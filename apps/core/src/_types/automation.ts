@@ -30,7 +30,7 @@ export type IUpdateAutomationRule = {
     label?: string;
     description?: string;
     active?: boolean;
-    trigger?: Partial<AutomationRuleTrigger>;
+    trigger?: AutomationRuleTrigger;
 };
 
 export enum SyncAutomationRuleEventAction {

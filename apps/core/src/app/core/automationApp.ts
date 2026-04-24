@@ -5,27 +5,22 @@ import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IAutomationDomain} from '../../domain/automation/automationDomain';
-import {
-    type ICreateAutomationRule,
-    type IAutomationRule,
-    type IUpdateAutomationRule,
-    SyncAutomationRuleEventAction,
-} from '../../_types/automation';
+import {type ICreateAutomationRule, type IAutomationRule, type IUpdateAutomationRule} from '../../_types/automation';
 import {type IPaginationParams, type ISortParams, type IList} from '../../_types/list';
-import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
+import {type IAutomationTriggers} from '../../domain/automation/triggers/automationTriggers';
+import {type IAutomationTriggersRegistry} from '../..//domain/automation/triggers/automationTriggersRegistry';
 import {
     AutomationTriggerDefSynchronicity,
     AutomationTriggerDefTopics,
     type AutomationTriggerDef,
-    type IAutomationTriggers,
-} from '../../domain/automation/automationTriggers';
+} from '../../domain/automation/triggers/_types';
 
 export type ICoreImportApp = IGraphqlAppModule;
 
 interface IAutomationAppDeps {
     'core.domain.automation': IAutomationDomain;
     'core.domain.automation.triggers': IAutomationTriggers;
-    'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.automation.triggers.registry': IAutomationTriggersRegistry;
 }
 
 export interface IGetAutomationRulesArgs {
@@ -42,15 +37,17 @@ export interface IGetAutomationRulesArgs {
 export default function ({
     'core.domain.automation': automationDomain,
     'core.domain.automation.triggers': automationTriggers,
-    'core.domain.eventsManager': eventsManagerDomain,
+    'core.domain.automation.triggers.registry': automationTriggersRegistry,
 }: IAutomationAppDeps): ICoreImportApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
                 typeDefs: `
                     enum AutomationRuleEventAction {
-                        ${Object.values(SyncAutomationRuleEventAction).join(' ')}
-                        ${eventsManagerDomain.getActions().join('\n')}
+                        ${automationTriggersRegistry
+                            .listTriggers()
+                            .map(def => def.eventAction)
+                            .join(' ')}
                     }
                     enum AutomationTriggerDefSynchronicity {
                         ${Object.values(AutomationTriggerDefSynchronicity).join('\n')}
@@ -128,7 +125,7 @@ export default function ({
                         label: String,
                         description: String,
                         active: Boolean,
-                        trigger: PartialAutomationRuleTriggerInput
+                        trigger: AutomationRuleTriggerInput
                     }
                     
                     extend type Query {
@@ -162,8 +159,8 @@ export default function ({
                                 ctx,
                             });
                         },
-                        automationTriggersDef(parent, args, ctx: IQueryInfos): AutomationTriggerDef[] {
-                            return automationTriggers.getAutomationTriggers({ctx});
+                        async automationTriggersDef(parent, args, ctx: IQueryInfos): Promise<AutomationTriggerDef[]> {
+                            return automationDomain.listAutomationTriggersDef({ctx});
                         },
                     },
                     Mutation: {

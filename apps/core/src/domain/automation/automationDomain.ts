@@ -25,6 +25,8 @@ import {type ArangoError} from 'arangojs/error';
 import {type IConfig} from '../../_types/config';
 import {type IPipelineExecutor} from './pipelineExecutor';
 import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesToTrigger';
+import {type IAutomationTriggers} from './triggers/automationTriggers';
+import {type AutomationTriggerDef} from './triggers/_types';
 
 export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
@@ -52,9 +54,12 @@ export interface IAutomationDomain {
     createAutomationRule({rule, ctx}: {rule: ICreateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     updateAutomationRule({rule, ctx}: {rule: IUpdateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     triggerRules(params: ITriggerRulesParams): Promise<void>;
+
+    listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): Promise<AutomationTriggerDef[]>;
 }
 
 export interface IAutomationDomainDeps {
+    'core.domain.automation.triggers': IAutomationTriggers;
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.automation.pipelineExecutor': IPipelineExecutor;
@@ -63,6 +68,7 @@ export interface IAutomationDomainDeps {
 }
 
 export default function ({
+    'core.domain.automation.triggers': automationTriggers,
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.domain.automation.pipelineExecutor': pipelineExecutor,
@@ -148,6 +154,10 @@ export default function ({
                 logger.error(`Error while triggering ${event.action} rules with topic ${event.topic}: ${error.stack}`);
             }
         },
+        async listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): Promise<AutomationTriggerDef[]> {
+            await _hasManageAutomationPermissionOrThrow(ctx);
+            return automationTriggers.listAutomationTriggersDef({ctx});
+        },
         async getAutomationRules({params, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
 
@@ -160,6 +170,7 @@ export default function ({
         },
         async createAutomationRule({rule, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
+            await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
 
             const newAutomationRule = await automationRuleRepo.createAutomationRule(rule, ctx);
 
@@ -180,6 +191,9 @@ export default function ({
         },
         async updateAutomationRule({rule, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
+            if (rule.trigger) {
+                await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
+            }
 
             const updatedAutomationRule = await automationRuleRepo
                 .updateAutomationRule(rule, ctx)
@@ -231,6 +245,10 @@ function automationDisabled(): IAutomationDomain {
         },
         async triggerRules(): Promise<void> {
             logger.silly('Automation system is disabled. Skipping rules trigger.');
+        },
+        async listAutomationTriggersDef(): Promise<AutomationTriggerDef[]> {
+            logger.silly('Automation system is disabled. Skipping listing automation triggers definitions.');
+            return [];
         },
     };
 }

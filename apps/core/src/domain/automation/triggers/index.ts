@@ -1,6 +1,6 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-export {default} from './automationDomain';
-export {default as actionsRegistry} from './automationActionsRegistry';
-export {default as pipelineExecutor} from './pipelineExecutor';
+export {default} from './automationTriggers';
+export {default as topics} from './automationTriggersTopics';
+export {default as registry} from './automationTriggersRegistry';
