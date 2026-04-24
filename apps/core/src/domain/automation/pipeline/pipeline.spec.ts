@@ -110,40 +110,6 @@ describe('pipelineExecutor', () => {
             expect(actionB.execute).not.toHaveBeenCalled();
         });
 
-        it('(temporary here for now) interrupts pipeline when params validation fails, without rethrowing', async () => {
-            const actionMissingParams: IAutomationAction = {
-                type: 'A',
-                paramsSchema: z.object({x: z.string()}), // requires x: string
-                execute: vi.fn(),
-            };
-            actionsRegistry.getAction.mockImplementation(mockGetAction([actionMissingParams, actionB]));
-
-            // Passing empty params — fails the schema
-            await expect(
-                executor.executePipeline(createPipelineToExecute([makeStep('A', {}), makeStep('B')]), mockCtx),
-            ).resolves.toBeFalsy();
-
-            expect(actionMissingParams.execute).not.toHaveBeenCalled();
-            expect(actionB.execute).not.toHaveBeenCalled();
-        });
-
-        it('(temporary here for now) calls optional validateParams after schema validation when defined', async () => {
-            const validateParams = vi.fn();
-            const action: IAutomationAction = {
-                type: 'A',
-                paramsSchema: z.object({}),
-                validateParams,
-                execute: vi.fn(),
-            };
-            actionsRegistry.getAction.mockImplementation(mockGetAction([action]));
-
-            await expect(
-                executor.executePipeline(createPipelineToExecute([makeStep('A')]), mockCtx),
-            ).resolves.toBeTruthy();
-
-            expect(validateParams).toHaveBeenCalledTimes(1);
-        });
-
         describe('event emission', () => {
             it('sends AUTOMATION_PIPELINE_SUCCESS on full completion', async () => {
                 await executor.executePipeline(createPipelineToExecute([makeStep('A'), makeStep('B')]), mockCtx);
@@ -215,22 +181,6 @@ describe('pipelineExecutor', () => {
                             },
                         },
                     }),
-                    mockCtx,
-                );
-            });
-
-            it('sends AUTOMATION_PIPELINE_FAILURE when params validation fails', async () => {
-                const strictAction: IAutomationAction = {
-                    type: 'A',
-                    paramsSchema: z.object({x: z.string()}),
-                    execute: vi.fn(),
-                };
-                actionsRegistry.getAction.mockImplementation(mockGetAction([strictAction]));
-
-                await executor.executePipeline(createPipelineToExecute([makeStep('A', {})]), mockCtx);
-
-                expect(eventManager.sendDatabaseEvent).toHaveBeenCalledWith(
-                    expect.objectContaining({action: EventAction.AUTOMATION_PIPELINE_FAILURE}),
                     mockCtx,
                 );
             });
