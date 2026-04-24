@@ -253,6 +253,55 @@ describe('Automation', () => {
         });
     });
 
+    describe('delete automation rule', () => {
+        let ruleToDelete: any;
+
+        beforeEach(async () => {
+            ruleToDelete = (
+                await adminUserSdk.CreateAutomationRule({
+                    rule: {
+                        label: 'Test rule',
+                        description: 'This is a test rule',
+                        trigger: {
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'users',
+                            },
+                        },
+                    },
+                })
+            ).createAutomationRule;
+        });
+
+        test('delete a rule', async () => {
+            const deletedRule = (await adminUserSdk.DeleteAutomationRule({ruleId: ruleToDelete.id}))
+                .deleteAutomationRule;
+
+            expect(deletedRule).toEqual(
+                expect.objectContaining({
+                    id: ruleToDelete.id,
+                }),
+            );
+        });
+
+        test('cannot delete a rule', async () => {
+            await expect(
+                nonAdminUserSdk.DeleteAutomationRule({
+                    ruleId: ruleToDelete.id,
+                }),
+            ).rejects.toThrow('Action forbidden');
+        });
+
+        test('delete unknown rule throws UNKNOWN_AUTOMATION_RULE', async () => {
+            await expect(
+                adminUserSdk.DeleteAutomationRule({
+                    ruleId: 'nonexistent-rule-id',
+                }),
+            ).rejects.toThrow(/Unknown automation rule/);
+        });
+    });
+
     describe('record creation triggers automation rules', () => {
         const testLibraryId = 'automation_trigger_test_lib';
 

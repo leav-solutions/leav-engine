@@ -140,6 +140,7 @@ export default function ({
                     extend type Mutation {
                         createAutomationRule(rule: CreateAutomationRuleInput!): AutomationRule!,
                         updateAutomationRule(rule: UpdateAutomationRuleInput!): AutomationRule!,
+                        deleteAutomationRule(ruleId: ID!): AutomationRule!
                     }
                 `,
                 resolvers: {
@@ -177,6 +178,13 @@ export default function ({
                             ctx: IQueryInfos,
                         ): Promise<IAutomationRule> {
                             return automationDomain.updateAutomationRule({rule, ctx});
+                        },
+                        async deleteAutomationRule(
+                            _parent,
+                            {ruleId}: {ruleId: string},
+                            ctx: IQueryInfos,
+                        ): Promise<IAutomationRule> {
+                            return automationDomain.deleteAutomationRule({ruleId, ctx});
                         },
                     },
                 },
