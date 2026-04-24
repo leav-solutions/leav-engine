@@ -274,8 +274,10 @@ export default function ({
             return dbUtils.cleanup(treeRes.pop());
         },
         async getTrees({params = {}, ctx}: {params?: IGetCoreTreesParams; ctx: IQueryInfos}): Promise<IList<ITree>> {
-            const _generateLibraryFilter = (filterKey: string, filterVal: string | boolean | string[]) =>
-                aql`POSITION(ATTRIBUTES(el.libraries), ${filterVal})`;
+            const _generateLibraryFilter = (
+                filterKey: string,
+                filterVal: string | boolean | string[] | Record<string, unknown>,
+            ) => aql`POSITION(ATTRIBUTES(el.libraries), ${filterVal})`;
 
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,

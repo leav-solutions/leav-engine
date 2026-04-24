@@ -103,7 +103,10 @@ export default function ({
             ctx: IQueryInfos;
         }): Promise<IList<IAttribute>> {
             // Will retrieve attributes that are linked to given libraries
-            const _generateLibrariesFilterConds = (filterKey: string, filterVal: string | boolean | string[]) => {
+            const _generateLibrariesFilterConds = (
+                _filterKey: string,
+                filterVal: string | boolean | string[] | Record<string, unknown>,
+            ) => {
                 if (typeof filterVal === 'boolean') {
                     return aql``;
                 }
@@ -129,7 +132,7 @@ export default function ({
             // Will retrieve attributes that are **not** linked to given libraries
             const _generateLibrariesExcludedFilterConds = (
                 filterKey: string,
-                filterVal: string | boolean | string[],
+                filterVal: string | boolean | string[] | Record<string, unknown>,
             ) => {
                 if (typeof filterVal === 'boolean') {
                     return aql``;

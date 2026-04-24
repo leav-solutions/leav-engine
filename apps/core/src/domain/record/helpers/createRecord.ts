@@ -13,7 +13,6 @@ import PermissionError from '../../../errors/PermissionError';
 import {type ICreateRecordValueError} from '../_types';
 import {type IAutomationDomain} from '../../automation/automationDomain';
 import {SyncAutomationRuleEventAction} from '../../../_types/automation';
-import {logger} from '@leav/logger';
 
 export type IPreCreateRecordCallback = () => Promise<ICreateRecordValueError[]>;
 
@@ -54,17 +53,20 @@ export default function ({
 
         const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
 
-        await automationDomain.triggerRules(
-            {
+        await automationDomain.triggerRules({
+            event: {
                 action: SyncAutomationRuleEventAction.RECORD_INIT,
                 topic: {
                     library,
-                    // TODO: ajouter le record lorsqu'on aura le match partiel du topic au niveau du getAutomationRules
+                    record: {
+                        id: newRecord.id,
+                        libraryId: library,
+                    },
                 },
             },
-            true,
+            synchronous: true,
             ctx,
-        );
+        });
 
         // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
         // important to send for indexation manager
