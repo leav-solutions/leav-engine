@@ -12,6 +12,7 @@ import {type ConditionActionParams} from './actions/conditionAction';
 import {type ErrorActionParams} from './actions/errorAction';
 import {type JexlCalculationActionParams} from './actions/jexlCalculationAutomationAction';
 import {type LogActionParams} from './actions/logAction';
+import {type ModifyAttributeActionParams} from './actions/modifyAttributeAction';
 
 // Temporary shortcut to avoid creating, updating and retrieving real rules from the database while the system is being developed and tested.
 
@@ -60,6 +61,93 @@ export const buildFakeRulesToTrigger = async (
                         level: 'verbose',
                     } satisfies LogActionParams,
                 },
+            ],
+        },
+        createdAt: Date.now(),
+        createdBy: 'system',
+        modifiedAt: Date.now(),
+        modifiedBy: 'system',
+    };
+    const fakeRuleIdInitCampaign: IAutomationRule = {
+        id: 'fake_rule_id_init_campaign',
+        label: 'Fake rule with log action',
+        active: true,
+        trigger: {
+            synchronous,
+            eventAction: event.action,
+            eventTopic: event.topic,
+        },
+        pipeline: {
+            steps: [
+                {
+                    type: AutomationRuleActions.JEXL_CALCULATION,
+                    name: 'use previous results',
+                    params: {
+                        formula: '"Jexl campaigns label " + now()',
+                    } satisfies JexlCalculationActionParams,
+                },
+                {
+                    type: AutomationRuleActions.MODIFY_ATTRIBUTE,
+                    params: {
+                        attributePath: 'campaigns_label', // test_jexl_label
+                        mode: 'add',
+                    } satisfies ModifyAttributeActionParams,
+                },
+                {
+                    type: AutomationRuleActions.JEXL_CALCULATION,
+                    params: {
+                        formula:
+                            "{ from: dateTimeToMillis(dateTimeAdd(now(), 'day', 0-3)) // 1000, to: dateTimeToMillis(dateTimeAdd(now(), 'day', 5)) // 1000 } | string",
+                    } satisfies JexlCalculationActionParams,
+                },
+                {
+                    type: AutomationRuleActions.MODIFY_ATTRIBUTE,
+                    params: {
+                        attributePath: 'campaigns_dates', // test_jexl_periode
+                        mode: 'add',
+                    } satisfies ModifyAttributeActionParams,
+                },
+                {
+                    type: AutomationRuleActions.JEXL_CALCULATION,
+                    params: {
+                        formula: "{ id: '10028330' }",
+                    } satisfies JexlCalculationActionParams,
+                },
+                {
+                    type: AutomationRuleActions.MODIFY_ATTRIBUTE,
+                    params: {
+                        attributePath: 'campaigns_type',
+                        mode: 'replace',
+                    } satisfies ModifyAttributeActionParams,
+                },
+                {
+                    type: AutomationRuleActions.JEXL_CALCULATION,
+                    params: {
+                        formula: "{ id: '10027357' }",
+                    } satisfies JexlCalculationActionParams,
+                },
+                {
+                    type: AutomationRuleActions.MODIFY_ATTRIBUTE,
+                    params: {
+                        attributePath: 'campaigns_category',
+                        mode: 'replace',
+                    } satisfies ModifyAttributeActionParams,
+                },
+                // disable to avoid create error logs in structure_items init records, to if we ignore those errors, there are well created
+                // {
+                //     type: AutomationRuleActions.JEXL_CALCULATION,
+                //     params: {
+                //         formula:
+                //             "[{ id: '51697252', library: 'structure_items' }, { id: '51697258', library: 'structure_items' }]",
+                //     } satisfies JexlCalculationActionParams,
+                // },
+                // {
+                //     type: AutomationRuleActions.MODIFY_ATTRIBUTE,
+                //     params: {
+                //         attributePath: 'campaigns_structure_items',
+                //         mode: 'add',
+                //     } satisfies ModifyAttributeActionParams,
+                // },
             ],
         },
         createdAt: Date.now(),
@@ -116,6 +204,7 @@ export const buildFakeRulesToTrigger = async (
     };
     return [
         fakeRuleIdLog,
+        // fakeRuleIdInitCampaign,
         // comment next rule to avoid error logs
         // fakeRuleIdConditionError,
     ];

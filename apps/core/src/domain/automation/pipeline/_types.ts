@@ -40,7 +40,9 @@ export type IAutomationPipelineSuccess = {
 export type IAutomationPipelineExecutionState = {
     readonly trigger: AutomationRuleTrigger;
     readonly results: IAutomationPipelineExecutionResults;
+    readonly lastResult?: unknown;
     readonly startDateMs: number;
+    stepIndex: number;
 };
 
 // Can be used by actions to store results for later steps, indexed by action type or custom keys

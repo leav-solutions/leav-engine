@@ -129,7 +129,11 @@ export default function ({
     ): IAutomationPipelineExecutionState => ({
         trigger: pipelineExec.trigger,
         results: {},
+        stepIndex: 0,
         startDateMs: Date.now(),
+        get lastResult() {
+            return this.results[this.stepIndex - 1];
+        },
     });
 
     return {
@@ -152,9 +156,8 @@ export default function ({
         async executePipeline(pipelineExec, ctx) {
             const state = _initializePipelineState(pipelineExec);
 
-            let stepIndex = 0;
             for (const step of pipelineExec.steps) {
-                const stepIdentifier = step.name ?? `${stepIndex}`;
+                const stepIdentifier = step.name ?? `${state.stepIndex}`;
 
                 try {
                     const action = actionsRegistry.getAction(step.type);
@@ -166,22 +169,23 @@ export default function ({
                         break;
                     }
 
-                    _storeStepResult(state, stepIndex, step.name, stepResult.result);
+                    _storeStepResult(state, state.stepIndex, step.name, stepResult.result);
                 } catch (error) {
                     logger.error(
                         `Pipeline for rules ${pipelineExec.ruleId} interrupted at step "${stepIdentifier}": ${(error as Error).stack}`,
                         {error},
                     );
-                    _storeStepResult(state, stepIndex, step.name, {
+                    _storeStepResult(state, state.stepIndex, step.name, {
                         ...error,
                         stack: error.stack,
                         message: error.message,
                         name: error.name,
+                        cause: error.cause,
                     });
                     await _emitFailure(pipelineExec, state, ctx);
                     return false;
                 }
-                stepIndex++;
+                state.stepIndex++;
             }
 
             await _emitSuccess(pipelineExec, state, ctx);
