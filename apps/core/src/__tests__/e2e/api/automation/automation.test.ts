@@ -256,15 +256,18 @@ describe('Automation', () => {
     describe('delete automation rule', () => {
         let ruleToDelete: any;
 
-        beforeAll(async () => {
+        beforeEach(async () => {
             ruleToDelete = (
                 await adminUserSdk.CreateAutomationRule({
                     rule: {
                         label: 'Test rule',
                         description: 'This is a test rule',
                         trigger: {
-                            synchronous: false,
+                            synchronous: true,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'users',
+                            },
                         },
                     },
                 })
@@ -293,7 +296,7 @@ describe('Automation', () => {
         test('delete unknown rule throws UNKNOWN_AUTOMATION_RULE', async () => {
             await expect(
                 adminUserSdk.DeleteAutomationRule({
-                    ruleId: ruleToDelete.id,
+                    ruleId: 'nonexistent-rule-id',
                 }),
             ).rejects.toThrow(/Unknown automation rule/);
         });
