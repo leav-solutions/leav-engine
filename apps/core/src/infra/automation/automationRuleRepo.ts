@@ -96,7 +96,7 @@ export default function ({
     });
 
     return {
-        async createAutomationRule(rule, ctx): Promise<IAutomationRule> {
+        async createAutomationRule(rule, ctx) {
             const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
             const docToInsert = createDocumentFromAutomationRule(rule, ctx);
 
@@ -107,7 +107,7 @@ export default function ({
 
             return automationRuleFromDbDocument(newAutomationRule[0]);
         },
-        async updateAutomationRule(rule, ctx): Promise<IAutomationRule> {
+        async updateAutomationRule(rule, ctx) {
             const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
             const docToUpdate = updateDocumentFromAutomationRule(rule, ctx);
 
@@ -121,7 +121,7 @@ export default function ({
 
             return automationRuleFromDbDocument(updatedAutomationRule[0]);
         },
-        async deleteAutomationRule(ruleId: string, ctx: IQueryInfos): Promise<IAutomationRule> {
+        async deleteAutomationRule(ruleId, ctx) {
             const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
 
             const oldAutomationRule = await dbService.execute<IAutomationRuleDbDocument[]>({
@@ -134,7 +134,7 @@ export default function ({
 
             return automationRuleFromDbDocument(oldAutomationRule[0]);
         },
-        async getAutomationRules(params, ctx): Promise<IList<IAutomationRule>> {
+        async getAutomationRules(params, ctx) {
             const defaultParams: IGetCoreEntitiesParams = {
                 filters: null,
                 strictFilters: false,
