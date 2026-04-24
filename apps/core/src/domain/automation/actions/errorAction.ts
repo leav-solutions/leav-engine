@@ -2,8 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {z} from 'zod';
-import {AutomationRuleActions} from '../../../_types/automation';
-import {type IAutomationAction} from '../types';
+import {AutomationRuleActions, type IAutomationAction} from './_types';
 
 const errorActionParamsSchema = z.object({
     message: z.string().meta({

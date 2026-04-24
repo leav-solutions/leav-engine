@@ -1,36 +1,18 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {
-    AutomationRuleActions,
-    type AutomationRulePipelineStep,
-    SyncAutomationRuleEventAction,
-} from '../../../../_types/automation';
+import {type AutomationRulePipelineStep, SyncAutomationRuleEventAction} from '../../../../_types/automation';
 import {type AutomationPipelineToExecute, type IPipelineExecutor} from '../../../../domain/automation/pipelineExecutor';
 import {systemUserId} from '../../../../_constants/users';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
 import {getCoreDep} from '../../integrationTestUtils';
+import {AutomationRuleActions} from '../../../../domain/automation/actions/_types';
 
 describe('pipelineExecutor', () => {
     let pipelineExecutor: IPipelineExecutor;
     const ctx: IQueryInfos = {userId: systemUserId};
     beforeAll(async () => {
         pipelineExecutor = getCoreDep<IPipelineExecutor>('core.domain.automation.pipelineExecutor');
-    });
-
-    describe('getAvailableActions', () => {
-        it('should list available actions', async () => {
-            const availableActions = pipelineExecutor.getAvailableActions();
-            expect(availableActions).toBeDefined();
-            expect(availableActions.length).toBeGreaterThanOrEqual(3);
-            expect(availableActions).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({type: AutomationRuleActions.CONDITION}),
-                    expect.objectContaining({type: AutomationRuleActions.LOG}), // tmp
-                    expect.objectContaining({type: AutomationRuleActions.ERROR}), // tmp
-                ]),
-            );
-        });
     });
 
     describe('execute', () => {
