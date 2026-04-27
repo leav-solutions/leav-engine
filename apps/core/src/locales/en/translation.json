@@ -49,6 +49,7 @@
         "INVALID_MAPPING": "Invalid mapping",
         "INVALID_PERMISSIONS_CONF_LIBRARIES": "These libraries are not bound to the tree",
         "INVALID_REGEXP": "Value does not match the regular expression",
+        "INVALID_JEXL_EXPRESSION": "Invalid JEXL expression: {{error}}",
         "INVALID_SORT_FIELDS": "Invalid sort fields",
         "INVALID_TREE_FILTER_FORMAT": "Classified filter must have condition, value and treeId",
         "INVALID_URL": "Invalid URL",

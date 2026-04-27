@@ -49,6 +49,7 @@
         "INVALID_MAPPING": "Mapping incorrect",
         "INVALID_PERMISSIONS_CONF_LIBRARIES": "Ces bibliothèques ne sont pas liées à cet arbre: {{libraries}}",
         "INVALID_REGEXP": "La valeur ne correspond pas à l'expression régulière",
+        "INVALID_JEXL_EXPRESSION": "Expression JEXL invalide: {{error}}",
         "INVALID_SORT_FIELDS": "Les champs de tri ne sont pas valides",
         "INVALID_TREE_FILTER_FORMAT": "Un filtre sur un arbre doit avoir une condition, un champ et un treeId",
         "INVALID_URL": "URL non valide",
