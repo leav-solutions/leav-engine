@@ -24,6 +24,7 @@ export type ICreateAutomationRule = {
     description?: string;
     trigger: AutomationRuleTrigger;
     pipeline: AutomationRulePipeline;
+    active: boolean;
 };
 
 export type IUpdateAutomationRule = {

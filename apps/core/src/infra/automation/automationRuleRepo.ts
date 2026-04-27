@@ -79,7 +79,6 @@ export default function ({
         ctx: IQueryInfos,
     ): IAutomationRuleBaseDocument => ({
         ...rule,
-        active: false,
         createdAt: dayjs().unix(),
         createdBy: String(ctx.userId),
         modifiedAt: dayjs().unix(),

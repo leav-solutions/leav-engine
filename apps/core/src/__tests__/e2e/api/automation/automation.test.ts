@@ -2,14 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {adminUserId} from '../../../../_constants/users';
-import {SyncAutomationRuleEventAction} from '../../../../_types/automation';
 import {
     AutomationRuleEventAction,
     AutomationTriggerDefSynchronicity,
     AutomationTriggerDefTopics,
     AutomationRuleActions,
 } from '../../_gqlTypes';
-import {adminUserSdk, gqlCreateRecord, nonAdminUserSdk} from '../e2eUtils';
+import {adminUserSdk, nonAdminUserSdk} from '../e2eUtils';
 
 describe('Automation', () => {
     describe('get automation rules', () => {
@@ -30,6 +29,7 @@ describe('Automation', () => {
                     rule: {
                         label: 'Test rule',
                         description: 'This is a test rule',
+                        active: false,
                         trigger: {
                             synchronous: true,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
@@ -100,6 +100,7 @@ describe('Automation', () => {
                 adminUserSdk.CreateAutomationRule({
                     rule: {
                         label: 'Invalid params rule',
+                        active: false,
                         trigger: {
                             synchronous: true,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
@@ -125,6 +126,7 @@ describe('Automation', () => {
                 nonAdminUserSdk.CreateAutomationRule({
                     rule: {
                         label: 'Test rule',
+                        active: false,
                         trigger: {
                             synchronous: true,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
@@ -143,6 +145,7 @@ describe('Automation', () => {
                 adminUserSdk.CreateAutomationRule({
                     rule: {
                         label: 'Test rule',
+                        active: false,
                         trigger: {
                             synchronous: false,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
@@ -161,6 +164,7 @@ describe('Automation', () => {
                 adminUserSdk.CreateAutomationRule({
                     rule: {
                         label: 'Test rule',
+                        active: false,
                         trigger: {
                             synchronous: true,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
@@ -179,6 +183,7 @@ describe('Automation', () => {
                 adminUserSdk.CreateAutomationRule({
                     rule: {
                         label: 'Test rule',
+                        active: false,
                         trigger: {
                             synchronous: true,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
@@ -195,6 +200,7 @@ describe('Automation', () => {
                 adminUserSdk.CreateAutomationRule({
                     rule: {
                         label: 'Test rule',
+                        active: false,
                         trigger: {
                             synchronous: true,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,
@@ -208,6 +214,25 @@ describe('Automation', () => {
                 }),
             ).rejects.toThrow('Invalid trigger attribute topic: Unrecognized key: "attribute"');
         });
+
+        test('cannot create an activated rule with an empty pipeline', async () => {
+            await expect(
+                adminUserSdk.CreateAutomationRule({
+                    rule: {
+                        label: 'Test rule',
+                        trigger: {
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {
+                                library: 'users',
+                            },
+                        },
+                        pipeline: {steps: []},
+                        active: true,
+                    },
+                }),
+            ).rejects.toThrow('Cannot activate an automation rule with an empty pipeline');
+        });
     });
 
     describe('update automation rule', () => {
@@ -218,6 +243,7 @@ describe('Automation', () => {
                 await adminUserSdk.CreateAutomationRule({
                     rule: {
                         label: 'Test rule',
+                        active: false,
                         description: 'This is a test rule',
                         trigger: {
                             synchronous: true,
@@ -318,7 +344,7 @@ describe('Automation', () => {
             ).rejects.toThrow('Trigger for event action RECORD_INIT is only available for synchronous execution');
         });
 
-        test('cannot create a rule with wrong event topic, library not exists', async () => {
+        test('cannot update a rule with wrong event topic, library not exists', async () => {
             await expect(
                 adminUserSdk.UpdateAutomationRule({
                     rule: {
@@ -381,6 +407,7 @@ describe('Automation', () => {
                     rule: {
                         label: 'Test rule',
                         description: 'This is a test rule',
+                        active: false,
                         trigger: {
                             synchronous: true,
                             eventAction: AutomationRuleEventAction.RECORD_INIT,

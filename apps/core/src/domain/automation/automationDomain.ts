@@ -171,9 +171,15 @@ export default function ({
         },
         async createAutomationRule({rule, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
-            await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
 
+            await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
             await pipelineDomain.validatePipeline(rule.pipeline);
+
+            if (rule.active && !rule.pipeline.steps.length) {
+                throw new ValidationError<IAutomationRule>({
+                    pipeline: Errors.AUTOMATION_RULE_PIPELINE_EMPTY,
+                });
+            }
 
             const newAutomationRule = await automationRuleRepo.createAutomationRule(rule, ctx);
 

@@ -275,6 +275,7 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
 };
 
 export type CreateAutomationRuleInput = {
+  active: Scalars['Boolean']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
   label: Scalars['String']['input'];
   pipeline: AutomationRulePipelineInput;
@@ -1200,7 +1201,7 @@ export type CreateAutomationRuleMutationVariables = Exact<{
 }>;
 
 
-export type CreateAutomationRuleMutation = { createAutomationRule: { id: string, label: string, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null }, pipeline: { steps: Array<{ type: AutomationRuleActions, name?: string | null, params: any }> } } };
+export type CreateAutomationRuleMutation = { createAutomationRule: { id: string, label: string, modifiedAt: number, active: boolean, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null }, pipeline: { steps: Array<{ type: AutomationRuleActions, name?: string | null, params: any }> } } };
 
 export type UpdateAutomationRuleMutationVariables = Exact<{
   rule: UpdateAutomationRuleInput;
@@ -1477,6 +1478,7 @@ export const CreateAutomationRuleDocument = gql`
     id
     label
     modifiedAt
+    active
     trigger {
       synchronous
       eventAction
