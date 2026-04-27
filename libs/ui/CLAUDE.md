@@ -1,8 +1,40 @@
 # libs/ui — CLAUDE.md
 
 `@leav/ui` — Composants React partagés du framework LEAV.
-Consommé en interne par `app-studio` (et historiquement `data-studio`).
-Publié sur npm pour les applications tierces qui utilisent LEAV.
+Consommé en interne par `app-studio` (et historiquement `data-studio`, en cours de suppression).
+Publié sur npm pour les applications tierces qui utilisent LEAV : **AMP** et **xStream**.
+
+---
+
+## API publique réelle (consommée par AMP et xStream)
+
+Ce sont les seuls symboles réellement utilisés par les consommateurs externes. Tout ce qui n'est pas dans cette liste est potentiellement un internal.
+
+Pour mettre à jour cette liste, exécuter depuis `leav-engine/` :
+
+```bash
+grep -rh --include="*.ts" --include="*.tsx" "from '@leav/ui'" \   # cherche les lignes d'import de @leav/ui dans tous les .ts/.tsx (-r récursif, -h sans nom de fichier)
+  ../amp-front ../xstream 2>/dev/null \                           # dans les deux repos consommateurs (erreurs silencieuses)
+  | grep -v node_modules \                                        # exclut les dépendances installées
+  | perl -ne 'if (/\{([^}]+)\}/) { print "$1\n" }' \              # extrait le contenu entre { et }
+  | tr ',' '\n' \                                                 # découpe par virgule → un symbole par ligne
+  | sed 's/^[[:space:]]*//' \                                     # supprime les espaces en début de ligne
+  | sed 's/[[:space:]]*$//' \                                     # supprime les espaces en fin de ligne
+  | grep -v '^$' \                                                # supprime les lignes vides
+  | sort -u                                                       # trie et déduplique
+```
+
+**Composants :** `Explorer`, `EditRecordPage`, `EditRecordSkeleton`, `ErrorDisplay`, `InitNotificationsSubscription`, `AttributeConditionFilter`, `ThroughConditionFilter`, `CommonFilterItem`, `SelectTreeNode`
+
+**Hooks :** `useAuth`, `useRedirectToLogin`, `useLang`, `useFilters`, `useFiltersContext`, `useFiltersReducer`, `useIFrameMessengerClient`, `useExecuteSaveValueBatchMutation`, `useGetRecordUpdatesSubscription`
+
+**Contextes / Classes :** `LangContext`, `FiltersContext`, `IFrameMessengerClient`
+
+**Utilitaires :** `gqlPossibleTypes`, `prepareFiltersForRequest`
+
+**Constantes :** `NEW_RECORD_ID`, `SUCCESS_ALERT_DURATION`, `TOOLTIP_DEFAULT_DELAY_IN_SECONDS`
+
+**Types :** `ILangContext`, `UIFilter`, `IRecordIdentityWhoAmI`, `ITreeNodeWithRecord`, `ErrorDisplayTypes`
 
 ---
 
