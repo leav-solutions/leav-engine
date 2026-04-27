@@ -1,8 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type AutomationRulePipelineStep, SyncAutomationRuleEventAction} from '../../../../_types/automation';
-import {type AutomationPipelineToExecute} from '../../../../domain/automation/pipeline/_types';
+import {SyncAutomationRuleEventAction} from '../../../../_types/automation';
+import {
+    type AutomationRulePipelineStep,
+    type AutomationPipelineToExecute,
+} from '../../../../domain/automation/pipeline/_types';
 import {systemUserId} from '../../../../_constants/users';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
 import {getCoreDep} from '../../integrationTestUtils';
