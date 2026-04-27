@@ -340,7 +340,7 @@ services:
     command: [sh, -c, "yarn run start:logsCollector"]
 
   admin:
-    image: node:24.14.1-alpine3.23
+    image: node:24.15.0-alpine3.23
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.admin.rule=(Host(`core.leav.localhost`) &&
@@ -367,7 +367,7 @@ services:
     command: [sh, -c, "yarn run start"]
 
   data-studio:
-    image: node:24.14.1-alpine3.23
+    image: node:24.15.0-alpine3.23
     stdin_open: true
     tty: true
     labels:
@@ -396,7 +396,7 @@ services:
     command: [sh, -c, "yarn run start"]
 
   app-studio:
-    image: node:24.14.1-alpine3.23
+    image: node:24.15.0-alpine3.23
     stdin_open: true
     tty: true
     labels:
@@ -426,7 +426,7 @@ services:
     command: [sh, -c, "yarn run start"]
 
   login:
-    image: node:24.14.1-alpine3.23
+    image: node:24.15.0-alpine3.23
     stdin_open: true
     tty: true
     labels:
@@ -455,7 +455,7 @@ services:
     command: [sh, -c, "yarn run start"]
 
   portal:
-    image: node:24.14.1-alpine3.23
+    image: node:24.15.0-alpine3.23
     stdin_open: true
     tty: true
     labels:
@@ -483,7 +483,7 @@ services:
 
   automate-scan:
     profiles: ["automate"]
-    image: node:24.14.1-alpine3.23
+    image: node:24.15.0-alpine3.23
     restart: always
     environment:
       <<: [*env-logger, *env-automate-scan, *env-amqp]
@@ -572,7 +572,7 @@ services:
   # You need to have a GRAPHQL_API_KEY defined as environment variables (eg. in a .env file)
   sync-scan:
     profiles: ["automate"]
-    image: node:24.14.1-alpine3.23
+    image: node:24.15.0-alpine3.23
     labels:
       - traefik.enable=true
     environment:
