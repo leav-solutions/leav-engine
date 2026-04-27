@@ -63,6 +63,14 @@ C'est une extension du pattern classique **EAV (Entity-Attribute-Value)** :
 
 Les packages internes utilisent le préfixe `@leav/`.
 
+### Design System — aristid-ds
+
+-   Composants React préfixés `Kit` (`KitButton`, `KitTable`…), interfaces `IKit`
+-   Wrapping d'Ant Design 5 avec theming par tokens — utiliser `useKitTheme()` pour accéder au thème
+-   Ne jamais importer depuis `antd/lib` — utiliser `antd` ou `antd/es`
+-   Distribué en commit-pin (pas de semver stable) dans `@leav/ui`, `app-studio`, `admin`
+-   Migration en cours dans `apps/admin` : `semantic-ui-react` → `aristid-ds`. Ne pas utiliser `semantic-ui-react` dans du nouveau code.
+
 ---
 
 ## Structure du monorepo
@@ -80,7 +88,7 @@ leav-engine/
 │   ├── automate-scan/     # Surveillance FS en temps réel → événements RabbitMQ
 │   ├── core/              # API GraphQL principale (port 4001) — tourne aussi en mode
 │   │                      # indexationManager, tasksManager, filesManager, logsCollector
-│   ├── data-studio/       # ⚠️ DÉPRÉCIÉ — remplacé par app-studio. Ne pas y ajouter de code.
+│   ├── data-studio/       # ⚠️ SUPPRESSION EN COURS — remplacé par une instance app-studio nommée explorer-studio. Ne pas y ajouter de code.
 │   ├── login/             # ⚠️ Local uniquement — en prod : Keycloak + OIDC
 │   ├── portal/            # Listing générique des applications disponibles
 │   │                      # Ne pas y toucher : le vrai portail métier est AMP (repo séparé, hors leav-engine)
@@ -100,8 +108,6 @@ leav-engine/
 test-apps/                 # Tests d'intégration globaux — testent l'application dans sa globalité
 ```
 
-> ⚠️ **Ne pas investir dans `data-studio`** — toute nouvelle feature UI va dans `app-studio`.
->
 > ⚠️ **`login`** n'existe qu'en local. En production : **Keycloak via OIDC**.
 >
 > ℹ️ **`portal`** : ne pas y toucher, il liste les apps de façon générique. Le vrai portail
@@ -171,6 +177,22 @@ docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e
 ## Conventions de code
 
 Voir [`CODING_GUIDELINES.md`](CODING_GUIDELINES.md) — source de vérité pour toutes les conventions : nommage, tests, types, frontend, GraphQL, styles.
+
+---
+
+## Chantiers en cours et à venir
+
+### En cours
+
+-   **Suppression de `data-studio`** — remplacement progressif par `explorer-studio`, une instance de `app-studio`. Ne pas ajouter de code dans `data-studio`.
+
+### Planifiés
+
+-   **Restructuration de `@leav/ui`** — une fois `data-studio` supprimé, nettoyer et restructurer la lib pour mettre en avant les composants publics : `Explorer`, composants de formulaire, composants de filtres. Ce chantier est bloqué par la suppression complète de `data-studio`.
+-   **AMP → instance `app-studio`** — objectif long terme de faire d'AMP une instance de `app-studio` (comme `explorer-studio`). `app-studio` devra être enrichi pour couvrir les besoins d'AMP. Permettra un nouveau cycle de nettoyage de `@leav/ui`.
+-   **DX plugins `core`** — simplifier le développement des plugins core pour les consommateurs externes. Situation actuelle : imports incorrects dans `xstream/apps/plugins/`, nécessite un `git sparse-checkout` ; AMP utilise `core` via image Docker. Chantier porté par l'équipe core (Sébastien / Jérémy).
+-   **Migration TypeScript `strict`** — `tsconfig.json` a `strict: true` mais court-circuité par 6 overrides (`strictNullChecks: false`, `noImplicitAny: false`, etc.). À activer progressivement, app par app — jamais en une seule PR globale.
+-   **Sortie de l'open source** — supprimer les headers de licence en tête de fichiers et les checks CI associés. En attendant, **toujours ajouter les headers de licence** sur les nouveaux fichiers — le check CI est bloquant.
 
 ---
 
