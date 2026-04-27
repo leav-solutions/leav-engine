@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ZodObject} from 'zod';
-import {type IActionExecutionResult, type IAutomationPipelineExecutionState} from '../types';
+import {type IAutomationPipelineExecutionState} from '../pipeline/_types';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 
 export enum AutomationRuleActions {
@@ -31,3 +31,14 @@ export interface IAutomationAction<Params = unknown> {
         ctx: IQueryInfos,
     ): Promise<IActionExecutionResult | void>;
 }
+
+export enum ActionExecutionResultStatus {
+    CONTINUE = 'continue',
+    STOP = 'stop',
+}
+
+// Returned by an action to control pipeline flow.
+// Returning void/undefined is treated as CONTINUE by the pipeline executor.
+export type IActionExecutionResult =
+    | {status: ActionExecutionResultStatus.CONTINUE; result?: unknown}
+    | {status: ActionExecutionResultStatus.STOP; reason?: string};

@@ -30,6 +30,9 @@ describe('automationRuleRepo', () => {
                         synchronous: false,
                         eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
                     },
+                    pipeline: {
+                        steps: [],
+                    },
                 },
                 ctx,
             );
@@ -62,6 +65,9 @@ describe('automationRuleRepo', () => {
                         trigger: {
                             synchronous: false,
                             eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                        },
+                        pipeline: {
+                            steps: [],
                         },
                     },
                     ctx,
@@ -116,6 +122,7 @@ describe('automationRuleRepo', () => {
                 {
                     label,
                     trigger: {synchronous: false, eventAction: SyncAutomationRuleEventAction.RECORD_INIT, eventTopic},
+                    pipeline: {steps: []},
                 },
                 ctx,
             );

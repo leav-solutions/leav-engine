@@ -3,10 +3,10 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import {type AwilixContainer} from 'awilix';
-import {type IAutomationAction} from './actions/_types';
+import {type IAutomationAction, type AutomationRuleActions} from './actions/_types';
 
 export interface IAutomationActionsRegistry {
-    getAction(type: string): IAutomationAction;
+    getAction(type: AutomationRuleActions | string): IAutomationAction | undefined;
     listAvailableActions(): IAutomationAction[];
 }
 
@@ -19,30 +19,27 @@ const ACTION_MODULE_DISCOVERY_REGEX = /^core\.domain\.automation\.actions\.[^.]+
 export default function ({
     'core.depsManager': depsManager,
 }: IAutomationActionsRegistryDeps): IAutomationActionsRegistry {
-    const loadedActionRegistry: Map<string, IAutomationAction> = new Map();
-    const _loadActionsOnDemand = (): Map<string, IAutomationAction> => {
-        if (loadedActionRegistry.size === 0) {
-            const coreActions: IAutomationAction[] = Object.keys(depsManager.registrations)
-                .filter(modName => modName.match(ACTION_MODULE_DISCOVERY_REGEX))
-                .map(modName => depsManager.cradle[modName]);
+    let _actionsRegistry: Map<string, IAutomationAction>;
 
-            logger.verbose('Loaded pipeline actions: ' + coreActions.map(a => a.type).join(', '));
-            coreActions.forEach(action => loadedActionRegistry.set(action.type, action));
+    const _getActionsRegistry = (): Map<string, IAutomationAction> => {
+        if (_actionsRegistry !== undefined) {
+            return _actionsRegistry;
         }
-        return loadedActionRegistry;
+
+        const coreActions: IAutomationAction[] = Object.keys(depsManager.registrations)
+            .filter(modName => modName.match(ACTION_MODULE_DISCOVERY_REGEX))
+            .map(modName => depsManager.cradle[modName]);
+
+        logger.verbose('Loaded pipeline actions: ' + coreActions.map(a => a.type).join(', '));
+        return new Map(coreActions.map(action => [action.type, action]));
     };
 
     return {
-        getAction(type: string): IAutomationAction {
-            const actions = _loadActionsOnDemand();
-            const action = actions.get(type);
-            if (!action) {
-                throw new Error(`Action "${type}" not found in registry`);
-            }
-            return action;
+        getAction(type): IAutomationAction | undefined {
+            return _getActionsRegistry().get(type);
         },
         listAvailableActions() {
-            return [..._loadActionsOnDemand().values()];
+            return [..._getActionsRegistry().values()];
         },
     };
 }

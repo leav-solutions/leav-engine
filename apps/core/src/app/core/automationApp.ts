@@ -14,6 +14,7 @@ import {
     AutomationTriggerDefTopics,
     type AutomationTriggerDef,
 } from '../../domain/automation/triggers/_types';
+import {AutomationRuleActions} from '../../domain/automation/actions/_types';
 
 export type ICoreImportApp = IGraphqlAppModule;
 
@@ -68,6 +69,16 @@ export default function ({
                         eventTopic: EventTopic,
                     }
                 
+                    type AutomationRulePipelineStep {
+                        type: AutomationRuleActions!,
+                        name: String,
+                        params: JSON!
+                    }
+
+                    type AutomationRulePipeline {
+                        steps: [AutomationRulePipelineStep!]!
+                    }
+
                     type AutomationRule {
                         createdAt: Int!,
                         createdBy: String!,
@@ -79,6 +90,7 @@ export default function ({
                         description: String,
                         active: Boolean!,
                         trigger: AutomationRuleTrigger!,
+                        pipeline: AutomationRulePipeline!
                     }
 
                     type AutomationRulesList {
@@ -114,10 +126,25 @@ export default function ({
                         eventTopic: EventTopicInput
                     }
 
+                    enum AutomationRuleActions {
+                        ${Object.values(AutomationRuleActions).join('\n')}
+                    }
+
+                    input AutomationRulePipelineStepInput {
+                        type: AutomationRuleActions!,
+                        name: String,
+                        params: JSON!
+                    }
+
+                    input AutomationRulePipelineInput {
+                        steps: [AutomationRulePipelineStepInput!]!
+                    }
+
                     input CreateAutomationRuleInput {
                         label: String!,
                         description: String,
                         trigger: AutomationRuleTriggerInput!
+                        pipeline: AutomationRulePipelineInput!
                     }
                     
                     input UpdateAutomationRuleInput {
@@ -126,6 +153,7 @@ export default function ({
                         description: String,
                         active: Boolean,
                         trigger: AutomationRuleTriggerInput
+                        pipeline: AutomationRulePipelineInput
                     }
                     
                     extend type Query {
@@ -166,14 +194,14 @@ export default function ({
                     },
                     Mutation: {
                         async createAutomationRule(
-                            parent,
+                            _,
                             {rule}: {rule: ICreateAutomationRule},
                             ctx: IQueryInfos,
                         ): Promise<IAutomationRule> {
                             return automationDomain.createAutomationRule({rule, ctx});
                         },
                         async updateAutomationRule(
-                            _parent,
+                            _,
                             {rule}: {rule: IUpdateAutomationRule},
                             ctx: IQueryInfos,
                         ): Promise<IAutomationRule> {

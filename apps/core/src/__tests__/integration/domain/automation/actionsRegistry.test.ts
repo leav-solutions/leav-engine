@@ -10,6 +10,7 @@ import {AutomationRuleActions} from '../../../../domain/automation/actions/_type
 describe('pipelineExecutor', () => {
     let actionsRegistry: IAutomationActionsRegistry;
     const ctx: IQueryInfos = {userId: systemUserId};
+
     beforeAll(async () => {
         actionsRegistry = getCoreDep<IAutomationActionsRegistry>('core.domain.automation.actionsRegistry');
     });
@@ -36,10 +37,9 @@ describe('pipelineExecutor', () => {
             expect(action.type).toBe(AutomationRuleActions.CONDITION);
         });
 
-        it('should throw if action type not found', async () => {
-            expect(() => actionsRegistry.getAction('nonExistingType')).toThrow(
-                'Action "nonExistingType" not found in registry',
-            );
+        it('should return undefined if action type is not found', async () => {
+            const action = actionsRegistry.getAction('nonExistingType');
+            expect(action).toBeUndefined();
         });
     });
 });

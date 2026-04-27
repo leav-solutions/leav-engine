@@ -208,11 +208,27 @@ export enum AttributesSortableFields {
   type = 'type'
 }
 
+export enum AutomationRuleActions {
+  condition = 'condition',
+  error = 'error',
+  log = 'log'
+}
+
 export enum AutomationRuleEventAction {
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
   VALUE_SAVE = 'VALUE_SAVE'
 }
+
+export type AutomationRulePipelineInput = {
+  steps: Array<AutomationRulePipelineStepInput>;
+};
+
+export type AutomationRulePipelineStepInput = {
+  name?: InputMaybe<Scalars['String']['input']>;
+  params: Scalars['JSON']['input'];
+  type: AutomationRuleActions;
+};
 
 export enum AutomationRuleSortableFields {
   id = 'id'
@@ -261,6 +277,7 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
 export type CreateAutomationRuleInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   label: Scalars['String']['input'];
+  pipeline: AutomationRulePipelineInput;
   trigger: AutomationRuleTriggerInput;
 };
 
@@ -1001,6 +1018,7 @@ export type UpdateAutomationRuleInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['String']['input']>;
+  pipeline?: InputMaybe<AutomationRulePipelineInput>;
   trigger?: InputMaybe<AutomationRuleTriggerInput>;
 };
 
@@ -1175,21 +1193,21 @@ export type GetAutomationRulesQueryVariables = Exact<{
 }>;
 
 
-export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: string, description?: string | null, active: boolean, createdAt: number, createdBy: string, modifiedAt: number, modifiedBy: string, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } }> } };
+export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: string, description?: string | null, active: boolean, createdAt: number, createdBy: string, modifiedAt: number, modifiedBy: string, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null }, pipeline: { steps: Array<{ type: AutomationRuleActions, name?: string | null, params: any }> } }> } };
 
 export type CreateAutomationRuleMutationVariables = Exact<{
   rule: CreateAutomationRuleInput;
 }>;
 
 
-export type CreateAutomationRuleMutation = { createAutomationRule: { id: string, label: string, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } } };
+export type CreateAutomationRuleMutation = { createAutomationRule: { id: string, label: string, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null }, pipeline: { steps: Array<{ type: AutomationRuleActions, name?: string | null, params: any }> } } };
 
 export type UpdateAutomationRuleMutationVariables = Exact<{
   rule: UpdateAutomationRuleInput;
 }>;
 
 
-export type UpdateAutomationRuleMutation = { updateAutomationRule: { id: string, label: string, description?: string | null, active: boolean, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null } } };
+export type UpdateAutomationRuleMutation = { updateAutomationRule: { id: string, label: string, description?: string | null, active: boolean, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null }, pipeline: { steps: Array<{ type: AutomationRuleActions, name?: string | null, params: any }> } } };
 
 export type DeleteAutomationRuleMutationVariables = Exact<{
   ruleId: Scalars['ID']['input'];
@@ -1442,6 +1460,13 @@ export const GetAutomationRulesDocument = gql`
           library
         }
       }
+      pipeline {
+        steps {
+          type
+          name
+          params
+        }
+      }
     }
   }
 }
@@ -1457,6 +1482,13 @@ export const CreateAutomationRuleDocument = gql`
       eventAction
       eventTopic {
         library
+      }
+    }
+    pipeline {
+      steps {
+        type
+        name
+        params
       }
     }
   }
@@ -1475,6 +1507,13 @@ export const UpdateAutomationRuleDocument = gql`
       eventAction
       eventTopic {
         library
+      }
+    }
+    pipeline {
+      steps {
+        type
+        name
+        params
       }
     }
   }
