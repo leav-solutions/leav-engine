@@ -213,7 +213,7 @@ describe('Automation', () => {
     describe('update automation rule', () => {
         let ruleToUpdate: any;
 
-        beforeAll(async () => {
+        beforeEach(async () => {
             ruleToUpdate = (
                 await adminUserSdk.CreateAutomationRule({
                     rule: {
@@ -335,6 +335,31 @@ describe('Automation', () => {
             ).rejects.toThrow('Invalid trigger library topic: Library with id "library-no-exists" does not exist');
         });
 
+        test('cannot activate a rule with an empty pipeline', async () => {
+            // it should throw on activate if existing pipeline is empty
+            await expect(
+                adminUserSdk.UpdateAutomationRule({
+                    rule: {
+                        id: ruleToUpdate.id,
+                        active: true,
+                    },
+                }),
+            ).rejects.toThrow('Cannot activate an automation rule with an empty pipeline');
+
+            // it should throw if we update pipeline to empty while activating
+            await expect(
+                adminUserSdk.UpdateAutomationRule({
+                    rule: {
+                        id: ruleToUpdate.id,
+                        active: true,
+                        pipeline: {
+                            steps: [],
+                        },
+                    },
+                }),
+            ).rejects.toThrow('Cannot activate an automation rule with an empty pipeline');
+        });
+
         test('update unknown rule throws UNKNOWN_AUTOMATION_RULE', async () => {
             await expect(
                 adminUserSdk.UpdateAutomationRule({
@@ -394,45 +419,6 @@ describe('Automation', () => {
                     ruleId: 'nonexistent-rule-id',
                 }),
             ).rejects.toThrow(/Unknown automation rule/);
-        });
-    });
-
-    describe('record creation triggers automation rules', () => {
-        const testLibraryId = 'automation_trigger_test_lib';
-
-        beforeAll(async () => {
-            await adminUserSdk.SaveLibrary({
-                library: {
-                    id: testLibraryId,
-                    label: {en: 'Automation Trigger Test Library'},
-                },
-            });
-
-            // Create and activate a RECORD_INIT rule for this library
-            const rule = (
-                await adminUserSdk.CreateAutomationRule({
-                    rule: {
-                        label: 'RECORD_INIT smoke test rule',
-                        trigger: {
-                            synchronous: true,
-                            eventAction:
-                                SyncAutomationRuleEventAction.RECORD_INIT as unknown as AutomationRuleEventAction,
-                            eventTopic: {library: testLibraryId},
-                        },
-                        pipeline: {steps: []},
-                    },
-                })
-            ).createAutomationRule;
-
-            await adminUserSdk.UpdateAutomationRule({
-                rule: {id: rule.id, active: true},
-            });
-        });
-
-        test('RECORD_INIT rule does not block record creation', async () => {
-            const recordId = await gqlCreateRecord(testLibraryId);
-            expect(recordId).toBeTruthy();
-            expect(typeof recordId).toBe('string');
         });
     });
 

@@ -194,12 +194,24 @@ export default function ({
         },
         async updateAutomationRule({rule, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
+
             if (rule.trigger) {
                 await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
             }
 
             if (rule.pipeline) {
                 await pipelineDomain.validatePipeline(rule.pipeline);
+            }
+
+            if (rule.active && !rule.pipeline?.steps?.length) {
+                const currentRule = (await automationRuleRepo.getAutomationRules({filters: {id: rule.id}}, ctx))
+                    .list[0];
+
+                if (currentRule.pipeline.steps.length === 0) {
+                    throw new ValidationError<IAutomationRule>({
+                        pipeline: Errors.AUTOMATION_RULE_PIPELINE_EMPTY,
+                    });
+                }
             }
 
             const updatedAutomationRule = await automationRuleRepo
