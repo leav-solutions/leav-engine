@@ -3,22 +3,18 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import {EventAction} from '@leav/utils';
+import {type AutomationRuleTrigger} from '../../../_types/automation';
 import {
-    type AutomationRuleTrigger,
     type AutomationRulePipeline,
     type AutomationRulePipelineStep,
-} from '../../../_types/automation';
-import {type IEventsManagerDomain} from '../../eventsManager/eventsManagerDomain';
-import {
-    ActionExecutionResultStatus,
-    type IActionExecutionResult,
     type IAutomationPipelineExecutionState,
-} from '../_types';
+} from '../pipeline/_types';
+import {type IEventsManagerDomain} from '../../eventsManager/eventsManagerDomain';
+import {ActionExecutionResultStatus, type IActionExecutionResult, type IAutomationAction} from '../actions/_types';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
 import {type IAutomationActionsRegistry} from '../automationActionsRegistry';
-import {type IAutomationAction} from '../actions/_types';
 
 export type AutomationPipelineToExecute = AutomationRulePipeline & {
     ruleId: string;

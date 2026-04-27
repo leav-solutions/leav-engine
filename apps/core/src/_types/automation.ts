@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type EventAction, type IDbPayload} from '@leav/utils';
-import {type AutomationRuleActions} from '../domain/automation/actions/_types';
+import {type AutomationRulePipeline} from '../domain/automation/pipeline/_types';
 
 export type IAutomationRule = ICoreEntity & {
     // metadata
@@ -46,14 +46,4 @@ export type AutomationRuleTrigger = {
     synchronous: boolean;
     eventAction: AutomationRuleEventAction;
     eventTopic?: AutomationRulesEventTopic; // if no specified, the action only is enough to trigger the rule
-};
-
-export type AutomationRulePipeline = {
-    steps: AutomationRulePipelineStep[];
-};
-
-export type AutomationRulePipelineStep = {
-    type: AutomationRuleActions | string; // string for custom/plugin actions
-    name?: string;
-    params: Record<string, unknown>;
 };

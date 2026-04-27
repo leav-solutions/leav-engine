@@ -4,17 +4,13 @@
 import {EventAction} from '@leav/utils';
 import {z} from 'zod';
 import {type Mock} from 'vitest';
-import {
-    SyncAutomationRuleEventAction,
-    type AutomationRulePipelineStep,
-    type AutomationRuleTrigger,
-} from '../../../_types/automation';
+import {SyncAutomationRuleEventAction, type AutomationRuleTrigger} from '../../../_types/automation';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import createPipelineExecutor, {type AutomationPipelineToExecute} from './pipeline';
-import {type IAutomationAction} from '../actions/_types';
-import {ActionExecutionResultStatus, type IActionExecutionResult} from '../_types';
+import {ActionExecutionResultStatus, type IActionExecutionResult, type IAutomationAction} from '../actions/_types';
 import {type IEventsManagerDomain} from '../../eventsManager/eventsManagerDomain';
 import {type IAutomationActionsRegistry} from '../automationActionsRegistry';
+import {type AutomationRulePipelineStep} from './_types';
 
 const eventManager: Mockify<IEventsManagerDomain> = {
     sendDatabaseEvent: vi.fn(),

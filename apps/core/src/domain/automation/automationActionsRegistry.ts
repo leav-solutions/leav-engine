@@ -21,7 +21,7 @@ export default function ({
 }: IAutomationActionsRegistryDeps): IAutomationActionsRegistry {
     const _actionsRegistry: Map<string, IAutomationAction> = (() => {
         const coreActions: IAutomationAction[] = Object.keys(depsManager.registrations)
-            .filter(modName => modName.match(/^core\.domain\.automation\.actions\./))
+            .filter(modName => modName.match(ACTION_MODULE_DISCOVERY_REGEX))
             .map(modName => depsManager.cradle[modName]);
 
         logger.verbose('Loaded pipeline actions: ' + coreActions.map(a => a.type).join(', '));
