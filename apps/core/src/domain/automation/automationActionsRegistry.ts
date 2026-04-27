@@ -19,21 +19,27 @@ const ACTION_MODULE_DISCOVERY_REGEX = /^core\.domain\.automation\.actions\.[^.]+
 export default function ({
     'core.depsManager': depsManager,
 }: IAutomationActionsRegistryDeps): IAutomationActionsRegistry {
-    const _actionsRegistry: Map<string, IAutomationAction> = (() => {
+    let _actionsRegistry: Map<string, IAutomationAction>;
+
+    const _getActionsRegistry = (): Map<string, IAutomationAction> => {
+        if (_actionsRegistry !== undefined) {
+            return _actionsRegistry;
+        }
+
         const coreActions: IAutomationAction[] = Object.keys(depsManager.registrations)
             .filter(modName => modName.match(ACTION_MODULE_DISCOVERY_REGEX))
             .map(modName => depsManager.cradle[modName]);
 
         logger.verbose('Loaded pipeline actions: ' + coreActions.map(a => a.type).join(', '));
         return new Map(coreActions.map(action => [action.type, action]));
-    })();
+    };
 
     return {
         getAction(type): IAutomationAction | undefined {
-            return _actionsRegistry.get(type);
+            return _getActionsRegistry().get(type);
         },
         listAvailableActions() {
-            return [..._actionsRegistry.values()];
+            return [..._getActionsRegistry().values()];
         },
     };
 }
