@@ -11835,10 +11835,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ace-builds@npm:^1.4.14":
-  version: 1.4.14
-  resolution: "ace-builds@npm:1.4.14"
-  checksum: 10/ea77b187f0d16eb2aa7cde344d2b292d014126492afb6f1f98717be250ec1fb192c72c74afe6d1e55ac279adaab44b901c2c1196e9f5eec15554a1d273c0314a
+"ace-builds@npm:^1.31.1":
+  version: 1.43.6
+  resolution: "ace-builds@npm:1.43.6"
+  checksum: 10/81c898ddc8788a38820c35602187a469df4ea7e9818b6061930e762e597d6040fc4ec9cf9bec3b9ca29e8ff93504cea6352c236eaef2f139ceff77978d43e719
   languageName: node
   linkType: hard
 
@@ -11961,7 +11961,7 @@ __metadata:
     jest-environment-jsdom: "npm:30.2.0"
     jest-fetch-mock: "npm:3.0.3"
     jest-styled-components: "npm:7.4.0"
-    jsoneditor: "npm:9.7.4"
+    jsoneditor: "npm:9.10.5"
     jsoneditor-react: "npm:3.1.2"
     lodash: "npm:4.17.23"
     node-fetch: "npm:2.6.7"
@@ -21564,20 +21564,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsoneditor@npm:9.7.4":
-  version: 9.7.4
-  resolution: "jsoneditor@npm:9.7.4"
+"jsoneditor@npm:9.10.5":
+  version: 9.10.5
+  resolution: "jsoneditor@npm:9.10.5"
   dependencies:
-    ace-builds: "npm:^1.4.14"
+    ace-builds: "npm:^1.31.1"
     ajv: "npm:^6.12.6"
     javascript-natural-sort: "npm:^0.7.1"
     jmespath: "npm:^0.16.0"
     json-source-map: "npm:^0.6.1"
-    jsonrepair: "npm:^2.2.1"
+    jsonrepair: "npm:3.1.0"
     mobius1-selectr: "npm:^2.4.13"
     picomodal: "npm:^3.0.0"
-    vanilla-picker: "npm:^2.12.1"
-  checksum: 10/e2faba7b97244b00ca157151d2e83261f6a1441e3ef005123c9eeba6d537c9e3995caeb9c193020db8f7d2ad15fc7ecf07ecf312fdd1a481313a3bbcd2266677
+    vanilla-picker: "npm:^2.12.2"
+  checksum: 10/8f072ed8d62daf220bcf0e4fe09078858cb6c6287687f89b3ddd51b45704b06084352d3889771b7fc9f2ddbe11aa88ab7c8d6642f550cc2b912262a1e8671432
   languageName: node
   linkType: hard
 
@@ -21613,12 +21613,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonrepair@npm:^2.2.1":
-  version: 2.2.1
-  resolution: "jsonrepair@npm:2.2.1"
+"jsonrepair@npm:3.1.0":
+  version: 3.1.0
+  resolution: "jsonrepair@npm:3.1.0"
   bin:
     jsonrepair: bin/cli.js
-  checksum: 10/b7cdafc04882e3b220ac299aea4f39be8e966c903e4e87528e3db0f77e34dbfd97d1e1d5e6c74319c494baa55f00ed362e8165259d2880021546f1eff0a15260
+  checksum: 10/a6b4c89fb47a69174705982e171b7e4c36ea253e117e0e27eaadc30eb05a7f788b90715bde8873d2c2fb72db05338c7e8725b430ce87ce23ef1def44241ba57c
   languageName: node
   linkType: hard
 
@@ -29385,12 +29385,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vanilla-picker@npm:^2.12.1":
-  version: 2.12.1
-  resolution: "vanilla-picker@npm:2.12.1"
+"vanilla-picker@npm:^2.12.2":
+  version: 2.12.3
+  resolution: "vanilla-picker@npm:2.12.3"
   dependencies:
     "@sphinxxxx/color-conversion": "npm:^2.2.2"
-  checksum: 10/660c751718b36ca47b2a48675856c916428fdba41b29a2a1a35e671567308f0b6ba068a5e132fc78c5e7b95daf674950b66bb2507005da64e507a42e9725c92d
+  checksum: 10/e3854d8de41420ab799f78f5758d3fb0dbb080d8d2265845fea8ccab4265e62aef8901f70ba147fe57af3d21f87457bb6b0a397747684b38b8f4394d87cbbce1
   languageName: node
   linkType: hard
 
