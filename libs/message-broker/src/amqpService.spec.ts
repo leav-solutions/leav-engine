@@ -5,30 +5,30 @@ import type * as amqp from 'amqplib';
 import amqpService, {type IAmqpService} from './amqpService';
 import {type IAmqp} from './types/amqp';
 
-type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? jest.Mock : T[P]};
+type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? ReturnType<typeof vi.fn> : T[P]};
 
 const amqpMockConfig: Mockify<IAmqp> = {connOpt: {hostname: 'localhost'}, exchange: 'exchange', type: 'direct'};
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
-    assertExchange: jest.fn(),
-    assertQueue: jest.fn(),
-    bindQueue: jest.fn(),
-    consume: jest.fn(),
-    publish: jest.fn().mockImplementation((exchange, routingKey, content, options, cb) => {
+    assertExchange: vi.fn(),
+    assertQueue: vi.fn(),
+    bindQueue: vi.fn(),
+    consume: vi.fn(),
+    publish: vi.fn().mockImplementation((exchange, routingKey, content, options, cb) => {
         cb(null, true);
     }),
-    waitForConfirms: jest.fn(),
-    prefetch: jest.fn(),
-    close: jest.fn(),
+    waitForConfirms: vi.fn(),
+    prefetch: vi.fn(),
+    close: vi.fn(),
 };
 
 const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
-    close: jest.fn(),
-    createConfirmChannel: jest.fn().mockReturnValue(mockAmqpChannel),
+    close: vi.fn(),
+    createConfirmChannel: vi.fn().mockReturnValue(mockAmqpChannel),
 };
 
-jest.mock('amqplib', () => ({
-    connect: jest.fn().mockImplementation(() => mockAmqpConnection),
+vi.mock('amqplib', () => ({
+    connect: vi.fn().mockImplementation(() => mockAmqpConnection),
 }));
 
 describe('amqp', () => {
@@ -45,11 +45,11 @@ describe('amqp', () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     test('Set up message listening', async () => {
-        const mockCbFunc = jest.fn();
+        const mockCbFunc = vi.fn();
 
         await amqpServ.consume('myQueue', 'someRoutingKey', mockCbFunc);
 

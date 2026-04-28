@@ -6,11 +6,11 @@ import fetch from 'node-fetch';
 
 describe('monitoringServer', () => {
     let server: ReturnType<typeof monitoringServer>;
-    const healthCheckFunction = jest.fn();
+    const healthCheckFunction = vi.fn();
     const port = 44445;
 
     beforeAll(async () => {
-        jest.resetAllMocks();
+        vi.resetAllMocks();
         process.env.MONITORING_SERVER_PORT = port.toString();
         server = monitoringServer({
             healthCheckFunction,
