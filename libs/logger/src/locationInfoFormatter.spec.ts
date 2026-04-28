@@ -6,14 +6,14 @@ import {addLocationInfoInLog} from './locationInfoFormatter';
 
 describe('addLocationInfo', () => {
     const fakeFormat = winston.format(info => info)();
-    const isLogLevelEnable = jest.fn();
-    const fakeFormatTransformSpy = jest.spyOn(fakeFormat, 'transform');
+    const isLogLevelEnable = vi.fn();
+    const fakeFormatTransformSpy = vi.spyOn(fakeFormat, 'transform');
 
     const initialErrorStackTraceLimit = Error.stackTraceLimit;
     const addLocationInfoFormat = addLocationInfoInLog(isLogLevelEnable);
     beforeEach(() => {
         Error.stackTraceLimit = 10; // default in prod
-        jest.resetAllMocks();
+        vi.resetAllMocks();
         isLogLevelEnable.mockReturnValue(true);
     });
 

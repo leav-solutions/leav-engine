@@ -3,9 +3,9 @@
     "version": "1.12.0",
     "description": "Module to get app root path",
     "scripts": {
-        "test": "jest -c jest-config.json",
-        "test:ci": "jest -c jest-config.json --maxWorkers=2",
-        "test:commit": "jest -c jest-config.json --maxWorkers=50% --onlyChanged ",
+        "test": "vitest run -c vitest.config.ts",
+        "test:ci": "vitest run -c vitest.config.ts --maxWorkers=2 --reporter=verbose",
+        "test:commit": "vitest run -c vitest.config.ts --changed",
         "prepublishOnly": "npm run build",
         "build": "tsc --build tsconfig.build.json",
         "tscheck": "tsc --noEmit -p .",
@@ -20,11 +20,9 @@
     "author": "",
     "license": "LGPL3",
     "devDependencies": {
-        "@types/jest": "29.5.14",
-        "jest": "29.7.0",
         "prettier": "3.3.3",
-        "ts-jest": "29.4.9",
-        "typescript": "5.9.3"
+        "typescript": "5.9.3",
+        "vitest": "4.1.5"
     },
     "dependencies": {
         "app-root-path": "3.1.0"

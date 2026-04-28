@@ -8,7 +8,7 @@ describe('catchErrorFormatter', () => {
     const initialErrorStackTraceLimit = Error.stackTraceLimit;
     beforeEach(() => {
         Error.stackTraceLimit = 10; // default in prod
-        jest.resetAllMocks();
+        vi.resetAllMocks();
     });
 
     afterAll(() => {
@@ -20,7 +20,7 @@ describe('catchErrorFormatter', () => {
     });
 
     it('should call onErrorLog when logging an error and getCallStackTrace should return stack from caller', () => {
-        const onErrorLog = jest.fn().mockImplementation((message, meta, getCallStackTrace) => getCallStackTrace());
+        const onErrorLog = vi.fn().mockImplementation((message, meta, getCallStackTrace) => getCallStackTrace());
         const format = catchErrorFormatter(onErrorLog);
         expect(format).toBeDefined();
 
@@ -37,11 +37,11 @@ describe('catchErrorFormatter', () => {
         expect(message).toBe('Test error');
         expect(meta.foo).toBe('bar');
         const callStack = onErrorLog.mock.results[0];
-        expect(callStack.value.split('\n')[0]).toMatch(new RegExp(`\\(${__filename}:\\d+:\\d+\\)`));
+        expect(callStack.value.split('\n')[0]).toMatch(new RegExp(`${__filename}:\\d+:\\d+`));
     });
 
     it('should call onErrorLog when logging twice an error and getCallStackTrace should return each stack', () => {
-        const onErrorLog = jest.fn().mockImplementation((message, meta, getCallStackTrace) => getCallStackTrace());
+        const onErrorLog = vi.fn().mockImplementation((message, meta, getCallStackTrace) => getCallStackTrace());
 
         const logger = winston.createLogger({
             level: 'error',
@@ -56,19 +56,19 @@ describe('catchErrorFormatter', () => {
         const [message1] = onErrorLog.mock.calls[0];
         expect(message1).toBe('Test error 1');
         const callStack1 = onErrorLog.mock.results[0];
-        expect(callStack1.value.split('\n')[0]).toMatch(/at Object.* \(.*catchErrorFormatter\.spec\.ts:\d+:\d+\)/);
+        expect(callStack1.value.split('\n')[0]).toMatch(/at .*catchErrorFormatter\.spec\.ts:\d+:\d+/);
 
         const [message2, meta2] = onErrorLog.mock.calls[1];
         expect(message2).toBe('Test error 2');
         expect(meta2.foo).toBe('bar');
         const callStack2 = onErrorLog.mock.results[1];
-        expect(callStack2.value.split('\n')[0]).toMatch(/at Object.* \(.*catchErrorFormatter\.spec\.ts:\d+:\d+\)/);
+        expect(callStack2.value.split('\n')[0]).toMatch(/at .*catchErrorFormatter\.spec\.ts:\d+:\d+/);
 
         expect(callStack1.value.split('\n')[0]).not.toBe(callStack2.value.split('\n')[0]);
     });
 
     it('should call onErrorLog when logging twice an error and getCallStackTrace should return each stack (invert)', () => {
-        const onErrorLog = jest.fn().mockImplementation((message, meta, getCallStackTrace) => getCallStackTrace());
+        const onErrorLog = vi.fn().mockImplementation((message, meta, getCallStackTrace) => getCallStackTrace());
 
         const logger = winston.createLogger({
             level: 'error',
@@ -85,18 +85,18 @@ describe('catchErrorFormatter', () => {
         expect(message1).toBe('Test error 1');
         expect(meta1.foo).toBe('bar');
         const callStack1 = onErrorLog.mock.results[0];
-        expect(callStack1.value.split('\n')[0]).toMatch(/at Object.* \(.*catchErrorFormatter\.spec\.ts:\d+:\d+\)/);
+        expect(callStack1.value.split('\n')[0]).toMatch(/at .*catchErrorFormatter\.spec\.ts:\d+:\d+/);
 
         const [message2] = onErrorLog.mock.calls[1];
         expect(message2).toBe('Test error 2');
         const callStack2 = onErrorLog.mock.results[1];
-        expect(callStack2.value.split('\n')[0]).toMatch(/at Object.* \(.*catchErrorFormatter\.spec\.ts:\d+:\d+\)/);
+        expect(callStack2.value.split('\n')[0]).toMatch(/at .*catchErrorFormatter\.spec\.ts:\d+:\d+/);
 
         expect(callStack1.value.split('\n')[0]).not.toBe(callStack2.value.split('\n')[0]);
     });
 
     it('should not call onErrorLog for non-error levels', () => {
-        const onErrorLog = jest.fn();
+        const onErrorLog = vi.fn();
         const format = catchErrorFormatter(onErrorLog);
 
         const logger = winston.createLogger({
