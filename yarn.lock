@@ -8202,12 +8202,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/app-root-path@workspace:libs/app-root-path"
   dependencies:
-    "@types/jest": "npm:29.5.14"
     app-root-path: "npm:3.1.0"
-    jest: "npm:29.7.0"
     prettier: "npm:3.3.3"
-    ts-jest: "npm:29.4.9"
     typescript: "npm:5.9.3"
+    vitest: "npm:4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -8215,11 +8213,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/config-manager@workspace:libs/config-manager"
   dependencies:
-    "@types/jest": "npm:29.5.14"
-    jest: "npm:29.7.0"
     prettier: "npm:3.3.3"
-    ts-jest: "npm:29.4.9"
     typescript: "npm:5.9.3"
+    vitest: "npm:4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -8227,10 +8223,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/logger@workspace:libs/logger"
   dependencies:
-    "@types/jest": "npm:29.5.14"
-    jest: "npm:29.7.0"
-    ts-jest: "npm:29.4.9"
     typescript: "npm:5.9.3"
+    vitest: "npm:4.1.5"
     winston: "npm:3.17.0"
   languageName: unknown
   linkType: soft
@@ -8334,12 +8328,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/utils@workspace:libs/utils"
   dependencies:
-    "@types/jest": "npm:29.5.14"
-    jest: "npm:29.7.0"
     lodash: "npm:4.17.23"
     minimatch: "npm:3.1.5"
-    ts-jest: "npm:29.4.9"
     typescript: "npm:5.9.3"
+    vitest: "npm:4.1.5"
   languageName: unknown
   linkType: soft
 

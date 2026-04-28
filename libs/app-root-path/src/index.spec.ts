@@ -4,7 +4,7 @@
 
 import {appRootPath} from '.';
 
-jest.mock('app-root-path', () => ({
+vi.mock('app-root-path', () => ({
     path: 'path/from/deps',
 }));
 
@@ -12,7 +12,7 @@ describe('appRootPath', () => {
     const OLD_ENV = process.env;
 
     beforeEach(() => {
-        jest.resetModules();
+        vi.resetModules();
         process.env = {...OLD_ENV};
     });
 
