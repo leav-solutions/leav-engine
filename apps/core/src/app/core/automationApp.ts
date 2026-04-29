@@ -145,6 +145,7 @@ export default function ({
                         description: String,
                         trigger: AutomationRuleTriggerInput!
                         pipeline: AutomationRulePipelineInput!
+                        active: Boolean!
                     }
                     
                     input UpdateAutomationRuleInput {

@@ -26,6 +26,7 @@ describe('automationRuleRepo', () => {
                 {
                     label: 'Test Automation Rule',
                     description: 'This is a test automation rule.',
+                    active: false,
                     trigger: {
                         synchronous: false,
                         eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
@@ -41,8 +42,8 @@ describe('automationRuleRepo', () => {
                 expect.objectContaining({
                     id: expect.any(String),
                     label: 'Test Automation Rule',
-                    description: 'This is a test automation rule.',
                     active: false,
+                    description: 'This is a test automation rule.',
                     createdAt: expect.any(Number),
                     createdBy: ctx.userId,
                     modifiedAt: expect.any(Number),
@@ -62,6 +63,7 @@ describe('automationRuleRepo', () => {
                 const rule = await automationRuleRepo.createAutomationRule(
                     {
                         label: `Test Automation Rule ${i + 1}`,
+                        active: false,
                         trigger: {
                             synchronous: false,
                             eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
@@ -123,6 +125,7 @@ describe('automationRuleRepo', () => {
                     label,
                     trigger: {synchronous: false, eventAction: SyncAutomationRuleEventAction.RECORD_INIT, eventTopic},
                     pipeline: {steps: []},
+                    active: false,
                 },
                 ctx,
             );
