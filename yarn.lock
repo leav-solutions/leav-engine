@@ -8311,7 +8311,7 @@ __metadata:
     zod: "npm:3.25.76"
   peerDependencies:
     "@apollo/client": ">=3.8.1"
-    aristid-ds: 15.3.1-05878d4
+    aristid-ds: 15.3.1-3917c51
     i18next: ">=22.5.1"
     react: ^18.2.0
     react-dom: ^18.2.0
