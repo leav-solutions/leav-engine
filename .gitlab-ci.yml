@@ -86,7 +86,7 @@ stages:
 lint:
   stage: test
   script:
-    - yarn workspaces focus --all
+    - yarn install --immutable
     - yarn run prettier:check
     - yarn run lint:check --format gitlab
   cache:
@@ -109,7 +109,7 @@ license-check:
 tscheck:
   stage: test
   script:
-    - yarn workspaces focus --all
+    - yarn install --immutable
     - yarn run tscheck
   cache:
     <<: *yarn_cache
