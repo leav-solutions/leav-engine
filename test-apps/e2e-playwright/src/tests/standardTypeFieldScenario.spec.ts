@@ -104,7 +104,7 @@ test.describe('Standard type field scenario', () => {
             fromDay: '02',
             toDay: '15',
         });
-        await expect(libraryStandardFieldPage.dateRangeComponent.isDateRangeSave(date)).toBeVisible();
+        await expect(libraryStandardFieldPage.modal.sidePanel).toContainText(date);
     });
 
     test('Delete simple date range', async ({page}) => {
