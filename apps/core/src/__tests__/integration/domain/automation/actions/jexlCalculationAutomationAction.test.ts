@@ -23,6 +23,8 @@ describe('jexlCalculationAutomationAction', () => {
             eventTopic: {} as any,
         },
         results: {},
+        stepIndex: 0,
+        lastResult: undefined,
         startDateMs: Date.now(),
     };
 

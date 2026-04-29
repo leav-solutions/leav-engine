@@ -211,7 +211,9 @@ export enum AttributesSortableFields {
 export enum AutomationRuleActions {
   condition = 'condition',
   error = 'error',
-  log = 'log'
+  jexlCalculation = 'jexlCalculation',
+  log = 'log',
+  modifyAttribute = 'modifyAttribute'
 }
 
 export enum AutomationRuleEventAction {
@@ -267,6 +269,18 @@ export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
+
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
 
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
@@ -347,6 +361,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -455,6 +471,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -556,6 +583,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -850,6 +879,30 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type ReportFramingAttributeFilterItemInput = {
+  attributeId: Scalars['String']['input'];
+  values: Array<ReportFramingAttributeFilterValueItemInput>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ReportFramingAttributeFilterValueItemInput = {
+  formattedValue?: InputMaybe<Scalars['String']['input']>;
+  rawValue: Scalars['String']['input'];
+};
+
+export type ReportFramingContentInput = {
+  filters?: InputMaybe<ReportFramingFiltersInput>;
+};
+
+export type ReportFramingFiltersInput = {
+  /**  only for excel header filter display  */
+  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  campaigns?: InputMaybe<Array<RecordFilterInput>>;
+  categories?: InputMaybe<Array<Scalars['String']['input']>>;
+  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -935,12 +988,19 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1355,6 +1415,24 @@ export type GetRecordByIdStandardValuesPropertyQueryVariables = Exact<{
 
 export type GetRecordByIdStandardValuesPropertyQuery = { records: { list: Array<{ id: string, active: boolean, whoAmI: { library: { id: string } }, property: Array<{ id_value?: string | null, payload?: any | null }> }> } };
 
+export type GetRecordByIdLinkValuesPropertyQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  recordId: Scalars['String']['input'];
+  attributeId: Scalars['ID']['input'];
+}>;
+
+
+export type GetRecordByIdLinkValuesPropertyQuery = { records: { list: Array<{ id: string, active: boolean, whoAmI: { library: { id: string } }, property: Array<{ id_value?: string | null, payload?: { id: string, library: { id: string } } | null }> }> } };
+
+export type GetRecordByIdTreeValuesPropertyQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  recordId: Scalars['String']['input'];
+  attributeId: Scalars['ID']['input'];
+}>;
+
+
+export type GetRecordByIdTreeValuesPropertyQuery = { records: { list: Array<{ id: string, active: boolean, whoAmI: { library: { id: string } }, property: Array<{ id_value?: string | null, payload?: { id: string, record: { id: string, library: { id: string } } } | null }> }> } };
+
 export const SaveValuePayloadFragmentDoc = gql`
     fragment SaveValuePayload on Value {
   id_value
@@ -1729,6 +1807,67 @@ export const GetRecordByIdStandardValuesPropertyDocument = gql`
   }
 }
     `;
+export const GetRecordByIdLinkValuesPropertyDocument = gql`
+    query GetRecordByIdLinkValuesProperty($libraryId: ID!, $recordId: String!, $attributeId: ID!) {
+  records(
+    library: $libraryId
+    filters: [{field: "id", condition: EQUAL, value: $recordId}]
+  ) {
+    list {
+      id
+      whoAmI {
+        library {
+          id
+        }
+      }
+      active
+      property(attribute: $attributeId) {
+        ... on LinkValue {
+          id_value
+          payload {
+            id
+            library {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+export const GetRecordByIdTreeValuesPropertyDocument = gql`
+    query GetRecordByIdTreeValuesProperty($libraryId: ID!, $recordId: String!, $attributeId: ID!) {
+  records(
+    library: $libraryId
+    filters: [{field: "id", condition: EQUAL, value: $recordId}]
+  ) {
+    list {
+      id
+      whoAmI {
+        library {
+          id
+        }
+      }
+      active
+      property(attribute: $attributeId) {
+        ... on TreeValue {
+          id_value
+          payload {
+            id
+            record {
+              id
+              library {
+                id
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string, variables?: any) => Promise<T>;
 
@@ -1811,6 +1950,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetRecordByIdStandardValuesProperty(variables: GetRecordByIdStandardValuesPropertyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordByIdStandardValuesPropertyQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecordByIdStandardValuesPropertyQuery>({ document: GetRecordByIdStandardValuesPropertyDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordByIdStandardValuesProperty', 'query', variables);
+    },
+    GetRecordByIdLinkValuesProperty(variables: GetRecordByIdLinkValuesPropertyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordByIdLinkValuesPropertyQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecordByIdLinkValuesPropertyQuery>({ document: GetRecordByIdLinkValuesPropertyDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordByIdLinkValuesProperty', 'query', variables);
+    },
+    GetRecordByIdTreeValuesProperty(variables: GetRecordByIdTreeValuesPropertyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordByIdTreeValuesPropertyQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecordByIdTreeValuesPropertyQuery>({ document: GetRecordByIdTreeValuesPropertyDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordByIdTreeValuesProperty', 'query', variables);
     }
   };
 }

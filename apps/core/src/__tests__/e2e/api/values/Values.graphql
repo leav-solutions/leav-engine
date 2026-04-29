@@ -71,3 +71,56 @@ query GetRecordByIdStandardValuesProperty($libraryId: ID!, $recordId: String!, $
         }
     }
 }
+
+query GetRecordByIdLinkValuesProperty($libraryId: ID!, $recordId: String!, $attributeId: ID!) {
+    records(library: $libraryId, filters: [{field: "id", condition: EQUAL, value: $recordId}]) {
+        list {
+            id
+            whoAmI {
+                library {
+                    id
+                }
+            }
+            active
+            property(attribute: $attributeId) {
+                ... on LinkValue {
+                    id_value
+                    payload {
+                        id
+                        library {
+                            id
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+query GetRecordByIdTreeValuesProperty($libraryId: ID!, $recordId: String!, $attributeId: ID!) {
+    records(library: $libraryId, filters: [{field: "id", condition: EQUAL, value: $recordId}]) {
+        list {
+            id
+            whoAmI {
+                library {
+                    id
+                }
+            }
+            active
+            property(attribute: $attributeId) {
+                ... on TreeValue {
+                    id_value
+                    payload {
+                        id
+                        record {
+                            id
+                            library {
+                                id
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
