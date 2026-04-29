@@ -4,11 +4,6 @@
 import {type AutomationRuleTrigger} from '../../../_types/automation';
 import {type AutomationRuleActions} from '../actions/_types';
 
-export type AutomationPipelineToExecute = AutomationRulePipeline & {
-    ruleId: string;
-    trigger: AutomationRuleTrigger;
-};
-
 export type AutomationRulePipeline = {
     steps: AutomationRulePipelineStep[];
 };
@@ -47,3 +42,15 @@ export type IAutomationPipelineExecutionState = {
 
 // Can be used by actions to store results for later steps, indexed by action type or custom keys
 export type IAutomationPipelineExecutionResults = Record<string, unknown>;
+
+// Internal domain pipeline type might be different from rule definition pipeline
+export type AutomationPipeline = AutomationRulePipeline;
+
+export type AutomationPipelineExecution = AutomationPipeline & {
+    trigger: AutomationRuleTrigger;
+    ruleId: string;
+};
+
+export type AutomationPipelineValidation = AutomationPipeline & {
+    trigger: AutomationRuleTrigger;
+};

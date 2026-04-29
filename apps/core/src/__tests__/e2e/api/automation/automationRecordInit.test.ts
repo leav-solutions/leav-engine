@@ -402,4 +402,26 @@ describe('Automation RECORD_INIT', () => {
             });
         });
     });
+
+    describe('modifyAttributeAction validateParams', () => {
+        it('should throw if the attribute does not exist', async () => {
+            await expect(
+                createRecordInitRule([
+                    {
+                        type: AutomationRuleActions.jexlCalculation,
+                        params: {
+                            formula: '"Default library label"',
+                        },
+                    },
+                    {
+                        type: AutomationRuleActions.modifyAttribute,
+                        params: {
+                            attributePath: 'attribute_does_not_exist',
+                            mode: 'replace',
+                        },
+                    },
+                ]),
+            ).rejects.toThrow(/Unknown attribute: attribute_does_not_exist/);
+        });
+    });
 });

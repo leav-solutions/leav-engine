@@ -4,7 +4,11 @@
 import {SyncAutomationRuleEventAction} from '../../../../../_types/automation';
 import {type IQueryInfos} from '../../../../../_types/queryInfos';
 import {systemUserId} from '../../../../../_constants/users';
-import {ActionExecutionResultStatus, type IAutomationAction} from '../../../../../domain/automation/actions/_types';
+import {
+    ActionExecutionResultStatus,
+    type AutomationStepParamsValidation,
+    type IAutomationAction,
+} from '../../../../../domain/automation/actions/_types';
 import {type JexlCalculationActionParams} from '../../../../../domain/automation/actions/jexlCalculationAutomationAction';
 import {Errors} from '../../../../../_types/errors';
 import ValidationError from '../../../../../errors/ValidationError';
@@ -35,18 +39,30 @@ describe('jexlCalculationAutomationAction', () => {
     });
 
     describe('validateParams', () => {
+        const makeValidateParams = (formula: string): AutomationStepParamsValidation<JexlCalculationActionParams> => ({
+            trigger: {
+                synchronous: true,
+                eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                eventTopic: {},
+            },
+            stepParams: {formula},
+            precedingSteps: [],
+        });
+
         it('resolves for a valid Jexl expression', async () => {
-            await expect(action.validateParams!({formula: '1 + 1'})).resolves.toBeUndefined();
+            await expect(action.validateParams?.(makeValidateParams('1 + 1'), ctx)).resolves.toBeUndefined();
         });
 
         it('resolves for a complex valid expression', async () => {
-            await expect(action.validateParams!({formula: 'results["step1"] * 2 + 10'})).resolves.toBeUndefined();
+            await expect(
+                action.validateParams?.(makeValidateParams('results["step1"] * 2 + 10'), ctx),
+            ).resolves.toBeUndefined();
         });
 
         it('throws ValidationError for an invalid Jexl expression', async () => {
             let caughtError: unknown;
             try {
-                await action.validateParams!({formula: '1 ++ 1'});
+                await action.validateParams?.(makeValidateParams('1 ++ 1'), ctx);
             } catch (err) {
                 caughtError = err;
             }

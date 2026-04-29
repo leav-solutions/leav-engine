@@ -4,7 +4,7 @@
 import {SyncAutomationRuleEventAction} from '../../../../_types/automation';
 import {
     type AutomationRulePipelineStep,
-    type AutomationPipelineToExecute,
+    type AutomationPipelineExecution,
 } from '../../../../domain/automation/pipeline/_types';
 import {systemUserId} from '../../../../_constants/users';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
@@ -21,7 +21,7 @@ describe('automation pipeline', () => {
     });
 
     describe('execute', () => {
-        const createPipelineToExecute = (actions: AutomationRulePipelineStep[]): AutomationPipelineToExecute => ({
+        const createPipelineToExecute = (actions: AutomationRulePipelineStep[]): AutomationPipelineExecution => ({
             ruleId: 'testRuleId',
             steps: actions,
             trigger: {

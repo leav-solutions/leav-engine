@@ -6,11 +6,15 @@ import {z} from 'zod';
 import {type Mock} from 'vitest';
 import {SyncAutomationRuleEventAction, type AutomationRuleTrigger} from '../../../_types/automation';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import automationPipelineDomain, {type AutomationPipelineToExecute} from './pipeline';
+import automationPipelineDomain from './pipeline';
 import {ActionExecutionResultStatus, type IActionExecutionResult, type IAutomationAction} from '../actions/_types';
 import {type IEventsManagerDomain} from '../../eventsManager/eventsManagerDomain';
 import {type IAutomationActionsRegistry} from '../automationActionsRegistry';
-import {type AutomationRulePipelineStep} from './_types';
+import {
+    type AutomationPipelineValidation,
+    type AutomationPipelineExecution,
+    type AutomationRulePipelineStep,
+} from './_types';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
 
@@ -59,7 +63,7 @@ describe('automation pipeline', () => {
         };
         const mockCtx = {userId: '1'} as IQueryInfos;
 
-        const createPipelineToExecute = (actions: AutomationRulePipelineStep[]): AutomationPipelineToExecute => ({
+        const createPipelineToExecute = (actions: AutomationRulePipelineStep[]): AutomationPipelineExecution => ({
             ruleId: 'ruleId',
             steps: actions,
             trigger: mockTrigger,
@@ -244,7 +248,6 @@ describe('automation pipeline', () => {
                 );
 
                 const [[payload]] = (eventManager.sendDatabaseEvent as Mock).mock.calls;
-                console.log('payload.after :>> ', payload.after);
                 expect(payload.after.results).toEqual({0: 'resultA'});
                 expect(Object.keys(payload.after.results)).not.toContain('myStep');
             });
@@ -252,25 +255,38 @@ describe('automation pipeline', () => {
     });
 
     describe('validatePipeline', () => {
+        const mockCtx = {userId: '1'} as IQueryInfos;
+        const mockTrigger: AutomationRuleTrigger = {
+            synchronous: false,
+            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+        };
+        const createPipelineToValidate = (steps: AutomationRulePipelineStep[]): AutomationPipelineValidation => ({
+            trigger: mockTrigger,
+            steps,
+        });
         const makeStep = (type: string, params: Record<string, unknown> = {}): AutomationRulePipelineStep => ({
             type,
             params,
         });
 
         it('resolves for an empty pipeline', async () => {
-            await expect(automationPipeline.validatePipeline({steps: []})).resolves.toBeUndefined();
+            await expect(
+                automationPipeline.validatePipeline(createPipelineToValidate([]), mockCtx),
+            ).resolves.toBeUndefined();
         });
 
         it('resolves when all steps have valid action types and params', async () => {
             await expect(
-                automationPipeline.validatePipeline({steps: [makeStep('A'), makeStep('B')]}),
+                automationPipeline.validatePipeline(createPipelineToValidate([makeStep('A'), makeStep('B')]), mockCtx),
             ).resolves.toBeUndefined();
         });
 
         it('throws ValidationError with INVALID_AUTOMATION_ACTION_TYPE when action type is unknown', async () => {
             actionsRegistry.getAction.mockReturnValue(undefined);
 
-            const error = await automationPipeline.validatePipeline({steps: [makeStep('UNKNOWN')]}).catch(e => e);
+            const error = await automationPipeline
+                .validatePipeline(createPipelineToValidate([makeStep('UNKNOWN')]), mockCtx)
+                .catch(e => e);
 
             expect(error).toBeInstanceOf(ValidationError);
             expect(error.fields).toMatchObject({
@@ -290,7 +306,7 @@ describe('automation pipeline', () => {
             actionsRegistry.getAction.mockReturnValue(strictAction);
 
             const error = await automationPipeline
-                .validatePipeline({steps: [makeStep('strict', {name: 42})]})
+                .validatePipeline(createPipelineToValidate([makeStep('strict', {name: 42})]), mockCtx)
                 .catch(e => e);
 
             expect(error).toBeInstanceOf(ValidationError);
@@ -309,9 +325,15 @@ describe('automation pipeline', () => {
             };
             actionsRegistry.getAction.mockReturnValue(actionWithValidate);
 
-            await automationPipeline.validatePipeline({steps: [makeStep('withValidate', {foo: 'bar'})]});
+            await automationPipeline.validatePipeline(
+                createPipelineToValidate([makeStep('withValidate', {foo: 'bar'})]),
+                mockCtx,
+            );
 
-            expect(validateParams).toHaveBeenCalledWith({foo: 'bar'});
+            expect(validateParams).toHaveBeenCalledWith(
+                {stepParams: {foo: 'bar'}, trigger: mockTrigger, precedingSteps: []},
+                mockCtx,
+            );
         });
 
         it('propagates errors thrown by validateParams', async () => {
@@ -324,9 +346,9 @@ describe('automation pipeline', () => {
             };
             actionsRegistry.getAction.mockReturnValue(actionWithValidate);
 
-            await expect(automationPipeline.validatePipeline({steps: [makeStep('withValidate')]})).rejects.toThrow(
-                customError,
-            );
+            await expect(
+                automationPipeline.validatePipeline(createPipelineToValidate([makeStep('withValidate')]), mockCtx),
+            ).rejects.toThrow(customError);
         });
     });
 });

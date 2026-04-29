@@ -3,28 +3,28 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
 import {EventAction} from '@leav/utils';
-import {type AutomationRuleTrigger} from '../../../_types/automation';
 import {
-    type AutomationRulePipeline,
+    type AutomationPipelineExecution,
+    type AutomationPipelineValidation,
     type AutomationRulePipelineStep,
     type IAutomationPipelineExecutionState,
 } from '../pipeline/_types';
 import {type IEventsManagerDomain} from '../../eventsManager/eventsManagerDomain';
-import {ActionExecutionResultStatus, type IActionExecutionResult, type IAutomationAction} from '../actions/_types';
+import {
+    ActionExecutionResultStatus,
+    type IActionExecutionResult,
+    type IAutomationAction,
+    type AutomationStepParamsValidation,
+} from '../actions/_types';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
 import {type IAutomationActionsRegistry} from '../automationActionsRegistry';
 
-export type AutomationPipelineToExecute = AutomationRulePipeline & {
-    ruleId: string;
-    trigger: AutomationRuleTrigger;
-};
-
 export interface IAutomationPipelineDomain {
     // returns true if pipeline executed fully, false if it was stopped by an action, for testing purpose for now
-    executePipeline(pipelineExec: AutomationPipelineToExecute, ctx: IQueryInfos): Promise<boolean>;
-    validatePipeline(pipeline: AutomationRulePipeline): Promise<void>;
+    executePipeline(pipelineExec: AutomationPipelineExecution, ctx: IQueryInfos): Promise<boolean>;
+    validatePipeline(pipelineToValidate: AutomationPipelineValidation, ctx: IQueryInfos): Promise<void>;
 }
 
 export interface IPipelineExecutorDeps {
@@ -36,8 +36,12 @@ export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.domain.automation.actionsRegistry': actionsRegistry,
 }: IPipelineExecutorDeps): IAutomationPipelineDomain {
-    const _validateActionParams = async (action: IAutomationAction, params: Record<string, unknown>): Promise<void> => {
-        const paramsValidation = action.paramsSchema.safeParse(params);
+    const _validateActionParams = async (
+        action: IAutomationAction,
+        params: AutomationStepParamsValidation,
+        ctx: IQueryInfos,
+    ): Promise<void> => {
+        const paramsValidation = action.paramsSchema.safeParse(params.stepParams);
 
         if (!paramsValidation.success) {
             const details = paramsValidation.error.issues.reduce(
@@ -57,7 +61,7 @@ export default function ({
             throw new ValidationError(details, `Invalid params for action "${action.type}"`);
         }
 
-        await action.validateParams?.(params);
+        await action.validateParams?.(params, ctx);
     };
 
     const _executeStep = async (
@@ -95,7 +99,7 @@ export default function ({
     };
 
     const _emitSuccess = (
-        pipelineExec: AutomationPipelineToExecute,
+        pipelineExec: AutomationPipelineExecution,
         state: IAutomationPipelineExecutionState,
         ctx: IQueryInfos,
     ): Promise<void> =>
@@ -110,7 +114,7 @@ export default function ({
         );
 
     const _emitFailure = (
-        pipelineExec: AutomationPipelineToExecute,
+        pipelineExec: AutomationPipelineExecution,
         state: IAutomationPipelineExecutionState,
         ctx: IQueryInfos,
     ): Promise<void> =>
@@ -125,7 +129,7 @@ export default function ({
         );
 
     const _initializePipelineState = (
-        pipelineExec: AutomationPipelineToExecute,
+        pipelineExec: AutomationPipelineExecution,
     ): IAutomationPipelineExecutionState => ({
         trigger: pipelineExec.trigger,
         results: {},
@@ -137,8 +141,8 @@ export default function ({
     });
 
     return {
-        async validatePipeline(pipeline): Promise<void> {
-            for (const step of pipeline.steps) {
+        async validatePipeline(pipelineToValidate, ctx): Promise<void> {
+            for (const [stepIndex, step] of pipelineToValidate.steps.entries()) {
                 const action = actionsRegistry.getAction(step.type);
 
                 if (!action) {
@@ -150,7 +154,13 @@ export default function ({
                     });
                 }
 
-                await _validateActionParams(action, step.params);
+                const stepParamsValidation: AutomationStepParamsValidation = {
+                    stepParams: step.params,
+                    trigger: pipelineToValidate.trigger,
+                    precedingSteps: pipelineToValidate.steps.slice(0, stepIndex),
+                };
+
+                await _validateActionParams(action, stepParamsValidation, ctx);
             }
         },
         async executePipeline(pipelineExec, ctx) {

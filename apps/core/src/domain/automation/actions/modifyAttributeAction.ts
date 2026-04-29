@@ -3,7 +3,12 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {z} from 'zod';
 import {logger} from '@leav/logger';
-import {ActionExecutionResultStatus, AutomationRuleActions, type IAutomationAction} from './_types';
+import {
+    ActionExecutionResultStatus,
+    AutomationRuleActions,
+    type AutomationStepParamsValidation,
+    type IAutomationAction,
+} from './_types';
 import {type ISaveBatchValueError, type IValueDomain} from '../../value/valueDomain';
 import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IRecord} from '../../../_types/record';
@@ -19,6 +24,7 @@ import {
     type ISaveTreeValue,
 } from '../../../_types/value';
 import _ from 'lodash';
+import {type IValidateHelper} from '../../helpers/validate';
 
 const modifyAttributeActionParamsSchema = z.object({
     attributePath: z.string().meta({
@@ -67,12 +73,41 @@ interface IAbstractValuesToSave<P = IValue['payload']> {
 interface IDeps {
     'core.domain.value': IValueDomain;
     'core.domain.attribute': IAttributeDomain;
+    'core.domain.helpers.validate': IValidateHelper;
 }
 
 export default function ({
     'core.domain.value': valueDomain,
     'core.domain.attribute': attributeDomain,
+    'core.domain.helpers.validate': validateHelper,
 }: IDeps): IAutomationAction<ModifyAttributeActionParams> {
+    const _ensureParamsAttributePathExists = async (
+        params: AutomationStepParamsValidation<{attributePath: string; mode: 'replace' | 'add'}>,
+        ctx: IQueryInfos,
+    ) => {
+        const attributeIdsPath = params.stepParams.attributePath.split('.');
+        let currentLibrary = params.trigger.eventTopic.library;
+        for (let i = 0; i < attributeIdsPath.length; i++) {
+            const attributeId = attributeIdsPath[i];
+            const attributeProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
+            await validateHelper.validateLibraryAttribute(currentLibrary, attributeId, ctx);
+
+            // Still some link/tree to go through
+            if (i < attributeIdsPath.length - 1) {
+                if (
+                    ![AttributeTypes.SIMPLE_LINK, AttributeTypes.ADVANCED_LINK, AttributeTypes.TREE].includes(
+                        attributeProps.type,
+                    )
+                ) {
+                    throw new Error(
+                        `No final attribute with id ${attributeId} in attributePath must be of type simple_link, advanced_link or tree. Found type ${attributeProps.type}`,
+                    );
+                }
+                currentLibrary = attributeProps.linked_library;
+            }
+        }
+    };
+
     const _getTargetRecords = async (record: IRecord, attributes: string[], ctx: IQueryInfos): Promise<IRecord[]> => {
         if (!attributes.length) {
             return [record];
@@ -253,6 +288,20 @@ export default function ({
     return {
         type: AutomationRuleActions.MODIFY_ATTRIBUTE,
         paramsSchema: modifyAttributeActionParamsSchema,
+        validateParams: async (params, ctx) => {
+            if (!params.trigger.eventTopic?.library) {
+                throw new Error(
+                    'ModifyAttributeAction can only be used with triggers that have a library in their event topic',
+                );
+            }
+
+            if (params.precedingSteps.length === 0) {
+                throw new Error(
+                    'ModifyAttributeAction cannot be used in the first step of a pipeline, as it needs the value from the previous step to know which value to set on the target attribute',
+                );
+            }
+            await _ensureParamsAttributePathExists(params, ctx);
+        },
         async execute(params, state, ctx) {
             if (state.trigger.eventTopic.record == null) {
                 throw new Error('ModifyAttributeAction requires a record in the event topic');
