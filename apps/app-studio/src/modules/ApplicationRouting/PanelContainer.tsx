@@ -27,6 +27,8 @@ import {WORKSPACE_PANEL_CONTAINER_ID, MODAL_EXTRA_RIGHT_PORTAL_ID} from '../../c
 import {createPortal} from 'react-dom';
 import {retrievePreviousPanelURLParams} from './utils/retrievePreviousPanelURLParams';
 
+const MODAL_FULLSCREEN_INDEX = 998;
+
 export const PanelContainer: FunctionComponent = ({children}) => {
     const [modalExtraRightElement, setModalExtraRightElement] = useState<HTMLElement>();
     const [application] = useApplicationSettingsContext();
@@ -88,7 +90,8 @@ export const PanelContainer: FunctionComponent = ({children}) => {
                   fullscreen: true,
                   parentSelector: getFullsPagePopupContainer,
                   appElement: getFullsPagePopupContainer(),
-                  style: {overlay: {position: 'absolute' as const}},
+                  //TODO Remove zIndex from here when design system handles the case
+                  style: {overlay: {position: 'absolute' as const, zIndex: MODAL_FULLSCREEN_INDEX}},
                   width: undefined, // We override the width so the modal is fullscreen
                   height: undefined, // We override the height so the modal is fullscreen
               }
