@@ -86,6 +86,9 @@ x-env-core: &env-core
   # SERVER_BASE_PATH: /campaigns-manager
   # OIDC_POST_LOGOUT_REDIRECT_URI: http://core.leav.localhost/campaigns-manager
 
+  # Temporary, remove after https://gitlab.aristid.com/dev/xstream/engine/xstream/-/merge_requests/1213
+  CORE_TSX_WATCH_ARGS: "--include './plugins/xstream/apps/plugins'"
+
 x-env-amqp: &env-amqp
   AMQP_PROTOCOL: "amqp"
   AMQP_HOST: message-broker
@@ -124,7 +127,8 @@ x-env-logger: &env-logger
   # LOG_ADDITIONAL_META_VERSION: "develop"
   # LOG_ADDITIONAL_META_APP: "xstream"
 
-x-env-mcp-runtime: &env-mcp-runtime # Internal Docker network URL — core listens on port 4001 inside the leav network
+# Internal Docker network URL — core listens on port 4001 inside the leav network
+x-env-mcp-runtime: &env-mcp-runtime
   CORE_URL: http://core:4001
 
 x-env-monitoring: &env-monitoring

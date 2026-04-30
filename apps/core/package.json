@@ -5,7 +5,7 @@
     "scripts": {
         "start": "node .",
         "start:watch": "npm run start:dev",
-        "start:dev": "tsx watch --clear-screen=false --ignore src/__tests__ --ignore 'src/**/*.spec.ts' --inspect=0.0.0.0:9229 ./src",
+        "start:dev": "tsx watch --clear-screen=false --ignore src/__tests__ --ignore 'src/**/*.spec.ts' ${CORE_TSX_WATCH_ARGS:-} --inspect=0.0.0.0:9229 ./src",
         "test:watch": "vitest -c vitest.unit.config.ts",
         "test": "vitest run -c vitest.unit.config.ts",
         "test:ci": "vitest run -c vitest.unit.config.ts --maxWorkers=2 --reporter=verbose",

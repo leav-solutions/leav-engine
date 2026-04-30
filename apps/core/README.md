@@ -34,8 +34,8 @@ module.exports = {
 
 You can add plugins to the core by adding them to the plugins folder. Each plugin live in its own folder and have at least a `index.ts` file.
 
-The plugin folder is located by default in `apps/core/src/plugins` on development environment and `apps/core/dist/plugins` on build.
-It can be configured with the `PLUGINS_PATH` environment variable or the `pluginsPath` variable in the `config/local.js` file. ⚠️ The path must be under the `apps/core/src/plugins` folder (eg. `apps/core/src/plugins/my-own-repo/my-plugins`)
+The plugin folder is located by default in `apps/core/plugins` on development environment and `apps/core/plugins` on build.
+It can be configured with the `PLUGINS_PATH` environment variable or the `pluginsPath` variable in the `config/local.js` file. ⚠️ The path must be under the `apps/core/plugins` folder (eg. `apps/core/plugins/my-own-repo/my-plugins`)
 
 ### Create a plugin
 

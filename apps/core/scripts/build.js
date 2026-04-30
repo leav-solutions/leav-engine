@@ -7,8 +7,6 @@ const {execSync} = require('child_process');
 
 const root = path.resolve(__dirname + '/..');
 const buildFolder = path.resolve(root + '/dist');
-const srcPluginsFolder = path.resolve(root + '/src/plugins');
-const buildPluginsFolder = path.resolve(buildFolder + '/plugins');
 
 // Empty build folder
 if (fs.existsSync(buildFolder)) {
@@ -21,17 +19,6 @@ try {
 } catch (e) {
     console.error(e.stderr.toString(), e.stdout.toString());
     process.exit(1);
-}
-
-// Create plugins folder if does not exists
-if (!fs.existsSync(buildPluginsFolder)) {
-    fs.mkdirSync(buildPluginsFolder);
-}
-
-// Copy plugins package.json files to build folder
-const pkgFiles = fs.globSync('*/package.json', {cwd: srcPluginsFolder});
-for (const pkgFile of pkgFiles) {
-    fs.copyFileSync(srcPluginsFolder + '/' + pkgFile, buildPluginsFolder + '/' + pkgFile);
 }
 
 // Copy html files to build folder
