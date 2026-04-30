@@ -230,13 +230,19 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         allowedDependentValues: [TreeAllowedDependentValues!]
                     }
 
+                    input AttributeDependentValueInput {
+                        attributeId: ID!,
+                        # nodeId may be null for root node
+                        nodeId: ID
+                    }
+
                     type TreeAttribute implements Attribute {
                         ${attributesInterfaceSchema}
                         linked_tree: Tree,
                         values_list: TreeValuesListConf,
                         permissions_conf_dependent_values: TreePermissionsDependentValuesConf
                         """ List of all tree nodes with their allowed dependent values for this attribute, include null node for root if applicable."""
-                        tree_values: [TreeDependentValuesNode!]
+                        tree_values(attributeDependentValue: AttributeDependentValueInput): [TreeDependentValuesNode!]
                     }
 
                     input AttributeInput {
@@ -536,7 +542,15 @@ export default function (deps: IDeps): ICoreAttributeApp {
                                 ).filter(r => r !== null),
                             };
                         },
-                        tree_values: async (attributeData: IAttribute, _, ctx: IQueryInfos) => {
+                        tree_values: async (
+                            attributeData: IAttribute,
+                            {
+                                attributeDependentValue,
+                            }: {
+                                attributeDependentValue?: {nodeId: string | null; attributeId: string};
+                            },
+                            ctx: IQueryInfos,
+                        ) => {
                             const treeValues: Array<ITreeNode | null> = (
                                 await treeDomain.getElementChildren({
                                     treeId: attributeData.linked_tree,
@@ -548,12 +562,12 @@ export default function (deps: IDeps): ICoreAttributeApp {
                             // Even when attribute is required, we may need to know allowed dependent values for root (null) node
                             treeValues.push(null);
 
-                            const hasDependentValue =
+                            const hasDependentValues =
                                 attributeData.permissions_conf_dependent_values != null &&
-                                attributeData.permissions_conf_dependent_values.dependenciesTreeAttributes.length ===
-                                    1 &&
-                                attributeData.permissions_conf_dependent_values.dependenciesTreeAttributes[0] ===
-                                    attributeData.id;
+                                attributeData.permissions_conf_dependent_values.dependenciesTreeAttributes.length &&
+                                attributeData.permissions_conf_dependent_values.dependenciesTreeAttributes.includes(
+                                    attributeData.id,
+                                );
 
                             const allValues = treeValues
                                 .filter(childNode => !attributeData.required || childNode !== null)
@@ -565,14 +579,15 @@ export default function (deps: IDeps): ICoreAttributeApp {
                                 treeValues.map(async child => ({
                                     node: child,
                                     allowedDependentValues:
-                                        (hasDependentValue &&
-                                            (await attributeDependentValuesPermissionDomain.filterAllowedDependentValuesOnItself(
+                                        (hasDependentValues &&
+                                            (await attributeDependentValuesPermissionDomain.filterAllowedWorkflowDependentValues(
                                                 {
                                                     action: AttributeDependentValuesPermissionsActions.SET_VALUE,
                                                     attributeId: attributeData.id,
                                                     targetValue: {
                                                         nodeId: child?.id || null,
                                                     },
+                                                    dependentValue: attributeDependentValue,
                                                     allValues,
                                                     ctx,
                                                 },

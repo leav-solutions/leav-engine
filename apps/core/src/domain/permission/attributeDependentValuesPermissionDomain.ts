@@ -36,10 +36,11 @@ export interface IAttributeDependentValuesPermissionDomain {
         ctx: IQueryInfos;
     }): Promise<boolean>;
 
-    filterAllowedDependentValuesOnItself(params: {
+    filterAllowedWorkflowDependentValues(params: {
         action: AttributeDependentValuesPermissionsActions;
         attributeId: string;
         targetValue: {nodeId: string | null};
+        dependentValue?: {attributeId: string; nodeId: string | null};
         allValues: Array<{nodeId: string | null}>;
         ctx: IQueryInfos;
     }): Promise<Array<{nodeId: string | null}>>;
@@ -188,31 +189,27 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
 
             return attrProps.permissions_conf_dependent_values.allowByDefault;
         },
-        async filterAllowedDependentValuesOnItself(params: {
+        async filterAllowedWorkflowDependentValues(params: {
             action: AttributeDependentValuesPermissionsActions;
             attributeId: string;
             targetValue: {nodeId: string | null};
+            dependentValue?: {attributeId: string; nodeId: string | null};
             allValues: Array<{nodeId: string | null}>;
             ctx: IQueryInfos;
         }): Promise<Array<{nodeId: string | null}>> {
-            const {action, attributeId, targetValue, allValues, ctx} = params;
+            const {action, attributeId, targetValue, dependentValue, allValues, ctx} = params;
 
             const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
+            const dependenciesTreeAttributes = attrProps.permissions_conf_dependent_values?.dependenciesTreeAttributes;
 
             // If no dependent values configuration, allow to set any value by default
-            if (
-                attrProps.permissions_conf_dependent_values?.dependenciesTreeAttributes == null ||
-                attrProps.permissions_conf_dependent_values?.dependenciesTreeAttributes.length === 0
-            ) {
+            if (dependenciesTreeAttributes == null || dependenciesTreeAttributes.length === 0) {
                 return allValues;
             }
 
-            if (
-                attrProps.permissions_conf_dependent_values.dependenciesTreeAttributes.length > 1 ||
-                attrProps.permissions_conf_dependent_values.dependenciesTreeAttributes[0] !== attributeId
-            ) {
+            if (dependenciesTreeAttributes.length > 2 || !dependenciesTreeAttributes.includes(attributeId)) {
                 throw new Error(
-                    'Attribute dependent values permission on itself can only be used on tree attributes depending on itself',
+                    'Attribute dependent values permission can only be used on tree attributes depending at least on itself and optionally on one other attribute.',
                 );
             }
 
@@ -223,6 +220,26 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
                     nodeId: targetValue.nodeId,
                 },
             ];
+
+            if (dependentValue !== undefined) {
+                if (!dependenciesTreeAttributes.includes(dependentValue.attributeId)) {
+                    throw new Error(
+                        'Attribute dependent values permission requires the dependent value attribute to be in dependenciesTreeAttributes permissions conf list.',
+                    );
+                }
+
+                const dependentValueAttrProps = await attributeDomain.getAttributeProperties({
+                    id: dependentValue.attributeId,
+                    ctx,
+                });
+
+                dependenciesTreeTargets.push({
+                    attributeId: dependentValue.attributeId,
+                    tree: dependentValueAttrProps.linked_tree,
+                    nodeId: dependentValue.nodeId,
+                });
+            }
+
             const userGroupsPaths = !!ctx.groupsId
                 ? await Promise.all(
                       ctx.groupsId.map(async groupId =>
