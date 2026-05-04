@@ -58,7 +58,7 @@
         "@types/node": "24.12.2",
         "@types/nodemailer": "6.4.23",
         "@types/ws": "8.5.3",
-        "axios": "1.15.2",
+        "axios": "1.16.0",
         "eventsource": "4.1.0",
         "graphql-request": "7.4.0",
         "jest-when": "3.7.0",
