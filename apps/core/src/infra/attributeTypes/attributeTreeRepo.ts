@@ -407,7 +407,7 @@ export default function ({
                 // Add null value for unlinked records
                 LET finalResultArray = APPEND(
                     linkGroupWithoutRecordIds,
-                    unlinkedRecordCount > 0 ? [{ valueId: null, count: unlinkedRecordCount }] : []
+                    unlinkedRecordCount > 0 ? [{ value: null, count: unlinkedRecordCount }] : []
                 )
 
                 // Flatten result array

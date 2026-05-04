@@ -9,7 +9,7 @@ import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
 import {VALUES_COLLECTION, VALUES_LINKS_COLLECTION} from '../value/valueRepo';
 import {AttributeFormats, type AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IRecord} from '../../_types/record';
-import {type IStandardValue, type IValueEdge} from '../../_types/value';
+import {type IDistinctValue, type IStandardBaseValue, type IStandardValue, type IValueEdge} from '../../_types/value';
 import {type IDbService} from '../db/dbService';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
 import {type GetConditionPart} from './helpers/getConditionPart';
@@ -333,6 +333,57 @@ export default function ({
                 modified_by: valueLinks[0].modified_by,
                 created_by: valueLinks[0].created_by,
             };
+        },
+
+        async listDistinctValues({
+            library,
+            attribute,
+            recordIds,
+            options,
+            ctx,
+        }): Promise<IDistinctValue<IStandardBaseValue>> {
+            const valuesEdgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
+
+            // For all recordIds,
+            // retrieve the corresponding edges and count the occurrences of each linked value,
+            // including unlinked records
+            const query = aql`
+                    LET allRecordIds = ${recordIds}
+                    LET linkedValuesGroups = (
+                        FOR edge IN ${valuesEdgeCollec}
+    
+                            FILTER edge.attribute == ${attribute.id}
+                            ${options?.version ? aql`FILTER edge.version == ${options.version}` : aql`FILTER edge.version == null`}
+                            FILTER PARSE_IDENTIFIER(edge._from).key IN allRecordIds
+    
+                            // Get the linked record and ensure it exists
+                            Let valueRecord = DOCUMENT(edge._to)
+                            COLLECT valueGrouped = valueRecord.value INTO grouped
+    
+                            // Keep track of which records are linked to this value
+                            LET groupLinkedRecordIds = (FOR g IN grouped[*].edge._from RETURN PARSE_IDENTIFIER(g).key)
+                            RETURN { value: valueGrouped, count: LENGTH(grouped), groupLinkedRecordIds }
+                    )
+    
+                    LET linkedRecordIds = UNIQUE(FLATTEN(linkedValuesGroups[*].groupLinkedRecordIds))
+                    LET linkGroupWithoutRecordIds = (FOR r IN linkedValuesGroups RETURN UNSET(r, 'groupLinkedRecordIds'))
+                    
+                    // Find unlinked records
+                    LET unlinkedRecordIds = OUTERSECTION(allRecordIds, linkedRecordIds)
+                    LET unlinkedRecordCount = COUNT(unlinkedRecordIds)
+    
+                    // Add null value for unlinked records
+                    LET finalResultArray = APPEND(
+                        linkGroupWithoutRecordIds,
+                        unlinkedRecordCount > 0 ? [{ value: null, count: unlinkedRecordCount }] : []
+                    )
+    
+                    // Flatten result array
+                    FOR r IN finalResultArray RETURN r
+                `;
+
+            const res = await dbService.execute<Array<{value: string | null; count: number}>>({query, ctx});
+            return res;
         },
         sortQueryPart({attributes, order}) {
             const collec = dbService.db.collection(VALUES_LINKS_COLLECTION);
