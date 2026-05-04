@@ -208,11 +208,13 @@ Voir [`CODING_GUIDELINES.md`](CODING_GUIDELINES.md) — source de vérité pour 
 
 Les ADR sont dans [`docs/adr/`](docs/adr). À consulter avant de proposer une lib ou une approche sur les sujets couverts.
 
-| ADR                                                              | Décision                                                                                                                                                                  |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [ADR-001 — Drag & drop](docs/adr/ADR-001-dnd.md)                 | Utiliser **`dnd-kit`** pour tout nouveau code DnD. Ne pas utiliser `react-beautiful-dnd` (non maintenu) ni `react-dnd`. La migration de l'existant n'est pas prioritaire. |
-| [ADR-002 — Tests E2E forms](docs/adr/ADR-002-tests-e2e-forms.md) | Tests E2E dans ce repo (`test-apps/`), stack **Playwright**, pattern **PageObjectModel**. Déclenchement quotidien + manuel en CI.                                         |
-| [ADR-003 — Documentation](docs/adr/ADR-003-documentation.md)     | La doc technique vit dans `docs/` (proche du code), en Markdown. Confluence = process/métier uniquement. Mise à jour obligatoire dans la même MR que le code.             |
+| ADR                                                                              | Décision                                                                                                                                                                  |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [ADR-001 — Drag & drop](docs/adr/ADR-001-dnd.md)                                 | Utiliser **`dnd-kit`** pour tout nouveau code DnD. Ne pas utiliser `react-beautiful-dnd` (non maintenu) ni `react-dnd`. La migration de l'existant n'est pas prioritaire. |
+| [ADR-002 — Tests E2E forms](docs/adr/ADR-002-tests-e2e-forms.md)                 | Tests E2E dans ce repo (`test-apps/`), stack **Playwright**, pattern **PageObjectModel**. Déclenchement quotidien + manuel en CI.                                         |
+| [ADR-003 — Documentation](docs/adr/ADR-003-documentation.md)                     | La doc technique vit dans `docs/` (proche du code), en Markdown. Confluence = process/métier uniquement. Mise à jour obligatoire dans la même MR que le code.             |
+| [ADR-004 — Plugins realtime](docs/adr/ADR-004-plugins-realtime-computed-data.md) | Les plugins exposent leurs données calculées via une **API tRPC**. Queries pour la lecture, mutations pour les actions, subscriptions pour le temps réel.                 |
+| [ADR-005 — Types GraphQL générés](docs/adr/ADR-005-graphql-plugins-types.md)     | Les types de plugins externes (xstream) peuvent rester dans les fichiers `_gqlTypes/index.ts` générés. Fichiers marqués `linguist-generated` dans `.gitattributes`.       |
 
 ---
 

@@ -1,1 +1,4 @@
 /.yarn/** linguist-vendored
+
+# Auto-generated GraphQL types (graphql-codegen) — collapsed in GitLab MR diffs
+**/_gqlTypes/index.ts linguist-generated=true

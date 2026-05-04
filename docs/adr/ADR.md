@@ -22,3 +22,6 @@ Decision taken
 
 1. [Drag and drop library](ADR-001-dnd.md)
 2. [E2E forms test](ADR-002-tests-e2e-forms.md)
+3. [Documentation](ADR-003-documentation.md)
+4. [Plugins real-time computed data architecture](ADR-004-plugins-realtime-computed-data.md)
+5. [GraphQL plugin types in generated files](ADR-005-graphql-plugins-types.md)
