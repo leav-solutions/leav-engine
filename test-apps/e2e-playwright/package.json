@@ -1,6 +1,6 @@
 {
     "name": "e2e-playwright",
-    "version": "1.12.0",
+    "version": "1.13.0",
     "scripts": {
         "start": "playwright test",
         "start-ui": "playwright test --ui",
