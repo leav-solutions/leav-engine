@@ -8,10 +8,10 @@ export type AutomationRulePipeline = {
     steps: AutomationRulePipelineStep[];
 };
 
-export type AutomationRulePipelineStep = {
+export type AutomationRulePipelineStep<Params = unknown> = {
     type: AutomationRuleActions | string; // string for custom/plugin actions
     name?: string;
-    params: Record<string, unknown>;
+    params: Params;
 };
 
 export type IAutomationPipelineFailure = {

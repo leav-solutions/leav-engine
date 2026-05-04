@@ -6,7 +6,7 @@ import {logger} from '@leav/logger';
 import {
     ActionExecutionResultStatus,
     AutomationRuleActions,
-    type AutomationStepParamsValidation,
+    type AutomationPipelineStepValidation,
     type IAutomationAction,
 } from './_types';
 import {type ISaveBatchValueError, type IValueDomain} from '../../value/valueDomain';
@@ -82,10 +82,10 @@ export default function ({
     'core.domain.helpers.validate': validateHelper,
 }: IDeps): IAutomationAction<ModifyAttributeActionParams> {
     const _ensureParamsAttributePathExists = async (
-        params: AutomationStepParamsValidation<{attributePath: string; mode: 'replace' | 'add'}>,
+        params: AutomationPipelineStepValidation<{attributePath: string; mode: 'replace' | 'add'}>,
         ctx: IQueryInfos,
     ) => {
-        const attributeIdsPath = params.stepParams.attributePath.split('.');
+        const attributeIdsPath = params.step.params.attributePath.split('.');
         let currentLibrary = params.trigger.eventTopic.library;
         for (let i = 0; i < attributeIdsPath.length; i++) {
             const attributeId = attributeIdsPath[i];
@@ -288,14 +288,14 @@ export default function ({
     return {
         type: AutomationRuleActions.MODIFY_ATTRIBUTE,
         paramsSchema: modifyAttributeActionParamsSchema,
-        validateParams: async (params, ctx) => {
+        validateStep: async (params, ctx) => {
             if (!params.trigger.eventTopic?.library) {
                 throw new Error(
                     'ModifyAttributeAction can only be used with triggers that have a library in their event topic',
                 );
             }
 
-            if (params.precedingSteps.length === 0) {
+            if (params.precedingStepsByExecOrder.length === 0) {
                 throw new Error(
                     'ModifyAttributeAction cannot be used in the first step of a pipeline, as it needs the value from the previous step to know which value to set on the target attribute',
                 );

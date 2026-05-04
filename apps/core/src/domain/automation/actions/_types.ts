@@ -2,7 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ZodObject} from 'zod';
-import {type AutomationRulePipelineStep, type IAutomationPipelineExecutionState} from '../pipeline/_types';
+import {
+    type AutomationRulePipeline,
+    type AutomationRulePipelineStep,
+    type IAutomationPipelineExecutionState,
+} from '../pipeline/_types';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type AutomationRuleTrigger} from '../../../_types/automation';
 
@@ -15,10 +19,11 @@ export enum AutomationRuleActions {
     NOTIFICATION = 'notification',
 }
 
-export type AutomationStepParamsValidation<Params = unknown> = {
-    trigger: AutomationRuleTrigger;
-    stepParams: Params;
-    precedingSteps: AutomationRulePipelineStep[];
+export type AutomationPipelineStepValidation<Params = unknown> = {
+    readonly step: AutomationRulePipelineStep<Params>;
+    readonly stepIndex: number;
+    readonly trigger: AutomationRuleTrigger;
+    readonly precedingStepsByExecOrder: AutomationRulePipelineStep[];
 };
 
 // Contract that every pipeline action must implement
@@ -32,7 +37,7 @@ export interface IAutomationAction<Params = unknown> {
 
     // Optional custom validation beyond the Zod schema.
     // Called by the pipeline executor after paramsSchema validation succeeds.
-    validateParams?: (params: AutomationStepParamsValidation<Params>, ctx: IQueryInfos) => Promise<void>;
+    validateStep?: (params: AutomationPipelineStepValidation<Params>, ctx: IQueryInfos) => Promise<void>;
 
     // Executes the action. Returning void/undefined is equivalent to CONTINUE.
     execute(

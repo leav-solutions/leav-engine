@@ -14,12 +14,13 @@ import {
     ActionExecutionResultStatus,
     type IActionExecutionResult,
     type IAutomationAction,
-    type AutomationStepParamsValidation,
+    type AutomationPipelineStepValidation,
 } from '../actions/_types';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
 import {type IAutomationActionsRegistry} from '../automationActionsRegistry';
+import {pipelineStepValidation} from './stepValidation';
 
 export interface IAutomationPipelineDomain {
     // returns true if pipeline executed fully, false if it was stopped by an action, for testing purpose for now
@@ -36,12 +37,12 @@ export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.domain.automation.actionsRegistry': actionsRegistry,
 }: IPipelineExecutorDeps): IAutomationPipelineDomain {
-    const _validateActionParams = async (
+    const _validatePipelineStep = async (
         action: IAutomationAction,
-        params: AutomationStepParamsValidation,
+        stepValidation: AutomationPipelineStepValidation,
         ctx: IQueryInfos,
     ): Promise<void> => {
-        const paramsValidation = action.paramsSchema.safeParse(params.stepParams);
+        const paramsValidation = action.paramsSchema.safeParse(stepValidation.step.params);
 
         if (!paramsValidation.success) {
             const details = paramsValidation.error.issues.reduce(
@@ -61,7 +62,7 @@ export default function ({
             throw new ValidationError(details, `Invalid params for action "${action.type}"`);
         }
 
-        await action.validateParams?.(params, ctx);
+        await action.validateStep?.(stepValidation, ctx);
     };
 
     const _executeStep = async (
@@ -154,13 +155,9 @@ export default function ({
                     });
                 }
 
-                const stepParamsValidation: AutomationStepParamsValidation = {
-                    stepParams: step.params,
-                    trigger: pipelineToValidate.trigger,
-                    precedingSteps: pipelineToValidate.steps.slice(0, stepIndex),
-                };
+                const stepValidation = pipelineStepValidation(pipelineToValidate, stepIndex);
 
-                await _validateActionParams(action, stepParamsValidation, ctx);
+                await _validatePipelineStep(action, stepValidation, ctx);
             }
         },
         async executePipeline(pipelineExec, ctx) {

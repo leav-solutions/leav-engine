@@ -320,18 +320,16 @@ describe('automation pipeline', () => {
             const actionWithValidate: IAutomationAction = {
                 type: 'withValidate',
                 paramsSchema: z.object({}),
-                validateParams,
+                validateStep: validateParams,
                 execute: vi.fn(),
             };
             actionsRegistry.getAction.mockReturnValue(actionWithValidate);
 
-            await automationPipeline.validatePipeline(
-                createPipelineToValidate([makeStep('withValidate', {foo: 'bar'})]),
-                mockCtx,
-            );
+            const step = makeStep('withValidate', {foo: 'bar'});
+            await automationPipeline.validatePipeline(createPipelineToValidate([step]), mockCtx);
 
             expect(validateParams).toHaveBeenCalledWith(
-                {stepParams: {foo: 'bar'}, trigger: mockTrigger, precedingSteps: []},
+                {step, stepIndex: 0, trigger: mockTrigger, precedingStepsByExecOrder: []},
                 mockCtx,
             );
         });
@@ -341,7 +339,7 @@ describe('automation pipeline', () => {
             const actionWithValidate: IAutomationAction = {
                 type: 'withValidate',
                 paramsSchema: z.object({}),
-                validateParams: vi.fn().mockRejectedValue(customError),
+                validateStep: vi.fn().mockRejectedValue(customError),
                 execute: vi.fn(),
             };
             actionsRegistry.getAction.mockReturnValue(actionWithValidate);
