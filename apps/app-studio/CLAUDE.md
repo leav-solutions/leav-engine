@@ -24,7 +24,7 @@ src/
 │       └── application-settings/  # Chargement et parsing de la config JSON
 ├── modules/
 │   ├── ApplicationRouting/        # Shell MFE central — routing et rendu des panneaux
-│   │   ├── content/               # Dispatcher de type de panneau
+│   │   ├── content/               # Router de type de panneau
 │   │   │   └── panel-custom/      # Panneau iframe + handlers de messages
 │   │   ├── guards/                # Navigation guards (redirections, transformations d'url)
 │   │   ├── router/paths.ts        # Définition des routes
@@ -105,6 +105,25 @@ URL pattern : `/:workspaceId/:panelId/:recordId?/:where?/:recordPanelId?`
 -   `where` : `slider` ou `popup` pour les panneaux secondaires
 -   Flap : `.../flap/:flapRecordId/:flapLibraryId/:flapPanelId`
 -   `retrievePanelDetails()` — utilitaire pour retrouver un panneau par ID dans la config
+
+### Convention `useParams()`
+
+Toujours destructurer les params dans l'ordre de l'URL, même si certains ne sont pas utilisés.
+S'arrêter au dernier param utile pour le composant.
+
+```ts
+// ✅ composant qui n'a besoin que de panelId — on s'arrête là
+const {workspaceId, panelId} = useParams();
+
+// ✅ composant qui a besoin de where — on inclut tout jusqu'à where
+const {workspaceId, panelId, recordId, where} = useParams();
+
+// ❌ on ne saute pas un param intermédiaire
+const {workspaceId, where} = useParams();
+```
+
+Ordre complet : `workspaceId` → `panelId` → `recordId` → `where` → `recordPanelId`
+→ `flapRecordId` → `flapLibraryId` → `flapPanelId`
 
 ---
 
