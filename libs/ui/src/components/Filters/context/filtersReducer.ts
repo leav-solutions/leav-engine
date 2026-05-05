@@ -26,6 +26,7 @@ export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 
 export const FiltersActionTypes = {
     ADD_FILTER: 'ADD_FILTER',
+    SET_FILTERS: 'SET_FILTERS',
     RESET_FILTER: 'RESET_FILTER',
     REMOVE_FILTER: 'REMOVE_FILTER',
     MOVE_FILTER: 'MOVE_FILTER',
@@ -49,6 +50,11 @@ export interface IUIFiltersState {
 interface IUIFiltersActionAddFilter {
     type: typeof FiltersActionTypes.ADD_FILTER;
     payload: Omit<UIFilter, 'id' | 'value' | 'condition'>;
+}
+
+interface IUIFiltersActionSetFilters {
+    type: typeof FiltersActionTypes.SET_FILTERS;
+    payload: UIFilter[];
 }
 
 interface IIUIFiltersActionResetFilter {
@@ -104,6 +110,7 @@ type Reducer<
 
 export type UIFiltersAction =
     | IUIFiltersActionAddFilter
+    | IUIFiltersActionSetFilters
     | IIUIFiltersActionResetFilter
     | IUIFiltersActionRemoveFilter
     | IUIFiltersActionChangeFilterConfig
@@ -173,6 +180,12 @@ const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
         viewModified: true,
     };
 };
+
+const setFilters: Reducer<IUIFiltersActionSetFilters> = (state, payload) => ({
+    ...state,
+    filters: payload,
+    viewModified: true,
+});
 
 const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => ({
     ...state,
@@ -305,6 +318,9 @@ export const filtersReducer =
         switch (action.type) {
             case FiltersActionTypes.ADD_FILTER: {
                 return addFilter(state, action.payload);
+            }
+            case FiltersActionTypes.SET_FILTERS: {
+                return setFilters(state, action.payload);
             }
             case FiltersActionTypes.RESET_FILTER: {
                 return resetFilter(state, action.payload);

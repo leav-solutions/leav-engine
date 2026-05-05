@@ -154,6 +154,64 @@ describe('ViewSettings Reducer', () => {
         });
     });
 
+    describe(`Action ${FiltersActionTypes.SET_FILTERS} test`, () => {
+        test('should set filters from payload', () => {
+            const setFiltersPayload = [
+                {
+                    id: 'id4',
+                    attribute: attributeDataStandard,
+                    field: 'first',
+                    condition: RecordFilterCondition.EQUAL,
+                    value: 'test',
+                },
+                {
+                    id: 'id5',
+                    attribute: attributeDataLink,
+                    field: 'second',
+                    condition: RecordFilterCondition.EQUAL,
+                    value: 'test',
+                },
+            ];
+
+            const state = filtersReducer(
+                {
+                    ...filtersInitialState,
+                    filters: [
+                        {
+                            id: 'id1',
+                            attribute: attributeDataStandard,
+                            field: 'first',
+                            condition: RecordFilterCondition.EQUAL,
+                            value: 'test',
+                        },
+                        {
+                            id: 'id2',
+                            attribute: attributeDataLink,
+                            field: 'second',
+                            condition: RecordFilterCondition.EQUAL,
+                            value: 'test',
+                        },
+                        {
+                            id: 'id3',
+                            attribute: attributeDataThrough,
+                            field: 'third',
+                            condition: ThroughConditionFilter.THROUGH,
+                            subField: 'thirdSub',
+                            subCondition: null,
+                            value: 'test',
+                        },
+                    ],
+                },
+                {
+                    type: FiltersActionTypes.SET_FILTERS,
+                    payload: setFiltersPayload,
+                },
+            );
+            expect(state.filters).toHaveLength(setFiltersPayload.length);
+            expect(state.filters).toEqual(setFiltersPayload);
+        });
+    });
+
     describe(`Action ${FiltersActionTypes.RESET_FILTER} test`, () => {
         test('Reset to empty filter', () => {
             const state = filtersReducer(
