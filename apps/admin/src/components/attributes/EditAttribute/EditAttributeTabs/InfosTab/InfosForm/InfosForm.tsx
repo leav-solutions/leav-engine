@@ -515,21 +515,22 @@ function InfosForm({
                         />
                     </FormFieldWrapper>
                 )}
-                {isLinkAttribute && (
-                    <FormFieldWrapper error={_getErrorByField('smart_filter.enable')}>
-                        <Form.Checkbox
-                            label={t('attributes.smart_filter.enable')}
-                            disabled={readonly}
-                            width="8"
-                            toggle
-                            name="smart_filter.enable"
-                            aria-label="smart_filter.enable"
-                            onChange={_handleChangeWithSubmit}
-                            onBlur={_handleBlur}
-                            checked={!!values.smart_filter?.enable}
-                        />
-                    </FormFieldWrapper>
-                )}
+                {isLinkAttribute ||
+                    (isStandardAttribute && values.format === AttributeFormat.text && (
+                        <FormFieldWrapper error={_getErrorByField('smart_filter.enable')}>
+                            <Form.Checkbox
+                                label={t('attributes.smart_filter.enable')}
+                                disabled={readonly}
+                                width="8"
+                                toggle
+                                name="smart_filter.enable"
+                                aria-label="smart_filter.enable"
+                                onChange={_handleChangeWithSubmit}
+                                onBlur={_handleBlur}
+                                checked={!!values.smart_filter?.enable}
+                            />
+                        </FormFieldWrapper>
+                    ))}
                 {allowVersionable && (
                     <Form.Group grouped>
                         <label>{t('attributes.values_versions')}</label>
