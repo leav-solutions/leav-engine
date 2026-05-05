@@ -133,6 +133,11 @@ export type ApplicationsFiltersInput = {
   type?: InputMaybe<Array<InputMaybe<ApplicationType>>>;
 };
 
+export type AttributeDependentValueInput = {
+  attributeId: Scalars['ID']['input'];
+  nodeId?: InputMaybe<Scalars['ID']['input']>;
+};
+
 export enum AttributeFormat {
   boolean = 'boolean',
   color = 'color',
@@ -165,7 +170,7 @@ export type AttributeInput = {
   required?: InputMaybe<Scalars['Boolean']['input']>;
   reverse_link?: InputMaybe<Scalars['String']['input']>;
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
-  /**  only for link attribute  */
+  /**  only for link and standard attribute  */
   smart_filter?: InputMaybe<SmartFilterConfInput>;
   type?: InputMaybe<AttributeType>;
   unique?: InputMaybe<Scalars['Boolean']['input']>;
@@ -208,40 +213,30 @@ export enum AttributesSortableFields {
   type = 'type'
 }
 
+export enum AutomationRuleActions {
+  condition = 'condition',
+  error = 'error',
+  jexlCalculation = 'jexlCalculation',
+  log = 'log',
+  modifyAttribute = 'modifyAttribute',
+  notification = 'notification'
+}
+
 export enum AutomationRuleEventAction {
-  API_KEY_DELETE = 'API_KEY_DELETE',
-  API_KEY_SAVE = 'API_KEY_SAVE',
-  APP_DELETE = 'APP_DELETE',
-  APP_SAVE = 'APP_SAVE',
-  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
-  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
-  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
-  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
-  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
-  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
-  DATA_IMPORT_END = 'DATA_IMPORT_END',
-  DATA_IMPORT_START = 'DATA_IMPORT_START',
-  EXPORT_END = 'EXPORT_END',
-  EXPORT_START = 'EXPORT_START',
-  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
-  LIBRARY_DELETE = 'LIBRARY_DELETE',
-  LIBRARY_PURGE = 'LIBRARY_PURGE',
-  LIBRARY_SAVE = 'LIBRARY_SAVE',
-  PERMISSION_SAVE = 'PERMISSION_SAVE',
-  RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
-  TASKS_DELETE = 'TASKS_DELETE',
-  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
-  TREE_DELETE = 'TREE_DELETE',
-  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
-  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
-  TREE_SAVE = 'TREE_SAVE',
-  VALUE_DELETE = 'VALUE_DELETE',
-  VALUE_SAVE = 'VALUE_SAVE',
-  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
-  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+  VALUE_SAVE = 'VALUE_SAVE'
 }
+
+export type AutomationRulePipelineInput = {
+  steps: Array<AutomationRulePipelineStepInput>;
+};
+
+export type AutomationRulePipelineStepInput = {
+  name?: InputMaybe<Scalars['String']['input']>;
+  params: Scalars['JSON']['input'];
+  type: AutomationRuleActions;
+};
 
 export enum AutomationRuleSortableFields {
   id = 'id'
@@ -281,6 +276,18 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -288,8 +295,10 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
 };
 
 export type CreateAutomationRuleInput = {
+  active: Scalars['Boolean']['input'];
   description?: InputMaybe<Scalars['String']['input']>;
   label: Scalars['String']['input'];
+  pipeline: AutomationRulePipelineInput;
   trigger: AutomationRuleTriggerInput;
 };
 
@@ -342,7 +351,10 @@ export enum EventAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
+  AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
   AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_DELETE = 'AUTOMATION_RULE_DELETE',
   AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
   CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
@@ -355,6 +367,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -463,6 +477,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -548,7 +573,10 @@ export enum LogAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
+  AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
   AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_DELETE = 'AUTOMATION_RULE_DELETE',
   AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
   CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
@@ -561,6 +589,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -855,6 +885,30 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type ReportFramingAttributeFilterItemInput = {
+  attributeId: Scalars['String']['input'];
+  values: Array<ReportFramingAttributeFilterValueItemInput>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ReportFramingAttributeFilterValueItemInput = {
+  formattedValue?: InputMaybe<Scalars['String']['input']>;
+  rawValue: Scalars['String']['input'];
+};
+
+export type ReportFramingContentInput = {
+  filters?: InputMaybe<ReportFramingFiltersInput>;
+};
+
+export type ReportFramingFiltersInput = {
+  /**  only for excel header filter display  */
+  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  campaigns?: InputMaybe<Array<RecordFilterInput>>;
+  categories?: InputMaybe<Array<Scalars['String']['input']>>;
+  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -940,12 +994,19 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1024,7 +1085,8 @@ export type UpdateAutomationRuleInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['String']['input']>;
-  trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
+  pipeline?: InputMaybe<AutomationRulePipelineInput>;
+  trigger?: InputMaybe<AutomationRuleTriggerInput>;
 };
 
 export type UploadFiltersInput = {
@@ -1155,7 +1217,7 @@ export type RecordIdentityFragment = { id: string, whoAmI: { id: string, label?:
 
 export type AttributeDetailsLinkAttributeFragment = { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, label?: any | null } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
-export type AttributeDetailsStandardAttributeFragment = { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
+export type AttributeDetailsStandardAttributeFragment = { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, smart_filter?: { enable: boolean } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
 export type AttributeDetailsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, label?: any | null } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
@@ -1328,7 +1390,7 @@ export type AttributesByLibAttributeWithPermissionsLinkAttributeFragment = { id:
 export type AttributesByLibAttributeWithPermissionsStandardAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, valuesList?:
     | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null }
     | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null }
-   | null, permissions: { access_attribute: boolean } };
+   | null, smart_filter?: { enable: boolean } | null, permissions: { access_attribute: boolean } };
 
 export type AttributesByLibAttributeWithPermissionsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null, libraries: Array<{ library: { id: string, label?: any | null } }> } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, permissions: { access_attribute: boolean } };
 
@@ -1340,7 +1402,7 @@ export type AttributesByLibAttributeWithPermissionsFragment =
 
 export type AttributesByLibLinkAttributeWithPermissionsFragment = { valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> | null } | null, linked_library?: { id: string } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null };
 
-export type StandardAttributeDetailsFragment = { id: string, type: AttributeType, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null };
+export type StandardAttributeDetailsFragment = { id: string, type: AttributeType, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, smart_filter?: { enable: boolean } | null };
 
 export type LinkAttributeDetailsFragment = { label?: any | null, type: AttributeType, linked_library?: { id: string, label?: any | null } | null, valuesList?: { allowFreeEntry?: boolean | null, enable: boolean, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }> | null } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null };
 
@@ -1456,7 +1518,7 @@ export type GetAttributeByIdQueryVariables = Exact<{
 
 export type GetAttributeByIdQuery = { attributes?: { list: Array<
       | { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, label?: any | null } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-      | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
+      | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, smart_filter?: { enable: boolean } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
       | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, label?: any | null } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
     > } | null };
 
@@ -1502,7 +1564,7 @@ export type SaveAttributeMutationVariables = Exact<{
 
 export type SaveAttributeMutation = { saveAttribute:
     | { reverse_link?: string | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, label?: any | null } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-    | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
+    | { unique?: boolean | null, id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, smart_filter?: { enable: boolean } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
     | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, label?: any | null, description?: any | null, required: boolean, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, label?: any | null } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
    };
 
@@ -1950,7 +2012,7 @@ export type GetAttributesByLibWithPermissionsQuery = { attributes?: { list: Arra
       | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, valuesList?:
           | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, dateRangeValues?: Array<{ from?: string | null, to?: string | null }> | null }
           | { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null }
-         | null, permissions: { access_attribute: boolean } }
+         | null, smart_filter?: { enable: boolean } | null, permissions: { access_attribute: boolean } }
       | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, multiple_values: boolean, system: boolean, required: boolean, readonly: boolean, compute: boolean, linked_tree?: { id: string, label?: any | null, libraries: Array<{ library: { id: string, label?: any | null } }> } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string }> } | null, permissions: { access_attribute: boolean } }
     > } | null };
 
@@ -1961,7 +2023,7 @@ export type ExplorerAttributesQueryVariables = Exact<{
 
 export type ExplorerAttributesQuery = { attributes?: { list: Array<
       | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_library?: { id: string, label?: any | null } | null, valuesList?: { allowFreeEntry?: boolean | null, enable: boolean, linkedValues?: Array<{ id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }> | null } | null, smart_filter?: { enable: boolean, through?: { id: string } | null } | null, permissions: { access_attribute: boolean } }
-      | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, permissions: { access_attribute: boolean } }
+      | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, embedded_fields?: Array<{ id: string, format?: AttributeFormat | null, label?: any | null } | null> | null, valuesList?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, values?: Array<string> | null } | null, smart_filter?: { enable: boolean } | null, permissions: { access_attribute: boolean } }
       | { id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null, linked_tree?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } }
     > } | null };
 
@@ -2100,7 +2162,11 @@ export type SmartFilterListValuesQueryVariables = Exact<{
 }>;
 
 
-export type SmartFilterListValuesQuery = { listDistinctValues?: Array<{ count: number, value?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }> | null };
+export type SmartFilterListValuesQuery = { listDistinctValues?: Array<
+    | { count: number, recordValue?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
+    | { count: number, standardValue?: any | null }
+    | { count: number }
+  > | null };
 
 export type FilterTreeDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID']['input'];
@@ -2223,6 +2289,9 @@ export const AttributeDetailsFragmentDoc = gql`
   }
   ... on StandardAttribute {
     unique
+    smart_filter {
+      enable
+    }
   }
   ... on LinkAttribute {
     linked_library {
@@ -2837,6 +2906,9 @@ export const AttributesByLibAttributeWithPermissionsFragmentDoc = gql`
         }
       }
     }
+    smart_filter {
+      enable
+    }
   }
 }
     ${AttributesByLibLinkAttributeWithPermissionsFragmentDoc}`;
@@ -2896,6 +2968,9 @@ export const StandardAttributeDetailsFragmentDoc = gql`
       allowListUpdate
       values
     }
+  }
+  smart_filter {
+    enable
   }
 }
     `;
@@ -6437,11 +6512,14 @@ export const SmartFilterListValuesDocument = gql`
     attribute: $attribute
     recordFilters: $recordFilters
   ) {
+    count
     ... on LinkDistinctValues {
-      count
-      value {
+      recordValue: value {
         ...RecordIdentity
       }
+    }
+    ... on StandardDistinctValues {
+      standardValue: value
     }
   }
 }

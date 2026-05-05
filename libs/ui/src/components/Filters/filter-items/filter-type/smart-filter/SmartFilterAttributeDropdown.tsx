@@ -54,7 +54,6 @@ export const SmartFilterAttributeDropdown = ({filter, onFilterChange}: IFilterCh
         filtersOperator: filtersData.filtersOperator,
         selectedValueIds: selectedNodesIds,
         selectedFormattedValues: filter.formattedValue,
-        linkedLibraryId: filter.attribute.linkedLibrary?.id,
     });
 
     const {filteredSmartFilterData, SearchInput} = useSmartFilterSearch(smartFilterDataToDisplay);
@@ -80,7 +79,7 @@ export const SmartFilterAttributeDropdown = ({filter, onFilterChange}: IFilterCh
 
         onFilterChange({
             ...filter,
-            value: selectedNodes.map(selectedNode => selectedNode.recordId),
+            value: selectedNodes.map(selectedNode => selectedNode.value),
             formattedValue: selectedNodes.map(selectedNode => selectedNode.title),
         });
     };
@@ -90,7 +89,7 @@ export const SmartFilterAttributeDropdown = ({filter, onFilterChange}: IFilterCh
 
         onFilterChange({
             ...filter,
-            value: selectedNodes.map(selectedNode => selectedNode.recordId),
+            value: selectedNodes.map(selectedNode => selectedNode.value),
             formattedValue: selectedNodes.map(selectedNode => selectedNode.title),
             withEmptyValues: isSelected,
         });
