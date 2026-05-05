@@ -14,6 +14,7 @@ export interface ITreeNode {
     accessRecordByDefaultPermission?: boolean;
     libraryId: string;
     recordId: string;
+    disableCheckbox?: boolean;
 }
 
 interface IUseGetTreeDataProps {

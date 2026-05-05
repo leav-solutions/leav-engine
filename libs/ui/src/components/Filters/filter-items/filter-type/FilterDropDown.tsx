@@ -1,27 +1,39 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type ComponentProps, type FunctionComponent, useRef} from 'react';
+import {type ComponentProps, type FunctionComponent, useRef, useState} from 'react';
 import styled from 'styled-components';
-import {KitDivider, KitButton} from 'aristid-ds';
+import {AntFlex, KitButton, KitDivider, KitSwitch, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FilterDropdownContent} from './FilterDropdownContent';
 import {useFiltersContext} from '../../useFiltersContext';
 import {FiltersActionTypes} from '../../context/filtersReducer';
-import {type IUIFilterDropDownProps, type UIFilter} from '../../_types';
+import {isUIFilterTree, type IUIFilterDropDownProps, type UIFilter} from '../../_types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClockRotateLeft, faTrash} from '@fortawesome/free-solid-svg-icons';
 
 const FilterDropDownStyledDiv = styled.div`
+    max-height: 600px;
     display: flex;
     flex-direction: column;
     gap: calc(var(--general-spacing-xxs) * 1px);
+`;
+
+const ShowHiddenToggleWrapper = styled(AntFlex)`
+    gap: calc(var(--general-spacing-xs) * 1px);
+    padding: 0 calc(var(--general-spacing-xs) * 1px);
 `;
 
 export const FilterDropDown: FunctionComponent<IUIFilterDropDownProps> = ({filter, canReset, canRemove}) => {
     const {t} = useSharedTranslation();
     const {dispatch} = useFiltersContext();
     const selectDropDownRef = useRef<HTMLDivElement>(null);
+
+    // Ref populated by TreeAttributeDropDown with its toggle handler (cleanup of hidden selections included)
+    const toggleHiddenRef = useRef<((checked: boolean) => void) | null>(null);
+
+    // Driven by TreeAttributeDropDown once tree data is loaded: true only if permissions are configured
+    const [showTreeToggle, setShowTreeToggle] = useState(false);
 
     const onFilterChange: ComponentProps<typeof FilterDropdownContent>['onFilterChange'] = (filterData: UIFilter) =>
         dispatch({
@@ -45,12 +57,17 @@ export const FilterDropDown: FunctionComponent<IUIFilterDropDownProps> = ({filte
             },
         });
 
+    const isTreeFilter = isUIFilterTree(filter);
+    const includeHiddenOptions = isTreeFilter ? (filter.includeHiddenOptions ?? false) : false;
+
     return (
         <FilterDropDownStyledDiv>
             <FilterDropdownContent
                 filter={filter}
                 onFilterChange={onFilterChange}
                 selectDropDownRef={selectDropDownRef}
+                toggleHiddenRef={isTreeFilter ? toggleHiddenRef : undefined}
+                onPermissionConfiguredChange={isTreeFilter ? setShowTreeToggle : undefined}
             />
             <div ref={selectDropDownRef} />
             <KitDivider noMargin />
@@ -63,6 +80,15 @@ export const FilterDropDown: FunctionComponent<IUIFilterDropDownProps> = ({filte
                 <KitButton type="action" icon={<FontAwesomeIcon icon={faTrash} />} onClick={_onDeleteFilter} danger>
                     {t('global.delete')}
                 </KitButton>
+            )}
+            {isTreeFilter && showTreeToggle && (
+                <ShowHiddenToggleWrapper align="center" justify="space-between">
+                    <KitTypography.Text size="fontSize5">{t('filters.show-hidden-options')}</KitTypography.Text>
+                    <KitSwitch
+                        checked={includeHiddenOptions}
+                        onChange={checked => toggleHiddenRef.current?.(checked)}
+                    />
+                </ShowHiddenToggleWrapper>
             )}
         </FilterDropDownStyledDiv>
     );

@@ -313,7 +313,8 @@
         "empty-value": "Undefined",
         "visible-by-default": "Value(s) visible by default",
         "hidden-by-default": "Value(s) hidden by default",
-        "select-all": "Select All"
+        "select-all": "Select All",
+        "show-hidden-options": "Include hidden options"
     },
     "filter-item": {
         "no-operator": "If"

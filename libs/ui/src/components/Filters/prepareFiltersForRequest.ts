@@ -100,19 +100,22 @@ const _addValuesListForFilters = (valuesList: string[]): RecordFilterInput[] => 
 const _generateConditionsFromMultipleValues = (
     filter: IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
 ): RecordFilterInput[] => {
-    if (!filter.value || filter.value.length === 0) {
+    const value = filter.value;
+    const nodes = isUIFilterTree(filter) ? filter.nodes : undefined;
+
+    if (!value || value.length === 0) {
         return [];
     }
     const filtersWithOperators: RecordFilterInput[] = [];
-    filter.value.forEach((recordId, idx) => {
-        if (idx === 0 && filter.value && filter.value.length > 1) {
+    value.forEach((recordId, idx) => {
+        if (idx === 0 && value.length > 1) {
             filtersWithOperators.push({operator: RecordFilterOperator.OPEN_BRACKET});
         }
-        if (isUIFilterTree(filter) && filter.nodes && filter.nodes.length > 0) {
+        if (nodes?.length > 0) {
             filtersWithOperators.push({
                 value: recordId,
                 condition: filter.condition,
-                field: `${filter.attribute.id}.${filter.nodes[0].libraryId}.id`,
+                field: `${filter.attribute.id}.${nodes[0].libraryId}.id`,
             });
         } else {
             filtersWithOperators.push({
@@ -121,7 +124,7 @@ const _generateConditionsFromMultipleValues = (
                 field: Array.isArray(filter.field) ? filter.field[idx] : filter.field,
             });
         }
-        if (filter.value && idx < filter.value.length - 1) {
+        if (idx < value.length - 1) {
             filtersWithOperators.push({
                 operator:
                     filter.condition === RecordFilterCondition.NOT_EQUAL
@@ -129,7 +132,7 @@ const _generateConditionsFromMultipleValues = (
                         : RecordFilterOperator.OR,
             });
         }
-        if (filter.value && filter.value.length > 1 && idx >= filter.value.length - 1) {
+        if (value.length > 1 && idx >= value.length - 1) {
             filtersWithOperators.push({operator: RecordFilterOperator.CLOSE_BRACKET});
         }
     });
@@ -137,10 +140,6 @@ const _generateConditionsFromMultipleValues = (
 };
 
 const _addEmptyCondition = (baseConditions: RecordFilterInput[], filter: UIFilter): RecordFilterInput[] => {
-    if (!filter.withEmptyValues) {
-        return baseConditions;
-    }
-
     const hasValue =
         filter.value !== null &&
         filter.value !== undefined &&
@@ -179,7 +178,13 @@ export const prepareFiltersForRequest = (
                 if (filter.withEmptyValues) {
                     return true;
                 }
-
+                if (isUIFilterTree(filter)) {
+                    // Skip if: (Toggle ON + no user selection) OR (No user selection + no initial value)
+                    const noUserSelectionNoInitialValue =
+                        filter.userNodes == null && (!filter.value || filter.value.length === 0);
+                    const toggleOnNoUserSelection = filter.includeHiddenOptions && filter.userNodes == null;
+                    return !(noUserSelectionNoInitialValue || toggleOnNoUserSelection);
+                }
                 if (isUIFilterWithSmartFilter(filter)) {
                     return (
                         (filter.value !== null && filter.value.length > 0) ||
@@ -225,26 +230,42 @@ export const prepareFiltersForRequest = (
             .map(filter => {
                 //@ts-ignore typscript does not recognize filter as a UIFilter
                 if (isUIFilterValueList(filter) || isUIFilterTree(filter) || isUIFilterWithSmartFilter(filter)) {
+                    const field = (Array.isArray(filter.field) ? filter.field[0] : filter.field) || filter.attribute.id;
                     if (filter.condition && nullValueConditions.includes(filter.condition)) {
-                        const baseConditions = [
+                        const baseConditions: RecordFilterInput[] = [
                             {
-                                field: Array.isArray(filter.field) ? filter.field[0] : filter.field,
+                                field,
                                 condition: filter.condition,
                                 value: null,
                             },
                         ];
-                        return _addEmptyCondition(
-                            baseConditions,
-                            filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
-                        );
+                        return !filter.withEmptyValues
+                            ? baseConditions
+                            : _addEmptyCondition(
+                                  baseConditions,
+                                  filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
+                              );
+                    }
+                    if (isUIFilterTree(filter)) {
+                        // No user selection (null or undefined): add IS_EMPTY to filters
+                        // TODO : include IS_EMPTY to permissions
+                        if (filter.userNodes == null) {
+                            if (filter.withEmptyValues) {
+                                return [{field, condition: RecordFilterCondition.IS_EMPTY, value: null}];
+                            }
+                            const baseConditions = _generateConditionsFromMultipleValues(filter as IUIFilterTree);
+                            return _addEmptyCondition(baseConditions, filter as IUIFilterTree);
+                        }
                     }
                     const baseConditions = _generateConditionsFromMultipleValues(
                         filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
                     );
-                    return _addEmptyCondition(
-                        baseConditions,
-                        filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
-                    );
+                    return !filter.withEmptyValues
+                        ? baseConditions
+                        : _addEmptyCondition(
+                              baseConditions,
+                              filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
+                          );
                 }
 
                 if (isUIFilterStandard(filter as UIFilter)) {
@@ -265,7 +286,9 @@ export const prepareFiltersForRequest = (
                         value: filterWithStringValue.value,
                     },
                 ];
-                return _addEmptyCondition(baseConditions, filter as UIFilter);
+                return !filter.withEmptyValues
+                    ? baseConditions
+                    : _addEmptyCondition(baseConditions, filter as UIFilter);
             }),
     );
 

@@ -149,6 +149,7 @@ describe('ViewSettings Reducer', () => {
                 field: 'second',
                 condition: RecordFilterCondition.EQUAL,
                 value: initialViewFilterValue,
+                withEmptyValues: true,
             });
         });
     });

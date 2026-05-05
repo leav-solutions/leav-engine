@@ -8,7 +8,7 @@ import {faSearch} from '@fortawesome/free-solid-svg-icons';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useState} from 'react';
 
-export const useTreesSearch = (visibleByDefaultTree: ITreeNode[], hiddenByDefaultTree: ITreeNode[]) => {
+export const useTreesSearch = (tree: ITreeNode[]) => {
     const {t} = useSharedTranslation();
     const [searchValue, setSearchValue] = useState('');
 
@@ -35,8 +35,7 @@ export const useTreesSearch = (visibleByDefaultTree: ITreeNode[], hiddenByDefaul
             .filter((node): node is ITreeNode => node !== null);
 
     return {
-        filteredVisibleByDefaultTree: !normalizedSearch ? visibleByDefaultTree : _filterNodes(visibleByDefaultTree),
-        filteredHiddenByDefaultTree: !normalizedSearch ? hiddenByDefaultTree : _filterNodes(hiddenByDefaultTree),
+        filteredTree: !normalizedSearch ? tree : _filterNodes(tree),
         expandedNodeIdsFromSearch: !normalizedSearch ? [] : nodeIds,
         SearchInput: (
             <KitInput

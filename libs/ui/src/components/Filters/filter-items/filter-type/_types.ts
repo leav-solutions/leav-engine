@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {type RefObject} from 'react';
+import {type MutableRefObject, type RefObject} from 'react';
 import {
     type IUIFilterSmartFiler,
     type IUIFilterLink,
@@ -27,6 +27,8 @@ export interface IFilterChildrenTreeDropDownProps {
     filter: IUIFilterTree;
     onFilterChange: (filterData: IUIFilterTree) => void;
     selectDropDownRef?: RefObject<HTMLDivElement>;
+    toggleHiddenRef?: MutableRefObject<((checked: boolean) => void) | null>;
+    onPermissionConfiguredChange?: (isConfigured: boolean) => void;
 }
 
 export interface IFilterChildrenSmartFilterDropDownProps {

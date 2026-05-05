@@ -143,7 +143,8 @@ const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
             initialFilter => initialFilter.attribute.id === payload.attribute.id,
         );
         if (filterWithDefaultValues !== undefined) {
-            filterToAdd = filterWithDefaultValues;
+            // TODO : include IS_EMPTY to permissions
+            filterToAdd = {...filterWithDefaultValues, withEmptyValues: true};
         } else {
             filterToAdd = {
                 ...payload,
@@ -224,7 +225,10 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
                     ...filter,
                     condition: null,
                     value: null,
-                    formattedValue: null,
+                    nodes: null,
+                    userNodes: null,
+                    userFormattedValue: null,
+                    includeHiddenOptions: false,
                 };
             }
         }
@@ -244,8 +248,24 @@ const changeFilterConfig: Reducer<IUIFiltersActionChangeFilterConfig> = (state, 
         if (filter.id !== payload.id) {
             return filter;
         }
-        if (isUIFilterTree(filter) && payload.value && payload.value.length === 0) {
-            return {...filter, ...payload, value: null};
+        if (isUIFilterTree(filter)) {
+            const treePayload = payload as IUIFilterTree;
+            // Convert empty user selection to null (deselecting all → no user selection)
+            // Restore initial value/nodes so the filter keeps its viewByDefault values
+            if (Array.isArray(treePayload.value) && treePayload.value.length === 0) {
+                const initialFilter = state.initialFilters.find(({id}) => id === filter.id) as
+                    | IUIFilterTree
+                    | undefined;
+                return {
+                    ...filter,
+                    ...payload,
+                    value: initialFilter?.value ?? null,
+                    nodes: initialFilter?.nodes ?? null,
+                    userNodes: null,
+                    userFormattedValue: null,
+                };
+            }
+            return {...filter, ...payload};
         }
         if (isUIFilterValueList(filter) && filter.condition && nullValueConditions.includes(filter.condition)) {
             return {...filter, ...payload, value: null};

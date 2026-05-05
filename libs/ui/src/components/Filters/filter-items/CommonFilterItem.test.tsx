@@ -506,11 +506,8 @@ describe('CommonFilterItem', () => {
             await userEvent.click(screen.getByRole('button', {name: /link/}));
 
             // THEN the "through" condition should be selected
-            const conditionSelect = screen.getByRole('combobox', {name: /filter-link-condition/});
-            await userEvent.click(conditionSelect);
-            const throughOption = screen.getByRole('option', {name: /through/i});
-            expect(throughOption).toHaveAttribute('aria-selected', 'true');
-            await userEvent.click(throughOption);
+            const throughSelectionLabel = baseElement.querySelector('[class*="ant-select-selection-item"]');
+            expect(throughSelectionLabel?.textContent).toMatch(/through/i);
 
             // AND the subField select is available
             await waitFor(() => {
@@ -538,7 +535,7 @@ describe('CommonFilterItem', () => {
             await userEvent.click(subConditionSelect);
             const subConditionSelectVirtualList = baseElement
                 .getElementsByClassName('rc-virtual-list')
-                .item(2) as HTMLElement;
+                .item(1) as HTMLElement;
             expect(subConditionSelectVirtualList).toBeVisible();
             await userEvent.click(within(subConditionSelectVirtualList).getByText('filters.not-contains'));
 
