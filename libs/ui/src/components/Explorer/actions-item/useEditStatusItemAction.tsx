@@ -15,10 +15,11 @@ import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
 import {type FeatureHook, type Entrypoint, type IEntrypointLink, type IItemAction, type IItemData} from '../_types';
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {MASS_SELECTION_ALL} from '../_constants';
-import {BREAK_TWO_LINES} from '_ui/constants';
+import {BREAK_TWO_LINES, ERROR_NOTIFICATION_DURATION, SUCCESS_NOTIFICATION_DURATION} from '_ui/constants';
 import {type FetchResult} from '@apollo/client';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash, faTrashRestore} from '@fortawesome/free-solid-svg-icons';
+import {KitAlert} from 'aristid-ds';
 
 /**
  * Hook used to get the action for `<DataView />` component.
@@ -103,6 +104,16 @@ export const useEditStatusItemAction = ({
         },
     });
 
+    const displayAlert = ({type}: {type: 'success' | 'error'}) => {
+        KitAlert[type]({
+            showIcon: true,
+            duration: type === 'success' ? SUCCESS_NOTIFICATION_DURATION : ERROR_NOTIFICATION_DURATION,
+            closable: true,
+            message: t(`explorer.item_deleted_${type}`),
+            description: null,
+        });
+    };
+
     const _deactivateItem = async (item: IItemData): Promise<FetchResult<DeactivateRecordsMutation>> => {
         const libRes = await deactivateRecordsMutation({
             variables: {
@@ -118,8 +129,12 @@ export const useEditStatusItemAction = ({
             });
         }
 
-        onRemove?.(item);
-
+        if ((libRes.data?.deactivateRecords ?? []).length > 0) {
+            displayAlert({type: 'success'});
+            onRemove?.(item);
+        } else {
+            displayAlert({type: 'error'});
+        }
         return libRes;
     };
 

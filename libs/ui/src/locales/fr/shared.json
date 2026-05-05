@@ -658,6 +658,8 @@
         "actions": "Actions",
         "more-actions": "Voir plus",
         "deactivate-item": "Désactiver",
+        "item_deleted_success": "Élément supprimé avec succès.",
+        "item_deleted_error": "Erreur lors de la suppression de l’élément.",
         "activate-item": "Activer",
         "delete-item": "Supprimer",
         "replace-item": "Remplacer",
