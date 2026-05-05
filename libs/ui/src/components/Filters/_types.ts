@@ -98,6 +98,11 @@ export interface IUIFilterTree extends Omit<IUIFilterBase, 'value' | 'formattedV
     formattedValue?: string[] | null;
     nodes?: null | Array<{nodeId: string; libraryId: string}>;
     field: string[];
+    includeHiddenOptions?: boolean;
+    /** Nodes explicitly selected by the user. Null/undefined = no user selection (use initial filter). */
+    userNodes?: null | Array<{nodeId: string; libraryId: string}>;
+    /** Labels for user-selected nodes (used for display in CommonFilterItem). */
+    userFormattedValue?: string[] | null;
 }
 
 export interface IUIFilterSmartFiler extends Omit<IUIFilterBase, 'value' | 'formattedValue'> {

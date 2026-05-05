@@ -14,12 +14,6 @@ interface IEmptyValueCheckboxProps {
     count?: number;
 }
 
-const TreeStyled = styled(KitTree)`
-    span.ant-typography {
-        font-style: italic;
-    }
-`;
-
 const EMPTY_VALUE_KEY = '0';
 
 export const EmptyValueCheckbox: FunctionComponent<IEmptyValueCheckboxProps> = ({filter, onSelect, count}) => {
@@ -30,7 +24,7 @@ export const EmptyValueCheckbox: FunctionComponent<IEmptyValueCheckboxProps> = (
     };
 
     return (
-        <TreeStyled
+        <KitTree
             checkable
             treeData={[{title: t('filters.empty-value'), key: EMPTY_VALUE_KEY, isLeaf: true}]}
             titleRender={

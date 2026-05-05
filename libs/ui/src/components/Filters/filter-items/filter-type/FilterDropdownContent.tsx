@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {AttributeFormat} from '_ui/_gqlTypes';
-import {type FunctionComponent, type RefObject} from 'react';
+import {type FunctionComponent, type MutableRefObject, type RefObject} from 'react';
 import {BooleanAttributeDropDown} from './BooleanAttributeDropdown';
 import {ColorAttributeDropDown} from './ColorAttributeDropDown';
 import {DateAttributeDropDown} from './DateAttributeDropDown';
@@ -30,7 +30,16 @@ export const FilterDropdownContent: FunctionComponent<{
     onFilterChange: (filterData: UIFilter) => void;
     selectDropDownRef?: RefObject<HTMLDivElement>;
     removeThroughCondition?: boolean;
-}> = ({filter, onFilterChange, selectDropDownRef, removeThroughCondition = false}) => {
+    toggleHiddenRef?: MutableRefObject<((checked: boolean) => void) | null>;
+    onPermissionConfiguredChange?: (isConfigured: boolean) => void;
+}> = ({
+    filter,
+    onFilterChange,
+    selectDropDownRef,
+    removeThroughCondition = false,
+    toggleHiddenRef,
+    onPermissionConfiguredChange,
+}) => {
     if (isUIFilterValueList(filter)) {
         return <FilterValueListDropDown filter={filter} onFilterChange={onFilterChange} />;
     }
@@ -65,6 +74,8 @@ export const FilterDropdownContent: FunctionComponent<{
                 filter={filter}
                 onFilterChange={onFilterChange}
                 selectDropDownRef={selectDropDownRef}
+                toggleHiddenRef={toggleHiddenRef}
+                onPermissionConfiguredChange={onPermissionConfiguredChange}
             />
         );
     }

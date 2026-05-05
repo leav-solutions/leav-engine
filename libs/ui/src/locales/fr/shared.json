@@ -313,7 +313,8 @@
         "empty-value": "Non défini",
         "visible-by-default": "Valeurs affichée(s) par défaut",
         "hidden-by-default": "Valeurs masquée(s) par défaut",
-        "select-all": "Tout sélectionner"
+        "select-all": "Tout sélectionner",
+        "show-hidden-options": "Inclure les options masquées"
     },
     "filter-item": {
         "no-operator": "Si"

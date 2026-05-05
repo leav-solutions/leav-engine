@@ -30,7 +30,11 @@ const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
 
     const filterValues: string[] = filter.withEmptyValues ? [t('filters.empty-value')] : [];
 
-    if (isUIFilterTree(filter) || isUIFilterWithSmartFilter(filter)) {
+    if (isUIFilterTree(filter)) {
+        return [...filterValues, ...(filter.userFormattedValue ?? [])];
+    }
+
+    if (isUIFilterWithSmartFilter(filter)) {
         return [...filterValues, ...(filter.formattedValue ?? [])];
     }
 

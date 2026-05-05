@@ -16,7 +16,7 @@ describe('filterTreeByPermission', () => {
     });
 
     it('should return an empty array when the list is empty', () => {
-        const result = filterTreeByPermission([], true);
+        const result = filterTreeByPermission([]);
 
         expect(result).toEqual([]);
     });
@@ -27,7 +27,7 @@ describe('filterTreeByPermission', () => {
             createNode({id: 'node-2', accessRecordByDefaultPermission: false}),
         ];
 
-        const result = filterTreeByPermission(nodes, true);
+        const result = filterTreeByPermission(nodes);
 
         expect(result).toHaveLength(1);
         expect(result[0].id).toBe('node-1');
@@ -45,7 +45,7 @@ describe('filterTreeByPermission', () => {
             }),
         ];
 
-        const result = filterTreeByPermission(nodes, true);
+        const result = filterTreeByPermission(nodes);
 
         expect(result).toHaveLength(1);
         expect(result[0].id).toBe('parent');
@@ -65,7 +65,42 @@ describe('filterTreeByPermission', () => {
             }),
         ];
 
-        const result = filterTreeByPermission(nodes, true);
+        const result = filterTreeByPermission(nodes);
+
+        expect(result).toHaveLength(0);
+    });
+
+    it('should not keep nodes with undefined permission', () => {
+        const nodes: ITreeNode[] = [
+            createNode({id: 'node-1', accessRecordByDefaultPermission: undefined}),
+            createNode({id: 'node-2', accessRecordByDefaultPermission: false}),
+            createNode({id: 'node-3', accessRecordByDefaultPermission: true}),
+        ];
+
+        const result = filterTreeByPermission(nodes);
+
+        expect(result).toHaveLength(1);
+        expect(result.map(n => n.id)).toEqual(['node-3']);
+    });
+
+    it('should return an empty array when no node has === true permission', () => {
+        const nodes: ITreeNode[] = [
+            createNode({id: 'node-1', accessRecordByDefaultPermission: undefined}),
+            createNode({id: 'node-2', accessRecordByDefaultPermission: undefined}),
+        ];
+
+        const result = filterTreeByPermission(nodes);
+
+        expect(result).toHaveLength(0);
+    });
+
+    it('should not keep nodes with false or undefined permission', () => {
+        const nodes: ITreeNode[] = [
+            createNode({id: 'node-1', accessRecordByDefaultPermission: undefined}),
+            createNode({id: 'node-2', accessRecordByDefaultPermission: false}),
+        ];
+
+        const result = filterTreeByPermission(nodes);
 
         expect(result).toHaveLength(0);
     });
@@ -85,7 +120,7 @@ describe('filterTreeByPermission', () => {
             }),
         ];
 
-        const result = filterTreeByPermission(nodes, true);
+        const result = filterTreeByPermission(nodes);
 
         expect(result).toHaveLength(1);
         expect(result[0].id).toBe('parent');

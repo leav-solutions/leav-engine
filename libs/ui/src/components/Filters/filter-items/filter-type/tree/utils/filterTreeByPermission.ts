@@ -3,14 +3,13 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type ITreeNode} from '../useGetTreeData';
 
-export const filterTreeByPermission = (nodes: ITreeNode[], accessRecordByDefaultPermission: boolean): ITreeNode[] => {
+export const filterTreeByPermission = (nodes: ITreeNode[]): ITreeNode[] => {
     const result: ITreeNode[] = [];
 
     for (const node of nodes) {
-        const filteredChildren = filterTreeByPermission(node.children, accessRecordByDefaultPermission);
-        const nodeMatchesPermission = node.accessRecordByDefaultPermission === accessRecordByDefaultPermission;
+        const filteredChildren = filterTreeByPermission(node.children);
 
-        if (nodeMatchesPermission || filteredChildren.length > 0) {
+        if (node.accessRecordByDefaultPermission || filteredChildren.length > 0) {
             result.push({
                 ...node,
                 children: filteredChildren,
