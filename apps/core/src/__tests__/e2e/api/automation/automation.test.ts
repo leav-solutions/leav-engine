@@ -47,7 +47,7 @@ describe('Automation', () => {
                                 },
                                 {
                                     type: AutomationRuleActions.condition,
-                                    params: {result: true},
+                                    params: {expression: 'true'},
                                 },
                             ],
                         },
@@ -88,7 +88,7 @@ describe('Automation', () => {
                             {
                                 type: AutomationRuleActions.condition,
                                 name: null,
-                                params: {result: true},
+                                params: {expression: 'true'},
                             },
                         ],
                     },

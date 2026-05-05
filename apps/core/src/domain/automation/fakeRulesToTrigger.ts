@@ -37,7 +37,7 @@ export const buildFakeRulesToTrigger = async (
                 {
                     type: AutomationRuleActions.CONDITION,
                     params: {
-                        result: true,
+                        expression: 'true',
                     } satisfies ConditionActionParams,
                 },
                 {
@@ -169,7 +169,7 @@ export const buildFakeRulesToTrigger = async (
                 {
                     type: AutomationRuleActions.CONDITION,
                     params: {
-                        result: true,
+                        expression: 'true',
                     } satisfies ConditionActionParams,
                 },
                 // {
