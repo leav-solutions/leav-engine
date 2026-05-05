@@ -11,17 +11,20 @@ import ValidationError from '../../../../../errors/ValidationError';
 import {getCoreDep} from '../../../integrationTestUtils';
 import {type IRecord} from '../../../../../_types/record';
 import {type IAutomationPipelineExecutionState} from '../../../../../domain/automation/pipeline/_types';
+import {pipelineStepValidation} from '../../../../../domain/automation/pipeline/stepValidation';
 
 describe('jexlCalculationAutomationAction', () => {
     let action: IAutomationAction<JexlCalculationActionParams>;
     const ctx: IQueryInfos = {userId: systemUserId};
 
+    const trigger = {
+        synchronous: false,
+        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+        eventTopic: {} as any,
+    };
+
     const baseState: IAutomationPipelineExecutionState = {
-        trigger: {
-            synchronous: false,
-            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
-            eventTopic: {} as any,
-        },
+        trigger,
         results: {},
         stepIndex: 0,
         lastResult: undefined,
@@ -35,18 +38,29 @@ describe('jexlCalculationAutomationAction', () => {
     });
 
     describe('validateParams', () => {
+        const makeValidateParams = (formula: string) =>
+            pipelineStepValidation<JexlCalculationActionParams>(
+                {
+                    steps: [{params: {formula}, type: 'jexlCalculation'}],
+                    trigger,
+                },
+                0,
+            );
+
         it('resolves for a valid Jexl expression', async () => {
-            await expect(action.validateParams!({formula: '1 + 1'})).resolves.toBeUndefined();
+            await expect(action.validateStep?.(makeValidateParams('1 + 1'), ctx)).resolves.toBeUndefined();
         });
 
         it('resolves for a complex valid expression', async () => {
-            await expect(action.validateParams!({formula: 'results["step1"] * 2 + 10'})).resolves.toBeUndefined();
+            await expect(
+                action.validateStep?.(makeValidateParams('results["step1"] * 2 + 10'), ctx),
+            ).resolves.toBeUndefined();
         });
 
         it('throws ValidationError for an invalid Jexl expression', async () => {
             let caughtError: unknown;
             try {
-                await action.validateParams!({formula: '1 ++ 1'});
+                await action.validateStep?.(makeValidateParams('1 ++ 1'), ctx);
             } catch (err) {
                 caughtError = err;
             }

@@ -34,7 +34,7 @@ export default function ({
     return {
         type: AutomationRuleActions.JEXL_CALCULATION,
         paramsSchema: jexlCalculationActionParamsSchema,
-        validateParams: params => jexlDomain.validate(params.formula),
+        validateStep: params => jexlDomain.validate(params.step.params.formula),
         async execute(params, state, ctx) {
             const jexlCtx = buildAutomationJexlContext(state, ctx);
             const result = await jexlDomain.eval(params.formula, jexlCtx);

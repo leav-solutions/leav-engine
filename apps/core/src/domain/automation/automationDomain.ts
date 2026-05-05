@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {logger} from '@leav/logger';
+import _ from 'lodash';
 import {
     type ICreateAutomationRule,
     type IAutomationRule,
@@ -27,6 +28,7 @@ import {type IAutomationPipelineDomain} from './pipeline/pipeline';
 import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesToTrigger';
 import {type IAutomationTriggers} from './triggers/automationTriggers';
 import {type AutomationTriggerDef} from './triggers/_types';
+import {type AutomationPipelineExecution, type AutomationPipelineValidation} from './pipeline/_types';
 
 export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
@@ -90,6 +92,21 @@ export default function ({
         }
     };
 
+    const _pipelineExecutionFromRule = (
+        rule: Pick<IAutomationRule, 'id' | 'pipeline' | 'trigger'>,
+    ): AutomationPipelineExecution => ({
+        ...rule.pipeline,
+        ruleId: rule.id,
+        trigger: rule.trigger,
+    });
+
+    const _pipelineValidationFromRule = (
+        rule: Pick<IAutomationRule, 'pipeline' | 'trigger'>,
+    ): AutomationPipelineValidation => ({
+        ...rule.pipeline,
+        trigger: rule.trigger,
+    });
+
     const _getRulesToTrigger = async (
         event: {action: AutomationRuleEventAction; topic?: AutomationRulesEventTopic},
         synchronous: boolean,
@@ -137,11 +154,11 @@ export default function ({
                     rules.map(async rule => {
                         try {
                             await pipelineDomain.executePipeline(
-                                {
-                                    ...rule.pipeline,
-                                    ruleId: rule.id,
+                                _pipelineExecutionFromRule({
+                                    id: rule.id,
+                                    pipeline: rule.pipeline,
                                     trigger,
-                                },
+                                }),
                                 ctx,
                             );
                         } catch (error) {
@@ -173,7 +190,13 @@ export default function ({
             await _hasManageAutomationPermissionOrThrow(ctx);
 
             await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
-            await pipelineDomain.validatePipeline(rule.pipeline);
+            await pipelineDomain.validatePipeline(
+                _pipelineValidationFromRule({
+                    pipeline: rule.pipeline,
+                    trigger: rule.trigger,
+                }),
+                ctx,
+            );
 
             if (rule.active && !rule.pipeline.steps.length) {
                 throw new ValidationError<IAutomationRule>({
@@ -201,19 +224,26 @@ export default function ({
         async updateAutomationRule({rule, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
 
+            const getCurrentRuleIfNeeded = _.once(() =>
+                automationRuleRepo.getAutomationRules({filters: {id: rule.id}}, ctx).then(res => res.list[0]),
+            );
+
             if (rule.trigger) {
                 await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
             }
 
             if (rule.pipeline) {
-                await pipelineDomain.validatePipeline(rule.pipeline);
+                await pipelineDomain.validatePipeline(
+                    _pipelineValidationFromRule({
+                        pipeline: rule.pipeline,
+                        trigger: rule.trigger || (await getCurrentRuleIfNeeded()).trigger,
+                    }),
+                    ctx,
+                );
             }
 
             if (rule.active && !rule.pipeline?.steps?.length) {
-                const currentRule = (await automationRuleRepo.getAutomationRules({filters: {id: rule.id}}, ctx))
-                    .list[0];
-
-                if (currentRule.pipeline.steps.length === 0) {
+                if ((await getCurrentRuleIfNeeded()).pipeline.steps.length === 0) {
                     throw new ValidationError<IAutomationRule>({
                         pipeline: Errors.AUTOMATION_RULE_PIPELINE_EMPTY,
                     });

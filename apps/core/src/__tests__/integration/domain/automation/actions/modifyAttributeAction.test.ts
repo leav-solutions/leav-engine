@@ -15,6 +15,8 @@ import {getCoreDep} from '../../../integrationTestUtils';
 import {type IRecordDomain} from '../../../../../domain/record/recordDomain';
 import {type ISaveValue} from '../../../../../_types/value';
 import {type IAutomationPipelineExecutionState} from '../../../../../domain/automation/pipeline/_types';
+import ValidationError from '../../../../../errors/ValidationError';
+import {pipelineStepValidation} from '../../../../../domain/automation/pipeline/stepValidation';
 
 const libSource = 'maa_lib_source';
 const libTarget = 'maa_lib_target';
@@ -132,6 +134,114 @@ describe('modifyAttributeAction', () => {
         startDateMs: Date.now(),
         stepIndex: 0,
         lastResult,
+    });
+
+    describe('validateParams', () => {
+        const makeValidateParams = (library: string, attributePath: string) =>
+            pipelineStepValidation<ModifyAttributeActionParams>(
+                {
+                    steps: [
+                        {
+                            type: 'some_other_action',
+                            params: {},
+                        },
+                        {params: {attributePath, mode: 'replace' as const}, type: 'modifyAttribute'},
+                    ],
+                    trigger: {
+                        synchronous: true,
+                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                        eventTopic: {library} as any,
+                    },
+                },
+                1,
+            );
+
+        it('throws when trigger has no eventTopic', async () => {
+            await expect(
+                action.validateStep?.(
+                    {
+                        ...makeValidateParams(libSource, STANDARD_MONO_ATTR),
+                        trigger: {synchronous: true, eventAction: SyncAutomationRuleEventAction.RECORD_INIT},
+                    },
+                    ctx,
+                ),
+            ).rejects.toThrow(
+                'ModifyAttributeAction can only be used with triggers that have a library in their event topic',
+            );
+        });
+
+        it('throws when eventTopic has no library', async () => {
+            await expect(
+                action.validateStep?.(
+                    {
+                        ...makeValidateParams(libSource, STANDARD_MONO_ATTR),
+                        trigger: {
+                            synchronous: true,
+                            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {} as any,
+                        },
+                    },
+                    ctx,
+                ),
+            ).rejects.toThrow(
+                'ModifyAttributeAction can only be used with triggers that have a library in their event topic',
+            );
+        });
+
+        it('resolves for a single-segment attributePath with valid trigger', async () => {
+            await expect(
+                action.validateStep?.(makeValidateParams(libSource, STANDARD_MONO_ATTR), ctx),
+            ).resolves.toBeUndefined();
+        });
+
+        it('resolves for a valid two-segment path with ADVANCED_LINK intermediate attribute', async () => {
+            await expect(
+                action.validateStep?.(makeValidateParams(libSource, `${LINK_MONO_ATTR}.${TARGET_ATTR}`), ctx),
+            ).resolves.toBeUndefined();
+        });
+
+        it('throws when an intermediate path segment is a standard (non-link) attribute type', async () => {
+            await expect(
+                action.validateStep?.(makeValidateParams(libSource, `${STANDARD_MONO_ATTR}.${TARGET_ATTR}`), ctx),
+            ).rejects.toThrow(/must be of type simple_link, advanced_link or tree/);
+        });
+
+        it('throws when an intermediate attribute does not belong to the library', async () => {
+            // TARGET_ATTR belongs to libTarget, not libSource → validateLibraryAttribute throws
+            await expect(
+                action.validateStep?.(makeValidateParams(libSource, `${TARGET_ATTR}.${TARGET_ATTR}`), ctx),
+            ).rejects.toBeInstanceOf(ValidationError);
+        });
+
+        it('throws when attribute in path does not exists', async () => {
+            await expect(
+                action.validateStep?.(makeValidateParams(libSource, 'some_not_existing_attribute'), ctx),
+            ).rejects.toBeInstanceOf(ValidationError);
+        });
+
+        it('throws when action is first in pipeline', async () => {
+            await expect(
+                action.validateStep?.(
+                    pipelineStepValidation<ModifyAttributeActionParams>(
+                        {
+                            steps: [
+                                {
+                                    params: {attributePath: STANDARD_MONO_ATTR, mode: 'replace' as const},
+                                    type: 'modifyAttribute',
+                                },
+                            ],
+                            trigger: {
+                                synchronous: true,
+                                eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                                eventTopic: {library: libSource} as any,
+                            },
+                        },
+                        0,
+                    ),
+                    ctx,
+                ),
+            ).rejects.toThrow('ModifyAttributeAction cannot be used in the first step of a pipeline');
+        });
     });
 
     describe('execute — throws when no record in eventTopic', () => {

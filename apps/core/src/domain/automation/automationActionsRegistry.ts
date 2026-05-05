@@ -31,7 +31,8 @@ export default function ({
             .map(modName => depsManager.cradle[modName]);
 
         logger.verbose('Loaded pipeline actions: ' + coreActions.map(a => a.type).join(', '));
-        return new Map(coreActions.map(action => [action.type, action]));
+        _actionsRegistry = new Map(coreActions.map(action => [action.type, action]));
+        return _actionsRegistry;
     };
 
     return {
