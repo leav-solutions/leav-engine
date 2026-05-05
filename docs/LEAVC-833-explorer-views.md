@@ -146,8 +146,7 @@ Il expose des callbacks génériques. C'est app-studio qui les branche sur le di
 messenger. Le composant Explorer doit rester utilisable hors de ce système de panneaux.
 
 > ⚠️ **Rétrocompatibilité AMP** : AMP consomme `Explorer` depuis `@leav/ui` sans passer par le
-> système de messenger d'app-studio. Toutes les nouvelles props/callbacks ajoutés à `Explorer`
-> **doivent rester optionnels** (`?:`). AMP ignorera ces callbacks sans modification de son côté.
+> système de messenger d'app-studio. Toutes les nouvelles props/callbacks ajoutés à `Explorer` > **doivent rester optionnels** (`?:`). AMP ignorera ces callbacks sans modification de son côté.
 
 **Flux Explorer → viewConfig :**
 Depuis la barre de l'Explorer, l'utilisateur peut modifier uniquement les **filtres** — pas les
