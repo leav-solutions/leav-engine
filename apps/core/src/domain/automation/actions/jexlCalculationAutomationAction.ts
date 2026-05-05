@@ -6,6 +6,7 @@ import {logger} from '@leav/logger';
 import {type IJexlDomain} from '../../jexl/jexlDomain';
 import {type IConfig} from '../../../_types/config';
 import {ActionExecutionResultStatus, AutomationRuleActions, type IAutomationAction} from './_types';
+import {type BuildAutomationJexlContext} from '../pipeline/buildAutomationJexlContext';
 
 const jexlCalculationActionParamsSchema = z.object({
     formula: z.string().meta({
@@ -20,27 +21,23 @@ export type JexlCalculationActionParams = z.infer<typeof jexlCalculationActionPa
 interface IDeps {
     'core.domain.jexl': IJexlDomain;
     config: IConfig;
+    'core.domain.automation.pipeline.buildAutomationJexlContext': BuildAutomationJexlContext;
 }
 
-export default function ({'core.domain.jexl': jexl, config}: IDeps): IAutomationAction<JexlCalculationActionParams> {
+export default function ({
+    'core.domain.jexl': jexlDomain,
+    config,
+    'core.domain.automation.pipeline.buildAutomationJexlContext': buildAutomationJexlContext,
+}: IDeps): IAutomationAction<JexlCalculationActionParams> {
     const debug = config.actions?.jexl?.debug ?? false;
+
     return {
         type: AutomationRuleActions.JEXL_CALCULATION,
         paramsSchema: jexlCalculationActionParamsSchema,
-        validateParams: params => jexl.validate(params.formula),
+        validateParams: params => jexlDomain.validate(params.formula),
         async execute(params, state, ctx) {
-            const jexlCtx = jexl.buildRootContext(
-                {
-                    results: state.results,
-                    ...(state.trigger.eventTopic.record
-                        ? {currentRecord: jexl.buildRecordContext(state.trigger.eventTopic.record, ctx)}
-                        : {}),
-                    // And other topics
-                },
-                ctx,
-            );
-
-            const result = await jexl.eval(params.formula, jexlCtx);
+            const jexlCtx = buildAutomationJexlContext(state, ctx);
+            const result = await jexlDomain.eval(params.formula, jexlCtx);
 
             debug && logger.debug(`Jexl calculation in automation: ${params.formula} => ${JSON.stringify(result)}`);
 
