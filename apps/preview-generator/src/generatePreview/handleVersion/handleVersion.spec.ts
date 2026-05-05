@@ -5,7 +5,11 @@ import {join} from 'path';
 import {execute} from './../execute/execute';
 import {handleVersion, type IHandleVersion} from './handleVersion';
 
+vi.mock('../execute/execute');
+
 describe('handleVersion', () => {
+    beforeEach(() => vi.clearAllMocks());
+
     const output = './test.png';
     const density = 300;
     const background = false;
@@ -40,16 +44,12 @@ describe('handleVersion', () => {
     };
 
     test('should call execute', () => {
-        (execute as jest.FunctionLike) = jest.fn();
-
         handleVersion(params as IHandleVersion);
 
         expect(execute).toBeCalledTimes(1);
     });
 
     test('should call execute with right argument', () => {
-        (execute as jest.FunctionLike) = jest.fn();
-
         handleVersion(params as IHandleVersion);
 
         expect(execute).toBeCalledWith({

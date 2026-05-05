@@ -14,14 +14,14 @@ describe('test getSvgCommand', () => {
     const size = 800;
 
     test('Command and args return on width larger', async () => {
-        jest.spyOn(fs.promises, 'readFile').mockResolvedValue(svgContent(200, 100));
+        vi.spyOn(fs.promises, 'readFile').mockResolvedValue(svgContent(200, 100));
         const {command, args} = await getSvgCommand(input, output, size);
         expect(command).toBe('inkscape');
         expect(args).toEqual(expect.arrayContaining([input, output, '-w', size.toString()]));
     });
 
     test('Command and args return on height larger', async () => {
-        jest.spyOn(fs.promises, 'readFile').mockResolvedValue(svgContent(100, 200));
+        vi.spyOn(fs.promises, 'readFile').mockResolvedValue(svgContent(100, 200));
         const {command, args} = await getSvgCommand(input, output, size);
         expect(command).toBe('inkscape');
         expect(args).toEqual(expect.arrayContaining([input, output, '-h', size.toString()]));

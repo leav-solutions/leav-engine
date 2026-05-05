@@ -4,12 +4,12 @@
 import {logger} from '@leav/logger';
 import {generateMsgRabbitMQ, sendToRabbitMQ} from './rabbitmq';
 
-jest.mock('../index');
+vi.mock('../index');
 
 describe('test sendToRabbitMQ', () => {
     test('check if display msg', () => {
         const channelMock: any = {
-            publish: jest.fn(),
+            publish: vi.fn(),
         };
 
         sendToRabbitMQ(
@@ -30,7 +30,7 @@ describe('test sendToRabbitMQ', () => {
 
     test('check if send to rabbitmq', () => {
         const channelMock: any = {
-            publish: jest.fn(),
+            publish: vi.fn(),
         };
 
         const msg = JSON.stringify({

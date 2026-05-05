@@ -13,36 +13,36 @@ const inode = 123456;
 const rootKey = 'rootKey';
 const stats = {ino: inode};
 
-jest.mock('chokidar', () => ({
-    watch: jest.fn(),
+vi.mock('chokidar', () => ({
+    watch: vi.fn(),
 }));
 
-jest.mock('crypto', () => ({
-    createHash: jest.fn(() => ({digest: jest.fn, update: jest.fn})),
+vi.mock('crypto', () => ({
+    createHash: vi.fn(() => ({digest: vi.fn(), update: vi.fn()})),
 }));
 
-jest.mock('fs', () => ({
-    createReadStream: jest.fn(() => ({
-        on: jest.fn(() => ({
-            on: jest.fn(() => ({
-                on: jest.fn((...args) => args[1]()),
+vi.mock('fs', () => ({
+    createReadStream: vi.fn(() => ({
+        on: vi.fn(() => ({
+            on: vi.fn(() => ({
+                on: vi.fn((...args) => args[1]()),
             })),
         })),
     })),
 }));
 
-jest.mock('../redis/redis', () => ({
-    setData: jest.fn(),
-    updateData: jest.fn(),
-    getInode: jest.fn(() => 123456),
+vi.mock('../redis/redis', () => ({
+    setData: vi.fn(),
+    updateData: vi.fn(),
+    getInode: vi.fn(() => 123456),
 }));
 
-jest.mock('../rabbitmq/rabbitmq', () => ({
-    generateMsgRabbitMQ: jest.fn(),
-    sendToRabbitMQ: jest.fn(),
+vi.mock('../rabbitmq/rabbitmq', () => ({
+    generateMsgRabbitMQ: vi.fn(),
+    sendToRabbitMQ: vi.fn(),
 }));
 
-jest.mock('../config', () => ({
+vi.mock('../config', () => ({
     getConfig: global.__mockPromise({
         allowFilesList: '',
         ignoreFilesList: '',
@@ -50,15 +50,15 @@ jest.mock('../config', () => ({
     }),
 }));
 
-jest.mock('./events', () => ({
-    handleCreate: jest.fn(),
-    handleDelete: jest.fn(),
-    handleMove: jest.fn(),
-    handleUpdate: jest.fn(),
+vi.mock('./events', () => ({
+    handleCreate: vi.fn(),
+    handleDelete: vi.fn(),
+    handleMove: vi.fn(),
+    handleUpdate: vi.fn(),
 }));
 
 describe('test checkEvent', () => {
-    afterAll(() => jest.resetAllMocks());
+    afterAll(() => vi.resetAllMocks());
 
     test('Init - add a file', async () => {
         const params: IParamsExtends = {
@@ -67,7 +67,7 @@ describe('test checkEvent', () => {
             rootKey,
         };
 
-        await checkEvent('add', file, params, {...stats, isDirectory: jest.fn(() => false)});
+        await checkEvent('add', file, params, {...stats, isDirectory: vi.fn(() => false)});
 
         expect(setData).toBeCalledWith(file, inode);
         expect(sendToRabbitMQ).not.toBeCalled();
@@ -81,7 +81,7 @@ describe('test checkEvent', () => {
             rootKey,
         };
 
-        await checkEvent('addDir', file, params, {...stats, isDirectory: jest.fn(() => true)});
+        await checkEvent('addDir', file, params, {...stats, isDirectory: vi.fn(() => true)});
 
         expect(setData).toBeCalledWith(file, inode);
         expect(sendToRabbitMQ).not.toBeCalled();
@@ -95,7 +95,7 @@ describe('test checkEvent', () => {
             rootKey,
         };
 
-        await checkEvent('add', file, params, {...stats, isDirectory: jest.fn(() => false)});
+        await checkEvent('add', file, params, {...stats, isDirectory: vi.fn(() => false)});
 
         expect(handleCreate).toBeCalled();
     });
@@ -108,7 +108,7 @@ describe('test checkEvent', () => {
             rootKey,
         };
 
-        await checkEvent('addDir', file, params, {...stats, isDirectory: jest.fn(() => true)});
+        await checkEvent('addDir', file, params, {...stats, isDirectory: vi.fn(() => true)});
 
         expect(handleCreate).toBeCalled();
     });
@@ -121,7 +121,7 @@ describe('test checkEvent', () => {
             rootKey,
         };
 
-        await checkEvent('unlink', file, params, {...stats, isDirectory: jest.fn(() => false)});
+        await checkEvent('unlink', file, params, {...stats, isDirectory: vi.fn(() => false)});
 
         expect(handleDelete).toBeCalled();
     });
@@ -134,7 +134,7 @@ describe('test checkEvent', () => {
             rootKey,
         };
 
-        await checkEvent('unlinkDir', file, params, {...stats, isDirectory: jest.fn(() => true)});
+        await checkEvent('unlinkDir', file, params, {...stats, isDirectory: vi.fn(() => true)});
 
         expect(handleDelete).toBeCalled();
     });
@@ -147,7 +147,7 @@ describe('test checkEvent', () => {
             rootKey,
         };
 
-        await checkEvent('change', file, params, {...stats, isDirectory: jest.fn(() => false)});
+        await checkEvent('change', file, params, {...stats, isDirectory: vi.fn(() => false)});
 
         expect(handleUpdate).toBeCalled();
     });
@@ -164,17 +164,19 @@ describe('test checkEvent', () => {
 
         // not use await for unlink
         checkEvent('unlink', file, params, undefined);
-        await checkEvent('add', file + 1, params, {...stats, isDirectory: jest.fn(() => false)});
+        await checkEvent('add', file + 1, params, {...stats, isDirectory: vi.fn(() => false)});
 
         expect(handleMove).toBeCalled();
     });
 
     test('Move a file -> hidden to no hidden', async () => {
-        (getConfig as jest.FunctionLike) = global.__mockPromise({
-            allowFilesList: '',
-            ignoreFilesList: file,
-            rootPath: '/files',
-        });
+        vi.mocked(getConfig).mockReturnValue(
+            Promise.resolve({
+                allowFilesList: '',
+                ignoreFilesList: file,
+                rootPath: '/files',
+            }),
+        );
 
         const params = {
             ready: true,
@@ -185,17 +187,19 @@ describe('test checkEvent', () => {
 
         // not use await for unlink
         checkEvent('unlink', file, params, undefined);
-        await checkEvent('add', file + 1, params, {...stats, isDirectory: jest.fn(() => false)});
+        await checkEvent('add', file + 1, params, {...stats, isDirectory: vi.fn(() => false)});
 
         expect(handleCreate).toBeCalled();
     });
 
     test('Move a file -> not hidden to hidden', async () => {
-        (getConfig as jest.FunctionLike) = global.__mockPromise({
-            allowFilesList: '',
-            ignoreFilesList: file + 1,
-            rootPath: '/files',
-        });
+        vi.mocked(getConfig).mockReturnValue(
+            Promise.resolve({
+                allowFilesList: '',
+                ignoreFilesList: file + 1,
+                rootPath: '/files',
+            }),
+        );
 
         const params = {
             ready: true,
@@ -206,7 +210,7 @@ describe('test checkEvent', () => {
 
         // not use await for unlink
         checkEvent('unlink', file, params, undefined);
-        await checkEvent('add', file + 1, params, {...stats, isDirectory: jest.fn(() => false)});
+        await checkEvent('add', file + 1, params, {...stats, isDirectory: vi.fn(() => false)});
 
         expect(handleDelete).toBeCalled();
     });

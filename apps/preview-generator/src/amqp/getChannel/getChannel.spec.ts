@@ -4,12 +4,12 @@
 import {connect, type Options} from 'amqplib';
 import {getChannel} from './getChannel';
 
+vi.mock('amqplib');
+
 describe('getChannel', () => {
     test('should use connect', async () => {
-        const createChannel = jest.fn();
-        (connect as jest.FunctionLike) = jest.fn(() => ({
-            createChannel,
-        }));
+        const createChannel = vi.fn();
+        vi.mocked(connect).mockResolvedValue({createChannel} as any);
 
         const amqpConfig: Options.Connect = {
             protocol: 'amqp',

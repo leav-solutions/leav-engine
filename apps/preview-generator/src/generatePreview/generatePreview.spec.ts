@@ -8,14 +8,13 @@ import {getConfig} from './../getConfig/getConfig';
 import {handleDocument} from './../handleDocument/handleDocument';
 import {generatePreview} from './generatePreview';
 
+vi.mock('child_process', () => ({execFile: vi.fn(() => '')}));
+vi.mock('../getArgs/getArgs', () => ({getArgs: vi.fn(() => [])}));
+vi.mock('../handleDocument/handleDocument', () => ({handleDocument: vi.fn(() => [])}));
+vi.mock('../getConfig/getConfig');
+
 describe('generatePreview', () => {
     const mockconf = {inputRootPath: 'input_path', outputRootPath: 'output_path', amqp: {hostname: 'localhost'}};
-
-    (execFile as jest.FunctionLike) = jest.fn(() => '');
-    (getArgs as jest.FunctionLike) = jest.fn(() => []);
-    (handleDocument as jest.FunctionLike) = jest.fn(() => []);
-
-    (getConfig as jest.FunctionLike) = jest.fn(() => mockconf);
 
     const msgContent: IMessageConsume = {
         input: 'test.jpg',
@@ -44,6 +43,7 @@ describe('generatePreview', () => {
         ],
     };
     test('result generatePreview', async () => {
+        vi.mocked(getConfig).mockResolvedValue(mockconf as any);
         const type = 'image';
 
         const results = await generatePreview(msgContent, type, mockconf as IConfig);

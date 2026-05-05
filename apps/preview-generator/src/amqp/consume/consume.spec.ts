@@ -7,13 +7,16 @@ import {type IConfig, type IResponse} from '../../types/types';
 import {sendResponse} from '../sendResponse/sendResponse';
 import {consume, handleMsg} from './consume';
 
+vi.mock('../../processPreview/processPreview');
+vi.mock('../sendResponse/sendResponse');
+
 const config = {amqp: {hostname: 'localhost', consume: {queue: 'queue'}, publish: {}}};
 
 describe('test consume', () => {
     test('execution', async () => {
         const channel: Mockify<Channel> = {
-            consume: jest.fn(),
-            prefetch: jest.fn(),
+            consume: vi.fn(),
+            prefetch: vi.fn(),
         };
 
         await consume(channel as Channel, config as unknown as IConfig);
@@ -27,8 +30,8 @@ describe('test handleMsg', () => {
         const context = 'context';
 
         const channel: Mockify<Channel> = {
-            ack: jest.fn(),
-            prefetch: jest.fn(),
+            ack: vi.fn(),
+            prefetch: vi.fn(),
         };
 
         const msg: Mockify<ConsumeMessage> = {
@@ -65,8 +68,7 @@ describe('test handleMsg', () => {
             ],
         };
 
-        (processPreview as jest.FunctionLike) = jest.fn(() => response);
-        (sendResponse as jest.FunctionLike) = jest.fn();
+        vi.mocked(processPreview).mockReturnValue(response as any);
 
         await handleMsg(msg as ConsumeMessage, channel as Channel, config as unknown as IConfig);
 

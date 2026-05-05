@@ -7,6 +7,9 @@ import {type IConfig} from '../types/types';
 import {handleCheck} from './../check/handleCheck';
 import {processPreview} from './processPreview';
 
+vi.mock('../check/handleCheck');
+vi.mock('../generatePreview/generatePreview');
+
 describe('processPreview', () => {
     const content = {
         input: 'test.jpg',
@@ -33,8 +36,8 @@ describe('processPreview', () => {
     };
 
     test('process preview', async () => {
-        (handleCheck as jest.FunctionLike) = global.__mockPromise();
-        (generatePreview as jest.FunctionLike) = global.__mockPromise();
+        vi.mocked(handleCheck).mockReturnValue(Promise.resolve(undefined));
+        vi.mocked(generatePreview).mockReturnValue(Promise.resolve(undefined));
 
         await processPreview(msg as ConsumeMessage, config as IConfig);
 

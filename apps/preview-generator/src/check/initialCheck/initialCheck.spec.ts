@@ -2,12 +2,11 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import * as fs from 'fs';
-import {ErrorPreview} from '../../errors/ErrorPreview';
 import {type IConfig} from './../../types/types';
 import {initialCheck} from './initialCheck';
 
 describe('initialCheck', () => {
-    afterAll(() => jest.resetAllMocks());
+    afterAll(() => vi.resetAllMocks());
 
     const config: Mockify<IConfig> = {
         inputRootPath: '/data',
@@ -15,17 +14,15 @@ describe('initialCheck', () => {
     };
 
     test('check inputRootPath should throw', async () => {
-        (fs.promises.access as jest.FunctionLike) = jest.fn().mockRejectedValue(null);
+        (fs.promises.access as any) = vi.fn().mockRejectedValue(null);
 
-        await expect(initialCheck(config as IConfig)).rejects.toStrictEqual(
-            new ErrorPreview({
-                error: 101,
-            }),
-        );
+        await expect(initialCheck(config as IConfig)).rejects.toMatchObject({
+            error: 101,
+        });
     });
 
     test('check intputRootPath should be called two timeswith', async () => {
-        (fs.promises.access as jest.FunctionLike) = global.__mockPromise((...args) => args[1]());
+        (fs.promises.access as any) = global.__mockPromise((...args) => args[1]());
 
         await initialCheck(config as IConfig);
 
@@ -33,7 +30,7 @@ describe('initialCheck', () => {
     });
 
     test('check outputRootPath should be call with ', async () => {
-        (fs.promises.access as jest.FunctionLike) = global.__mockPromise((...args) => args[1]());
+        (fs.promises.access as any) = global.__mockPromise((...args) => args[1]());
 
         await initialCheck(config as IConfig);
 

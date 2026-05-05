@@ -5,15 +5,20 @@ import {execFile} from 'child_process';
 import {exists, mkdir} from 'fs';
 import {handleMultiPage} from './handleMultiPage';
 
+vi.mock('child_process', () => ({
+    execFile: vi.fn((_cmd: any, _args: any, cb: any) => cb(null, '10')),
+}));
+vi.mock('fs', () => ({
+    access: vi.fn((_path: any, cb: any) => cb()),
+    mkdir: vi.fn((_path: any, cb: any) => cb()),
+    exists: vi.fn((_path: any, cb: any) => cb()),
+}));
+
 describe('handleMultiPage', () => {
     test('gs use call with the right arguments', async () => {
         const pdfFile = './test';
         const multiPage = '';
         const rootPaths = {input: '/data/', output: '/data/'};
-
-        (mkdir as jest.FunctionLike) = jest.fn((...args) => args[1]());
-        (exists as jest.FunctionLike) = jest.fn((...args) => args[1]());
-        (execFile as jest.FunctionLike) = jest.fn((...args) => args[2](null, '10'));
 
         await handleMultiPage(pdfFile, multiPage, rootPaths, []);
 

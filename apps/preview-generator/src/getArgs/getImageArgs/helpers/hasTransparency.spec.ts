@@ -4,9 +4,11 @@
 import {exec} from 'child_process';
 import {hasTransparency} from './hasTransparency';
 
+vi.mock('child_process');
+
 describe('hasTransparency', () => {
     test('Has transparency', async () => {
-        (exec as jest.FunctionLike) = jest.fn().mockImplementation((cmd, cb) => cb(null, 'False', null));
+        vi.mocked(exec).mockImplementation((_cmd: any, cb: any) => cb(null, 'False', null));
 
         const res = await hasTransparency('test.psd');
 
@@ -14,7 +16,7 @@ describe('hasTransparency', () => {
     });
 
     test("Hasn't transparency", async () => {
-        (exec as jest.FunctionLike) = jest.fn().mockImplementation((cmd, cb) => cb(null, 'True', null));
+        vi.mocked(exec).mockImplementation((_cmd: any, cb: any) => cb(null, 'True', null));
 
         const res = await hasTransparency('test.psd');
 

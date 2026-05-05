@@ -4,8 +4,10 @@
 import {loadConfig} from '@leav/config-manager';
 import {getConfig} from './getConfig';
 
+vi.mock('@leav/config-manager');
+
 describe('test getConfig', () => {
-    afterAll(() => jest.resetAllMocks());
+    afterAll(() => vi.resetAllMocks());
 
     test('Memoize config', async () => {
         const config = {
@@ -23,9 +25,9 @@ describe('test getConfig', () => {
             },
         };
 
-        const mockLoadConfig = jest.fn(() => config);
+        const mockLoadConfig = vi.fn(() => config);
 
-        (loadConfig as jest.FunctionLike) = mockLoadConfig;
+        vi.mocked(loadConfig).mockImplementation(mockLoadConfig as any);
 
         await getConfig();
         await getConfig();

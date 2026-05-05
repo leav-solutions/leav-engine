@@ -4,6 +4,8 @@
 import {getArgs} from './../../getArgs/getArgs';
 import {execute, type IExecute} from './execute';
 
+vi.mock('../../getArgs/getArgs');
+
 describe('execute', () => {
     const output = '/data/test.png';
     const density = 300;
@@ -31,7 +33,7 @@ describe('execute', () => {
                 args: [],
             },
         ];
-        (getArgs as jest.FunctionLike) = jest.fn(() => commands);
+        vi.mocked(getArgs).mockResolvedValue(commands as any);
 
         execute(params as IExecute).catch(e => {
             expect(e.error).toBe(501);
