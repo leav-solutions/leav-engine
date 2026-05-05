@@ -281,18 +281,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -372,8 +360,6 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -594,8 +580,6 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -890,30 +874,6 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type ReportFramingAttributeFilterItemInput = {
-  attributeId: Scalars['String']['input'];
-  values: Array<ReportFramingAttributeFilterValueItemInput>;
-  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type ReportFramingAttributeFilterValueItemInput = {
-  formattedValue?: InputMaybe<Scalars['String']['input']>;
-  rawValue: Scalars['String']['input'];
-};
-
-export type ReportFramingContentInput = {
-  filters?: InputMaybe<ReportFramingFiltersInput>;
-};
-
-export type ReportFramingFiltersInput = {
-  /**  only for excel header filter display  */
-  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
-  campaigns?: InputMaybe<Array<RecordFilterInput>>;
-  categories?: InputMaybe<Array<Scalars['String']['input']>>;
-  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
-  search?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -999,19 +959,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
-};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1340,6 +1293,11 @@ export type GetAutomationRuleFormQueryVariables = Exact<{
 
 
 export type GetAutomationRuleFormQuery = { automationRuleForm: { jsonSchema: any, uiSchema: any } };
+
+export type ListAutomationActionsDefQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ListAutomationActionsDefQuery = { automationActionsDef: Array<AutomationRuleActions> };
 
 export type PostDiscussionCommentMutationVariables = Exact<{
   comment?: InputMaybe<DiscussionCommentInput>;
@@ -1720,6 +1678,11 @@ export const GetAutomationRuleFormDocument = gql`
     jsonSchema
     uiSchema
   }
+}
+    `;
+export const ListAutomationActionsDefDocument = gql`
+    query ListAutomationActionsDef {
+  automationActionsDef
 }
     `;
 export const PostDiscussionCommentDocument = gql`
@@ -2104,6 +2067,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetAutomationRuleForm(variables: GetAutomationRuleFormQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetAutomationRuleFormQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetAutomationRuleFormQuery>({ document: GetAutomationRuleFormDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetAutomationRuleForm', 'query', variables);
+    },
+    ListAutomationActionsDef(variables?: ListAutomationActionsDefQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<ListAutomationActionsDefQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ListAutomationActionsDefQuery>({ document: ListAutomationActionsDefDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'ListAutomationActionsDef', 'query', variables);
     },
     PostDiscussionComment(variables?: PostDiscussionCommentMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<PostDiscussionCommentMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<PostDiscussionCommentMutation>({ document: PostDiscussionCommentDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'PostDiscussionComment', 'mutation', variables);

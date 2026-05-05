@@ -1,9 +1,5 @@
 import {type ZodObject} from 'zod';
-import {
-    type AutomationRulePipeline,
-    type AutomationRulePipelineStep,
-    type IAutomationPipelineExecutionState,
-} from '../pipeline/_types';
+import {type AutomationRulePipelineStep, type IAutomationPipelineExecutionState} from '../pipeline/_types';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type AutomationRuleTrigger} from '../../../_types/automation';
 
@@ -24,7 +20,7 @@ export type AutomationPipelineStepValidation<Params = unknown> = {
 };
 
 // Contract that every pipeline action must implement
-export interface IAutomationAction<Params = unknown> {
+export interface IAutomationAction<Params = Record<string, unknown>> {
     // Matches AutomationRulePipelineAction.type — supports built-in enum and custom/plugin actions
     readonly type: AutomationRuleActions | string;
 

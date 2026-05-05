@@ -6,6 +6,7 @@ import {
     AutomationTriggerDefTopics,
     AutomationRuleActions,
 } from '../../_gqlTypes';
+import {FAKE_PLUGIN_AUTOMATION_ACTION_TYPE} from '../_fixtures/fakeplugin';
 import {adminUserSdk, nonAdminUserSdk} from '../e2eUtils';
 
 describe('Automation', () => {
@@ -593,6 +594,23 @@ describe('Automation', () => {
 
         test('non-admin user cannot list triggers', async () => {
             await expect(nonAdminUserSdk.ListAutomationTriggersDef()).rejects.toThrow('Action forbidden');
+        });
+    });
+
+    describe('list automation actions', () => {
+        test('should contains core and plugins actions', async () => {
+            const actionsDef = await adminUserSdk.ListAutomationActionsDef();
+            console.log('actionsDef', actionsDef);
+
+            expect(actionsDef.automationActionsDef.length).toBeGreaterThanOrEqual(1);
+
+            expect(actionsDef.automationActionsDef).toEqual(
+                expect.arrayContaining([AutomationRuleActions.condition, FAKE_PLUGIN_AUTOMATION_ACTION_TYPE]),
+            );
+        });
+
+        test('non-admin user cannot list automation actions', async () => {
+            await expect(nonAdminUserSdk.ListAutomationActionsDef()).rejects.toThrow('Action forbidden');
         });
     });
 });

@@ -10,6 +10,7 @@ import {
 import {adminUserSdk, e2eAdminUser, e2eGuestUser, e2eNonAdminUser} from '../e2eUtils';
 import {type NotificationActionParams} from '../../../../domain/automation/actions/notificationAction';
 import {type ConditionActionParams} from '../../../../domain/automation/actions/conditionAction';
+import {FAKE_PLUGIN_AUTOMATION_ACTION_TYPE} from '../_fixtures/fakeplugin';
 
 describe('Automation RECORD_INIT', () => {
     const testLibraryId = 'automation_record_init_test_library';
@@ -475,6 +476,55 @@ describe('Automation RECORD_INIT', () => {
 
                 expect(res.records.list[0].property).toEqual([]);
             });
+        });
+    });
+
+    describe('pipeline with a fakeplugin action', () => {
+        let ruleId: string;
+
+        beforeAll(async () => {
+            ruleId = (
+                await adminUserSdk.CreateAutomationRule({
+                    rule: {
+                        label: 'Plugin action rule',
+                        active: true,
+                        trigger: {
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {library: testLibraryId},
+                        },
+                        pipeline: {
+                            steps: [
+                                {
+                                    type: FAKE_PLUGIN_AUTOMATION_ACTION_TYPE as AutomationRuleActions,
+                                    params: {message: 'hello from plugin'},
+                                },
+                                {
+                                    type: AutomationRuleActions.modifyAttribute,
+                                    params: {
+                                        attributePath: testLibraryLabelAttrId,
+                                        mode: 'replace',
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                })
+            ).createAutomationRule.id;
+        });
+
+        afterAll(async () => {
+            await adminUserSdk.DeleteAutomationRule({ruleId});
+        });
+
+        test('should execute the plugin action and propagate its result to the next step', async () => {
+            const res = await adminUserSdk.GetRecordByIdStandardValuesProperty({
+                attributeId: testLibraryLabelAttrId,
+                libraryId: testLibraryId,
+                recordId,
+            });
+
+            expect(res.records.list[0].property).toEqual([expect.objectContaining({payload: 'hello from plugin'})]);
         });
     });
 

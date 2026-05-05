@@ -1,6 +1,5 @@
 import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IAutomationDomain} from '../../domain/automation/automationDomain';
 import {
     type ICreateAutomationRule,
@@ -9,22 +8,24 @@ import {
     type AutomationRuleJsonSchemaFormType,
 } from '../../_types/automation';
 import {type IPaginationParams, type ISortParams, type IList} from '../../_types/list';
-import {type IAutomationTriggers} from '../../domain/automation/triggers/automationTriggers';
 import {type IAutomationTriggersRegistry} from '../..//domain/automation/triggers/automationTriggersRegistry';
 import {
     AutomationTriggerDefSynchronicity,
     AutomationTriggerDefTopics,
     type AutomationTriggerDef,
 } from '../../domain/automation/triggers/_types';
-import {AutomationRuleActions} from '../../domain/automation/actions/_types';
+import {type AutomationRuleActions, type IAutomationAction} from '../../domain/automation/actions/_types';
+import {type IAutomationActionsRegistry} from '../../domain/automation/automationActionsRegistry';
+import {type IAppModule} from '../../_types/shared';
+import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type RJSFSchema, type UiSchema} from '@rjsf/utils';
 
-export type ICoreImportApp = IGraphqlAppModule;
+export type ICoreAutomationApp = IAppModule & IGraphqlAppModule;
 
 interface IAutomationAppDeps {
     'core.domain.automation': IAutomationDomain;
-    'core.domain.automation.triggers': IAutomationTriggers;
     'core.domain.automation.triggers.registry': IAutomationTriggersRegistry;
+    'core.domain.automation.actionsRegistry': IAutomationActionsRegistry;
 }
 
 export interface IGetAutomationRulesArgs {
@@ -40,9 +41,9 @@ export interface IGetAutomationRulesArgs {
 
 export default function ({
     'core.domain.automation': automationDomain,
-    'core.domain.automation.triggers': automationTriggers,
     'core.domain.automation.triggers.registry': automationTriggersRegistry,
-}: IAutomationAppDeps): ICoreImportApp {
+    'core.domain.automation.actionsRegistry': automationActionsRegistry,
+}: IAutomationAppDeps): ICoreAutomationApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const baseSchema = {
@@ -53,6 +54,7 @@ export default function ({
                             .map(def => def.eventAction)
                             .join(' ')}
                     }
+
                     enum AutomationTriggerDefSynchronicity {
                         ${Object.values(AutomationTriggerDefSynchronicity).join('\n')}
                     }
@@ -135,7 +137,10 @@ export default function ({
                     }
 
                     enum AutomationRuleActions {
-                        ${Object.values(AutomationRuleActions).join('\n')}
+                        ${automationActionsRegistry
+                            .listAvailableActions()
+                            .map(({type}) => type)
+                            .join(' ')}
                     }
 
                     input AutomationRulePipelineStepInput {
@@ -177,6 +182,7 @@ export default function ({
                             sort: AutomationRulesSortInput
                         ): AutomationRulesList!
                         automationTriggersDef: [AutomationTriggerDef!]!
+                        automationActionsDef: [AutomationRuleActions!]!
                         automationRuleForm(formType: AutomationRuleJsonSchemaFormType!): AutomationRuleForm!
                     }
 
@@ -205,6 +211,13 @@ export default function ({
                         },
                         async automationTriggersDef(parent, args, ctx: IQueryInfos): Promise<AutomationTriggerDef[]> {
                             return automationDomain.listAutomationTriggersDef({ctx});
+                        },
+                        async automationActionsDef(
+                            parent,
+                            args,
+                            ctx: IQueryInfos,
+                        ): Promise<Array<AutomationRuleActions | string>> {
+                            return automationDomain.listAutomationActionsDef({ctx});
                         },
                         async automationRuleForm(
                             parent,
@@ -244,6 +257,11 @@ export default function ({
             };
 
             return {typeDefs: baseSchema.typeDefs, resolvers: baseSchema.resolvers};
+        },
+        extensionPoints: {
+            registerAutomationAction(action: IAutomationAction): void {
+                automationActionsRegistry.registerAction(action);
+            },
         },
     };
 }

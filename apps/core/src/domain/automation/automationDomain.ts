@@ -28,6 +28,8 @@ import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesT
 import {type IAutomationTriggers} from './triggers/automationTriggers';
 import {type AutomationTriggerDef} from './triggers/_types';
 import {type AutomationPipelineExecution, type AutomationPipelineValidation} from './pipeline/_types';
+import {type AutomationRuleActions} from './actions/_types';
+import {type IAutomationActionsRegistry} from './automationActionsRegistry';
 import {type IAutomationJsonSchemaFormDomain} from './form/automationJsonSchemaForm';
 import {type IAutomationUiJsonSchemaFormDomain} from './form/automationUiJsonSchemaForm';
 import {type UiSchema, type RJSFSchema} from '@rjsf/utils';
@@ -75,6 +77,7 @@ export interface IAutomationDomain {
     triggerRules(params: ITriggerRulesParams): Promise<void>;
 
     listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): Promise<AutomationTriggerDef[]>;
+    listAutomationActionsDef({ctx}: {ctx: IQueryInfos}): Promise<Array<AutomationRuleActions | string>>;
 }
 
 export interface IAutomationDomainDeps {
@@ -86,6 +89,7 @@ export interface IAutomationDomainDeps {
     'core.domain.automation.pipeline': IAutomationPipelineDomain;
     'core.domain.automation.rulesCache': IAutomationRulesCache;
     'core.infra.automation.rule': IAutomationRuleRepo;
+    'core.domain.automation.actionsRegistry': IAutomationActionsRegistry;
     config: IConfig;
 }
 
@@ -98,6 +102,7 @@ export default function ({
     'core.domain.automation.pipeline': pipelineDomain,
     'core.domain.automation.rulesCache': automationRulesCache,
     'core.infra.automation.rule': automationRuleRepo,
+    'core.domain.automation.actionsRegistry': automationActionsRegistry,
     config,
 }: IAutomationDomainDeps): IAutomationDomain {
     if (config.automation.enable === false) {
@@ -181,6 +186,10 @@ export default function ({
         async listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): Promise<AutomationTriggerDef[]> {
             await _hasManageAutomationPermissionOrThrow(ctx);
             return automationTriggers.listAutomationTriggersDef({ctx});
+        },
+        async listAutomationActionsDef({ctx}: {ctx: IQueryInfos}): Promise<Array<AutomationRuleActions | string>> {
+            await _hasManageAutomationPermissionOrThrow(ctx);
+            return automationActionsRegistry.listAvailableActions().map(({type}) => type);
         },
         async getAutomationRules({params, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
@@ -365,6 +374,10 @@ function automationDisabled(): IAutomationDomain {
         },
         async listAutomationTriggersDef(): Promise<AutomationTriggerDef[]> {
             logger.silly('Automation system is disabled. Skipping listing automation triggers definitions.');
+            return [];
+        },
+        async listAutomationActionsDef(): Promise<Array<AutomationRuleActions | string>> {
+            logger.silly('Automation system is disabled. Skipping listing automation actions definitions.');
             return [];
         },
     };

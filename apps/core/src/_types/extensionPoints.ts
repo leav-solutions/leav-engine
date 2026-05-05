@@ -5,6 +5,7 @@ import {type PluginRegisterRoute} from './endpoint';
 import {type AuthPostOidcLoginCallback} from './auth';
 import {type RegisterCronTask} from './cronTask';
 import {type ITRPCRouterFactory} from '../app/trpc/trpcApp';
+import {type IAutomationAction} from '../domain/automation/actions/_types';
 
 export interface IExtensionPoints {
     [name: string]: (...args: any[]) => void;
@@ -24,6 +25,7 @@ export interface IExtensionPointsFunctions extends IExtensionPoints {
     registerPermissionActions: (type: PermissionTypes, actions: string[], applyOn?: string[]) => void;
     registerEventActions: (actions: string[], prefix: string) => void;
     registerActions: (actions: IActionsListFunction[]) => void;
+    registerAutomationAction: <P = Record<string, unknown>>(action: IAutomationAction<P>) => void;
     registerTaskTypes: (types: string[]) => void;
     registerStart: (fct: () => Promise<void>) => void;
     /**
