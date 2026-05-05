@@ -658,6 +658,8 @@
         "actions": "Actions",
         "more-actions": "Show more",
         "deactivate-item": "Deactivate",
+        "item_deleted_success": "Item deleted successfully.",
+        "item_deleted_error": "Error occurred while deleting the item.",
         "activate-item": "Activate",
         "delete-item": "Delete",
         "replace-item": "Replace",

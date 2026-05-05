@@ -15,7 +15,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faStar, faCheck, faCog, faEdit, faTrash} from '@fortawesome/free-solid-svg-icons';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {Explorer} from '_ui/index';
+import {ERROR_NOTIFICATION_DURATION, Explorer, SUCCESS_NOTIFICATION_DURATION} from '_ui/index';
 import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
 import {type IEntrypointLibrary, type IEntrypointLink, type IItemAction, type IPrimaryAction} from './_types';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
@@ -23,7 +23,7 @@ import * as useColumnWidth from './useColumnWidth';
 import {type IExplorerRef} from './Explorer';
 import ResizeObserver from 'resize-observer-polyfill';
 import * as attributeDetailsModule from '_ui/components/Explorer/manage-view-settings/_shared/useAttributeDetailsData';
-import {mockLibrarySimple} from '_ui/__mocks__/common/library';
+import {KitAlert} from 'aristid-ds';
 
 global.ResizeObserver = ResizeObserver;
 
@@ -67,6 +67,14 @@ jest.mock('_ui/components/Explorer/link-item/LinkModal', () => ({
             <button onClick={() => onLink([987654])}>link-record</button>
         </div>
     ),
+}));
+
+jest.mock('aristid-ds', () => ({
+    ...jest.requireActual('aristid-ds'),
+    KitAlert: {
+        success: jest.fn(),
+        error: jest.fn(),
+    },
 }));
 
 jest.mock('@uidotdev/usehooks', () => ({
@@ -1259,7 +1267,7 @@ describe('Explorer', () => {
             data: {
                 deactivateRecords: [
                     {
-                        id: 42,
+                        id: mockRecords[0].id,
                         whoAmI: mockRecord,
                     },
                 ],
@@ -1287,12 +1295,58 @@ describe('Explorer', () => {
         await user.click(screen.getByText('global.confirm'));
 
         expect(mockDeactivateMutation).toHaveBeenCalled();
+        expect(KitAlert.success).toHaveBeenCalledWith({
+            showIcon: true,
+            duration: SUCCESS_NOTIFICATION_DURATION,
+            closable: true,
+            message: 'explorer.item_deleted_success',
+            description: null,
+        });
         expect(onRemove).toHaveBeenCalledWith(
+            // TODO: voir Ticket => https://aristid.atlassian.net/browse/LEAVC-845
             expect.objectContaining({
                 key: mockRecords[1].id,
                 itemId: mockRecords[1].id,
             }),
         );
+    });
+
+    test('Should display an error when deactivation returns an error', async () => {
+        const mockDeactivateMutation = jest.fn().mockResolvedValue({
+            data: {
+                deactivateRecords: [],
+            },
+        });
+
+        jest.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(() => [
+            mockDeactivateMutation,
+            {loading: false, called: false, client: {} as any, reset: jest.fn()},
+        ]);
+
+        const onRemove = jest.fn();
+
+        render(
+            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />
+            </Explorer.EditSettingsContextProvider>,
+        );
+
+        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+        await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
+
+        expect(screen.getByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
+        expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
+        await user.click(screen.getByText('global.confirm'));
+
+        expect(mockDeactivateMutation).toHaveBeenCalled();
+        expect(KitAlert.error).toHaveBeenCalledWith({
+            showIcon: true,
+            duration: ERROR_NOTIFICATION_DURATION,
+            closable: true,
+            message: 'explorer.item_deleted_error',
+            description: null,
+        });
+        expect(onRemove).not.toHaveBeenCalled();
     });
 
     test('Should be able to activate a record with default actions', async () => {
@@ -1333,7 +1387,7 @@ describe('Explorer', () => {
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.activate-item'}));
 
-        expect(screen.getByText('explorer.activate_item_description_one', {exact: false})).toBeVisible();
+        expect(screen.getByText('explorer.activate_item_description', {exact: false})).toBeVisible();
         expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
         await user.click(screen.getByText('global.confirm'));
 
@@ -2874,9 +2928,6 @@ describe('Explorer', () => {
             });
 
             expect(onDeactivate).toHaveBeenCalledWith(expectedDeactivateFilters, [firstRecord.id, secondRecord.id]);
-
-            // AND I click to close the success alert (otherwise there are two role status on the screen)
-            await user.click(screen.getByRole('button', {name: 'Fermer'}));
 
             // AND the selection is cleared
             waitFor(() => expect(screen.queryByRole('status')).not.toBeVisible());
