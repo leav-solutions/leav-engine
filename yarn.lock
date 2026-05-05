@@ -10700,15 +10700,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:24.9.1":
-  version: 24.9.1
-  resolution: "@types/jest@npm:24.9.1"
-  dependencies:
-    jest-diff: "npm:^24.3.0"
-  checksum: 10/5affc096d871c1abf101e753a11ba544dcf4ebdc61220cb47e3089ca4892604529ef49d7e953a90c3fddc398c3ef77b0c03139cddbe30bc3ab714a380ba985f0
-  languageName: node
-  linkType: hard
-
 "@types/jest@npm:27.5.2":
   version: 27.5.2
   resolution: "@types/jest@npm:27.5.2"
@@ -12904,18 +12895,16 @@ __metadata:
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
-    "@types/jest": "npm:24.9.1"
     "@types/node": "npm:24.12.2"
     amqplib: "npm:0.10.9"
     app-root-path: "npm:3.1.0"
     chokidar: "npm:4.0.3"
-    jest: "npm:29.7.0"
     lodash: "npm:4.18.1"
     prettier: "npm:3.3.3"
     redis: "npm:5.10.0"
-    ts-jest: "npm:29.4.9"
     tsx: "npm:4.21.0"
     typescript: "npm:5.9.3"
+    vitest: "npm:4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -20263,7 +20252,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-diff@npm:^24.0.0, jest-diff@npm:^24.3.0, jest-diff@npm:^24.9.0":
+"jest-diff@npm:^24.0.0, jest-diff@npm:^24.9.0":
   version: 24.9.0
   resolution: "jest-diff@npm:24.9.0"
   dependencies:
@@ -20503,31 +20492,6 @@ __metadata:
     fsevents:
       optional: true
   checksum: 10/8531b42003581cb18a69a2774e68c456fb5a5c3280b1b9b77475af9e346b6a457250f9d756bfeeae2fe6cbc9ef28434c205edab9390ee970a919baddfa08bb85
-  languageName: node
-  linkType: hard
-
-"jest-jasmine2@npm:29.7.0":
-  version: 29.7.0
-  resolution: "jest-jasmine2@npm:29.7.0"
-  dependencies:
-    "@jest/environment": "npm:^29.7.0"
-    "@jest/expect": "npm:^29.7.0"
-    "@jest/source-map": "npm:^29.6.3"
-    "@jest/test-result": "npm:^29.7.0"
-    "@jest/types": "npm:^29.6.3"
-    "@types/node": "npm:*"
-    chalk: "npm:^4.0.0"
-    co: "npm:^4.6.0"
-    is-generator-fn: "npm:^2.0.0"
-    jest-each: "npm:^29.7.0"
-    jest-matcher-utils: "npm:^29.7.0"
-    jest-message-util: "npm:^29.7.0"
-    jest-runtime: "npm:^29.7.0"
-    jest-snapshot: "npm:^29.7.0"
-    jest-util: "npm:^29.7.0"
-    p-limit: "npm:^3.1.0"
-    pretty-format: "npm:^29.7.0"
-  checksum: 10/aae873cdb743be5402f593f42ace98acf303ea02b99f2d9b52b02b332665c6f0665225064e549162ffe3c622eb225a6782ea6a280befa8f59494e5ecfa491c7d
   languageName: node
   linkType: hard
 
@@ -24330,15 +24294,13 @@ __metadata:
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
-    "@types/jest": "npm:29.5.14"
     "@types/node": "npm:24.12.2"
     amqplib: "npm:0.10.9"
     fast-xml-parser: "npm:5.7.2"
-    jest: "npm:29.7.0"
     prettier: "npm:3.3.3"
-    ts-jest: "npm:29.4.9"
     tsx: "npm:4.21.0"
     typescript: "npm:5.9.3"
+    vitest: "npm:4.1.5"
   languageName: unknown
   linkType: soft
 
@@ -28015,7 +27977,6 @@ __metadata:
     "@leav/message-broker": "workspace:libs/message-broker"
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
-    "@types/jest": "npm:29.5.14"
     "@types/joi": "npm:14.3.4"
     "@types/node": "npm:24.12.2"
     amqplib: "npm:0.10.9"
@@ -28027,14 +27988,12 @@ __metadata:
     arangojs: "npm:8.8.1"
     graphql: "npm:16.13.2"
     graphql-tag: "npm:2.12.6"
-    jest: "npm:29.7.0"
-    jest-jasmine2: "npm:29.7.0"
     joi: "npm:18.1.2"
     node-fetch: "npm:2.6.7"
     prettier: "npm:3.3.3"
-    ts-jest: "npm:29.4.9"
     tsx: "npm:4.21.0"
     typescript: "npm:5.9.3"
+    vitest: "npm:4.1.5"
     walk: "npm:2.3.15"
     xxhashjs: "npm:0.2.2"
   languageName: unknown

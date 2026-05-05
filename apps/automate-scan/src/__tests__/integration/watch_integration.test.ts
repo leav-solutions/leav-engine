@@ -9,15 +9,12 @@ import {getConfig} from '../../config';
 import path from 'path';
 
 describe('integration test automate-scan', () => {
-    console.info = jest.fn();
+    console.info = vi.fn();
 
     test('create a file and check if event send to rabbitmq', async () => {
         expect.assertions(2);
 
         const config = await getConfig();
-
-        // set max timeout in jest test
-        jest.setTimeout(10000);
 
         const pathTmpFile = config.rootPath + '/file_' + Math.random().toString();
         const watcher = await startWatch();
@@ -51,8 +48,6 @@ describe('integration test automate-scan', () => {
 
         const config = await getConfig();
 
-        // set max timeout in jest test
-        jest.setTimeout(15000);
         const pathTmpFile = config.rootPath + '/file_' + Math.random().toString();
 
         await fs.promises.writeFile(pathTmpFile, Math.random().toString());
@@ -81,8 +76,6 @@ describe('integration test automate-scan', () => {
     test('delete a file and check if event send to rabbitmq', async () => {
         const config = await getConfig();
 
-        // set max timeout in jest test
-        jest.setTimeout(15000);
         const pathTmpFile = config.rootPath + '/file_' + Math.random().toString();
 
         await fs.promises.writeFile(pathTmpFile, Math.random().toString());
@@ -113,9 +106,6 @@ describe('integration test automate-scan', () => {
         expect.assertions(2);
 
         const config = await getConfig();
-
-        // set max timeout in jest test
-        jest.setTimeout(15000);
 
         const pathTmpFile = config.rootPath + '/file1_' + Math.random().toString();
         const newPathTmpFile = config.rootPath + '/file2_' + Math.random().toString();
@@ -149,9 +139,6 @@ describe('integration test automate-scan', () => {
         expect.assertions(2);
 
         const config = await getConfig();
-
-        // set max timeout in jest test
-        jest.setTimeout(15000);
 
         const fileName = 'file_' + Math.random().toString();
         const pathTmpFile = config.rootPath + '/' + fileName;
@@ -190,8 +177,6 @@ describe('integration test automate-scan', () => {
 
         const config = await getConfig();
 
-        // set max timeout in jest test
-        jest.setTimeout(15000);
         const pathTmpFile = config.rootPath + '/file1_' + Math.random().toString();
         const newPathTmpFile = config.rootPath + '/1/file2_' + Math.random().toString();
 

@@ -5,11 +5,11 @@ import {exec} from 'child_process';
 import {Colorspaces} from '../../../types/constants';
 import {getColorspace} from './getColorspace';
 
+vi.mock('child_process');
+
 describe('getColorspace', () => {
     test('Detect CMYK colorspace', async () => {
-        (exec as jest.FunctionLike) = jest
-            .fn()
-            .mockImplementation((cmd, cb) => cb(null, 'blah blabh CMYK blah blah', null));
+        vi.mocked(exec).mockImplementation((_cmd: any, cb: any) => cb(null, 'blah blabh CMYK blah blah', null));
 
         const colorspace = await getColorspace('test.jpg');
 
@@ -17,9 +17,7 @@ describe('getColorspace', () => {
     });
 
     test('Detect RGB colorspace', async () => {
-        (exec as jest.FunctionLike) = jest
-            .fn()
-            .mockImplementation((cmd, cb) => cb(null, 'blah blabh sRGB blah blah', null));
+        vi.mocked(exec).mockImplementation((_cmd: any, cb: any) => cb(null, 'blah blabh sRGB blah blah', null));
 
         const colorspace = await getColorspace('test.jpg');
 

@@ -7,10 +7,10 @@ import * as events from '../../events';
 import * as scan from '../../scan';
 import {mockDbResult, mockFsContent, mockDbSettings} from './scan';
 
-jest.mock('../../events', () => ({
-    create: jest.fn(),
-    move: jest.fn(),
-    update: jest.fn(),
+vi.mock('../../events', () => ({
+    create: vi.fn(),
+    move: vi.fn(),
+    update: vi.fn(),
 }));
 
 let amqp;
@@ -21,12 +21,12 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
 
 beforeAll(async () => {
     try {
-        jest.spyOn(console, 'info').mockImplementation(() => null);
+        vi.spyOn(console, 'info').mockImplementation(() => null);
 
         const mockAmqp = {
-            publish: jest.fn(),
-            consume: jest.fn(),
-            close: jest.fn(),
+            publish: vi.fn(),
+            consume: vi.fn(),
+            close: vi.fn(),
         };
 
         amqp = mockAmqp;
@@ -62,8 +62,8 @@ describe('unit tests', () => {
         try {
             expect.assertions(3);
 
-            const create = jest.spyOn(events, 'create');
-            const update = jest.spyOn(events, 'update');
+            const create = vi.spyOn(events, 'create');
+            const update = vi.spyOn(events, 'update');
 
             const dbScan = extractChildrenDbElements(mockDbSettings, mockDbResult.treeContent);
 

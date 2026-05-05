@@ -7,11 +7,13 @@ import {getArgs} from './getArgs';
 import {getImageArgs} from './getImageArgs/getImageArgs';
 import {getVideoArgs} from './getVideoArgs/getVideoArgs';
 
-describe('getArgs', () => {
-    test('type image use getImageArgs', async () => {
-        (getImageArgs as jest.FunctionLike) = jest.fn();
-        (getVideoArgs as jest.FunctionLike) = jest.fn();
+vi.mock('./getImageArgs/getImageArgs');
+vi.mock('./getVideoArgs/getVideoArgs');
 
+describe('getArgs', () => {
+    beforeEach(() => vi.clearAllMocks());
+
+    test('type image use getImageArgs', async () => {
         const type = 'image';
         const input = 'test.jpg';
         const output = 'test.png';
@@ -36,9 +38,6 @@ describe('getArgs', () => {
     });
 
     test('type video use getVideoArgs', async () => {
-        (getImageArgs as jest.FunctionLike) = jest.fn();
-        (getVideoArgs as jest.FunctionLike) = jest.fn();
-
         const type = 'video';
         const input = 'test.mkv';
         const output = 'test.png';
@@ -62,9 +61,6 @@ describe('getArgs', () => {
     });
 
     test('none exist type should throw', async () => {
-        (getImageArgs as jest.FunctionLike) = jest.fn();
-        (getVideoArgs as jest.FunctionLike) = jest.fn();
-
         const type = 'other';
         const input = 'test.dsfsdfsdf';
         const output = 'test.png';

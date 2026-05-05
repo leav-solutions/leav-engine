@@ -4,11 +4,13 @@
 import {exec} from 'child_process';
 import {hasClippingPath} from './hasClippingPath';
 
+vi.mock('child_process');
+
 describe('getColorspace', () => {
     test('Has clipping path', async () => {
-        (exec as jest.FunctionLike) = jest
-            .fn()
-            .mockImplementation((cmd, cb) => cb(null, 'any string representing clipping path', null));
+        vi.mocked(exec).mockImplementation((_cmd: any, cb: any) =>
+            cb(null, 'any string representing clipping path', null),
+        );
 
         const res = await hasClippingPath('test.jpg');
 
@@ -16,7 +18,7 @@ describe('getColorspace', () => {
     });
 
     test("Hasn't clipping path", async () => {
-        (exec as jest.FunctionLike) = jest.fn().mockImplementation((cmd, cb) => cb('ERR', null, null));
+        vi.mocked(exec).mockImplementation((_cmd: any, cb: any) => cb('ERR', null, null));
 
         const res = await hasClippingPath('test.jpg');
 

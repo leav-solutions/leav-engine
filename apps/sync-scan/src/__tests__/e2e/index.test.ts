@@ -25,8 +25,6 @@ process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) =>
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-jest.setTimeout(20000);
-
 beforeAll(async () => {
     try {
         cfg = await getConfig();
@@ -95,7 +93,7 @@ describe('e2e tests', () => {
         ];
     });
 
-    test('2 - initialization/creation events', async done => {
+    test('2 - initialization/creation events', async () => {
         try {
             expect.assertions(10);
 
@@ -118,25 +116,29 @@ describe('e2e tests', () => {
                 'dir/sdir/ssfile': 'CREATE',
             };
 
-            await amqp.consumer.channel.consume(
-                cfg.amqp.queue,
-                async msg => {
-                    const m = JSON.parse(msg.content.toString());
-                    expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathAfter]));
-                    expect(expected[m.pathAfter]).toEqual(m.event);
-                    if (m.pathAfter === 'dir/sdir/ssfile') {
-                        await amqp.consumer.channel.cancel('test3');
-                        done();
-                    }
-                },
-                {consumerTag: 'test3', noAck: true},
-            );
+            await new Promise<void>((resolve, reject) => {
+                amqp.consumer.channel
+                    .consume(
+                        cfg.amqp.queue,
+                        async msg => {
+                            const m = JSON.parse(msg.content.toString());
+                            expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathAfter]));
+                            expect(expected[m.pathAfter]).toEqual(m.event);
+                            if (m.pathAfter === 'dir/sdir/ssfile') {
+                                await amqp.consumer.channel.cancel('test3');
+                                resolve();
+                            }
+                        },
+                        {consumerTag: 'test3', noAck: true},
+                    )
+                    .catch(reject);
+            });
         } catch (e) {
             console.error(e);
         }
     });
 
-    test('3 - move/rename/edit events', async done => {
+    test('3 - move/rename/edit events', async () => {
         try {
             expect.assertions(10);
 
@@ -162,27 +164,31 @@ describe('e2e tests', () => {
                 'dir/sdir/ssfile': {pathAfter: 'dir/sdir/ssfile', event: 'UPDATE'},
             };
 
-            amqp.consumer.channel.consume(
-                cfg.amqp.queue,
-                async msg => {
-                    const m = JSON.parse(msg.content.toString());
-                    expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
-                    expect(expected[m.pathBefore].pathAfter).toEqual(m.pathAfter);
-                    expect(expected[m.pathBefore].event).toEqual(m.event);
-                    if (m.pathAfter === 'dir/sdir/ssfile') {
-                        expect('f75b8179e4bbe7e2b4a074dcef62de95').toEqual(m.hash);
-                        await amqp.consumer.channel.cancel('test4');
-                        done();
-                    }
-                },
-                {consumerTag: 'test4', noAck: true},
-            );
+            await new Promise<void>((resolve, reject) => {
+                amqp.consumer.channel
+                    .consume(
+                        cfg.amqp.queue,
+                        async msg => {
+                            const m = JSON.parse(msg.content.toString());
+                            expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
+                            expect(expected[m.pathBefore].pathAfter).toEqual(m.pathAfter);
+                            expect(expected[m.pathBefore].event).toEqual(m.event);
+                            if (m.pathAfter === 'dir/sdir/ssfile') {
+                                expect('f75b8179e4bbe7e2b4a074dcef62de95').toEqual(m.hash);
+                                await amqp.consumer.channel.cancel('test4');
+                                resolve();
+                            }
+                        },
+                        {consumerTag: 'test4', noAck: true},
+                    )
+                    .catch(reject);
+            });
         } catch (e) {
             console.error(e);
         }
     });
 
-    test('4 - delete events', async done => {
+    test('4 - delete events', async () => {
         try {
             expect.assertions(10);
 
@@ -207,19 +213,23 @@ describe('e2e tests', () => {
                 'dir/sdir/ssfile': 'REMOVE',
             };
 
-            amqp.consumer.channel.consume(
-                cfg.amqp.queue,
-                async msg => {
-                    const m = JSON.parse(msg.content.toString());
-                    expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
-                    expect(expected[m.pathBefore]).toEqual(m.event);
-                    if (m.pathBefore === 'dir/sdir/ssfile') {
-                        await amqp.consumer.channel.cancel('test5');
-                        done();
-                    }
-                },
-                {consumerTag: 'test5', noAck: true},
-            );
+            await new Promise<void>((resolve, reject) => {
+                amqp.consumer.channel
+                    .consume(
+                        cfg.amqp.queue,
+                        async msg => {
+                            const m = JSON.parse(msg.content.toString());
+                            expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
+                            expect(expected[m.pathBefore]).toEqual(m.event);
+                            if (m.pathBefore === 'dir/sdir/ssfile') {
+                                await amqp.consumer.channel.cancel('test5');
+                                resolve();
+                            }
+                        },
+                        {consumerTag: 'test5', noAck: true},
+                    )
+                    .catch(reject);
+            });
         } catch (e) {
             console.error(e);
         }

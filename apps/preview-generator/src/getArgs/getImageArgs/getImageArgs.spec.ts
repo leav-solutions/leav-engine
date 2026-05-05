@@ -5,19 +5,19 @@ import {Colorspaces} from '../../types/constants';
 import {type IVersion} from '../../types/types';
 import {getImageArgs} from './getImageArgs';
 
-jest.mock('./helpers/getColorspace', () => ({
-    getColorspace: jest.fn(() => Promise.resolve(Colorspaces.CMYK)),
+vi.mock('./helpers/getColorspace', () => ({
+    getColorspace: vi.fn(() => Promise.resolve(Colorspaces.CMYK)),
 }));
 
-jest.mock('./helpers/hasClippingPath', () => ({
+vi.mock('./helpers/hasClippingPath', () => ({
     hasClippingPath: () => Promise.resolve(true),
 }));
 
-jest.mock('./helpers/hasTransparency', () => ({
+vi.mock('./helpers/hasTransparency', () => ({
     hasTransparency: () => Promise.resolve(true),
 }));
 
-jest.mock('../../getConfig/getConfig', () => ({
+vi.mock('../../getConfig/getConfig', () => ({
     getConfig: async () => ({}),
 }));
 

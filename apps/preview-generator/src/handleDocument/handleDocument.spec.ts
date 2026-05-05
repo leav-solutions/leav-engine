@@ -2,26 +2,28 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {execFile} from 'child_process';
-import {unlink} from 'fs';
-import {getConfig} from '../getConfig/getConfig';
 import {type IVersion} from '../types/types';
-import {getImageArgs} from './../getArgs/getImageArgs/getImageArgs';
 import {handleDocument} from './handleDocument';
 
-describe('getDocumentArgs', () => {
-    const mockconf = {amqp: {hostname: 'localhost'}};
-
-    (execFile as jest.FunctionLike) = jest.fn((...args) => args[3]());
-    (unlink as jest.FunctionLike) = jest.fn((...args) => args[1]());
-
-    (getImageArgs as jest.FunctionLike) = jest.fn(() => [
+vi.mock('child_process', () => ({
+    execFile: vi.fn((_cmd: any, _args: any, _opts: any, cb: any) => cb()),
+}));
+vi.mock('fs', () => ({
+    unlink: vi.fn((_path: any, cb: any) => cb()),
+}));
+vi.mock('../getArgs/getImageArgs/getImageArgs', () => ({
+    getImageArgs: vi.fn(() => [
         {
             command: 'convert',
-            args: [`${output}.pdf[0]`, 'png:' + output],
+            args: ['test.png.pdf[0]', 'png:test.png'],
         },
-    ]);
-    (getConfig as jest.FunctionLike) = jest.fn(() => mockconf);
+    ]),
+}));
+vi.mock('../getConfig/getConfig', () => ({
+    getConfig: vi.fn(() => ({amqp: {hostname: 'localhost'}})),
+}));
 
+describe('getDocumentArgs', () => {
     const input = 'test.docx';
     const output = 'test.png';
     const size = 800;
@@ -38,7 +40,7 @@ describe('getDocumentArgs', () => {
         ],
     };
 
-    afterAll(() => jest.resetAllMocks());
+    afterAll(() => vi.resetAllMocks());
 
     test('check unoconv command', async () => {
         await handleDocument({input, output, size, name, version, rootPaths, results: []});

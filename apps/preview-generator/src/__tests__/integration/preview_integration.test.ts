@@ -229,7 +229,6 @@ describe('test preview generation', () => {
     });
 
     test('docx to png', async done => {
-        jest.setTimeout(10000);
         const output = '/src/files/test/preview/docx.png';
         const msgSend = {
             input: '/src/files/test/test.docx',
@@ -273,8 +272,6 @@ describe('test preview generation', () => {
 
     // this test can take time
     test('pdf with multi page to png', async done => {
-        jest.setTimeout(15000);
-
         const output = '/src/files/test/preview/docx.png';
         const multiPage = '/src/files/test/preview/pdfMultiPage/';
 
@@ -321,8 +318,6 @@ describe('test preview generation', () => {
     });
 
     test('docx with multi page to png', async done => {
-        jest.setTimeout(15000);
-
         const output = '/src/files/test/preview/docxMultiPage.png';
         const multiPage = '/src/files/test/preview/docxMultiPage/';
 

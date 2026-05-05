@@ -4,13 +4,13 @@
 import {startWatch} from './setupWatcher';
 import {start} from '../watch/watch';
 
-jest.mock('redis');
+vi.mock('redis');
 
-jest.mock('../watch/watch', () => ({
-    start: jest.fn(),
+vi.mock('../watch/watch', () => ({
+    start: vi.fn(),
 }));
 
-jest.mock('../config', () => ({
+vi.mock('../config', () => ({
     getConfig: global.__mockPromise({
         rootPath: '',
         redis: {
@@ -20,12 +20,12 @@ jest.mock('../config', () => ({
     }),
 }));
 
-jest.mock('./../redis/redis', () => ({
-    createClient: jest.fn(),
+vi.mock('./../redis/redis', () => ({
+    createClient: vi.fn(),
 }));
 
-jest.mock('fs', () => ({
-    existsSync: jest.fn(() => true),
+vi.mock('fs', () => ({
+    existsSync: vi.fn(() => true),
 }));
 
 describe('test init', () => {

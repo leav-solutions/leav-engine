@@ -4,22 +4,18 @@
 import {checkInput} from './checkInput';
 import {access, lstat} from 'fs';
 
-jest.mock('fs');
+vi.mock('fs');
 
 describe('checkInput', () => {
-    afterAll(() => jest.resetAllMocks());
+    afterAll(() => vi.resetAllMocks());
 
     const inputRootPath = '/data/';
     const path = 'test.jpg';
     const absPath = inputRootPath + path;
-    const isFile = jest.fn(() => true);
+    const isFile = vi.fn(() => true);
 
-    (access as jest.FunctionLike) = jest.fn((...args) => args[1]());
-    (lstat as jest.FunctionLike) = jest.fn((...args) =>
-        args[1](null, {
-            isFile,
-        }),
-    );
+    vi.mocked(access).mockImplementation((...args: any[]) => args[1]());
+    vi.mocked(lstat).mockImplementation((...args: any[]) => args[1](null, {isFile}));
 
     test('should check file exist', async () => {
         await checkInput(path, inputRootPath);

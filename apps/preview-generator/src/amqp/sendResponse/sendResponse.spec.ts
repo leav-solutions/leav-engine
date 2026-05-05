@@ -7,7 +7,7 @@ import {sendResponse} from './sendResponse';
 
 describe('test sendResponse', () => {
     const channel: Mockify<Channel> = {
-        publish: jest.fn(),
+        publish: vi.fn(),
     };
 
     const response: IResponse = {

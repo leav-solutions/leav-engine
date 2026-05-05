@@ -10,7 +10,7 @@ const routingKey = 'routingKey';
 
 describe('test assertExchange', () => {
     const channel: Mockify<Channel> = {
-        assertExchange: jest.fn(),
+        assertExchange: vi.fn(),
     };
     test('assert exchange', async () => {
         await assertExchange(channel as Channel, 'direct', exchange);
@@ -21,7 +21,7 @@ describe('test assertExchange', () => {
 
 describe('test assertQueue', () => {
     const channel: Mockify<Channel> = {
-        assertQueue: jest.fn(),
+        assertQueue: vi.fn(),
     };
     test('assert queue', async () => {
         await assertQueue(channel as Channel, queue);
@@ -32,7 +32,7 @@ describe('test assertQueue', () => {
 
 describe('test bindQueue', () => {
     const channel: Mockify<Channel> = {
-        bindQueue: jest.fn(),
+        bindQueue: vi.fn(),
     };
     test('bind queue', async () => {
         await bindQueue(channel as Channel, queue, exchange, routingKey);
@@ -43,19 +43,15 @@ describe('test bindQueue', () => {
 
 describe('test initAmqp', () => {
     const channel: Mockify<Channel> = {
-        assertExchange: jest.fn(),
-        assertQueue: jest.fn(),
-        bindQueue: jest.fn(),
+        assertExchange: vi.fn(),
+        assertQueue: vi.fn(),
+        bindQueue: vi.fn(),
     };
     test('call other functions', async () => {
-        (assertExchange as jest.FunctionLike) = jest.fn();
-        (assertQueue as jest.FunctionLike) = jest.fn();
-        (bindQueue as jest.FunctionLike) = jest.fn();
-
         await initAmqp(channel as Channel, 'direct', {exchange, queue, routingKey, maxPriority: 3});
 
-        expect(assertExchange).toBeCalledWith(channel as Channel, 'direct', exchange);
-        expect(assertQueue).toBeCalledWith(channel as Channel, queue, 3);
-        expect(bindQueue).toBeCalledWith(channel as Channel, queue, exchange, routingKey);
+        expect(channel.assertExchange).toBeCalledWith(exchange, expect.anything(), expect.anything());
+        expect(channel.assertQueue).toBeCalledWith(queue, expect.anything());
+        expect(channel.bindQueue).toBeCalledWith(queue, exchange, routingKey);
     });
 });

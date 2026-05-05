@@ -32,12 +32,8 @@ export const startBench = async (jsonFile: string, dest: string, config: IConfig
                 ],
             }),
         );
-        const msg: Mockify<ConsumeMessage> = {
-            content,
-        };
-
-        await processPreview(msg as ConsumeMessage, config);
+        await processPreview({content} as ConsumeMessage, config);
     }
 
-    logger.info(`Time elapsed: ${(Date.now() - begin) / 1000}`);
+    logger.info(`Time elapsed: ${(Date.now() - begin) / 1_000}`);
 };
