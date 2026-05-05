@@ -1,0 +1,21 @@
+query Notifications {
+    notifications {
+        totalCount
+        list {
+            id
+            date
+            level
+            title
+            message
+            relatedEntities {
+                url
+                label
+            }
+            attachments {
+                url
+                label
+            }
+            taskId
+        }
+    }
+}

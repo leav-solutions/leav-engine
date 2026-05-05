@@ -10,7 +10,8 @@ import {
     AttributeFormat,
     type AutomationRulePipelineStepInput,
 } from '../../_gqlTypes';
-import {adminUserSdk, e2eGuestUser, e2eNonAdminUser} from '../e2eUtils';
+import {adminUserSdk, e2eAdminUser, e2eGuestUser, e2eNonAdminUser} from '../e2eUtils';
+import {type NotificationActionParams} from '../../../../domain/automation/actions/notificationAction';
 
 describe('Automation RECORD_INIT', () => {
     const testLibraryId = 'automation_record_init_test_library';
@@ -116,6 +117,36 @@ describe('Automation RECORD_INIT', () => {
             })
         ).createRecord.record.id;
     }
+
+    describe('pipeline with a notification action', () => {
+        let ruleId: string;
+
+        beforeAll(async () => {
+            ruleId = await createRecordInitRule([
+                {
+                    type: AutomationRuleActions.notification,
+                    params: {
+                        title: 'Record initialized',
+                        recipients: `["${e2eAdminUser().userId}"]`,
+                        message: '"Record with id " +  currentRecord.id + " has been initialized"',
+                        mail: true,
+                    } satisfies NotificationActionParams,
+                },
+            ]);
+        });
+
+        afterAll(async () => {
+            await adminUserSdk.DeleteAutomationRule({ruleId});
+        });
+
+        test('should send notification with currentRecord context', async () => {
+            const {notifications} = await adminUserSdk.Notifications();
+            const notification = notifications.list.find(n => n.title === 'Record initialized');
+
+            expect(notification).toBeDefined();
+            expect(notification.message).toBe(`Record with id ${recordId} has been initialized`);
+        });
+    });
 
     describe('setup default value jexl calculation and modify attribute actions', () => {
         describe('simple attribute', () => {

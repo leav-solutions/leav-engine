@@ -10,6 +10,7 @@ import {initRedis} from '../../infra/cache';
 import {type IGlobalThis} from './integrationTestUtils';
 import {type IDbService} from '../../infra/db/dbService';
 import {type IRedis} from '../../infra/cache/redis';
+import {initMailer} from '../../infra/mailer';
 
 declare const globalThis: IGlobalThis;
 
@@ -21,6 +22,7 @@ beforeAll(async () => {
 
         await initDb(conf);
         const redis = await initRedis({config: conf});
+        const mailer = await initMailer({config: conf});
         const amqp = await amqpService({
             // limit prefetch to one for task cancel to avoid multiple tasks being started in parallel
             config: {...conf.amqp, prefetch: 1},
@@ -30,6 +32,7 @@ beforeAll(async () => {
             translator,
             'core.infra.redis': redis,
             'core.infra.amqpService': amqp,
+            'core.infra.mailer': mailer,
         });
 
         globalThis.coreContainer = coreContainer;

@@ -11,6 +11,7 @@ export enum AutomationRuleActions {
     ERROR = 'error',
     JEXL_CALCULATION = 'jexlCalculation',
     MODIFY_ATTRIBUTE = 'modifyAttribute',
+    NOTIFICATION = 'notification',
 }
 
 // Contract that every pipeline action must implement

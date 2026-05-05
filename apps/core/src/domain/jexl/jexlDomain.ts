@@ -25,7 +25,7 @@ interface IDeps {
 }
 
 export interface IJexlDomain {
-    eval<Ctx extends JexlContext>(expression: string, context?: Ctx): Promise<any>;
+    eval<Return = unknown, Ctx extends JexlContext = JexlContext>(expression: string, context?: Ctx): Promise<Return>;
     validate(expression: string): Promise<void>;
 
     // Functions to prepare contexts for Jexl evaluation
@@ -36,7 +36,7 @@ export interface IJexlDomain {
 }
 
 export default function ({'core.domain.value': valueDomain}: IDeps): IJexlDomain {
-    const getValues = async (
+    const _getValues = async (
         value: JexlRecordContext | JexlTreeNodeContext,
         attributePath: string,
     ): Promise<JexlValueContext[]> => {
@@ -47,6 +47,7 @@ export default function ({'core.domain.value': valueDomain}: IDeps): IJexlDomain
         ) {
             throw new Error('getValues transform can only be used on record or tree node');
         }
+
         const valueRecord: IRecord = value.__jexlContextType === JexlContextType.TREE_NODE ? value.record : value;
         const ctx = value.__getJexlQueryCtx();
 
@@ -66,8 +67,9 @@ export default function ({'core.domain.value': valueDomain}: IDeps): IJexlDomain
             throw error;
         }
     };
-    jexl.addTransform('getValues', getValues);
-    jexl.addFunction('getValues', getValues);
+
+    jexl.addTransform('getValues', _getValues);
+    jexl.addFunction('getValues', _getValues);
 
     function buildRecordContext(record: IRecord, ctx: IQueryInfos): JexlRecordContext {
         return {
