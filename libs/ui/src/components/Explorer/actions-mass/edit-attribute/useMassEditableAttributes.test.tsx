@@ -37,7 +37,7 @@ describe('useMassEditableAttributes', () => {
     });
 
     describe('when attribute has no dependency or tree fields', () => {
-        it('should return the attribute with empty dependencies, empty treeNodes and hasEmptyDependency=true', () => {
+        it('should return the attribute with empty dependencies and hasEmptyDependency=true', () => {
             jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
                 data: {
                     attributes: {
@@ -54,7 +54,6 @@ describe('useMassEditableAttributes', () => {
                 expect.objectContaining({
                     id: attributeId,
                     dependencies: [],
-                    treeNodes: [],
                     hasEmptyDependency: true,
                     isSimpleWorkflow: false,
                     isMonoDependencyWorkflow: false,
@@ -74,7 +73,13 @@ describe('useMassEditableAttributes', () => {
                                     id: attributeId,
                                     label: {fr: 'Attribut 1'},
                                     permissions_conf_dependent_values: {
-                                        dependenciesTreeAttributes: [{id: attributeId, label: {fr: 'Attribut 1'}}],
+                                        dependenciesTreeAttributes: [
+                                            {
+                                                id: attributeId,
+                                                label: {fr: 'Attribut 1'},
+                                                linked_tree: {libraries: [{library: {id: 'tree_lib_1'}}]},
+                                            },
+                                        ],
                                     },
                                 },
                             ],
@@ -88,10 +93,15 @@ describe('useMassEditableAttributes', () => {
                 expect(result.current[0].isSimpleWorkflow).toBe(true);
                 expect(result.current[0].hasEmptyDependency).toBe(false);
                 expect(result.current[0].isMonoDependencyWorkflow).toBe(false);
+                expect(result.current[0].dependencies[0]).toEqual({
+                    id: attributeId,
+                    label: {fr: 'Attribut 1'},
+                    linkedTreeLibraryId: 'tree_lib_1',
+                });
             });
         });
 
-        describe.skip('with two dependencies and one matching the attribute id', () => {
+        describe('with two dependencies and one matching the attribute id', () => {
             it('should set isMonoDependencyWorkflow=true', () => {
                 jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
                     data: {
@@ -102,8 +112,16 @@ describe('useMassEditableAttributes', () => {
                                     label: {fr: 'Attribut 1'},
                                     permissions_conf_dependent_values: {
                                         dependenciesTreeAttributes: [
-                                            {id: attributeId, label: {fr: 'Attribut 1'}},
-                                            {id: 'attr_2', label: {fr: 'Attribut 2'}},
+                                            {
+                                                id: attributeId,
+                                                label: {fr: 'Attribut 1'},
+                                                linked_tree: {libraries: [{library: {id: 'tree_lib_1'}}]},
+                                            },
+                                            {
+                                                id: 'attr_2',
+                                                label: {fr: 'Attribut 2'},
+                                                linked_tree: {libraries: [{library: {id: 'tree_lib_2'}}]},
+                                            },
                                         ],
                                     },
                                 },
@@ -120,6 +138,43 @@ describe('useMassEditableAttributes', () => {
                 expect(result.current[0].isSimpleWorkflow).toBe(false);
             });
         });
+
+        describe('with a dependency whose linked_tree has more than one library', () => {
+            it('should not include it in dependencies', () => {
+                jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
+                    data: {
+                        attributes: {
+                            list: [
+                                {
+                                    id: attributeId,
+                                    label: {fr: 'Attribut 1'},
+                                    permissions_conf_dependent_values: {
+                                        dependenciesTreeAttributes: [
+                                            {
+                                                id: attributeId,
+                                                label: {fr: 'Attribut 1'},
+                                                linked_tree: {
+                                                    libraries: [
+                                                        {library: {id: 'tree_lib_1'}},
+                                                        {library: {id: 'tree_lib_2'}},
+                                                    ],
+                                                },
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    loading: false,
+                } as unknown as gqlTypes.MassEditableAttributesQueryResult);
+
+                const {result} = renderHook(() => useMassEditableAttributes({libraryId}));
+
+                expect(result.current[0].dependencies).toEqual([]);
+                expect(result.current[0].hasEmptyDependency).toBe(true);
+            });
+        });
     });
 
     describe('filtering — which attributes are returned', () => {
@@ -132,7 +187,10 @@ describe('useMassEditableAttributes', () => {
                                 id: attributeId,
                                 label: {fr: 'Attribut 1'},
                                 permissions_conf_dependent_values: {
-                                    dependenciesTreeAttributes: deps,
+                                    dependenciesTreeAttributes: deps.map(dep => ({
+                                        ...dep,
+                                        linked_tree: {libraries: [{library: {id: `${dep.id}_tree_lib`}}]},
+                                    })),
                                 },
                             },
                         ],
@@ -166,14 +224,14 @@ describe('useMassEditableAttributes', () => {
             expect(result.current).toHaveLength(1);
         });
 
-        it('should not include an attribute with two dependencies where one matches itself (isMonoDependencyWorkflow)', () => {
+        it('should include an attribute with two dependencies where one matches itself (isMonoDependencyWorkflow)', () => {
             jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue(
                 mockAttributeWithDeps([{id: attributeId}, {id: 'attr_2'}]),
             );
 
             const {result} = renderHook(() => useMassEditableAttributes({libraryId}));
 
-            expect(result.current).toHaveLength(0);
+            expect(result.current).toHaveLength(1);
         });
 
         it('should exclude an attribute with more than two dependencies', () => {
@@ -184,107 +242,6 @@ describe('useMassEditableAttributes', () => {
             const {result} = renderHook(() => useMassEditableAttributes({libraryId}));
 
             expect(result.current).toHaveLength(0);
-        });
-    });
-
-    describe('when attribute has tree_values', () => {
-        describe('with a valid node', () => {
-            it('should map treeNode with id, label, color and allowedDependentNodeIds', () => {
-                jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
-                    data: {
-                        attributes: {
-                            list: [
-                                {
-                                    id: attributeId,
-                                    label: {fr: 'Attribut 1'},
-                                    tree_values: [
-                                        {
-                                            node: {
-                                                id: 'node_1',
-                                                record: {
-                                                    id: 'record_1',
-                                                    whoAmI: {label: 'Record 1', color: '#ff0000'},
-                                                },
-                                            },
-                                            allowedDependentValues: [{nodeId: 'node_2'}, {nodeId: 'node_3'}],
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                    },
-                    loading: false,
-                } as unknown as gqlTypes.MassEditableAttributesQueryResult);
-
-                const {result} = renderHook(() => useMassEditableAttributes({libraryId}));
-
-                expect(result.current[0].treeNodes).toEqual([
-                    {
-                        id: 'node_1',
-                        label: 'Record 1',
-                        color: '#ff0000',
-                        allowedDependentNodeIds: ['node_2', 'node_3'],
-                    },
-                ]);
-            });
-        });
-
-        describe('with a null node', () => {
-            it('should set treeNode id to null and use the translation fallback as label', () => {
-                jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
-                    data: {
-                        attributes: {
-                            list: [
-                                {
-                                    id: attributeId,
-                                    label: {fr: 'Attribut 1'},
-                                    tree_values: [{node: null, allowedDependentValues: []}],
-                                },
-                            ],
-                        },
-                    },
-                    loading: false,
-                } as unknown as gqlTypes.MassEditableAttributesQueryResult);
-
-                const {result} = renderHook(() => useMassEditableAttributes({libraryId}));
-
-                expect(result.current[0].treeNodes[0].id).toBeNull();
-                expect(result.current[0].treeNodes[0].label).toBe('explorer.massAction.editAttribute_value_undefined');
-            });
-        });
-
-        describe('with no allowedDependentValues', () => {
-            it('should set allowedDependentNodeIds to an empty array', () => {
-                jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
-                    data: {
-                        attributes: {
-                            list: [
-                                {
-                                    id: attributeId,
-                                    label: {fr: 'Attribut 1'},
-                                    tree_values: [
-                                        {
-                                            node: {
-                                                id: 'node_1',
-                                                record: {
-                                                    id: 'record_1',
-                                                    whoAmI: {label: 'Record 1', color: null},
-                                                },
-                                            },
-                                            allowedDependentValues: null,
-                                        },
-                                    ],
-                                },
-                            ],
-                        },
-                    },
-                    loading: false,
-                } as unknown as gqlTypes.MassEditableAttributesQueryResult);
-
-                const {result} = renderHook(() => useMassEditableAttributes({libraryId}));
-
-                expect(result.current[0].treeNodes[0].allowedDependentNodeIds).toEqual([]);
-            });
         });
     });
 });

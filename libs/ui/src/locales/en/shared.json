@@ -741,6 +741,7 @@
             "editAttribute_value_occurrences_to_edit_other": "{{count, number}} elements to edit",
             "editAttribute_value_undefined": "Undefined",
             "editAttribute_value_do_not_change": "Do not change",
+            "editAttribute_mono_dependency_workflow_notice": "The elements are grouped by type. Select the new desired value for each group.",
             "editAttribute_submit_notification_title": "Bulk edit request",
             "editAttribute_submit_notification_description_one": "Your request to edit {{count, number}} item has been received. You will be notified once the operation is complete.",
             "editAttribute_submit_notification_description_other": "Your request to edit {{count, number}} items has been received. You will be notified once the operation is complete.",

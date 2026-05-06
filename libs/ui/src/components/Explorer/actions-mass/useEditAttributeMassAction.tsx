@@ -4,9 +4,9 @@
 import {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEdit} from '@fortawesome/free-solid-svg-icons';
-import {KitAlert, KitEmpty, KitNotification, KitSelect, KitSpace, KitTypography} from 'aristid-ds';
+import {KitAlert, KitNotification, KitSelect, KitSpace, KitTypography} from 'aristid-ds';
 import {localizedTranslation} from '@leav/utils';
-import {type RecordFilterInput, type SaveValueBulkMappingInput, useSaveValueBulkMutation} from '_ui/_gqlTypes';
+import {type RecordFilterInput, useSaveValueBulkMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION} from '_ui/constants';
 import {useLang} from '_ui/hooks';
@@ -16,9 +16,9 @@ import {type IViewSettingsState} from '../manage-view-settings';
 import {EditTreeAttributeValuesMapping} from './edit-attribute/EditTreeAttributeValuesMapping';
 import {EditAttributeMassActionModal} from './edit-attribute/EditAttributeMassActionModal';
 import {useMassEditableAttributes} from './edit-attribute/useMassEditableAttributes';
+import {EditMonoDependencyWorkflowTreeAttribute} from './edit-attribute/EditMonoDependencyWorkflowTreeAttribute';
 import {type MassEditableAttribute} from './edit-attribute/_types';
-
-const EDITION_MAPPING_DEFAULT_VALUES = {count: 0, mapping: []};
+import {useEditionMappingState} from './edit-attribute/useEditionMappingState';
 
 export const useEditAttributeMassAction = ({
     isEnabled,
@@ -41,19 +41,26 @@ export const useEditAttributeMassAction = ({
     const editableAttributes = useMassEditableAttributes({libraryId: view.libraryId});
 
     const [selectedAttribute, setSelectedAttribute] = useState<MassEditableAttribute | null>(null);
-    const [executeSaveValueBulk] = useSaveValueBulkMutation();
-    const [editionMapping, setEditionMapping] = useState<{count: number; mapping: SaveValueBulkMappingInput[]}>(
-        EDITION_MAPPING_DEFAULT_VALUES,
-    );
+    const [executeSaveValueBulk] = useSaveValueBulkMutation({
+        update(cache) {
+            // Without this evict, Apollo keeps stale listDistinctValues occurrences in cache,
+            // preventing a re-edit of the same attribute right after a previous (partial or full) bulk edit.
+            cache.evict({fieldName: 'listDistinctValues'});
+            cache.gc();
+        },
+    });
+    const {editionMapping, resetEditionMapping, applyMappingChange, applyMonoDependencyWorkflowChange} =
+        useEditionMappingState();
+
     useEffect(() => {
-        setEditionMapping(EDITION_MAPPING_DEFAULT_VALUES);
+        resetEditionMapping();
     }, [selectedAttribute]);
 
     const _closeModal = () => {
         setOpenModal(false);
         setMassSelectionFilters([]);
         setSelectedAttribute(null);
-        setEditionMapping(EDITION_MAPPING_DEFAULT_VALUES);
+        resetEditionMapping();
     };
 
     const bulkCount = view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
@@ -109,7 +116,7 @@ export const useEditAttributeMassAction = ({
             callback: (_massSelectionFilter: RecordFilterInput[]) => {
                 setMassSelectionFilters(_massSelectionFilter);
                 setSelectedAttribute(null);
-                setEditionMapping(EDITION_MAPPING_DEFAULT_VALUES);
+                resetEditionMapping();
                 setOpenModal(true);
             },
         },
@@ -143,66 +150,22 @@ export const useEditAttributeMassAction = ({
                             libraryId={view.libraryId}
                             attribute={selectedAttribute}
                             massSelectionFilters={massSelectionFilters}
-                            setAttributeMapping={({before, after, occurrenceCount}) => {
-                                setEditionMapping(
-                                    before === after
-                                        ? {
-                                              count: editionMapping.count - occurrenceCount,
-                                              mapping: [
-                                                  {
-                                                      values: (editionMapping.mapping[0]?.values ?? []).filter(
-                                                          value => value.before !== before,
-                                                      ),
-                                                  },
-                                              ],
-                                          }
-                                        : {
-                                              count: editionMapping.count + occurrenceCount,
-                                              mapping: [
-                                                  {
-                                                      values: (editionMapping.mapping[0]?.values ?? [])
-                                                          .filter(value => value.before !== before)
-                                                          .concat([{before, after}]),
-                                                  },
-                                              ],
-                                          },
-                                );
-                            }}
+                            setAttributeMapping={applyMappingChange}
                         />
                     ) : selectedAttribute.isSimpleWorkflow ? (
                         <EditTreeAttributeValuesMapping
                             libraryId={view.libraryId}
                             attribute={selectedAttribute}
                             massSelectionFilters={massSelectionFilters}
-                            setAttributeMapping={({before, after, occurrenceCount}) => {
-                                setEditionMapping(
-                                    before === after
-                                        ? {
-                                              count: editionMapping.count - occurrenceCount,
-                                              mapping: [
-                                                  {
-                                                      values: (editionMapping.mapping[0]?.values ?? []).filter(
-                                                          value => value.before !== before,
-                                                      ),
-                                                  },
-                                              ],
-                                          }
-                                        : {
-                                              count: editionMapping.count + occurrenceCount,
-                                              mapping: [
-                                                  {
-                                                      values: (editionMapping.mapping[0]?.values ?? [])
-                                                          .filter(value => value.before !== before)
-                                                          .concat([{before, after}]),
-                                                  },
-                                              ],
-                                          },
-                                );
-                            }}
+                            setAttributeMapping={applyMappingChange}
                         />
                     ) : selectedAttribute.isMonoDependencyWorkflow ? (
-                        /* TODO: */
-                        <KitEmpty description="WIP" />
+                        <EditMonoDependencyWorkflowTreeAttribute
+                            libraryId={view.libraryId}
+                            attribute={selectedAttribute}
+                            massSelectionFilters={massSelectionFilters}
+                            setAttributeMapping={applyMonoDependencyWorkflowChange}
+                        />
                     ) : null)}
             </EditAttributeMassActionModal>
         ),

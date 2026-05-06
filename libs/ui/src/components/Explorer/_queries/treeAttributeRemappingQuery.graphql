@@ -1,0 +1,36 @@
+query TreeAttributeRemapping(
+    $libraryId: ID!
+    $attributeId: ID!
+    $recordFilters: [RecordFilterInput]!
+    $attributeDependentValue: AttributeDependentValueInput
+) {
+    listDistinctValues(library: $libraryId, attribute: $attributeId, recordFilters: $recordFilters) {
+        count
+        ... on TreeDistinctValues {
+            treeNode: value {
+                id
+            }
+        }
+    }
+    attributes(filters: {id: $attributeId}) {
+        list {
+            ... on TreeAttribute {
+                tree_values(attributeDependentValue: $attributeDependentValue) {
+                    node {
+                        id
+                        record {
+                            id
+                            whoAmI {
+                                label
+                                color
+                            }
+                        }
+                    }
+                    allowedDependentValues {
+                        nodeId
+                    }
+                }
+            }
+        }
+    }
+}
