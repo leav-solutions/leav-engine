@@ -24,3 +24,4 @@ export {useIFrameMessengerHandlers} from './useIFrameMessenger/useIFrameMessenge
 export {IFrameMessengerProvider} from './useIFrameMessenger/useIFrameMessengerContext';
 export {useGetRecordIdCard} from './useGetRecordIdCard';
 export {useConfirmModal} from './useConfirmModal';
+export {useDelayedLoading} from './useDelayedLoading';

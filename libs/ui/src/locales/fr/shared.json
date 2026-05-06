@@ -741,6 +741,7 @@
             "editAttribute_value_occurrences_to_edit_other": "{{count, number}} éléments à traiter",
             "editAttribute_value_undefined": "Non défini",
             "editAttribute_value_do_not_change": "Ne pas changer",
+            "editAttribute_mono_dependency_workflow_notice": "Les éléments sont regroupés par type. Sélectionnez la nouvelle valeur souhaitée pour chaque groupe.",
             "editAttribute_submit_notification_title": "Demande de modification en masse",
             "editAttribute_submit_notification_description_one": "Votre demande de modification de {{count, number}} élément a bien été prise en compte. Vous serez notifié une fois l’opération terminée.",
             "editAttribute_submit_notification_description_other": "Votre demande de modification de {{count, number}} éléments a bien été prise en compte. Vous serez notifié une fois l’opération terminée.",

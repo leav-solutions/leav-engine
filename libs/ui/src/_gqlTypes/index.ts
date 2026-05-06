@@ -2111,7 +2111,10 @@ export type MassEditableAttributesQueryVariables = Exact<{
 
 export type MassEditableAttributesQuery = { attributes?: { list: Array<
       | { id: string, label?: any | null }
-      | { id: string, label?: any | null, tree_values?: Array<{ node?: { id: string, record: { id: string, whoAmI: { label?: string | null, color?: string | null } } } | null, allowedDependentValues?: Array<{ nodeId?: string | null }> | null }> | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<{ id: string, label?: any | null }> } | null }
+      | { id: string, label?: any | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+            | { id: string, label?: any | null }
+            | { id: string, label?: any | null, linked_tree?: { libraries: Array<{ library: { id: string } }> } | null }
+          > } | null }
     > } | null };
 
 export type ExplorerSelectionIdsQueryVariables = Exact<{
@@ -2127,6 +2130,19 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { me?: { id: string, whoAmI: { id: string, library: { id: string } } } | null };
 
+export type TreeAttributeRemappingQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  attributeId: Scalars['ID']['input'];
+  recordFilters: Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>;
+  attributeDependentValue?: InputMaybe<AttributeDependentValueInput>;
+}>;
+
+
+export type TreeAttributeRemappingQuery = { listDistinctValues?: Array<
+    | { count: number }
+    | { count: number, treeNode?: { id: string } | null }
+  > | null, attributes?: { list: Array<{ tree_values?: Array<{ node?: { id: string, record: { id: string, whoAmI: { label?: string | null, color?: string | null } } } | null, allowedDependentValues?: Array<{ nodeId?: string | null }> | null }> | null }> } | null };
+
 export type UpdateViewMutationVariables = Exact<{
   view: ViewInputPartial;
 }>;
@@ -2134,17 +2150,14 @@ export type UpdateViewMutationVariables = Exact<{
 
 export type UpdateViewMutation = { updateView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
 
-export type ValuesOccurrencesQueryVariables = Exact<{
+export type ValuesOccurrencesForDependencyQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
-  attributeId: Scalars['ID']['input'];
+  dependencyAttributeId: Scalars['ID']['input'];
   recordFilters: Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>;
 }>;
 
 
-export type ValuesOccurrencesQuery = { listDistinctValues?: Array<
-    | { count: number }
-    | { count: number, treeNode?: { id: string } | null }
-  > | null };
+export type ValuesOccurrencesForDependencyQuery = { listDistinctValues?: Array<{ treeNode?: { id: string, record: { id: string, whoAmI: { label?: string | null } } } | null }> | null };
 
 export type TreeFiltersDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID']['input'];
@@ -6202,25 +6215,19 @@ export const MassEditableAttributesDocument = gql`
       label
       ... on TreeAttribute {
         id
-        tree_values {
-          node {
-            id
-            record {
-              id
-              whoAmI {
-                label
-                color
-              }
-            }
-          }
-          allowedDependentValues {
-            nodeId
-          }
-        }
         permissions_conf_dependent_values {
           dependenciesTreeAttributes {
             id
             label
+            ... on TreeAttribute {
+              linked_tree {
+                libraries {
+                  library {
+                    id
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -6358,6 +6365,82 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeSuspenseQueryHookResult = ReturnType<typeof useMeSuspenseQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const TreeAttributeRemappingDocument = gql`
+    query TreeAttributeRemapping($libraryId: ID!, $attributeId: ID!, $recordFilters: [RecordFilterInput]!, $attributeDependentValue: AttributeDependentValueInput) {
+  listDistinctValues(
+    library: $libraryId
+    attribute: $attributeId
+    recordFilters: $recordFilters
+  ) {
+    count
+    ... on TreeDistinctValues {
+      treeNode: value {
+        id
+      }
+    }
+  }
+  attributes(filters: {id: $attributeId}) {
+    list {
+      ... on TreeAttribute {
+        tree_values(attributeDependentValue: $attributeDependentValue) {
+          node {
+            id
+            record {
+              id
+              whoAmI {
+                label
+                color
+              }
+            }
+          }
+          allowedDependentValues {
+            nodeId
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useTreeAttributeRemappingQuery__
+ *
+ * To run a query within a React component, call `useTreeAttributeRemappingQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTreeAttributeRemappingQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTreeAttributeRemappingQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *      attributeId: // value for 'attributeId'
+ *      recordFilters: // value for 'recordFilters'
+ *      attributeDependentValue: // value for 'attributeDependentValue'
+ *   },
+ * });
+ */
+export function useTreeAttributeRemappingQuery(baseOptions: Apollo.QueryHookOptions<TreeAttributeRemappingQuery, TreeAttributeRemappingQueryVariables> & ({ variables: TreeAttributeRemappingQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TreeAttributeRemappingQuery, TreeAttributeRemappingQueryVariables>(TreeAttributeRemappingDocument, options);
+      }
+export function useTreeAttributeRemappingLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TreeAttributeRemappingQuery, TreeAttributeRemappingQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TreeAttributeRemappingQuery, TreeAttributeRemappingQueryVariables>(TreeAttributeRemappingDocument, options);
+        }
+// @ts-ignore
+export function useTreeAttributeRemappingSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TreeAttributeRemappingQuery, TreeAttributeRemappingQueryVariables>): Apollo.UseSuspenseQueryResult<TreeAttributeRemappingQuery, TreeAttributeRemappingQueryVariables>;
+export function useTreeAttributeRemappingSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeAttributeRemappingQuery, TreeAttributeRemappingQueryVariables>): Apollo.UseSuspenseQueryResult<TreeAttributeRemappingQuery | undefined, TreeAttributeRemappingQueryVariables>;
+export function useTreeAttributeRemappingSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeAttributeRemappingQuery, TreeAttributeRemappingQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<TreeAttributeRemappingQuery, TreeAttributeRemappingQueryVariables>(TreeAttributeRemappingDocument, options);
+        }
+export type TreeAttributeRemappingQueryHookResult = ReturnType<typeof useTreeAttributeRemappingQuery>;
+export type TreeAttributeRemappingLazyQueryHookResult = ReturnType<typeof useTreeAttributeRemappingLazyQuery>;
+export type TreeAttributeRemappingSuspenseQueryHookResult = ReturnType<typeof useTreeAttributeRemappingSuspenseQuery>;
+export type TreeAttributeRemappingQueryResult = Apollo.QueryResult<TreeAttributeRemappingQuery, TreeAttributeRemappingQueryVariables>;
 export const UpdateViewDocument = gql`
     mutation UpdateView($view: ViewInputPartial!) {
   updateView(view: $view) {
@@ -6391,17 +6474,22 @@ export function useUpdateViewMutation(baseOptions?: Apollo.MutationHookOptions<U
 export type UpdateViewMutationHookResult = ReturnType<typeof useUpdateViewMutation>;
 export type UpdateViewMutationResult = Apollo.MutationResult<UpdateViewMutation>;
 export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMutation, UpdateViewMutationVariables>;
-export const ValuesOccurrencesDocument = gql`
-    query ValuesOccurrences($libraryId: ID!, $attributeId: ID!, $recordFilters: [RecordFilterInput]!) {
+export const ValuesOccurrencesForDependencyDocument = gql`
+    query ValuesOccurrencesForDependency($libraryId: ID!, $dependencyAttributeId: ID!, $recordFilters: [RecordFilterInput]!) {
   listDistinctValues(
     library: $libraryId
-    attribute: $attributeId
+    attribute: $dependencyAttributeId
     recordFilters: $recordFilters
   ) {
-    count
     ... on TreeDistinctValues {
       treeNode: value {
         id
+        record {
+          id
+          whoAmI {
+            label
+          }
+        }
       }
     }
   }
@@ -6409,42 +6497,42 @@ export const ValuesOccurrencesDocument = gql`
     `;
 
 /**
- * __useValuesOccurrencesQuery__
+ * __useValuesOccurrencesForDependencyQuery__
  *
- * To run a query within a React component, call `useValuesOccurrencesQuery` and pass it any options that fit your needs.
- * When your component renders, `useValuesOccurrencesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useValuesOccurrencesForDependencyQuery` and pass it any options that fit your needs.
+ * When your component renders, `useValuesOccurrencesForDependencyQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useValuesOccurrencesQuery({
+ * const { data, loading, error } = useValuesOccurrencesForDependencyQuery({
  *   variables: {
  *      libraryId: // value for 'libraryId'
- *      attributeId: // value for 'attributeId'
+ *      dependencyAttributeId: // value for 'dependencyAttributeId'
  *      recordFilters: // value for 'recordFilters'
  *   },
  * });
  */
-export function useValuesOccurrencesQuery(baseOptions: Apollo.QueryHookOptions<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables> & ({ variables: ValuesOccurrencesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useValuesOccurrencesForDependencyQuery(baseOptions: Apollo.QueryHookOptions<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables> & ({ variables: ValuesOccurrencesForDependencyQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>(ValuesOccurrencesDocument, options);
+        return Apollo.useQuery<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>(ValuesOccurrencesForDependencyDocument, options);
       }
-export function useValuesOccurrencesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>) {
+export function useValuesOccurrencesForDependencyLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>(ValuesOccurrencesDocument, options);
+          return Apollo.useLazyQuery<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>(ValuesOccurrencesForDependencyDocument, options);
         }
 // @ts-ignore
-export function useValuesOccurrencesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>): Apollo.UseSuspenseQueryResult<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>;
-export function useValuesOccurrencesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>): Apollo.UseSuspenseQueryResult<ValuesOccurrencesQuery | undefined, ValuesOccurrencesQueryVariables>;
-export function useValuesOccurrencesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>) {
+export function useValuesOccurrencesForDependencySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>): Apollo.UseSuspenseQueryResult<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>;
+export function useValuesOccurrencesForDependencySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>): Apollo.UseSuspenseQueryResult<ValuesOccurrencesForDependencyQuery | undefined, ValuesOccurrencesForDependencyQueryVariables>;
+export function useValuesOccurrencesForDependencySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>(ValuesOccurrencesDocument, options);
+          return Apollo.useSuspenseQuery<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>(ValuesOccurrencesForDependencyDocument, options);
         }
-export type ValuesOccurrencesQueryHookResult = ReturnType<typeof useValuesOccurrencesQuery>;
-export type ValuesOccurrencesLazyQueryHookResult = ReturnType<typeof useValuesOccurrencesLazyQuery>;
-export type ValuesOccurrencesSuspenseQueryHookResult = ReturnType<typeof useValuesOccurrencesSuspenseQuery>;
-export type ValuesOccurrencesQueryResult = Apollo.QueryResult<ValuesOccurrencesQuery, ValuesOccurrencesQueryVariables>;
+export type ValuesOccurrencesForDependencyQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencyQuery>;
+export type ValuesOccurrencesForDependencyLazyQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencyLazyQuery>;
+export type ValuesOccurrencesForDependencySuspenseQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencySuspenseQuery>;
+export type ValuesOccurrencesForDependencyQueryResult = Apollo.QueryResult<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>;
 export const TreeFiltersDataQueryDocument = gql`
     query TreeFiltersDataQuery($treeId: ID!, $startAt: ID, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
   treeContent(

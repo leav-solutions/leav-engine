@@ -120,10 +120,9 @@ export default function ({
             let treatedNumber = 0;
             let recordsNumber = 0;
 
-            const operations: Array<() => Promise<IValue[]>> = [];
-
             await Promise.all(
                 mapping.map(async ({dependenciesFilters = [], values}) => {
+                    const operations: Array<() => Promise<IValue[]>> = [];
                     const records = await findRecordsHelper({
                         params: {
                             library: libraryId,

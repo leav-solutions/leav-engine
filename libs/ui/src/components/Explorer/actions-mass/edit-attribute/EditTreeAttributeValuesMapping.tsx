@@ -4,36 +4,36 @@
 import {KitLoader, KitSpace} from 'aristid-ds';
 import {type RecordFilterInput} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useValuesDistribution} from './useValuesDistribution';
-import {useTreeNodeRemapping} from './useTreeNodeRemapping';
+import {useTreeNodesCandidates} from './useTreeNodesCandidates';
 import {TreeNodeRemap} from './TreeNodeRemap';
 import {type MassEditableAttribute, type SetAttributeMapping} from './_types';
 
-const UNDEFINED_NODE_ID = null;
+const EMPTY_VALUE_NODE_ID = null;
 
 export const EditTreeAttributeValuesMapping = ({
     libraryId,
     attribute,
+    dependencyAttributeId,
+    dependencyAttributeNodeId,
     setAttributeMapping,
     massSelectionFilters,
 }: {
     libraryId: string;
     attribute: MassEditableAttribute;
+    dependencyAttributeId?: string;
+    dependencyAttributeNodeId?: string;
     setAttributeMapping: SetAttributeMapping;
     massSelectionFilters: RecordFilterInput[];
 }) => {
     const {t} = useSharedTranslation();
 
-    const {distribution, noValueCount, loading} = useValuesDistribution({
+    const {candidateNodes, loading} = useTreeNodesCandidates({
         attributeId: attribute.id,
+        dependencyAttributeId,
+        dependencyAttributeNodeId,
         libraryId,
-        recordFilters: massSelectionFilters,
+        massSelectionFilters,
     });
-
-    const noValueNode = attribute.treeNodes.find(({id}) => id === UNDEFINED_NODE_ID) ?? null;
-    const editableNodes = attribute.treeNodes.filter(({id}) => id !== UNDEFINED_NODE_ID);
-
-    const remappingList = useTreeNodeRemapping({distribution, editableNodes});
 
     if (loading) {
         return <KitLoader />;
@@ -41,24 +41,18 @@ export const EditTreeAttributeValuesMapping = ({
 
     return (
         <KitSpace direction="vertical" size="xs" style={{display: 'flex'}}>
-            {remappingList.map(remapping => (
+            {candidateNodes.map(remapping => (
                 <TreeNodeRemap
-                    key={remapping.currentNode.id}
-                    {...remapping}
-                    setAttributeMapping={setAttributeMapping}
-                />
-            ))}
-            {noValueCount > 0 && noValueNode !== null && (
-                <TreeNodeRemap
-                    currentNode={noValueNode}
-                    occurrenceCount={noValueCount}
+                    key={remapping.currentNode.id ?? 'empty'}
+                    currentNode={remapping.currentNode}
+                    occurrenceCount={remapping.occurrenceCount}
                     candidateNodes={[
-                        {id: UNDEFINED_NODE_ID, label: t('explorer.massAction.editAttribute_value_do_not_change')},
-                        ...editableNodes,
+                        {id: EMPTY_VALUE_NODE_ID, label: t('explorer.massAction.editAttribute_value_do_not_change')},
+                        ...remapping.allowedDependentValues,
                     ]}
                     setAttributeMapping={setAttributeMapping}
                 />
-            )}
+            ))}
         </KitSpace>
     );
 };

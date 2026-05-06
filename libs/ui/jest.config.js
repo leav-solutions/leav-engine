@@ -9,7 +9,7 @@ module.exports = {
         '\\.(ts|tsx)$': [
             'ts-jest',
             {
-                isolatedModules: true,
+                tsconfig: './tsconfig.test.json',
             },
         ],
         '^.+\\.js?$': ['babel-jest', {rootMode: 'upward'}],

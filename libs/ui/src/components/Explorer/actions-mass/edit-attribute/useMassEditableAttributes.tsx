@@ -2,12 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useMassEditableAttributesQuery} from '_ui/_gqlTypes';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type MassEditableAttribute} from './_types';
 
 export const useMassEditableAttributes = ({libraryId}: {libraryId: string}): MassEditableAttribute[] => {
-    const {t} = useSharedTranslation();
-
     const {data} = useMassEditableAttributesQuery({
         variables: {libraryId},
         skip: libraryId.length === 0,
@@ -18,7 +15,19 @@ export const useMassEditableAttributes = ({libraryId}: {libraryId: string}): Mas
             .map(treeAttribute => {
                 let dependencies: MassEditableAttribute['dependencies'] = [];
                 if ('permissions_conf_dependent_values' in treeAttribute) {
-                    dependencies = treeAttribute.permissions_conf_dependent_values?.dependenciesTreeAttributes ?? [];
+                    dependencies = (treeAttribute.permissions_conf_dependent_values?.dependenciesTreeAttributes ?? [])
+                        .map(attribute => {
+                            if ('linked_tree' in attribute && attribute.linked_tree?.libraries.length === 1) {
+                                return {
+                                    id: attribute.id,
+                                    label: attribute.label,
+                                    linkedTreeLibraryId: attribute.linked_tree.libraries[0].library.id,
+                                };
+                            }
+                            return null;
+                        })
+                        // TODO: to be factorised as utility (replace .filter(Boolean) but with better TS support)
+                        .filter((x): x is NonNullable<typeof x> => x !== null);
                 }
 
                 const hasEmptyDependency = dependencies.length === 0;
@@ -27,20 +36,6 @@ export const useMassEditableAttributes = ({libraryId}: {libraryId: string}): Mas
                     dependencies.length === 2 &&
                     dependencies.filter(attribute => attribute.id === treeAttribute.id).length === 1;
 
-                let treeNodes: MassEditableAttribute['treeNodes'] = [];
-                if ('tree_values' in treeAttribute) {
-                    treeNodes =
-                        treeAttribute.tree_values?.map(treeValue => ({
-                            id: treeValue.node?.id ?? null,
-                            label:
-                                treeValue.node?.record.whoAmI.label ??
-                                treeValue.node?.record.id ??
-                                t('explorer.massAction.editAttribute_value_undefined'),
-                            color: treeValue.node?.record.whoAmI.color,
-                            allowedDependentNodeIds: treeValue.allowedDependentValues?.map(({nodeId}) => nodeId!) ?? [],
-                        })) ?? [];
-                }
-
                 return {
                     id: treeAttribute.id,
                     label: treeAttribute.label,
@@ -48,12 +43,11 @@ export const useMassEditableAttributes = ({libraryId}: {libraryId: string}): Mas
                     hasEmptyDependency,
                     isSimpleWorkflow,
                     isMonoDependencyWorkflow,
-                    treeNodes,
                 };
             })
             .filter(
                 ({hasEmptyDependency, isSimpleWorkflow, isMonoDependencyWorkflow}) =>
-                    hasEmptyDependency || isSimpleWorkflow /*|| isMonoDependencyWorkflow*/,
+                    hasEmptyDependency || isSimpleWorkflow || isMonoDependencyWorkflow,
             ) ?? []
     );
 };

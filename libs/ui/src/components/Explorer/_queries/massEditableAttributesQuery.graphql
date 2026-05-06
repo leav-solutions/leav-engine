@@ -5,25 +5,19 @@ query MassEditableAttributes($libraryId: String!) {
             label
             ... on TreeAttribute {
                 id
-                tree_values {
-                    node {
-                        id
-                        record {
-                            id
-                            whoAmI {
-                                label
-                                color
-                            }
-                        }
-                    }
-                    allowedDependentValues {
-                        nodeId
-                    }
-                }
                 permissions_conf_dependent_values {
                     dependenciesTreeAttributes {
                         id
                         label
+                        ... on TreeAttribute {
+                            linked_tree {
+                                libraries {
+                                    library {
+                                        id
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
