@@ -179,7 +179,7 @@ services:
       - "traefik.http.routers.core.priority=10"
     environment:
       <<: [*env-core, *env-amqp, *env-logger]
-      CORE_MODE: server
+      CORE_MODES: server,indexationManager,tasksManager:master,tasksManager:worker,filesManager
     volumes:
       # We must load every volume for installation
       - *mount_point-repo
@@ -219,96 +219,7 @@ services:
         condition: service_healthy
     command: [sh, -c, "/scripts/start-core.sh"]
 
-  indexation-manager:
-    build: *env-build-core
-    stdin_open: true
-    tty: true
-    environment:
-      <<: [*env-core, *env-amqp, *env-logger]
-      CORE_MODE: indexationManager
-    volumes:
-      - *mount_point-repo
-      - *mount_point-scripts
-      - *volume-yarn
-      - *volume-shared-modules
-      - *volume-core-modules
-      - *volume-app_root_path-modules
-      - *volume-config_manager-modules
-      - *volume-logger-modules
-      - *volume-message_broker-modules
-      - *volume-monitoring_server-modules
-      - *volume-utils-modules
-      - *mount_point-yarn_releases
-    ports:
-      - "9231:9231"
-    working_dir: *dir-core
-    healthcheck: *healthcheck-localhost-44444
-    depends_on:
-      core:
-        condition: service_healthy
-    command: [sh, -c, "yarn run start:indexation"]
-
-  tasks-manager-master:
-    build: *env-build-core
-    stdin_open: true
-    tty: true
-    environment:
-      <<: [*env-logger, *env-core, *env-amqp]
-      CORE_MODE: tasksManager:master
-    volumes:
-      - *mount_point-repo
-      - *mount_point-scripts
-      - *mount_point-imports
-      - *mount_point-exports
-      - *volume-yarn
-      - *volume-shared-modules
-      - *volume-core-modules
-      - *volume-app_root_path-modules
-      - *volume-config_manager-modules
-      - *volume-logger-modules
-      - *volume-message_broker-modules
-      - *volume-monitoring_server-modules
-      - *volume-utils-modules
-      - *mount_point-yarn_releases
-    ports:
-      - "9232:9232"
-    working_dir: *dir-core
-    healthcheck: *healthcheck-localhost-44444
-    depends_on:
-      core:
-        condition: service_healthy
-    command: [sh, -c, "yarn run start:tasksMaster"]
-
-  tasks-manager-worker:
-    build: *env-build-core
-    restart: always
-    environment:
-      <<: [*env-logger, *env-core, *env-amqp]
-      CORE_MODE: tasksManager:worker
-    volumes:
-      - *mount_point-repo
-      - *mount_point-scripts
-      - *mount_point-imports
-      - *mount_point-exports
-      - *volume-yarn
-      - *volume-shared-modules
-      - *volume-core-modules
-      - *volume-app_root_path-modules
-      - *volume-config_manager-modules
-      - *volume-logger-modules
-      - *volume-message_broker-modules
-      - *volume-monitoring_server-modules
-      - *volume-utils-modules
-      - *mount_point-yarn_releases
-    working_dir: *dir-core
-    healthcheck: *healthcheck-localhost-44444
-    ports:
-      - "9234:9234"
-    depends_on:
-      core:
-        condition: service_healthy
-    command: [sh, -c, "yarn run start:tasksWorker"]
-
+  # Logs collector in separate container because it depends in logs profile with elasticsearch
   logs-collector:
     profiles: ["logs"]
     build: *env-build-core
@@ -337,7 +248,7 @@ services:
     depends_on:
       core:
         condition: service_healthy
-    command: [sh, -c, "yarn run start:logsCollector"]
+    command: [sh, -c, "yarn run start:watch"]
 
   admin:
     image: node:24.15.0-alpine3.23
@@ -506,36 +417,6 @@ services:
       core:
         condition: service_healthy
     command: [sh, -c, "yarn run start:watch"]
-
-  files-manager:
-    profiles: ["automate"]
-    build: *env-build-core
-    restart: always
-    environment:
-      <<: [*env-logger, *env-core, *env-amqp]
-      CORE_MODE: filesManager
-    volumes:
-      - *mount_point-repo
-      - *mount_point-files
-      - *mount_point-previews
-      - *mount_point-scripts
-      - *volume-shared-modules
-      - *volume-core-modules
-      - *volume-app_root_path-modules
-      - *volume-config_manager-modules
-      - *volume-logger-modules
-      - *volume-message_broker-modules
-      - *volume-monitoring_server-modules
-      - *volume-utils-modules
-      - *mount_point-yarn_releases
-    ports:
-      - "9230:9230"
-    working_dir: *dir-core
-    healthcheck: *healthcheck-localhost-44444
-    depends_on:
-      core:
-        condition: service_healthy
-    command: [sh, -c, "yarn run start:files"]
 
   preview-generator:
     profiles: ["automate"]
