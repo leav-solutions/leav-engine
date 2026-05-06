@@ -70,9 +70,10 @@ export const validateConfig = (conf: IConfig) => {
             },
             enableTracer: Joi.boolean().required(),
         }),
-        coreMode: Joi.string()
-            .valid(...Object.values(CoreMode))
-            .required(),
+        coreModes: Joi.array()
+            .items(Joi.string().valid(...Object.values(CoreMode)))
+            .required()
+            .unique(),
         db: Joi.object().keys({
             url: Joi.string().required(),
             name: Joi.string().required(),

@@ -18,7 +18,7 @@ import {
 } from './permissions';
 
 export interface IConfig {
-    coreMode: CoreMode;
+    coreModes: CoreMode[];
     server: IServer;
     db: IDb;
     diskCache: IDiskCache;
@@ -66,9 +66,26 @@ export enum CoreMode {
     TASKS_MANAGER_MASTER = 'tasksManager:master',
     TASKS_MANAGER_WORKER = 'tasksManager:worker',
     LOGS_COLLECTOR = 'logsCollector',
+
+    /**
+     * Alias for [
+     *   CoreMode.SERVER,
+     *   CoreMode.INDEXATION_MANAGER,
+     *   CoreMode.TASKS_MANAGER_MASTER,
+     *   CoreMode.TASKS_MANAGER_WORKER,
+     * ]
+     */
     E2E_PLAYWRIGHT = 'e2ePlaywright',
-    CLI = 'cli', // default
 }
+
+export const CORE_MODES_E2E_PLAYWRIGHT = [
+    CoreMode.SERVER,
+    CoreMode.INDEXATION_MANAGER,
+    CoreMode.TASKS_MANAGER_MASTER,
+    CoreMode.TASKS_MANAGER_WORKER,
+    // no CoreMode.LOGS_COLLECTOR yet because not needed in e2e tests, need elasticsearch
+    // no CoreMode.FILES_MANAGER yet because not needed in e2e tests
+];
 
 export interface IServer {
     host: string;
