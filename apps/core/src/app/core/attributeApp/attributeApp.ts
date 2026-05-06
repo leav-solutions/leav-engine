@@ -209,6 +209,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         values_list: StandardValuesListConf,
                         unique: Boolean,
                         character_limit: Int
+                        smart_filter: SmartFilterConf
                     }
 
                     type LinkAttribute implements Attribute {
@@ -269,7 +270,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         settings: JSONObject
                         multi_link_display_option: MultiDisplayOption
                         multi_tree_display_option: MultiDisplayOption
-                        """ only for link attribute """
+                        """ only for link or standard attribute """
                         smart_filter: SmartFilterConfInput
                     }
 

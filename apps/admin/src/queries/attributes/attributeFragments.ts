@@ -56,6 +56,9 @@ export const attributeDetailsFragment = gql`
         ... on StandardAttribute {
             unique
             character_limit
+            smart_filter {
+                enable
+            }
         }
 
         ... on LinkAttribute {

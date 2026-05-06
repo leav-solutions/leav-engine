@@ -180,6 +180,7 @@ export const useTransformFilters = () => {
                         attribute: {
                             ...filterAttributeBase,
                             format: attributeData.format!,
+                            smartFilter: (attributeData as StandardAttributeDetailsFragment).smart_filter ?? undefined,
                         },
                         withEmptyValues: filter.withEmptyValues ?? false,
                     };

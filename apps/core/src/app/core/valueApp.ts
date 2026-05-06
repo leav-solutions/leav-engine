@@ -273,6 +273,11 @@ export default function ({
                         count: Int!
                     }
 
+                    type StandardDistinctValues implements GenericDistinctValues {
+                        value: Any
+                        count: Int!
+                    }
+
                     extend type Query {
                         listDistinctValues(                     
                             library: ID!,
@@ -442,6 +447,9 @@ export default function ({
                                 case AttributeTypes.SIMPLE_LINK:
                                 case AttributeTypes.ADVANCED_LINK:
                                     return 'LinkDistinctValues';
+                                case AttributeTypes.SIMPLE:
+                                case AttributeTypes.ADVANCED:
+                                    return 'StandardDistinctValues';
                                 default:
                                     return null;
                             }

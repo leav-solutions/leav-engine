@@ -72,6 +72,9 @@ fragment AttributesByLibAttributeWithPermissions on Attribute {
                 }
             }
         }
+        smart_filter {
+            enable
+        }
     }
 }
 

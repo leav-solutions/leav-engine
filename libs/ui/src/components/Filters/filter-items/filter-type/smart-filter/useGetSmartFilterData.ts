@@ -8,8 +8,7 @@ import {type IUIFilterTree, type FiltersOperator, type UIFilter} from '_ui/compo
 export interface ISmartFilterNode {
     title: string;
     key: string;
-    libraryId: string;
-    recordId: string;
+    value: string | null; // recordId or text value
     count: number;
     ghosted?: boolean;
 }
@@ -21,7 +20,6 @@ interface IUseGetSmartFilterDataProps {
     filtersOperator: FiltersOperator;
     selectedValueIds?: string[] | null;
     selectedFormattedValues?: Array<string | null> | null;
-    linkedLibraryId?: string;
 }
 
 export const useGetSmartFilterData = ({
@@ -31,7 +29,6 @@ export const useGetSmartFilterData = ({
     filtersOperator,
     selectedValueIds,
     selectedFormattedValues,
-    linkedLibraryId,
 }: IUseGetSmartFilterDataProps) => {
     const filtersWithoutCurrentAttributeFilter = filters.filter(filter => filter.attribute.id !== attributeId);
     const preparedFilters = prepareFiltersForRequest(filtersWithoutCurrentAttributeFilter, filtersOperator, undefined);
@@ -48,22 +45,30 @@ export const useGetSmartFilterData = ({
 
     const smartFilterData: ISmartFilterNode[] = occurrences?.length
         ? occurrences
-              .map(({value, count}) =>
-                  value !== null
+              .map(occurrence =>
+                  'standardValue' in occurrence && occurrence.standardValue !== null
                       ? {
-                            key: value.id,
-                            title: value.whoAmI.label ?? value.whoAmI.id ?? value.id,
-                            recordId: value.whoAmI.id,
-                            libraryId: value.whoAmI.library.id,
-                            count,
+                            key: occurrence.standardValue,
+                            title: occurrence.standardValue,
+                            value: occurrence.standardValue,
+                            count: occurrence.count,
                         }
-                      : {
-                            key: 'no_value',
-                            title: '',
-                            recordId: null,
-                            libraryId: null,
-                            count,
-                        },
+                      : 'recordValue' in occurrence && occurrence.recordValue !== null
+                        ? {
+                              key: occurrence.recordValue.id,
+                              title:
+                                  occurrence.recordValue.whoAmI.label ??
+                                  occurrence.recordValue.whoAmI.id ??
+                                  occurrence.recordValue.id,
+                              value: occurrence.recordValue.whoAmI.id,
+                              count: occurrence.count,
+                          }
+                        : {
+                              key: 'no_value',
+                              title: '',
+                              value: null,
+                              count: occurrence.count,
+                          },
               )
               .sort((a, b) => a.title.localeCompare(b.title, undefined, {numeric: true}))
         : [];
@@ -80,8 +85,7 @@ export const useGetSmartFilterData = ({
             index >= 0 && selectedFormattedValues?.[index] != null ? selectedFormattedValues[index] : nodeId;
         return {
             key: nodeId,
-            recordId: nodeId,
-            libraryId: linkedLibraryId ?? '',
+            value: nodeId,
             title: formattedValue ?? nodeId,
             count: 0,
             ghosted: true,

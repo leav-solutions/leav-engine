@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {RecordPermissionsActions} from '../../../../_types/permissions';
-import {AttributeTypes} from '../../../../_types/attribute';
+import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {
     adminUserSdk,
     e2eGuestUser,
@@ -20,9 +20,11 @@ describe('listDistinctValues', () => {
     const treeName = 'list_distinct_tree_test';
     const remoteLibName = 'list_distinct_tree_library_test';
 
-    const attrSimpleName = 'list_distinct_values_attribute_test_simple';
+    const attrSimpleTextName = 'list_distinct_values_attribute_test_simple_text';
     const attrSimpleLinkName = 'list_distinct_values_attribute_test_simple_link';
     const attrAdvancedReverseLinkValueName = 'list_distinct_values_attribute_test_advanced_reverse_link_mono_value';
+    const attrAdvancedTextMonoValueName = 'list_distinct_values_attribute_test_advanced_text_mono_value';
+    const attrAdvancedTextMultiValueName = 'list_distinct_values_attribute_test_advanced_text_multi_value';
     const attrAdvancedLinkMonoValueName = 'list_distinct_values_attribute_test_advanced_link_mono_value';
     const attrAdvancedLinkMultiValueName = 'list_distinct_values_attribute_test_advanced_link_multi_value';
     const attrTreeMonoValueName = 'list_distinct_values_attribute_test_tree_mono_value';
@@ -72,9 +74,10 @@ describe('listDistinctValues', () => {
 
     beforeAll(async () => {
         await gqlSaveAttribute({
-            id: attrSimpleName,
+            id: attrSimpleTextName,
             type: AttributeTypes.SIMPLE,
-            label: 'Test attr simple',
+            format: AttributeFormats.TEXT,
+            label: 'Test attr simple text',
         });
         await gqlSaveAttribute({
             id: attrSimpleLinkName,
@@ -89,6 +92,20 @@ describe('listDistinctValues', () => {
             linkedLibrary: testLibName,
             reverseLink: attrSimpleLinkName,
             multipleValues: false,
+        });
+        await gqlSaveAttribute({
+            id: attrAdvancedTextMonoValueName,
+            type: AttributeTypes.ADVANCED,
+            label: 'Test attr advanced text mono value',
+            format: AttributeFormats.TEXT,
+            multipleValues: false,
+        });
+        await gqlSaveAttribute({
+            id: attrAdvancedTextMultiValueName,
+            type: AttributeTypes.ADVANCED,
+            label: 'Test attr advanced text multi value',
+            format: AttributeFormats.TEXT,
+            multipleValues: true,
         });
         await gqlSaveAttribute({
             id: attrAdvancedLinkMonoValueName,
@@ -152,8 +169,10 @@ describe('listDistinctValues', () => {
                 id: "${testLibName}",
                 label: {en: "Test lib"},
                 attributes: [
-                    "${attrSimpleName}",
+                    "${attrSimpleTextName}",
                     "${attrSimpleLinkName}",
+                    "${attrAdvancedTextMonoValueName}",
+                    "${attrAdvancedTextMultiValueName}",
                     "${attrAdvancedLinkMonoValueName}",
                     "${attrAdvancedLinkMultiValueName}",
                     "${attrTreeMonoValueName}",
@@ -195,6 +214,10 @@ describe('listDistinctValues', () => {
 
         const resRecord = await makeGraphQlCall(`mutation {
             c1: createRecord(library: "${testLibName}", data: { values: [
+                { attribute: "${attrSimpleTextName}", payload: "value1"},
+                { attribute: "${attrAdvancedTextMonoValueName}", payload: "value1"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value1"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value2"},
                 { attribute: "${attrSimpleLinkName}", payload: "${remoteRecordId1}"},
                 { attribute: "${attrAdvancedLinkMonoValueName}", payload: "${remoteRecordId1}"},
                 { attribute: "${attrAdvancedLinkMultiValueName}", payload: "${remoteRecordId1}"},
@@ -207,6 +230,10 @@ describe('listDistinctValues', () => {
                 { attribute: "${joinAttribute.id}", payload: "${remoteRecordId2}"}
             ]}) { record {id} },
             c2: createRecord(library: "${testLibName}", data: { values: [
+                { attribute: "${attrSimpleTextName}", payload: "value1"},
+                { attribute: "${attrAdvancedTextMonoValueName}", payload: "value1"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value1"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value3"},
                 { attribute: "${attrSimpleLinkName}", payload: "${remoteRecordId1}"},
                 { attribute: "${attrAdvancedLinkMonoValueName}", payload: "${remoteRecordId1}"},
                 { attribute: "${attrAdvancedLinkMultiValueName}", payload: "${remoteRecordId1}"},
@@ -219,6 +246,10 @@ describe('listDistinctValues', () => {
                 { attribute: "${joinAttribute.id}", payload: "${remoteRecordId4}"}
             ]}) { record {id} },
             c3: createRecord(library: "${testLibName}", data: { values: [
+                { attribute: "${attrSimpleTextName}", payload: "value2"},
+                { attribute: "${attrAdvancedTextMonoValueName}", payload: "value2"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value1"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value4"},
                 { attribute: "${attrSimpleLinkName}", payload: "${remoteRecordId2}"},
                 { attribute: "${attrAdvancedLinkMonoValueName}", payload: "${remoteRecordId2}"},
                 { attribute: "${attrAdvancedLinkMultiValueName}", payload: "${remoteRecordId1}"},
@@ -229,6 +260,10 @@ describe('listDistinctValues', () => {
                 { attribute: "${joinAttribute.id}", payload: "${remoteRecordId5}"}
             ]}) { record {id} },
             c4: createRecord(library: "${testLibName}", data: { values: [
+                { attribute: "${attrSimpleTextName}", payload: "value2"},
+                { attribute: "${attrAdvancedTextMonoValueName}", payload: "value2"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value1"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value5"},
                 { attribute: "${attrSimpleLinkName}", payload: "${remoteRecordId2}"},
                 { attribute: "${attrAdvancedLinkMonoValueName}", payload: "${remoteRecordId2}"},
                 { attribute: "${attrAdvancedLinkMultiValueName}", payload: "${remoteRecordId1}"},
@@ -242,6 +277,11 @@ describe('listDistinctValues', () => {
                 { attribute: "${joinAttribute.id}", payload: "${remoteRecordId4}"}
             ]}) { record {id} },
             c5: createRecord(library: "${testLibName}", data: { values: [
+                { attribute: "${attrSimpleTextName}", payload: "value3"},
+                { attribute: "${attrAdvancedTextMonoValueName}", payload: "value3"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value1"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value2"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value3"},
                 { attribute: "${attrSimpleLinkName}", payload: "${remoteRecordId3}"},
                 { attribute: "${attrAdvancedLinkMonoValueName}", payload: "${remoteRecordId3}"},
                 { attribute: "${attrAdvancedLinkMultiValueName}", payload: "${remoteRecordId1}"},
@@ -253,6 +293,11 @@ describe('listDistinctValues', () => {
                 { attribute: "${joinAttribute.id}", payload: "${remoteRecordId3}"}
             ]}) { record {id} },
             c6: createRecord(library: "${testLibName}", data: { values: [
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value1"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value2"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value3"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value4"},
+                { attribute: "${attrAdvancedTextMultiValueName}", payload: "value5"},
                 { attribute: "${attrAdvancedLinkMultiValueName}", payload: "${remoteRecordId1}"},
                 { attribute: "${attrAdvancedLinkMultiValueName}", payload: "${remoteRecordId2}"},
                 { attribute: "${attrAdvancedLinkMultiValueName}", payload: "${remoteRecordId3}"},
@@ -276,10 +321,75 @@ describe('listDistinctValues', () => {
         recordId8 = resRecord.data.data.c8.record.id;
     });
 
-    it('should throw error if attribute is not of tree type', async () => {
-        await expect(listDistinctValues(testLibName, attrSimpleName)).rejects.toThrow(
-            /Attribute type simple is not supported for this operation/,
-        );
+    describe('With simple text value attribute', () => {
+        it('without record filters should return all set values', async () => {
+            const distinctValues = await listDistinctValues(testLibName, attrSimpleTextName);
+
+            expect(distinctValues.length).toBe(4);
+            expect(distinctValues).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        count: 2,
+                        value: 'value1',
+                    }),
+                    expect.objectContaining({
+                        count: 2,
+                        value: 'value2',
+                    }),
+                    expect.objectContaining({
+                        count: 1,
+                        value: 'value3',
+                    }),
+                    {count: 3, value: null},
+                ]),
+            );
+        });
+
+        it('with record filters should return some set values', async () => {
+            const distinctValues = await listDistinctValues(testLibName, attrSimpleTextName, [
+                recordId1,
+                recordId2,
+                recordId3,
+                recordId8,
+            ]);
+
+            expect(distinctValues.length).toBe(3);
+            expect(distinctValues).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        count: 2,
+                        value: 'value1',
+                    }),
+                    expect.objectContaining({
+                        count: 1,
+                        value: 'value2',
+                    }),
+                    {count: 1, value: null},
+                ]),
+            );
+        });
+
+        it('with record filters should return some set values, no null', async () => {
+            const distinctValues = await listDistinctValues(testLibName, attrSimpleTextName, [
+                recordId1,
+                recordId2,
+                recordId3,
+            ]);
+
+            expect(distinctValues.length).toBe(2);
+            expect(distinctValues).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        count: 2,
+                        value: 'value1',
+                    }),
+                    expect.objectContaining({
+                        count: 1,
+                        value: 'value2',
+                    }),
+                ]),
+            );
+        });
     });
 
     describe('With simple link value attribute', () => {
@@ -410,32 +520,114 @@ describe('listDistinctValues', () => {
         });
     });
 
-    describe('With advanced link mono value attribute', () => {
+    describe('With advanced text mono value attribute', () => {
         it('without record filters should return all set values', async () => {
-            const distinctValues = await listDistinctValues(testLibName, attrAdvancedLinkMonoValueName);
+            const distinctValues = await listDistinctValues(testLibName, attrAdvancedTextMonoValueName);
 
             expect(distinctValues.length).toBe(4);
             expect(distinctValues).toEqual(
                 expect.arrayContaining([
                     expect.objectContaining({
                         count: 2,
-                        record: expect.objectContaining({
-                            id: remoteRecordId1,
-                        }),
+                        value: 'value1',
                     }),
                     expect.objectContaining({
                         count: 2,
-                        record: expect.objectContaining({
-                            id: remoteRecordId2,
-                        }),
+                        value: 'value2',
                     }),
                     expect.objectContaining({
                         count: 1,
-                        record: expect.objectContaining({
-                            id: remoteRecordId3,
-                        }),
+                        value: 'value3',
                     }),
-                    {count: 3, record: null},
+                    {count: 3, value: null},
+                ]),
+            );
+        });
+    });
+
+    describe('With advanced text multi value attribute', () => {
+        it('without record filters should return all set values', async () => {
+            const distinctValues = await listDistinctValues(testLibName, attrAdvancedTextMultiValueName);
+
+            expect(distinctValues.length).toBe(6);
+            expect(distinctValues).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        count: 6,
+                        value: 'value1',
+                    }),
+                    expect.objectContaining({
+                        count: 3,
+                        value: 'value2',
+                    }),
+                    expect.objectContaining({
+                        count: 3,
+                        value: 'value3',
+                    }),
+                    expect.objectContaining({
+                        count: 2,
+                        value: 'value4',
+                    }),
+                    expect.objectContaining({
+                        count: 2,
+                        value: 'value5',
+                    }),
+                    {count: 2, value: null},
+                ]),
+            );
+        });
+
+        it('with record filters should return some set values, no null', async () => {
+            const distinctValues = await listDistinctValues(testLibName, attrAdvancedTextMultiValueName, [
+                recordId1,
+                recordId2,
+                recordId3,
+            ]);
+
+            expect(distinctValues.length).toBe(4);
+            expect(distinctValues).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        count: 3,
+                        value: 'value1',
+                    }),
+                    expect.objectContaining({
+                        count: 1,
+                        value: 'value2',
+                    }),
+                    expect.objectContaining({
+                        count: 1,
+                        value: 'value3',
+                    }),
+                    expect.objectContaining({
+                        count: 1,
+                        value: 'value4',
+                    }),
+                ]),
+            );
+        });
+    });
+
+    describe('With advanced link mono value attribute', () => {
+        it('without record filters should return all set values', async () => {
+            const distinctValues = await listDistinctValues(testLibName, attrAdvancedTextMonoValueName);
+
+            expect(distinctValues.length).toBe(4);
+            expect(distinctValues).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        count: 2,
+                        value: 'value1',
+                    }),
+                    expect.objectContaining({
+                        count: 2,
+                        value: 'value2',
+                    }),
+                    expect.objectContaining({
+                        count: 1,
+                        value: 'value3',
+                    }),
+                    {count: 3, value: null},
                 ]),
             );
         });
@@ -831,6 +1023,9 @@ describe('listDistinctValues', () => {
                         record: value {
                             id
                         }
+                    }
+                    ... on StandardDistinctValues {
+                        value
                     }
                 }
             

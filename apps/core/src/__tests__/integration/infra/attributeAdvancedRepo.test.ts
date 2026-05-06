@@ -76,29 +76,6 @@ describe('attributeAdvancedRepo', () => {
     };
 
     describe('2 records exists with advanced mono attribute', () => {
-        const advancedExtendedAttribute: IAttributeWithRevLink = {
-            id: 'extended_attr',
-            type: AttributeTypes.ADVANCED,
-            multiple_values: true,
-            format: AttributeFormats.EXTENDED,
-            embedded_fields: [
-                {
-                    id: 'key1',
-                    format: AttributeFormats.EXTENDED,
-                    embedded_fields: [
-                        {
-                            id: 'subkey1',
-                            format: AttributeFormats.TEXT,
-                        },
-                    ],
-                },
-                {
-                    id: 'key2',
-                    format: AttributeFormats.TEXT,
-                },
-            ],
-        };
-
         let record1: IRecord;
         let record2: IRecord;
         let record1Value: IStandardValue;
@@ -206,6 +183,66 @@ describe('attributeAdvancedRepo', () => {
             });
         });
 
+        describe('listDistinctValues', () => {
+            let record3WithoutAttr: IRecord;
+            let record4WithoutAttr: IRecord;
+            let record5WithSameValue: IRecord;
+
+            beforeAll(async () => {
+                record3WithoutAttr = await createRecord({});
+                record4WithoutAttr = await createRecord({});
+                record5WithSameValue = await createRecord({});
+                await createValue(advancedTextMonoAttribute, record5WithSameValue.id, 'value1');
+            });
+
+            afterAll(async () => {
+                await recordRepo.deleteRecord({libraryId, recordId: record3WithoutAttr.id, ctx});
+                await recordRepo.deleteRecord({libraryId, recordId: record4WithoutAttr.id, ctx});
+                await recordRepo.deleteRecord({libraryId, recordId: record5WithSameValue.id, ctx});
+            });
+
+            test('Should return values occurrences for an attribute', async () => {
+                const occurrences = await attributeAdvancedRepo.listDistinctValues({
+                    library: libraryId,
+                    attribute: advancedTextMonoAttribute,
+                    recordIds: [record1.id, record2.id, record5WithSameValue.id],
+                    ctx,
+                });
+
+                expect(occurrences).toHaveLength(2);
+                expect(occurrences).toEqual(
+                    expect.arrayContaining([
+                        {value: 'value1', count: 2},
+                        {value: 'value2', count: 1},
+                    ]),
+                );
+            });
+
+            test('Should return null values occurrences for records without attribute', async () => {
+                const occurrences = await attributeAdvancedRepo.listDistinctValues({
+                    library: libraryId,
+                    attribute: advancedTextMonoAttribute,
+                    recordIds: [
+                        record1.id,
+                        record2.id,
+                        record5WithSameValue.id,
+                        record3WithoutAttr.id,
+                        record4WithoutAttr.id,
+                    ],
+                    ctx,
+                });
+
+                expect(occurrences).toHaveLength(3);
+                expect(occurrences).toEqual(
+                    expect.arrayContaining([
+                        {value: 'value1', count: 2},
+                        {value: 'value2', count: 1},
+                        {value: null, count: 2},
+                    ]),
+                );
+            });
+        });
+
         describe('add version values', () => {
             const version1: IValueVersion = {
                 version1: 'node1',
@@ -302,6 +339,67 @@ describe('attributeAdvancedRepo', () => {
 
                     expect(values).toEqual(expect.arrayContaining([record1Value, record1ValueV1]));
                     expect(values).toHaveLength(2);
+                });
+            });
+
+            describe('listDistinctValues', () => {
+                let record3WithoutAttr: IRecord;
+                let record4WithValue1V1: IRecord;
+                beforeAll(async () => {
+                    record3WithoutAttr = await createRecord({});
+                    record4WithValue1V1 = await createRecord({});
+                    await createValue(advancedTextMonoAttribute, record4WithValue1V1.id, 'value1V1', version1);
+                });
+
+                afterAll(async () => {
+                    await recordRepo.deleteRecord({
+                        libraryId,
+                        recordId: record3WithoutAttr.id,
+                        ctx,
+                    });
+                    await recordRepo.deleteRecord({
+                        libraryId,
+                        recordId: record4WithValue1V1.id,
+                        ctx,
+                    });
+                });
+
+                test('Should return values occurrences for null version', async () => {
+                    const occurrences = await attributeAdvancedRepo.listDistinctValues({
+                        library: libraryId,
+                        attribute: advancedTextMonoAttribute,
+                        recordIds: [record1.id, record2.id, record3WithoutAttr.id, record4WithValue1V1.id],
+                        options: {version: null},
+                        ctx,
+                    });
+
+                    expect(occurrences).toHaveLength(3);
+                    expect(occurrences).toEqual(
+                        expect.arrayContaining([
+                            {value: 'value1', count: 1},
+                            {value: 'value2', count: 1},
+                            {value: null, count: 2},
+                        ]),
+                    );
+                });
+
+                test('Should return values occurrences for null version', async () => {
+                    const occurrences = await attributeAdvancedRepo.listDistinctValues({
+                        library: libraryId,
+                        attribute: advancedTextMonoAttribute,
+                        recordIds: [record1.id, record2.id, record3WithoutAttr.id, record4WithValue1V1.id],
+                        options: {version: version1},
+                        ctx,
+                    });
+
+                    expect(occurrences).toHaveLength(3);
+                    expect(occurrences).toEqual(
+                        expect.arrayContaining([
+                            {value: 'value1V1', count: 2},
+                            {value: 'value2V1', count: 1},
+                            {value: null, count: 1},
+                        ]),
+                    );
                 });
             });
         });
@@ -466,6 +564,71 @@ describe('attributeAdvancedRepo', () => {
             });
         });
 
+        describe('listDistinctValues', () => {
+            let record3WithoutAttr: IRecord;
+            let record4WithoutAttr: IRecord;
+            let recordWithManyValues: IRecord;
+
+            beforeAll(async () => {
+                record3WithoutAttr = await createRecord({});
+                record4WithoutAttr = await createRecord({});
+                recordWithManyValues = await createRecord({});
+                await createValue(advancedTextMultiAttribute, recordWithManyValues.id, 'value1');
+                await createValue(advancedTextMultiAttribute, recordWithManyValues.id, 'value2');
+            });
+
+            afterAll(async () => {
+                await recordRepo.deleteRecord({libraryId, recordId: record3WithoutAttr.id, ctx});
+                await recordRepo.deleteRecord({libraryId, recordId: record4WithoutAttr.id, ctx});
+                await recordRepo.deleteRecord({libraryId, recordId: recordWithManyValues.id, ctx});
+            });
+
+            test('Should return values occurrences for an attribute', async () => {
+                const occurrences = await attributeAdvancedRepo.listDistinctValues({
+                    library: libraryId,
+                    attribute: advancedTextMultiAttribute,
+                    recordIds: [record1.id, record2.id, recordWithManyValues.id],
+                    ctx,
+                });
+
+                expect(occurrences).toHaveLength(4);
+                expect(occurrences).toEqual(
+                    expect.arrayContaining([
+                        {value: 'value1', count: 2},
+                        {value: 'value12', count: 1},
+                        {value: 'value2', count: 2},
+                        {value: 'value22', count: 1},
+                    ]),
+                );
+            });
+
+            test('Should return null values occurrences for records without attribute', async () => {
+                const occurrences = await attributeAdvancedRepo.listDistinctValues({
+                    library: libraryId,
+                    attribute: advancedTextMultiAttribute,
+                    recordIds: [
+                        record1.id,
+                        record2.id,
+                        recordWithManyValues.id,
+                        record3WithoutAttr.id,
+                        record4WithoutAttr.id,
+                    ],
+                    ctx,
+                });
+
+                expect(occurrences).toHaveLength(5);
+                expect(occurrences).toEqual(
+                    expect.arrayContaining([
+                        {value: 'value1', count: 2},
+                        {value: 'value12', count: 1},
+                        {value: 'value2', count: 2},
+                        {value: 'value22', count: 1},
+                        {value: null, count: 2},
+                    ]),
+                );
+            });
+        });
+
         describe('add version values', () => {
             const version1: IValueVersion = {
                 version1: 'node1',
@@ -570,6 +733,67 @@ describe('attributeAdvancedRepo', () => {
 
                     expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2, record1ValueV1]));
                     expect(values).toHaveLength(3);
+                });
+            });
+
+            describe('listDistinctValues', () => {
+                let record3WithoutAttr: IRecord;
+                let record4WithoutAttr: IRecord;
+                beforeAll(async () => {
+                    record3WithoutAttr = await createRecord({});
+                    record4WithoutAttr = await createRecord({});
+                });
+
+                afterAll(async () => {
+                    await recordRepo.deleteRecord({
+                        libraryId,
+                        recordId: record3WithoutAttr.id,
+                        ctx,
+                    });
+                    await recordRepo.deleteRecord({
+                        libraryId,
+                        recordId: record4WithoutAttr.id,
+                        ctx,
+                    });
+                });
+
+                test('Should return values occurrences for an attribute', async () => {
+                    const occurrences = await attributeAdvancedRepo.listDistinctValues({
+                        library: libraryId,
+                        attribute: advancedTextMultiAttribute,
+                        recordIds: [record1.id, record2.id],
+                        ctx,
+                    });
+
+                    expect(occurrences).toHaveLength(4);
+                    expect(occurrences).toEqual(
+                        expect.arrayContaining([
+                            {value: 'value1', count: 1},
+                            {value: 'value12', count: 1},
+                            {value: 'value2', count: 1},
+                            {value: 'value22', count: 1},
+                        ]),
+                    );
+                });
+
+                test('Should return null values occurrences for an attribute', async () => {
+                    const occurrences = await attributeAdvancedRepo.listDistinctValues({
+                        library: libraryId,
+                        attribute: advancedTextMultiAttribute,
+                        recordIds: [record1.id, record2.id, record3WithoutAttr.id, record4WithoutAttr.id],
+                        ctx,
+                    });
+
+                    expect(occurrences).toHaveLength(5);
+                    expect(occurrences).toEqual(
+                        expect.arrayContaining([
+                            {value: 'value1', count: 1},
+                            {value: 'value12', count: 1},
+                            {value: 'value2', count: 1},
+                            {value: 'value22', count: 1},
+                            {value: null, count: 2},
+                        ]),
+                    );
                 });
             });
 

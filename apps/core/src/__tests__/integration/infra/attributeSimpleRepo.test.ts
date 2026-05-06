@@ -261,6 +261,60 @@ describe('attributeSimpleRepo', () => {
             });
         });
 
+        describe('listDistinctValues', () => {
+            let record3WithSameValue: IRecord;
+            let record4WithoutAttr: IRecord;
+            let record5WithoutAttr: IRecord;
+
+            beforeAll(async () => {
+                record3WithSameValue = await createRecord({});
+                record4WithoutAttr = await createRecord({});
+                record5WithoutAttr = await createRecord({});
+                await createValue(simpleTextAttribute, record3WithSameValue.id, 'value1');
+            });
+
+            afterAll(async () => {
+                await recordRepo.deleteRecord({libraryId, recordId: record3WithSameValue.id, ctx});
+                await recordRepo.deleteRecord({libraryId, recordId: record4WithoutAttr.id, ctx});
+                await recordRepo.deleteRecord({libraryId, recordId: record5WithoutAttr.id, ctx});
+            });
+
+            test('Should return values occurrences for an attribute', async () => {
+                const occurrences = await attributeSimpleRepo.listDistinctValues({
+                    library: libraryId,
+                    attribute: simpleTextAttribute,
+                    recordIds: [record1.id, record2.id, record3WithSameValue.id],
+                    ctx,
+                });
+
+                expect(occurrences).toHaveLength(2);
+                expect(occurrences).toEqual(
+                    expect.arrayContaining([
+                        {value: 'value1', count: 2},
+                        {value: 'value2', count: 1},
+                    ]),
+                );
+            });
+
+            test('Should return null values occurrences for records without attribute', async () => {
+                const occurrences = await attributeSimpleRepo.listDistinctValues({
+                    library: libraryId,
+                    attribute: simpleTextAttribute,
+                    recordIds: [record1.id, record2.id, record4WithoutAttr.id, record5WithoutAttr.id],
+                    ctx,
+                });
+
+                expect(occurrences).toHaveLength(3);
+                expect(occurrences).toEqual(
+                    expect.arrayContaining([
+                        {value: 'value1', count: 1},
+                        {value: 'value2', count: 1},
+                        {value: null, count: 2},
+                    ]),
+                );
+            });
+        });
+
         describe('deleteValue', () => {
             test('Should return the deleted value', async () => {
                 const value = await attributeSimpleRepo.deleteValue({

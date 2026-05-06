@@ -5,12 +5,18 @@ import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
 import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {AttributeFormats, type AttributeTypes, type IAttribute} from '../../_types/attribute';
-import {type ISaveStandardValue, type IStandardValue} from '../../_types/value';
+import {
+    type IDistinctValue,
+    type IStandardBaseValue,
+    type ISaveStandardValue,
+    type IStandardValue,
+} from '../../_types/value';
 import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {type IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
-import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
 import {type GetConditionPart} from './helpers/getConditionPart';
+import _ from 'lodash';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
@@ -126,6 +132,31 @@ export default function ({
                 const payload = record?.[attribute.id];
                 return payload != null ? [{payload, attribute: attribute.id, modified_by: null, created_by: null}] : [];
             });
+        },
+        async listDistinctValues({library, attribute, recordIds, ctx}): Promise<IDistinctValue<IStandardBaseValue>> {
+            const libCollec = dbService.db.collection(library);
+
+            // For all recordIds, retrieve the value and count the occurrences of each linked value
+            const query = aql`
+                FOR rec IN ${libCollec}
+                    FILTER rec._key IN ${recordIds}
+
+                    // Keep only record with linked value
+                    LET value = rec.${attribute.id}
+                    
+                    // Group by linkedId and count occurrences
+                    COLLECT valueGrouped = value WITH COUNT INTO count
+                    RETURN { value: valueGrouped, count }
+            `;
+
+            const res = await dbService.execute<Array<{value: any; count: number}>>({query, ctx});
+
+            // Compute total occurrences to find unlinked records, each recordId without linked value counts as 1
+            const countOccurrences = _.sum(res.map(r => r.count));
+
+            return res.concat(
+                countOccurrences < recordIds.length ? [{value: null, count: recordIds.length - countOccurrences}] : [],
+            );
         },
         sortQueryPart({attributes, order}) {
             attributes[0].id = attributes[0].id === 'id' ? '_key' : attributes[0].id;

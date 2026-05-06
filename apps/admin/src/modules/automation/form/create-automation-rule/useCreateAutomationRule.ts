@@ -38,9 +38,13 @@ export const useCreateAutomationRule = () => {
                     rule: {
                         ...rule,
                         //TODO: Set a false trigger configuration for now. To replace with real values later.
+                        active: rule.active ?? false,
                         trigger: {
                             synchronous: false,
-                            eventAction: AutomationRuleEventAction.AUTOMATION_RULE_CREATE,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                        },
+                        pipeline: {
+                            steps: [],
                         },
                         //TODO: Add pipeline configuration.
                     },

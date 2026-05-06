@@ -34,6 +34,12 @@ export interface IUIFilterBaseAttribute {
 
 export interface IUIFilterStandardAttribute extends IUIFilterBaseAttribute {
     format: AttributeFormat;
+    smartFilter?: {
+        enable?: boolean;
+        through?: {
+            id: string;
+        } | null;
+    };
 }
 
 export interface IUIFilterLinkAttribute extends IUIFilterBaseAttribute {
@@ -179,7 +185,8 @@ export const isUIFilterTreeWithValueList = (filter: UIFilter): filter is IUIFilt
     isUIFilterTree(filter) && isValueList(filter);
 
 export const isUIFilterWithSmartFilter = (filter: UIFilter): filter is IUIFilterSmartFiler =>
-    (isUIFilterLink(filter) || isUIFilterThrough(filter)) && filter.attribute.smartFilter?.enable;
+    (isUIFilterStandard(filter) || isUIFilterLink(filter) || isUIFilterThrough(filter)) &&
+    filter.attribute.smartFilter?.enable;
 
 const isValueList = (filter: UIFilter): filter is UIFilter & {attribute: {valuesList: {enabled: true}}} =>
     !!filter.attribute?.valuesList && filter.attribute?.valuesList.enable;

@@ -52,6 +52,9 @@ fragment StandardAttributeDetails on StandardAttribute {
             values
         }
     }
+    smart_filter {
+        enable
+    }
 }
 
 query ExplorerAttributes($ids: [ID!]) {

@@ -1051,18 +1051,6 @@ const valueDomain = function ({
 
             const attribute = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
 
-            if (
-                ![AttributeTypes.TREE, AttributeTypes.ADVANCED_LINK, AttributeTypes.SIMPLE_LINK].includes(
-                    attribute.type,
-                )
-            ) {
-                throw new ValidationError({
-                    [attributeId]: {
-                        msg: Errors.UNSUPPORTED_ATTRIBUTE_TYPE,
-                        vars: {attributeType: attribute.type},
-                    },
-                });
-            }
             // If the attribute has an actions list to get value, we cannot retrieve distinct values with listDistinctValues
             // In that case, we should use getRecordFieldValue for each record instead and aggregate the results, which is less efficient
             // May be check only excelCalculation or inheritanceCalculation actions because theirs are not idempotent !
