@@ -7,6 +7,14 @@ import {useTranslation} from 'react-i18next';
 import {automationTableContainer} from './automationTable.module.css';
 import {useTableScrollableHeight} from '../../../utils/useTableScrollableHeight';
 import {type AutomationRulesData} from '../get-automation-rules-data/useGetAutomationRulesData';
+import {AutomationCell} from './cell/AutomationCell';
+import {DeleteAutomationRuleButton} from '../../delete-automation-rule/DeleteAutomationRuleButton';
+
+const ColumnWidth = {
+    XS: '10ch',
+    S: '15ch',
+    M: '20ch',
+};
 
 type AutomationTableProps = {
     data: AutomationRulesData[];
@@ -16,6 +24,7 @@ type AutomationTableProps = {
     onPageChange: (page: number) => void;
     onPageSizeChange: (page: number, size: number) => void;
     onRowClick: (record: AutomationRulesData) => void;
+    onDelete: (ruleId: string) => void;
 };
 
 export const AutomationTable = ({
@@ -26,41 +35,47 @@ export const AutomationTable = ({
     onPageChange,
     onPageSizeChange,
     onRowClick,
+    onDelete,
 }: AutomationTableProps) => {
     const {t} = useTranslation();
     const {containerRef, scrollHeight} = useTableScrollableHeight(true);
 
-    // We are using HistoryCell component for columns when we want a max width and ellipsis. Others columns are not truncated.
     const tableColumns: ComponentProps<typeof KitTable>['columns'] = [
         {
             title: t('automation.table.column.name'),
             dataIndex: 'name',
             key: 'name',
-            width: '25%',
+            render: (name: string, record: AutomationRulesData) => (
+                <AutomationCell hoverAction={<DeleteAutomationRuleButton onClick={() => onDelete(record.id)} />}>
+                    {name}
+                </AutomationCell>
+            ),
         },
         {
             title: t('automation.table.column.trigger'),
             dataIndex: 'trigger',
             key: 'trigger',
-            width: '25%',
+            width: ColumnWidth.M,
+            render: (trigger: string) => <AutomationCell>{trigger}</AutomationCell>,
         },
         {
             title: t('automation.table.column.target'),
             dataIndex: 'target',
             key: 'target',
-            width: '25%',
+            render: (target: string) => <AutomationCell>{target}</AutomationCell>,
         },
         {
             title: t('automation.table.column.nb_actions'),
             dataIndex: 'nb_actions',
             key: 'nb_actions',
-            width: '15%',
+            width: ColumnWidth.S,
+            render: (nbActions: number) => <AutomationCell>{String(nbActions)}</AutomationCell>,
         },
         {
             title: t('automation.table.column.status'),
             dataIndex: 'active',
             key: 'active',
-            width: '15%',
+            width: ColumnWidth.XS,
             render: (active: boolean) =>
                 active ? (
                     <KitTag type="success">
@@ -89,7 +104,7 @@ export const AutomationTable = ({
                 scroll={{
                     y: scrollHeight,
                 }}
-                tableLayout="auto"
+                tableLayout="fixed"
                 pagination={{
                     position: ['bottomCenter'],
                     current: currentPage,

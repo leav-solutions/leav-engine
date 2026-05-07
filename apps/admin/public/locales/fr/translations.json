@@ -571,6 +571,16 @@
                 "target": "Cible",
                 "nb_actions": "NB. Actions",
                 "status": "Statut"
+            },
+            "action": {
+                "delete": {
+                    "confirm": {
+                        "title": "Supprimer la règle d’automatisation",
+                        "content": "Êtes-vous sûr de vouloir supprimer cette règle ? Cette action est irréversible."
+                    },
+                    "success": "Règle d’automatisation supprimée",
+                    "error": "Une erreur est survenue lors de la suppression de la règle d’automatisation"
+                }
             }
         },
         "form": {
