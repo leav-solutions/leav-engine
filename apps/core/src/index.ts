@@ -9,6 +9,7 @@ import {type IFilesManagerInterface} from './interface/filesManager';
 import {type IIndexationManagerInterface} from './interface/indexationManager';
 import {type IServer} from './interface/server';
 import {type ITasksManagerInterface} from './interface/tasksManager';
+import {type ICliInterface} from './interface/cli';
 import {getConfig, validateConfig} from './config';
 import {initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
@@ -89,8 +90,7 @@ import {type ICorePluginsApp} from './app/core/pluginsApp';
     const indexationManager: IIndexationManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
     const logsCollector: ILogsCollectorInterface = coreContainer.cradle['core.interface.logsCollector'];
     const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
-    const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
-    const cli = coreContainer.cradle['core.interface.cli'];
+    const cli: ICliInterface = coreContainer.cradle['core.interface.cli'];
     const utils: IUtils = coreContainer.cradle['core.utils'];
     const pluginsApp: ICorePluginsApp = coreContainer.cradle['core.app.core.plugins'];
 
