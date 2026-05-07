@@ -6,9 +6,12 @@ import {type IQueryInfos} from '../../../../../_types/queryInfos';
 import {systemUserId} from '../../../../../_constants/users';
 import {ActionExecutionResultStatus, type IAutomationAction} from '../../../../../domain/automation/actions/_types';
 import {type ConditionActionParams} from '../../../../../domain/automation/actions/conditionAction';
+import {Errors} from '../../../../../_types/errors';
+import ValidationError from '../../../../../errors/ValidationError';
 import {getCoreDep} from '../../../integrationTestUtils';
 import {type IRecord} from '../../../../../_types/record';
 import {type IAutomationPipelineExecutionState} from '../../../../../domain/automation/pipeline/_types';
+import {pipelineStepValidation} from '../../../../../domain/automation/pipeline/stepValidation';
 
 describe('conditionAction', () => {
     let action: IAutomationAction<ConditionActionParams>;
@@ -30,6 +33,30 @@ describe('conditionAction', () => {
 
     beforeAll(() => {
         action = getCoreDep<IAutomationAction<ConditionActionParams>>('core.domain.automation.actions.condition');
+    });
+
+    describe('validateStep', () => {
+        const makeValidateParams = (expression: string) =>
+            pipelineStepValidation<ConditionActionParams>(
+                {
+                    steps: [{params: {expression}, type: 'condition'}],
+                    trigger,
+                },
+                0,
+            );
+
+        it('resolves for a valid Jexl expression', async () => {
+            await expect(action.validateStep?.(makeValidateParams('1 == 1'), ctx)).resolves.toBeUndefined();
+        });
+
+        it('throws ValidationError for an invalid Jexl expression', async () => {
+            const error = await action.validateStep?.(makeValidateParams('1 ++ 1'), ctx).catch(err => err);
+
+            expect(error).toBeInstanceOf(ValidationError);
+            expect((error as ValidationError<any>).fields!.formula).toMatchObject({
+                msg: Errors.INVALID_JEXL_EXPRESSION,
+            });
+        });
     });
 
     describe('execute — returns CONTINUE when expression is truthy', () => {

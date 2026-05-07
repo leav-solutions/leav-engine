@@ -15,7 +15,7 @@ const conditionActionParamsSchema = z.object({
     expression: z.string().meta({
         title: 'Expression (Jexl)',
         description:
-            'The Jexl expression to determine the condition. If the result is true, the pipeline continues; otherwise, the pipeline stops. ',
+            'The Jexl expression to determine the condition. If the result is true, the pipeline continues; otherwise, the pipeline stops.',
     }),
 });
 
@@ -33,6 +33,7 @@ export default function ({
     return {
         type: AutomationRuleActions.CONDITION,
         paramsSchema: conditionActionParamsSchema,
+        validateStep: params => jexl.validate(params.step.params.expression),
         async execute(params, state, ctx): Promise<IActionExecutionResult> {
             const {expression} = params;
 
