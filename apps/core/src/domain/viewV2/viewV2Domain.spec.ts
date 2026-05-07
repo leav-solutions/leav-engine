@@ -5,7 +5,7 @@ import {type IValidateHelper} from '../helpers/validate';
 import {type IViewV2Repo} from '../../infra/viewV2/viewV2Repo';
 import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import {mockViewV2, mockViewV2BeforeCreation} from '../../__tests__/mocks/viewV2';
+import {mockViewV2, mockViewV2CreateInput} from '../../__tests__/mocks/viewV2';
 import viewV2Domain, {type IViewV2DomainDeps} from './viewV2Domain';
 import {type ToAny} from '../../utils/utils';
 
@@ -40,84 +40,117 @@ describe('viewV2Domain', () => {
         }),
     };
 
-    describe('saveViewV2', () => {
-        describe('Update viewV2', () => {
-            test('Should update viewV2', async () => {
-                const domain = viewV2Domain({
-                    ...depsBase,
-                    'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
-                    'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
-                });
-
-                const updatedView = await domain.saveViewV2({...mockViewV2}, mockCtx);
-
-                expect(mockViewV2Repo.updateViewV2).toBeCalled();
-                expect(mockViewV2Repo.createViewV2).not.toBeCalled();
-
-                const viewPassedToRepo = mockViewV2Repo.updateViewV2.mock.calls[0][0];
-                expect(viewPassedToRepo.modified_at).toBeDefined();
-                expect(viewPassedToRepo.modified_at).not.toBe(viewPassedToRepo.created_at);
-
-                expect(updatedView).toMatchObject(mockViewV2);
+    describe('createViewV2', () => {
+        test('Should create a new viewV2 and apply timestamps + ownership', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
             });
 
-            test('Should throw if unknown viewV2', async () => {
-                const domain = viewV2Domain({
-                    ...depsBase,
-                    'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
-                    'core.infra.viewV2': mockViewV2RepoNoView as IViewV2Repo,
-                });
+            const newView = await domain.createViewV2({...mockViewV2CreateInput}, mockCtx);
 
-                await expect(domain.saveViewV2({...mockViewV2}, mockCtx)).rejects.toThrow(ValidationError);
-            });
+            expect(mockViewV2Repo.createViewV2).toBeCalled();
+            expect(mockViewV2Repo.updateViewV2).not.toBeCalled();
 
-            test('Should throw if user is not owner of this viewV2', async () => {
-                const domain = viewV2Domain({
-                    ...depsBase,
-                    'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
-                    'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
-                });
+            const passedToRepo = mockViewV2Repo.createViewV2.mock.calls[0][0];
+            expect(passedToRepo.created_by).toBe(mockCtx.userId);
+            expect(passedToRepo.created_at).toBeDefined();
+            expect(passedToRepo.modified_at).toBe(passedToRepo.created_at);
 
-                await expect(domain.saveViewV2({...mockViewV2}, {...mockCtx, userId: '42'})).rejects.toThrow(
-                    ValidationError,
-                );
-            });
+            expect(newView).toMatchObject(mockViewV2);
         });
 
-        describe('Create viewV2', () => {
-            test('Should create new viewV2', async () => {
-                const domain = viewV2Domain({
-                    ...depsBase,
-                    'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
-                    'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
-                });
-
-                const viewToCreate = {...mockViewV2BeforeCreation};
-
-                const newView = await domain.saveViewV2(viewToCreate, mockCtx);
-
-                expect(mockViewV2Repo.createViewV2).toBeCalled();
-                expect(mockViewV2Repo.updateViewV2).not.toBeCalled();
-
-                const viewPassedToRepo = mockViewV2Repo.createViewV2.mock.calls[0][0];
-                expect(viewPassedToRepo.created_by).toBe(mockCtx.userId);
-                expect(viewPassedToRepo.created_at).toBeDefined();
-                expect(viewPassedToRepo.modified_at).toBe(viewPassedToRepo.created_at);
-
-                expect(newView).toMatchObject(mockViewV2);
+        test('Should default optional list fields to [] when omitted', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
             });
 
-            test('Should throw if unknown library', async () => {
-                const domain = viewV2Domain({
-                    ...depsBase,
-                    'core.domain.helpers.validate': mockValidationHelperInvalid as IValidateHelper,
-                    'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
-                });
+            await domain.createViewV2(
+                {
+                    library: 'test_lib',
+                    label: {fr: 'My view'},
+                    display: mockViewV2CreateInput.display,
+                    shared: false,
+                },
+                mockCtx,
+            );
 
-                const viewToCreate = {...mockViewV2BeforeCreation};
+            const passedToRepo = mockViewV2Repo.createViewV2.mock.calls[0][0];
+            expect(passedToRepo.filters).toEqual([]);
+            expect(passedToRepo.sort).toEqual([]);
+            expect(passedToRepo.attributes).toEqual([]);
+        });
 
-                await expect(domain.saveViewV2(viewToCreate, mockCtx)).rejects.toThrow(ValidationError);
+        test('Should throw if library is unknown', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelperInvalid as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
             });
+
+            await expect(domain.createViewV2({...mockViewV2CreateInput}, mockCtx)).rejects.toThrow(ValidationError);
+            expect(mockViewV2Repo.createViewV2).not.toBeCalled();
+        });
+    });
+
+    describe('updateViewV2', () => {
+        test('Should update an existing viewV2 owned by the user', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
+            });
+
+            const updated = await domain.updateViewV2({id: mockViewV2.id, color: '#000000'}, mockCtx);
+
+            expect(mockViewV2Repo.updateViewV2).toBeCalled();
+            expect(mockViewV2Repo.createViewV2).not.toBeCalled();
+
+            const passedToRepo = mockViewV2Repo.updateViewV2.mock.calls[0][0];
+            expect(passedToRepo.id).toBe(mockViewV2.id);
+            expect(passedToRepo.color).toBe('#000000');
+            expect(passedToRepo.modified_at).toBeDefined();
+
+            expect(updated).toMatchObject(mockViewV2);
+        });
+
+        test('Should throw if viewV2 is unknown', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2RepoNoView as IViewV2Repo,
+            });
+
+            await expect(domain.updateViewV2({id: 'unknown_view'}, mockCtx)).rejects.toThrow(ValidationError);
+        });
+
+        test('Should throw if user is not the owner', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
+            });
+
+            await expect(domain.updateViewV2({id: mockViewV2.id}, {...mockCtx, userId: '42'})).rejects.toThrow(
+                ValidationError,
+            );
+        });
+
+        test('Should validate library only when it is provided in the update payload', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
+            });
+
+            await domain.updateViewV2({id: mockViewV2.id, color: '#FFFFFF'}, mockCtx);
+            expect(mockValidationHelper.validateLibrary).not.toBeCalled();
+
+            await domain.updateViewV2({id: mockViewV2.id, library: 'other_lib'}, mockCtx);
+            expect(mockValidationHelper.validateLibrary).toBeCalledWith('other_lib', mockCtx);
         });
     });
 
@@ -180,10 +213,10 @@ describe('viewV2Domain', () => {
                 'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
             });
 
-            const deletedView = await domain.deleteViewV2(mockViewV2.id, mockCtx);
+            const deleted = await domain.deleteViewV2(mockViewV2.id, mockCtx);
 
             expect(mockViewV2Repo.deleteViewV2).toBeCalled();
-            expect(deletedView).toEqual(mockViewV2);
+            expect(deleted).toEqual(mockViewV2);
         });
 
         test('Should throw if viewV2 does not exist', async () => {

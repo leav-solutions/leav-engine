@@ -16,28 +16,68 @@ export enum ViewV2Sizes {
     BIG = 'BIG',
 }
 
-interface IViewV2Display {
+export interface IViewV2Display {
     type: ViewV2Types;
-    size: ViewV2Sizes;
+    size?: ViewV2Sizes;
 }
 
-interface IViewV2ValuesVersion {
+export interface IViewV2ValuesVersion {
     [treeId: string]: string;
 }
 
+/**
+ * Stored view v2 entity, as persisted in ArangoDB and returned by the domain.
+ */
 export interface IViewV2 extends ICoreEntity {
-    shared?: boolean;
-    created_by?: string;
-    created_at?: number;
-    modified_at?: number;
-    library?: string;
+    id: string;
+    library: string;
+    label: ISystemTranslation;
+    display: IViewV2Display;
+    shared: boolean;
+    created_by: string;
+    created_at: number;
+    modified_at: number;
+    attributes: string[];
     description?: ISystemTranslation;
     color?: string;
-    display?: IViewV2Display;
     filters?: IRecordFilterLight[];
     sort?: IRecordSortLight[];
     valuesVersions?: IViewV2ValuesVersion;
-    attributes: string[];
+}
+
+/**
+ * Domain create input. `library`, `label`, `display`, `shared` are mandatory; everything
+ * else is optional and will be defaulted by the domain when missing.
+ */
+export interface IViewV2CreateInput {
+    library: string;
+    label: ISystemTranslation;
+    display: IViewV2Display;
+    shared: boolean;
+    description?: ISystemTranslation;
+    color?: string;
+    filters?: IRecordFilterLight[];
+    sort?: IRecordSortLight[];
+    valuesVersions?: IViewV2ValuesVersion;
+    attributes?: string[];
+}
+
+/**
+ * Domain update input. Only `id` is mandatory; every other field is optional and only
+ * the provided ones are updated.
+ */
+export interface IViewV2UpdateInput {
+    id: string;
+    library?: string;
+    label?: ISystemTranslation;
+    display?: IViewV2Display;
+    shared?: boolean;
+    description?: ISystemTranslation;
+    color?: string;
+    filters?: IRecordFilterLight[];
+    sort?: IRecordSortLight[];
+    valuesVersions?: IViewV2ValuesVersion;
+    attributes?: string[];
 }
 
 export interface IViewV2ValuesVersionForGraphql {
@@ -45,13 +85,19 @@ export interface IViewV2ValuesVersionForGraphql {
     treeNode: {id: string};
 }
 
-export type ViewV2FromGraphQL = Omit<IViewV2, 'valuesVersions' | 'settings'> & {
-    valuesVersions: IViewV2ValuesVersionForGraphql[];
+/**
+ * GraphQL-shaped create input: same as the domain input but `valuesVersions` arrives as
+ * an array of `{treeId, treeNode}` pairs.
+ */
+export type IViewV2CreateInputFromGraphQL = Omit<IViewV2CreateInput, 'valuesVersions'> & {
+    valuesVersions?: IViewV2ValuesVersionForGraphql[];
 };
 
-export type PartialViewV2FromGraphQL = Omit<IViewV2, 'id' | 'valuesVersions' | 'settings'> & {
-    id: string;
-    valuesVersions: IViewV2ValuesVersionForGraphql[];
+/**
+ * GraphQL-shaped update input: same as the domain input with array-shaped `valuesVersions`.
+ */
+export type IViewV2UpdateInputFromGraphQL = Omit<IViewV2UpdateInput, 'valuesVersions'> & {
+    valuesVersions?: IViewV2ValuesVersionForGraphql[];
 };
 
 export interface IViewV2FilterOptions extends ICoreEntityFilterOptions {

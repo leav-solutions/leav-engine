@@ -20,9 +20,21 @@ export type IGetViewV2Params = IGetCoreEntitiesParams & {
     filters?: IViewV2FilterOptionsInRepo;
 };
 
+/**
+ * Repo create payload: full stored entity minus `id` (ArangoDB will generate the `_key`).
+ * `id` stays optional for callers that need a deterministic key (tests, seeding).
+ */
+export type IViewV2CreateInRepo = Omit<IViewV2, 'id'> & {id?: string};
+
+/**
+ * Repo update payload: `id` and `modified_at` are mandatory; every other field is optional
+ * and only the provided ones are persisted (UPDATE with `keepNull: false`).
+ */
+export type IViewV2UpdateInRepo = {id: string; modified_at: number} & Partial<Omit<IViewV2, 'id' | 'modified_at'>>;
+
 export interface IViewV2Repo {
-    createViewV2(view: IViewV2, ctx: IQueryInfos): Promise<IViewV2>;
-    updateViewV2(view: IViewV2, ctx: IQueryInfos): Promise<IViewV2>;
+    createViewV2(view: IViewV2CreateInRepo, ctx: IQueryInfos): Promise<IViewV2>;
+    updateViewV2(view: IViewV2UpdateInRepo, ctx: IQueryInfos): Promise<IViewV2>;
     getViewsV2(params: IGetViewV2Params, ctx: IQueryInfos): Promise<IList<IViewV2>>;
     deleteViewV2(viewId: string, ctx: IQueryInfos): Promise<IViewV2>;
 }
@@ -37,7 +49,18 @@ export default function ({
     'core.infra.db.dbUtils': dbUtils = null,
 }: IViewV2RepoDeps): IViewV2Repo {
     return {
-        async updateViewV2(view: IViewV2, ctx: IQueryInfos): Promise<IViewV2> {
+        async createViewV2(view: IViewV2CreateInRepo, ctx: IQueryInfos): Promise<IViewV2> {
+            const collec = dbService.db.collection(VIEWS_V2_COLLECTION_NAME);
+            const docToInsert = dbUtils.convertToDoc(view);
+
+            const newView = await dbService.execute({
+                query: aql`INSERT ${docToInsert} IN ${collec} RETURN NEW`,
+                ctx,
+            });
+
+            return dbUtils.cleanup(newView[0]);
+        },
+        async updateViewV2(view: IViewV2UpdateInRepo, ctx: IQueryInfos): Promise<IViewV2> {
             const collec = dbService.db.collection(VIEWS_V2_COLLECTION_NAME);
             const docToInsert = dbUtils.convertToDoc(view);
 
@@ -50,17 +73,6 @@ export default function ({
             });
 
             return dbUtils.cleanup(updatedView[0]);
-        },
-        async createViewV2(view: IViewV2, ctx: IQueryInfos): Promise<IViewV2> {
-            const collec = dbService.db.collection(VIEWS_V2_COLLECTION_NAME);
-            const docToInsert = dbUtils.convertToDoc(view);
-
-            const newView = await dbService.execute({
-                query: aql`INSERT ${docToInsert} IN ${collec} RETURN NEW`,
-                ctx,
-            });
-
-            return dbUtils.cleanup(newView[0]);
         },
         async getViewsV2(params: IGetViewV2Params, ctx: IQueryInfos): Promise<IList<IViewV2>> {
             const defaultParams: IGetViewV2Params = {

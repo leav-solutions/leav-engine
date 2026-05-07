@@ -11,9 +11,9 @@ import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {
     type IViewV2,
+    type IViewV2CreateInputFromGraphQL,
+    type IViewV2UpdateInputFromGraphQL,
     type IViewV2ValuesVersionForGraphql,
-    type PartialViewV2FromGraphQL,
-    type ViewV2FromGraphQL,
     ViewV2Sizes,
     ViewV2Types,
 } from '../../_types/viewsV2';
@@ -85,12 +85,11 @@ export default function ({
                         attributes: [Attribute!]
                     }
 
-                    input ViewV2Input {
-                        id: String,
+                    input ViewV2CreateInput {
                         library: String!,
                         display: ViewV2DisplayInput!,
                         shared: Boolean!,
-                        label: SystemTranslation,
+                        label: SystemTranslation!,
                         description: SystemTranslationOptional,
                         color: String,
                         filters: [RecordFilterInput!],
@@ -100,7 +99,7 @@ export default function ({
                         attributes: [String!]
                     }
 
-                    input ViewV2InputPartial {
+                    input ViewV2UpdateInput {
                         id: String!,
                         library: String,
                         display: ViewV2DisplayInput,
@@ -126,8 +125,8 @@ export default function ({
                     }
 
                     extend type Mutation {
-                        saveViewV2(view: ViewV2Input!): ViewV2!
-                        updateViewV2(view: ViewV2InputPartial!): ViewV2!
+                        createViewV2(view: ViewV2CreateInput!): ViewV2!
+                        updateViewV2(view: ViewV2UpdateInput!): ViewV2!
                         deleteViewV2(viewId: String!): ViewV2!
                     }
                 `,
@@ -139,8 +138,12 @@ export default function ({
                             viewV2Domain.getViewV2ById(viewId, ctx),
                     },
                     Mutation: {
-                        saveViewV2: (_, {view}: {view: ViewV2FromGraphQL}, ctx: IQueryInfos): Promise<IViewV2> =>
-                            viewV2Domain.saveViewV2(
+                        createViewV2: (
+                            _,
+                            {view}: {view: IViewV2CreateInputFromGraphQL},
+                            ctx: IQueryInfos,
+                        ): Promise<IViewV2> =>
+                            viewV2Domain.createViewV2(
                                 {
                                     ...view,
                                     valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode'),
@@ -149,10 +152,10 @@ export default function ({
                             ),
                         updateViewV2: (
                             _,
-                            {view}: {view: PartialViewV2FromGraphQL},
+                            {view}: {view: IViewV2UpdateInputFromGraphQL},
                             ctx: IQueryInfos,
                         ): Promise<IViewV2> =>
-                            viewV2Domain.saveViewV2(
+                            viewV2Domain.updateViewV2(
                                 {
                                     ...view,
                                     valuesVersions: utils.nameValArrayToObj(view.valuesVersions, 'treeId', 'treeNode'),
@@ -163,7 +166,7 @@ export default function ({
                             viewV2Domain.deleteViewV2(viewId, ctx),
                     },
                     ViewV2: {
-                        created_by: async (view: ViewV2FromGraphQL, _, ctx): Promise<IRecord | null> => {
+                        created_by: async (view: IViewV2, _, ctx): Promise<IRecord | null> => {
                             const record = await recordDomain.find({
                                 params: {
                                     library: USERS_LIBRARY,
@@ -181,11 +184,10 @@ export default function ({
                                 return null;
                             }
 
-                            const versions = Object.keys(view.valuesVersions).map(treeId => ({
+                            return Object.keys(view.valuesVersions).map(treeId => ({
                                 treeId,
                                 treeNode: {id: view.valuesVersions[treeId], treeId},
                             }));
-                            return versions;
                         },
                         attributes: (view: IViewV2, _, ctx: IQueryInfos) =>
                             Promise.all(

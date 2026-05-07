@@ -2,8 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {type IViewV2Repo, VIEWS_V2_COLLECTION_NAME} from '../../../infra/viewV2/viewV2Repo';
-import {type IViewV2, ViewV2Sizes, ViewV2Types} from '../../../_types/viewsV2';
+import {
+    type IViewV2CreateInRepo,
+    type IViewV2Repo,
+    type IViewV2UpdateInRepo,
+    VIEWS_V2_COLLECTION_NAME,
+} from '../../../infra/viewV2/viewV2Repo';
+import {ViewV2Sizes, ViewV2Types} from '../../../_types/viewsV2';
 import {clearAllCollectionDocuments, getViewV2Repo} from './integrationTestRepoUtils';
 
 describe('viewV2Repo', () => {
@@ -12,7 +17,7 @@ describe('viewV2Repo', () => {
         userId: '1',
     };
 
-    const baseView: Omit<IViewV2, 'id'> = {
+    const baseView: IViewV2CreateInRepo = {
         library: 'test_lib',
         label: {fr: 'My view'},
         description: {fr: 'My test view'},
@@ -36,8 +41,8 @@ describe('viewV2Repo', () => {
     });
 
     describe('createViewV2', () => {
-        it('should create a viewV2 and return it with an id', async () => {
-            const created = await viewV2Repo.createViewV2({...baseView, id: 'created_view'} as IViewV2, ctx);
+        it('should create a viewV2 with an explicit id', async () => {
+            const created = await viewV2Repo.createViewV2({...baseView, id: 'created_view'}, ctx);
 
             expect(created.id).toBe('created_view');
             expect(created.library).toBe('test_lib');
@@ -45,18 +50,22 @@ describe('viewV2Repo', () => {
             expect(created.display).toEqual({type: ViewV2Types.LIST, size: ViewV2Sizes.MEDIUM});
             expect(created.attributes).toEqual(['id', 'label']);
         });
+
+        it('should create a viewV2 with an auto-generated id when none is provided', async () => {
+            const created = await viewV2Repo.createViewV2({...baseView}, ctx);
+
+            expect(created.id).toBeTruthy();
+            expect(created.library).toBe('test_lib');
+        });
     });
 
     describe('updateViewV2', () => {
-        it('should update an existing viewV2', async () => {
-            const created = await viewV2Repo.createViewV2(
-                {...baseView, id: 'updated_view', color: '#000000'} as IViewV2,
-                ctx,
-            );
+        it('should update only the provided fields and leave the rest untouched', async () => {
+            const created = await viewV2Repo.createViewV2({...baseView, id: 'updated_view', color: '#000000'}, ctx);
 
             const updated = await viewV2Repo.updateViewV2(
                 {
-                    ...created,
+                    id: created.id,
                     color: '#FFFFFF',
                     label: {fr: 'Updated label'},
                     modified_at: 1234567999,
@@ -73,10 +82,10 @@ describe('viewV2Repo', () => {
         });
 
         it('should drop fields that are null in the update payload (keepNull: false)', async () => {
-            await viewV2Repo.createViewV2({...baseView, id: 'view_drop_null'} as IViewV2, ctx);
+            await viewV2Repo.createViewV2({...baseView, id: 'view_drop_null'}, ctx);
 
             const updated = await viewV2Repo.updateViewV2(
-                {...baseView, id: 'view_drop_null', description: null} as unknown as IViewV2,
+                {id: 'view_drop_null', modified_at: 1234567999, description: null} as unknown as IViewV2UpdateInRepo,
                 ctx,
             );
 
@@ -86,22 +95,10 @@ describe('viewV2Repo', () => {
 
     describe('getViewsV2', () => {
         beforeEach(async () => {
-            await viewV2Repo.createViewV2(
-                {...baseView, id: 'own_private', shared: false, created_by: '1'} as IViewV2,
-                ctx,
-            );
-            await viewV2Repo.createViewV2(
-                {...baseView, id: 'own_shared', shared: true, created_by: '1'} as IViewV2,
-                ctx,
-            );
-            await viewV2Repo.createViewV2(
-                {...baseView, id: 'other_private', shared: false, created_by: '42'} as IViewV2,
-                ctx,
-            );
-            await viewV2Repo.createViewV2(
-                {...baseView, id: 'other_shared', shared: true, created_by: '42'} as IViewV2,
-                ctx,
-            );
+            await viewV2Repo.createViewV2({...baseView, id: 'own_private', shared: false, created_by: '1'}, ctx);
+            await viewV2Repo.createViewV2({...baseView, id: 'own_shared', shared: true, created_by: '1'}, ctx);
+            await viewV2Repo.createViewV2({...baseView, id: 'other_private', shared: false, created_by: '42'}, ctx);
+            await viewV2Repo.createViewV2({...baseView, id: 'other_shared', shared: true, created_by: '42'}, ctx);
         });
 
         it('should return only shared views and views owned by the requesting user', async () => {
@@ -131,7 +128,7 @@ describe('viewV2Repo', () => {
 
     describe('deleteViewV2', () => {
         it('should remove a viewV2 from the collection', async () => {
-            await viewV2Repo.createViewV2({...baseView, id: 'to_delete'} as IViewV2, ctx);
+            await viewV2Repo.createViewV2({...baseView, id: 'to_delete'}, ctx);
 
             const deleted = await viewV2Repo.deleteViewV2('to_delete', ctx);
             expect(deleted.id).toBe('to_delete');

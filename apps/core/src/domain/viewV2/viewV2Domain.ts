@@ -10,10 +10,17 @@ import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
-import {type IViewV2, type IViewV2FilterOptions} from '../../_types/viewsV2';
+import {
+    type IViewV2,
+    type IViewV2CreateInput,
+    type IViewV2FilterOptions,
+    type IViewV2UpdateInput,
+    type IViewV2ValuesVersion,
+} from '../../_types/viewsV2';
 
 export interface IViewV2Domain {
-    saveViewV2(view: IViewV2, ctx: IQueryInfos): Promise<IViewV2>;
+    createViewV2(input: IViewV2CreateInput, ctx: IQueryInfos): Promise<IViewV2>;
+    updateViewV2(input: IViewV2UpdateInput, ctx: IQueryInfos): Promise<IViewV2>;
     getViewsV2(library: string, ctx: IQueryInfos): Promise<IList<IViewV2>>;
     getViewV2ById(viewId: string, ctx: IQueryInfos): Promise<IViewV2>;
     deleteViewV2(viewId: string, ctx: IQueryInfos): Promise<IViewV2>;
@@ -32,73 +39,84 @@ export default function ({
     'core.infra.viewV2': viewV2Repo,
     'core.utils': utils,
 }: IViewV2DomainDeps): IViewV2Domain {
-    return {
-        async saveViewV2(view: IViewV2, ctx: IQueryInfos): Promise<IViewV2> {
-            const isExistingView = !!view.id;
+    const _validateValuesVersions = async (valuesVersions: IViewV2ValuesVersion, ctx: IQueryInfos): Promise<void> => {
+        for (const treeId of Object.keys(valuesVersions)) {
+            await validationHelper.validateTree(treeId, true, ctx);
 
-            await validationHelper.validateLibrary(view.library, ctx);
+            const isNodePresent = await treeDomain.isNodePresent({
+                treeId,
+                nodeId: valuesVersions[treeId],
+                ctx,
+            });
 
-            // Check user is owner
-            if (isExistingView) {
-                const existingView = await viewV2Repo.getViewsV2(
+            if (!isNodePresent) {
+                throw utils.generateExplicitValidationError(
+                    'version',
                     {
-                        filters: {id: view.id},
-                        strictFilters: true,
+                        msg: Errors.INVALID_VALUES_VERSIONS_SETTINGS_BAD_NODE_ID,
+                        vars: {treeId, nodeId: valuesVersions[treeId]},
                     },
-                    ctx,
+                    ctx.lang,
                 );
-
-                if (!existingView.list.length) {
-                    throw new ValidationError({id: Errors.UNKNOWN_VIEW});
-                }
-
-                const existingViewData = existingView.list[0];
-
-                if (existingViewData.created_by !== ctx.userId) {
-                    throw new ValidationError({id: Errors.USER_IS_NOT_VIEW_OWNER});
-                }
             }
+        }
+    };
 
-            // Validate values versions settings
-            if (view.valuesVersions) {
-                // Check version settings are valid: treeId is part of the profile and tree node exist
-                for (const treeId of Object.keys(view.valuesVersions)) {
-                    await validationHelper.validateTree(treeId, true, ctx);
+    return {
+        async createViewV2(input: IViewV2CreateInput, ctx: IQueryInfos): Promise<IViewV2> {
+            await validationHelper.validateLibrary(input.library, ctx);
 
-                    const isNodePresent = await treeDomain.isNodePresent({
-                        treeId,
-                        nodeId: view.valuesVersions[treeId],
-                        ctx,
-                    });
-
-                    if (!isNodePresent) {
-                        throw utils.generateExplicitValidationError(
-                            'version',
-                            {
-                                msg: Errors.INVALID_VALUES_VERSIONS_SETTINGS_BAD_NODE_ID,
-                                vars: {treeId, nodeId: view.valuesVersions[treeId]},
-                            },
-                            ctx.lang,
-                        );
-                    }
-                }
+            if (input.valuesVersions) {
+                await _validateValuesVersions(input.valuesVersions, ctx);
             }
 
             const now = dayjs().unix();
 
-            const viewToSave: IViewV2 = {
-                ...view,
-                modified_at: now,
-            };
+            return viewV2Repo.createViewV2(
+                {
+                    library: input.library,
+                    label: input.label,
+                    display: input.display,
+                    shared: input.shared,
+                    description: input.description,
+                    color: input.color,
+                    filters: input.filters ?? [],
+                    sort: input.sort ?? [],
+                    valuesVersions: input.valuesVersions,
+                    attributes: input.attributes ?? [],
+                    created_by: ctx.userId,
+                    created_at: now,
+                    modified_at: now,
+                },
+                ctx,
+            );
+        },
+        async updateViewV2(input: IViewV2UpdateInput, ctx: IQueryInfos): Promise<IViewV2> {
+            const existingView = await viewV2Repo.getViewsV2({filters: {id: input.id}, strictFilters: true}, ctx);
 
-            if (isExistingView) {
-                return viewV2Repo.updateViewV2(viewToSave, ctx);
+            if (!existingView.list.length) {
+                throw new ValidationError({id: Errors.UNKNOWN_VIEW});
             }
 
-            viewToSave.created_at = now;
-            viewToSave.created_by = ctx.userId;
+            if (existingView.list[0].created_by !== ctx.userId) {
+                throw new ValidationError({id: Errors.USER_IS_NOT_VIEW_OWNER});
+            }
 
-            return viewV2Repo.createViewV2(viewToSave, ctx);
+            if (input.library !== undefined) {
+                await validationHelper.validateLibrary(input.library, ctx);
+            }
+
+            if (input.valuesVersions) {
+                await _validateValuesVersions(input.valuesVersions, ctx);
+            }
+
+            return viewV2Repo.updateViewV2(
+                {
+                    ...input,
+                    modified_at: dayjs().unix(),
+                },
+                ctx,
+            );
         },
         async getViewsV2(library: string, ctx: IQueryInfos): Promise<IList<IViewV2>> {
             await validationHelper.validateLibrary(library, ctx);
@@ -108,27 +126,11 @@ export default function ({
                 created_by: ctx.userId,
             };
 
-            const views = await viewV2Repo.getViewsV2(
-                {
-                    filters,
-                    withCount: true,
-                },
-                ctx,
-            );
-
-            return views;
+            return viewV2Repo.getViewsV2({filters, withCount: true}, ctx);
         },
         async getViewV2ById(viewId: string, ctx: IQueryInfos): Promise<IViewV2> {
-            const filters: IViewV2FilterOptions = {
-                id: viewId,
-            };
-
             const views = await viewV2Repo.getViewsV2(
-                {
-                    filters,
-                    strictFilters: true,
-                    withCount: false,
-                },
+                {filters: {id: viewId}, strictFilters: true, withCount: false},
                 ctx,
             );
 
@@ -139,22 +141,13 @@ export default function ({
             return views.list[0];
         },
         async deleteViewV2(viewId: string, ctx: IQueryInfos): Promise<IViewV2> {
-            // Check view exists
-            const existingView = await viewV2Repo.getViewsV2(
-                {
-                    filters: {id: viewId},
-                    strictFilters: true,
-                },
-                ctx,
-            );
+            const existingView = await viewV2Repo.getViewsV2({filters: {id: viewId}, strictFilters: true}, ctx);
 
             if (!existingView.list.length) {
                 throw new ValidationError({id: Errors.UNKNOWN_VIEW});
             }
 
-            // Check user is owner
-            const existingViewData = existingView.list[0];
-            if (existingViewData.created_by !== ctx.userId) {
+            if (existingView.list[0].created_by !== ctx.userId) {
                 throw new ValidationError({id: Errors.USER_IS_NOT_VIEW_OWNER});
             }
 

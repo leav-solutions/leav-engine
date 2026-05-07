@@ -16,7 +16,7 @@ describe('ViewsV2', () => {
     describe('CRUD operations', () => {
         test('Create viewV2', async () => {
             const resSaveView = await makeGraphQlCall(`mutation {
-                saveViewV2(view: {
+                createViewV2(view: {
                   library: "${testLibName}",
                   display: {type: ${ViewV2Types.LIST}, size: ${ViewV2Sizes.MEDIUM}},
                   shared: true,
@@ -32,7 +32,7 @@ describe('ViewsV2', () => {
                 }
             }`);
 
-            viewId = resSaveView.data.data.saveViewV2.id;
+            viewId = resSaveView.data.data.createViewV2.id;
 
             expect(resSaveView.status).toBe(200);
             expect(resSaveView.data.errors).toBeUndefined();
@@ -100,7 +100,7 @@ describe('ViewsV2', () => {
         describe('Private viewsV2', () => {
             it('Should not be able to edit viewsV2 owned by other users', async () => {
                 const resSaveView = await makeGraphQlCall(`mutation {
-                saveViewV2(view: {
+                createViewV2(view: {
                   library: "${testLibName}",
                   display: {type: ${ViewV2Types.LIST}, size: ${ViewV2Sizes.MEDIUM}},
                   shared: false,
@@ -116,7 +116,7 @@ describe('ViewsV2', () => {
                 }
             }`);
 
-                const savedViewId = resSaveView.data.data.saveViewV2.id;
+                const savedViewId = resSaveView.data.data.createViewV2.id;
 
                 const mutationUpdateView = `mutation {
                 updateViewV2(view: {
@@ -137,7 +137,7 @@ describe('ViewsV2', () => {
 
             it('Should not be able to delete viewsV2 owned by other users', async () => {
                 const resSaveView = await makeGraphQlCall(`mutation {
-                saveViewV2(view: {
+                createViewV2(view: {
                   library: "${testLibName}",
                   display: {type: ${ViewV2Types.LIST}, size: ${ViewV2Sizes.MEDIUM}},
                   shared: false,
@@ -153,7 +153,7 @@ describe('ViewsV2', () => {
                 }
             }`);
 
-                const savedViewId = resSaveView.data.data.saveViewV2.id;
+                const savedViewId = resSaveView.data.data.createViewV2.id;
 
                 const mutationDeleteView = `mutation {
                 deleteViewV2(viewId: "${savedViewId}") {
@@ -170,7 +170,7 @@ describe('ViewsV2', () => {
         describe('Shared viewsV2', () => {
             it('Should not be able to edit shared viewsV2 owned by other users', async () => {
                 const resSaveView = await makeGraphQlCall(`mutation {
-                saveViewV2(view: {
+                createViewV2(view: {
                   library: "${testLibName}",
                   display: {type: ${ViewV2Types.LIST}, size: ${ViewV2Sizes.MEDIUM}},
                   shared: true,
@@ -186,7 +186,7 @@ describe('ViewsV2', () => {
                 }
             }`);
 
-                const savedViewId = resSaveView.data.data.saveViewV2.id;
+                const savedViewId = resSaveView.data.data.createViewV2.id;
 
                 const mutationUpdateView = `mutation {
                 updateViewV2(view: {
@@ -207,7 +207,7 @@ describe('ViewsV2', () => {
 
             it('Should not be able to delete shared viewsV2 owned by other users', async () => {
                 const resSaveView = await makeGraphQlCall(`mutation {
-                saveViewV2(view: {
+                createViewV2(view: {
                   library: "${testLibName}",
                   display: {type: ${ViewV2Types.LIST}, size: ${ViewV2Sizes.MEDIUM}},
                   shared: false,
@@ -223,7 +223,7 @@ describe('ViewsV2', () => {
                 }
             }`);
 
-                const savedViewId = resSaveView.data.data.saveViewV2.id;
+                const savedViewId = resSaveView.data.data.createViewV2.id;
 
                 const mutationDeleteView = `mutation {
                 deleteViewV2(viewId: "${savedViewId}") {
