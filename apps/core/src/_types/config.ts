@@ -68,6 +68,11 @@ export enum CoreMode {
     LOGS_COLLECTOR = 'logsCollector',
 
     /**
+     * Default, to do db migration, or import ...
+     */
+    CLI = 'cli',
+
+    /**
      * Alias for [
      *   CoreMode.SERVER,
      *   CoreMode.INDEXATION_MANAGER,

@@ -118,8 +118,8 @@ import {type ICorePluginsApp} from './app/core/pluginsApp';
 
     await initPlugins(conf.pluginsPath, pluginsContainer);
 
-    // by default, no core modes, run cli
-    if (conf.coreModes.length === 0) {
+    const isCli = conf.coreModes.includes(CoreMode.CLI);
+    if (isCli) {
         // Run CLI
         await cli.run();
         // Make sure we always exit process.
