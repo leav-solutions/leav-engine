@@ -1,0 +1,28 @@
+.container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+}
+
+.text {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.hoverActionWrapper {
+    position: absolute;
+    right: 0;
+    display: none;
+    align-items: center;
+}
+
+:global(.ant-table-row:hover) .hoverActionWrapper {
+    display: flex;
+}
+
+:global(.ant-table-row:hover) .text {
+    /* Reserve space for the button (size s) + its gap */
+    padding-right: calc((var(--general-spacing-m) + var(--general-spacing-xs)) * 1px);
+}

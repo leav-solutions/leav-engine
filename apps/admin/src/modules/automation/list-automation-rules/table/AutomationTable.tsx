@@ -1,12 +1,22 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitIdCard, KitTable, KitTag} from 'aristid-ds';
+import {KitButton, KitIdCard, KitTable, KitTag, KitTooltip} from 'aristid-ds';
+import {faTrash} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {type ComponentProps} from 'react';
 import {useTranslation} from 'react-i18next';
+import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 import {automationTableContainer} from './automationTable.module.css';
 import {useTableScrollableHeight} from '../../../utils/useTableScrollableHeight';
 import {type AutomationRulesData} from '../get-automation-rules-data/useGetAutomationRulesData';
+import {AutomationCell} from './cell/AutomationCell';
+
+const ColumnWidth = {
+    XS: '10ch',
+    S: '15ch',
+    M: '20ch',
+};
 
 type AutomationTableProps = {
     data: AutomationRulesData[];
@@ -30,37 +40,38 @@ export const AutomationTable = ({
     const {t} = useTranslation();
     const {containerRef, scrollHeight} = useTableScrollableHeight(true);
 
-    // We are using HistoryCell component for columns when we want a max width and ellipsis. Others columns are not truncated.
     const tableColumns: ComponentProps<typeof KitTable>['columns'] = [
         {
             title: t('automation.table.column.name'),
             dataIndex: 'name',
             key: 'name',
-            width: '25%',
+            render: (name: string) => <AutomationCell>{name}</AutomationCell>,
         },
         {
             title: t('automation.table.column.trigger'),
             dataIndex: 'trigger',
             key: 'trigger',
-            width: '25%',
+            width: ColumnWidth.M,
+            render: (trigger: string) => <AutomationCell>{trigger}</AutomationCell>,
         },
         {
             title: t('automation.table.column.target'),
             dataIndex: 'target',
             key: 'target',
-            width: '25%',
+            render: (target: string) => <AutomationCell>{target}</AutomationCell>,
         },
         {
             title: t('automation.table.column.nb_actions'),
             dataIndex: 'nb_actions',
             key: 'nb_actions',
-            width: '15%',
+            width: ColumnWidth.S,
+            render: (nbActions: number) => <AutomationCell>{String(nbActions)}</AutomationCell>,
         },
         {
             title: t('automation.table.column.status'),
             dataIndex: 'active',
             key: 'active',
-            width: '15%',
+            width: ColumnWidth.XS,
             render: (active: boolean) =>
                 active ? (
                     <KitTag type="success">
@@ -89,7 +100,7 @@ export const AutomationTable = ({
                 scroll={{
                     y: scrollHeight,
                 }}
-                tableLayout="auto"
+                tableLayout="fixed"
                 pagination={{
                     position: ['bottomCenter'],
                     current: currentPage,
