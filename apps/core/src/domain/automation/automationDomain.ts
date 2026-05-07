@@ -10,6 +10,7 @@ import {
     type AutomationRulesEventTopic,
     type AutomationRuleEventAction,
     type AutomationRuleTrigger,
+    type AutomationRuleJsonSchemaFormType,
 } from '../../_types/automation';
 import {SortOrder, type IList} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
@@ -29,6 +30,9 @@ import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesT
 import {type IAutomationTriggers} from './triggers/automationTriggers';
 import {type AutomationTriggerDef} from './triggers/_types';
 import {type AutomationPipelineExecution, type AutomationPipelineValidation} from './pipeline/_types';
+import {type IAutomationJsonSchemaFormDomain} from './form/automationJsonSchemaForm';
+import {type IAutomationUiJsonSchemaFormDomain} from './form/automationUiJsonSchemaForm';
+import {type UiSchema, type RJSFSchema} from '@rjsf/utils';
 
 export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
@@ -53,6 +57,20 @@ export interface IAutomationDomain {
         params: IGetAutomationRulesParams;
         ctx: IQueryInfos;
     }): Promise<IList<IAutomationRule>>;
+    getAutomationRuleJsonSchemaForm({
+        formType,
+        ctx,
+    }: {
+        formType: AutomationRuleJsonSchemaFormType;
+        ctx: IQueryInfos;
+    }): Promise<RJSFSchema>;
+    getAutomationRuleUiJsonSchemaForm({
+        formType,
+        ctx,
+    }: {
+        formType: AutomationRuleJsonSchemaFormType;
+        ctx: IQueryInfos;
+    }): Promise<UiSchema>;
     createAutomationRule({rule, ctx}: {rule: ICreateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     updateAutomationRule({rule, ctx}: {rule: IUpdateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     deleteAutomationRule({ruleId, ctx}: {ruleId: string; ctx: IQueryInfos}): Promise<IAutomationRule>;
@@ -63,6 +81,8 @@ export interface IAutomationDomain {
 
 export interface IAutomationDomainDeps {
     'core.domain.automation.triggers': IAutomationTriggers;
+    'core.domain.automation.form': IAutomationJsonSchemaFormDomain;
+    'core.domain.automation.form.uiJsonSchemaForm': IAutomationUiJsonSchemaFormDomain;
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.automation.pipeline': IAutomationPipelineDomain;
@@ -72,6 +92,8 @@ export interface IAutomationDomainDeps {
 
 export default function ({
     'core.domain.automation.triggers': automationTriggers,
+    'core.domain.automation.form': automationJsonSchemaFormDomain,
+    'core.domain.automation.form.uiJsonSchemaForm': automationUiJsonSchemaFormDomain,
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.domain.automation.pipeline': pipelineDomain,
@@ -185,6 +207,14 @@ export default function ({
             }
 
             return automationRuleRepo.getAutomationRules(initializedParams, ctx);
+        },
+        async getAutomationRuleJsonSchemaForm({formType, ctx}) {
+            await _hasManageAutomationPermissionOrThrow(ctx);
+            return automationJsonSchemaFormDomain.getAutomationRuleJsonSchemaForm({formType, ctx});
+        },
+        async getAutomationRuleUiJsonSchemaForm({formType, ctx}) {
+            await _hasManageAutomationPermissionOrThrow(ctx);
+            return automationUiJsonSchemaFormDomain.getAutomationRuleUiJsonSchemaForm({formType, ctx});
         },
         async createAutomationRule({rule, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
@@ -319,6 +349,14 @@ function automationDisabled(): IAutomationDomain {
         async getAutomationRules(): Promise<IList<IAutomationRule>> {
             logger.silly('Automation system is disabled. Skipping automation rules retrieval.');
             return {list: [], totalCount: 0};
+        },
+        async getAutomationRuleJsonSchemaForm(): Promise<RJSFSchema> {
+            logger.silly('Automation system is disabled. Skipping automation rule JSON schema form retrieval.');
+            return {};
+        },
+        async getAutomationRuleUiJsonSchemaForm(): Promise<UiSchema> {
+            logger.silly('Automation system is disabled. Skipping automation rule UI JSON schema form retrieval.');
+            return {};
         },
         async createAutomationRule(): Promise<IAutomationRule> {
             logger.silly('Automation system is disabled. Skipping automation rule creation.');

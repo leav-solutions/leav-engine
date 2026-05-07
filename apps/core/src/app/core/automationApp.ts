@@ -5,7 +5,12 @@ import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IAutomationDomain} from '../../domain/automation/automationDomain';
-import {type ICreateAutomationRule, type IAutomationRule, type IUpdateAutomationRule} from '../../_types/automation';
+import {
+    type ICreateAutomationRule,
+    type IAutomationRule,
+    type IUpdateAutomationRule,
+    type AutomationRuleJsonSchemaFormType,
+} from '../../_types/automation';
 import {type IPaginationParams, type ISortParams, type IList} from '../../_types/list';
 import {type IAutomationTriggers} from '../../domain/automation/triggers/automationTriggers';
 import {type IAutomationTriggersRegistry} from '../..//domain/automation/triggers/automationTriggersRegistry';
@@ -15,6 +20,7 @@ import {
     type AutomationTriggerDef,
 } from '../../domain/automation/triggers/_types';
 import {AutomationRuleActions} from '../../domain/automation/actions/_types';
+import {type RJSFSchema, type UiSchema} from '@rjsf/utils';
 
 export type ICoreImportApp = IGraphqlAppModule;
 
@@ -98,6 +104,11 @@ export default function ({
                         list: [AutomationRule!]!
                     }
 
+                    enum AutomationRuleJsonSchemaFormType {
+                        creation
+                        edition
+                    }
+
                     enum AutomationRuleSortableFields {
                         id
                     }
@@ -157,6 +168,11 @@ export default function ({
                         pipeline: AutomationRulePipelineInput
                     }
                     
+                    type AutomationRuleForm {
+                        jsonSchema: JSONObject!
+                        uiSchema: JSONObject!
+                    }
+
                     extend type Query {
                         automationRules(
                             filters: AutomationRulesFiltersInput,
@@ -164,6 +180,7 @@ export default function ({
                             sort: AutomationRulesSortInput
                         ): AutomationRulesList!
                         automationTriggersDef: [AutomationTriggerDef!]!
+                        automationRuleForm(formType: AutomationRuleJsonSchemaFormType!): AutomationRuleForm!
                     }
 
                     extend type Mutation {
@@ -191,6 +208,16 @@ export default function ({
                         },
                         async automationTriggersDef(parent, args, ctx: IQueryInfos): Promise<AutomationTriggerDef[]> {
                             return automationDomain.listAutomationTriggersDef({ctx});
+                        },
+                        async automationRuleForm(
+                            parent,
+                            {formType}: {formType: AutomationRuleJsonSchemaFormType},
+                            ctx: IQueryInfos,
+                        ): Promise<{jsonSchema: RJSFSchema; uiSchema: UiSchema}> {
+                            return {
+                                jsonSchema: await automationDomain.getAutomationRuleJsonSchemaForm({formType, ctx}),
+                                uiSchema: await automationDomain.getAutomationRuleUiJsonSchemaForm({formType, ctx}),
+                            };
                         },
                     },
                     Mutation: {

@@ -3,13 +3,14 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitLoader} from 'aristid-ds';
 import {Navigate, useNavigate, useParams} from 'react-router-dom';
-import {AdminAbsolutePaths} from '../../routes/paths';
-import {type AutomationFormValues} from './types';
-import {AutomationForm} from './AutomationForm';
-import {useGetAutomationRuleDetails} from './get-automation-rule-details/useGetAutomationRuleDetails';
-import {useEditAutomationRule} from './edit-automation-rule/useEditAutomationRule';
+import {AdminAbsolutePaths} from '../routes/paths';
+import {type AutomationFormValues} from '../automation/types';
+import {AutomationForm} from '../automation/generate-automation-form/AutomationForm';
+import {useGetAutomationRuleDetails} from '../automation/get-automation-rule-details/useGetAutomationRuleDetails';
+import {useEditAutomationRule} from '../automation/edit-automation-rule/useEditAutomationRule';
+import {AutomationRuleJsonSchemaFormType} from '../../_gqlTypes';
 
-export const EditAutomation = () => {
+export const AutomationEdition = () => {
     const navigate = useNavigate();
     const {id} = useParams<{id: string}>();
     const {data, loading: dataLoading} = useGetAutomationRuleDetails({id});
@@ -32,8 +33,8 @@ export const EditAutomation = () => {
     return (
         <AutomationForm
             initialValues={data}
-            loading={loading}
-            formType="edition"
+            mutationLoading={loading}
+            formType={AutomationRuleJsonSchemaFormType.edition}
             onSubmit={handleSubmit}
             onCancel={handleBack}
         />

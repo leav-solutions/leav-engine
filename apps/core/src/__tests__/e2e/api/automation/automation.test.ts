@@ -4,6 +4,7 @@
 import {adminUserId} from '../../../../_constants/users';
 import {
     AutomationRuleEventAction,
+    AutomationRuleJsonSchemaFormType,
     AutomationTriggerDefSynchronicity,
     AutomationTriggerDefTopics,
     AutomationRuleActions,
@@ -446,6 +447,107 @@ describe('Automation', () => {
                     ruleId: 'nonexistent-rule-id',
                 }),
             ).rejects.toThrow(/Unknown automation rule/);
+        });
+    });
+
+    describe('get automation rule form', () => {
+        test('creation json schema has correct structure for RJSF', async () => {
+            const result = await adminUserSdk.GetAutomationRuleForm({
+                formType: AutomationRuleJsonSchemaFormType.creation,
+            });
+            const schema = result.automationRuleForm.jsonSchema;
+
+            expect(schema.properties).toHaveProperty('label');
+            expect(schema.properties).toHaveProperty('description');
+            expect(schema.properties).toHaveProperty('trigger');
+            expect(schema.properties).not.toHaveProperty('active');
+            expect(schema.required).toEqual(expect.arrayContaining(['label', 'trigger']));
+
+            expect(schema.$defs).toHaveProperty('library');
+            expect(schema.$defs).toHaveProperty('attribute');
+
+            const {trigger} = schema.properties;
+            expect(trigger.properties.eventAction.enum).toEqual(
+                expect.arrayContaining(Object.values(AutomationRuleEventAction)),
+            );
+            expect(trigger).not.toHaveProperty('readOnly');
+
+            expect(Array.isArray(trigger.allOf)).toBe(true);
+            expect(trigger.allOf.length).toBeGreaterThanOrEqual(Object.values(AutomationRuleEventAction).length);
+
+            Object.values(AutomationRuleEventAction).forEach(eventAction => {
+                const block = trigger.allOf.find(b => b.if?.properties?.eventAction?.const === eventAction);
+
+                expect(block).toBeDefined();
+                expect(block.then.properties).toHaveProperty('eventTopic');
+                expect(block.then.required).toContain('eventTopic');
+            });
+        });
+
+        test('edition json schema has active field and trigger is readonly', async () => {
+            const result = await adminUserSdk.GetAutomationRuleForm({
+                formType: AutomationRuleJsonSchemaFormType.edition,
+            });
+            const schema = result.automationRuleForm.jsonSchema;
+
+            expect(schema.properties).toHaveProperty('active');
+            expect(schema.properties.trigger.readOnly).toBe(true);
+
+            expect(Array.isArray(schema.properties.trigger.allOf)).toBe(true);
+            expect(schema.properties.trigger.allOf.length).toBeGreaterThanOrEqual(3);
+        });
+
+        test('$defs contains a single entry per key when multiple triggers share the same $defs key', async () => {
+            // RECORD_SAVE and VALUE_SAVE both produce a $defs.library definition.
+            const result = await adminUserSdk.GetAutomationRuleForm({
+                formType: AutomationRuleJsonSchemaFormType.creation,
+            });
+            const schema = result.automationRuleForm.jsonSchema;
+
+            const libraryDef = schema.$defs?.library;
+            expect(libraryDef).toBeDefined();
+            expect(libraryDef).toEqual({type: 'string'});
+        });
+
+        test('creation ui schema has correct groups and field widgets', async () => {
+            const result = await adminUserSdk.GetAutomationRuleForm({
+                formType: AutomationRuleJsonSchemaFormType.creation,
+            });
+            const uiSchema = result.automationRuleForm.uiSchema;
+
+            const {groups} = uiSchema['ui:options'];
+            expect(groups).toHaveLength(2);
+            expect(groups[0]).toMatchObject({step: '1', fields: expect.arrayContaining(['label', 'description'])});
+            expect(groups[1]).toMatchObject({step: '2', fields: ['trigger']});
+
+            expect(uiSchema.label).toHaveProperty('ui:title');
+            expect(uiSchema.description).toHaveProperty('ui:title');
+
+            expect(uiSchema.trigger.eventAction).toHaveProperty('ui:title');
+            expect(uiSchema.trigger.eventTopic.library).toHaveProperty('ui:title');
+            expect(uiSchema.trigger.eventTopic.attribute).toHaveProperty('ui:title');
+
+            expect(uiSchema.trigger).not.toHaveProperty('ui:readonly');
+        });
+
+        test('edition ui schema has active widget and trigger with ui:readonly', async () => {
+            const result = await adminUserSdk.GetAutomationRuleForm({
+                formType: AutomationRuleJsonSchemaFormType.edition,
+            });
+            const uiSchema = result.automationRuleForm.uiSchema;
+
+            const {groups} = uiSchema['ui:options'];
+            expect(groups[0].fields).toContain('active');
+
+            expect(uiSchema.trigger).toHaveProperty('eventAction');
+        });
+
+        test('non-admin user cannot get automation rule form', async () => {
+            await expect(
+                nonAdminUserSdk.GetAutomationRuleForm({
+                    formType: AutomationRuleJsonSchemaFormType.creation,
+                }),
+            ).rejects.toThrow('Action forbidden');
         });
     });
 

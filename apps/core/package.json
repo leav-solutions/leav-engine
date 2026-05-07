@@ -78,6 +78,7 @@
         "@leav/message-broker": "workspace:libs/message-broker",
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
+        "@rjsf/utils": "6.5.1",
         "@trpc/server": "11.16.0",
         "add-filename-increment": "1.0.0",
         "amqplib": "0.10.9",

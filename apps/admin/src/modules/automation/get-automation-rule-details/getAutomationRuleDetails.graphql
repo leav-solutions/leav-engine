@@ -9,6 +9,14 @@ query getAutomationRuleDetails(
             label
             description
             active
+            trigger {
+                eventAction
+                eventTopic {
+                    library
+                    attribute
+                }
+                synchronous
+            }
         }
     }
 }
