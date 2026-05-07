@@ -11,10 +11,19 @@ import {type IDbUtils} from '../db/dbUtils';
 
 export const VIEWS_V2_COLLECTION_NAME = 'core_views_v2';
 
+export type IViewV2FilterOptionsInRepo = ICoreEntityFilterOptions & {
+    created_by?: string;
+    library?: string;
+};
+
+export type IGetViewV2Params = IGetCoreEntitiesParams & {
+    filters?: IViewV2FilterOptionsInRepo;
+};
+
 export interface IViewV2Repo {
     createViewV2(view: IViewV2, ctx: IQueryInfos): Promise<IViewV2>;
     updateViewV2(view: IViewV2, ctx: IQueryInfos): Promise<IViewV2>;
-    getViewsV2(params: IGetCoreEntitiesParams, ctx: IQueryInfos): Promise<IList<IViewV2>>;
+    getViewsV2(params: IGetViewV2Params, ctx: IQueryInfos): Promise<IList<IViewV2>>;
     deleteViewV2(viewId: string, ctx: IQueryInfos): Promise<IViewV2>;
 }
 
@@ -53,8 +62,8 @@ export default function ({
 
             return dbUtils.cleanup(newView[0]);
         },
-        async getViewsV2(params: IGetCoreEntitiesParams, ctx: IQueryInfos): Promise<IList<IViewV2>> {
-            const defaultParams: IGetCoreEntitiesParams = {
+        async getViewsV2(params: IGetViewV2Params, ctx: IQueryInfos): Promise<IList<IViewV2>> {
+            const defaultParams: IGetViewV2Params = {
                 filters: null,
                 strictFilters: false,
                 withCount: false,
