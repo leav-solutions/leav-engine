@@ -104,7 +104,7 @@ describe('automation pipeline', () => {
                     ]),
                     ctx,
                 ),
-            ).resolves.toBeFalsy();
+            ).resolves.toBeTruthy();
         });
     });
 });

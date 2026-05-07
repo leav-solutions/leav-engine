@@ -22,7 +22,7 @@ export default function ({
         jexlDomain.buildRootContext(
             {
                 results: executionState.results,
-                ...(executionState.trigger.eventTopic.record
+                ...(executionState.trigger.eventTopic?.record
                     ? {currentRecord: jexlDomain.buildRecordContext(executionState.trigger.eventTopic.record, ctx)}
                     : {}),
                 // And other topics
