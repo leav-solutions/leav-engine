@@ -1,0 +1,105 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`viewV2Repo > createViewV2 > Should create a new viewV2 1`] = `"INSERT @value0 IN @@value1 RETURN NEW"`;
+
+exports[`viewV2Repo > createViewV2 > Should create a new viewV2 2`] = `
+{
+  "@value1": "core_views_v2",
+  "value0": {
+    "_key": "test_view_v2",
+    "attributes": [
+      "id",
+      "label",
+    ],
+    "color": "#123456",
+    "created_at": 1234567890,
+    "created_by": "1",
+    "description": {
+      "fr": "My test view",
+    },
+    "display": {
+      "size": "MEDIUM",
+      "type": "list",
+    },
+    "filters": [
+      {
+        "field": "id",
+        "value": "fake_id_filter",
+      },
+    ],
+    "id": "test_view_v2",
+    "label": {
+      "fr": "My view",
+    },
+    "library": "test_lib",
+    "modified_at": 1234567890,
+    "shared": true,
+    "sort": [
+      {
+        "field": "id",
+        "order": "asc",
+      },
+    ],
+  },
+}
+`;
+
+exports[`viewV2Repo > deleteViewV2 > Should delete viewV2 1`] = `"REMOVE @value0 IN @@value1 RETURN OLD"`;
+
+exports[`viewV2Repo > deleteViewV2 > Should delete viewV2 2`] = `
+{
+  "@value1": "core_views_v2",
+  "value0": {
+    "_key": "test_view_v2",
+  },
+}
+`;
+
+exports[`viewV2Repo > updateViewV2 > Should update an existing viewV2 1`] = `
+"
+                    UPDATE @value0 IN @@value1
+                    OPTIONS {mergeObjects: false, keepNull: false}
+                    RETURN NEW"
+`;
+
+exports[`viewV2Repo > updateViewV2 > Should update an existing viewV2 2`] = `
+{
+  "@value1": "core_views_v2",
+  "value0": {
+    "_key": "test_view_v2",
+    "attributes": [
+      "id",
+      "label",
+    ],
+    "color": "#123456",
+    "created_at": 1234567890,
+    "created_by": "1",
+    "description": {
+      "fr": "My test view",
+    },
+    "display": {
+      "size": "MEDIUM",
+      "type": "list",
+    },
+    "filters": [
+      {
+        "field": "id",
+        "value": "fake_id_filter",
+      },
+    ],
+    "id": "test_view_v2",
+    "label": {
+      "fr": "My view",
+    },
+    "library": "test_lib",
+    "modified_at": 1234567890,
+    "shared": true,
+    "sort": [
+      {
+        "field": "id",
+        "order": "asc",
+      },
+    ],
+  },
+}
+`;
