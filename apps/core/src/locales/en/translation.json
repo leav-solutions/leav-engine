@@ -311,5 +311,28 @@
     },
     "appStudio": {
         "edit": "Edit"
+    },
+    "automation": {
+        "form": {
+            "fields": {
+                "active": "Active",
+                "label": "Automation name",
+                "label_placeholder": "Add the name of the automation",
+                "description": "Description",
+                "description_placeholder": "Describe the objective of this automation",
+                "trigger_event_action": "Trigger type",
+                "trigger_event_action_placeholder": "Select a trigger event",
+                "event_topic_library": "Target library",
+                "event_topic_library_placeholder": "Enter the library identifier",
+                "event_topic_attribute": "Target attribute",
+                "event_topic_attribute_placeholder": "Enter the attribute identifier",
+                "synchronous": "Synchronous"
+            },
+            "sections": {
+                "info": "Automation information",
+                "trigger": "Trigger",
+                "trigger_description": "When the event occurs"
+            }
+        }
     }
 }

@@ -87,3 +87,10 @@ query ListAutomationTriggersDef {
         synchronicity
     }
 }
+
+query GetAutomationRuleForm($formType: AutomationRuleJsonSchemaFormType!) {
+    automationRuleForm(formType: $formType) {
+        jsonSchema
+        uiSchema
+    }
+}

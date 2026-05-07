@@ -2,14 +2,16 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {ERROR_NOTIFICATION_DURATION, SUCCESS_NOTIFICATION_DURATION} from '_ui/constants';
-import {AutomationRuleEventAction, useCreateAutomationRuleMutation} from '../../../../_gqlTypes';
+import {useCreateAutomationRuleMutation} from '../../../_gqlTypes';
 import {KitAlert} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {type AutomationFormValues} from '../types';
 
 export const useCreateAutomationRule = () => {
     const {t} = useTranslation();
-    const [createAutomationRule, {loading, error}] = useCreateAutomationRuleMutation();
+    const [createAutomationRule, {loading}] = useCreateAutomationRuleMutation({
+        fetchPolicy: 'no-cache', // prevents a stale cached response from masking a submission error on retry
+    });
 
     const displaySuccessAlert = () => {
         KitAlert.success({
@@ -21,45 +23,44 @@ export const useCreateAutomationRule = () => {
         });
     };
 
-    const displayErrorAlert = () => {
+    const displayErrorAlert = (description?: string) => {
         KitAlert.error({
             showIcon: true,
             duration: ERROR_NOTIFICATION_DURATION,
             closable: true,
             message: t('automation.form.create.error'),
-            description: null,
+            description: description ?? null,
         });
     };
 
     const handleCreateAutomation = async (rule: AutomationFormValues, onSuccess: () => void) => {
+        const {active, label, description, trigger} = rule;
+
         try {
-            await createAutomationRule({
+            const {errors} = await createAutomationRule({
                 variables: {
                     rule: {
-                        ...rule,
-                        //TODO: Set a false trigger configuration for now. To replace with real values later.
-                        active: rule.active ?? false,
-                        trigger: {
-                            synchronous: false,
-                            eventAction: AutomationRuleEventAction.RECORD_INIT,
-                        },
+                        active: active ?? false,
+                        label,
+                        description,
+                        trigger,
+                        //TODO: Add fake pipeline configuration for now. To replace with real values later.
                         pipeline: {
                             steps: [],
                         },
-                        //TODO: Add pipeline configuration.
                     },
                 },
             });
 
-            if (error) {
-                displayErrorAlert();
+            if (errors) {
+                displayErrorAlert(errors[0].message);
                 return;
             }
 
             displaySuccessAlert();
             onSuccess();
-        } catch {
-            displayErrorAlert();
+        } catch (error) {
+            displayErrorAlert(error instanceof Error ? error.message : String(error));
         }
     };
 

@@ -574,17 +574,6 @@
             }
         },
         "form": {
-            "fields": {
-                "active": "Actif",
-                "label": "Nom de l’automatisation",
-                "label_placeholder": "Entrez le nom de l’automatisation",
-                "label_required": "Le nom de l’automatisation est requis",
-                "description": "Description",
-                "description_placeholder": "Décrivez l’objectif de cette automatisation"
-            },
-            "sections": {
-                "info": "Informations de l’automatisation"
-            },
             "create": {
                 "title": "Nouvelle automatisation",
                 "success": "Règle d'automatisation créée",
@@ -598,7 +587,8 @@
             "unsaved_changes": {
                 "title": "Modifications non enregistrées",
                 "content": "Vous avez des modifications non enregistrées. Si vous quittez cette page, vos modifications seront perdues."
-            }
+            },
+            "required": "Ce champ est requis."
         }
     },
     "error": {

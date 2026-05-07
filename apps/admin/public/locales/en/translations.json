@@ -574,17 +574,6 @@
             }
         },
         "form": {
-            "fields": {
-                "active": "Active",
-                "label": "Automation name",
-                "label_placeholder": "Enter the name of the automation",
-                "label_required": "The automation name is required",
-                "description": "Description",
-                "description_placeholder": "Describe the objective of this automation"
-            },
-            "sections": {
-                "info": "Automation information"
-            },
             "create": {
                 "title": "New automation",
                 "success": "Automation rule created",
@@ -598,7 +587,8 @@
             "unsaved_changes": {
                 "title": "Unsaved changes",
                 "content": "You have unsaved changes. If you leave this page, your changes will be lost."
-            }
+            },
+            "required": "This field is required."
         }
     },
     "error": {

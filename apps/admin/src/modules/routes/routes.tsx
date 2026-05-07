@@ -20,9 +20,9 @@ import EditVersionProfile from '../../components/versionProfiles/EditVersionProf
 import Tasks from '../../components/tasks/Tasks';
 import {History} from '../history/History';
 import {NotFound} from '../not-found/NotFound';
-import {Automation} from '../automation/Automation';
-import {CreateAutomation} from '../automation/form/CreateAutomation';
-import {EditAutomation} from '../automation/form/EditAutomation';
+import {AutomationList} from '../pages/AutomationList';
+import {AutomationCreation} from '../pages/AutomationCreation';
+import {AutomationEdition} from '../pages/AutomationEdition';
 
 // Note:
 // - For historic routes, we don't use the children routes feature as they don't have an <Outlet/> and are not nested
@@ -101,19 +101,20 @@ export const adminRoutes: RouteObject[] = [
     },
     {
         path: AdminAbsolutePaths.automation,
-        element: <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={Automation} />,
+        element: (
+            <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={AutomationList} />
+        ),
     },
     {
-        // Note: We didn't use the children routes for now because we don't need to keep automation list visible (or preserve filters / sorting / etc.)
         path: `${AdminAbsolutePaths.automation}/${AdminUnreachablePaths.create}`,
         element: (
-            <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={CreateAutomation} />
+            <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={AutomationCreation} />
         ),
     },
     {
         path: `${AdminAbsolutePaths.automation}/${AdminUnreachablePaths.edit}`,
         element: (
-            <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={EditAutomation} />
+            <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={AutomationEdition} />
         ),
     },
     {

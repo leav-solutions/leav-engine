@@ -36,6 +36,11 @@ export type IUpdateAutomationRule = {
     pipeline?: AutomationRulePipeline;
 };
 
+export enum AutomationRuleJsonSchemaFormType {
+    CREATION = 'creation',
+    EDITION = 'edition',
+}
+
 export enum SyncAutomationRuleEventAction {
     RECORD_INIT = 'RECORD_INIT',
 }

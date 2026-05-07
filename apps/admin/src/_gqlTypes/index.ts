@@ -170,7 +170,7 @@ export type AttributeInput = {
   required?: InputMaybe<Scalars['Boolean']['input']>;
   reverse_link?: InputMaybe<Scalars['String']['input']>;
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
-  /**  only for link and standard attribute  */
+  /**  only for link or standard attribute  */
   smart_filter?: InputMaybe<SmartFilterConfInput>;
   type?: InputMaybe<AttributeType>;
   unique?: InputMaybe<Scalars['Boolean']['input']>;
@@ -226,6 +226,11 @@ export enum AutomationRuleEventAction {
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
   VALUE_SAVE = 'VALUE_SAVE'
+}
+
+export enum AutomationRuleJsonSchemaFormType {
+  creation = 'creation',
+  edition = 'edition'
 }
 
 export type AutomationRulePipelineInput = {
@@ -475,17 +480,6 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
-}
-
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -1282,15 +1276,6 @@ export type LibraryDetailsFragment = { id: string, system?: boolean | null, labe
       | { id: string, label?: any | null, linked_tree?: { id: string } | null }
     > } | null, recordIdentityConf?: { label?: string | null, subLabel?: string | null, color?: string | null, preview?: string | null, treeColorPreview?: string | null, parentContext?: string | null } | null, defaultView?: { id: string } | null, permissions?: { admin_library: boolean, access_library: boolean, access_record: boolean, create_record: boolean, edit_record: boolean, delete_record: boolean } | null, icon?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
 
-export type GetAutomationRulesDataQueryVariables = Exact<{
-  filters?: InputMaybe<AutomationRulesFiltersInput>;
-  pagination?: InputMaybe<Pagination>;
-  sort?: InputMaybe<AutomationRulesSortInput>;
-}>;
-
-
-export type GetAutomationRulesDataQuery = { automationRules: { totalCount: number, list: Array<{ id: string, label: string, active: boolean }> } };
-
 export type CreateAutomationRuleMutationVariables = Exact<{
   rule: CreateAutomationRuleInput;
 }>;
@@ -1305,6 +1290,13 @@ export type UpdateAutomationRuleMutationVariables = Exact<{
 
 export type UpdateAutomationRuleMutation = { updateAutomationRule: { id: string } };
 
+export type GetAutomationRuleFormQueryVariables = Exact<{
+  formType: AutomationRuleJsonSchemaFormType;
+}>;
+
+
+export type GetAutomationRuleFormQuery = { automationRuleForm: { jsonSchema: any, uiSchema: any } };
+
 export type GetAutomationRuleDetailsQueryVariables = Exact<{
   filters?: InputMaybe<AutomationRulesFiltersInput>;
   pagination?: InputMaybe<Pagination>;
@@ -1312,7 +1304,16 @@ export type GetAutomationRuleDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetAutomationRuleDetailsQuery = { automationRules: { list: Array<{ id: string, label: string, description?: string | null, active: boolean }> } };
+export type GetAutomationRuleDetailsQuery = { automationRules: { list: Array<{ id: string, label: string, description?: string | null, active: boolean, trigger: { eventAction: AutomationRuleEventAction, synchronous: boolean, eventTopic?: { library?: string | null, attribute?: string | null } | null } }> } };
+
+export type GetAutomationRulesDataQueryVariables = Exact<{
+  filters?: InputMaybe<AutomationRulesFiltersInput>;
+  pagination?: InputMaybe<Pagination>;
+  sort?: InputMaybe<AutomationRulesSortInput>;
+}>;
+
+
+export type GetAutomationRulesDataQuery = { automationRules: { totalCount: number, list: Array<{ id: string, label: string, active: boolean, trigger: { eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null, attribute?: string | null } | null } }> } };
 
 export type GetHistoryDataQueryVariables = Exact<{
   filters?: InputMaybe<LogFilterInput>;
@@ -2317,56 +2318,6 @@ export const ValueDetailsExtendedFragmentDoc = gql`
   }
 }
     ${RecordIdentityFragmentDoc}`;
-export const GetAutomationRulesDataDocument = gql`
-    query getAutomationRulesData($filters: AutomationRulesFiltersInput, $pagination: Pagination, $sort: AutomationRulesSortInput) {
-  automationRules(filters: $filters, pagination: $pagination, sort: $sort) {
-    totalCount
-    list {
-      id
-      label
-      active
-    }
-  }
-}
-    `;
-
-/**
- * __useGetAutomationRulesDataQuery__
- *
- * To run a query within a React component, call `useGetAutomationRulesDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAutomationRulesDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAutomationRulesDataQuery({
- *   variables: {
- *      filters: // value for 'filters'
- *      pagination: // value for 'pagination'
- *      sort: // value for 'sort'
- *   },
- * });
- */
-export function useGetAutomationRulesDataQuery(baseOptions?: Apollo.QueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>(GetAutomationRulesDataDocument, options);
-      }
-export function useGetAutomationRulesDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>(GetAutomationRulesDataDocument, options);
-        }
-// @ts-ignore
-export function useGetAutomationRulesDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>;
-export function useGetAutomationRulesDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationRulesDataQuery | undefined, GetAutomationRulesDataQueryVariables>;
-export function useGetAutomationRulesDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>(GetAutomationRulesDataDocument, options);
-        }
-export type GetAutomationRulesDataQueryHookResult = ReturnType<typeof useGetAutomationRulesDataQuery>;
-export type GetAutomationRulesDataLazyQueryHookResult = ReturnType<typeof useGetAutomationRulesDataLazyQuery>;
-export type GetAutomationRulesDataSuspenseQueryHookResult = ReturnType<typeof useGetAutomationRulesDataSuspenseQuery>;
-export type GetAutomationRulesDataQueryResult = Apollo.QueryResult<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>;
 export const CreateAutomationRuleDocument = gql`
     mutation CreateAutomationRule($rule: CreateAutomationRuleInput!) {
   createAutomationRule(rule: $rule) {
@@ -2433,6 +2384,50 @@ export function useUpdateAutomationRuleMutation(baseOptions?: Apollo.MutationHoo
 export type UpdateAutomationRuleMutationHookResult = ReturnType<typeof useUpdateAutomationRuleMutation>;
 export type UpdateAutomationRuleMutationResult = Apollo.MutationResult<UpdateAutomationRuleMutation>;
 export type UpdateAutomationRuleMutationOptions = Apollo.BaseMutationOptions<UpdateAutomationRuleMutation, UpdateAutomationRuleMutationVariables>;
+export const GetAutomationRuleFormDocument = gql`
+    query getAutomationRuleForm($formType: AutomationRuleJsonSchemaFormType!) {
+  automationRuleForm(formType: $formType) {
+    jsonSchema
+    uiSchema
+  }
+}
+    `;
+
+/**
+ * __useGetAutomationRuleFormQuery__
+ *
+ * To run a query within a React component, call `useGetAutomationRuleFormQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAutomationRuleFormQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAutomationRuleFormQuery({
+ *   variables: {
+ *      formType: // value for 'formType'
+ *   },
+ * });
+ */
+export function useGetAutomationRuleFormQuery(baseOptions: Apollo.QueryHookOptions<GetAutomationRuleFormQuery, GetAutomationRuleFormQueryVariables> & ({ variables: GetAutomationRuleFormQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAutomationRuleFormQuery, GetAutomationRuleFormQueryVariables>(GetAutomationRuleFormDocument, options);
+      }
+export function useGetAutomationRuleFormLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAutomationRuleFormQuery, GetAutomationRuleFormQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAutomationRuleFormQuery, GetAutomationRuleFormQueryVariables>(GetAutomationRuleFormDocument, options);
+        }
+// @ts-ignore
+export function useGetAutomationRuleFormSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAutomationRuleFormQuery, GetAutomationRuleFormQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationRuleFormQuery, GetAutomationRuleFormQueryVariables>;
+export function useGetAutomationRuleFormSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationRuleFormQuery, GetAutomationRuleFormQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationRuleFormQuery | undefined, GetAutomationRuleFormQueryVariables>;
+export function useGetAutomationRuleFormSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationRuleFormQuery, GetAutomationRuleFormQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAutomationRuleFormQuery, GetAutomationRuleFormQueryVariables>(GetAutomationRuleFormDocument, options);
+        }
+export type GetAutomationRuleFormQueryHookResult = ReturnType<typeof useGetAutomationRuleFormQuery>;
+export type GetAutomationRuleFormLazyQueryHookResult = ReturnType<typeof useGetAutomationRuleFormLazyQuery>;
+export type GetAutomationRuleFormSuspenseQueryHookResult = ReturnType<typeof useGetAutomationRuleFormSuspenseQuery>;
+export type GetAutomationRuleFormQueryResult = Apollo.QueryResult<GetAutomationRuleFormQuery, GetAutomationRuleFormQueryVariables>;
 export const GetAutomationRuleDetailsDocument = gql`
     query getAutomationRuleDetails($filters: AutomationRulesFiltersInput, $pagination: Pagination, $sort: AutomationRulesSortInput) {
   automationRules(filters: $filters, pagination: $pagination, sort: $sort) {
@@ -2441,6 +2436,14 @@ export const GetAutomationRuleDetailsDocument = gql`
       label
       description
       active
+      trigger {
+        eventAction
+        eventTopic {
+          library
+          attribute
+        }
+        synchronous
+      }
     }
   }
 }
@@ -2483,6 +2486,63 @@ export type GetAutomationRuleDetailsQueryHookResult = ReturnType<typeof useGetAu
 export type GetAutomationRuleDetailsLazyQueryHookResult = ReturnType<typeof useGetAutomationRuleDetailsLazyQuery>;
 export type GetAutomationRuleDetailsSuspenseQueryHookResult = ReturnType<typeof useGetAutomationRuleDetailsSuspenseQuery>;
 export type GetAutomationRuleDetailsQueryResult = Apollo.QueryResult<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>;
+export const GetAutomationRulesDataDocument = gql`
+    query getAutomationRulesData($filters: AutomationRulesFiltersInput, $pagination: Pagination, $sort: AutomationRulesSortInput) {
+  automationRules(filters: $filters, pagination: $pagination, sort: $sort) {
+    totalCount
+    list {
+      id
+      label
+      active
+      trigger {
+        eventAction
+        eventTopic {
+          library
+          attribute
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAutomationRulesDataQuery__
+ *
+ * To run a query within a React component, call `useGetAutomationRulesDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAutomationRulesDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAutomationRulesDataQuery({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *      pagination: // value for 'pagination'
+ *      sort: // value for 'sort'
+ *   },
+ * });
+ */
+export function useGetAutomationRulesDataQuery(baseOptions?: Apollo.QueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>(GetAutomationRulesDataDocument, options);
+      }
+export function useGetAutomationRulesDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>(GetAutomationRulesDataDocument, options);
+        }
+// @ts-ignore
+export function useGetAutomationRulesDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>;
+export function useGetAutomationRulesDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>): Apollo.UseSuspenseQueryResult<GetAutomationRulesDataQuery | undefined, GetAutomationRulesDataQueryVariables>;
+export function useGetAutomationRulesDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>(GetAutomationRulesDataDocument, options);
+        }
+export type GetAutomationRulesDataQueryHookResult = ReturnType<typeof useGetAutomationRulesDataQuery>;
+export type GetAutomationRulesDataLazyQueryHookResult = ReturnType<typeof useGetAutomationRulesDataLazyQuery>;
+export type GetAutomationRulesDataSuspenseQueryHookResult = ReturnType<typeof useGetAutomationRulesDataSuspenseQuery>;
+export type GetAutomationRulesDataQueryResult = Apollo.QueryResult<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>;
 export const GetHistoryDataDocument = gql`
     query GetHistoryData($filters: LogFilterInput, $sort: LogSortInput, $pagination: Pagination) {
   logs(filters: $filters, sort: $sort, pagination: $pagination) {

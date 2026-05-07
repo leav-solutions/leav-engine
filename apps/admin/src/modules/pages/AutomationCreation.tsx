@@ -2,17 +2,13 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useNavigate} from 'react-router-dom';
-import {AdminAbsolutePaths} from '../../routes/paths';
-import {type AutomationFormValues} from './types';
-import {AutomationForm} from './AutomationForm';
-import {useCreateAutomationRule} from './create-automation-rule/useCreateAutomationRule';
+import {AdminAbsolutePaths} from '../routes/paths';
+import {type AutomationFormValues} from '../automation/types';
+import {AutomationForm} from '../automation/generate-automation-form/AutomationForm';
+import {useCreateAutomationRule} from '../automation/create-automation-rule/useCreateAutomationRule';
+import {AutomationRuleJsonSchemaFormType} from '../../_gqlTypes';
 
-const CREATION_FORM_INITIAL_VALUES: AutomationFormValues = {
-    label: '',
-    description: '',
-};
-
-export const CreateAutomation = () => {
+export const AutomationCreation = () => {
     const navigate = useNavigate();
     const {createAutomationRule, loading} = useCreateAutomationRule();
 
@@ -24,9 +20,9 @@ export const CreateAutomation = () => {
 
     return (
         <AutomationForm
-            initialValues={CREATION_FORM_INITIAL_VALUES}
-            loading={loading}
-            formType="creation"
+            initialValues={null}
+            mutationLoading={loading}
+            formType={AutomationRuleJsonSchemaFormType.creation}
             onSubmit={handleSubmit}
             onCancel={handleBack}
         />

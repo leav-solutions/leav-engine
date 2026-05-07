@@ -1,0 +1,6 @@
+query getAutomationRuleForm($formType: AutomationRuleJsonSchemaFormType!) {
+    automationRuleForm(formType: $formType) {
+        jsonSchema
+        uiSchema
+    }
+}

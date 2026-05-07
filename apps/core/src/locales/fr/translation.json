@@ -311,5 +311,28 @@
     },
     "appStudio": {
         "edit": "Éditer"
+    },
+    "automation": {
+        "form": {
+            "fields": {
+                "active": "Actif",
+                "label": "Nom de l’automatisation",
+                "label_placeholder": "Ajoutez le nom de l’automatisation",
+                "description": "Description",
+                "description_placeholder": "Décrivez l’objectif de cette automatisation",
+                "trigger_event_action": "Type de déclencheur",
+                "trigger_event_action_placeholder": "Sélectionnez un événement déclencheur",
+                "event_topic_library": "Bibliothèque cible",
+                "event_topic_library_placeholder": "Entrez l’identifiant de la bibliothèque",
+                "event_topic_attribute": "Attribut cible",
+                "event_topic_attribute_placeholder": "Entrez l’identifiant de l’attribut",
+                "synchronous": "Synchrone"
+            },
+            "sections": {
+                "info": "Informations de l’automatisation",
+                "trigger": "Déclencheur",
+                "trigger_description": "Quand l’évènement survient"
+            }
+        }
     }
 }

@@ -9,6 +9,13 @@ query getAutomationRulesData(
             id
             label
             active
+            trigger {
+                eventAction
+                eventTopic {
+                    library
+                    attribute
+                }
+            }
         }
     }
 }
