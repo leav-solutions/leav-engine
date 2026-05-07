@@ -1,0 +1,107 @@
+# Tests e2e — `apps/core`
+
+Mémo Claude pour écrire un test e2e.
+
+## Quand
+
+-   Valider l'**API GraphQL** au niveau du bord, contre un vrai serveur `core` qui tourne.
+-   Cibles : chemins critiques CRUD, permissions/ACL, contrats GraphQL, scénarios multi-mutations.
+-   La logique métier reste couverte par les unitaires (`*.spec.ts`) et l'intégration ([`__tests__/integration/`](../integration/)). N'ajoute pas un e2e si un test moins coûteux suffit.
+
+## Pattern moderne (à suivre pour tout nouveau test)
+
+1. **Écrire un fichier `.graphql`** co-localisé avec le test (ex. `myFeature/MyFeature.graphql` ↔ `myFeature/myFeature.test.ts`). Plusieurs opérations dans le même fichier sont OK et même encouragées si elles couvrent un domaine cohérent.
+2. **Régénérer le SDK** : `yarn graphql-generate` (depuis `apps/core/`). Cela met à jour [`_gqlTypes/index.ts`](_gqlTypes/index.ts) — un seul fichier global qui contient tous les types et le `getSdk()`. Pré-requis :
+    - le serveur `core` tourne (la config [`codegen.ts`](../../../codegen.ts) introspecte `http://core.leav.localhost/graphql`) ;
+    - le fichier `apps/core/apolloApiKey.js` existe localement (cf. `apolloApiKey.js.example`).
+3. **Importer** depuis `_gqlTypes` (types/enums/inputs) et le SDK pré-authentifié depuis [`api/e2eUtils.ts`](api/e2eUtils.ts).
+4. **Écrire le test** : appel direct sur le SDK, assertions Vitest.
+
+Pas de regen nécessaire si tu modifies seulement le `.test.ts` (ou les valeurs de variables) sans toucher aux opérations `.graphql`.
+
+## Référence canonique
+
+[`api/automation/Automation.graphql`](api/automation/Automation.graphql) + [`api/automation/automation.test.ts`](api/automation/automation.test.ts). Calquer dessus.
+
+## Conventions GraphQL
+
+-   Une opération **nommée** par bloc : `query GetXxx(...)`, `mutation CreateXxx(...)`. Le nom devient la méthode du SDK (`adminUserSdk.GetXxx`) et le préfixe des types (`GetXxxQuery`, `GetXxxQueryVariables`).
+-   **PascalCase** pour les noms d'opérations.
+-   Variables GraphQL (`$rule: CreateAutomationRuleInput!`) plutôt que valeurs inline.
+-   Fragments autorisés mais à éviter sauf gain réel ; les exemples actuels n'en utilisent quasiment pas.
+
+## SDK et utilisateurs
+
+Les trois SDK pré-authentifiés exportés par [`api/e2eUtils.ts`](api/e2eUtils.ts) :
+
+| SDK               | Rôle                                                    |
+| ----------------- | ------------------------------------------------------- |
+| `adminUserSdk`    | Admin global. À utiliser par défaut.                    |
+| `nonAdminUserSdk` | Utilisateur sans droits — pour tester les rejets ACL.   |
+| `guestUserSdk`    | Utilisateur guest — pour tester les vues "shared", etc. |
+
+Cas particulier (utilisateur custom) : `getSdkWithUser(e2eAdminUser())` ou `getSdkWithUser({userId, getAuthToken})` — rare, ne fais ça que si les trois SDK ne suffisent pas.
+
+## Structure d'un test
+
+```ts
+// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
+// This file is released under LGPL V3
+// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+import {SomeEnum} from '../../_gqlTypes';
+import {adminUserSdk, nonAdminUserSdk} from '../e2eUtils';
+
+describe('MyFeature', () => {
+    test('does the thing', async () => {
+        const {myMutation: result} = await adminUserSdk.MyMutation({input: {...}});
+        expect(result).toMatchObject({id: expect.any(String)});
+    });
+
+    test('non-admin is rejected', async () => {
+        await expect(nonAdminUserSdk.MyQuery()).rejects.toThrow('Action forbidden');
+    });
+});
+```
+
+Le header de licence LGPL est obligatoire (check CI bloquant).
+
+## Patterns d'assertion (calqués sur `automation.test.ts`)
+
+```ts
+// Cas nominal — destructurer la racine GraphQL
+const {createAutomationRule: newRule} = await adminUserSdk.CreateAutomationRule({rule: {...}});
+expect(newRule).toMatchObject({id: expect.any(String), label: 'Test rule'});
+
+// Liste & objets imbriqués
+expect(rules.automationRules.list).toEqual([
+    expect.objectContaining({id: newRule.id, createdAt: expect.any(Number)}),
+]);
+
+// Permissions / validation serveur — l'erreur GraphQL est rethrown par le SDK
+await expect(nonAdminUserSdk.GetAutomationRules()).rejects.toThrow('Action forbidden');
+await expect(adminUserSdk.CreateAutomationRule({rule: invalidRule})).rejects.toThrow();
+```
+
+## Lancer les tests
+
+| Cible                      | Commande                                                                       |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| Localement, hors container | `yarn run test:e2e:api`                                                        |
+| Dans le container `core`   | `docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e:api` |
+| Filtrer une suite          | `yarn run test:e2e:api -- myFeature`                                           |
+
+Pré-requis : core tourne, ArangoDB joignable. Config Vitest : [`vitest.e2e-api.config.ts`](../../../vitest.e2e-api.config.ts). Setup partagé : [`api/globalSetup.ts`](api/globalSetup.ts) et [`e2eVitestSharedContext.ts`](e2eVitestSharedContext.ts).
+
+## Hors `api/`
+
+Les répertoires [`filesManager/`](filesManager/) et [`indexationManager/`](indexationManager/) ont leurs propres configs Vitest (`vitest.e2e-filesManager.config.ts`, `vitest.e2e-indexationManager.config.ts`) et leurs propres scripts (`yarn run test:e2e:filesManager`, `yarn run test:e2e:indexationManager`). Le SDK GraphQL généré est partagé — la config codegen scanne `src/__tests__/e2e/**/*.graphql`.
+
+## À éviter (pattern legacy)
+
+**N'utilise jamais ces APIs dans un nouveau test :**
+
+-   `makeGraphQlCall(query: string, ...)` — l'ancien helper qui prend une string GraphQL ([`api/e2eUtils.ts:105`](api/e2eUtils.ts#L105)).
+-   `importFileGraphQlCall(...)` — variante upload de fichier, même problème.
+-   Les helpers historiques basés sur `makeGraphQlCall` exportés par `api/e2eUtils.ts` : `gqlSaveAttribute`, `gqlSaveTree`, `gqlCreateRecord`, `gqlAddElemToTree`, `gqlSaveLibrary`, etc. Ils restent uniquement pour la maintenance des tests existants.
+
+S'il manque une opération CRUD partagée (ex. créer une library de fixture), écris-la dans un `.graphql` partagé plutôt que de réutiliser un de ces helpers string-based.
