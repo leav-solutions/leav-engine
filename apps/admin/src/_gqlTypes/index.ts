@@ -1283,6 +1283,13 @@ export type CreateAutomationRuleMutationVariables = Exact<{
 
 export type CreateAutomationRuleMutation = { createAutomationRule: { id: string } };
 
+export type DeleteAutomationRuleMutationVariables = Exact<{
+  ruleId: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteAutomationRuleMutation = { deleteAutomationRule: { id: string } };
+
 export type UpdateAutomationRuleMutationVariables = Exact<{
   rule: UpdateAutomationRuleInput;
 }>;
@@ -2351,6 +2358,39 @@ export function useCreateAutomationRuleMutation(baseOptions?: Apollo.MutationHoo
 export type CreateAutomationRuleMutationHookResult = ReturnType<typeof useCreateAutomationRuleMutation>;
 export type CreateAutomationRuleMutationResult = Apollo.MutationResult<CreateAutomationRuleMutation>;
 export type CreateAutomationRuleMutationOptions = Apollo.BaseMutationOptions<CreateAutomationRuleMutation, CreateAutomationRuleMutationVariables>;
+export const DeleteAutomationRuleDocument = gql`
+    mutation DeleteAutomationRule($ruleId: ID!) {
+  deleteAutomationRule(ruleId: $ruleId) {
+    id
+  }
+}
+    `;
+export type DeleteAutomationRuleMutationFn = Apollo.MutationFunction<DeleteAutomationRuleMutation, DeleteAutomationRuleMutationVariables>;
+
+/**
+ * __useDeleteAutomationRuleMutation__
+ *
+ * To run a mutation, you first call `useDeleteAutomationRuleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAutomationRuleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAutomationRuleMutation, { data, loading, error }] = useDeleteAutomationRuleMutation({
+ *   variables: {
+ *      ruleId: // value for 'ruleId'
+ *   },
+ * });
+ */
+export function useDeleteAutomationRuleMutation(baseOptions?: Apollo.MutationHookOptions<DeleteAutomationRuleMutation, DeleteAutomationRuleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteAutomationRuleMutation, DeleteAutomationRuleMutationVariables>(DeleteAutomationRuleDocument, options);
+      }
+export type DeleteAutomationRuleMutationHookResult = ReturnType<typeof useDeleteAutomationRuleMutation>;
+export type DeleteAutomationRuleMutationResult = Apollo.MutationResult<DeleteAutomationRuleMutation>;
+export type DeleteAutomationRuleMutationOptions = Apollo.BaseMutationOptions<DeleteAutomationRuleMutation, DeleteAutomationRuleMutationVariables>;
 export const UpdateAutomationRuleDocument = gql`
     mutation UpdateAutomationRule($rule: UpdateAutomationRuleInput!) {
   updateAutomationRule(rule: $rule) {

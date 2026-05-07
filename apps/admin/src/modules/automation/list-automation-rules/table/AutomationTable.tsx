@@ -1,16 +1,14 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitButton, KitIdCard, KitTable, KitTag, KitTooltip} from 'aristid-ds';
-import {faTrash} from '@fortawesome/free-solid-svg-icons';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {KitIdCard, KitTable, KitTag} from 'aristid-ds';
 import {type ComponentProps} from 'react';
 import {useTranslation} from 'react-i18next';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 import {automationTableContainer} from './automationTable.module.css';
 import {useTableScrollableHeight} from '../../../utils/useTableScrollableHeight';
 import {type AutomationRulesData} from '../get-automation-rules-data/useGetAutomationRulesData';
 import {AutomationCell} from './cell/AutomationCell';
+import {DeleteAutomationRuleButton} from '../../delete-automation-rule/DeleteAutomationRuleButton';
 
 const ColumnWidth = {
     XS: '10ch',
@@ -26,6 +24,7 @@ type AutomationTableProps = {
     onPageChange: (page: number) => void;
     onPageSizeChange: (page: number, size: number) => void;
     onRowClick: (record: AutomationRulesData) => void;
+    onDelete: (ruleId: string) => void;
 };
 
 export const AutomationTable = ({
@@ -36,6 +35,7 @@ export const AutomationTable = ({
     onPageChange,
     onPageSizeChange,
     onRowClick,
+    onDelete,
 }: AutomationTableProps) => {
     const {t} = useTranslation();
     const {containerRef, scrollHeight} = useTableScrollableHeight(true);
@@ -45,7 +45,11 @@ export const AutomationTable = ({
             title: t('automation.table.column.name'),
             dataIndex: 'name',
             key: 'name',
-            render: (name: string) => <AutomationCell>{name}</AutomationCell>,
+            render: (name: string, record: AutomationRulesData) => (
+                <AutomationCell hoverAction={<DeleteAutomationRuleButton onClick={() => onDelete(record.id)} />}>
+                    {name}
+                </AutomationCell>
+            ),
         },
         {
             title: t('automation.table.column.trigger'),

@@ -10,11 +10,13 @@ import {
     useGetAutomationRulesData,
     type AutomationRulesData,
 } from '../automation/list-automation-rules/get-automation-rules-data/useGetAutomationRulesData';
+import {useDeleteAutomationRule} from '../automation/delete-automation-rule/useDeleteAutomationRule';
 import {AutomationToolbar} from '../automation/list-automation-rules/toolbar/AutomationToolbar';
 import {PageContainer} from '../ui/page/PageContainer';
 import {PageHeader} from '../ui/page/PageHeader';
 import {PageContentContainer} from '../ui/page/PageContentContainer';
 import {useTranslation} from 'react-i18next';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal';
 
 export const AutomationList = () => {
     const navigate = useNavigate();
@@ -24,9 +26,20 @@ export const AutomationList = () => {
     // const {isOpen, selectedRecord, openDetails, closeDetails} = useAutomationDetails();  //TODO: Use similar hook as for history, but for automation
 
     const {t} = useTranslation();
+    const {deleteAutomationRule} = useDeleteAutomationRule();
+    const {openConfirmModal} = useConfirmModal();
 
     const handleRowClick = (record: AutomationRulesData) => {
         navigate(`${AdminAbsolutePaths.automation}/edit/${record.id}`);
+    };
+
+    const handleDelete = (ruleId: string) => {
+        openConfirmModal({
+            title: t('automation.table.action.delete.confirm.title'),
+            content: t('automation.table.action.delete.confirm.content'),
+            onOk: () => deleteAutomationRule(ruleId),
+            dangerConfirm: true,
+        });
     };
 
     if (error) {
@@ -58,6 +71,7 @@ export const AutomationList = () => {
                         onPageChange={handlePageChange}
                         onPageSizeChange={handlePageSizeChange}
                         onRowClick={handleRowClick}
+                        onDelete={handleDelete}
                     />
                 )}
             </PageContentContainer>
