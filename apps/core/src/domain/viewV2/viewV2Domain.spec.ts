@@ -4,7 +4,9 @@ import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import viewV2Domain, {type IViewV2DomainDeps} from './viewV2Domain';
 import {type ToAny} from '../../utils/utils';
-import {type IViewV2CreateInput, ViewV2Types, type IViewV2} from '../../_types/viewsV2';
+import {SortOrder} from '../../_types/list';
+import {AttributeCondition} from '../../_types/record';
+import {type IViewV2, type IViewV2CreateInput, ViewV2Types} from '../../_types/viewsV2';
 
 const depsBase: ToAny<IViewV2DomainDeps> = {
     'core.domain.helpers.validate': vi.fn(),
@@ -19,11 +21,23 @@ describe('viewV2Domain', () => {
     const mockViewV2CreateInput: IViewV2CreateInput = {
         library: 'test_lib',
         label: {fr: 'My view'},
-        display: {type: ViewV2Types.LIST},
+        display: {
+            type: ViewV2Types.LIST,
+            attributes: [
+                {attributeId: 'id', visible: true},
+                {attributeId: 'label', visible: true},
+            ],
+        },
         shared: true,
-        filters: [{field: 'id', value: 'fake_id_filter'}],
-        sort: [{field: 'id', order: 'asc'}],
-        attributes: ['id', 'label'],
+        filters: [
+            {
+                pinned: false,
+                attributes: ['id'],
+                values: ['fake_id_filter'],
+                condition: AttributeCondition.EQUAL,
+            },
+        ],
+        sorts: [{attributes: ['id'], order: SortOrder.ASC}],
     };
 
     const mockViewV2: IViewV2 = {
@@ -32,7 +46,10 @@ describe('viewV2Domain', () => {
         created_by: '1',
         created_at: 1234567890,
         modified_at: 1234567890,
-        attributes: ['id', 'label'],
+        sorts: [
+            {attributes: ['id'], order: SortOrder.ASC},
+            {attributes: ['label'], order: SortOrder.ASC},
+        ],
     };
 
     const mockViewV2Repo = {
@@ -96,8 +113,7 @@ describe('viewV2Domain', () => {
 
             const passedToRepo = mockViewV2Repo.createViewV2.mock.calls[0][0];
             expect(passedToRepo.filters).toEqual([]);
-            expect(passedToRepo.sort).toEqual([]);
-            expect(passedToRepo.attributes).toEqual([]);
+            expect(passedToRepo.sorts).toEqual([]);
         });
 
         test('Should throw if library is unknown', async () => {

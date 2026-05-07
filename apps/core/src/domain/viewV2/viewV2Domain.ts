@@ -73,12 +73,14 @@ export default function ({
                 {
                     library: input.library,
                     label: input.label,
-                    display: input.display,
+                    display: {
+                        type: input.display.type,
+                        attributes: input.display.attributes ?? [],
+                    },
                     shared: input.shared,
                     filters: input.filters ?? [],
-                    sort: input.sort ?? [],
+                    sorts: input.sorts ?? [],
                     valuesVersions: input.valuesVersions,
-                    attributes: input.attributes ?? [],
                     created_by: ctx.userId,
                     created_at: now,
                     modified_at: now,

@@ -5,6 +5,8 @@ import {
     type IViewV2UpdateInRepo,
     VIEWS_V2_COLLECTION_NAME,
 } from '../../../infra/viewV2/viewV2Repo';
+import {SortOrder} from '../../../_types/list';
+import {AttributeCondition} from '../../../_types/record';
 import {ViewV2Types} from '../../../_types/viewsV2';
 import {clearAllCollectionDocuments, getViewV2Repo} from './integrationTestRepoUtils';
 
@@ -17,14 +19,26 @@ describe('viewV2Repo', () => {
     const baseView: IViewV2CreateInRepo = {
         library: 'test_lib',
         label: {fr: 'My view'},
-        display: {type: ViewV2Types.LIST},
-        filters: [{field: 'id', value: 'fake_id_filter'}],
-        sort: [{field: 'id', order: 'asc'}],
+        display: {
+            type: ViewV2Types.LIST,
+            attributes: [
+                {attributeId: 'id', visible: true},
+                {attributeId: 'label', visible: true},
+            ],
+        },
+        filters: [
+            {
+                pinned: false,
+                attributes: ['id'],
+                values: ['fake_id_filter'],
+                condition: AttributeCondition.EQUAL,
+            },
+        ],
+        sorts: [{attributes: ['id'], order: SortOrder.ASC}],
         shared: false,
         created_by: '1',
         created_at: 1234567890,
         modified_at: 1234567890,
-        attributes: ['id', 'label'],
     };
 
     beforeAll(() => {
@@ -41,8 +55,13 @@ describe('viewV2Repo', () => {
 
             expect(created.id).toBe('created_view');
             expect(created.library).toBe('test_lib');
-            expect(created.display).toEqual({type: ViewV2Types.LIST});
-            expect(created.attributes).toEqual(['id', 'label']);
+            expect(created.display).toEqual({
+                type: ViewV2Types.LIST,
+                attributes: [
+                    {attributeId: 'id', visible: true},
+                    {attributeId: 'label', visible: true},
+                ],
+            });
         });
 
         it('should create a viewV2 with an auto-generated id when none is provided', async () => {

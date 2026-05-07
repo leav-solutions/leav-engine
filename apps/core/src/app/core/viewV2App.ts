@@ -1,3 +1,4 @@
+import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {type IViewV2Domain} from '../../domain/viewV2/viewV2Domain';
 import {type IUtils} from '../../utils/utils';
@@ -8,29 +9,34 @@ import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {
     type IViewV2,
+    type IViewV2DisplayAttribute,
     type IViewV2CreateInputFromGraphQL,
+    type IViewV2Filter,
+    type IViewV2Sort,
     type IViewV2UpdateInputFromGraphQL,
     type IViewV2ValuesVersionForGraphql,
     ViewV2Types,
 } from '../../_types/viewsV2';
-import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 
 interface IDeps {
+    'core.domain.attribute': IAttributeDomain;
     'core.domain.record': IRecordDomain;
     'core.domain.viewV2': IViewV2Domain;
-    'core.domain.attribute': IAttributeDomain;
     'core.utils': IUtils;
 }
 
 export type IViewV2App = IGraphqlAppModule;
 
 export default function ({
+    'core.domain.attribute': attributeDomain,
     'core.domain.viewV2': viewV2Domain,
     'core.domain.record': recordDomain,
-    'core.domain.attribute': attributeDomain,
     'core.utils': utils,
 }: IDeps): IViewV2App {
+    const _resolveAttribute = (parent: {attributeId: string}, _: unknown, ctx: IQueryInfos) =>
+        attributeDomain.getAttributeProperties({id: parent.attributeId, ctx});
+
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             return {
@@ -39,12 +45,25 @@ export default function ({
                         ${Object.values(ViewV2Types).join(' ')}
                     }
 
+                    type ViewV2DisplayAttribute {
+                        attribute: Attribute!,
+                        visible: Boolean!
+                    }
+
+                    input ViewV2DisplayAttributeInput {
+                        attributeId: ID!,
+                        visible: Boolean!
+                    }
+
                     type ViewV2Display {
                         type: ViewV2Types!,
+                        attributes: [ViewV2DisplayAttribute!],
                     }
 
                     input ViewV2DisplayInput {
                         type: ViewV2Types!,
+                        """ The whoAmI column should never be included in attributes because is already hard-coded to be present"""
+                        attributes: [ViewV2DisplayAttributeInput!],
                     }
 
                     type ViewV2ValuesVersion {
@@ -57,6 +76,30 @@ export default function ({
                         treeNode: ID!
                     }
 
+                    type ViewV2Filter {
+                        pinned: Boolean!,
+                        attributes: [Attribute!]!,
+                        values: [String]!,
+                        condition: RecordFilterCondition!,
+                    }
+
+                    input ViewV2FilterInput {
+                        pinned: Boolean!,
+                        attributes: [ID!]!,
+                        values: [String]!,
+                        condition: RecordFilterCondition!,
+                    }
+
+                    type ViewV2Sort {
+                        attributes: [Attribute!]!,
+                        order: SortOrder!,
+                    }
+
+                    input ViewV2SortInput {
+                        attributes: [ID!]!,
+                        order: SortOrder!,
+                    }
+
                     type ViewV2 {
                         id: ID!,
                         library: ID!,
@@ -65,12 +108,10 @@ export default function ({
                         created_at: Int!,
                         modified_at: Int!,
                         label: SystemTranslation!,
-                        filters: [RecordFilter!],
-                        sort: [RecordSort!],
+                        filters: [ViewV2Filter!],
+                        sorts: [ViewV2Sort!],
                         display: ViewV2Display!,
                         valuesVersions: [ViewV2ValuesVersion!],
-                        """ The whoAmI column will never be included in attributes because is already hard-coded to be present"""
-                        attributes: [Attribute!]
                     }
 
                     input ViewV2CreateInput {
@@ -78,11 +119,9 @@ export default function ({
                         display: ViewV2DisplayInput!,
                         shared: Boolean!,
                         label: SystemTranslation!,
-                        filters: [RecordFilterInput!],
-                        sort: [RecordSortInput!],
+                        filters: [ViewV2FilterInput!],
+                        sorts: [ViewV2SortInput!],
                         valuesVersions: [ViewV2ValuesVersionInput!],
-                        """ The whoAmI column should never be included in attributes because is already hard-coded to be present"""
-                        attributes: [ID!]
                     }
 
                     input ViewV2UpdateInput {
@@ -92,11 +131,9 @@ export default function ({
                         shared: Boolean,
                         label: SystemTranslation,
                         description: SystemTranslationOptional,
-                        filters: [RecordFilterInput!],
-                        sort: [RecordSortInput!],
+                        filters: [ViewV2FilterInput!],
+                        sorts: [ViewV2SortInput!],
                         valuesVersions: [ViewV2ValuesVersionInput!],
-                        """ The whoAmI column should never be included in attributes because is already hard-coded to be present"""
-                        attributes: [ID!]
                     }
 
                     type ViewsV2List {
@@ -174,12 +211,18 @@ export default function ({
                                 treeNode: {id: view.valuesVersions[treeId], treeId},
                             }));
                         },
-                        attributes: (view: IViewV2, _, ctx: IQueryInfos) =>
-                            Promise.all(
-                                (view.attributes ?? []).map(attributeId =>
-                                    attributeDomain.getAttributeProperties({id: attributeId, ctx}),
-                                ),
-                            ),
+                    },
+                    ViewV2Filter: {
+                        attributes: (filter: IViewV2Filter, _, ctx: IQueryInfos) =>
+                            Promise.all(filter.attributes.map(id => attributeDomain.getAttributeProperties({id, ctx}))),
+                    },
+                    ViewV2Sort: {
+                        attributes: (sort: IViewV2Sort, _, ctx: IQueryInfos) =>
+                            Promise.all(sort.attributes.map(id => attributeDomain.getAttributeProperties({id, ctx}))),
+                    },
+                    ViewV2DisplayAttribute: {
+                        attribute: (attribute: IViewV2DisplayAttribute, _, ctx: IQueryInfos) =>
+                            attributeDomain.getAttributeProperties({id: attribute.attributeId, ctx}),
                     },
                 },
             };

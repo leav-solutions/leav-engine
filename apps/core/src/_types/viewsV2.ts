@@ -1,4 +1,5 @@
-import {type IRecordFilterLight, type IRecordSortLight} from './record';
+import {type SortOrder} from './list';
+import {type AttributeCondition, type TreeCondition} from './record';
 import {type ISystemTranslation} from './systemTranslation';
 
 export enum ViewV2Types {
@@ -6,12 +7,31 @@ export enum ViewV2Types {
     CARDS = 'cards',
     TIMELINE = 'timeline',
 }
+
+export interface IViewV2DisplayAttribute {
+    attributeId: string;
+    visible: boolean;
+}
+
 export interface IViewV2Display {
     type: ViewV2Types;
+    attributes?: IViewV2DisplayAttribute[];
 }
 
 export interface IViewV2ValuesVersion {
     [treeId: string]: string;
+}
+
+export interface IViewV2Filter {
+    pinned: boolean;
+    attributes: string[];
+    values: Array<string | null>;
+    condition: AttributeCondition | TreeCondition;
+}
+
+export interface IViewV2Sort {
+    attributes: string[];
+    order: SortOrder;
 }
 
 /**
@@ -24,9 +44,8 @@ interface IViewV2UserFields {
     label: ISystemTranslation;
     display: IViewV2Display;
     shared: boolean;
-    attributes: string[];
-    filters?: IRecordFilterLight[];
-    sort?: IRecordSortLight[];
+    filters?: IViewV2Filter[];
+    sorts?: IViewV2Sort[];
     valuesVersions?: IViewV2ValuesVersion;
 }
 
@@ -46,10 +65,10 @@ interface IViewV2ServerFields {
 export type IViewV2 = IViewV2UserFields & IViewV2ServerFields;
 
 /**
- * Domain create input: user fields, with `attributes` made optional (the domain
+ * Domain create input: user fields, with `columns` made optional (the domain
  * defaults it to `[]`).
  */
-export type IViewV2CreateInput = Omit<IViewV2UserFields, 'attributes'> & {attributes?: string[]};
+export type IViewV2CreateInput = IViewV2UserFields;
 
 /**
  * Domain update input: only `id` is mandatory; every other user field is optional
