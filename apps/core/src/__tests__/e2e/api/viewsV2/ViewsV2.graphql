@@ -4,7 +4,7 @@ mutation CreateViewV2($view: ViewV2CreateInput!) {
     }
 }
 
-query GetViewsV2($library: String!) {
+query GetViewsV2($library: ID!) {
     viewsV2(library: $library) {
         totalCount
         list {
@@ -46,7 +46,7 @@ mutation UpdateViewV2($view: ViewV2UpdateInput!) {
     }
 }
 
-mutation DeleteViewV2($viewId: String!) {
+mutation DeleteViewV2($viewId: ID!) {
     deleteViewV2(viewId: $viewId) {
         id
     }

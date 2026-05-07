@@ -1213,13 +1213,13 @@ export enum ViewTypes {
 
 export type ViewV2CreateInput = {
   /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
-  attributes?: InputMaybe<Array<Scalars['String']['input']>>;
+  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   display: ViewV2DisplayInput;
   filters?: InputMaybe<Array<RecordFilterInput>>;
   label: Scalars['SystemTranslation']['input'];
-  library: Scalars['String']['input'];
+  library: Scalars['ID']['input'];
   shared: Scalars['Boolean']['input'];
   sort?: InputMaybe<Array<RecordSortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
@@ -1244,22 +1244,22 @@ export enum ViewV2Types {
 
 export type ViewV2UpdateInput = {
   /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
-  attributes?: InputMaybe<Array<Scalars['String']['input']>>;
+  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   display?: InputMaybe<ViewV2DisplayInput>;
   filters?: InputMaybe<Array<RecordFilterInput>>;
-  id: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
-  library?: InputMaybe<Scalars['String']['input']>;
+  library?: InputMaybe<Scalars['ID']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
   sort?: InputMaybe<Array<RecordSortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
 
 export type ViewV2ValuesVersionInput = {
-  treeId: Scalars['String']['input'];
-  treeNode: Scalars['String']['input'];
+  treeId: Scalars['ID']['input'];
+  treeNode: Scalars['ID']['input'];
 };
 
 export type ViewValuesVersionInput = {
@@ -1515,7 +1515,7 @@ export type CreateViewV2MutationVariables = Exact<{
 export type CreateViewV2Mutation = { createViewV2: { id: string } };
 
 export type GetViewsV2QueryVariables = Exact<{
-  library: Scalars['String']['input'];
+  library: Scalars['ID']['input'];
 }>;
 
 
@@ -1529,7 +1529,7 @@ export type UpdateViewV2MutationVariables = Exact<{
 export type UpdateViewV2Mutation = { updateViewV2: { id: string, display: { type: ViewV2Types } } };
 
 export type DeleteViewV2MutationVariables = Exact<{
-  viewId: Scalars['String']['input'];
+  viewId: Scalars['ID']['input'];
 }>;
 
 
@@ -2009,7 +2009,7 @@ export const CreateViewV2Document = gql`
 }
     `;
 export const GetViewsV2Document = gql`
-    query GetViewsV2($library: String!) {
+    query GetViewsV2($library: ID!) {
   viewsV2(library: $library) {
     totalCount
     list {
@@ -2053,7 +2053,7 @@ export const UpdateViewV2Document = gql`
 }
     `;
 export const DeleteViewV2Document = gql`
-    mutation DeleteViewV2($viewId: String!) {
+    mutation DeleteViewV2($viewId: ID!) {
   deleteViewV2(viewId: $viewId) {
     id
   }

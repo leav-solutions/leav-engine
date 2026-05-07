@@ -58,18 +58,18 @@ export default function ({
                     }
 
                     type ViewV2ValuesVersion {
-                        treeId: String!,
+                        treeId: ID!,
                         treeNode: TreeNode!
                     }
 
                     input ViewV2ValuesVersionInput {
-                        treeId: String!,
-                        treeNode: String!
+                        treeId: ID!,
+                        treeNode: ID!
                     }
 
                     type ViewV2 {
-                        id: String!,
-                        library: String!,
+                        id: ID!,
+                        library: ID!,
                         created_by: Record!,
                         shared: Boolean!,
                         created_at: Int!,
@@ -86,7 +86,7 @@ export default function ({
                     }
 
                     input ViewV2CreateInput {
-                        library: String!,
+                        library: ID!,
                         display: ViewV2DisplayInput!,
                         shared: Boolean!,
                         label: SystemTranslation!,
@@ -96,12 +96,12 @@ export default function ({
                         sort: [RecordSortInput!],
                         valuesVersions: [ViewV2ValuesVersionInput!],
                         """ The whoAmI column should never be included in attributes because is already hard-coded to be present"""
-                        attributes: [String!]
+                        attributes: [ID!]
                     }
 
                     input ViewV2UpdateInput {
-                        id: String!,
-                        library: String,
+                        id: ID!,
+                        library: ID,
                         display: ViewV2DisplayInput,
                         shared: Boolean,
                         label: SystemTranslation,
@@ -111,7 +111,7 @@ export default function ({
                         sort: [RecordSortInput!],
                         valuesVersions: [ViewV2ValuesVersionInput!],
                         """ The whoAmI column should never be included in attributes because is already hard-coded to be present"""
-                        attributes: [String!]
+                        attributes: [ID!]
                     }
 
                     type ViewsV2List {
@@ -120,14 +120,14 @@ export default function ({
                     }
 
                     extend type Query {
-                        viewsV2(library: String!): ViewsV2List!
-                        viewV2(viewId: String!): ViewV2!
+                        viewsV2(library: ID!): ViewsV2List!
+                        viewV2(viewId: ID!): ViewV2!
                     }
 
                     extend type Mutation {
                         createViewV2(view: ViewV2CreateInput!): ViewV2!
                         updateViewV2(view: ViewV2UpdateInput!): ViewV2!
-                        deleteViewV2(viewId: String!): ViewV2!
+                        deleteViewV2(viewId: ID!): ViewV2!
                     }
                 `,
                 resolvers: {
