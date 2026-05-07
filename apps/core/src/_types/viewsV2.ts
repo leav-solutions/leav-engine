@@ -26,17 +26,15 @@ export interface IViewV2ValuesVersion {
 }
 
 /**
- * Stored view v2 entity, as persisted in ArangoDB and returned by the domain.
+ * User-facing fields of a view v2 with their natural required/optional cardinality.
+ * Source of truth for both the stored entity and the create/update inputs — every other
+ * shape in this file is derived from it.
  */
-export interface IViewV2 extends ICoreEntity {
-    id: string;
+interface IViewV2UserFields {
     library: string;
     label: ISystemTranslation;
     display: IViewV2Display;
     shared: boolean;
-    created_by: string;
-    created_at: number;
-    modified_at: number;
     attributes: string[];
     description?: ISystemTranslation;
     color?: string;
@@ -46,39 +44,31 @@ export interface IViewV2 extends ICoreEntity {
 }
 
 /**
- * Domain create input. `library`, `label`, `display`, `shared` are mandatory; everything
- * else is optional and will be defaulted by the domain when missing.
+ * Server-managed fields, populated by the domain layer.
  */
-export interface IViewV2CreateInput {
-    library: string;
-    label: ISystemTranslation;
-    display: IViewV2Display;
-    shared: boolean;
-    description?: ISystemTranslation;
-    color?: string;
-    filters?: IRecordFilterLight[];
-    sort?: IRecordSortLight[];
-    valuesVersions?: IViewV2ValuesVersion;
-    attributes?: string[];
+interface IViewV2ServerFields {
+    id: string;
+    created_by: string;
+    created_at: number;
+    modified_at: number;
 }
 
 /**
- * Domain update input. Only `id` is mandatory; every other field is optional and only
- * the provided ones are updated.
+ * Stored view v2 entity, as persisted in ArangoDB and returned by the domain.
  */
-export interface IViewV2UpdateInput {
-    id: string;
-    library?: string;
-    label?: ISystemTranslation;
-    display?: IViewV2Display;
-    shared?: boolean;
-    description?: ISystemTranslation;
-    color?: string;
-    filters?: IRecordFilterLight[];
-    sort?: IRecordSortLight[];
-    valuesVersions?: IViewV2ValuesVersion;
-    attributes?: string[];
-}
+export type IViewV2 = IViewV2UserFields & IViewV2ServerFields;
+
+/**
+ * Domain create input: user fields, with `attributes` made optional (the domain
+ * defaults it to `[]`).
+ */
+export type IViewV2CreateInput = Omit<IViewV2UserFields, 'attributes'> & {attributes?: string[]};
+
+/**
+ * Domain update input: only `id` is mandatory; every other user field is optional
+ * and only the provided ones are updated.
+ */
+export type IViewV2UpdateInput = Pick<IViewV2ServerFields, 'id'> & Partial<IViewV2UserFields>;
 
 export interface IViewV2ValuesVersionForGraphql {
     treeId: string;
