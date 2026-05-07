@@ -5,9 +5,9 @@ import {type IValidateHelper} from '../helpers/validate';
 import {type IViewV2Repo} from '../../infra/viewV2/viewV2Repo';
 import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
-import {mockViewV2, mockViewV2CreateInput} from '../../__tests__/mocks/viewV2';
 import viewV2Domain, {type IViewV2DomainDeps} from './viewV2Domain';
 import {type ToAny} from '../../utils/utils';
+import {type IViewV2CreateInput, ViewV2Types, ViewV2Sizes, type IViewV2} from '../../_types/viewsV2';
 
 const depsBase: ToAny<IViewV2DomainDeps> = {
     'core.domain.helpers.validate': vi.fn(),
@@ -18,6 +18,27 @@ const depsBase: ToAny<IViewV2DomainDeps> = {
 
 describe('viewV2Domain', () => {
     beforeEach(() => vi.clearAllMocks());
+
+    const mockViewV2CreateInput: IViewV2CreateInput = {
+        library: 'test_lib',
+        label: {fr: 'My view'},
+        display: {type: ViewV2Types.LIST, size: ViewV2Sizes.MEDIUM},
+        shared: true,
+        description: {fr: 'My test view'},
+        color: '#123456',
+        filters: [{field: 'id', value: 'fake_id_filter'}],
+        sort: [{field: 'id', order: 'asc'}],
+        attributes: ['id', 'label'],
+    };
+
+    const mockViewV2: IViewV2 = {
+        ...mockViewV2CreateInput,
+        id: 'test_view_v2',
+        created_by: '1',
+        created_at: 1234567890,
+        modified_at: 1234567890,
+        attributes: ['id', 'label'],
+    };
 
     const mockViewV2Repo = {
         updateViewV2: global.__mockPromise({...mockViewV2}),
