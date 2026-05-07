@@ -70,7 +70,7 @@ describe('automation pipeline', () => {
                         {
                             type: AutomationRuleActions.CONDITION,
                             params: {
-                                result: true,
+                                expression: 'true',
                             },
                         },
                         {
@@ -92,7 +92,7 @@ describe('automation pipeline', () => {
                         {
                             type: AutomationRuleActions.CONDITION,
                             params: {
-                                result: false,
+                                expression: 'false',
                             },
                         },
                         {

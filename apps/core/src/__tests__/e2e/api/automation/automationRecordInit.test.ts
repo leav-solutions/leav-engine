@@ -12,6 +12,7 @@ import {
 } from '../../_gqlTypes';
 import {adminUserSdk, e2eAdminUser, e2eGuestUser, e2eNonAdminUser} from '../e2eUtils';
 import {type NotificationActionParams} from '../../../../domain/automation/actions/notificationAction';
+import {type ConditionActionParams} from '../../../../domain/automation/actions/conditionAction';
 
 describe('Automation RECORD_INIT', () => {
     const testLibraryId = 'automation_record_init_test_library';
@@ -399,6 +400,79 @@ describe('Automation RECORD_INIT', () => {
                 expect(res.records.list[0].property).toEqual([
                     expect.objectContaining({payload: expect.objectContaining({id: adminsGroupId})}),
                 ]);
+            });
+        });
+    });
+
+    describe('pipeline with a condition action', () => {
+        describe('when condition is true, pipeline continues to next steps', () => {
+            let ruleId: string;
+
+            beforeAll(async () => {
+                ruleId = await createRecordInitRule([
+                    {
+                        type: AutomationRuleActions.condition,
+                        params: {expression: 'true'} satisfies ConditionActionParams,
+                    },
+                    {
+                        type: AutomationRuleActions.jexlCalculation,
+                        params: {formula: '"condition was true"'},
+                    },
+                    {
+                        type: AutomationRuleActions.modifyAttribute,
+                        params: {attributePath: testLibraryLabelAttrId, mode: 'replace'},
+                    },
+                ]);
+            });
+
+            afterAll(async () => {
+                await adminUserSdk.DeleteAutomationRule({ruleId});
+            });
+
+            test('should execute subsequent actions', async () => {
+                const res = await adminUserSdk.GetRecordByIdStandardValuesProperty({
+                    attributeId: testLibraryLabelAttrId,
+                    libraryId: testLibraryId,
+                    recordId,
+                });
+
+                expect(res.records.list[0].property).toEqual([
+                    expect.objectContaining({payload: 'condition was true'}),
+                ]);
+            });
+        });
+
+        describe('when condition is false, pipeline stops', () => {
+            let ruleId: string;
+            beforeAll(async () => {
+                ruleId = await createRecordInitRule([
+                    {
+                        type: AutomationRuleActions.condition,
+                        params: {expression: 'false'} satisfies ConditionActionParams,
+                    },
+                    {
+                        type: AutomationRuleActions.jexlCalculation,
+                        params: {formula: '"should not be set"'},
+                    },
+                    {
+                        type: AutomationRuleActions.modifyAttribute,
+                        params: {attributePath: testLibraryLabelAttrId, mode: 'replace'},
+                    },
+                ]);
+            });
+
+            afterAll(async () => {
+                await adminUserSdk.DeleteAutomationRule({ruleId});
+            });
+
+            test('should not execute subsequent actions', async () => {
+                const res = await adminUserSdk.GetRecordByIdStandardValuesProperty({
+                    attributeId: testLibraryLabelAttrId,
+                    libraryId: testLibraryId,
+                    recordId,
+                });
+
+                expect(res.records.list[0].property).toEqual([]);
             });
         });
     });

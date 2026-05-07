@@ -57,7 +57,7 @@ describe('notificationRepo', () => {
     });
 
     describe('Several notifications existe', () => {
-        const user2Notifications: string[] = [];
+        const user5Notifications: string[] = [];
         const user3Notifications: string[] = [];
         const user4Notifications: string[] = [];
 
@@ -67,14 +67,14 @@ describe('notificationRepo', () => {
                 const notification = await notificationRepo.createNotification(
                     {
                         date: Date.now(),
-                        userId: '2',
+                        userId: '5',
                         level: 'info',
-                        title: `Test Notification ${i + 1} user 2`,
-                        message: `This is test notification message number ${i + 1} user 2.`,
+                        title: `Test Notification ${i + 1} user 5`,
+                        message: `This is test notification message number ${i + 1} user 5.`,
                     },
                     ctx,
                 );
-                user2Notifications.push(notification.id);
+                user5Notifications.push(notification.id);
             }
             // Create multiple notifications for testing
             for (let i = 0; i < 3; i++) {
@@ -106,19 +106,19 @@ describe('notificationRepo', () => {
         });
 
         describe('getNotifications', () => {
-            it('should get notifications for user 2', async () => {
+            it('should get notifications for user 5', async () => {
                 const notifications = await notificationRepo.getNotifications(
                     {
                         filters: {
-                            userId: '2',
+                            userId: '5',
                         },
                         withCount: true,
                     },
                     ctx,
                 );
 
-                expect(notifications.totalCount).toBe(user2Notifications.length);
-                expect(notifications.list.map(n => n.id).sort()).toEqual(user2Notifications.sort());
+                expect(notifications.totalCount).toBe(user5Notifications.length);
+                expect(notifications.list.map(n => n.id).sort()).toEqual(user5Notifications.sort());
             });
 
             it('should get full notifications for user 4', async () => {
@@ -163,8 +163,8 @@ describe('notificationRepo', () => {
         });
 
         describe('deleteNotificationById', () => {
-            it('should delete a specific notification by ID for user 2', async () => {
-                const notificationIdToDelete = user2Notifications[0];
+            it('should delete a specific notification by ID for user 5', async () => {
+                const notificationIdToDelete = user5Notifications[0];
 
                 const deletedNotification = await notificationRepo.deleteNotificationById(notificationIdToDelete, ctx);
 
@@ -173,14 +173,14 @@ describe('notificationRepo', () => {
                 const notificationsAfterDeletion = await notificationRepo.getNotifications(
                     {
                         filters: {
-                            userId: '2',
+                            userId: '5',
                         },
                         withCount: true,
                     },
                     ctx,
                 );
 
-                expect(notificationsAfterDeletion.totalCount).toBe(user2Notifications.length - 1);
+                expect(notificationsAfterDeletion.totalCount).toBe(user5Notifications.length - 1);
                 expect(notificationsAfterDeletion.list.map(n => n.id)).not.toContain(notificationIdToDelete);
             });
         });
