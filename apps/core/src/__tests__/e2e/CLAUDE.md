@@ -30,6 +30,23 @@ Pas de regen nécessaire si tu modifies seulement le `.test.ts` (ou les valeurs 
 -   Variables GraphQL (`$rule: CreateAutomationRuleInput!`) plutôt que valeurs inline.
 -   Fragments autorisés mais à éviter sauf gain réel ; les exemples actuels n'en utilisent quasiment pas.
 
+## Pièges codegen (à lire avant d'écrire)
+
+Le codegen est configuré avec [`enumValues: 'keep'`](../../../codegen.ts) — les **clés** des enums TypeScript générés sont les **valeurs littérales** déclarées dans le schéma GraphQL, pas les clés des enums source côté serveur. Cela conduit à des asymétries surprenantes :
+
+| Côté serveur (`src/_types/`)              | Côté SDK (`_gqlTypes`)             | Pourquoi                                                                                                                    |
+| ----------------------------------------- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `enum ViewV2Types { LIST = 'list' }`      | `ViewV2Types.list` (minuscule !)   | Le schéma GraphQL est généré via `Object.values(enum).join(' ')`, donc la valeur `'list'` devient la clé de l'enum codegen. |
+| `enum ViewV2Sizes { SMALL = 'SMALL' }`    | `ViewV2Sizes.SMALL` (majuscule)    | Ici la valeur source est déjà en majuscule, donc la clé codegen tombe juste.                                                |
+| `AttributeCondition.EQUAL` (domain TS)    | `RecordFilterCondition.EQUAL`      | Le **nom** GraphQL diffère du nom TS — l'enum est exposé sous un autre identifiant dans le schéma.                          |
+| `IRecordSortLight.order: 'asc' \| 'desc'` | `SortOrder.asc` / `SortOrder.desc` | Pas d'enum source côté domain, juste un union de string ; le schéma déclare un vrai enum nommé `SortOrder`.                 |
+
+**Règles à appliquer systématiquement :**
+
+-   **Importer** enums, inputs et types d'opérations **uniquement depuis `_gqlTypes`** — jamais depuis `src/_types/`. Mélanger les deux mondes finit toujours par un cast ou une erreur runtime.
+-   **Vérifier le nom exact** d'un enum/input avant de le citer : `grep -E "^export (enum|type) NomCherché" apps/core/src/__tests__/e2e/_gqlTypes/index.ts`. C'est un seul fichier de ~2000 lignes, grep est instantané.
+-   **Si une méthode du SDK n'existe pas** (`Property 'CreateXxx' does not exist on type ...`), c'est presque toujours que tu as oublié de relancer `yarn graphql-generate` après avoir modifié un `.graphql`.
+
 ## SDK et utilisateurs
 
 Les trois SDK pré-authentifiés exportés par [`api/e2eUtils.ts`](api/e2eUtils.ts) :

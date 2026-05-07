@@ -482,6 +482,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -1200,6 +1211,57 @@ export enum ViewTypes {
   timeline = 'timeline'
 }
 
+export type ViewV2CreateInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<Scalars['String']['input']>>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  display: ViewV2DisplayInput;
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  label: Scalars['SystemTranslation']['input'];
+  library: Scalars['String']['input'];
+  shared: Scalars['Boolean']['input'];
+  sort?: InputMaybe<Array<RecordSortInput>>;
+  valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
+};
+
+export type ViewV2DisplayInput = {
+  size?: InputMaybe<ViewV2Sizes>;
+  type: ViewV2Types;
+};
+
+export enum ViewV2Sizes {
+  BIG = 'BIG',
+  MEDIUM = 'MEDIUM',
+  SMALL = 'SMALL'
+}
+
+export enum ViewV2Types {
+  cards = 'cards',
+  list = 'list',
+  timeline = 'timeline'
+}
+
+export type ViewV2UpdateInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<Scalars['String']['input']>>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  display?: InputMaybe<ViewV2DisplayInput>;
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  id: Scalars['String']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  library?: InputMaybe<Scalars['String']['input']>;
+  shared?: InputMaybe<Scalars['Boolean']['input']>;
+  sort?: InputMaybe<Array<RecordSortInput>>;
+  valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
+};
+
+export type ViewV2ValuesVersionInput = {
+  treeId: Scalars['String']['input'];
+  treeNode: Scalars['String']['input'];
+};
+
 export type ViewValuesVersionInput = {
   treeId: Scalars['String']['input'];
   treeNode: Scalars['String']['input'];
@@ -1444,6 +1506,34 @@ export type GetRecordByIdTreeValuesPropertyQueryVariables = Exact<{
 
 
 export type GetRecordByIdTreeValuesPropertyQuery = { records: { list: Array<{ id: string, active: boolean, whoAmI: { library: { id: string } }, property: Array<{ id_value?: string | null, payload?: { id: string, record: { id: string, library: { id: string } } } | null }> }> } };
+
+export type CreateViewV2MutationVariables = Exact<{
+  view: ViewV2CreateInput;
+}>;
+
+
+export type CreateViewV2Mutation = { createViewV2: { id: string } };
+
+export type GetViewsV2QueryVariables = Exact<{
+  library: Scalars['String']['input'];
+}>;
+
+
+export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, description?: any | null, color?: string | null, created_by: { whoAmI: { id: string } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, attributes?: Array<{ id: string }> | null }> } };
+
+export type UpdateViewV2MutationVariables = Exact<{
+  view: ViewV2UpdateInput;
+}>;
+
+
+export type UpdateViewV2Mutation = { updateViewV2: { id: string, display: { type: ViewV2Types } } };
+
+export type DeleteViewV2MutationVariables = Exact<{
+  viewId: Scalars['String']['input'];
+}>;
+
+
+export type DeleteViewV2Mutation = { deleteViewV2: { id: string } };
 
 export const SaveValuePayloadFragmentDoc = gql`
     fragment SaveValuePayload on Value {
@@ -1911,6 +2001,64 @@ export const GetRecordByIdTreeValuesPropertyDocument = gql`
   }
 }
     `;
+export const CreateViewV2Document = gql`
+    mutation CreateViewV2($view: ViewV2CreateInput!) {
+  createViewV2(view: $view) {
+    id
+  }
+}
+    `;
+export const GetViewsV2Document = gql`
+    query GetViewsV2($library: String!) {
+  viewsV2(library: $library) {
+    totalCount
+    list {
+      id
+      created_by {
+        whoAmI {
+          id
+        }
+      }
+      modified_at
+      created_at
+      shared
+      label
+      description
+      color
+      filters {
+        field
+        value
+        condition
+        operator
+      }
+      sort {
+        field
+        order
+      }
+      attributes {
+        id
+      }
+    }
+  }
+}
+    `;
+export const UpdateViewV2Document = gql`
+    mutation UpdateViewV2($view: ViewV2UpdateInput!) {
+  updateViewV2(view: $view) {
+    id
+    display {
+      type
+    }
+  }
+}
+    `;
+export const DeleteViewV2Document = gql`
+    mutation DeleteViewV2($viewId: String!) {
+  deleteViewV2(viewId: $viewId) {
+    id
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string, variables?: any) => Promise<T>;
 
@@ -2005,6 +2153,18 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetRecordByIdTreeValuesProperty(variables: GetRecordByIdTreeValuesPropertyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordByIdTreeValuesPropertyQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecordByIdTreeValuesPropertyQuery>({ document: GetRecordByIdTreeValuesPropertyDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordByIdTreeValuesProperty', 'query', variables);
+    },
+    CreateViewV2(variables: CreateViewV2MutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<CreateViewV2Mutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateViewV2Mutation>({ document: CreateViewV2Document, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'CreateViewV2', 'mutation', variables);
+    },
+    GetViewsV2(variables: GetViewsV2QueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetViewsV2Query> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetViewsV2Query>({ document: GetViewsV2Document, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetViewsV2', 'query', variables);
+    },
+    UpdateViewV2(variables: UpdateViewV2MutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<UpdateViewV2Mutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateViewV2Mutation>({ document: UpdateViewV2Document, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'UpdateViewV2', 'mutation', variables);
+    },
+    DeleteViewV2(variables: DeleteViewV2MutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteViewV2Mutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteViewV2Mutation>({ document: DeleteViewV2Document, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteViewV2', 'mutation', variables);
     }
   };
 }

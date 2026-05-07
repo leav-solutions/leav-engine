@@ -1,9 +1,8 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {adminUserSdk, e2eGuestUser, makeGraphQlCall} from '../e2eUtils';
-import {AttributeCondition} from '../../../../_types/record';
-import {ViewV2Sizes, ViewV2Types} from '../../../../_types/viewsV2';
+import {RecordFilterCondition, SortOrder, ViewV2Sizes, ViewV2Types} from '../../_gqlTypes';
+import {adminUserSdk, guestUserSdk} from '../e2eUtils';
 
 describe('ViewsV2', () => {
     const testLibName = 'test_views_v2_lib';
@@ -15,225 +14,87 @@ describe('ViewsV2', () => {
 
     describe('CRUD operations', () => {
         test('Create viewV2', async () => {
-            const resSaveView = await makeGraphQlCall(`mutation {
-                createViewV2(view: {
-                  library: "${testLibName}",
-                  display: {type: ${ViewV2Types.LIST}, size: ${ViewV2Sizes.MEDIUM}},
-                  shared: true,
-                  label: {en: "test_first_view"},
-                  description: {en: "Best view ever!"},
-                  color: "#FFFFFF",
-                  filters: [
-                    {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
-                  ],
-                  sort: {field: "created_at", order: asc}
-                }) {
-                  id
-                }
-            }`);
+            const {createViewV2} = await adminUserSdk.CreateViewV2({
+                view: {
+                    library: testLibName,
+                    display: {type: ViewV2Types.list, size: ViewV2Sizes.MEDIUM},
+                    shared: true,
+                    label: {en: 'test_first_view'},
+                    description: {en: 'Best view ever!'},
+                    color: '#FFFFFF',
+                    filters: [{field: 'label', value: 'Test', condition: RecordFilterCondition.EQUAL}],
+                    sort: [{field: 'created_at', order: SortOrder.asc}],
+                },
+            });
 
-            viewId = resSaveView.data.data.createViewV2.id;
-
-            expect(resSaveView.status).toBe(200);
-            expect(resSaveView.data.errors).toBeUndefined();
+            viewId = createViewV2.id;
             expect(viewId).toBeTruthy();
         });
 
         test('Get viewsV2', async () => {
-            const resGetViews = await makeGraphQlCall(`{
-                viewsV2(library: "${testLibName}") {
-                  totalCount
-                  list {
-                    id
-                    created_by { whoAmI { id }}
-                    modified_at
-                    created_at
-                    shared
-                    label
-                    description
-                    color
-                    filters {field value condition operator}
-                    sort {field order}
-                    attributes {id}
-                  }
-                }
-            }`);
+            const {viewsV2} = await adminUserSdk.GetViewsV2({library: testLibName});
 
-            expect(resGetViews.status).toBe(200);
-            expect(resGetViews.data.errors).toBeUndefined();
-            expect(resGetViews.data.data.viewsV2.list.length).toBeGreaterThanOrEqual(1);
-            expect(resGetViews.data.data.viewsV2.list[0].created_by.whoAmI.id).toBeTruthy();
+            expect(viewsV2.list.length).toBeGreaterThanOrEqual(1);
+            expect(viewsV2.list[0].created_by.whoAmI.id).toBeTruthy();
         });
 
         test('Update viewV2', async () => {
-            const resUpdateView = await makeGraphQlCall(`mutation {
-                updateViewV2(view: {
-                  id: "${viewId}",
-                  display: {type: ${ViewV2Types.LIST}},
-                }) {
-                  id
-                  display {
-                    type
-                  }
-                }
-            }`);
+            const {updateViewV2} = await adminUserSdk.UpdateViewV2({
+                view: {id: viewId, display: {type: ViewV2Types.list}},
+            });
 
-            expect(resUpdateView.status).toBe(200);
-            expect(resUpdateView.data.errors).toBeUndefined();
-            expect(resUpdateView.data.data.updateViewV2.id).toBe(viewId);
+            expect(updateViewV2.id).toBe(viewId);
+            expect(updateViewV2.display.type).toBe(ViewV2Types.list);
         });
 
         test('Delete viewV2', async () => {
-            const resDeleteView = await makeGraphQlCall(`mutation {
-                deleteViewV2(viewId: "${viewId}") {
-                    id
-                }
-            }`);
-
-            expect(resDeleteView.status).toBe(200);
-            expect(resDeleteView.data.errors).toBeUndefined();
-            expect(resDeleteView.data.data.deleteViewV2.id).toBe(viewId);
+            const {deleteViewV2} = await adminUserSdk.DeleteViewV2({viewId});
+            expect(deleteViewV2.id).toBe(viewId);
         });
     });
 
     describe('Permissions', () => {
+        const createViewAsAdmin = async (shared: boolean): Promise<string> => {
+            const {createViewV2} = await adminUserSdk.CreateViewV2({
+                view: {
+                    library: testLibName,
+                    display: {type: ViewV2Types.list, size: ViewV2Sizes.MEDIUM},
+                    shared,
+                    label: {en: 'test_first_view'},
+                    description: {en: 'Best view ever!'},
+                    color: '#FFFFFF',
+                    filters: [{field: 'label', value: 'Test', condition: RecordFilterCondition.EQUAL}],
+                    sort: [{field: 'created_at', order: SortOrder.asc}],
+                },
+            });
+            return createViewV2.id;
+        };
+
         describe('Private viewsV2', () => {
             it('Should not be able to edit viewsV2 owned by other users', async () => {
-                const resSaveView = await makeGraphQlCall(`mutation {
-                createViewV2(view: {
-                  library: "${testLibName}",
-                  display: {type: ${ViewV2Types.LIST}, size: ${ViewV2Sizes.MEDIUM}},
-                  shared: false,
-                  label: {en: "test_first_view"},
-                  description: {en: "Best view ever!"},
-                  color: "#FFFFFF",
-                  filters: [
-                    {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
-                  ],
-                  sort: {field: "created_at", order: asc}
-                }) {
-                  id
-                }
-            }`);
-
-                const savedViewId = resSaveView.data.data.createViewV2.id;
-
-                const mutationUpdateView = `mutation {
-                updateViewV2(view: {
-                  id: "${savedViewId}",
-                  display: {type: ${ViewV2Types.LIST}},
-                }) {
-                  id
-                  display {
-                    type
-                  }
-                }
-            }`;
-
-                await expect(makeGraphQlCall(mutationUpdateView, {user: e2eGuestUser()})).rejects.toThrow(
-                    /USER_IS_NOT_VIEW_OWNER/,
-                );
+                const id = await createViewAsAdmin(false);
+                await expect(
+                    guestUserSdk.UpdateViewV2({view: {id, display: {type: ViewV2Types.list}}}),
+                ).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
             });
 
             it('Should not be able to delete viewsV2 owned by other users', async () => {
-                const resSaveView = await makeGraphQlCall(`mutation {
-                createViewV2(view: {
-                  library: "${testLibName}",
-                  display: {type: ${ViewV2Types.LIST}, size: ${ViewV2Sizes.MEDIUM}},
-                  shared: false,
-                  label: {en: "test_first_view"},
-                  description: {en: "Best view ever!"},
-                  color: "#FFFFFF",
-                  filters: [
-                    {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
-                  ],
-                  sort: {field: "created_at", order: asc}
-                }) {
-                  id
-                }
-            }`);
-
-                const savedViewId = resSaveView.data.data.createViewV2.id;
-
-                const mutationDeleteView = `mutation {
-                deleteViewV2(viewId: "${savedViewId}") {
-                  id
-                }
-            }`;
-
-                await expect(makeGraphQlCall(mutationDeleteView, {user: e2eGuestUser()})).rejects.toThrow(
-                    /USER_IS_NOT_VIEW_OWNER/,
-                );
+                const id = await createViewAsAdmin(false);
+                await expect(guestUserSdk.DeleteViewV2({viewId: id})).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
             });
         });
 
         describe('Shared viewsV2', () => {
             it('Should not be able to edit shared viewsV2 owned by other users', async () => {
-                const resSaveView = await makeGraphQlCall(`mutation {
-                createViewV2(view: {
-                  library: "${testLibName}",
-                  display: {type: ${ViewV2Types.LIST}, size: ${ViewV2Sizes.MEDIUM}},
-                  shared: true,
-                  label: {en: "test_first_view"},
-                  description: {en: "Best view ever!"},
-                  color: "#FFFFFF",
-                  filters: [
-                    {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
-                  ],
-                  sort: {field: "created_at", order: asc}
-                }) {
-                  id
-                }
-            }`);
-
-                const savedViewId = resSaveView.data.data.createViewV2.id;
-
-                const mutationUpdateView = `mutation {
-                updateViewV2(view: {
-                  id: "${savedViewId}",
-                  display: {type: ${ViewV2Types.LIST}},
-                }) {
-                  id
-                  display {
-                    type
-                  }
-                }
-            }`;
-
-                await expect(makeGraphQlCall(mutationUpdateView, {user: e2eGuestUser()})).rejects.toThrow(
-                    /USER_IS_NOT_VIEW_OWNER/,
-                );
+                const id = await createViewAsAdmin(true);
+                await expect(
+                    guestUserSdk.UpdateViewV2({view: {id, display: {type: ViewV2Types.list}}}),
+                ).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
             });
 
             it('Should not be able to delete shared viewsV2 owned by other users', async () => {
-                const resSaveView = await makeGraphQlCall(`mutation {
-                createViewV2(view: {
-                  library: "${testLibName}",
-                  display: {type: ${ViewV2Types.LIST}, size: ${ViewV2Sizes.MEDIUM}},
-                  shared: false,
-                  label: {en: "test_first_view"},
-                  description: {en: "Best view ever!"},
-                  color: "#FFFFFF",
-                  filters: [
-                    {field: "label", value: "Test", condition: ${AttributeCondition.EQUAL}}
-                  ],
-                  sort: {field: "created_at", order: asc}
-                }) {
-                  id
-                }
-            }`);
-
-                const savedViewId = resSaveView.data.data.createViewV2.id;
-
-                const mutationDeleteView = `mutation {
-                deleteViewV2(viewId: "${savedViewId}") {
-                  id
-                }
-            }`;
-
-                await expect(makeGraphQlCall(mutationDeleteView, {user: e2eGuestUser()})).rejects.toThrow(
-                    /USER_IS_NOT_VIEW_OWNER/,
-                );
+                const id = await createViewAsAdmin(true);
+                await expect(guestUserSdk.DeleteViewV2({viewId: id})).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
             });
         });
     });
