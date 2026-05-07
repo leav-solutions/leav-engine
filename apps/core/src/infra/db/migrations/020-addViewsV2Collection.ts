@@ -5,7 +5,7 @@
 import {type IMigration} from '../../../_types/migration';
 import {CollectionType} from 'arangojs/collection';
 import {type IDbService} from '../dbService';
-import {VIEWS_V2_COLLECTION_NAME} from '../../viewV2/_types';
+import {VIEWS_V2_COLLECTION_NAME} from '../../viewV2/viewV2Repo';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;

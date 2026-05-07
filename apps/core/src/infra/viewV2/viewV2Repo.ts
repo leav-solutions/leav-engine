@@ -5,8 +5,23 @@ import {aql} from 'arangojs';
 import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '../../_types/shared';
-import {type IViewV2Repo, type IViewV2RepoDeps, VIEWS_V2_COLLECTION_NAME} from './_types';
 import {type IViewV2} from '../../_types/viewsV2';
+import {type IDbService} from '../db/dbService';
+import {type IDbUtils} from '../db/dbUtils';
+
+export const VIEWS_V2_COLLECTION_NAME = 'core_views_v2';
+
+export interface IViewV2Repo {
+    createViewV2(view: IViewV2, ctx: IQueryInfos): Promise<IViewV2>;
+    updateViewV2(view: IViewV2, ctx: IQueryInfos): Promise<IViewV2>;
+    getViewsV2(params: IGetCoreEntitiesParams, ctx: IQueryInfos): Promise<IList<IViewV2>>;
+    deleteViewV2(viewId: string, ctx: IQueryInfos): Promise<IViewV2>;
+}
+
+export interface IViewV2RepoDeps {
+    'core.infra.db.dbService': IDbService;
+    'core.infra.db.dbUtils': IDbUtils;
+}
 
 export default function ({
     'core.infra.db.dbService': dbService = null,

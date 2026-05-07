@@ -6,7 +6,7 @@ import {type ILibraryRepo} from '../../infra/library/libraryRepo';
 import {type ITreeRepo} from '../../infra/tree/treeRepo';
 import {type IVersionProfileRepo} from '../../infra/versionProfile/versionProfileRepo';
 import {type IViewRepo} from '../../infra/view/_types';
-import {type IViewV2Repo} from '../../infra/viewV2/_types';
+import {type IViewV2Repo} from '../../infra/viewV2/viewV2Repo';
 import {type IUtils} from '../../utils/utils';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type ICachesService} from '../../infra/cache/cacheService';

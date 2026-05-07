@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IValidateHelper} from '../helpers/validate';
 import {type ITreeDomain} from '../tree/treeDomain';
-import {type IViewV2Repo} from '../../infra/viewV2/_types';
+import {type IViewV2Repo} from '../../infra/viewV2/viewV2Repo';
 import dayjs from 'dayjs';
 import {type IUtils} from '../../utils/utils';
 import {type IList} from '../../_types/list';

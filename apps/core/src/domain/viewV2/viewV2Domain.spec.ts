@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IValidateHelper} from '../helpers/validate';
-import {type IViewV2Repo} from '../../infra/viewV2/_types';
+import {type IViewV2Repo} from '../../infra/viewV2/viewV2Repo';
 import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockViewV2, mockViewV2BeforeCreation} from '../../__tests__/mocks/viewV2';
