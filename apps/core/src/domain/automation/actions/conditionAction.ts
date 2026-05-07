@@ -8,8 +8,7 @@ import {
     type IActionExecutionResult,
     ActionExecutionResultStatus,
 } from './_types';
-import {type BuildAutomationJexlContext} from '../pipeline/buildAutomationJexlContext';
-import {type IJexlDomain} from '../../jexl/jexlDomain';
+import {type IJexlAutomation} from '../jexl/jexlAutomation';
 
 const conditionActionParamsSchema = z.object({
     expression: z.string().meta({
@@ -22,24 +21,21 @@ const conditionActionParamsSchema = z.object({
 export type ConditionActionParams = z.infer<typeof conditionActionParamsSchema>;
 
 interface IConditionActionDeps {
-    'core.domain.jexl': IJexlDomain;
-    'core.domain.automation.pipeline.buildAutomationJexlContext': BuildAutomationJexlContext;
+    'core.domain.automation.jexl': IJexlAutomation;
 }
 
 export default function ({
-    'core.domain.jexl': jexl,
-    'core.domain.automation.pipeline.buildAutomationJexlContext': buildAutomationJexlContext,
+    'core.domain.automation.jexl': jexlAutomation,
 }: IConditionActionDeps): IAutomationAction<ConditionActionParams> {
     return {
         type: AutomationRuleActions.CONDITION,
         paramsSchema: conditionActionParamsSchema,
-        validateStep: params => jexl.validate(params.step.params.expression),
+        validateStep: params => jexlAutomation.validate(params.step.params.expression),
         async execute(params, state, ctx): Promise<IActionExecutionResult> {
             const {expression} = params;
 
-            const jexlCtx = buildAutomationJexlContext(state, ctx);
-
-            const conditionResult = await jexl.eval<boolean>(expression, jexlCtx);
+            const jexlCtx = jexlAutomation.buildAutomationContext(state, ctx);
+            const conditionResult = await jexlAutomation.eval<boolean>(expression, jexlCtx);
 
             if (typeof conditionResult !== 'boolean') {
                 throw new Error('Condition expression must evaluate to a boolean.');
