@@ -10783,13 +10783,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/joi@npm:14.3.4":
-  version: 14.3.4
-  resolution: "@types/joi@npm:14.3.4"
-  checksum: 10/f37d83cb2e84919caaccc65bb2b752eecdc323a8d466059beb437a51747ca32cdecc6b8720cb7a42248c25c217edd6ceea1fce8e6aeb47d44d7ad32de652a049
-  languageName: node
-  linkType: hard
-
 "@types/jsdom@npm:^20.0.0":
   version: 20.0.1
   resolution: "@types/jsdom@npm:20.0.1"
@@ -28103,7 +28096,6 @@ __metadata:
     "@leav/message-broker": "workspace:libs/message-broker"
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
-    "@types/joi": "npm:14.3.4"
     "@types/node": "npm:24.12.3"
     amqplib: "npm:0.10.9"
     apollo-cache-inmemory: "npm:1.6.6"
