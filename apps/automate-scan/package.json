@@ -23,7 +23,7 @@
     "license": "ISC",
     "devDependencies": {
         "@types/amqplib": "0.10.8",
-        "@types/node": "24.12.2",
+        "@types/node": "24.12.3",
         "prettier": "3.3.3",
         "tsx": "4.21.0",
         "typescript": "5.9.3",
