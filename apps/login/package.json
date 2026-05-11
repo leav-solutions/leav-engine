@@ -20,7 +20,7 @@
         "@apollo/client": "3.14.1",
         "@leav/ui": "workspace:libs/ui",
         "aristid-ds": "15.3.1-3917c51",
-        "graphql": "16.13.2",
+        "graphql": "16.14.0",
         "i18next": "22.5.1",
         "i18next-browser-languagedetector": "7.2.2",
         "i18next-resources-to-backend": "1.2.1",
