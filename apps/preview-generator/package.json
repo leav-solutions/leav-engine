@@ -20,7 +20,7 @@
     "license": "LGPL3",
     "devDependencies": {
         "@types/amqplib": "0.10.8",
-        "@types/node": "24.12.2",
+        "@types/node": "24.12.3",
         "prettier": "3.3.3",
         "tsx": "4.21.0",
         "typescript": "5.9.3",
@@ -32,7 +32,7 @@
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
         "amqplib": "0.10.9",
-        "fast-xml-parser": "5.7.2"
+        "fast-xml-parser": "5.7.3"
     },
     "stableVersion": "1.0.0"
 }

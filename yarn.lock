@@ -3200,9 +3200,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-modules-systemjs@npm:^7.29.0":
-  version: 7.29.0
-  resolution: "@babel/plugin-transform-modules-systemjs@npm:7.29.0"
+"@babel/plugin-transform-modules-systemjs@npm:^7.29.4":
+  version: 7.29.4
+  resolution: "@babel/plugin-transform-modules-systemjs@npm:7.29.4"
   dependencies:
     "@babel/helper-module-transforms": "npm:^7.28.6"
     "@babel/helper-plugin-utils": "npm:^7.28.6"
@@ -3210,7 +3210,7 @@ __metadata:
     "@babel/traverse": "npm:^7.29.0"
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 10/b3e64728eef02d829510778226da4c06be740fe52e0d45d4aa68b24083096d8ad7df67f2e9e67198b2e85f3237d42bd66f5771f85846f7a746105d05ca2e0cae
+  checksum: 10/79269e6ec8ec831bb63bf1c7cc1a980e28da785e92b36d42612f0139e4044499b99aa109fca849e1a156c092aabf6c24d145f4cabf2ac9ea84ef468852fe4c03
   languageName: node
   linkType: hard
 
@@ -4041,9 +4041,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:7.29.3":
-  version: 7.29.3
-  resolution: "@babel/preset-env@npm:7.29.3"
+"@babel/preset-env@npm:7.29.5":
+  version: 7.29.5
+  resolution: "@babel/preset-env@npm:7.29.5"
   dependencies:
     "@babel/compat-data": "npm:^7.29.3"
     "@babel/helper-compilation-targets": "npm:^7.28.6"
@@ -4084,7 +4084,7 @@ __metadata:
     "@babel/plugin-transform-member-expression-literals": "npm:^7.27.1"
     "@babel/plugin-transform-modules-amd": "npm:^7.27.1"
     "@babel/plugin-transform-modules-commonjs": "npm:^7.28.6"
-    "@babel/plugin-transform-modules-systemjs": "npm:^7.29.0"
+    "@babel/plugin-transform-modules-systemjs": "npm:^7.29.4"
     "@babel/plugin-transform-modules-umd": "npm:^7.27.1"
     "@babel/plugin-transform-named-capturing-groups-regex": "npm:^7.29.0"
     "@babel/plugin-transform-new-target": "npm:^7.27.1"
@@ -4118,7 +4118,7 @@ __metadata:
     semver: "npm:^6.3.1"
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: 10/723676e883ac22bdf24000aad81a2f0a86e9b17c520423df4d54d34b6e183c8c2609019d745bcbb453bd11d9273aee237e641d2cdc27744ef6a494df96f18fb8
+  checksum: 10/2e54630764b6650d81df5ce5a47fa260acd3695dc95a6b989b713bf6c0713fb320e3ae3f76f0c636bfda058ee5c582a3de7f5d58d691c68ca566129c7d3d0f0a
   languageName: node
   linkType: hard
 
@@ -8260,7 +8260,7 @@ __metadata:
   dependencies:
     "@hono/node-server": "npm:1.19.14"
     "@leav/logger": "workspace:libs/logger"
-    hono: "npm:4.12.16"
+    hono: "npm:4.12.18"
     node-fetch: "npm:2.6.7"
     prom-client: "npm:15.1.3"
     typescript: "npm:5.9.3"
@@ -8274,7 +8274,7 @@ __metadata:
   dependencies:
     "@ant-design/icons": "npm:5.6.1"
     "@apollo/client": "npm:3.14.1"
-    "@babel/preset-env": "npm:7.29.3"
+    "@babel/preset-env": "npm:7.29.5"
     "@babel/preset-react": "npm:7.28.5"
     "@ckeditor/ckeditor5-build-inline": "npm:39.0.2"
     "@ckeditor/ckeditor5-react": "npm:6.3.0"
@@ -8319,7 +8319,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     tsc-alias: "npm:1.8.17"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.2"
+    vite: "npm:7.3.3"
     xlsx: "npm:0.18.5"
     zod: "npm:3.25.76"
   peerDependencies:
@@ -8939,9 +8939,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rjsf/core@npm:6.5.1":
-  version: 6.5.1
-  resolution: "@rjsf/core@npm:6.5.1"
+"@rjsf/core@npm:6.5.2":
+  version: 6.5.2
+  resolution: "@rjsf/core@npm:6.5.2"
   dependencies:
     lodash: "npm:^4.18.1"
     lodash-es: "npm:^4.18.1"
@@ -8950,15 +8950,16 @@ __metadata:
   peerDependencies:
     "@rjsf/utils": ^6.5.x
     react: ">=18"
-  checksum: 10/a3bbc05f6674b926c1851bbe8597f45f725f99821ae03262a28bdc5baeaf2684dbe6141f197843349e56d4405ced0c2c0451db59a6fa209f52dc463d8491ac32
+  checksum: 10/3e3bd3d6d1f163545cba9dfbd69cd727a2f246d6e2ad29526721e345caaff3d59c8309d120f4374867daa8a6a3b25b22da6f4f8d11b29f072fec9ec97cf583f1
   languageName: node
   linkType: hard
 
-"@rjsf/utils@npm:6.5.1":
-  version: 6.5.1
-  resolution: "@rjsf/utils@npm:6.5.1"
+"@rjsf/utils@npm:6.5.2":
+  version: 6.5.2
+  resolution: "@rjsf/utils@npm:6.5.2"
   dependencies:
     "@x0k/json-schema-merge": "npm:^1.0.3"
+    fast-equals: "npm:^6.0.0"
     fast-uri: "npm:^3.1.0"
     jsonpointer: "npm:^5.0.1"
     lodash: "npm:^4.18.1"
@@ -8966,13 +8967,13 @@ __metadata:
     react-is: "npm:^18.3.1"
   peerDependencies:
     react: ">=18"
-  checksum: 10/4f5ad78a0bdce37e80c49d460fc56f282cb115ab1089f0abcb1fe40f90e4097b0d3981aee9f9a957636e9ac24f317ef31aac589faf1593b0c22d861f2d09bf6a
+  checksum: 10/cbaa3f584199106bc65cd16428404ca260b7826afcf2b797fdbf5bbd9c7f2848c9cdcb48bea9c9a3f27bffd43bcadb42f188481c47c36c70c81ba35e09d5aca0
   languageName: node
   linkType: hard
 
-"@rjsf/validator-ajv8@npm:6.5.1":
-  version: 6.5.1
-  resolution: "@rjsf/validator-ajv8@npm:6.5.1"
+"@rjsf/validator-ajv8@npm:6.5.2":
+  version: 6.5.2
+  resolution: "@rjsf/validator-ajv8@npm:6.5.2"
   dependencies:
     ajv: "npm:^8.18.0"
     ajv-formats: "npm:^2.1.1"
@@ -8980,7 +8981,7 @@ __metadata:
     lodash-es: "npm:^4.18.1"
   peerDependencies:
     "@rjsf/utils": ^6.5.x
-  checksum: 10/1463e80f68f262cc36c4a374093e216aa243ba6f6c6dac18c72fdcc9b1327ad348f5efec8ad401c103e8f585f61e8dbd53d6015647091ebc0f09f09ea7affc35
+  checksum: 10/ee2d4298278aa76c0cfb10e2cd31ab007811d2bcba62f361c143c73e93cbe5dc297cedc536b5ab21c8a60db64304927af291401ec679dc509443ab6ae122d72d
   languageName: node
   linkType: hard
 
@@ -11005,12 +11006,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:24.12.2":
-  version: 24.12.2
-  resolution: "@types/node@npm:24.12.2"
+"@types/node@npm:24.12.3":
+  version: 24.12.3
+  resolution: "@types/node@npm:24.12.3"
   dependencies:
     undici-types: "npm:~7.16.0"
-  checksum: 10/99b9f15e67a4b3c39b39ad83ee0febad7f0b4709c004863104d7acfa4146dd7e58c12a08a9a7ff2be8c2eefd0063bf991fade0879d7c4a370a0ee7fd4c799e8a
+  checksum: 10/a7441f1505fee5c049b0c64c70707b5081cdeb945537fd9249a4304d636c27213ee9973bfd68cec5e5326e0cab5506d2a45e60d6528882bc8096c6e1195b661a
   languageName: node
   linkType: hard
 
@@ -11977,9 +11978,9 @@ __metadata:
     "@leav/utils": "workspace:libs/utils"
     "@nosferatu500/react-sortable-tree": "npm:4.4.0"
     "@reduxjs/toolkit": "npm:1.9.7"
-    "@rjsf/core": "npm:6.5.1"
-    "@rjsf/utils": "npm:6.5.1"
-    "@rjsf/validator-ajv8": "npm:6.5.1"
+    "@rjsf/core": "npm:6.5.2"
+    "@rjsf/utils": "npm:6.5.2"
+    "@rjsf/validator-ajv8": "npm:6.5.2"
     "@semantic-ui-react/craco-less": "npm:2.0.2"
     "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:6.9.1"
@@ -11990,7 +11991,7 @@ __metadata:
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:30.0.0"
     "@types/lodash": "npm:4.17.24"
-    "@types/node": "npm:24.12.2"
+    "@types/node": "npm:24.12.3"
     "@types/node-fetch": "npm:2.1.4"
     "@types/react": "npm:16.14.69"
     "@types/react-dom": "npm:16.9.25"
@@ -12041,7 +12042,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     ts-jest-mock-import-meta: "npm:1.3.2"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.2"
+    vite: "npm:7.3.3"
     vite-jest: "npm:0.1.4"
     yup: "npm:0.32.11"
   languageName: unknown
@@ -12495,7 +12496,7 @@ __metadata:
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
     "@types/i18next-xhr-backend": "npm:1.4.2"
     "@types/jest": "npm:30.0.0"
-    "@types/node": "npm:24.12.2"
+    "@types/node": "npm:24.12.3"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@types/styled-components": "npm:5.1.36"
@@ -12524,7 +12525,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     ts-jest-mock-import-meta: "npm:1.3.2"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.2"
+    vite: "npm:7.3.3"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:1.4.0"
     vite-plugin-svgr: "npm:4.5.0"
@@ -12985,7 +12986,7 @@ __metadata:
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
-    "@types/node": "npm:24.12.2"
+    "@types/node": "npm:24.12.3"
     amqplib: "npm:0.10.9"
     app-root-path: "npm:3.1.0"
     chokidar: "npm:4.0.3"
@@ -14889,7 +14890,7 @@ __metadata:
     "@leav/message-broker": "workspace:libs/message-broker"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
-    "@rjsf/utils": "npm:6.5.1"
+    "@rjsf/utils": "npm:6.5.2"
     "@trpc/client": "npm:11.16.0"
     "@trpc/server": "npm:11.16.0"
     "@types/amqplib": "npm:0.10.8"
@@ -14902,7 +14903,7 @@ __metadata:
     "@types/jsonwebtoken": "npm:9.0.10"
     "@types/lodash": "npm:4.17.24"
     "@types/ms": "npm:0.7.34"
-    "@types/node": "npm:24.12.2"
+    "@types/node": "npm:24.12.3"
     "@types/nodemailer": "npm:6.4.23"
     "@types/ws": "npm:8.5.3"
     add-filename-increment: "npm:1.0.0"
@@ -15341,7 +15342,7 @@ __metadata:
     "@types/i18next-browser-languagedetector": "npm:3.0.0"
     "@types/jest": "npm:27.5.2"
     "@types/lodash": "npm:4.17.24"
-    "@types/node": "npm:24.12.2"
+    "@types/node": "npm:24.12.3"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@types/redux-mock-store": "npm:1.5.0"
@@ -15371,7 +15372,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     ts-jest-mock-import-meta: "npm:1.3.2"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.2"
+    vite: "npm:7.3.3"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:1.4.0"
     vite-plugin-svgr: "npm:4.5.0"
@@ -17408,6 +17409,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-equals@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "fast-equals@npm:6.0.0"
+  checksum: 10/c5f8cd9f4dc36bb83cee75be6ace0ffaad8c2c8904f3659a1a70514b8117b04db757cef5db017ab8a12a36da9464b7dc90b2171e4260978b3594819e69f8c2dd
+  languageName: node
+  linkType: hard
+
 "fast-glob@npm:^3.0.3, fast-glob@npm:^3.2.9":
   version: 3.2.11
   resolution: "fast-glob@npm:3.2.11"
@@ -17455,26 +17463,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-xml-builder@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "fast-xml-builder@npm:1.1.5"
+"fast-xml-builder@npm:^1.1.7":
+  version: 1.2.0
+  resolution: "fast-xml-builder@npm:1.2.0"
   dependencies:
-    path-expression-matcher: "npm:^1.1.3"
-  checksum: 10/377c4ef816972e67192fd32757c50d2a9d4cccf352ceac48bda6681a0ee24fb0b1f1c892810f77886db760681f23fe0b8f62c7c0cc9469c0d2863c5c529ac1d2
+    path-expression-matcher: "npm:^1.5.0"
+    xml-naming: "npm:^0.1.0"
+  checksum: 10/5948add7796879d03b6c779cbb17f2f203a41cdf23dfaaa4789c65078a36376cd0709a6586701e980e3d244ebd5fdb35db1235ccb5e4fb9e9abfd8c51e7b8813
   languageName: node
   linkType: hard
 
-"fast-xml-parser@npm:5.7.2":
-  version: 5.7.2
-  resolution: "fast-xml-parser@npm:5.7.2"
+"fast-xml-parser@npm:5.7.3":
+  version: 5.7.3
+  resolution: "fast-xml-parser@npm:5.7.3"
   dependencies:
     "@nodable/entities": "npm:^2.1.0"
-    fast-xml-builder: "npm:^1.1.5"
+    fast-xml-builder: "npm:^1.1.7"
     path-expression-matcher: "npm:^1.5.0"
     strnum: "npm:^2.2.3"
   bin:
     fxparser: src/cli/cli.js
-  checksum: 10/7f32d77127dbd5eb1b4c9f7f6ad81972527049905cebe8926c88d102b84c2a56468180dd7541384c93bfc8dad2cef0b1b82b097a931893d3cab3989bd1cf83e1
+  checksum: 10/00a58655d0d58c1f914c7fd8e3a94e88799c3d473e29a6d2231dc02103df069e8c6043137cbec8df1cda6525a39914d1b84455a79530f63be266876a2211251c
   languageName: node
   linkType: hard
 
@@ -18732,10 +18741,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:4.12.16":
-  version: 4.12.16
-  resolution: "hono@npm:4.12.16"
-  checksum: 10/60ebaf89dc62820a9caf2b15dcc720d29037489c292bdd4e14e59ce3481978f08c1268ad1d179bc15b241e027717dad812ed37eb4bb3dd19589038be5da3ba6f
+"hono@npm:4.12.18":
+  version: 4.12.18
+  resolution: "hono@npm:4.12.18"
+  checksum: 10/0adda91eeb68c921e073bcbedd8758f026cc47dbbe7824147cf0ee8ef03004b1891f4d4edc80f6ab4c6ab33ec1f2fac52c4f7098752f8acf6833bcb76efb39e4
   languageName: node
   linkType: hard
 
@@ -21830,7 +21839,7 @@ __metadata:
   resolution: "leav-monorepo@workspace:."
   dependencies:
     "@aristid/eslint-plugin": "npm:1.3.0"
-    "@babel/preset-env": "npm:7.29.3"
+    "@babel/preset-env": "npm:7.29.5"
     "@commitlint/cli": "npm:19.8.1"
     "@commitlint/config-conventional": "npm:19.8.1"
     "@rushstack/eslint-patch": "npm:1.16.1"
@@ -22474,7 +22483,7 @@ __metadata:
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/jest": "npm:27.5.2"
-    "@types/node": "npm:24.12.2"
+    "@types/node": "npm:24.12.3"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.2.0"
@@ -22495,7 +22504,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     ts-jest-mock-import-meta: "npm:1.3.2"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.2"
+    vite: "npm:7.3.3"
     vite-plugin-dynamic-base: "npm:1.4.0"
     vite-plugin-rewrite-all: "npm:1.0.2"
     web-vitals: "npm:2.1.4"
@@ -24030,13 +24039,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-expression-matcher@npm:^1.1.3":
-  version: 1.2.0
-  resolution: "path-expression-matcher@npm:1.2.0"
-  checksum: 10/eab23babd9a97d6cf4841a99825c3e990b70b2b29ea6529df9fb6a1f3953befbc68e9e282a373d7a75aff5dc6542d05a09ee2df036ff9bfddf5e1627b769875b
-  languageName: node
-  linkType: hard
-
 "path-expression-matcher@npm:^1.5.0":
   version: 1.5.0
   resolution: "path-expression-matcher@npm:1.5.0"
@@ -24243,7 +24245,7 @@ __metadata:
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/jest": "npm:27.5.2"
-    "@types/node": "npm:24.12.2"
+    "@types/node": "npm:24.12.3"
     "@types/react": "npm:18.2.14"
     "@types/react-dom": "npm:18.2.6"
     "@vitejs/plugin-react": "npm:5.2.0"
@@ -24266,7 +24268,7 @@ __metadata:
     ts-jest: "npm:29.4.9"
     ts-jest-mock-import-meta: "npm:1.3.2"
     typescript: "npm:5.9.3"
-    vite: "npm:7.3.2"
+    vite: "npm:7.3.3"
     vite-jest: "npm:0.1.4"
     vite-plugin-dynamic-base: "npm:1.4.0"
   languageName: unknown
@@ -24418,9 +24420,9 @@ __metadata:
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
-    "@types/node": "npm:24.12.2"
+    "@types/node": "npm:24.12.3"
     amqplib: "npm:0.10.9"
-    fast-xml-parser: "npm:5.7.2"
+    fast-xml-parser: "npm:5.7.3"
     prettier: "npm:3.3.3"
     tsx: "npm:4.21.0"
     typescript: "npm:5.9.3"
@@ -28102,7 +28104,7 @@ __metadata:
     "@leav/utils": "workspace:*"
     "@types/amqplib": "npm:0.10.8"
     "@types/joi": "npm:14.3.4"
-    "@types/node": "npm:24.12.2"
+    "@types/node": "npm:24.12.3"
     amqplib: "npm:0.10.9"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-client: "npm:2.6.10"
@@ -29570,9 +29572,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:7.3.2":
-  version: 7.3.2
-  resolution: "vite@npm:7.3.2"
+"vite@npm:7.3.3":
+  version: 7.3.3
+  resolution: "vite@npm:7.3.3"
   dependencies:
     esbuild: "npm:^0.27.0"
     fdir: "npm:^6.5.0"
@@ -29621,7 +29623,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10/c5f7a9a60011c41c836cedf31c8ee7624102aff9b6a7f3aab2ff47639721bba0916f81994c3a3ea6577a16c4f0dfee1e7dbd244e0da8edd5954e3c6d48daaaa2
+  checksum: 10/c7fa17bc0aa530313417a28a144edcf910466b936cb192ce2c8cf7d6075e4b8e481b08a55ef71a7486757b03465b054d8c2cb49473d6fc9a0db8ac1dd641edff
   languageName: node
   linkType: hard
 
@@ -30298,6 +30300,13 @@ __metadata:
   version: 5.0.0
   resolution: "xml-name-validator@npm:5.0.0"
   checksum: 10/43f30f3f6786e406dd665acf08cd742d5f8a46486bd72517edb04b27d1bcd1599664c2a4a99fc3f1e56a3194bff588b12f178b7972bc45c8047bdc4c3ac8d4a1
+  languageName: node
+  linkType: hard
+
+"xml-naming@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "xml-naming@npm:0.1.0"
+  checksum: 10/45abd94ba64a508bda3f4d0b70e49811a3c3542596252c213caf47c858bbe9bba365ebba8eeff68e2a876e22a1bf6855d90cd2019b2f28012cebb167a4df2293
   languageName: node
   linkType: hard
 
