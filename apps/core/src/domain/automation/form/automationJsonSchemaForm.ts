@@ -38,15 +38,19 @@ export const extractAndLiftDefs = (jsonSchema: RJSFSchema): {schema: RJSFSchema;
     // the dict key already anchors $ref resolution (e.g. $ref: "#/$defs/library"), and keeping
     // $id causes AJV8 to register multiple URI anchors when the same def is $ref'd from more
     // than one place in the schema (e.g. trigger.properties.topic AND allOf[].then).
+    // We also strip the `ui` key: Zod copies all .meta() fields into $defs, but ui metadata
+    // belongs only in the UI schema.
     const normalizedDefs: Record<string, RJSFSchema> = {};
 
     for (const [key, def] of Object.entries($defs ?? {})) {
-        if (typeof def === 'object' && def !== null && 'id' in def) {
-            const {id: _id, ...defRest} = def as RJSFSchema & {id: string};
-            normalizedDefs[key] = defRest;
-        } else {
+        if (typeof def !== 'object' || def === null) {
             normalizedDefs[key] = def as RJSFSchema;
+            continue;
         }
+
+        normalizedDefs[key] = Object.fromEntries(
+            Object.entries(def).filter(([k]) => k !== 'id' && k !== 'ui'),
+        ) as RJSFSchema;
     }
 
     return {schema: rest as RJSFSchema, defs: normalizedDefs};

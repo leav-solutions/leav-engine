@@ -74,8 +74,29 @@ describe('extractAndLiftDefs', () => {
         expect(defs.status).toEqual({type: 'string', enum: ['active', 'inactive']});
     });
 
-    it('handles a realistic Zod toJSONSchema output with $schema, $defs with id, and a $ref', () => {
-        // Simulates what trigger.topicSchema.toJSONSchema() produces for a library topic
+    it('strips the ui key from each $defs entry (Zod copies .meta() ui fields into $defs)', () => {
+        // Zod v4 serializes all .meta() fields — including the nested ui object — into $defs.
+        // These belong in the UI schema only and must not appear in the JSON Schema sent to AJV8.
+        const input: RJSFSchema = {
+            $defs: {
+                library: {
+                    ui: {
+                        title: 'automation.form.fields.event_topic_library',
+                        placeholder: 'automation.form.fields.event_topic_library_placeholder',
+                    },
+                    type: 'string',
+                } as RJSFSchema,
+            },
+        };
+
+        const {defs} = extractAndLiftDefs(input);
+
+        expect(defs.library).not.toHaveProperty('ui');
+        expect(defs.library).toEqual({type: 'string'});
+    });
+
+    it('handles a realistic Zod toJSONSchema output with $schema, $defs with id and nested ui, and a $ref', () => {
+        // Simulates what trigger.topicSchema.toJSONSchema() now produces after adding ui to .meta()
         const zodOutput: RJSFSchema = {
             $schema: 'http://json-schema.org/draft-07/schema#',
             type: 'object',
@@ -84,7 +105,14 @@ describe('extractAndLiftDefs', () => {
             },
             required: ['library'],
             $defs: {
-                library: {type: 'string'} as RJSFSchema & {id: string},
+                library: {
+                    id: 'library',
+                    ui: {
+                        title: 'automation.form.fields.event_topic_library',
+                        placeholder: 'automation.form.fields.event_topic_library_placeholder',
+                    },
+                    type: 'string',
+                } as RJSFSchema & {id: string},
             },
         };
 
