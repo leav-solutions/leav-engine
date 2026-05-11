@@ -12526,7 +12526,7 @@ __metadata:
     typescript: "npm:5.9.3"
     vite: "npm:7.3.2"
     vite-jest: "npm:0.1.4"
-    vite-plugin-dynamic-base: "npm:1.3.0"
+    vite-plugin-dynamic-base: "npm:1.4.0"
     vite-plugin-svgr: "npm:4.5.0"
     zod: "npm:3.25.76"
   languageName: unknown
@@ -15373,7 +15373,7 @@ __metadata:
     typescript: "npm:5.9.3"
     vite: "npm:7.3.2"
     vite-jest: "npm:0.1.4"
-    vite-plugin-dynamic-base: "npm:1.3.0"
+    vite-plugin-dynamic-base: "npm:1.4.0"
     vite-plugin-svgr: "npm:4.5.0"
   languageName: unknown
   linkType: soft
@@ -22496,7 +22496,7 @@ __metadata:
     ts-jest-mock-import-meta: "npm:1.3.2"
     typescript: "npm:5.9.3"
     vite: "npm:7.3.2"
-    vite-plugin-dynamic-base: "npm:1.3.0"
+    vite-plugin-dynamic-base: "npm:1.4.0"
     vite-plugin-rewrite-all: "npm:1.0.2"
     web-vitals: "npm:2.1.4"
   languageName: unknown
@@ -24268,7 +24268,7 @@ __metadata:
     typescript: "npm:5.9.3"
     vite: "npm:7.3.2"
     vite-jest: "npm:0.1.4"
-    vite-plugin-dynamic-base: "npm:1.3.0"
+    vite-plugin-dynamic-base: "npm:1.4.0"
   languageName: unknown
   linkType: soft
 
@@ -29534,15 +29534,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-dynamic-base@npm:1.3.0":
-  version: 1.3.0
-  resolution: "vite-plugin-dynamic-base@npm:1.3.0"
+"vite-plugin-dynamic-base@npm:1.4.0":
+  version: 1.4.0
+  resolution: "vite-plugin-dynamic-base@npm:1.4.0"
   dependencies:
     "@swc/core": "npm:^1.3.61"
     node-html-parser: "npm:^5.3.3"
   peerDependencies:
     vite: ">= 2.9.5"
-  checksum: 10/039803f2d8a245fd6851e59ed4d8bd81d2b79bf5e921f2c6d4f686c33303efc02796eac41402052f47eff94f5dcb105827e863bed95eaa5138937df0d29fcffc
+  checksum: 10/176cb1c9833982c2b55cfef7d4317a7a25b2b7801f2fa925d1539c49eac2bd866046a519e70b8b4274f00b30736f242c35c67d7926c98f97c0d5e2beb488a62f
   languageName: node
   linkType: hard
 
