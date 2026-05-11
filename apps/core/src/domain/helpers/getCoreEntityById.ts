@@ -6,6 +6,7 @@ import {type ILibraryRepo} from '../../infra/library/libraryRepo';
 import {type ITreeRepo} from '../../infra/tree/treeRepo';
 import {type IVersionProfileRepo} from '../../infra/versionProfile/versionProfileRepo';
 import {type IViewRepo} from '../../infra/view/_types';
+import {type IViewV2Repo} from '../../infra/viewV2/viewV2Repo';
 import {type IUtils} from '../../utils/utils';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type ICachesService} from '../../infra/cache/cacheService';
@@ -15,13 +16,14 @@ interface IDeps {
     'core.infra.attribute': IAttributeRepo;
     'core.infra.tree': ITreeRepo;
     'core.infra.view': IViewRepo;
+    'core.infra.viewV2': IViewV2Repo;
     'core.infra.versionProfile': IVersionProfileRepo;
     'core.infra.cache.cacheService': ICachesService;
     'core.utils': IUtils;
 }
 
 export type GetCoreEntityByIdFunc = <T extends ICoreEntity>(
-    entityType: 'library' | 'attribute' | 'tree' | 'view' | 'versionProfile',
+    entityType: 'library' | 'attribute' | 'tree' | 'view' | 'viewV2' | 'versionProfile',
     entityId: string,
     ctx: IQueryInfos,
 ) => Promise<T>;
@@ -31,6 +33,7 @@ export default function ({
     'core.infra.attribute': attributeRepo,
     'core.infra.tree': treeRepo,
     'core.infra.view': viewRepo,
+    'core.infra.viewV2': viewV2Repo,
     'core.infra.versionProfile': versionProfileRepo,
     'core.infra.cache.cacheService': cacheService,
     'core.utils': utils,
@@ -61,6 +64,12 @@ export default function ({
                         params: {filters: {id: entityId}, strictFilters: true},
                         ctx,
                     });
+                    break;
+                case 'viewV2':
+                    result = await viewV2Repo.getViewsOwnedOrSharedV2(
+                        {filters: {id: entityId}, strictFilters: true},
+                        ctx,
+                    );
                     break;
             }
 

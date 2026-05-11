@@ -9,6 +9,7 @@ import {type INotificationRepo} from '../../../infra/notification/notificationRe
 import {type IRecordRepo} from '../../../infra/record/recordRepo';
 import {type ITreeRepo} from '../../../infra/tree/treeRepo';
 import {type IAutomationRuleRepo} from '../../../infra/automation/automationRuleRepo';
+import {type IViewV2Repo} from '../../../infra/viewV2/viewV2Repo';
 import {type IDbService} from '../../../infra/db/dbService';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {systemUserId} from '../../../_constants/users';
@@ -25,6 +26,8 @@ export const getNotificationRepo = (): INotificationRepo => getCoreDep<INotifica
 
 export const getAutomationRuleRepo = (): IAutomationRuleRepo =>
     getCoreDep<IAutomationRuleRepo>('core.infra.automation.rule');
+
+export const getViewV2Repo = (): IViewV2Repo => getCoreDep<IViewV2Repo>('core.infra.viewV2');
 
 export const clearAllCollectionDocuments = async (collectionName: string): Promise<void> => {
     const dbService = getCoreDep<IDbService>('core.infra.db.dbService');

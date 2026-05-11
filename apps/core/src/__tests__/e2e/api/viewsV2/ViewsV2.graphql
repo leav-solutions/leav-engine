@@ -1,0 +1,57 @@
+mutation CreateViewV2($view: ViewV2CreateInput!) {
+    createViewV2(view: $view) {
+        id
+    }
+}
+
+query GetViewsV2($library: ID!) {
+    viewsV2(library: $library) {
+        totalCount
+        list {
+            id
+            created_by {
+                whoAmI {
+                    id
+                }
+            }
+            modified_at
+            created_at
+            shared
+            label
+            filters {
+                field
+                value
+                condition
+                operator
+            }
+            sort {
+                field
+                order
+            }
+            attributes {
+                id
+            }
+        }
+    }
+}
+
+query GetViewV2($viewId: ID!) {
+    viewV2(viewId: $viewId) {
+        id
+    }
+}
+
+mutation UpdateViewV2($view: ViewV2UpdateInput!) {
+    updateViewV2(view: $view) {
+        id
+        display {
+            type
+        }
+    }
+}
+
+mutation DeleteViewV2($viewId: ID!) {
+    deleteViewV2(viewId: $viewId) {
+        id
+    }
+}
