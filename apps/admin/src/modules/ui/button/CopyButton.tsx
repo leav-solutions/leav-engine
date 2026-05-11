@@ -19,7 +19,7 @@ export const CopyButton = ({className, iconColor, title, value}: CopyButtonProps
     const {t} = useTranslation();
 
     const handleCopy: MouseEventHandler<HTMLButtonElement> = e => {
-        // Prevent from opening history details modal when clicking on the copy button
+        // Prevent from opening history open-history-details modal when clicking on the copy button
         e.stopPropagation();
 
         navigator.clipboard.writeText(value);

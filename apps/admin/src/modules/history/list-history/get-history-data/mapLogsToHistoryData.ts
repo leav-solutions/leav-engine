@@ -2,9 +2,9 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type AvailableLanguage, type GetHistoryDataQuery} from '../../../../_gqlTypes';
-import {type HistoryData} from './useGetHistoryData';
 import {getTopicEntityFromAction} from './getTopicEntityFromAction';
 import {removeGraphqlTypename} from '../../../utils/removeGraphqlTypename';
+import {type HistoryData} from '../../types';
 
 export const mapLogsToHistoryData = (data: GetHistoryDataQuery['logs'], lang: AvailableLanguage[]): HistoryData[] => {
     const _formatDate = (date: number) => new Date(date * 1000).toLocaleString();

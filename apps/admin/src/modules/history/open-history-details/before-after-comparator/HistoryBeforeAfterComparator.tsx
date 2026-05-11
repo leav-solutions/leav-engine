@@ -3,11 +3,11 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDivider, KitTypography} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
-import {type HistoryData} from '../../get-history-data/useGetHistoryData';
 import {
     historyBeforeAfterComparatorContainer,
     historyBeforeAfterComparatorBlock,
 } from './historyBeforeAfterComparator.module.css';
+import {type HistoryData} from '../../types';
 
 type HistoryBeforeAfterComparatorProps = {
     historyData: HistoryData;
@@ -17,8 +17,8 @@ export const HistoryBeforeAfterComparator = ({historyData}: HistoryBeforeAfterCo
     const {t} = useTranslation();
 
     const fields = [
-        {labelKey: 'logs.details.before', value: historyData.before},
-        {labelKey: 'logs.details.after', value: historyData.after},
+        {labelKey: 'logs.open-history-details.before', value: historyData.before},
+        {labelKey: 'logs.open-history-details.after', value: historyData.after},
     ];
 
     return (

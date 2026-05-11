@@ -5,10 +5,10 @@ import {KitTable} from 'aristid-ds';
 import {type ComponentProps} from 'react';
 import {HistoryCell} from './cell/HistoryCell';
 import {CopyCell} from './cell/CopyCell';
-import {type HistoryData} from '../get-history-data/useGetHistoryData';
 import {useTranslation} from 'react-i18next';
 import {useTableScrollableHeight} from '../../../utils/useTableScrollableHeight';
 import {historyTableContainer} from './historyTable.module.css';
+import {type HistoryData} from '../../types';
 
 type HistoryTableProps = {
     data: HistoryData[];
@@ -63,7 +63,7 @@ export const HistoryTable = ({
             render: (entity: string) => <HistoryCell value={entity} />,
         },
         {
-            title: t('logs.table.column.details'),
+            title: t('logs.table.column.open-history-details'),
             dataIndex: 'details',
             key: 'details',
             render: (details: string) => <HistoryCell value={details} />,

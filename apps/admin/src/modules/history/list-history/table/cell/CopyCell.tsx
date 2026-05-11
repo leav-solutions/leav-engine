@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitSpace} from 'aristid-ds';
 import {copyCellIcon} from './copyCell.module.css';
-import {CopyButton} from '../../copy-button/CopyButton';
+import {CopyButton} from '../../../../ui/button/CopyButton';
 
 type CopyCellProps = {
     cellName: string;
