@@ -1,26 +1,15 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {AttributeFormat, type RecordFilterCondition, type SortOrder} from '_ui/_gqlTypes';
-import {type DefaultViewSettings, type Entrypoint, type IUserView, type MassSelection} from '../../_types';
-import {hasOnlyNoValueConditions, nullValueConditions} from '../../conditionsHelper';
-import {AttributeConditionFilter, ThroughConditionFilter} from '_ui/types';
+import {type SortOrder} from '_ui/_gqlTypes';
+import {
+    type DefaultViewSettings,
+    type Entrypoint,
+    type IUserView,
+    type MassSelection,
+    type SerializedView,
+} from '../../_types';
 import {DefaultViewId} from './viewSettingsInitialState';
-import {isLinkAttribute} from '_ui/_utils/attributeType';
-import {
-    conditionsByFormat,
-    getFirstConditionByFilterType,
-} from '_ui/components/Filters/filter-items/filter-type/useConditionOptionsByType';
-import {
-    isUIFilterLink,
-    isUIFilterStandard,
-    isUIFilterThrough,
-    isUIFilterTree,
-    isUIFilterValueList,
-    type IUIFilterStandard,
-    type IUIFilterTree,
-    type UIFilter,
-} from '_ui/components/Filters';
 
 export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 
@@ -38,17 +27,13 @@ export const ViewSettingsActionTypes = {
     CHANGE_PAGE_SIZE: 'CHANGE_PAGE_SIZE',
     CHANGE_FULLTEXT_SEARCH: 'CHANGE_FULLTEXT_SEARCH',
     CLEAR_FULLTEXT_SEARCH: 'CLEAR_FULLTEXT_SEARCH',
-    ADD_FILTER: 'ADD_FILTER',
-    RESET_FILTER: 'RESET_FILTER',
-    REMOVE_FILTER: 'REMOVE_FILTER',
-    MOVE_FILTER: 'MOVE_FILTER',
-    CHANGE_FILTER_CONFIG: 'CHANGE_FILTER_CONFIG',
     SET_SELECTED_KEYS: 'SET_SELECTED_KEYS',
     RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS',
     UPDATE_VIEWS: 'UPDATE_VIEWS',
     RENAME_VIEW: 'RENAME_VIEW',
     DELETE_VIEW: 'DELETE_VIEW',
     LOAD_VIEW: 'LOAD_VIEW',
+    APPLY_SERIALIZED_VIEW: 'APPLY_SERIALIZED_VIEW',
 } as const;
 
 export interface IViewSettingsState {
@@ -136,34 +121,6 @@ interface IViewSettingsActionClearFulltextSearch {
     type: typeof ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH;
 }
 
-interface IViewSettingsActionAddFilter {
-    type: typeof ViewSettingsActionTypes.ADD_FILTER;
-    payload: Omit<UIFilter, 'id' | 'value' | 'condition'>;
-}
-
-interface IViewSettingsActionResetFilter {
-    type: typeof ViewSettingsActionTypes.RESET_FILTER;
-    payload: Pick<UIFilter, 'id'>;
-}
-
-interface IViewSettingsActionRemoveFilter {
-    type: typeof ViewSettingsActionTypes.REMOVE_FILTER;
-    payload: Pick<UIFilter, 'id'>;
-}
-
-interface IViewSettingsActionChangeFilterConfig {
-    type: typeof ViewSettingsActionTypes.CHANGE_FILTER_CONFIG;
-    payload: UIFilter | IUIFilterTree;
-}
-
-interface IViewSettingsActionMoveFilter {
-    type: typeof ViewSettingsActionTypes.MOVE_FILTER;
-    payload: {
-        indexFrom: number;
-        indexTo: number;
-    };
-}
-
 interface IViewSettingsActionReset {
     type: typeof ViewSettingsActionTypes.RESET;
     payload: IViewSettingsState;
@@ -206,6 +163,11 @@ export type IViewSettingsActionLoadViewPayload = Pick<
 interface IViewSettingsActionLoadView {
     type: typeof ViewSettingsActionTypes.LOAD_VIEW;
     payload: IViewSettingsActionLoadViewPayload;
+}
+
+interface IViewSettingsActionApplySerializedView {
+    type: typeof ViewSettingsActionTypes.APPLY_SERIALIZED_VIEW;
+    payload: Omit<SerializedView, 'filters' | 'filtersOperator'>;
 }
 
 type Reducer<
@@ -357,6 +319,12 @@ const deleteView: Reducer<IViewSettingsActionDeleteView> = (state, payload) => {
     };
 };
 
+const applySerializedView: Reducer<IViewSettingsActionApplySerializedView> = (state, payload) => ({
+    ...state,
+    ...payload,
+    viewModified: true,
+});
+
 const loadView: Reducer<IViewSettingsActionLoadView> = (state, payload) => ({
     ...state,
     ...payload,
@@ -382,18 +350,14 @@ export type IViewSettingsAction =
     | IViewSettingsActionChangePageSize
     | IViewSettingsActionChangeFulltextSearch
     | IViewSettingsActionClearFulltextSearch
-    | IViewSettingsActionAddFilter
-    | IViewSettingsActionResetFilter
-    | IViewSettingsActionRemoveFilter
-    | IViewSettingsActionChangeFilterConfig
-    | IViewSettingsActionMoveFilter
     | IViewSettingsActionReset
     | IViewSettingsActionSetSelectedKeys
     | IViewSettingsActionRestoreInitialViewSettings
     | IViewSettingsActionUpdateViewListAndCurrentView
     | IViewSettingsActionRenameView
     | IViewSettingsActionDeleteView
-    | IViewSettingsActionLoadView;
+    | IViewSettingsActionLoadView
+    | IViewSettingsActionApplySerializedView;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -433,21 +397,6 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         case ViewSettingsActionTypes.CLEAR_FULLTEXT_SEARCH: {
             return clearFulltextSearch(state);
         }
-        /*case ViewSettingsActionTypes.ADD_FILTER: {
-            return addFilter(state, action.payload);
-        }
-        case ViewSettingsActionTypes.RESET_FILTER: {
-            return resetFilter(state, action.payload);
-        }
-        case ViewSettingsActionTypes.REMOVE_FILTER: {
-            return removeFilter(state, action.payload);
-        }
-        case ViewSettingsActionTypes.CHANGE_FILTER_CONFIG: {
-            return changeFilterConfig(state, action.payload);
-        }
-        case ViewSettingsActionTypes.MOVE_FILTER: {
-            return moveFilter(state, action.payload);
-        }*/
         case ViewSettingsActionTypes.RESET: {
             return reset(state, action.payload);
         }
@@ -468,6 +417,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.LOAD_VIEW: {
             return loadView(state, action.payload);
+        }
+        case ViewSettingsActionTypes.APPLY_SERIALIZED_VIEW: {
+            return applySerializedView(state, action.payload);
         }
         default:
             return state;

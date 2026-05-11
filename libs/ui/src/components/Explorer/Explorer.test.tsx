@@ -526,6 +526,26 @@ describe('Explorer', () => {
         },
     };
 
+    const mockGetLibraryByIdQueryResult: Mockify<typeof gqlTypes.useGetLibraryByIdQuery> = {
+        loading: false,
+        called: true,
+        data: {
+            libraries: {
+                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.standard}],
+            },
+        },
+    };
+
+    const mockMassEditableAttributesQueryResult: Mockify<typeof gqlTypes.useMassEditableAttributesQuery> = {
+        loading: false,
+        called: true,
+        data: {
+            attributes: {
+                list: [],
+            },
+        },
+    };
+
     const mockExplorerAttributesQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
         loading: false,
         called: true,
@@ -834,6 +854,14 @@ describe('Explorer', () => {
         );
 
         jest.spyOn(gqlTypes, 'useMeQuery').mockReturnValue(mockMeResult as gqlTypes.MeQueryResult);
+
+        jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockReturnValue(
+            mockGetLibraryByIdQueryResult as gqlTypes.GetLibraryByIdQueryResult,
+        );
+
+        jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue(
+            mockMassEditableAttributesQueryResult as gqlTypes.MassEditableAttributesQueryResult,
+        );
 
         // TODO: useless except for remove logs warning `No more mocked`
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
@@ -3704,6 +3732,78 @@ describe('Explorer', () => {
                     variables: expect.objectContaining(expectedFiltersWithValuesList),
                 }),
             );
+        });
+    });
+
+    describe('onFiltersChange callback', () => {
+        const initialFilter = {
+            id: 'filter-1',
+            attribute: {
+                id: simpleMockAttribute.id,
+                format: simpleMockAttribute.format,
+                label: simpleMockAttribute.label.fr,
+                type: simpleMockAttribute.type,
+            },
+            field: simpleMockAttribute.id,
+            condition: gqlTypes.RecordFilterCondition.CONTAINS,
+            value: 'test',
+        };
+
+        const mockAttributeDetails = {
+            attributeDetailsById: {
+                [simpleMockAttribute.id]: {
+                    id: simpleMockAttribute.id,
+                    type: simpleMockAttribute.type,
+                    format: simpleMockAttribute.format,
+                    label: simpleMockAttribute.label.fr,
+                },
+            },
+            isLoading: false,
+            onSearchChanged: jest.fn(),
+            searchFilteredColumnsIds: [simpleMockAttribute.id],
+        };
+
+        test('is not called on initial render', () => {
+            const onFiltersChange = jest.fn();
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                        defaultMassActions={[]}
+                        defaultCallbacks={{viewConfig: {onFiltersChange}}}
+                    />
+                </Explorer.EditSettingsContextProvider>,
+            );
+
+            expect(onFiltersChange).not.toHaveBeenCalled();
+        });
+
+        test('is called with current filters when a filter is removed from the toolbar', async () => {
+            const onFiltersChange = jest.fn();
+
+            jest.spyOn(attributeDetailsModule, 'useAttributeDetailsData').mockReturnValue(mockAttributeDetails as any);
+
+            render(
+                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                    <Explorer
+                        entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                        showFilters
+                        defaultMassActions={[]}
+                        defaultViewSettings={{filters: [initialFilter], enableConfigureView: true}}
+                        defaultCallbacks={{viewConfig: {onFiltersChange}}}
+                    />
+                </Explorer.EditSettingsContextProvider>,
+            );
+
+            await user.click(screen.getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)}));
+            await user.click(await screen.findByRole('button', {name: /global\.delete/}));
+
+            await waitFor(() => {
+                expect(onFiltersChange).toHaveBeenCalledWith(
+                    expect.objectContaining({filters: [], filtersOperator: 'AND'}),
+                );
+            });
         });
     });
 });

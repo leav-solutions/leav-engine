@@ -23,7 +23,7 @@ import {
 } from '@dnd-kit/core';
 import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy} from '@dnd-kit/sortable';
 import {useAttributeDetailsData} from '../_shared/useAttributeDetailsData';
-import {ViewSettingsActionTypes} from '../store-view-settings/viewSettingsReducer';
+import {FiltersActionTypes} from '_ui/components/Filters/context/filtersReducer';
 import {FilterListItem} from './FilterListItem';
 import {CommonFilterItem} from '_ui/components/Filters/filter-items/CommonFilterItem';
 import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
@@ -80,7 +80,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
 
     const addFilter = (attributeId: string) => () => {
         dispatch({
-            type: ViewSettingsActionTypes.ADD_FILTER,
+            type: FiltersActionTypes.ADD_FILTER,
             payload: {
                 field: attributeId,
                 attribute: {
@@ -106,7 +106,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
 
     const removeFilter = (filterId: string) => () => {
         dispatch({
-            type: ViewSettingsActionTypes.REMOVE_FILTER,
+            type: FiltersActionTypes.REMOVE_FILTER,
             payload: {
                 id: filterId,
             },
@@ -124,7 +124,7 @@ export const FilterItems: FunctionComponent<{libraryId: string}> = ({libraryId})
             return;
         }
 
-        dispatch({type: ViewSettingsActionTypes.MOVE_FILTER, payload: {indexFrom, indexTo}});
+        dispatch({type: FiltersActionTypes.MOVE_FILTER, payload: {indexFrom, indexTo}});
     };
 
     const activeFilters = filters.filter(({attribute}) => searchFilteredColumnsIds.includes(attribute.id));

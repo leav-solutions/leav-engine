@@ -18,6 +18,7 @@ import {
 } from '_ui/hooks/useIFrameMessenger/schema';
 import {type AnyPrimitive} from '@leav/utils';
 import {type IRecordIdentity, type ITreeNodeWithRecord} from '_ui/types';
+import {type SerializedView} from '_ui/components/Explorer/_types';
 
 export const packetId = '__fromIframeMessenger';
 
@@ -34,6 +35,7 @@ export type ComponentPropsWithKey<T extends keyof JSX.IntrinsicElements | JSXEle
 
 export interface IMessageBase {
     __frameId?: string;
+    __targetPanelId?: string;
 }
 
 export type ModalConfirmMessage = IMessageBase & {
@@ -187,6 +189,21 @@ export type GetPanelConfigMessage = IMessageBase & {
     overrides?: string[];
 };
 
+export type ExplorerViewChangedMessage = IMessageBase & {
+    type: 'explorer-view-changed';
+    data: {
+        serializedView: SerializedView;
+    };
+};
+
+export type ViewConfigUpdateMessage = IMessageBase & {
+    type: 'view-config-update';
+    data: {
+        targetPanelId: string;
+        serializedView: SerializedView;
+    };
+};
+
 export type MessageToParent =
     | ModalConfirmMessage
     | AlertMessage
@@ -201,7 +218,8 @@ export type MessageToParent =
     | OpenFlapPanelMessage
     | CloseFlapPanelMessage
     | GetUrlMessage
-    | GetPanelConfigMessage;
+    | GetPanelConfigMessage
+    | ExplorerViewChangedMessage;
 
 export type MessageFromParent =
     | (IMessageBase & {
@@ -210,7 +228,8 @@ export type MessageFromParent =
           data: unknown;
       })
     | IsRegisteredMessage
-    | ChangeLanguageMessage;
+    | ChangeLanguageMessage
+    | ViewConfigUpdateMessage;
 
 export type Message = MessageToParent | MessageFromParent;
 
@@ -230,6 +249,11 @@ export type RegisterHandlers = (
     iframeRef: RefObject<HTMLIFrameElement>,
     handlers: IUseIFrameMessengerOptions['handlers'],
 ) => UnregisterHandlers;
+export type RegisterNativePanelHandlers = (
+    panelId: string,
+    handlers: IUseIFrameMessengerOptions['handlers'],
+) => UnregisterHandlers;
+export type DispatchToNativePanel = (panelId: string, message: Message) => void;
 
 export interface IUseIFrameMessengerOptions {
     ref?: RefObject<HTMLIFrameElement>;
@@ -269,5 +293,7 @@ export interface IUseIFrameMessengerOptions {
             callCb: CallCbFunction,
         ) => void;
         onCloseFlapPanel?: () => void;
+        onExplorerViewChanged?: (data: ExplorerViewChangedMessage['data']) => void;
+        onViewConfigUpdate?: (data: ViewConfigUpdateMessage['data']) => void;
     };
 }

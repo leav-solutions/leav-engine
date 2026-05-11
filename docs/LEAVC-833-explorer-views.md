@@ -116,30 +116,60 @@ indifféremment pour des panneaux natifs React et des iframes. App-studio sert d
 Ce choix est structurant : quand les sous-panneaux Planning/Cadrage (iframes) arriveront, le
 protocole de communication n'aura pas à changer.
 
-**Nouveaux types de messages à ajouter dans `libs/ui/src/hooks/useIFrameMessenger/types.ts` :**
+**Modifications dans `libs/ui/src/hooks/useIFrameMessenger/` :**
 
 `SerializedView` est défini dans `libs/ui/src/components/Explorer/_types.ts` (alias de
 `DefaultViewSettings`).
 
+**`types.ts`** — nouveaux types de messages, handlers et types de registre :
+
 ```ts
+// __targetPanelId ajouté à IMessageBase pour le routage same-window
+export interface IMessageBase {
+    __frameId?: string;
+    __targetPanelId?: string;
+}
+
 export type ViewConfigUpdateMessage = IMessageBase & {
     type: 'view-config-update';
-    data: {
-        targetPanelId: string;
-        serializedView: SerializedView;
-    };
+    data: { targetPanelId: string; serializedView: SerializedView };
 };
 
 export type ExplorerViewChangedMessage = IMessageBase & {
     type: 'explorer-view-changed';
-    data: {
-        serializedView: SerializedView;
-    };
+    data: { serializedView: SerializedView };
 };
+
+// Dans IUseIFrameMessengerOptions.handlers :
+onExplorerViewChanged?: (data: ExplorerViewChangedMessage['data']) => void;
+onViewConfigUpdate?: (data: ViewConfigUpdateMessage['data']) => void;
+
+// Types de registre
+export type RegisterNativePanelHandlers = (panelId: string, handlers) => UnregisterHandlers;
+export type DispatchToNativePanel = (panelId: string, message: Message) => void;
 ```
 
-À ajouter à `MessageToParent` et `MessageFromParent` selon le sens, et aux handlers dans
-`IUseIFrameMessengerOptions`.
+`ExplorerViewChangedMessage` → union `MessageToParent` ; `ViewConfigUpdateMessage` → union
+`MessageFromParent`.
+
+**`useIFrameMessengerContext.tsx`** — second registre dans `IFrameMessengerProvider` :
+
+```ts
+const nativePanelHandlersMap = useRef(new Map<string, handlers>());
+```
+
+Dans `onMessageReceived` : si `senderWindow === window`, route par `message.__targetPanelId`
+vers `nativePanelHandlersMap`. Expose `registerNativePanelHandlers` et `dispatchToNativePanel`
+(via `window.postMessage` same-window) dans le contexte.
+
+**`useNativePanelMessengerHandlers.ts`** (nouveau) — symétrique de `useIFrameMessengerHandlers`
+pour les panels React natifs :
+
+```ts
+useNativePanelMessengerHandlers(panelId: string, handlers) → { dispatch }
+```
+
+Enregistre les handlers au montage, nettoyage à l'unmount. Retourne `dispatch(targetPanelId, message)`.
 
 **Principe fondamental : l'Explorer ne connaît pas app-studio.**
 Il expose des callbacks génériques. C'est app-studio qui les branche sur le dispatcher du
@@ -152,9 +182,11 @@ messenger. Le composant Explorer doit rester utilisable hors de ce système de p
 Depuis la barre de l'Explorer, l'utilisateur peut modifier uniquement les **filtres** — pas les
 tris (les tris ne sont modifiables que depuis le panneau viewConfig).
 
-L'Explorer expose un callback générique pour notifier d'un changement de filtres :
+L'Explorer expose un callback générique pour notifier d'un changement de filtres, dans
+`defaultCallbacks.viewConfig` :
 
--   `onFiltersChange?: (filters: ...) => void`
+-   `defaultCallbacks.viewConfig.onFiltersChange?: (payload: FiltersChangePayload) => void`
+    avec `FiltersChangePayload = { filters: UIFilter[]; filtersOperator: 'AND' | 'OR' }`
 
 App-studio branche ce callback sur le dispatcher `explorer-view-changed`. `PanelViewConfig`
 reçoit la notification via le messenger.
@@ -164,7 +196,7 @@ reçoit la notification via le messenger.
 message et met à jour une prop de l'Explorer (ex. `currentView`) pour lui appliquer la vue.
 
 **Raccourcis vers un onglet du panneau :**
-L'Explorer expose un callback `onRequestOpenViewConfigTab?: (tab: 'display' | 'filters' | 'sorts' | 'views') => void`
+L'Explorer expose un callback `defaultCallbacks.viewConfig.onViewConfigTabClick?: (tab: ViewConfigTab) => void`
 pour les boutons de raccourci dans sa barre (ex. clic sur l'icône filtre → ouvre directement
 l'onglet Filtres du panneau viewConfig). App-studio branche ce callback sur la navigation vers
 le panneau slider avec le bon onglet actif. L'Explorer ne sait pas ce qui se passe derrière.
@@ -273,16 +305,21 @@ Qui remplace l'état courant sans round-trip backend et positionne `viewModified
 // Prop contrôlée — quand elle change, l'Explorer dispatche APPLY_SERIALIZED_VIEW
 currentView?: SerializedView;
 
-// Notifie l'extérieur d'un changement de filtres depuis la barre de l'Explorer
-onFiltersChange?: (view: SerializedView) => void;
-
-// Raccourci vers un onglet du panneau viewConfig
-onRequestOpenViewConfigTab?: (tab: 'display' | 'filters' | 'sorts' | 'catalogue') => void;
+// Dans defaultCallbacks.viewConfig :
+defaultCallbacks?: {
+    viewConfig?: {
+        // Notifie l'extérieur d'un changement de filtres depuis la barre de l'Explorer
+        onFiltersChange?: (payload: FiltersChangePayload) => void;
+        // Raccourci vers un onglet du panneau viewConfig
+        onViewConfigTabClick?: (tab: ViewConfigTab) => void;
+    };
+};
 ```
 
-App-studio branche `onFiltersChange` sur le dispatcher `explorer-view-changed`,
-`onRequestOpenViewConfigTab` sur la navigation vers le slider au bon onglet, et met à jour
-`currentView` quand un `view-config-update` arrive via le messenger.
+App-studio branche `defaultCallbacks.viewConfig.onFiltersChange` sur le dispatcher
+`explorer-view-changed`, `defaultCallbacks.viewConfig.onViewConfigTabClick` sur la navigation
+vers le slider au bon onglet, et met à jour `currentView` quand un `view-config-update` arrive
+via le messenger.
 
 ---
 
