@@ -15,7 +15,7 @@
     },
     "dependencies": {
         "@playwright/test": "1.59.1",
-        "graphql": "16.13.2",
+        "graphql": "16.14.0",
         "graphql-request": "7.4.0",
         "graphql-tag": "2.12.6"
     },

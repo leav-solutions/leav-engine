@@ -23,7 +23,7 @@
         "aristid-ds": "15.3.1-3917c51",
         "classnames": "2.5.1",
         "dayjs": "1.11.20",
-        "graphql": "16.13.2",
+        "graphql": "16.14.0",
         "graphql-ws": "5.16.2",
         "i18next": "22.5.1",
         "i18next-browser-languagedetector": "7.2.2",
