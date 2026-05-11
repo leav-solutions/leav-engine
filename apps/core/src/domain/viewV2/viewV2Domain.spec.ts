@@ -42,11 +42,11 @@ describe('viewV2Domain', () => {
         updateViewV2: global.__mockPromise({...mockViewV2}),
         createViewV2: global.__mockPromise({...mockViewV2}),
         deleteViewV2: global.__mockPromise({...mockViewV2}),
-        getViewsV2: global.__mockPromise({list: [{...mockViewV2}]}),
+        getViewsOwnedOrSharedV2: global.__mockPromise({list: [{...mockViewV2}]}),
     } satisfies Mockify<IViewV2Repo>;
 
     const mockViewV2RepoNoView: Mockify<IViewV2Repo> = {
-        getViewsV2: global.__mockPromise({list: []}),
+        getViewsOwnedOrSharedV2: global.__mockPromise({list: []}),
     };
 
     const mockValidationHelper: Mockify<IValidateHelper> = {
@@ -80,7 +80,7 @@ describe('viewV2Domain', () => {
             expect(newView).toMatchObject(mockViewV2);
         });
 
-        test('Should default optional list fields to [] when omitted', async () => {
+        test('Should set default optional list fields to [] when omitted', async () => {
             const domain = viewV2Domain({
                 ...depsBase,
                 'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
@@ -183,8 +183,8 @@ describe('viewV2Domain', () => {
 
             const views = await domain.getViewsV2('test_lib', mockCtx);
 
-            expect(mockViewV2Repo.getViewsV2).toBeCalled();
-            expect(mockViewV2Repo.getViewsV2.mock.calls[0][0].filters.created_by).toBe(mockCtx.userId);
+            expect(mockViewV2Repo.getViewsOwnedOrSharedV2).toBeCalled();
+            expect(mockViewV2Repo.getViewsOwnedOrSharedV2.mock.calls[0][0].filters.created_by).toBe(mockCtx.userId);
             expect(views.list[0]).toEqual(mockViewV2);
         });
 
@@ -196,7 +196,7 @@ describe('viewV2Domain', () => {
             });
 
             await expect(domain.getViewsV2('bad_lib', mockCtx)).rejects.toThrow(ValidationError);
-            expect(mockViewV2Repo.getViewsV2).not.toBeCalled();
+            expect(mockViewV2Repo.getViewsOwnedOrSharedV2).not.toBeCalled();
         });
     });
 
@@ -209,8 +209,8 @@ describe('viewV2Domain', () => {
 
             const view = await domain.getViewV2ById('123456', mockCtx);
 
-            expect(mockViewV2Repo.getViewsV2).toBeCalled();
-            expect(mockViewV2Repo.getViewsV2.mock.calls[0][0].filters.id).toBe('123456');
+            expect(mockViewV2Repo.getViewsOwnedOrSharedV2).toBeCalled();
+            expect(mockViewV2Repo.getViewsOwnedOrSharedV2.mock.calls[0][0].filters.id).toBe('123456');
             expect(view).toEqual(mockViewV2);
         });
 
@@ -221,7 +221,7 @@ describe('viewV2Domain', () => {
             });
 
             await expect(domain.getViewV2ById('bad_view', mockCtx)).rejects.toThrow(ValidationError);
-            expect(mockViewV2RepoNoView.getViewsV2).toBeCalled();
+            expect(mockViewV2RepoNoView.getViewsOwnedOrSharedV2).toBeCalled();
         });
     });
 

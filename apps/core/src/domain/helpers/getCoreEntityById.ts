@@ -66,7 +66,10 @@ export default function ({
                     });
                     break;
                 case 'viewV2':
-                    result = await viewV2Repo.getViewsV2({filters: {id: entityId}, strictFilters: true}, ctx);
+                    result = await viewV2Repo.getViewsOwnedOrSharedV2(
+                        {filters: {id: entityId}, strictFilters: true},
+                        ctx,
+                    );
                     break;
             }
 

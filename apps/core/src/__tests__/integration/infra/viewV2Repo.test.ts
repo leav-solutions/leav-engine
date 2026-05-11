@@ -89,7 +89,7 @@ describe('viewV2Repo', () => {
         });
     });
 
-    describe('getViewsV2', () => {
+    describe('getViewsOwnedOrSharedV2', () => {
         beforeEach(async () => {
             await viewV2Repo.createViewV2({...baseView, id: 'own_private', shared: false, created_by: '1'}, ctx);
             await viewV2Repo.createViewV2({...baseView, id: 'own_shared', shared: true, created_by: '1'}, ctx);
@@ -98,7 +98,7 @@ describe('viewV2Repo', () => {
         });
 
         it('should return only shared views and views owned by the requesting user', async () => {
-            const result = await viewV2Repo.getViewsV2(
+            const result = await viewV2Repo.getViewsOwnedOrSharedV2(
                 {filters: {created_by: '1', library: 'test_lib'}, withCount: true},
                 ctx,
             );
@@ -109,14 +109,20 @@ describe('viewV2Repo', () => {
         });
 
         it('should return a single view when filtered by id with strictFilters', async () => {
-            const result = await viewV2Repo.getViewsV2({filters: {id: 'own_private'}, strictFilters: true}, ctx);
+            const result = await viewV2Repo.getViewsOwnedOrSharedV2(
+                {filters: {id: 'own_private'}, strictFilters: true},
+                ctx,
+            );
 
             expect(result.list).toHaveLength(1);
             expect(result.list[0].id).toBe('own_private');
         });
 
         it('should return an empty list when filtering on a non-existing id', async () => {
-            const result = await viewV2Repo.getViewsV2({filters: {id: 'does_not_exist'}, strictFilters: true}, ctx);
+            const result = await viewV2Repo.getViewsOwnedOrSharedV2(
+                {filters: {id: 'does_not_exist'}, strictFilters: true},
+                ctx,
+            );
 
             expect(result.list).toHaveLength(0);
         });
@@ -129,7 +135,10 @@ describe('viewV2Repo', () => {
             const deleted = await viewV2Repo.deleteViewV2('to_delete', ctx);
             expect(deleted.id).toBe('to_delete');
 
-            const remaining = await viewV2Repo.getViewsV2({filters: {id: 'to_delete'}, strictFilters: true}, ctx);
+            const remaining = await viewV2Repo.getViewsOwnedOrSharedV2(
+                {filters: {id: 'to_delete'}, strictFilters: true},
+                ctx,
+            );
             expect(remaining.list).toHaveLength(0);
         });
     });

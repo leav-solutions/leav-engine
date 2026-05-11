@@ -67,6 +67,11 @@ describe('ViewsV2', () => {
         };
 
         describe('Private viewsV2', () => {
+            it('Should not be able to get viewsV2 owned by other users', async () => {
+                const id = await createViewAsAdmin(false);
+                await expect(guestUserSdk.GetViewV2({viewId: id})).rejects.toThrow(/VALIDATION_ERROR/);
+            });
+
             it('Should not be able to edit viewsV2 owned by other users', async () => {
                 const id = await createViewAsAdmin(false);
                 await expect(
@@ -81,6 +86,11 @@ describe('ViewsV2', () => {
         });
 
         describe('Shared viewsV2', () => {
+            it('Should be able to get viewsV2 owned by other users', async () => {
+                const id = await createViewAsAdmin(true);
+                await guestUserSdk.GetViewV2({viewId: id});
+            });
+
             it('Should not be able to edit shared viewsV2 owned by other users', async () => {
                 const id = await createViewAsAdmin(true);
                 await expect(

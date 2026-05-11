@@ -35,6 +35,12 @@ query GetViewsV2($library: ID!) {
     }
 }
 
+query GetViewV2($viewId: ID!) {
+    viewV2(viewId: $viewId) {
+        id
+    }
+}
+
 mutation UpdateViewV2($view: ViewV2UpdateInput!) {
     updateViewV2(view: $view) {
         id

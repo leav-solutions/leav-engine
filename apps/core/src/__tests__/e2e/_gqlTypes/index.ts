@@ -1511,6 +1511,13 @@ export type GetViewsV2QueryVariables = Exact<{
 
 export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, created_by: { whoAmI: { id: string } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, attributes?: Array<{ id: string }> | null }> } };
 
+export type GetViewV2QueryVariables = Exact<{
+  viewId: Scalars['ID']['input'];
+}>;
+
+
+export type GetViewV2Query = { viewV2: { id: string } };
+
 export type UpdateViewV2MutationVariables = Exact<{
   view: ViewV2UpdateInput;
 }>;
@@ -2030,6 +2037,13 @@ export const GetViewsV2Document = gql`
   }
 }
     `;
+export const GetViewV2Document = gql`
+    query GetViewV2($viewId: ID!) {
+  viewV2(viewId: $viewId) {
+    id
+  }
+}
+    `;
 export const UpdateViewV2Document = gql`
     mutation UpdateViewV2($view: ViewV2UpdateInput!) {
   updateViewV2(view: $view) {
@@ -2147,6 +2161,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetViewsV2(variables: GetViewsV2QueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetViewsV2Query> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetViewsV2Query>({ document: GetViewsV2Document, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetViewsV2', 'query', variables);
+    },
+    GetViewV2(variables: GetViewV2QueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetViewV2Query> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetViewV2Query>({ document: GetViewV2Document, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetViewV2', 'query', variables);
     },
     UpdateViewV2(variables: UpdateViewV2MutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<UpdateViewV2Mutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<UpdateViewV2Mutation>({ document: UpdateViewV2Document, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'UpdateViewV2', 'mutation', variables);

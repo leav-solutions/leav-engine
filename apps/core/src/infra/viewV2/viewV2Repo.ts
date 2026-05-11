@@ -35,7 +35,7 @@ export type IViewV2UpdateInRepo = {id: string; modified_at: number} & Partial<Om
 export interface IViewV2Repo {
     createViewV2(view: IViewV2CreateInRepo, ctx: IQueryInfos): Promise<IViewV2>;
     updateViewV2(view: IViewV2UpdateInRepo, ctx: IQueryInfos): Promise<IViewV2>;
-    getViewsV2(params: IGetViewV2Params, ctx: IQueryInfos): Promise<IList<IViewV2>>;
+    getViewsOwnedOrSharedV2(params: IGetViewV2Params, ctx: IQueryInfos): Promise<IList<IViewV2>>;
     deleteViewV2(viewId: string, ctx: IQueryInfos): Promise<IViewV2>;
 }
 
@@ -74,7 +74,7 @@ export default function ({
 
             return dbUtils.cleanup(updatedView[0]);
         },
-        async getViewsV2(params: IGetViewV2Params, ctx: IQueryInfos): Promise<IList<IViewV2>> {
+        async getViewsOwnedOrSharedV2(params: IGetViewV2Params, ctx: IQueryInfos): Promise<IList<IViewV2>> {
             const defaultParams: IGetViewV2Params = {
                 filters: null,
                 strictFilters: false,

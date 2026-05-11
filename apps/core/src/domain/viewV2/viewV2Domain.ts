@@ -90,22 +90,24 @@ export default function ({
             );
         },
         async updateViewV2(input: IViewV2UpdateInput, ctx: IQueryInfos): Promise<IViewV2> {
-            const existingView = await viewV2Repo.getViewsV2({filters: {id: input.id}, strictFilters: true}, ctx);
-
-            if (!existingView.list.length) {
-                throw new ValidationError({id: Errors.UNKNOWN_VIEW});
-            }
-
-            if (existingView.list[0].created_by !== ctx.userId) {
-                throw new ValidationError({id: Errors.USER_IS_NOT_VIEW_OWNER});
-            }
-
             if (input.library !== undefined) {
                 await validationHelper.validateLibrary(input.library, ctx);
             }
 
             if (input.valuesVersions) {
                 await _validateValuesVersions(input.valuesVersions, ctx);
+            }
+
+            const existingView = await viewV2Repo.getViewsOwnedOrSharedV2(
+                {filters: {id: input.id}, strictFilters: true},
+                ctx,
+            );
+            if (!existingView.list.length) {
+                throw new ValidationError({id: Errors.UNKNOWN_VIEW});
+            }
+
+            if (existingView.list[0].created_by !== ctx.userId) {
+                throw new ValidationError({id: Errors.USER_IS_NOT_VIEW_OWNER});
             }
 
             return viewV2Repo.updateViewV2(
@@ -124,11 +126,11 @@ export default function ({
                 created_by: ctx.userId,
             };
 
-            return viewV2Repo.getViewsV2({filters, withCount: true}, ctx);
+            return viewV2Repo.getViewsOwnedOrSharedV2({filters, withCount: true}, ctx);
         },
         async getViewV2ById(viewId: string, ctx: IQueryInfos): Promise<IViewV2> {
-            const views = await viewV2Repo.getViewsV2(
-                {filters: {id: viewId}, strictFilters: true, withCount: false},
+            const views = await viewV2Repo.getViewsOwnedOrSharedV2(
+                {filters: {id: viewId, created_by: ctx.userId}, strictFilters: true, withCount: false},
                 ctx,
             );
 
@@ -139,7 +141,10 @@ export default function ({
             return views.list[0];
         },
         async deleteViewV2(viewId: string, ctx: IQueryInfos): Promise<IViewV2> {
-            const existingView = await viewV2Repo.getViewsV2({filters: {id: viewId}, strictFilters: true}, ctx);
+            const existingView = await viewV2Repo.getViewsOwnedOrSharedV2(
+                {filters: {id: viewId}, strictFilters: true},
+                ctx,
+            );
 
             if (!existingView.list.length) {
                 throw new ValidationError({id: Errors.UNKNOWN_VIEW});
