@@ -8,8 +8,8 @@ import {
     historyDetailsHeaderFieldWrapper,
 } from './historyDetailsHeader.module.css';
 import {useTranslation} from 'react-i18next';
-import {type HistoryData} from '../../get-history-data/useGetHistoryData';
-import {CopyButton} from '../../copy-button/CopyButton';
+import {type HistoryData} from '../../types';
+import {CopyButton} from '../../../ui/button/CopyButton';
 
 type HistoryDetailsHeaderProps = {
     historyData: HistoryData;
@@ -19,13 +19,13 @@ export const HistoryDetailsHeader = ({historyData}: HistoryDetailsHeaderProps) =
     const {t} = useTranslation();
 
     const fields = [
-        {labelKey: 'logs.details.date', value: historyData.date},
-        {labelKey: 'logs.details.user', value: historyData.user},
-        {labelKey: 'logs.details.action', value: historyData.action},
-        {labelKey: 'logs.details.object', value: historyData.object},
-        {labelKey: 'logs.details.entity', value: historyData.entity},
-        {labelKey: 'logs.details.details', value: historyData.details},
-        {labelKey: 'logs.details.query_id', value: historyData.queryId, copyable: true},
+        {labelKey: 'logs.open-history-details.date', value: historyData.date},
+        {labelKey: 'logs.open-history-details.user', value: historyData.user},
+        {labelKey: 'logs.open-history-details.action', value: historyData.action},
+        {labelKey: 'logs.open-history-details.object', value: historyData.object},
+        {labelKey: 'logs.open-history-details.entity', value: historyData.entity},
+        {labelKey: 'logs.open-history-details.open-history-details', value: historyData.details},
+        {labelKey: 'logs.open-history-details.query_id', value: historyData.queryId, copyable: true},
     ];
 
     return (

@@ -18,8 +18,8 @@ import EditApplication from '../../components/applications/EditApplication';
 import VersionProfiles from '../../components/versionProfiles/VersionProfiles';
 import EditVersionProfile from '../../components/versionProfiles/EditVersionProfile';
 import Tasks from '../../components/tasks/Tasks';
-import {History} from '../history/History';
 import {NotFound} from '../not-found/NotFound';
+import {HistoryList} from '../pages/HistoryList';
 import {AutomationList} from '../pages/AutomationList';
 import {AutomationCreation} from '../pages/AutomationCreation';
 import {AutomationEdition} from '../pages/AutomationEdition';
@@ -97,7 +97,7 @@ export const adminRoutes: RouteObject[] = [
     },
     {
         path: AdminAbsolutePaths.logs,
-        element: <ProtectedRoute permissions={[PermissionsActions.admin_access_logs]} component={History} />,
+        element: <ProtectedRoute permissions={[PermissionsActions.admin_access_logs]} component={HistoryList} />,
     },
     {
         path: AdminAbsolutePaths.automation,

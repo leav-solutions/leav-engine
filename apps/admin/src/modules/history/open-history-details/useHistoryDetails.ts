@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {useState} from 'react';
-import {type HistoryData} from '../get-history-data/useGetHistoryData';
+import {type HistoryData} from '../types';
 
 export const useHistoryDetails = () => {
     const [selectedRecord, setSelectedRecord] = useState<HistoryData | null>(null);

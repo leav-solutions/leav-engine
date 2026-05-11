@@ -3,8 +3,8 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitTypography} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
-import {type HistoryData} from '../../get-history-data/useGetHistoryData';
-import {CopyButton} from '../../copy-button/CopyButton';
+import {type HistoryData} from '../../types';
+import {CopyButton} from '../../../ui/button/CopyButton';
 import {
     historyDetailsRawJsonContainer,
     historyDetailsRawJsonField,
@@ -26,10 +26,10 @@ export const HistoryDetailsRawJson = ({historyData}: HistoryDetailsRawJsonProps)
         <div className={historyDetailsRawJsonContainer}>
             <span className={historyDetailsRawJsonField}>
                 <KitTypography.Text size="fontSize5" weight="bold">
-                    {t('logs.details.json_full')}
+                    {t('logs.open-history-details.json_full')}
                 </KitTypography.Text>
                 <CopyButton
-                    title={t('logs.details.json_full')}
+                    title={t('logs.open-history-details.json_full')}
                     value={historyData.rawJson}
                     iconColor="var(--general-utilities-disabled)"
                 />

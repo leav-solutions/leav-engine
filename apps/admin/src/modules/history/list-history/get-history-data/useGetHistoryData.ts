@@ -6,20 +6,6 @@ import {mapLogsToHistoryData} from './mapLogsToHistoryData';
 import useLang from '../../../../hooks/useLang';
 import {DEFAULT_CURRENT_PAGE} from '../../../utils/usePagination';
 
-export type HistoryData = {
-    key: string;
-    date: string;
-    user: string;
-    action: string;
-    object: string;
-    entity: string;
-    details: string;
-    before: string;
-    after: string;
-    queryId: string;
-    rawJson: string;
-};
-
 export type HistoryPaginationParams = {
     currentPage: number;
     pageSize: number;

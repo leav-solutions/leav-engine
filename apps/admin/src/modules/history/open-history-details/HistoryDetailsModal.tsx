@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {KitDivider, KitModal} from 'aristid-ds';
-import {type HistoryData} from '../get-history-data/useGetHistoryData';
+import {type HistoryData} from '../types';
 import {useTranslation} from 'react-i18next';
 import {HistoryDetailsHeader} from './header/HistoryDetailsHeader';
 import {HistoryBeforeAfterComparator} from './before-after-comparator/HistoryBeforeAfterComparator';
@@ -28,7 +28,7 @@ export const HistoryDetailsModal = ({isOpen, historyData, onClose}: HistoryDetai
             height="80vh"
             isOpen
             close={onClose}
-            title={t('logs.details.title')}
+            title={t('logs.open-history-details.title')}
             appElement={document.getElementById('root')}
             destroyOnClose
             showCloseIcon

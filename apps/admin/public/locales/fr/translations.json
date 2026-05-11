@@ -543,7 +543,7 @@
                 "query_id": "Query ID"
             }
         },
-        "details": {
+        "open-history-details": {
             "title": "Détail de l’évènement",
             "date": "Date",
             "user": "Utilisateur",
