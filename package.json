@@ -67,7 +67,7 @@
         "react-error-overlay": "6.1.0",
         "@types/react": "^16",
         "@types/react-dom": "^16",
-        "semver": "7.7.4",
+        "semver": ">=7.8.0",
         "git-url-parse": "13",
         "glob-parent": ">=5.1.2",
         "node-fetch": "2.6.7",
