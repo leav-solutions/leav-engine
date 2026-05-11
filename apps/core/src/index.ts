@@ -4,11 +4,12 @@
 import {amqpService} from '@leav/message-broker';
 import {monitoringServer} from '@leav/monitoring-server';
 import fs from 'fs';
-import {type IConfig, CoreMode} from './_types/config';
+import {type IConfig, CORE_MODES_E2E_PLAYWRIGHT, CoreMode} from './_types/config';
 import {type IFilesManagerInterface} from './interface/filesManager';
 import {type IIndexationManagerInterface} from './interface/indexationManager';
 import {type IServer} from './interface/server';
 import {type ITasksManagerInterface} from './interface/tasksManager';
+import {type ICliInterface} from './interface/cli';
 import {getConfig, validateConfig} from './config';
 import {initDI} from './depsManager';
 import i18nextInit from './i18nextInit';
@@ -62,7 +63,10 @@ import {type ICorePluginsApp} from './app/core/pluginsApp';
         amqpService({
             config: {
                 ...conf.amqp,
-                ...(conf.coreMode === CoreMode.TASKS_MANAGER_WORKER && {prefetch: conf.tasksManager.workerPrefetch}),
+                ...(conf.coreModes.length === 1 &&
+                    conf.coreModes[0] === CoreMode.TASKS_MANAGER_WORKER && {
+                        prefetch: conf.tasksManager.workerPrefetch,
+                    }),
             },
         }),
         initRedis({config: conf}),
@@ -86,8 +90,7 @@ import {type ICorePluginsApp} from './app/core/pluginsApp';
     const indexationManager: IIndexationManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
     const logsCollector: ILogsCollectorInterface = coreContainer.cradle['core.interface.logsCollector'];
     const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
-    const dbUtils = coreContainer.cradle['core.infra.db.dbUtils'];
-    const cli = coreContainer.cradle['core.interface.cli'];
+    const cli: ICliInterface = coreContainer.cradle['core.interface.cli'];
     const utils: IUtils = coreContainer.cradle['core.utils'];
     const pluginsApp: ICorePluginsApp = coreContainer.cradle['core.app.core.plugins'];
 
@@ -111,57 +114,46 @@ import {type ICorePluginsApp} from './app/core/pluginsApp';
 
     await _createRequiredDirectories();
 
-    logger.info(`Starting core in mode ${conf.coreMode}`);
+    logger.info(`Starting core in mode ${conf.coreModes.length > 0 ? conf.coreModes.join(', ') : 'cli'}`);
 
     await initPlugins(conf.pluginsPath, pluginsContainer);
 
-    switch (conf.coreMode) {
-        case CoreMode.SERVER:
-            await pluginsApp.startPlugins();
-            await server.init();
-            await server.initConsumers();
-            await monitoringServerInstance.init();
-            break;
-        case CoreMode.MIGRATE:
-            // Run db migrations
-            await dbUtils.migrate(coreContainer);
-            // Make sure we always exit process. Sometimes we don't and we're stuck here forever
-            process.exit(0);
-        case CoreMode.FILES_MANAGER:
-            await filesManager.init();
-            await monitoringServerInstance.init();
-            break;
-        case CoreMode.INDEXATION_MANAGER:
-            await indexationManager.init();
-            await monitoringServerInstance.init();
-            break;
-        case CoreMode.TASKS_MANAGER_MASTER:
-            await tasksManager.initMaster();
-            await monitoringServerInstance.init();
-            break;
-        case CoreMode.TASKS_MANAGER_WORKER:
-            await tasksManager.initWorker();
-            await monitoringServerInstance.init();
-            break;
-        case CoreMode.LOGS_COLLECTOR:
-            await logsCollector.init();
-            await monitoringServerInstance.init();
-            break;
-        case CoreMode.E2E_PLAYWRIGHT:
-            await pluginsApp.startPlugins();
-            await server.init();
-            await server.initConsumers();
-            await indexationManager.init();
-            await tasksManager.initMaster();
-            await tasksManager.initWorker();
-            // no logsCollector.init() yet because not needed in e2e tests, need elasticsearch
-            // no filesManager.init(); yet because not needed in e2e tests
-            await monitoringServerInstance.init();
-            break;
-        case CoreMode.CLI:
-        default:
-            await cli.run();
+    const isCli = conf.coreModes.includes(CoreMode.CLI);
+    if (isCli) {
+        // Run CLI
+        await cli.run();
+        // Make sure we always exit process.
+        process.exit(0);
     }
+
+    const isE2ePlaywright = conf.coreModes.includes(CoreMode.E2E_PLAYWRIGHT);
+    const modesToStart = isE2ePlaywright ? CORE_MODES_E2E_PLAYWRIGHT : conf.coreModes;
+
+    for (const mode of modesToStart) {
+        switch (mode) {
+            case CoreMode.SERVER:
+                await pluginsApp.startPlugins();
+                await server.init();
+                await server.initConsumers();
+                break;
+            case CoreMode.FILES_MANAGER:
+                await filesManager.init();
+                break;
+            case CoreMode.INDEXATION_MANAGER:
+                await indexationManager.init();
+                break;
+            case CoreMode.TASKS_MANAGER_MASTER:
+                await tasksManager.initMaster();
+                break;
+            case CoreMode.TASKS_MANAGER_WORKER:
+                await tasksManager.initWorker();
+                break;
+            case CoreMode.LOGS_COLLECTOR:
+                await logsCollector.init();
+                break;
+        }
+    }
+    await monitoringServerInstance.init();
 })().catch(e => {
     logger.error(`Fatal error during initialization ${e.stack}`);
     process.exit(1);

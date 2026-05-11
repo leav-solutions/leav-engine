@@ -5,7 +5,9 @@ const {envToBool, envToNumber, envToStringArray} = require('@leav/config-manager
 
 module.exports = {
     instanceId: process.env.INSTANCE_ID || 'leav_engine',
-    coreMode: process.env.CORE_MODE || 'server',
+    coreModes:
+        // keep retro-compatibility with CORE_MODE env variable, but CORE_MODES is now the main way to set core modes and support multiple modes at the same time
+        process.env.CORE_MODE ? [process.env.CORE_MODE] : envToStringArray(process.env.CORE_MODES, ',', ['cli']),
     server: {
         host: process.env.SERVER_HOST || 'localhost',
         port: envToNumber(process.env.SERVER_PORT, 4001),
