@@ -78,7 +78,6 @@ export default function ({
                     label: input.label,
                     display: input.display,
                     shared: input.shared,
-                    color: input.color,
                     filters: input.filters ?? [],
                     sort: input.sort ?? [],
                     valuesVersions: input.valuesVersions,

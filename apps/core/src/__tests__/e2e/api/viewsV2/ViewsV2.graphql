@@ -18,7 +18,6 @@ query GetViewsV2($library: ID!) {
             created_at
             shared
             label
-            color
             filters {
                 field
                 value

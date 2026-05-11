@@ -24,7 +24,6 @@ describe('viewV2Domain', () => {
         label: {fr: 'My view'},
         display: {type: ViewV2Types.LIST},
         shared: true,
-        color: '#123456',
         filters: [{field: 'id', value: 'fake_id_filter'}],
         sort: [{field: 'id', order: 'asc'}],
         attributes: ['id', 'label'],
@@ -124,14 +123,14 @@ describe('viewV2Domain', () => {
                 'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
             });
 
-            const updated = await domain.updateViewV2({id: mockViewV2.id, color: '#000000'}, mockCtx);
+            const updated = await domain.updateViewV2({id: mockViewV2.id, shared: false}, mockCtx);
 
             expect(mockViewV2Repo.updateViewV2).toBeCalled();
             expect(mockViewV2Repo.createViewV2).not.toBeCalled();
 
             const passedToRepo = mockViewV2Repo.updateViewV2.mock.calls[0][0];
             expect(passedToRepo.id).toBe(mockViewV2.id);
-            expect(passedToRepo.color).toBe('#000000');
+            expect(passedToRepo.shared).toBe(false);
             expect(passedToRepo.modified_at).toBeDefined();
 
             expect(updated).toMatchObject(mockViewV2);
@@ -166,7 +165,7 @@ describe('viewV2Domain', () => {
                 'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
             });
 
-            await domain.updateViewV2({id: mockViewV2.id, color: '#FFFFFF'}, mockCtx);
+            await domain.updateViewV2({id: mockViewV2.id, shared: false}, mockCtx);
             expect(mockValidationHelper.validateLibrary).not.toBeCalled();
 
             await domain.updateViewV2({id: mockViewV2.id, library: 'other_lib'}, mockCtx);

@@ -20,7 +20,6 @@ describe('viewV2Repo', () => {
     const baseView: IViewV2CreateInRepo = {
         library: 'test_lib',
         label: {fr: 'My view'},
-        color: '#123456',
         display: {type: ViewV2Types.LIST},
         filters: [{field: 'id', value: 'fake_id_filter'}],
         sort: [{field: 'id', order: 'asc'}],
@@ -45,7 +44,6 @@ describe('viewV2Repo', () => {
 
             expect(created.id).toBe('created_view');
             expect(created.library).toBe('test_lib');
-            expect(created.color).toBe('#123456');
             expect(created.display).toEqual({type: ViewV2Types.LIST});
             expect(created.attributes).toEqual(['id', 'label']);
         });
@@ -60,24 +58,23 @@ describe('viewV2Repo', () => {
 
     describe('updateViewV2', () => {
         it('should update only the provided fields and leave the rest untouched', async () => {
-            const created = await viewV2Repo.createViewV2({...baseView, id: 'updated_view', color: '#000000'}, ctx);
+            const created = await viewV2Repo.createViewV2({...baseView, id: 'updated_view', shared: false}, ctx);
 
             const updated = await viewV2Repo.updateViewV2(
                 {
                     id: created.id,
-                    color: '#FFFFFF',
                     label: {fr: 'Updated label'},
+                    shared: true,
                     modified_at: 1234567999,
                 },
                 ctx,
             );
 
             expect(updated.id).toBe('updated_view');
-            expect(updated.color).toBe('#FFFFFF');
             expect(updated.label).toEqual({fr: 'Updated label'});
             expect(updated.modified_at).toBe(1234567999);
             expect(updated.library).toBe('test_lib');
-            expect(updated.shared).toBe(false);
+            expect(updated.shared).toBe(true);
         });
 
         it('should drop fields that are null in the update payload (keepNull: false)', async () => {
