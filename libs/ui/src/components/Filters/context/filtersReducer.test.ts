@@ -212,6 +212,43 @@ describe('ViewSettings Reducer', () => {
         });
     });
 
+    describe(`Action ${FiltersActionTypes.SET_FILTERS_AND_OPERATOR} test`, () => {
+        test('should replace filters and filtersOperator from payload', () => {
+            const newFilters = [
+                {
+                    id: 'id4',
+                    attribute: attributeDataStandard,
+                    field: 'first',
+                    condition: RecordFilterCondition.EQUAL,
+                    value: 'test',
+                },
+            ];
+
+            const state = filtersReducer(
+                {
+                    ...filtersInitialState,
+                    filtersOperator: 'AND',
+                    filters: [
+                        {
+                            id: 'id1',
+                            attribute: attributeDataStandard,
+                            field: 'first',
+                            condition: RecordFilterCondition.EQUAL,
+                            value: 'test',
+                        },
+                    ],
+                },
+                {
+                    type: FiltersActionTypes.SET_FILTERS_AND_OPERATOR,
+                    payload: {filters: newFilters, filtersOperator: 'OR'},
+                },
+            );
+
+            expect(state.filters).toEqual(newFilters);
+            expect(state.filtersOperator).toEqual('OR');
+        });
+    });
+
     describe(`Action ${FiltersActionTypes.RESET_FILTER} test`, () => {
         test('Reset to empty filter', () => {
             const state = filtersReducer(

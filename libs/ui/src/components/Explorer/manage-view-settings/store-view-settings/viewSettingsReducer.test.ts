@@ -9,7 +9,6 @@ import {
 } from './viewSettingsReducer';
 import {defaultPageSizeOptions, viewSettingsInitialState} from './viewSettingsInitialState';
 import {AttributeFormat, AttributeType, RecordFilterCondition, SortOrder, ViewTypes} from '_ui/_gqlTypes';
-import {ThroughConditionFilter} from '_ui/types';
 import {mapViewTypeFromLegacyToExplorer} from '../../_constants';
 
 const attributeDataStandard = {
@@ -17,18 +16,6 @@ const attributeDataStandard = {
     id: 'first',
     format: AttributeFormat.text,
     type: AttributeType.simple,
-};
-const attributeDataLink = {
-    label: 'first',
-    id: 'first',
-    linkedLibrary: {id: 'toto'},
-    type: AttributeType.simple_link,
-};
-const attributeDataThrough = {
-    label: 'first',
-    id: 'first',
-    linkedLibrary: {id: 'toto'},
-    type: AttributeType.simple_link,
 };
 
 describe('ViewSettings Reducer', () => {
@@ -502,6 +489,42 @@ describe('ViewSettings Reducer', () => {
 
         expect(state.savedViews.length).toEqual(0);
         expect(state.viewModified).toEqual(true);
+    });
+
+    describe(`Action ${ViewSettingsActionTypes.APPLY_SERIALIZED_VIEW}`, () => {
+        test('applies viewType and attributesIds from the serialized view', () => {
+            const state = viewSettingsReducer(
+                {...viewSettingsInitialState, viewModified: false},
+                {
+                    type: ViewSettingsActionTypes.APPLY_SERIALIZED_VIEW,
+                    payload: {
+                        viewType: 'mosaic' as ViewType,
+                        attributesIds: ['attr1', 'attr2'],
+                    },
+                },
+            );
+
+            expect(state.viewType).toEqual('mosaic');
+            expect(state.attributesIds).toEqual(['attr1', 'attr2']);
+            expect(state.viewModified).toEqual(true);
+        });
+
+        test('preserves existing state fields not included in the serialized view', () => {
+            const state = viewSettingsReducer(
+                {
+                    ...viewSettingsInitialState,
+                    sort: [{field: 'created_at', order: SortOrder.desc}],
+                    viewModified: false,
+                },
+                {
+                    type: ViewSettingsActionTypes.APPLY_SERIALIZED_VIEW,
+                    payload: {viewType: 'list' as ViewType},
+                },
+            );
+
+            expect(state.sort).toEqual([{field: 'created_at', order: SortOrder.desc}]);
+            expect(state.viewModified).toEqual(true);
+        });
     });
 
     test(`Action ${ViewSettingsActionTypes.LOAD_VIEW} test`, async () => {

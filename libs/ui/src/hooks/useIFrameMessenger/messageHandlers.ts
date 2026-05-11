@@ -8,6 +8,7 @@ import {
     type Callbacks,
     type CallCbFunction,
     type ClosePanelMessage,
+    type ExplorerViewChangedMessage,
     type IEncodedMessage,
     type IUseIFrameMessengerOptions,
     type GetUrlMessage,
@@ -23,6 +24,7 @@ import {
     type SimpleMessage,
     type OpenFlapPanelMessage,
     type GetPanelConfigMessage,
+    type ViewConfigUpdateMessage,
 } from './types';
 
 export const encodeMessage = (message: Message): string =>
@@ -168,6 +170,12 @@ export const initClientHandlers: (
                 ) as GetUrlMessage['data'],
             );
             break;
+        case 'explorer-view-changed':
+            options?.handlers?.onExplorerViewChanged?.(message.data as ExplorerViewChangedMessage['data']);
+            break;
+        case 'view-config-update':
+            options?.handlers?.onViewConfigUpdate?.(message.data as ViewConfigUpdateMessage['data']);
+            break;
         default:
             break;
     }
@@ -239,5 +247,8 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
         const id = Date.now().toString();
         const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
         dispatch?.({type: 'get-url', data: nextData as GetUrlMessage['data'], id, overrides});
+    },
+    explorerViewChanged: (data: ExplorerViewChangedMessage['data']) => {
+        dispatch?.({type: 'explorer-view-changed', data});
     },
 });

@@ -11,9 +11,11 @@ import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecor
 import {
     type DefaultViewSettings,
     type Entrypoint,
+    type FiltersChangePayload,
     type IItemAction,
     type IMassActions,
     type IPrimaryAction,
+    type ViewConfigTab,
 } from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
@@ -45,6 +47,7 @@ import {useExportMassAction} from './actions-mass/useExportMassAction';
 import {useEditAttributeMassAction} from './actions-mass/useEditAttributeMassAction';
 import {useExplorerCountData} from './_queries/useExplorerCountData';
 import {useGeneratePreviewsMassAction} from './actions-mass/useGeneratePreviewsMassAction';
+import {useNotifyFiltersChange} from './useNotifyFiltersChange';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -106,6 +109,10 @@ export interface IExplorerProps {
             deactivate?: IMassActions['callback'];
             export?: IMassActions['callback'];
             generatePreviews?: IMassActions['callback'];
+        };
+        viewConfig?: {
+            onFiltersChange?: (payload: FiltersChangePayload) => void;
+            onViewConfigTabClick?: (tab: ViewConfigTab) => void;
         };
     };
     showCreateOnNoResultOnly?: boolean;
@@ -186,6 +193,13 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             filtersOperator: defaultViewSettings?.filtersOperator ?? undefined,
             ignoreViewByDefault,
             skip: viewSettingsLoading,
+        });
+
+        useNotifyFiltersChange({
+            isLoading: viewSettingsLoading,
+            filters: filtersData.filters,
+            filtersOperator: filtersData.filtersOperator,
+            onFiltersChange: defaultCallbacks?.viewConfig?.onFiltersChange,
         });
 
         const {currentPage, setNewPageSize, setNewPage} = usePagination(viewSettingsDispatch);

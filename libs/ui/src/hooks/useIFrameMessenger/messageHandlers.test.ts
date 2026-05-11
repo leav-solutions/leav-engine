@@ -1,7 +1,7 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {decodeMessage, encodeMessage, getExposedMethods} from './messageHandlers';
+import {decodeMessage, encodeMessage, getExposedMethods, initClientHandlers} from './messageHandlers';
 import {type Message} from './types';
 
 describe('MessageHandlers', () => {
@@ -30,6 +30,7 @@ describe('MessageHandlers', () => {
                 closeFlapPanel: expect.any(Function),
                 getPanelConfig: expect.any(Function),
                 getUrl: expect.any(Function),
+                explorerViewChanged: expect.any(Function),
             });
         });
 
@@ -136,6 +137,58 @@ describe('MessageHandlers', () => {
             closePanel(data);
 
             expect(dispatchMock).toHaveBeenCalledWith({type: 'close-panel', data});
+        });
+
+        it('Should expose method explorerViewChanged which notifies parent of a view change', async () => {
+            const data: any = {serializedView: {viewType: 'table', attributesIds: ['attr1']}};
+
+            const {explorerViewChanged} = getExposedMethods({current: null}, dispatchMock);
+            explorerViewChanged(data);
+
+            expect(dispatchMock).toHaveBeenCalledWith({type: 'explorer-view-changed', data});
+        });
+    });
+
+    describe('initClientHandlers', () => {
+        const callCbMock = jest.fn();
+        const dispatchMock = jest.fn();
+        const callbacksStore = {current: {}};
+
+        beforeEach(() => {
+            callCbMock.mockClear();
+            dispatchMock.mockClear();
+        });
+
+        it('should call onExplorerViewChanged when receiving explorer-view-changed', () => {
+            const onExplorerViewChanged = jest.fn();
+            const handlers = initClientHandlers(callCbMock, {handlers: {onExplorerViewChanged}}, callbacksStore);
+
+            handlers(
+                {type: 'explorer-view-changed', data: {serializedView: {viewType: 'table', attributesIds: ['attr1']}}},
+                dispatchMock,
+            );
+
+            expect(onExplorerViewChanged).toHaveBeenCalledWith({
+                serializedView: {viewType: 'table', attributesIds: ['attr1']},
+            });
+        });
+
+        it('should call onViewConfigUpdate when receiving view-config-update', () => {
+            const onViewConfigUpdate = jest.fn();
+            const handlers = initClientHandlers(callCbMock, {handlers: {onViewConfigUpdate}}, callbacksStore);
+
+            handlers(
+                {
+                    type: 'view-config-update',
+                    data: {targetPanelId: 'explorer-panel-1', serializedView: {viewType: 'list'}},
+                },
+                dispatchMock,
+            );
+
+            expect(onViewConfigUpdate).toHaveBeenCalledWith({
+                targetPanelId: 'explorer-panel-1',
+                serializedView: {viewType: 'list'},
+            });
         });
     });
 

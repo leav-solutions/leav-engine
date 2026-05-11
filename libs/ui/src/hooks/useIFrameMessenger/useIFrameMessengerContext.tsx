@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type MutableRefObject, type ReactNode, type RefObject, useCallback, useMemo, useRef} from 'react';
 import {useIFrameMessenger} from './useIFrameMessenger';
-import {initClientHandlers} from './messageHandlers';
+import {encodeMessage, initClientHandlers} from './messageHandlers';
 import {
     type Callbacks,
     type CallCbFunction,
@@ -11,7 +11,7 @@ import {
     type MessageDispatcher,
     type IUseIFrameMessengerOptions,
     type RegisterHandlers,
-    type UnregisterHandlers,
+    type RegisterNativePanelHandlers,
 } from './types';
 import {IFrameMessengerContext} from './iFrameMessengerContext';
 
@@ -30,8 +30,12 @@ export const IFrameMessengerProvider = ({children}: {children: ReactNode}) => {
     // may not be available yet when the iframe mounts and registers its handlers.
     const handlersMap = useRef(new Map<RefObject<HTMLIFrameElement>, IUseIFrameMessengerOptions['handlers']>());
 
+    // Maps native React panel IDs to their handlers.
+    // Same-window postMessage is used as transport: __targetPanelId in the envelope routes to the right entry.
+    const nativePanelHandlersMap = useRef(new Map<string, IUseIFrameMessengerOptions['handlers']>());
+
     // Called by useIFrameMessenger for every non-system message.
-    // Finds the handlers registered for the sender iframe and dispatches the message to them.
+    // Finds the handlers registered for the sender and dispatches the message to them.
     const onMessageReceived = useCallback(
         (
             senderWindow: Window | null,
@@ -44,6 +48,22 @@ export const IFrameMessengerProvider = ({children}: {children: ReactNode}) => {
             // event.source is null when the sender iframe was unmounted before the message
             // was processed — the browser clears the reference on iframe removal.
             if (!senderWindow) {
+                return;
+            }
+
+            // Same-window message: dispatched via dispatchToNativePanel.
+            // Route to the native panel identified by __targetPanelId.
+            if (senderWindow === window) {
+                const targetPanelId = message.__targetPanelId;
+                if (!targetPanelId) {
+                    return;
+                }
+                const handlers = nativePanelHandlersMap.current.get(targetPanelId);
+                if (!handlers) {
+                    return;
+                }
+                const clientHandlers = initClientHandlers(callCb, {handlers}, callbacksStore);
+                clientHandlers(message, dispatch);
                 return;
             }
 
@@ -75,15 +95,22 @@ export const IFrameMessengerProvider = ({children}: {children: ReactNode}) => {
 
     const registerHandlers: RegisterHandlers = useCallback((iframeRef, handlers) => {
         handlersMap.current.set(iframeRef, handlers);
-
-        const cleanup = () => {
-            handlersMap.current.delete(iframeRef);
-        };
-
-        return cleanup;
+        return () => handlersMap.current.delete(iframeRef);
     }, []);
 
-    const contextValue = useMemo(() => ({registerHandlers, changeLangInAllFrames}), []);
+    const registerNativePanelHandlers: RegisterNativePanelHandlers = useCallback((panelId, handlers) => {
+        nativePanelHandlersMap.current.set(panelId, handlers);
+        return () => nativePanelHandlersMap.current.delete(panelId);
+    }, []);
+
+    const dispatchToNativePanel = useCallback((panelId: string, message: Message) => {
+        window.postMessage(encodeMessage({...message, __targetPanelId: panelId}), '*');
+    }, []);
+
+    const contextValue = useMemo(
+        () => ({registerHandlers, registerNativePanelHandlers, dispatchToNativePanel, changeLangInAllFrames}),
+        [],
+    );
 
     return <IFrameMessengerContext.Provider value={contextValue}>{children}</IFrameMessengerContext.Provider>;
 };

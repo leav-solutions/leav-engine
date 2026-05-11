@@ -27,6 +27,7 @@ export type ViewType = 'table' | 'list' | 'timeline' | 'mosaic';
 export const FiltersActionTypes = {
     ADD_FILTER: 'ADD_FILTER',
     SET_FILTERS: 'SET_FILTERS',
+    SET_FILTERS_AND_OPERATOR: 'SET_FILTERS_AND_OPERATOR',
     RESET_FILTER: 'RESET_FILTER',
     REMOVE_FILTER: 'REMOVE_FILTER',
     MOVE_FILTER: 'MOVE_FILTER',
@@ -55,6 +56,11 @@ interface IUIFiltersActionAddFilter {
 interface IUIFiltersActionSetFilters {
     type: typeof FiltersActionTypes.SET_FILTERS;
     payload: UIFilter[];
+}
+
+interface IUIFiltersActionSetFiltersAndOperator {
+    type: typeof FiltersActionTypes.SET_FILTERS_AND_OPERATOR;
+    payload: {filters: UIFilter[]; filtersOperator: FiltersOperator};
 }
 
 interface IIUIFiltersActionResetFilter {
@@ -111,6 +117,7 @@ type Reducer<
 export type UIFiltersAction =
     | IUIFiltersActionAddFilter
     | IUIFiltersActionSetFilters
+    | IUIFiltersActionSetFiltersAndOperator
     | IIUIFiltersActionResetFilter
     | IUIFiltersActionRemoveFilter
     | IUIFiltersActionChangeFilterConfig
@@ -177,14 +184,18 @@ const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
     return {
         ...state,
         filters: [...state.filters, filterToAdd],
-        viewModified: true,
     };
 };
 
 const setFilters: Reducer<IUIFiltersActionSetFilters> = (state, payload) => ({
     ...state,
     filters: payload,
-    viewModified: true,
+});
+
+const setFiltersAndOperator: Reducer<IUIFiltersActionSetFiltersAndOperator> = (state, payload) => ({
+    ...state,
+    filters: payload.filters,
+    filtersOperator: payload.filtersOperator,
 });
 
 const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => ({
@@ -252,7 +263,6 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
 const removeFilter: Reducer<IUIFiltersActionRemoveFilter> = (state, payload) => ({
     ...state,
     filters: state.filters.filter(({id}) => id !== payload.id),
-    viewModified: true,
 });
 
 const changeFilterConfig: Reducer<IUIFiltersActionChangeFilterConfig> = (state, payload) => ({
@@ -285,7 +295,6 @@ const changeFilterConfig: Reducer<IUIFiltersActionChangeFilterConfig> = (state, 
         }
         return {...filter, ...payload};
     }),
-    viewModified: true,
 });
 
 const moveFilter: Reducer<IUIFiltersActionMoveFilter> = (state, payload) => {
@@ -295,7 +304,6 @@ const moveFilter: Reducer<IUIFiltersActionMoveFilter> = (state, payload) => {
     return {
         ...state,
         filters: attributesUsedToFilter,
-        viewModified: true,
     };
 };
 
@@ -321,6 +329,9 @@ export const filtersReducer =
             }
             case FiltersActionTypes.SET_FILTERS: {
                 return setFilters(state, action.payload);
+            }
+            case FiltersActionTypes.SET_FILTERS_AND_OPERATOR: {
+                return setFiltersAndOperator(state, action.payload);
             }
             case FiltersActionTypes.RESET_FILTER: {
                 return resetFilter(state, action.payload);

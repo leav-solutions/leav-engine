@@ -75,6 +75,15 @@ export type DefaultViewSettings = Override<
     }
 >;
 
+export type SerializedView = DefaultViewSettings;
+
+export type ViewConfigTab = 'display' | 'filters' | 'sorts' | 'catalogue';
+
+export type FiltersChangePayload = {
+    filters: UIFilter[];
+    filtersOperator: 'AND' | 'OR';
+};
+
 export interface IEntrypointTree {
     type: 'tree';
     treeId: string;
