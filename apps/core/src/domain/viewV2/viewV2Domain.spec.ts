@@ -7,7 +7,7 @@ import ValidationError from '../../errors/ValidationError';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import viewV2Domain, {type IViewV2DomainDeps} from './viewV2Domain';
 import {type ToAny} from '../../utils/utils';
-import {type IViewV2CreateInput, ViewV2Types, ViewV2Sizes, type IViewV2} from '../../_types/viewsV2';
+import {type IViewV2CreateInput, ViewV2Types, type IViewV2} from '../../_types/viewsV2';
 
 const depsBase: ToAny<IViewV2DomainDeps> = {
     'core.domain.helpers.validate': vi.fn(),
@@ -22,7 +22,7 @@ describe('viewV2Domain', () => {
     const mockViewV2CreateInput: IViewV2CreateInput = {
         library: 'test_lib',
         label: {fr: 'My view'},
-        display: {type: ViewV2Types.LIST, size: ViewV2Sizes.MEDIUM},
+        display: {type: ViewV2Types.LIST},
         shared: true,
         description: {fr: 'My test view'},
         color: '#123456',

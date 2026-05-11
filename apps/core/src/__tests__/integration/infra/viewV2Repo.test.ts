@@ -8,7 +8,7 @@ import {
     type IViewV2UpdateInRepo,
     VIEWS_V2_COLLECTION_NAME,
 } from '../../../infra/viewV2/viewV2Repo';
-import {ViewV2Sizes, ViewV2Types} from '../../../_types/viewsV2';
+import {ViewV2Types} from '../../../_types/viewsV2';
 import {clearAllCollectionDocuments, getViewV2Repo} from './integrationTestRepoUtils';
 
 describe('viewV2Repo', () => {
@@ -22,7 +22,7 @@ describe('viewV2Repo', () => {
         label: {fr: 'My view'},
         description: {fr: 'My test view'},
         color: '#123456',
-        display: {type: ViewV2Types.LIST, size: ViewV2Sizes.MEDIUM},
+        display: {type: ViewV2Types.LIST},
         filters: [{field: 'id', value: 'fake_id_filter'}],
         sort: [{field: 'id', order: 'asc'}],
         shared: false,
@@ -47,7 +47,7 @@ describe('viewV2Repo', () => {
             expect(created.id).toBe('created_view');
             expect(created.library).toBe('test_lib');
             expect(created.color).toBe('#123456');
-            expect(created.display).toEqual({type: ViewV2Types.LIST, size: ViewV2Sizes.MEDIUM});
+            expect(created.display).toEqual({type: ViewV2Types.LIST});
             expect(created.attributes).toEqual(['id', 'label']);
         });
 

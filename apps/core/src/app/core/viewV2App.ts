@@ -14,7 +14,6 @@ import {
     type IViewV2CreateInputFromGraphQL,
     type IViewV2UpdateInputFromGraphQL,
     type IViewV2ValuesVersionForGraphql,
-    ViewV2Sizes,
     ViewV2Types,
 } from '../../_types/viewsV2';
 import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
@@ -43,18 +42,12 @@ export default function ({
                         ${Object.values(ViewV2Types).join(' ')}
                     }
 
-                    enum ViewV2Sizes {
-                        ${Object.values(ViewV2Sizes).join(' ')}
-                    }
-
                     type ViewV2Display {
                         type: ViewV2Types!,
-                        size: ViewV2Sizes
                     }
 
                     input ViewV2DisplayInput {
                         type: ViewV2Types!,
-                        size: ViewV2Sizes
                     }
 
                     type ViewV2ValuesVersion {

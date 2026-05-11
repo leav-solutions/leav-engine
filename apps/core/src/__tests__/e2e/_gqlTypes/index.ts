@@ -1226,15 +1226,8 @@ export type ViewV2CreateInput = {
 };
 
 export type ViewV2DisplayInput = {
-  size?: InputMaybe<ViewV2Sizes>;
   type: ViewV2Types;
 };
-
-export enum ViewV2Sizes {
-  BIG = 'BIG',
-  MEDIUM = 'MEDIUM',
-  SMALL = 'SMALL'
-}
 
 export enum ViewV2Types {
   cards = 'cards',

@@ -9,16 +9,8 @@ export enum ViewV2Types {
     CARDS = 'cards',
     TIMELINE = 'timeline',
 }
-
-export enum ViewV2Sizes {
-    SMALL = 'SMALL',
-    MEDIUM = 'MEDIUM',
-    BIG = 'BIG',
-}
-
 export interface IViewV2Display {
     type: ViewV2Types;
-    size?: ViewV2Sizes;
 }
 
 export interface IViewV2ValuesVersion {
