@@ -24,7 +24,6 @@ describe('viewV2Domain', () => {
         label: {fr: 'My view'},
         display: {type: ViewV2Types.LIST},
         shared: true,
-        description: {fr: 'My test view'},
         color: '#123456',
         filters: [{field: 'id', value: 'fake_id_filter'}],
         sort: [{field: 'id', order: 'asc'}],

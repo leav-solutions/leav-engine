@@ -28,7 +28,6 @@ interface IViewV2UserFields {
     display: IViewV2Display;
     shared: boolean;
     attributes: string[];
-    description?: ISystemTranslation;
     color?: string;
     filters?: IRecordFilterLight[];
     sort?: IRecordSortLight[];

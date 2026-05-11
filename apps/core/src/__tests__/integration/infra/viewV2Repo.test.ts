@@ -20,7 +20,6 @@ describe('viewV2Repo', () => {
     const baseView: IViewV2CreateInRepo = {
         library: 'test_lib',
         label: {fr: 'My view'},
-        description: {fr: 'My test view'},
         color: '#123456',
         display: {type: ViewV2Types.LIST},
         filters: [{field: 'id', value: 'fake_id_filter'}],
@@ -85,11 +84,11 @@ describe('viewV2Repo', () => {
             await viewV2Repo.createViewV2({...baseView, id: 'view_drop_null'}, ctx);
 
             const updated = await viewV2Repo.updateViewV2(
-                {id: 'view_drop_null', modified_at: 1234567999, description: null} as unknown as IViewV2UpdateInRepo,
+                {id: 'view_drop_null', modified_at: 1234567999, filters: null} as IViewV2UpdateInRepo,
                 ctx,
             );
 
-            expect(updated.description).toBeUndefined();
+            expect(updated.filters).toBeUndefined();
         });
     });
 

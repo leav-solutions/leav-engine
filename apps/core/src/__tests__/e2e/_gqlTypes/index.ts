@@ -1215,7 +1215,6 @@ export type ViewV2CreateInput = {
   /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   display: ViewV2DisplayInput;
   filters?: InputMaybe<Array<RecordFilterInput>>;
   label: Scalars['SystemTranslation']['input'];
@@ -1512,7 +1511,7 @@ export type GetViewsV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, description?: any | null, color?: string | null, created_by: { whoAmI: { id: string } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, attributes?: Array<{ id: string }> | null }> } };
+export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, color?: string | null, created_by: { whoAmI: { id: string } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, attributes?: Array<{ id: string }> | null }> } };
 
 export type UpdateViewV2MutationVariables = Exact<{
   view: ViewV2UpdateInput;
@@ -2016,7 +2015,6 @@ export const GetViewsV2Document = gql`
       created_at
       shared
       label
-      description
       color
       filters {
         field
