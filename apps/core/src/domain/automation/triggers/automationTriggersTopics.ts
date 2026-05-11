@@ -2,6 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {z, type ZodType} from 'zod';
+import {type ZodMetaUISchema} from '../../../_types/jsonSchemaForm';
 import {type GetSystemQueryContext} from '../../../utils/helpers/getSystemQueryContext';
 import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IValidateHelper} from '../../helpers/validate';
@@ -24,16 +25,15 @@ export default function ({
     'core.domain.helpers.validate': validate,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
 }: IAutomationTriggersTopicsDeps): IAutomationTriggersTopics {
-    // TODO add translation if necessary for frontend display
     const systemCtx = getSystemQueryContext('automation-triggers-topics');
 
     const librarySchema = z
         .string()
-        .meta({id: 'library'})
         .check(async input => {
             try {
                 await validate.validateLibrary(input.value, systemCtx);
             } catch (err) {
+                // TODO add translation if necessary for frontend display
                 input.issues.push({
                     code: 'invalid_value',
                     values: [],
@@ -41,15 +41,22 @@ export default function ({
                     message: `Library with id "${input.value}" does not exist`,
                 });
             }
-        });
+        })
+        .meta({
+            id: 'library',
+            ui: {
+                title: 'automation.form.fields.event_topic_library',
+                placeholder: 'automation.form.fields.event_topic_library_placeholder',
+            },
+        } satisfies ZodMetaUISchema);
 
     const attributeSchema = z
         .string()
-        .meta({id: 'attribute'})
         .check(async input => {
             try {
                 await attributeDomain.getAttributeProperties({id: input.value, ctx: systemCtx});
             } catch (err) {
+                // TODO add translation if necessary for frontend display
                 input.issues.push({
                     code: 'invalid_value',
                     values: [],
@@ -57,7 +64,14 @@ export default function ({
                     message: `Attribute with id "${input.value}" does not exist`,
                 });
             }
-        });
+        })
+        .meta({
+            id: 'attribute',
+            ui: {
+                title: 'automation.form.fields.event_topic_attribute',
+                placeholder: 'automation.form.fields.event_topic_attribute_placeholder',
+            },
+        } satisfies ZodMetaUISchema);
 
     const libraryAndAttributeSchema = z
         .object({
@@ -68,6 +82,7 @@ export default function ({
             try {
                 await validate.validateLibraryAttribute(input.value.library, input.value.attribute, systemCtx);
             } catch (err) {
+                // TODO add translation if necessary for frontend display
                 input.issues.push({
                     code: 'invalid_value',
                     values: [],
