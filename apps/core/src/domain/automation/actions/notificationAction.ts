@@ -3,10 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {z} from 'zod';
 import {type IAutomationAction, AutomationRuleActions, ActionExecutionResultStatus} from './_types';
-import {type IJexlDomain} from '../../jexl/jexlDomain';
 import {type INotificationDomain} from '../../notification/notificationDomain';
 import {NotificationChannels} from '../../../_types/notification';
-import {type BuildAutomationJexlContext} from '../pipeline/buildAutomationJexlContext';
+import {type IJexlAutomation} from '../jexl/jexlAutomation';
 
 const notificationActionParamsSchema = z.object({
     title: z.string().meta({
@@ -33,26 +32,30 @@ const notificationActionParamsSchema = z.object({
 export type NotificationActionParams = z.infer<typeof notificationActionParamsSchema>;
 
 interface INotificationActionDeps {
-    'core.domain.jexl': IJexlDomain;
+    'core.domain.automation.jexl': IJexlAutomation;
     'core.domain.notification': INotificationDomain;
-    'core.domain.automation.pipeline.buildAutomationJexlContext': BuildAutomationJexlContext;
 }
 
 export default function ({
-    'core.domain.jexl': jexl,
+    'core.domain.automation.jexl': jexlAutomation,
     'core.domain.notification': notification,
-    'core.domain.automation.pipeline.buildAutomationJexlContext': buildAutomationJexlContext,
 }: INotificationActionDeps): IAutomationAction<NotificationActionParams> {
     return {
         type: AutomationRuleActions.NOTIFICATION,
         paramsSchema: notificationActionParamsSchema,
+        validateStep: async params => {
+            await Promise.all([
+                jexlAutomation.validate(params.step.params.recipients),
+                jexlAutomation.validate(params.step.params.message),
+            ]);
+        },
         async execute(params, state, ctx) {
             const {title, recipients, message: jexlMessage, mail = false} = params;
 
-            const jexlCtx = buildAutomationJexlContext(state, ctx);
+            const jexlCtx = jexlAutomation.buildAutomationContext(state, ctx);
 
-            const userIds = await jexl.eval<string[]>(recipients, jexlCtx);
-            const message = await jexl.eval<string>(jexlMessage, jexlCtx);
+            const userIds = await jexlAutomation.eval<string[]>(recipients, jexlCtx);
+            const message = await jexlAutomation.eval<string>(jexlMessage, jexlCtx);
 
             if (!Array.isArray(userIds) || !userIds.every(id => typeof id === 'string')) {
                 throw new Error('Recipients expression must evaluate to an array of strings.');

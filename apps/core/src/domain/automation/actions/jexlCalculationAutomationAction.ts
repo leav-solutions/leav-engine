@@ -3,10 +3,9 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {z} from 'zod';
 import {logger} from '@leav/logger';
-import {type IJexlDomain} from '../../jexl/jexlDomain';
 import {type IConfig} from '../../../_types/config';
 import {ActionExecutionResultStatus, AutomationRuleActions, type IAutomationAction} from './_types';
-import {type BuildAutomationJexlContext} from '../pipeline/buildAutomationJexlContext';
+import {type IJexlAutomation} from '../jexl/jexlAutomation';
 
 const jexlCalculationActionParamsSchema = z.object({
     formula: z.string().meta({
@@ -19,25 +18,23 @@ const jexlCalculationActionParamsSchema = z.object({
 export type JexlCalculationActionParams = z.infer<typeof jexlCalculationActionParamsSchema>;
 
 interface IDeps {
-    'core.domain.jexl': IJexlDomain;
+    'core.domain.automation.jexl': IJexlAutomation;
     config: IConfig;
-    'core.domain.automation.pipeline.buildAutomationJexlContext': BuildAutomationJexlContext;
 }
 
 export default function ({
-    'core.domain.jexl': jexlDomain,
+    'core.domain.automation.jexl': jexlAutomation,
     config,
-    'core.domain.automation.pipeline.buildAutomationJexlContext': buildAutomationJexlContext,
 }: IDeps): IAutomationAction<JexlCalculationActionParams> {
     const debug = config.actions?.jexl?.debug ?? false;
 
     return {
         type: AutomationRuleActions.JEXL_CALCULATION,
         paramsSchema: jexlCalculationActionParamsSchema,
-        validateStep: params => jexlDomain.validate(params.step.params.formula),
+        validateStep: params => jexlAutomation.validate(params.step.params.formula),
         async execute(params, state, ctx) {
-            const jexlCtx = buildAutomationJexlContext(state, ctx);
-            const result = await jexlDomain.eval(params.formula, jexlCtx);
+            const jexlCtx = jexlAutomation.buildAutomationContext(state, ctx);
+            const result = await jexlAutomation.eval(params.formula, jexlCtx);
 
             debug && logger.debug(`Jexl calculation in automation: ${params.formula} => ${JSON.stringify(result)}`);
 
