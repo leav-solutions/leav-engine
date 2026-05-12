@@ -126,6 +126,42 @@ describe('viewV2Domain', () => {
             await expect(domain.createViewV2({...mockViewV2CreateInput}, mockCtx)).rejects.toThrow(ValidationError);
             expect(mockViewV2Repo.createViewV2).not.toBeCalled();
         });
+
+        test('Should throw ValidationError when input shape is invalid and skip downstream checks', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
+            });
+
+            await expect(
+                domain.createViewV2(
+                    {
+                        ...mockViewV2CreateInput,
+                        display: {...mockViewV2CreateInput.display, type: 'invalid' as ViewV2Types},
+                    },
+                    mockCtx,
+                ),
+            ).rejects.toThrow(ValidationError);
+            expect(mockValidationHelper.validateLibrary).not.toBeCalled();
+            expect(mockViewV2Repo.createViewV2).not.toBeCalled();
+        });
+
+        test('Should throw ValidationError when a sort has no attributes', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
+            });
+
+            await expect(
+                domain.createViewV2(
+                    {...mockViewV2CreateInput, sorts: [{attributes: [], order: SortOrder.ASC}]},
+                    mockCtx,
+                ),
+            ).rejects.toThrow(ValidationError);
+            expect(mockViewV2Repo.createViewV2).not.toBeCalled();
+        });
     });
 
     describe('updateViewV2', () => {
@@ -169,6 +205,21 @@ describe('viewV2Domain', () => {
             await expect(domain.updateViewV2({id: mockViewV2.id}, {...mockCtx, userId: '42'})).rejects.toThrow(
                 ValidationError,
             );
+        });
+
+        test('Should throw ValidationError when update payload shape is invalid and skip downstream checks', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
+            });
+
+            await expect(
+                domain.updateViewV2({id: mockViewV2.id, display: {type: 'invalid' as ViewV2Types}}, mockCtx),
+            ).rejects.toThrow(ValidationError);
+            expect(mockValidationHelper.validateLibrary).not.toBeCalled();
+            expect(mockViewV2Repo.getViewsOwnedOrSharedV2).not.toBeCalled();
+            expect(mockViewV2Repo.updateViewV2).not.toBeCalled();
         });
 
         test('Should validate library only when it is provided in the update payload', async () => {

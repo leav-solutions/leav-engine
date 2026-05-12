@@ -46,7 +46,7 @@ interface IViewV2UserFields {
     shared: boolean;
     filters?: IViewV2Filter[];
     sorts?: IViewV2Sort[];
-    valuesVersions?: IViewV2ValuesVersion;
+    valuesVersions?: IViewV2ValuesVersion | null;
 }
 
 /**

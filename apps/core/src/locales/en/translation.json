@@ -58,6 +58,7 @@
         "INVALID_VALUES": "Invalid values",
         "INVALID_VARIABLE_FUNCTION": "Invalid variable function: {{functionName}}.",
         "INVALID_VERSION": "Invalid version: ",
+        "INVALID_VIEW_V2_INPUT": "Invalid view input: {{details}}",
         "LIBRARY_FORBIDDEN_AS_CHILD": "Library forbidden as child",
         "METADATA_PERMISSION_ERROR": "Forbidden action on fields {{fields}}",
         "MISSING_ACTION_PREFIX": "Missing prefix on actions: {{actions}}",
