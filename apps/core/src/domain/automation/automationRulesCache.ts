@@ -14,7 +14,7 @@ import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IAutomationRuleRepo} from '../../infra/automation/automationRuleRepo';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 
-export const ACTIVE_RULES_CACHE_KEY = 'automation:rules:active';
+export const INDEX_RULES_CACHE_KEY = 'automation:rules:index';
 export const RULES_CACHE_KEYS_PATTERN = 'automation:rules:*';
 
 export const ruleCacheKey = (id: string): string => `automation:rules:${id}`;
@@ -45,7 +45,7 @@ export default function ({
 
     const _loadIndex = (ctx: IQueryInfos): Promise<AutomationRuleIndexEntry[]> =>
         cachesService.memoize<AutomationRuleIndexEntry[]>({
-            key: ACTIVE_RULES_CACHE_KEY,
+            key: INDEX_RULES_CACHE_KEY,
             func: () => automationRuleRepo.getActiveAutomationRulesForCache(ctx),
             ctx,
         });
@@ -106,7 +106,7 @@ export default function ({
             return rules.filter((r): r is IAutomationRule => r !== null);
         },
         invalidate: async ruleId => {
-            const keys = ruleId ? [ACTIVE_RULES_CACHE_KEY, ruleCacheKey(ruleId)] : [RULES_CACHE_KEYS_PATTERN];
+            const keys = ruleId ? [INDEX_RULES_CACHE_KEY, ruleCacheKey(ruleId)] : [RULES_CACHE_KEYS_PATTERN];
             await cachesService.getCache(ECacheType.RAM).deleteData(keys);
         },
     };

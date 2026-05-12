@@ -87,8 +87,8 @@ export interface IAutomationDomainDeps {
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.automation.pipeline': IAutomationPipelineDomain;
-    'core.infra.automation.rule': IAutomationRuleRepo;
     'core.domain.automation.rulesCache': IAutomationRulesCache;
+    'core.infra.automation.rule': IAutomationRuleRepo;
     config: IConfig;
 }
 
@@ -99,8 +99,8 @@ export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.domain.automation.pipeline': pipelineDomain,
-    'core.infra.automation.rule': automationRuleRepo,
     'core.domain.automation.rulesCache': automationRulesCache,
+    'core.infra.automation.rule': automationRuleRepo,
     config,
 }: IAutomationDomainDeps): IAutomationDomain {
     if (config.automation.enable === false) {

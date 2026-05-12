@@ -6,7 +6,7 @@ import {systemUserId} from '../../../../_constants/users';
 import {type ICreateAutomationRule, SyncAutomationRuleEventAction} from '../../../../_types/automation';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
 import {
-    ACTIVE_RULES_CACHE_KEY,
+    INDEX_RULES_CACHE_KEY,
     ruleCacheKey,
     type IAutomationRulesCache,
 } from '../../../../domain/automation/automationRulesCache';
@@ -88,7 +88,7 @@ describe('automationRulesCache', () => {
             expect(matched).toHaveLength(1);
             expect(matched[0].id).toBe(rule.id);
 
-            const [rawIndex, rawRule] = await ramCache.getData([ACTIVE_RULES_CACHE_KEY, ruleCacheKey(rule.id)]);
+            const [rawIndex, rawRule] = await ramCache.getData([INDEX_RULES_CACHE_KEY, ruleCacheKey(rule.id)]);
 
             expect(rawIndex).not.toBeNull();
             const cachedIndex = JSON.parse(rawIndex as string);
@@ -129,7 +129,7 @@ describe('automationRulesCache', () => {
             );
 
             const [idxBefore, aBefore, bBefore] = await ramCache.getData([
-                ACTIVE_RULES_CACHE_KEY,
+                INDEX_RULES_CACHE_KEY,
                 ruleCacheKey(ruleA.id),
                 ruleCacheKey(ruleB.id),
             ]);
@@ -140,7 +140,7 @@ describe('automationRulesCache', () => {
             await rulesCache.invalidate(ruleA.id);
 
             const [idxAfter, aAfter, bAfter] = await ramCache.getData([
-                ACTIVE_RULES_CACHE_KEY,
+                INDEX_RULES_CACHE_KEY,
                 ruleCacheKey(ruleA.id),
                 ruleCacheKey(ruleB.id),
             ]);
@@ -249,7 +249,7 @@ describe('automationRulesCache', () => {
 
             await rulesCache.invalidate();
 
-            const [rawAfterInvalidate] = await ramCache.getData([ACTIVE_RULES_CACHE_KEY]);
+            const [rawAfterInvalidate] = await ramCache.getData([INDEX_RULES_CACHE_KEY]);
             expect(rawAfterInvalidate).toBeNull();
 
             const afterInvalidate = await rulesCache.getRulesToTrigger(
