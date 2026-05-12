@@ -14,6 +14,52 @@ import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IAutomationRuleRepo} from '../../infra/automation/automationRuleRepo';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 
+/**
+ * Two-tier cache for automation rules, shared across every `core` replica
+ * via Redis.
+ *
+ * ## Structure
+ *
+ * 1. **Index** under the key `automation:rules:index` → `AutomationRuleIndexEntry[]`
+ *    (= `Pick<IAutomationRule, 'id' | 'trigger'>[]`). Holds the bare minimum
+ *    needed to decide which rules match an event (action, sync, topic).
+ *    Built on the ArangoDB side via a dedicated AQL projection
+ *    (`automationRuleRepo.getActiveAutomationRulesForCache`) — pipelines and
+ *    metadata never leave the Arango server.
+ *
+ * 2. **Per-rule cache** under `automation:rules:{ruleId}` → the full
+ *    `IAutomationRule` (pipeline included). Populated **lazily**: only a rule
+ *    that is actually matched by an event triggers the fetch + caching of its
+ *    full payload.
+ *
+ * ## Why this split
+ *
+ * Selecting which rules to execute only depends on `trigger`; the `pipeline`
+ * is only required when the rule actually runs. With a naive "full-list"
+ * cache, every event would load all pipelines (potentially large) to execute
+ * 0 to a handful of them. The lightweight index bounds the selection cost to
+ * an `{id, trigger}` payload × number of active rules; only the pipelines of
+ * matching rules are fetched.
+ *
+ * ## Targeted invalidation
+ *
+ * `invalidate(ruleId)` removes only `[INDEX_RULES_CACHE_KEY,
+ * ruleCacheKey(ruleId)]`. Other rules keep their Redis entry intact — their
+ * pipelines are not reloaded until a modification targets them. Relevant
+ * when an admin edits a single rule among dozens (the typical case).
+ *
+ * `invalidate()` without an argument performs a full wipe via the
+ * `RULES_CACHE_KEYS_PATTERN` glob (useful for tests and global admin purges).
+ *
+ * ## Lazy per-rule population (not eager)
+ *
+ * On an index rebuild, per-rule caches are NOT re-written. Otherwise,
+ * re-writing every rule on each modification would defeat the "preserve
+ * other rules" guarantee. Acceptable trade-off: if a matched rule has never
+ * been cached, `_loadRuleById` performs an extra repo fetch — the debt is
+ * amortized by subsequent hits.
+ */
+
 export const INDEX_RULES_CACHE_KEY = 'automation:rules:index';
 export const RULES_CACHE_KEYS_PATTERN = 'automation:rules:*';
 
