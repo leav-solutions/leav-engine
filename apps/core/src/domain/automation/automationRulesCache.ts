@@ -8,6 +8,7 @@ import {
     type AutomationRulesEventTopic,
     type IAutomationRule,
 } from '../../_types/automation';
+import {type IConfig} from '../../_types/config';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IAutomationRuleRepo} from '../../infra/automation/automationRuleRepo';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
@@ -31,12 +32,18 @@ export interface IAutomationRulesCache {
 export interface IAutomationRulesCacheDeps {
     'core.infra.cache.cacheService': ICachesService;
     'core.infra.automation.rule': IAutomationRuleRepo;
+    config: IConfig;
 }
 
 export default function ({
     'core.infra.cache.cacheService': cachesService,
     'core.infra.automation.rule': automationRuleRepo,
+    config,
 }: IAutomationRulesCacheDeps): IAutomationRulesCache {
+    if (config.automation.cache.enable === false) {
+        return automationCacheDisabled({automationRuleRepo});
+    }
+
     const _loadIndex = (ctx: IQueryInfos): Promise<AutomationRuleIndexEntry[]> =>
         cachesService.memoize<AutomationRuleIndexEntry[]>({
             key: ACTIVE_RULES_CACHE_KEY,
@@ -105,6 +112,37 @@ export default function ({
         invalidate: async ruleId => {
             const keys = ruleId ? [ACTIVE_RULES_CACHE_KEY, ruleCacheKey(ruleId)] : [RULES_CACHE_KEYS_PATTERN];
             await cachesService.getCache(ECacheType.RAM).deleteData(keys);
+        },
+    };
+}
+
+function automationCacheDisabled({
+    automationRuleRepo,
+}: {
+    automationRuleRepo: IAutomationRuleRepo;
+}): IAutomationRulesCache {
+    logger.verbose('Automation rules cache is disabled in the configuration.');
+
+    return {
+        getRulesToTrigger: async (event, synchronous, ctx) => {
+            const rules = await automationRuleRepo.getAutomationRules(
+                {
+                    filters: {
+                        active: true,
+                        trigger: {
+                            synchronous,
+                            eventAction: event.action,
+                            eventTopic: event.topic,
+                        },
+                    },
+                    partialMatchOnEventTopic: true,
+                },
+                ctx,
+            );
+            return rules.list;
+        },
+        invalidate: async () => {
+            /* no-op: cache is disabled */
         },
     };
 }

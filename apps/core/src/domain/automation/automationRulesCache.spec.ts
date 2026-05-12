@@ -7,6 +7,7 @@ import {
     type IAutomationRule,
     SyncAutomationRuleEventAction,
 } from '../../_types/automation';
+import {type IConfig} from '../../_types/config';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IAutomationRuleRepo} from '../../infra/automation/automationRuleRepo';
 import {type ICachesService} from '../../infra/cache/cacheService';
@@ -38,19 +39,25 @@ describe('automationRulesCache', () => {
             ...overrides,
         }) as IAutomationRule;
 
-    const buildCache = (rules: IAutomationRule[]) => {
+    const buildCache = (rules: IAutomationRule[], cacheEnabled = true) => {
         const cachesService: Mockify<ICachesService> = {
             memoize: vi.fn().mockImplementation(({func}) => func()),
+            getCache: vi.fn(),
         };
 
         const ruleRepo: Mockify<IAutomationRuleRepo> = {
             getAutomationRules: global.__mockPromise({list: rules, totalCount: rules.length}),
         };
 
-        return automationRulesCache({
+        const config = {automation: {cache: {enable: cacheEnabled}}} as IConfig;
+
+        const cache = automationRulesCache({
             'core.infra.cache.cacheService': cachesService as ICachesService,
             'core.infra.automation.rule': ruleRepo as IAutomationRuleRepo,
+            config,
         });
+
+        return {cache, cachesService, ruleRepo};
     };
 
     describe('getRulesToTrigger', () => {
@@ -58,7 +65,7 @@ describe('automationRulesCache', () => {
             const rule = buildRule({
                 trigger: {synchronous: false, eventAction: EventAction.RECORD_SAVE},
             });
-            const cache = buildCache([rule]);
+            const {cache} = buildCache([rule]);
 
             const matched = await cache.getRulesToTrigger(
                 {action: EventAction.RECORD_SAVE, topic: {library: 'lib'}},
@@ -73,7 +80,7 @@ describe('automationRulesCache', () => {
             const rule = buildRule({
                 trigger: {synchronous: false, eventAction: EventAction.RECORD_SAVE, eventTopic: {}},
             });
-            const cache = buildCache([rule]);
+            const {cache} = buildCache([rule]);
 
             const matched = await cache.getRulesToTrigger(
                 {action: EventAction.RECORD_SAVE, topic: {library: 'lib'}},
@@ -92,7 +99,7 @@ describe('automationRulesCache', () => {
                     eventTopic: {library: 'products'},
                 },
             });
-            const cache = buildCache([rule]);
+            const {cache} = buildCache([rule]);
 
             const matched = await cache.getRulesToTrigger(
                 {
@@ -114,7 +121,7 @@ describe('automationRulesCache', () => {
                     eventTopic: {library: 'orders'},
                 },
             });
-            const cache = buildCache([rule]);
+            const {cache} = buildCache([rule]);
 
             const matched = await cache.getRulesToTrigger(
                 {
@@ -136,7 +143,7 @@ describe('automationRulesCache', () => {
                     eventTopic: {library: 'products', attribute: 'unrelated'},
                 },
             });
-            const cache = buildCache([rule]);
+            const {cache} = buildCache([rule]);
 
             const matched = await cache.getRulesToTrigger(
                 {
@@ -159,7 +166,7 @@ describe('automationRulesCache', () => {
                     eventTopic: {record: recordRef},
                 } as AutomationRulesEventTopic & IAutomationRule['trigger'],
             });
-            const cache = buildCache([rule]);
+            const {cache} = buildCache([rule]);
 
             const matched = await cache.getRulesToTrigger(
                 {
@@ -177,7 +184,7 @@ describe('automationRulesCache', () => {
             const rule = buildRule({
                 trigger: {synchronous: true, eventAction: EventAction.RECORD_SAVE},
             });
-            const cache = buildCache([rule]);
+            const {cache} = buildCache([rule]);
 
             const matched = await cache.getRulesToTrigger(
                 {action: EventAction.RECORD_SAVE, topic: {library: 'lib'}},
@@ -192,7 +199,7 @@ describe('automationRulesCache', () => {
             const rule = buildRule({
                 trigger: {synchronous: false, eventAction: EventAction.RECORD_DELETE},
             });
-            const cache = buildCache([rule]);
+            const {cache} = buildCache([rule]);
 
             const matched = await cache.getRulesToTrigger(
                 {action: EventAction.RECORD_SAVE, topic: {library: 'lib'}},
@@ -211,11 +218,65 @@ describe('automationRulesCache', () => {
                     eventTopic: {library: 'products'},
                 },
             });
-            const cache = buildCache([rule]);
+            const {cache} = buildCache([rule]);
 
             const matched = await cache.getRulesToTrigger({action: EventAction.RECORD_SAVE}, false, mockCtx);
 
             expect(matched).toEqual([]);
+        });
+    });
+
+    describe('with cache disabled', () => {
+        it('delegates filtering to the repo AQL with partialMatchOnEventTopic: true', async () => {
+            const rule = buildRule({
+                id: 'rule-x',
+                trigger: {
+                    synchronous: false,
+                    eventAction: EventAction.RECORD_SAVE,
+                    eventTopic: {library: 'products'},
+                },
+            });
+            const {cache, ruleRepo} = buildCache([rule], false);
+
+            const matched = await cache.getRulesToTrigger(
+                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                false,
+                mockCtx,
+            );
+
+            expect(ruleRepo.getAutomationRules).toHaveBeenCalledTimes(1);
+            expect(ruleRepo.getAutomationRules).toHaveBeenCalledWith(
+                {
+                    filters: {
+                        active: true,
+                        trigger: {
+                            synchronous: false,
+                            eventAction: EventAction.RECORD_SAVE,
+                            eventTopic: {library: 'products'},
+                        },
+                    },
+                    partialMatchOnEventTopic: true,
+                },
+                mockCtx,
+            );
+            expect(matched).toEqual([rule]);
+        });
+
+        it('never calls memoize when the cache is disabled', async () => {
+            const {cache, cachesService} = buildCache([], false);
+
+            await cache.getRulesToTrigger({action: EventAction.RECORD_SAVE, topic: {library: 'any'}}, false, mockCtx);
+
+            expect(cachesService.memoize).not.toHaveBeenCalled();
+        });
+
+        it('invalidate() is a no-op (no Redis call, does not throw)', async () => {
+            const {cache, cachesService} = buildCache([], false);
+
+            await expect(cache.invalidate('any-id')).resolves.toBeUndefined();
+            await expect(cache.invalidate()).resolves.toBeUndefined();
+
+            expect(cachesService.getCache).not.toHaveBeenCalled();
         });
     });
 });
