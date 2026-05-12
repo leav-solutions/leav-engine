@@ -1,13 +1,12 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {SyncAutomationRuleEventAction} from '../../../../../_types/automation';
+import {type AutomationRulesEventTopic, SyncAutomationRuleEventAction} from '../../../../../_types/automation';
 import {type IQueryInfos} from '../../../../../_types/queryInfos';
 import {systemUserId} from '../../../../../_constants/users';
 import {ActionExecutionResultStatus, type IAutomationAction} from '../../../../../domain/automation/actions/_types';
 import {type NotificationActionParams} from '../../../../../domain/automation/actions/notificationAction';
 import {type INotificationDomain} from '../../../../../domain/notification/notificationDomain';
-import {type IRecord} from '../../../../../_types/record';
 import {getCoreDep} from '../../../integrationTestUtils';
 import {type IAutomationPipelineExecutionState} from '../../../../../domain/automation/pipeline/_types';
 
@@ -115,11 +114,11 @@ describe('notificationAction', () => {
     });
 
     describe('execute — Jexl context with record in eventTopic', () => {
-        const record: IRecord = {
+        const record = {
             id: 'rec_notif_001',
-            library: 'test_library',
+            libraryId: 'test_library',
             assigneeId: systemUserId,
-        };
+        } as AutomationRulesEventTopic['record'];
 
         const stateWithRecord: IAutomationPipelineExecutionState = {
             ...baseState,

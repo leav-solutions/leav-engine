@@ -128,8 +128,9 @@ describe('Automation RECORD_INIT', () => {
                     type: AutomationRuleActions.notification,
                     params: {
                         title: 'Record initialized',
-                        recipients: `["${e2eAdminUser().userId}"]`,
-                        message: '"Record with id " +  currentRecord.id + " has been initialized"',
+                        recipients: "currentRecord | getValues('created_by') | map('value.id')", // notify the creator of the record
+                        message:
+                            '"Record with id " +  currentRecord.id + " has been initialized at year " + ((currentRecord | getValues(\'created_at\') | first) * 1000) | dateTimeFormat("yyyy")',
                         mail: true,
                     } satisfies NotificationActionParams,
                 },
@@ -145,7 +146,9 @@ describe('Automation RECORD_INIT', () => {
             const notification = notifications.list.find(n => n.title === 'Record initialized');
 
             expect(notification).toBeDefined();
-            expect(notification.message).toBe(`Record with id ${recordId} has been initialized`);
+            expect(notification.message).toBe(
+                `Record with id ${recordId} has been initialized at year ${new Date().getFullYear()}`,
+            );
         });
     });
 
@@ -157,7 +160,8 @@ describe('Automation RECORD_INIT', () => {
                     {
                         type: AutomationRuleActions.jexlCalculation,
                         params: {
-                            formula: '"Default library label"',
+                            formula:
+                                "\"Default library label from email: \" + currentRecord | getValues('created_by') | first | getValues('email') | first",
                         },
                     },
                     {
@@ -182,7 +186,7 @@ describe('Automation RECORD_INIT', () => {
                 });
 
                 expect(res.records.list[0].property).toEqual([
-                    expect.objectContaining({payload: 'Default library label'}),
+                    expect.objectContaining({payload: 'Default library label from email: admin@test.leav-engine.com'}),
                 ]);
             });
         });

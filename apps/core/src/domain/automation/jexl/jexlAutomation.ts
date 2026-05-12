@@ -5,6 +5,7 @@ import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IJexlDomain} from '../../jexl/jexlDomain';
 import {type IAutomationPipelineExecutionState} from '../pipeline/_types';
 import {type JexlRootContext, type JexlRecordContext} from '../../jexl/types';
+import {type AutomationRulesEventTopic} from '../../../_types/automation';
 
 interface IDeps {
     'core.domain.jexl': IJexlDomain;
@@ -27,12 +28,24 @@ export default function ({'core.domain.jexl': jexlDomain}: IDeps): IJexlAutomati
         executionState: IAutomationPipelineExecutionState,
         ctx: IQueryInfos,
     ): JexlAutomationContext {
+        const _convertTopicRecordToJexlRecordContext = (
+            topicRecord: AutomationRulesEventTopic['record'],
+        ): JexlRecordContext =>
+            jexlDomain.buildRecordContext(
+                {
+                    ...topicRecord,
+                    libraryId: undefined,
+                    library: topicRecord.libraryId,
+                },
+                ctx,
+            );
+
+        const topicRecord = executionState.trigger.eventTopic?.record;
+
         return jexlDomain.buildRootContext(
             {
                 results: executionState.results,
-                ...(executionState.trigger.eventTopic?.record
-                    ? {currentRecord: jexlDomain.buildRecordContext(executionState.trigger.eventTopic.record, ctx)}
-                    : {}),
+                ...(topicRecord ? {currentRecord: _convertTopicRecordToJexlRecordContext(topicRecord)} : {}),
                 // And other topics
             },
             ctx,
