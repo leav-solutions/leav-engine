@@ -9,7 +9,7 @@ import {filterTreeByPermission} from './utils/filterTreeByPermission';
 const markDisabledParents = (nodes: ITreeNode[]): ITreeNode[] =>
     nodes.map(node => ({
         ...node,
-        disableCheckbox: node.accessRecordByDefaultPermission === false,
+        disableCheckbox: node.accessRecordByDefaultPermission !== true,
         children: markDisabledParents(node.children),
     }));
 
