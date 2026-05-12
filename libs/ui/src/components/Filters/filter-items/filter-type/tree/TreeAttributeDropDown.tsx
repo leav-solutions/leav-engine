@@ -94,7 +94,11 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
             // disabled-checkbox parents whose children are in a different permission group.
             // This ensures the count reflects the actual selected descendants regardless of splitting.
             const selectedChildrenCount = countSelectedTreeChildren(nodeData, selectedNodesIds);
-            const isHiddenByDefault = includeHiddenOptions && nodeData.accessRecordByDefaultPermission === false;
+            const isHiddenByDefault =
+                isAccessPermissionConfigured &&
+                (includeHiddenOptions
+                    ? nodeData.accessRecordByDefaultPermission === false
+                    : nodeData.accessRecordByDefaultPermission !== true);
 
             return (
                 <FilterTreeNodeTitle
@@ -113,6 +117,9 @@ export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDow
         },
         onSelect: (_, info) => {
             const node = info.node as EventDataNode<ITreeNode>;
+            if (node.disableCheckbox) {
+                return;
+            }
             handleOnSelect(node, info.selected);
         },
     };
