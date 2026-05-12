@@ -223,7 +223,7 @@ export default function ({
 
             const newAutomationRule = await automationRuleRepo.createAutomationRule(rule, ctx);
 
-            await automationRulesCache.invalidate();
+            await automationRulesCache.invalidate(newAutomationRule.id);
 
             logger.debug(`Created new automation rule with id ${newAutomationRule.id}`);
 
@@ -283,7 +283,7 @@ export default function ({
                     throw error;
                 });
 
-            await automationRulesCache.invalidate();
+            await automationRulesCache.invalidate(updatedAutomationRule.id);
 
             logger.debug(`Updated automation rule with id ${updatedAutomationRule.id}`);
 
@@ -316,7 +316,7 @@ export default function ({
                     throw error;
                 });
 
-            await automationRulesCache.invalidate();
+            await automationRulesCache.invalidate(deletedAutomationRule.id);
 
             logger.debug(`Deleted automation rule with id ${ruleId}`);
 
