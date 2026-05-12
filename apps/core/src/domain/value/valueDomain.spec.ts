@@ -34,11 +34,13 @@ import {type IRecordAttributePermissionDomain} from '../permission/recordAttribu
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import valueDomain, {type IValueDomainDeps} from './valueDomain';
 import {type IRecordInCreationBypassHelper} from '../permission/helpers/recordInCreationBypass';
+import {type IAutomationDomain} from '../automation/automationDomain';
 
 const depsBase: ToAny<IValueDomainDeps> = {
     config: {},
     'core.domain.actionsList': vi.fn(),
     'core.domain.attribute': vi.fn(),
+    'core.domain.automation': vi.fn(),
     'core.domain.permission.attributeDependentValues': vi.fn(),
     'core.domain.permission.recordAttribute': vi.fn(),
     'core.domain.permission.record': vi.fn(),
@@ -117,6 +119,10 @@ describe('ValueDomain', () => {
         sendDatabaseEvent: global.__mockPromise(),
     };
 
+    const mockAutomationDomain: Mockify<IAutomationDomain> = {
+        triggerRules: global.__mockPromise(),
+    };
+
     const mockValidateHelper: Mockify<IValidateHelper> = {
         validateLibrary: global.__mockPromise(true),
         validateRecord: global.__mockPromise(true),
@@ -192,6 +198,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -240,6 +247,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -297,6 +305,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -467,6 +476,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -515,6 +525,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.versionProfile': mockVersionProfileDomain as IVersionProfileDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -562,6 +573,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -617,6 +629,7 @@ describe('ValueDomain', () => {
             const valDomain = valueDomain({
                 ...depsBase,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                 'core.infra.value': mockValRepo as IValueRepo,
                 'core.infra.record': mockRecordRepoNotfound as IRecordRepo,
@@ -845,6 +858,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -865,6 +879,7 @@ describe('ValueDomain', () => {
 
             expect(mockValRepo.updateValue).not.toBeCalled();
             expect(mockEventsManagerDomain.sendDatabaseEvent).not.toBeCalled();
+            expect(mockAutomationDomain.triggerRules).not.toBeCalled();
             expect(mockUpdateRecordLastModif).not.toBeCalled();
             expect(mockSendRecordUpdateEventHelper).not.toBeCalled();
             expect(savedValue[0]).toEqual({...dbValueData, raw_payload: dbValueData.payload});
@@ -897,6 +912,7 @@ describe('ValueDomain', () => {
                     ...depsBase,
                     config: mockConfig as Config.IConfig,
                     'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                     'core.domain.attribute': mockAttrDomain as IAttributeDomain,
                     'core.infra.value': mockValRepo as IValueRepo,
                     'core.infra.record': mockRecordRepo as IRecordRepo,
@@ -1075,6 +1091,7 @@ describe('ValueDomain', () => {
                     'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                     'core.infra.tree': mockTreeRepo as ITreeRepo,
                     'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                     'core.domain.permission.recordAttribute':
                         mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                     'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
@@ -1216,6 +1233,7 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepoWithLinked as IRecordRepo,
                 'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
@@ -1276,6 +1294,7 @@ describe('ValueDomain', () => {
                 'core.domain.actionsList': mockActionsListDomain as any,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -1373,6 +1392,7 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -1488,6 +1508,7 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -1713,6 +1734,7 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -1777,6 +1799,7 @@ describe('ValueDomain', () => {
                 'core.infra.tree': mockTreeRepo as ITreeRepo,
                 'core.utils': mockUtils as IUtils,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -1910,6 +1933,7 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -1986,6 +2010,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
             });
 
@@ -2033,6 +2058,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
             });
 
             const deleteVal = valDomain.deleteValue({
@@ -2071,6 +2097,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.helpers.recordInCreationBypass':
                     mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper,
             });
@@ -2114,6 +2141,7 @@ describe('ValueDomain', () => {
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateRecordLastModif,
@@ -2184,6 +2212,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.helpers.recordInCreationBypass':
                     mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper,
             });
@@ -2338,6 +2367,7 @@ describe('ValueDomain', () => {
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
                 'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
                 'core.domain.permission.helpers.recordInCreationBypass': {
                     recordInCreationBypassById: global.__mockPromise(false),
                 } as IRecordInCreationBypassHelper,

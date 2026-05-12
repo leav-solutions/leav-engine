@@ -48,8 +48,8 @@ export default function ({
         },
         {
             eventAction: EventAction.VALUE_SAVE,
-            topicSchema: topics.libraryAndAttributeSchema,
-            synchronicity: AutomationTriggerDefSynchronicity.BOTH, // Just for testing
+            topicSchema: topics.libraryAndOptAttributeSchema,
+            synchronicity: AutomationTriggerDefSynchronicity.BOTH,
         },
     ];
 

@@ -11,7 +11,7 @@ export interface IAutomationTriggersTopics {
     // Expose common topic schemas for reuse in automation rule validation
     librarySchema: ZodType<string>;
     attributeSchema: ZodType<string>;
-    libraryAndAttributeSchema: ZodType<{library: string; attribute: string}>;
+    libraryAndOptAttributeSchema: ZodType<{library: string; attribute?: string}>;
 }
 
 export interface IAutomationTriggersTopicsDeps {
@@ -73,12 +73,15 @@ export default function ({
             },
         } satisfies ZodMetaUISchema);
 
-    const libraryAndAttributeSchema = z
+    const libraryAndOptAttributeSchema = z
         .object({
             library: librarySchema,
-            attribute: attributeSchema,
+            attribute: attributeSchema.optional(),
         })
         .check(async input => {
+            if (input.value.attribute === undefined) {
+                return;
+            }
             try {
                 await validate.validateLibraryAttribute(input.value.library, input.value.attribute, systemCtx);
             } catch (err) {
@@ -96,6 +99,6 @@ export default function ({
     return {
         librarySchema,
         attributeSchema,
-        libraryAndAttributeSchema,
+        libraryAndOptAttributeSchema,
     };
 }

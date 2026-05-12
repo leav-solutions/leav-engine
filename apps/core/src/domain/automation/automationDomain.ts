@@ -45,7 +45,7 @@ export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
 }
 
 interface ITriggerRulesParams {
-    event: {action: IAutomationRule['trigger']['eventAction']; topic?: IAutomationRule['trigger']['eventTopic']};
+    event: {action: AutomationRuleEventAction; topic?: AutomationRulesEventTopic};
     synchronous: boolean;
     ctx: IQueryInfos;
 }
