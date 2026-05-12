@@ -115,6 +115,107 @@ describe('automationRuleRepo', () => {
         });
     });
 
+    describe('getActiveAutomationRulesForCache', () => {
+        it('returns only active rules', async () => {
+            const createdActive = await automationRuleRepo.createAutomationRule(
+                {
+                    label: 'Active rule',
+                    active: true,
+                    trigger: {
+                        synchronous: false,
+                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                    },
+                    pipeline: {steps: []},
+                },
+                ctx,
+            );
+            await automationRuleRepo.createAutomationRule(
+                {
+                    label: 'Inactive rule',
+                    active: false,
+                    trigger: {
+                        synchronous: false,
+                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                    },
+                    pipeline: {steps: []},
+                },
+                ctx,
+            );
+
+            const entries = await automationRuleRepo.getActiveAutomationRulesForCache(ctx);
+
+            expect(entries).toHaveLength(1);
+            expect(entries).toEqual(
+                expect.arrayContaining([
+                    {
+                        id: createdActive.id,
+                        trigger: {
+                            synchronous: false,
+                            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                        },
+                    },
+                ]),
+            );
+        });
+
+        it('projects each entry to only {id, trigger} — no pipeline, no metadata', async () => {
+            const created = await automationRuleRepo.createAutomationRule(
+                {
+                    label: 'rule-projection',
+                    description: 'should not leak',
+                    active: true,
+                    trigger: {
+                        synchronous: false,
+                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                        eventTopic: {library: 'products'},
+                    },
+                    pipeline: {steps: [{type: 'log', params: {message: 'leaky', level: 'info'}}]},
+                },
+                ctx,
+            );
+
+            const entries = await automationRuleRepo.getActiveAutomationRulesForCache(ctx);
+
+            expect(entries).toHaveLength(1);
+            expect(entries).toEqual(
+                expect.arrayContaining([
+                    {
+                        id: created.id,
+                        trigger: {
+                            synchronous: false,
+                            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {library: 'products'},
+                        },
+                    },
+                ]),
+            );
+        });
+
+        it('preserves the full trigger payload (synchronous, eventAction, eventTopic)', async () => {
+            await automationRuleRepo.createAutomationRule(
+                {
+                    label: 'rule-trigger',
+                    active: true,
+                    trigger: {
+                        synchronous: true,
+                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                        eventTopic: {library: 'products', attribute: 'color'},
+                    },
+                    pipeline: {steps: []},
+                },
+                ctx,
+            );
+
+            const [entry] = await automationRuleRepo.getActiveAutomationRulesForCache(ctx);
+
+            expect(entry.trigger).toEqual({
+                synchronous: true,
+                eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                eventTopic: {library: 'products', attribute: 'color'},
+            });
+        });
+    });
+
     describe('getAutomationRules with partialMatchOnEventTopic', () => {
         const libraryId = 'my_library';
         const attributeId = 'my_attribute';

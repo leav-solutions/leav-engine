@@ -5,6 +5,7 @@ import {logger} from '@leav/logger';
 import {isDeepStrictEqual} from 'node:util';
 import {
     type AutomationRuleEventAction,
+    type AutomationRuleIndexEntry,
     type AutomationRulesEventTopic,
     type IAutomationRule,
 } from '../../_types/automation';
@@ -17,8 +18,6 @@ export const ACTIVE_RULES_CACHE_KEY = 'automation:rules:active';
 export const RULES_CACHE_KEYS_PATTERN = 'automation:rules:*';
 
 export const ruleCacheKey = (id: string): string => `automation:rules:${id}`;
-
-export type AutomationRuleIndexEntry = Pick<IAutomationRule, 'id' | 'trigger'>;
 
 export interface IAutomationRulesCache {
     getRulesToTrigger(
@@ -47,10 +46,7 @@ export default function ({
     const _loadIndex = (ctx: IQueryInfos): Promise<AutomationRuleIndexEntry[]> =>
         cachesService.memoize<AutomationRuleIndexEntry[]>({
             key: ACTIVE_RULES_CACHE_KEY,
-            func: async () => {
-                const res = await automationRuleRepo.getAutomationRules({filters: {active: true}}, ctx);
-                return res.list.map(rule => ({id: rule.id, trigger: rule.trigger}));
-            },
+            func: () => automationRuleRepo.getActiveAutomationRulesForCache(ctx),
             ctx,
         });
 

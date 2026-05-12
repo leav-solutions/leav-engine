@@ -46,7 +46,10 @@ describe('automationRulesCache', () => {
         };
 
         const ruleRepo: Mockify<IAutomationRuleRepo> = {
-            getAutomationRules: global.__mockPromise({list: rules, totalCount: rules.length}),
+            getAutomationRules: vi.fn().mockResolvedValue({list: rules, totalCount: rules.length}),
+            getActiveAutomationRulesForCache: vi
+                .fn()
+                .mockResolvedValue(rules.map(r => ({id: r.id, trigger: r.trigger}))),
         };
 
         const config = {automation: {cache: {enable: cacheEnabled}}} as IConfig;

@@ -53,3 +53,5 @@ export type AutomationRuleTrigger = {
     eventAction: AutomationRuleEventAction;
     eventTopic?: AutomationRulesEventTopic; // if no specified, the action only is enough to trigger the rule
 };
+
+export type AutomationRuleIndexEntry = Pick<IAutomationRule, 'id' | 'trigger'>;
