@@ -68,6 +68,7 @@
         "@types/react": "^16",
         "@types/react-dom": "^16",
         "semver": ">=7.8.0",
+        "sha.js": ">=2.4.12",
         "git-url-parse": "13",
         "glob-parent": ">=5.1.2",
         "node-fetch": "2.6.7",
