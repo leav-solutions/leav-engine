@@ -5,7 +5,7 @@ import {EventAction} from '@leav/utils';
 import {z, type ZodType} from 'zod';
 import {
     type AutomationRuleEventAction,
-    type AutomationRulesEventTopic,
+    type AutomationRuleEventTopic,
     SyncAutomationRuleEventAction,
 } from '../../../_types/automation';
 import {type IAutomationTriggersTopics} from './automationTriggersTopics';
@@ -16,7 +16,7 @@ import {AutomationTriggerDefSynchronicity} from './_types';
 // Internal shape used for registration — carries the Zod schema for validation
 type AutomationTriggerRegistration = {
     eventAction: AutomationRuleEventAction;
-    topicSchema: ZodType<Partial<AutomationRulesEventTopic>>;
+    topicSchema: ZodType<Partial<AutomationRuleEventTopic>>;
     synchronicity: AutomationTriggerDefSynchronicity;
 };
 

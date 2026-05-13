@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {
     type AutomationRuleEventAction,
-    type AutomationRulesEventTopic,
+    type AutomationRuleEventTopic,
     type IAutomationRule,
 } from '../../_types/automation';
 import {type IQueryInfos} from '../../_types/queryInfos';
@@ -19,7 +19,7 @@ import {type ModifyAttributeActionParams} from './actions/modifyAttributeAction'
 export const TRIGGER_FAKER_RULES_FOR_DEV = false;
 
 export const buildFakeRulesToTrigger = async (
-    event: {action: AutomationRuleEventAction; topic?: AutomationRulesEventTopic},
+    event: {action: AutomationRuleEventAction; topic?: AutomationRuleEventTopic},
     synchronous: boolean,
     ctx: IQueryInfos,
 ): Promise<IAutomationRule[]> => {

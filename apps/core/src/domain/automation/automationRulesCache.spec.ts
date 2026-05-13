@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {EventAction} from '@leav/utils';
 import {
-    type AutomationRulesEventTopic,
+    type AutomationRuleEventTopic,
     type IAutomationRule,
     SyncAutomationRuleEventAction,
 } from '../../_types/automation';
@@ -167,7 +167,7 @@ describe('automationRulesCache', () => {
                     synchronous: true,
                     eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
                     eventTopic: {record: recordRef},
-                } as AutomationRulesEventTopic & IAutomationRule['trigger'],
+                } as AutomationRuleEventTopic & IAutomationRule['trigger'],
             });
             const {cache} = buildCache([rule]);
 
