@@ -112,7 +112,7 @@ describe('automationTriggersTopics', () => {
         });
     });
 
-    describe('libraryAndAttributeSchema', () => {
+    describe('libraryAndOptAttributeSchema', () => {
         beforeEach(() => {
             attributeDomain.getAttributeProperties = vi.fn().mockResolvedValue({});
             validate.validateLibrary = vi.fn().mockResolvedValue(undefined);
@@ -120,7 +120,7 @@ describe('automationTriggersTopics', () => {
         });
 
         it('validates an existing library and attribute', async () => {
-            const {libraryAndAttributeSchema} = createTopics();
+            const {libraryAndOptAttributeSchema: libraryAndAttributeSchema} = createTopics();
 
             const result = await libraryAndAttributeSchema.safeParseAsync({library: 'my_lib', attribute: 'my_attr'});
 
@@ -129,7 +129,7 @@ describe('automationTriggersTopics', () => {
 
         it('rejects a non-existing attribute', async () => {
             validate.validateLibraryAttribute.mockRejectedValue(new Error('not in library'));
-            const {libraryAndAttributeSchema} = createTopics();
+            const {libraryAndOptAttributeSchema: libraryAndAttributeSchema} = createTopics();
 
             const result = await libraryAndAttributeSchema.safeParseAsync({
                 library: 'my_lib',
@@ -139,11 +139,23 @@ describe('automationTriggersTopics', () => {
             expect(result.success).toBe(false);
         });
 
+        it('does not call getAttributeProperties/validateLibraryAttribute when attribute is undefined', async () => {
+            const {libraryAndOptAttributeSchema: libraryAndAttributeSchema} = createTopics();
+
+            const result = await libraryAndAttributeSchema.safeParseAsync({library: 'my_lib', attribute: undefined});
+
+            expect(result.success).toBe(true);
+            expect(validate.validateLibrary).toHaveBeenCalledWith('my_lib', mockSystemCtx);
+            expect(attributeDomain.getAttributeProperties).not.toHaveBeenCalled();
+            expect(validate.validateLibraryAttribute).not.toHaveBeenCalled();
+        });
+
         it('calls getAttributeProperties/validateLibrary/validateLibraryAttribute with the submitted value and the system context', async () => {
-            const {libraryAndAttributeSchema} = createTopics();
+            const {libraryAndOptAttributeSchema: libraryAndAttributeSchema} = createTopics();
 
-            await libraryAndAttributeSchema.safeParseAsync({library: 'my_lib', attribute: 'my_attr'});
+            const result = await libraryAndAttributeSchema.safeParseAsync({library: 'my_lib', attribute: 'my_attr'});
 
+            expect(result.success).toBe(true);
             expect(attributeDomain.getAttributeProperties).toHaveBeenCalledWith({id: 'my_attr', ctx: mockSystemCtx});
             expect(validate.validateLibrary).toHaveBeenCalledWith('my_lib', mockSystemCtx);
             expect(validate.validateLibraryAttribute).toHaveBeenCalledWith('my_lib', 'my_attr', mockSystemCtx);

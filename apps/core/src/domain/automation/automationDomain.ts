@@ -7,7 +7,7 @@ import {
     type ICreateAutomationRule,
     type IAutomationRule,
     type IUpdateAutomationRule,
-    type AutomationRulesEventTopic,
+    type AutomationRuleEventTopic,
     type AutomationRuleEventAction,
     type AutomationRuleTrigger,
     type AutomationRuleJsonSchemaFormType,
@@ -40,12 +40,12 @@ export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
         active?: boolean;
         synchronous?: boolean;
         eventAction?: AutomationRuleEventAction;
-        eventTopic?: AutomationRulesEventTopic;
+        eventTopic?: AutomationRuleEventTopic;
     };
 }
 
 interface ITriggerRulesParams {
-    event: {action: IAutomationRule['trigger']['eventAction']; topic?: IAutomationRule['trigger']['eventTopic']};
+    event: {action: AutomationRuleEventAction; topic?: AutomationRuleEventTopic};
     synchronous: boolean;
     ctx: IQueryInfos;
 }
@@ -133,7 +133,7 @@ export default function ({
     });
 
     const _getRulesToTrigger = async (
-        event: {action: AutomationRuleEventAction; topic?: AutomationRulesEventTopic},
+        event: {action: AutomationRuleEventAction; topic?: AutomationRuleEventTopic},
         synchronous: boolean,
         ctx: IQueryInfos,
     ): Promise<IAutomationRule[]> => {

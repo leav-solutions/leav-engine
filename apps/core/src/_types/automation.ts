@@ -46,12 +46,12 @@ export enum SyncAutomationRuleEventAction {
 }
 
 export type AutomationRuleEventAction = EventAction | SyncAutomationRuleEventAction;
-export type AutomationRulesEventTopic = IDbPayload['topic'];
+export type AutomationRuleEventTopic = IDbPayload['topic'];
 
 export type AutomationRuleTrigger = {
     synchronous: boolean;
     eventAction: AutomationRuleEventAction;
-    eventTopic?: AutomationRulesEventTopic; // if no specified, the action only is enough to trigger the rule
+    eventTopic?: AutomationRuleEventTopic; // if no specified, the action only is enough to trigger the rule
 };
 
 export type AutomationRuleIndexEntry = Pick<IAutomationRule, 'id' | 'trigger'>;

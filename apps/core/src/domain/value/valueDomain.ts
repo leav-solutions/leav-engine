@@ -5,6 +5,7 @@ import {EventAction, localizedTranslation} from '@leav/utils';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type UpdateRecordLastModifFunc} from '../helpers/updateRecordLastModif';
 import {type SendRecordUpdateEventHelper} from '../record/helpers/sendRecordUpdateEvent';
+import {type IAutomationDomain} from '../automation/automationDomain';
 import {type IElementAncestorsHelper} from '../tree/helpers/elementAncestors';
 import {type IGetDefaultElementHelper} from '../tree/helpers/getDefaultElement';
 import {type ITreeDomain} from '../tree/treeDomain';
@@ -183,6 +184,7 @@ export interface IValueDomainDeps {
     config: Config.IConfig;
     'core.domain.actionsList': IActionsListDomain;
     'core.domain.attribute': IAttributeDomain;
+    'core.domain.automation': IAutomationDomain;
     'core.domain.permission.attributeDependentValues': IAttributeDependentValuesPermissionDomain;
     'core.domain.permission.recordAttribute': IRecordAttributePermissionDomain;
     'core.domain.permission.record': IRecordPermissionDomain;
@@ -214,6 +216,7 @@ const valueDomain = function ({
     config,
     'core.domain.actionsList': actionsListDomain,
     'core.domain.attribute': attributeDomain,
+    'core.domain.automation': automationDomain,
     'core.domain.permission.attributeDependentValues': attributeDependentValuesPermissionDomain,
     'core.domain.permission.recordAttribute': recordAttributePermissionDomain,
     'core.domain.permission.record': recordPermissionDomain,
@@ -649,6 +652,22 @@ const valueDomain = function ({
             // Fetch the linked record's label so it can be preserved in the event metadata.
             // This is especially useful when the linked record is later purged and its label would be unrecoverable.
             const recordLabel = await _maybeGetLinkedRecordLabel(attribute, savedValue, ctx);
+
+            await automationDomain.triggerRules({
+                event: {
+                    action: EventAction.VALUE_SAVE,
+                    topic: {
+                        library,
+                        attribute: attribute.id,
+                        record: {
+                            id: record.id,
+                            libraryId: library,
+                        },
+                    },
+                },
+                synchronous: true,
+                ctx,
+            });
 
             await eventsManager.sendDatabaseEvent<EventAction.VALUE_SAVE>(
                 {

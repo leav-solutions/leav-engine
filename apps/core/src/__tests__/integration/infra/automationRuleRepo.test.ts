@@ -3,7 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {AUTOMATION_RULES_COLLECTION_NAME, type IAutomationRuleRepo} from '../../../infra/automation/automationRuleRepo';
-import {type AutomationRulesEventTopic, SyncAutomationRuleEventAction} from '../../../_types/automation';
+import {type AutomationRuleEventTopic, SyncAutomationRuleEventAction} from '../../../_types/automation';
 import {clearAllCollectionDocuments, getAutomationRuleRepo} from './integrationTestRepoUtils';
 
 describe('automationRuleRepo', () => {
@@ -220,7 +220,7 @@ describe('automationRuleRepo', () => {
         const libraryId = 'my_library';
         const attributeId = 'my_attribute';
 
-        const makeRule = (label: string, eventTopic: AutomationRulesEventTopic) =>
+        const makeRule = (label: string, eventTopic: AutomationRuleEventTopic) =>
             automationRuleRepo.createAutomationRule(
                 {
                     label,

@@ -13,7 +13,7 @@ import {type IAutomationTriggersTopics} from './automationTriggersTopics';
 const mockTopics: IAutomationTriggersTopics = {
     librarySchema: z.string(),
     attributeSchema: z.string(),
-    libraryAndAttributeSchema: z.object({library: z.string(), attribute: z.string()}).strict(),
+    libraryAndOptAttributeSchema: z.object({library: z.string(), attribute: z.string()}).strict(),
 };
 
 const createRegistry = () =>

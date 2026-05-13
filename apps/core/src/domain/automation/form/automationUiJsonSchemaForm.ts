@@ -2,7 +2,7 @@
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type i18n} from 'i18next';
-import {ZodObject, type ZodType} from 'zod';
+import {ZodObject, type ZodOptional, type ZodType} from 'zod';
 import {type UiSchema} from '@rjsf/utils';
 import {AutomationRuleJsonSchemaFormType} from '../../../_types/automation';
 import {type ZodMetaUISchema} from '../../../_types/jsonSchemaForm';
@@ -31,6 +31,17 @@ export default function ({
     'core.domain.automation.triggers.registry': automationTriggersRegistry,
     'core.domain.automation.actionsRegistry': actionsRegistry,
 }: IAutomationUiJsonSchemaFormDomainDeps): IAutomationUiJsonSchemaFormDomain {
+    const _resolveMeta = (schema: ZodType): ZodMetaUISchema | undefined => {
+        const meta = schema.meta?.() as ZodMetaUISchema | undefined;
+        if (meta) {
+            return meta;
+        }
+        if ('innerType' in (schema as ZodOptional<any>).def) {
+            return _resolveMeta((schema as ZodOptional<any>).def.innerType);
+        }
+        return undefined;
+    };
+
     const _buildObjectUiSchema = (schema: ZodType, lng: string): UiSchema => {
         if (!(schema instanceof ZodObject)) {
             return {};
@@ -38,8 +49,8 @@ export default function ({
 
         const result: UiSchema = {};
 
-        for (const [fieldName, fieldSchema] of Object.entries(schema.shape)) {
-            const meta = (fieldSchema as ZodType).meta?.() as ZodMetaUISchema | undefined;
+        for (const [fieldName, fieldSchema] of Object.entries<ZodType<any>>(schema.shape)) {
+            const meta = _resolveMeta(fieldSchema);
             if (!meta) {
                 continue;
             }

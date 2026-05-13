@@ -6,7 +6,7 @@ import {isDeepStrictEqual} from 'node:util';
 import {
     type AutomationRuleEventAction,
     type AutomationRuleIndexEntry,
-    type AutomationRulesEventTopic,
+    type AutomationRuleEventTopic,
     type IAutomationRule,
 } from '../../_types/automation';
 import {type IConfig} from '../../_types/config';
@@ -67,7 +67,7 @@ export const ruleCacheKey = (id: string): string => `automation:rules:${id}`;
 
 export interface IAutomationRulesCache {
     getRulesToTrigger(
-        event: {action: AutomationRuleEventAction; topic?: AutomationRulesEventTopic},
+        event: {action: AutomationRuleEventAction; topic?: AutomationRuleEventTopic},
         synchronous: boolean,
         ctx: IQueryInfos,
     ): Promise<IAutomationRule[]>;
@@ -108,7 +108,7 @@ export default function ({
 
     const _indexEntryMatchesEvent = (
         entry: AutomationRuleIndexEntry,
-        event: {action: AutomationRuleEventAction; topic?: AutomationRulesEventTopic},
+        event: {action: AutomationRuleEventAction; topic?: AutomationRuleEventTopic},
         synchronous: boolean,
     ): boolean => {
         if (entry.trigger.synchronous !== synchronous) {
