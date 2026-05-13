@@ -15,7 +15,7 @@ export interface IViewV2DisplayAttribute {
 
 export interface IViewV2Display {
     type: ViewV2Types;
-    attributes?: IViewV2DisplayAttribute[];
+    attributes: IViewV2DisplayAttribute[];
 }
 
 export interface IViewV2ValuesVersion {
@@ -44,8 +44,8 @@ interface IViewV2UserFields {
     label: ISystemTranslation;
     display: IViewV2Display;
     shared: boolean;
-    filters?: IViewV2Filter[];
-    sorts?: IViewV2Sort[];
+    filters: IViewV2Filter[];
+    sorts: IViewV2Sort[];
     valuesVersions?: IViewV2ValuesVersion | null;
 }
 

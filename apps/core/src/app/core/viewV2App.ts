@@ -57,7 +57,7 @@ export default function ({
 
                     type ViewV2Display {
                         type: ViewV2Types!,
-                        attributes: [ViewV2DisplayAttribute!],
+                        attributes: [ViewV2DisplayAttribute!]!,
                     }
 
                     input ViewV2DisplayInput {
@@ -108,8 +108,8 @@ export default function ({
                         created_at: Int!,
                         modified_at: Int!,
                         label: SystemTranslation!,
-                        filters: [ViewV2Filter!],
-                        sorts: [ViewV2Sort!],
+                        filters: [ViewV2Filter!]!,
+                        sorts: [ViewV2Sort!]!,
                         display: ViewV2Display!,
                         valuesVersions: [ViewV2ValuesVersion!],
                     }

@@ -14,7 +14,7 @@ const viewV2DisplayAttributeSchema = z.object({
 
 const viewV2DisplaySchema = z.object({
     type: z.enum(ViewV2Types),
-    attributes: z.array(viewV2DisplayAttributeSchema).optional(),
+    attributes: z.array(viewV2DisplayAttributeSchema),
 });
 
 const viewV2FilterSchema = z.object({
@@ -36,8 +36,8 @@ export const viewV2UserFieldsSchema = z.object({
     label: systemTranslationSchema,
     display: viewV2DisplaySchema,
     shared: z.boolean(),
-    filters: z.array(viewV2FilterSchema).optional(),
-    sorts: z.array(viewV2SortSchema).optional(),
+    filters: z.array(viewV2FilterSchema),
+    sorts: z.array(viewV2SortSchema),
     valuesVersions: viewV2ValuesVersionSchema.optional().nullable(),
 });
 

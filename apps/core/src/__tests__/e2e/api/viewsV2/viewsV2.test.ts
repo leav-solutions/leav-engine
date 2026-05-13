@@ -73,7 +73,16 @@ describe('ViewsV2', () => {
 
         test('Update viewV2', async () => {
             const {updateViewV2} = await adminUserSdk.UpdateViewV2({
-                view: {id: viewId, display: {type: ViewV2Types.list}},
+                view: {
+                    id: viewId,
+                    display: {
+                        type: ViewV2Types.list,
+                        attributes: [
+                            {attributeId: 'id', visible: true},
+                            {attributeId: 'label', visible: true},
+                        ],
+                    },
+                },
             });
 
             expect(updateViewV2.id).toBe(viewId);
@@ -123,7 +132,7 @@ describe('ViewsV2', () => {
             it('Should not be able to edit viewsV2 owned by other users', async () => {
                 const id = await createViewAsAdmin(false);
                 await expect(
-                    guestUserSdk.UpdateViewV2({view: {id, display: {type: ViewV2Types.list}}}),
+                    guestUserSdk.UpdateViewV2({view: {id, display: {type: ViewV2Types.list, attributes: []}}}),
                 ).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
             });
 
@@ -142,7 +151,7 @@ describe('ViewsV2', () => {
             it('Should not be able to edit shared viewsV2 owned by other users', async () => {
                 const id = await createViewAsAdmin(true);
                 await expect(
-                    guestUserSdk.UpdateViewV2({view: {id, display: {type: ViewV2Types.list}}}),
+                    guestUserSdk.UpdateViewV2({view: {id, display: {type: ViewV2Types.list, attributes: []}}}),
                 ).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
             });
 

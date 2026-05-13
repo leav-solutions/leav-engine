@@ -1216,6 +1216,7 @@ export type ViewV2DisplayAttributeInput = {
 };
 
 export type ViewV2DisplayInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<ViewV2DisplayAttributeInput>>;
   type: ViewV2Types;
 };
@@ -1507,7 +1508,7 @@ export type GetViewsV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, created_by: { whoAmI: { id: string } }, display: { type: ViewV2Types, attributes?: Array<{ visible: boolean, attribute: { id: string } }> | null }, filters?: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, attributes: Array<{ id: string }> }> | null, sorts?: Array<{ order: SortOrder, attributes: Array<{ id: string }> }> | null }> } };
+export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, created_by: { whoAmI: { id: string } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, attributes: Array<{ id: string }> }>, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string }> }> }> } };
 
 export type GetViewV2QueryVariables = Exact<{
   viewId: Scalars['ID']['input'];

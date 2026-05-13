@@ -107,6 +107,8 @@ describe('viewV2Domain', () => {
                     label: {fr: 'My view'},
                     display: mockViewV2CreateInput.display,
                     shared: false,
+                    filters: [],
+                    sorts: [],
                 },
                 mockCtx,
             );
@@ -215,7 +217,10 @@ describe('viewV2Domain', () => {
             });
 
             await expect(
-                domain.updateViewV2({id: mockViewV2.id, display: {type: 'invalid' as ViewV2Types}}, mockCtx),
+                domain.updateViewV2(
+                    {id: mockViewV2.id, display: {type: 'invalid' as ViewV2Types, attributes: []}},
+                    mockCtx,
+                ),
             ).rejects.toThrow(ValidationError);
             expect(mockValidationHelper.validateLibrary).not.toBeCalled();
             expect(mockViewV2Repo.getViewsOwnedOrSharedV2).not.toBeCalled();
