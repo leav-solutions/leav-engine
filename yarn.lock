@@ -21290,7 +21290,6 @@ __metadata:
     jest-watch-typeahead: "npm:2.2.2"
     lint-staged: "npm:16.4.0"
     prettier: "npm:3.3.3"
-    react-router-dom: "npm:6.22.0"
     typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
