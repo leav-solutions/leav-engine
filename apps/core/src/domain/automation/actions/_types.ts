@@ -12,7 +12,7 @@ export enum AutomationRuleActions {
     NOTIFICATION = 'notification',
 }
 
-export type AutomationPipelineStepValidation<Params = unknown> = {
+export type AutomationPipelineStepValidation<Params = Record<string, unknown>> = {
     readonly step: AutomationRulePipelineStep<Params>;
     readonly stepIndex: number;
     readonly trigger: AutomationRuleTrigger;

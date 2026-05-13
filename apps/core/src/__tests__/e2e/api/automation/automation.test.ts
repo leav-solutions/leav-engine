@@ -6,7 +6,7 @@ import {
     AutomationTriggerDefTopics,
     AutomationRuleActions,
 } from '../../_gqlTypes';
-import {FAKE_PLUGIN_AUTOMATION_ACTION_TYPE} from '../_fixtures/fakeplugin';
+import {FAKE_PLUGIN_AUTOMATION_ACTION_TYPE} from '../_fixtures/fakeplugin/domain/fakeAutomationAction';
 import {adminUserSdk, nonAdminUserSdk} from '../e2eUtils';
 
 describe('Automation', () => {
@@ -486,9 +486,9 @@ describe('Automation', () => {
             expect(pipeline.type).toBe('object');
             expect(pipeline.properties.steps.type).toBe('array');
             expect(pipeline.properties.steps.items.properties.type.enum).toEqual(
-                expect.arrayContaining(Object.values(AutomationRuleActions)),
+                expect.arrayContaining([...Object.values(AutomationRuleActions), FAKE_PLUGIN_AUTOMATION_ACTION_TYPE]),
             );
-            expect(pipeline.properties.steps.items.allOf.length).toBe(Object.values(AutomationRuleActions).length);
+            expect(pipeline.properties.steps.items.allOf.length).toBe(Object.values(AutomationRuleActions).length + 1);
         });
 
         test('edition json schema has active field and trigger is readonly', async () => {
@@ -545,6 +545,7 @@ describe('Automation', () => {
             expect(pipelineUiOptions.actionTypeLabels).toMatchObject(
                 Object.fromEntries(Object.values(AutomationRuleActions).map(type => [type, expect.any(String)])),
             );
+            expect(pipelineUiOptions.actionTypeLabels[FAKE_PLUGIN_AUTOMATION_ACTION_TYPE]).toBe('Plugin log action EN');
 
             const {params} = uiSchema.pipeline.steps.items;
             expect(params.condition.expression).toHaveProperty('ui:title');
@@ -553,6 +554,7 @@ describe('Automation', () => {
             expect(params.log.level).toHaveProperty('ui:title');
             expect(params.modifyAttribute.attributePath).toHaveProperty('ui:title');
             expect(params.notification.recipients).toHaveProperty('ui:title');
+            expect(params.plugin_log_action.message).toHaveProperty('ui:title', 'Plugin log message EN');
         });
 
         test('edition ui schema has active widget and trigger with ui:readonly', async () => {

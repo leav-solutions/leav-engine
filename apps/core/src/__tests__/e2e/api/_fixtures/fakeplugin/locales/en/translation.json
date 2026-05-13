@@ -1,16 +1,16 @@
 {
     "fakeplugin": {
-        "testtranslation": "Test translation FR"
+        "testtranslation": "Test translation EN"
     },
     "automation": {
         "form": {
             "pipeline": {
                 "types": {
-                    "plugin_log_action": "Plugin log action FR"
+                    "plugin_log_action": "Plugin log action EN"
                 },
                 "params": {
                     "plugin_log_action": {
-                        "message": "Message de log du plugin FR"
+                        "message": "Plugin log message EN"
                     }
                 }
             }

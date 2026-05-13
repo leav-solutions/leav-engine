@@ -7,10 +7,10 @@ import {
     AttributeFormat,
     type AutomationRulePipelineStepInput,
 } from '../../_gqlTypes';
-import {adminUserSdk, e2eAdminUser, e2eGuestUser, e2eNonAdminUser} from '../e2eUtils';
+import {adminUserSdk, e2eGuestUser, e2eNonAdminUser} from '../e2eUtils';
 import {type NotificationActionParams} from '../../../../domain/automation/actions/notificationAction';
 import {type ConditionActionParams} from '../../../../domain/automation/actions/conditionAction';
-import {FAKE_PLUGIN_AUTOMATION_ACTION_TYPE} from '../_fixtures/fakeplugin';
+import {FAKE_PLUGIN_AUTOMATION_ACTION_TYPE} from '../_fixtures/fakeplugin/domain/fakeAutomationAction';
 
 describe('Automation RECORD_INIT', () => {
     const testLibraryId = 'automation_record_init_test_library';

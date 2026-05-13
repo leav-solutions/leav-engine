@@ -13,8 +13,7 @@ import {type INotificationDomain} from '../../../../../domain/notification/notif
 import {TaskPriority} from '../../../../../_types/tasksManager';
 import {type TTrpc} from '../../../../../app/trpc/trpcApp';
 import {type IEventsManagerDomain} from '../../../../../domain/eventsManager/eventsManagerDomain';
-import {ActionExecutionResultStatus, type IAutomationAction} from '../../../../../domain/automation/actions/_types';
-import {logger} from '@leav/logger';
+import {fakePluginAutomationAction} from './domain/fakeAutomationAction';
 
 interface IDeps {
     translator: i18n;
@@ -65,37 +64,6 @@ function createTrpcRouter(t: TTrpc, eventsManagerDomain: IEventsManagerDomain) {
 }
 
 export type FakePluginRouter = ReturnType<typeof createTrpcRouter>;
-
-const LogPluginAutomationActionParamsSchema = z.object({
-    message: z.string().meta({
-        title: 'Log message',
-        description: 'The message to log when this action is executed.',
-    }),
-});
-
-export type LogPluginActionParams = z.infer<typeof LogPluginAutomationActionParamsSchema>;
-export const FAKE_PLUGIN_AUTOMATION_ACTION_TYPE = 'plugin_log_action';
-
-const _fakePluginAutomationAction: IAutomationAction<LogPluginActionParams> = {
-    type: FAKE_PLUGIN_AUTOMATION_ACTION_TYPE,
-    paramsSchema: z.object({
-        message: z.string().meta({
-            title: 'Plugin log message',
-            description: 'The message to log when this plugin action is executed.',
-        }),
-    }),
-    async execute(params, state, ctx) {
-        logger.info(
-            `Automation pipeline plugin log action ${state.trigger.eventAction} for user ${ctx.userId}: ${params.message}`,
-            {previousResults: state.results},
-        );
-
-        return {
-            status: ActionExecutionResultStatus.CONTINUE,
-            result: params.message,
-        };
-    },
-};
 
 export default function ({
     translator,
@@ -233,7 +201,7 @@ export default function ({
 
             extensionPoints.registerStart(async () => fakeDomain.startPlugin());
 
-            extensionPoints.registerAutomationAction(_fakePluginAutomationAction);
+            extensionPoints.registerAutomationAction(fakePluginAutomationAction);
         },
     };
 }
