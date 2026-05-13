@@ -5,6 +5,7 @@
 import {aql} from 'arangojs';
 import {join, type GeneratedAqlQuery} from 'arangojs/aql';
 import {
+    type AutomationRuleIndexEntry,
     type ICreateAutomationRule,
     type IAutomationRule,
     type IUpdateAutomationRule,
@@ -59,6 +60,7 @@ export interface IAutomationRuleRepo {
     createAutomationRule(rule: ICreateAutomationRule, ctx: IQueryInfos): Promise<IAutomationRule>;
     updateAutomationRule(rule: IUpdateAutomationRule, ctx: IQueryInfos): Promise<IAutomationRule>;
     getAutomationRules(params: IGetAutomationRulesParams, ctx: IQueryInfos): Promise<IList<IAutomationRule>>;
+    getActiveAutomationRulesForCache(ctx: IQueryInfos): Promise<AutomationRuleIndexEntry[]>;
     deleteAutomationRule(ruleId: string, ctx: IQueryInfos): Promise<IAutomationRule>;
 }
 
@@ -132,6 +134,18 @@ export default function ({
             });
 
             return automationRuleFromDbDocument(oldAutomationRule[0]);
+        },
+        async getActiveAutomationRulesForCache(ctx) {
+            const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
+
+            return dbService.execute<AutomationRuleIndexEntry[]>({
+                query: aql`
+                    FOR el IN ${collection}
+                        FILTER el.active == true
+                        RETURN { id: el._key, trigger: el.trigger }
+                `,
+                ctx,
+            });
         },
         async getAutomationRules(params, ctx) {
             const defaultParams: IGetCoreEntitiesParams = {

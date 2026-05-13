@@ -83,5 +83,8 @@ module.exports = {
     },
     automation: {
         enable: true,
+        cache: {
+            enable: true,
+        },
     },
 };

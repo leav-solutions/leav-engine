@@ -56,6 +56,11 @@ export interface IConfig {
 
 export interface IAutomation {
     enable: boolean;
+    cache: IAutomationCache;
+}
+
+export interface IAutomationCache {
+    enable: boolean;
 }
 
 export enum CoreMode {

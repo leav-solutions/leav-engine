@@ -26,6 +26,7 @@ import {Errors} from '../../_types/errors';
 import {isArangoError} from 'arangojs/error';
 import {type IConfig} from '../../_types/config';
 import {type IAutomationPipelineDomain} from './pipeline/pipeline';
+import {type IAutomationRulesCache} from './automationRulesCache';
 import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesToTrigger';
 import {type IAutomationTriggers} from './triggers/automationTriggers';
 import {type AutomationTriggerDef} from './triggers/_types';
@@ -86,6 +87,7 @@ export interface IAutomationDomainDeps {
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.automation.pipeline': IAutomationPipelineDomain;
+    'core.domain.automation.rulesCache': IAutomationRulesCache;
     'core.infra.automation.rule': IAutomationRuleRepo;
     config: IConfig;
 }
@@ -97,6 +99,7 @@ export default function ({
     'core.domain.permission.admin': adminPermissionDomain,
     'core.domain.eventsManager': eventsManagerDomain,
     'core.domain.automation.pipeline': pipelineDomain,
+    'core.domain.automation.rulesCache': automationRulesCache,
     'core.infra.automation.rule': automationRuleRepo,
     config,
 }: IAutomationDomainDeps): IAutomationDomain {
@@ -137,23 +140,7 @@ export default function ({
         if (TRIGGER_FAKER_RULES_FOR_DEV) {
             return buildFakeRulesToTrigger(event, synchronous, ctx);
         }
-
-        const rules = await automationRuleRepo.getAutomationRules(
-            {
-                filters: {
-                    active: true,
-                    trigger: {
-                        synchronous,
-                        eventAction: event.action,
-                        eventTopic: event.topic,
-                    },
-                },
-                partialMatchOnEventTopic: true,
-            },
-            ctx,
-        );
-
-        return rules.list;
+        return automationRulesCache.getRulesToTrigger(event, synchronous, ctx);
     };
 
     return {
@@ -236,6 +223,8 @@ export default function ({
 
             const newAutomationRule = await automationRuleRepo.createAutomationRule(rule, ctx);
 
+            await automationRulesCache.invalidate(newAutomationRule.id);
+
             logger.debug(`Created new automation rule with id ${newAutomationRule.id}`);
 
             await eventsManagerDomain.sendDatabaseEvent<EventAction.AUTOMATION_RULE_CREATE>(
@@ -294,6 +283,8 @@ export default function ({
                     throw error;
                 });
 
+            await automationRulesCache.invalidate(updatedAutomationRule.id);
+
             logger.debug(`Updated automation rule with id ${updatedAutomationRule.id}`);
 
             await eventsManagerDomain.sendDatabaseEvent<EventAction.AUTOMATION_RULE_UPDATE>(
@@ -324,6 +315,8 @@ export default function ({
 
                     throw error;
                 });
+
+            await automationRulesCache.invalidate(deletedAutomationRule.id);
 
             logger.debug(`Deleted automation rule with id ${ruleId}`);
 
