@@ -598,21 +598,4 @@ describe('Automation', () => {
             await expect(nonAdminUserSdk.ListAutomationTriggersDef()).rejects.toThrow('Action forbidden');
         });
     });
-
-    describe('list automation actions', () => {
-        test('should contains core and plugins actions', async () => {
-            const actionsDef = await adminUserSdk.ListAutomationActionsDef();
-            console.log('actionsDef', actionsDef);
-
-            expect(actionsDef.automationActionsDef.length).toBeGreaterThanOrEqual(1);
-
-            expect(actionsDef.automationActionsDef).toEqual(
-                expect.arrayContaining([AutomationRuleActions.condition, FAKE_PLUGIN_AUTOMATION_ACTION_TYPE]),
-            );
-        });
-
-        test('non-admin user cannot list automation actions', async () => {
-            await expect(nonAdminUserSdk.ListAutomationActionsDef()).rejects.toThrow('Action forbidden');
-        });
-    });
 });

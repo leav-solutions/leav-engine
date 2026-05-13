@@ -94,7 +94,3 @@ query GetAutomationRuleForm($formType: AutomationRuleJsonSchemaFormType!) {
         uiSchema
     }
 }
-
-query ListAutomationActionsDef {
-    automationActionsDef
-}

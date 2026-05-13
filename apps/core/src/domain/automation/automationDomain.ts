@@ -77,7 +77,6 @@ export interface IAutomationDomain {
     triggerRules(params: ITriggerRulesParams): Promise<void>;
 
     listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): Promise<AutomationTriggerDef[]>;
-    listAutomationActionsDef({ctx}: {ctx: IQueryInfos}): Promise<Array<AutomationRuleActions | string>>;
 }
 
 export interface IAutomationDomainDeps {
@@ -186,10 +185,6 @@ export default function ({
         async listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): Promise<AutomationTriggerDef[]> {
             await _hasManageAutomationPermissionOrThrow(ctx);
             return automationTriggers.listAutomationTriggersDef({ctx});
-        },
-        async listAutomationActionsDef({ctx}: {ctx: IQueryInfos}): Promise<Array<AutomationRuleActions | string>> {
-            await _hasManageAutomationPermissionOrThrow(ctx);
-            return automationActionsRegistry.listAvailableActions().map(({type}) => type);
         },
         async getAutomationRules({params, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
@@ -374,10 +369,6 @@ function automationDisabled(): IAutomationDomain {
         },
         async listAutomationTriggersDef(): Promise<AutomationTriggerDef[]> {
             logger.silly('Automation system is disabled. Skipping listing automation triggers definitions.');
-            return [];
-        },
-        async listAutomationActionsDef(): Promise<Array<AutomationRuleActions | string>> {
-            logger.silly('Automation system is disabled. Skipping listing automation actions definitions.');
             return [];
         },
     };

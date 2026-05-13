@@ -1341,11 +1341,6 @@ export type GetAutomationRuleFormQueryVariables = Exact<{
 
 export type GetAutomationRuleFormQuery = { automationRuleForm: { jsonSchema: any, uiSchema: any } };
 
-export type ListAutomationActionsDefQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ListAutomationActionsDefQuery = { automationActionsDef: Array<AutomationRuleActions> };
-
 export type PostDiscussionCommentMutationVariables = Exact<{
   comment?: InputMaybe<DiscussionCommentInput>;
 }>;
@@ -1725,11 +1720,6 @@ export const GetAutomationRuleFormDocument = gql`
     jsonSchema
     uiSchema
   }
-}
-    `;
-export const ListAutomationActionsDefDocument = gql`
-    query ListAutomationActionsDef {
-  automationActionsDef
 }
     `;
 export const PostDiscussionCommentDocument = gql`
@@ -2114,9 +2104,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetAutomationRuleForm(variables: GetAutomationRuleFormQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetAutomationRuleFormQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetAutomationRuleFormQuery>({ document: GetAutomationRuleFormDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetAutomationRuleForm', 'query', variables);
-    },
-    ListAutomationActionsDef(variables?: ListAutomationActionsDefQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<ListAutomationActionsDefQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<ListAutomationActionsDefQuery>({ document: ListAutomationActionsDefDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'ListAutomationActionsDef', 'query', variables);
     },
     PostDiscussionComment(variables?: PostDiscussionCommentMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<PostDiscussionCommentMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<PostDiscussionCommentMutation>({ document: PostDiscussionCommentDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'PostDiscussionComment', 'mutation', variables);

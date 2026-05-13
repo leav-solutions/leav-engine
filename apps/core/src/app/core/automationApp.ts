@@ -182,7 +182,6 @@ export default function ({
                             sort: AutomationRulesSortInput
                         ): AutomationRulesList!
                         automationTriggersDef: [AutomationTriggerDef!]!
-                        automationActionsDef: [AutomationRuleActions!]!
                         automationRuleForm(formType: AutomationRuleJsonSchemaFormType!): AutomationRuleForm!
                     }
 
@@ -211,13 +210,6 @@ export default function ({
                         },
                         async automationTriggersDef(parent, args, ctx: IQueryInfos): Promise<AutomationTriggerDef[]> {
                             return automationDomain.listAutomationTriggersDef({ctx});
-                        },
-                        async automationActionsDef(
-                            parent,
-                            args,
-                            ctx: IQueryInfos,
-                        ): Promise<Array<AutomationRuleActions | string>> {
-                            return automationDomain.listAutomationActionsDef({ctx});
                         },
                         async automationRuleForm(
                             parent,
