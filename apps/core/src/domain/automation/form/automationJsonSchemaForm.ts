@@ -5,6 +5,7 @@ import {AutomationRuleJsonSchemaFormType} from '../../../_types/automation';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IAutomationTriggersRegistry} from '../triggers/automationTriggersRegistry';
 import {AutomationTriggerDefSynchronicity} from '../triggers/_types';
+import {type IAutomationActionsRegistry} from '../automationActionsRegistry';
 import {type RJSFSchema} from '@rjsf/utils';
 
 export interface IAutomationJsonSchemaFormDomain {
@@ -19,6 +20,7 @@ export interface IAutomationJsonSchemaFormDomain {
 
 interface IAutomationJsonSchemaFormDomainDeps {
     'core.domain.automation.triggers.registry': IAutomationTriggersRegistry;
+    'core.domain.automation.actionsRegistry': IAutomationActionsRegistry;
 }
 
 // Extracts $defs from a Zod-generated sub-schema and returns the cleaned schema alongside
@@ -58,6 +60,7 @@ export const extractAndLiftDefs = (jsonSchema: RJSFSchema): {schema: RJSFSchema;
 
 export default function ({
     'core.domain.automation.triggers.registry': automationTriggersRegistry,
+    'core.domain.automation.actionsRegistry': actionsRegistry,
 }: IAutomationJsonSchemaFormDomainDeps): IAutomationJsonSchemaFormDomain {
     return {
         async getAutomationRuleJsonSchemaForm({formType}) {
@@ -108,6 +111,48 @@ export default function ({
                 })),
             };
 
+            const actions = actionsRegistry.listAvailableActions();
+
+            const actionParamSchemas = actions.map(action => {
+                const {schema: paramsSchema, defs} = extractAndLiftDefs(
+                    action.paramsSchema.toJSONSchema() as unknown as RJSFSchema,
+                );
+                Object.assign(collectedDefs, defs);
+                return {action, paramsSchema};
+            });
+
+            const pipelineStepsSchema: RJSFSchema = {
+                type: 'array',
+                items: {
+                    type: 'object',
+                    properties: {
+                        type: {
+                            type: 'string',
+                            enum: actions.map(a => a.type),
+                        },
+                        name: {type: 'string'},
+                    },
+                    required: ['type'],
+                    allOf: actionParamSchemas.map(({action, paramsSchema}) => ({
+                        if: {
+                            properties: {type: {const: action.type}},
+                            required: ['type'],
+                        },
+                        then: {
+                            properties: {params: paramsSchema},
+                            required: ['params'],
+                        },
+                    })),
+                },
+            };
+
+            const pipelineSchema: RJSFSchema = {
+                type: 'object',
+                properties: {
+                    steps: pipelineStepsSchema,
+                },
+            };
+
             return {
                 type: 'object',
                 ...(Object.keys(collectedDefs).length > 0 ? {$defs: collectedDefs} : {}),
@@ -123,6 +168,7 @@ export default function ({
                         ...triggerSchema,
                         ...(isEdition ? {readOnly: true} : {}),
                     },
+                    pipeline: pipelineSchema,
                 },
                 required: ['label', 'trigger'],
             };

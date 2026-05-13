@@ -9,13 +9,18 @@ import {
     ActionExecutionResultStatus,
 } from './_types';
 import {type IJexlAutomation} from '../jexl/jexlAutomation';
+import {type ZodMetaUISchema} from '../../../_types/jsonSchemaForm';
 
 const conditionActionParamsSchema = z.object({
     expression: z.string().meta({
         title: 'Expression (Jexl)',
         description:
             'The Jexl expression to determine the condition. If the result is true, the pipeline continues; otherwise, the pipeline stops.',
-    }),
+        ui: {
+            title: 'automation.form.pipeline.params.condition.expression',
+            placeholder: 'automation.form.pipeline.params.condition.expression_placeholder',
+        },
+    } satisfies ZodMetaUISchema),
 });
 
 export type ConditionActionParams = z.infer<typeof conditionActionParamsSchema>;

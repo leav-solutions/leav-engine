@@ -594,6 +594,12 @@
                 "success": "Automation rule updated",
                 "error": "An error occurred while updating the automation rule"
             },
+            "pipeline": {
+                "delete_action_confirm": {
+                    "title": "Delete this action",
+                    "content": "Are you sure you want to delete this action?"
+                }
+            },
             "unsaved_changes": {
                 "title": "Unsaved changes",
                 "content": "You have unsaved changes. If you leave this page, your changes will be lost."

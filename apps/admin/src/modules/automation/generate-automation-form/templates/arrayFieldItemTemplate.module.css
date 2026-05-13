@@ -1,0 +1,8 @@
+.arrayFieldItemTemplate {
+    :global(.ant-collapse-item.ant-collapse-item-active),
+    :global(.ant-collapse-item:hover:not(.ant-collapse-item-disabled)) {
+        outline: none;
+    }
+
+    box-shadow: var(--general-utilities-shadow-light);
+}

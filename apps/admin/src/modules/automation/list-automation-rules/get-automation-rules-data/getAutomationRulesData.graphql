@@ -16,6 +16,11 @@ query getAutomationRulesData(
                     attribute
                 }
             }
+            pipeline {
+                steps {
+                    name
+                }
+            }
         }
     }
 }

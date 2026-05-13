@@ -25,5 +25,14 @@ export const mapAutomationRuleDetails = (
         description: rule.description ?? '',
         active: rule.active,
         trigger: {...triggerRest, ...(cleanedEventTopic !== undefined ? {eventTopic: cleanedEventTopic} : {})},
+        pipeline: rule.pipeline
+            ? {
+                  steps: rule.pipeline.steps.map(step => ({
+                      type: step.type,
+                      ...(step.name ? {name: step.name} : {}), // As name is optional, we need to check if it is defined
+                      params: step.params,
+                  })),
+              }
+            : undefined,
     };
 };

@@ -482,6 +482,15 @@ describe('Automation', () => {
                 expect(block.then.properties).toHaveProperty('eventTopic');
                 expect(block.then.required).toContain('eventTopic');
             });
+
+            expect(schema.properties).toHaveProperty('pipeline');
+            const {pipeline} = schema.properties;
+            expect(pipeline.type).toBe('object');
+            expect(pipeline.properties.steps.type).toBe('array');
+            expect(pipeline.properties.steps.items.properties.type.enum).toEqual(
+                expect.arrayContaining(Object.values(AutomationRuleActions)),
+            );
+            expect(pipeline.properties.steps.items.allOf.length).toBe(Object.values(AutomationRuleActions).length);
         });
 
         test('edition json schema has active field and trigger is readonly', async () => {
@@ -516,9 +525,10 @@ describe('Automation', () => {
             const uiSchema = result.automationRuleForm.uiSchema;
 
             const {groups} = uiSchema['ui:options'];
-            expect(groups).toHaveLength(2);
+            expect(groups).toHaveLength(3);
             expect(groups[0]).toMatchObject({step: '1', fields: expect.arrayContaining(['label', 'description'])});
             expect(groups[1]).toMatchObject({step: '2', fields: ['trigger']});
+            expect(groups[2]).toMatchObject({step: '3', fields: ['pipeline']});
 
             expect(uiSchema.label).toHaveProperty('ui:title');
             expect(uiSchema.description).toHaveProperty('ui:title');
@@ -528,6 +538,23 @@ describe('Automation', () => {
             expect(uiSchema.trigger.eventTopic.attribute).toHaveProperty('ui:title');
 
             expect(uiSchema.trigger).not.toHaveProperty('ui:readonly');
+
+            const pipelineUiOptions = uiSchema.pipeline.steps['ui:options'];
+            expect(pipelineUiOptions).toHaveProperty('addLabel');
+            expect(pipelineUiOptions).toHaveProperty('moveUpLabel');
+            expect(pipelineUiOptions).toHaveProperty('moveDownLabel');
+            expect(pipelineUiOptions).toHaveProperty('deleteLabel');
+            expect(pipelineUiOptions.actionTypeLabels).toMatchObject(
+                Object.fromEntries(Object.values(AutomationRuleActions).map(type => [type, expect.any(String)])),
+            );
+
+            const {params} = uiSchema.pipeline.steps.items;
+            expect(params.condition.expression).toHaveProperty('ui:title');
+            expect(params.jexlCalculation.formula).toHaveProperty('ui:title');
+            expect(params.log.message).toHaveProperty('ui:title');
+            expect(params.log.level).toHaveProperty('ui:title');
+            expect(params.modifyAttribute.attributePath).toHaveProperty('ui:title');
+            expect(params.notification.recipients).toHaveProperty('ui:title');
         });
 
         test('edition ui schema has active widget and trigger with ui:readonly', async () => {

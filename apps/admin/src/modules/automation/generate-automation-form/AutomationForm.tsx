@@ -20,6 +20,8 @@ import {SelectWidget} from './widgets/SelectWidget';
 import {CheckboxWidget} from './widgets/CheckboxWidget';
 import {ObjectFieldTemplate} from './templates/ObjectFieldTemplate';
 import {FieldTemplate} from './templates/FieldTemplate';
+import {ArrayFieldTemplate} from './templates/ArrayFieldTemplate';
+import {ArrayFieldItemTemplate} from './templates/ArrayFieldItemTemplate';
 import {useAutomationFormData} from './utils/useAutomationFormData';
 import {useAutomationFormNavigation} from './utils/useAutomationFormNavigation';
 import {makeTransformErrors} from './utils/transformErrors';
@@ -39,7 +41,7 @@ export const AutomationForm = ({initialValues, mutationLoading, formType, onSubm
 
     const {formSchema, uiSchema, loading: schemaLoading} = useGetAutomationRuleForm({formType});
 
-    const {formData, hasUnsavedChanges, handleChange, handleFormSubmit} = useAutomationFormData({
+    const {formData, hasUnsavedChanges, handleChange, handleFormSubmit, addPipelineStep} = useAutomationFormData({
         initialValues,
         isCreationForm,
         formSchema,
@@ -102,6 +104,10 @@ export const AutomationForm = ({initialValues, mutationLoading, formType, onSubm
                             uiSchema={uiSchema}
                             formData={formData}
                             validator={validator}
+                            formContext={{
+                                addPipelineStep,
+                                pipelineStepsData: formData?.pipeline?.steps,
+                            }}
                             widgets={{
                                 TextWidget,
                                 SelectWidget,
@@ -110,7 +116,8 @@ export const AutomationForm = ({initialValues, mutationLoading, formType, onSubm
                             templates={{
                                 ObjectFieldTemplate,
                                 FieldTemplate,
-                                ButtonTemplates: {SubmitButton: () => null},
+                                ArrayFieldTemplate,
+                                ArrayFieldItemTemplate,
                             }}
                             onChange={handleChange}
                             onSubmit={handleFormSubmit}

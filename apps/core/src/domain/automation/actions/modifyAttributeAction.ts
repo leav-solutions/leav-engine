@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {z} from 'zod';
 import {logger} from '@leav/logger';
+import {type ZodMetaUISchema} from '../../../_types/jsonSchemaForm';
 import {
     ActionExecutionResultStatus,
     AutomationRuleActions,
@@ -30,12 +31,20 @@ const modifyAttributeActionParamsSchema = z.object({
     attributePath: z.string().meta({
         title: 'Attribute path',
         description: 'The path of the attribute to modify when this action is executed.',
-    }),
+        ui: {
+            title: 'automation.form.pipeline.params.modify_attribute.attribute_path',
+            placeholder: 'automation.form.pipeline.params.modify_attribute.attribute_path_placeholder',
+        },
+    } satisfies ZodMetaUISchema),
     mode: z.enum(['replace', 'add']).meta({
         title: 'Modification mode',
         description:
             'The mode of modification to apply to the attribute. "replace" will replace the current value, "add" will add the new value at the end of the current value.',
-    }),
+        ui: {
+            title: 'automation.form.pipeline.params.modify_attribute.mode',
+            placeholder: 'automation.form.pipeline.params.modify_attribute.mode_placeholder',
+        },
+    } satisfies ZodMetaUISchema),
 });
 
 export type ModifyAttributeActionParams = z.infer<typeof modifyAttributeActionParamsSchema>;

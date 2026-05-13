@@ -69,23 +69,18 @@ export const AutomationTable = ({
             dataIndex: 'nb_actions',
             key: 'nb_actions',
             width: ColumnWidth.S,
-            render: (nbActions: number) => <AutomationCell>{String(nbActions)}</AutomationCell>,
+            render: (nbActions: number) => <KitTag style={{width: 'fit-content'}}>{String(nbActions)}</KitTag>,
         },
         {
             title: t('automation.table.column.status'),
             dataIndex: 'active',
             key: 'active',
             width: ColumnWidth.XS,
-            render: (active: boolean) =>
-                active ? (
-                    <KitTag type="success">
-                        <KitIdCard description={t('admin.active')} />
-                    </KitTag>
-                ) : (
-                    <KitTag>
-                        <KitIdCard description={t('admin.inactive')} />
-                    </KitTag>
-                ),
+            render: (active: boolean) => (
+                <KitTag type={active ? 'success' : 'neutral'} style={{width: 'fit-content'}}>
+                    <KitIdCard description={active ? t('admin.active') : t('admin.inactive')} />
+                </KitTag>
+            ),
         },
     ];
 

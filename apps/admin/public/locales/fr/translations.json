@@ -594,6 +594,12 @@
                 "success": "Règle d'automatisation mise à jour",
                 "error": "Une erreur est survenue lors de la mise à jour de la règle d'automatisation"
             },
+            "pipeline": {
+                "delete_action_confirm": {
+                    "title": "Supprimer cette action",
+                    "content": "Êtes-vous sûr de vouloir supprimer cette action ?"
+                }
+            },
             "unsaved_changes": {
                 "title": "Modifications non enregistrées",
                 "content": "Vous avez des modifications non enregistrées. Si vous quittez cette page, vos modifications seront perdues."

@@ -17,6 +17,13 @@ query getAutomationRuleDetails(
                 }
                 synchronous
             }
+            pipeline {
+                steps {
+                    type
+                    name
+                    params
+                }
+            }
         }
     }
 }

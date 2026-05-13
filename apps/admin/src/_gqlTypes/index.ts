@@ -1200,6 +1200,47 @@ export enum ViewTypes {
   timeline = 'timeline'
 }
 
+export type ViewV2CreateInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
+  display: ViewV2DisplayInput;
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  label: Scalars['SystemTranslation']['input'];
+  library: Scalars['ID']['input'];
+  shared: Scalars['Boolean']['input'];
+  sort?: InputMaybe<Array<RecordSortInput>>;
+  valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
+};
+
+export type ViewV2DisplayInput = {
+  type: ViewV2Types;
+};
+
+export enum ViewV2Types {
+  cards = 'cards',
+  list = 'list',
+  timeline = 'timeline'
+}
+
+export type ViewV2UpdateInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  display?: InputMaybe<ViewV2DisplayInput>;
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  library?: InputMaybe<Scalars['ID']['input']>;
+  shared?: InputMaybe<Scalars['Boolean']['input']>;
+  sort?: InputMaybe<Array<RecordSortInput>>;
+  valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
+};
+
+export type ViewV2ValuesVersionInput = {
+  treeId: Scalars['ID']['input'];
+  treeNode: Scalars['ID']['input'];
+};
+
 export type ViewValuesVersionInput = {
   treeId: Scalars['String']['input'];
   treeNode: Scalars['String']['input'];
@@ -1311,7 +1352,7 @@ export type GetAutomationRuleDetailsQueryVariables = Exact<{
 }>;
 
 
-export type GetAutomationRuleDetailsQuery = { automationRules: { list: Array<{ id: string, label: string, description?: string | null, active: boolean, trigger: { eventAction: AutomationRuleEventAction, synchronous: boolean, eventTopic?: { library?: string | null, attribute?: string | null } | null } }> } };
+export type GetAutomationRuleDetailsQuery = { automationRules: { list: Array<{ id: string, label: string, description?: string | null, active: boolean, trigger: { eventAction: AutomationRuleEventAction, synchronous: boolean, eventTopic?: { library?: string | null, attribute?: string | null } | null }, pipeline: { steps: Array<{ type: AutomationRuleActions, name?: string | null, params: any }> } }> } };
 
 export type GetAutomationRulesDataQueryVariables = Exact<{
   filters?: InputMaybe<AutomationRulesFiltersInput>;
@@ -1320,7 +1361,7 @@ export type GetAutomationRulesDataQueryVariables = Exact<{
 }>;
 
 
-export type GetAutomationRulesDataQuery = { automationRules: { totalCount: number, list: Array<{ id: string, label: string, active: boolean, trigger: { eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null, attribute?: string | null } | null } }> } };
+export type GetAutomationRulesDataQuery = { automationRules: { totalCount: number, list: Array<{ id: string, label: string, active: boolean, trigger: { eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null, attribute?: string | null } | null }, pipeline: { steps: Array<{ name?: string | null }> } }> } };
 
 export type GetHistoryDataQueryVariables = Exact<{
   filters?: InputMaybe<LogFilterInput>;
@@ -2484,6 +2525,13 @@ export const GetAutomationRuleDetailsDocument = gql`
         }
         synchronous
       }
+      pipeline {
+        steps {
+          type
+          name
+          params
+        }
+      }
     }
   }
 }
@@ -2539,6 +2587,11 @@ export const GetAutomationRulesDataDocument = gql`
         eventTopic {
           library
           attribute
+        }
+      }
+      pipeline {
+        steps {
+          name
         }
       }
     }

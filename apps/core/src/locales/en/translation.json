@@ -314,24 +314,79 @@
     },
     "automation": {
         "form": {
-            "fields": {
+            "sections": {
+                "info": "Automation rule information",
+                "trigger": "Trigger",
+                "trigger_description": "When the event occurs",
+                "pipeline": "Actions",
+                "pipeline_description": "Execute the following actions in order"
+            },
+            "info": {
                 "active": "Active",
                 "label": "Automation name",
                 "label_placeholder": "Add the name of the automation",
                 "description": "Description",
-                "description_placeholder": "Describe the objective of this automation",
-                "trigger_event_action": "Trigger type",
-                "trigger_event_action_placeholder": "Select a trigger event",
+                "description_placeholder": "Describe the objective of this automation"
+            },
+            "trigger": {
+                "event_action": "Trigger type",
+                "event_action_placeholder": "Select a trigger event",
                 "event_topic_library": "Target library",
                 "event_topic_library_placeholder": "Enter the library identifier",
                 "event_topic_attribute": "Target attribute",
                 "event_topic_attribute_placeholder": "Enter the attribute identifier",
                 "synchronous": "Synchronous"
             },
-            "sections": {
-                "info": "Automation information",
-                "trigger": "Trigger",
-                "trigger_description": "When the event occurs"
+            "pipeline": {
+                "types": {
+                    "log": "Log",
+                    "condition": "Test condition",
+                    "error": "Error",
+                    "jexlCalculation": "Jexl calculation",
+                    "modifyAttribute": "Modify attribute",
+                    "notification": "Notification"
+                },
+                "add_action": "Add action",
+                "move_up": "Move up",
+                "move_down": "Move down",
+                "delete_action": "Delete action",
+                "action_name": "Action name",
+                "action_name_placeholder": "Add the action name",
+                "params": {
+                    "log": {
+                        "message": "Message",
+                        "message_placeholder": "Enter the message",
+                        "level": "Log level",
+                        "level_placeholder": "Select a log level"
+                    },
+                    "error": {
+                        "message": "Message",
+                        "message_placeholder": "Enter the message"
+                    },
+                    "condition": {
+                        "expression": "Condition (Jexl)",
+                        "expression_placeholder": "Enter a Jexl expression"
+                    },
+                    "jexl_calculation": {
+                        "formula": "Jexl expression",
+                        "formula_placeholder": "Enter a Jexl expression"
+                    },
+                    "modify_attribute": {
+                        "attribute_path": "Attribute path",
+                        "attribute_path_placeholder": "Enter the attribute path",
+                        "mode": "Modification mode",
+                        "mode_placeholder": "Select a modification mode"
+                    },
+                    "notification": {
+                        "title": "Notification title",
+                        "title_placeholder": "Enter the notification title",
+                        "recipients": "Recipients (Jexl)",
+                        "recipients_placeholder": "Enter a Jexl expression for recipients",
+                        "message": "Notification message",
+                        "message_placeholder": "Enter the notification message",
+                        "mail": "Send as email"
+                    }
+                }
             }
         }
     }

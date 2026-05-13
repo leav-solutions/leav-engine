@@ -5,6 +5,7 @@ import {useMemo, useState} from 'react';
 import {type IChangeEvent} from '@rjsf/core';
 import {deepEquals, getDefaultFormState, type RJSFSchema} from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
+import {type AutomationRuleActions} from '../../../../_gqlTypes';
 import {type AutomationFormValues} from '../../types';
 
 type UseAutomationFormDataParams = {
@@ -93,5 +94,14 @@ export const useAutomationFormData = ({
         onSubmit(submittedData);
     };
 
-    return {formData, hasUnsavedChanges, handleChange, handleFormSubmit};
+    const addPipelineStep = (actionType: AutomationRuleActions) => {
+        setFormData(prev => ({
+            ...prev,
+            pipeline: {
+                steps: [...(prev?.pipeline?.steps ?? []), {type: actionType, params: {}}],
+            },
+        }));
+    };
+
+    return {formData, hasUnsavedChanges, handleChange, handleFormSubmit, addPipelineStep};
 };

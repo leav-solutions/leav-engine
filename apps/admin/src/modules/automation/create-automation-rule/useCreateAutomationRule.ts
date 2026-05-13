@@ -7,6 +7,9 @@ import {KitAlert} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {type AutomationFormValues} from '../types';
 
+const INACTIVE_RULE = false;
+const EMPTY_PIPELINE = {steps: []};
+
 export const useCreateAutomationRule = () => {
     const {t} = useTranslation();
     const [createAutomationRule, {loading}] = useCreateAutomationRuleMutation({
@@ -34,20 +37,17 @@ export const useCreateAutomationRule = () => {
     };
 
     const handleCreateAutomation = async (rule: AutomationFormValues, onSuccess: () => void) => {
-        const {active, label, description, trigger} = rule;
+        const {label, description, trigger, pipeline} = rule;
 
         try {
             const {errors} = await createAutomationRule({
                 variables: {
                     rule: {
-                        active: active ?? false,
+                        active: INACTIVE_RULE,
                         label,
                         description,
                         trigger,
-                        //TODO: Add fake pipeline configuration for now. To replace with real values later.
-                        pipeline: {
-                            steps: [],
-                        },
+                        pipeline: pipeline ?? EMPTY_PIPELINE,
                     },
                 },
             });
