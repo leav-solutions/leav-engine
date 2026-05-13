@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {aql} from 'arangojs';
 import {type IAttributeTypeRepo, type IAttributeTypesRepo} from '../../attributeTypes/attributeTypesRepo';
 import {AttributeCondition, type IRecordFilterOption, Operator, TreeCondition} from '../../../_types/record';

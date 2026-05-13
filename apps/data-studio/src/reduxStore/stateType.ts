@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type GET_TASKS_tasks_list} from '../_gqlTypes/GET_TASKS';
 import {type TREE_NODE_CHILDREN_treeNodeChildren_list} from '../_gqlTypes/TREE_NODE_CHILDREN';
 import {type IBaseInfo, type IInfo, type ISharedStateSelectionSearch, type SharedStateSelection} from '../_types/types';
