@@ -81,8 +81,8 @@ describe('extractAndLiftDefs', () => {
             $defs: {
                 library: {
                     ui: {
-                        title: 'automation.form.fields.event_topic_library',
-                        placeholder: 'automation.form.fields.event_topic_library_placeholder',
+                        title: 'automation.form.trigger.event_topic_library',
+                        placeholder: 'automation.form.trigger.event_topic_library_placeholder',
                     },
                     type: 'string',
                 } as RJSFSchema,
@@ -108,8 +108,8 @@ describe('extractAndLiftDefs', () => {
                 library: {
                     id: 'library',
                     ui: {
-                        title: 'automation.form.fields.event_topic_library',
-                        placeholder: 'automation.form.fields.event_topic_library_placeholder',
+                        title: 'automation.form.trigger.event_topic_library',
+                        placeholder: 'automation.form.trigger.event_topic_library_placeholder',
                     },
                     type: 'string',
                 } as RJSFSchema & {id: string},

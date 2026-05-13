@@ -34,11 +34,20 @@ export const useEditAutomationRule = () => {
     };
 
     const handleEditAutomation = async (id: string, rule: AutomationFormValues, onSuccess: () => void) => {
-        const {active, label, description, trigger} = rule;
+        const {active, label, description, trigger, pipeline} = rule;
 
         try {
             const {errors} = await updateAutomationRule({
-                variables: {rule: {id, active, label, description, trigger, pipeline: {steps: []}}},
+                variables: {
+                    rule: {
+                        id,
+                        active,
+                        label,
+                        description,
+                        trigger,
+                        pipeline,
+                    },
+                },
             });
 
             if (errors) {

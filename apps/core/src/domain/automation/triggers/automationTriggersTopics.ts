@@ -45,8 +45,8 @@ export default function ({
         .meta({
             id: 'library',
             ui: {
-                title: 'automation.form.fields.event_topic_library',
-                placeholder: 'automation.form.fields.event_topic_library_placeholder',
+                title: 'automation.form.trigger.event_topic_library',
+                placeholder: 'automation.form.trigger.event_topic_library_placeholder',
             },
         } satisfies ZodMetaUISchema);
 
@@ -68,8 +68,8 @@ export default function ({
         .meta({
             id: 'attribute',
             ui: {
-                title: 'automation.form.fields.event_topic_attribute',
-                placeholder: 'automation.form.fields.event_topic_attribute_placeholder',
+                title: 'automation.form.trigger.event_topic_attribute',
+                placeholder: 'automation.form.trigger.event_topic_attribute_placeholder',
             },
         } satisfies ZodMetaUISchema);
 

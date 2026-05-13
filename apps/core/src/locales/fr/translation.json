@@ -314,24 +314,79 @@
     },
     "automation": {
         "form": {
-            "fields": {
+            "sections": {
+                "info": "Informations de la règle d’automatisation",
+                "trigger": "Déclencheur",
+                "trigger_description": "Quand l’évènement survient",
+                "pipeline": "Actions",
+                "pipeline_description": "Exécuter les actions suivantes dans l’ordre"
+            },
+            "info": {
                 "active": "Actif",
                 "label": "Nom de l’automatisation",
                 "label_placeholder": "Ajoutez le nom de l’automatisation",
                 "description": "Description",
-                "description_placeholder": "Décrivez l’objectif de cette automatisation",
-                "trigger_event_action": "Type de déclencheur",
-                "trigger_event_action_placeholder": "Sélectionnez un événement déclencheur",
+                "description_placeholder": "Décrivez l’objectif de cette automatisation"
+            },
+            "trigger": {
+                "event_action": "Type de déclencheur",
+                "event_action_placeholder": "Sélectionnez un événement déclencheur",
                 "event_topic_library": "Bibliothèque cible",
                 "event_topic_library_placeholder": "Entrez l’identifiant de la bibliothèque",
                 "event_topic_attribute": "Attribut cible",
                 "event_topic_attribute_placeholder": "Entrez l’identifiant de l’attribut",
                 "synchronous": "Synchrone"
             },
-            "sections": {
-                "info": "Informations de l’automatisation",
-                "trigger": "Déclencheur",
-                "trigger_description": "Quand l’évènement survient"
+            "pipeline": {
+                "types": {
+                    "log": "Log",
+                    "condition": "Condition de test",
+                    "error": "Erreur",
+                    "jexlCalculation": "Calcul Jexl",
+                    "modifyAttribute": "Modifier un attribut",
+                    "notification": "Notification"
+                },
+                "add_action": "Ajouter une action",
+                "move_up": "Monter",
+                "move_down": "Descendre",
+                "delete_action": "Supprimer l’action",
+                "action_name": "Nom de l’action",
+                "action_name_placeholder": "Ajoutez le nom de l’action",
+                "params": {
+                    "log": {
+                        "message": "Message",
+                        "message_placeholder": "Saisissez le message",
+                        "level": "Niveau de log",
+                        "level_placeholder": "Sélectionnez un niveau de log"
+                    },
+                    "error": {
+                        "message": "Message",
+                        "message_placeholder": "Saisissez le message"
+                    },
+                    "condition": {
+                        "expression": "Condition (Jexl)",
+                        "expression_placeholder": "Saisissez une expression Jexl"
+                    },
+                    "jexl_calculation": {
+                        "formula": "Expression Jexl",
+                        "formula_placeholder": "Saisissez une expression Jexl"
+                    },
+                    "modify_attribute": {
+                        "attribute_path": "Chemin de l’attribut",
+                        "attribute_path_placeholder": "Saisissez le chemin de l’attribut",
+                        "mode": "Mode de modification",
+                        "mode_placeholder": "Sélectionnez un mode de modification"
+                    },
+                    "notification": {
+                        "title": "Titre de la notification",
+                        "title_placeholder": "Saisissez le titre de la notification",
+                        "recipients": "Destinataires (Jexl)",
+                        "recipients_placeholder": "Saisissez une expression Jexl pour les destinataires",
+                        "message": "Corps de la notification",
+                        "message_placeholder": "Saisissez le corps de la notification",
+                        "mail": "Envoyer par email"
+                    }
+                }
             }
         }
     }

@@ -3,6 +3,7 @@
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {z} from 'zod';
 import {logger} from '@leav/logger';
+import {type ZodMetaUISchema} from '../../../_types/jsonSchemaForm';
 import {type IConfig} from '../../../_types/config';
 import {ActionExecutionResultStatus, AutomationRuleActions, type IAutomationAction} from './_types';
 import {type IJexlAutomation} from '../jexl/jexlAutomation';
@@ -12,7 +13,11 @@ const jexlCalculationActionParamsSchema = z.object({
         title: 'Jexl expression',
         description:
             'The Jexl expression to evaluate when this action is executed. https://aristid.atlassian.net/wiki/spaces/PRODUIT/pages/2087256077/Calcul+Jexl',
-    }),
+        ui: {
+            title: 'automation.form.pipeline.params.jexl_calculation.formula',
+            placeholder: 'automation.form.pipeline.params.jexl_calculation.formula_placeholder',
+        },
+    } satisfies ZodMetaUISchema),
 });
 
 export type JexlCalculationActionParams = z.infer<typeof jexlCalculationActionParamsSchema>;

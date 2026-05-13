@@ -20,6 +20,6 @@ export const mapAutomationRulesData = (data: GetAutomationRulesDataQuery['automa
         name: automation.label,
         trigger: automation.trigger.eventAction,
         target: _getTarget(automation.trigger.eventTopic),
-        nb_actions: 0,
+        nb_actions: automation.pipeline?.steps.length ?? 0,
         active: automation.active,
     }));

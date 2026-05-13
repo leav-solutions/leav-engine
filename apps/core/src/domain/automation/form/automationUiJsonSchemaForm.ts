@@ -4,10 +4,11 @@
 import {type i18n} from 'i18next';
 import {ZodObject, type ZodType} from 'zod';
 import {type UiSchema} from '@rjsf/utils';
-import {AutomationRuleJsonSchemaFormType, type AutomationRulesEventTopic} from '../../../_types/automation';
+import {AutomationRuleJsonSchemaFormType} from '../../../_types/automation';
 import {type ZodMetaUISchema} from '../../../_types/jsonSchemaForm';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IAutomationTriggersRegistry} from '../triggers/automationTriggersRegistry';
+import {type IAutomationActionsRegistry} from '../automationActionsRegistry';
 
 export interface IAutomationUiJsonSchemaFormDomain {
     getAutomationRuleUiJsonSchemaForm({
@@ -22,23 +23,22 @@ export interface IAutomationUiJsonSchemaFormDomain {
 interface IAutomationUiJsonSchemaFormDomainDeps {
     translator: i18n;
     'core.domain.automation.triggers.registry': IAutomationTriggersRegistry;
+    'core.domain.automation.actionsRegistry': IAutomationActionsRegistry;
 }
 
 export default function ({
     translator,
     'core.domain.automation.triggers.registry': automationTriggersRegistry,
+    'core.domain.automation.actionsRegistry': actionsRegistry,
 }: IAutomationUiJsonSchemaFormDomainDeps): IAutomationUiJsonSchemaFormDomain {
-    const _buildEventTopicUiSchema = (
-        topicSchema: ZodType<Partial<AutomationRulesEventTopic>>,
-        lng: string,
-    ): UiSchema => {
-        if (!(topicSchema instanceof ZodObject)) {
+    const _buildObjectUiSchema = (schema: ZodType, lng: string): UiSchema => {
+        if (!(schema instanceof ZodObject)) {
             return {};
         }
 
         const result: UiSchema = {};
 
-        for (const [fieldName, fieldSchema] of Object.entries(topicSchema.shape)) {
+        for (const [fieldName, fieldSchema] of Object.entries(schema.shape)) {
             const meta = (fieldSchema as ZodType).meta?.() as ZodMetaUISchema | undefined;
             if (!meta) {
                 continue;
@@ -68,9 +68,14 @@ export default function ({
             const lng = ctx.lang;
 
             const triggers = automationTriggersRegistry.listTriggers();
-
             const mergedEventTopicUiSchema = triggers.reduce(
-                (acc, trigger) => ({...acc, ..._buildEventTopicUiSchema(trigger.topicSchema, lng)}),
+                (acc, trigger) => ({...acc, ..._buildObjectUiSchema(trigger.topicSchema, lng)}),
+                {} as UiSchema,
+            );
+
+            const actions = actionsRegistry.listAvailableActions();
+            const actionParamsUiSchema = actions.reduce(
+                (acc, action) => ({...acc, [action.type]: _buildObjectUiSchema(action.paramsSchema, lng)}),
                 {} as UiSchema,
             );
 
@@ -90,33 +95,70 @@ export default function ({
                             fields: ['trigger'],
                             defaultOpen: true,
                         },
+                        {
+                            title: translator.t('automation.form.sections.pipeline', {lng}),
+                            description: translator.t('automation.form.sections.pipeline_description', {lng}),
+                            step: '3',
+                            fields: ['pipeline'],
+                            defaultOpen: true,
+                        },
                     ],
+                    submitButtonOptions: {
+                        norender: true,
+                    },
                 },
                 ...(isEdition
                     ? {
                           active: {
-                              'ui:title': translator.t('automation.form.fields.active', {lng}),
+                              'ui:title': translator.t('automation.form.info.active', {lng}),
                           },
                       }
                     : {}),
                 label: {
-                    'ui:title': translator.t('automation.form.fields.label', {lng}),
-                    'ui:placeholder': translator.t('automation.form.fields.label_placeholder', {lng}),
+                    'ui:title': translator.t('automation.form.info.label', {lng}),
+                    'ui:placeholder': translator.t('automation.form.info.label_placeholder', {lng}),
                 },
                 description: {
-                    'ui:title': translator.t('automation.form.fields.description', {lng}),
-                    'ui:placeholder': translator.t('automation.form.fields.description_placeholder', {lng}),
+                    'ui:title': translator.t('automation.form.info.description', {lng}),
+                    'ui:placeholder': translator.t('automation.form.info.description_placeholder', {lng}),
                 },
                 trigger: {
                     eventAction: {
-                        'ui:title': translator.t('automation.form.fields.trigger_event_action', {lng}),
-                        'ui:placeholder': translator.t('automation.form.fields.trigger_event_action_placeholder', {
+                        'ui:title': translator.t('automation.form.trigger.event_action', {lng}),
+                        'ui:placeholder': translator.t('automation.form.trigger.event_action_placeholder', {
                             lng,
                         }),
                     },
                     eventTopic: mergedEventTopicUiSchema,
                     synchronous: {
-                        'ui:title': translator.t('automation.form.fields.synchronous', {lng}),
+                        'ui:title': translator.t('automation.form.trigger.synchronous', {lng}),
+                    },
+                },
+                pipeline: {
+                    steps: {
+                        'ui:options': {
+                            addLabel: translator.t('automation.form.pipeline.add_action', {lng}),
+                            moveUpLabel: translator.t('automation.form.pipeline.move_up', {lng}),
+                            moveDownLabel: translator.t('automation.form.pipeline.move_down', {lng}),
+                            deleteLabel: translator.t('automation.form.pipeline.delete_action', {lng}),
+                            actionTypeLabels: actions.reduce(
+                                (acc, action) => ({
+                                    ...acc,
+                                    [action.type]: translator.t(`automation.form.pipeline.types.${action.type}`, {lng}),
+                                }),
+                                {} as Record<string, string>,
+                            ),
+                        },
+                        items: {
+                            type: {'ui:widget': 'hidden'},
+                            name: {
+                                'ui:title': translator.t('automation.form.pipeline.action_name', {lng}),
+                                'ui:placeholder': translator.t('automation.form.pipeline.action_name_placeholder', {
+                                    lng,
+                                }),
+                            },
+                            params: actionParamsUiSchema,
+                        },
                     },
                 },
             };

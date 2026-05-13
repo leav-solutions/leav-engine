@@ -1,10 +1,11 @@
 // Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
 // This file is released under LGPL V3
 // License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-import {KitCollapse, KitIdCard, KitSpace} from 'aristid-ds';
+import {KitSpace} from 'aristid-ds';
 import {getUiOptions, type ObjectFieldTemplateProps} from '@rjsf/utils';
+import {ObjectFieldGroups} from './components/ObjectFieldGroups';
 
-type GroupConfig = {
+export type GroupConfig = {
     title: string;
     description?: string;
     step: string;
@@ -12,50 +13,23 @@ type GroupConfig = {
     defaultOpen?: boolean;
 };
 
-export const ObjectFieldTemplate = ({properties, uiSchema}: ObjectFieldTemplateProps) => {
-    const options = getUiOptions(uiSchema);
-    const groups = options.groups as GroupConfig[] | undefined;
+export const ObjectFieldTemplate = ({properties, uiSchema, schema, registry}: ObjectFieldTemplateProps) => {
+    const groups = getUiOptions(uiSchema).groups as GroupConfig[] | undefined;
 
+    // Root form object: renders fields grouped into collapsible sections (e.g. Info, Actions)
     if (groups) {
         return (
-            <KitSpace direction="vertical" size="xs" style={{width: '100%'}}>
-                {groups.map(group => {
-                    const groupProperties = properties.filter(p => group.fields.includes(p.name));
-                    if (groupProperties.length === 0) {
-                        return null;
-                    }
-
-                    return (
-                        <KitCollapse
-                            key={group.step}
-                            defaultActiveKey={1}
-                            items={[
-                                {
-                                    key: 1,
-                                    label: (
-                                        <KitIdCard
-                                            avatarProps={{label: group.step, shape: 'square'}}
-                                            title={group.title}
-                                            description={group.description}
-                                            size="m"
-                                        />
-                                    ),
-                                    children: (
-                                        <KitSpace direction="vertical" size="s" style={{width: '100%'}}>
-                                            {groupProperties.map(p => (
-                                                <div key={p.name}>{p.content}</div>
-                                            ))}
-                                        </KitSpace>
-                                    ),
-                                },
-                            ]}
-                        />
-                    );
-                })}
-            </KitSpace>
+            <ObjectFieldGroups
+                groups={groups}
+                properties={properties}
+                schema={schema}
+                uiSchema={uiSchema}
+                registry={registry}
+            />
         );
     }
 
+    // Nested objects (trigger, eventTopic…): renders fields as a flat vertical list
     return (
         <KitSpace direction="vertical" size="s" style={{width: '100%'}}>
             {properties
