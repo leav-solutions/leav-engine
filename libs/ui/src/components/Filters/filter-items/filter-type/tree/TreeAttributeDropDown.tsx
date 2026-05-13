@@ -38,6 +38,13 @@ const StyledKitTreeWithGhostedNodes = styled(KitTree)`
             font-style: italic;
         }
     }
+
+    & .ant-tree-treenode:has(.ant-tree-checkbox-disabled) {
+        .ant-tree-node-content-wrapper,
+        .ant-typography {
+            cursor: default;
+        }
+    }
 `;
 
 export const TreeAttributeDropDown: FunctionComponent<IFilterChildrenTreeDropDownProps> = ({
