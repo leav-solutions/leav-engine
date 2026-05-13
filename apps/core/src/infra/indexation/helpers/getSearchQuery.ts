@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type IRecordSort} from '../../../_types/record';
 import {type GeneratedAqlQuery, aql, join, literal} from 'arangojs/aql';
 import {CORE_INDEX_ANALYZER, CORE_INDEX_FIELD, CORE_INDEX_INPUT_ANALYZER, CORE_INDEX_VIEW} from '../indexationService';

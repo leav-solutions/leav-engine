@@ -1,7 +1,3 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
-
 import {type ISheet} from '_ui/components/ImportModal/_types';
 import {ImportMode, ImportType} from '_ui/_gqlTypes';
 import {mockAttributeWithDetails} from './attribute';

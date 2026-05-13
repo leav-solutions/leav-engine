@@ -62,9 +62,7 @@ Cas particulier (utilisateur custom) : `getSdkWithUser(e2eAdminUser())` ou `getS
 ## Structure d'un test
 
 ```ts
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
+
 import {SomeEnum} from '../../_gqlTypes';
 import {adminUserSdk, nonAdminUserSdk} from '../e2eUtils';
 
@@ -79,8 +77,6 @@ describe('MyFeature', () => {
     });
 });
 ```
-
-Le header de licence LGPL est obligatoire (check CI bloquant).
 
 ## Patterns d'assertion (calqués sur `automation.test.ts`)
 

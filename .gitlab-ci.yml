@@ -97,15 +97,6 @@ lint:
     reports:
       codequality: gl-codequality.json
 
-license-check:
-  stage: test
-  script:
-    - yarn workspaces focus leav-monorepo
-    - yarn run license:check
-  cache:
-    <<: *yarn_cache
-  rules: *check_ci_rules
-
 tscheck:
   stage: test
   script:

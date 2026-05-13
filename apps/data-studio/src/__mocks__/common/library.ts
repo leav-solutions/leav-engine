@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017 until 2023/11/05, Copyright Aristid from 2023/11/06
-// This file is released under LGPL V3
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 import {type GET_LIBRARY_PERMISSIONS_libraries_list_permissions} from '../../_gqlTypes/GET_LIBRARY_PERMISSIONS';
 import {LibraryBehavior} from '../../_gqlTypes';
 import {mockLabel} from './label';

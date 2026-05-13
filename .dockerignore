@@ -30,8 +30,6 @@
 **/jest-*config.json
 **/*.tsbuildinfo
 **/*.md
-/license-check-config.json
-/LICENSE_HEADER
 /jestModuleNameMapper.js
 /commitlint.config.cjs
 
