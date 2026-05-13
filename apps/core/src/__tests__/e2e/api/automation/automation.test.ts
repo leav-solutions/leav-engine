@@ -1,11 +1,5 @@
 import {adminUserId} from '../../../../_constants/users';
-import {
-    AutomationRuleEventAction,
-    AutomationRuleJsonSchemaFormType,
-    AutomationTriggerDefSynchronicity,
-    AutomationTriggerDefTopics,
-    AutomationRuleActions,
-} from '../../_gqlTypes';
+import {AutomationRuleEventAction, AutomationRuleJsonSchemaFormType, AutomationRuleActions} from '../../_gqlTypes';
 import {FAKE_PLUGIN_AUTOMATION_ACTION_TYPE} from '../_fixtures/fakeplugin/domain/fakeAutomationAction';
 import {adminUserSdk, nonAdminUserSdk} from '../e2eUtils';
 
@@ -575,27 +569,6 @@ describe('Automation', () => {
                     formType: AutomationRuleJsonSchemaFormType.creation,
                 }),
             ).rejects.toThrow('Action forbidden');
-        });
-    });
-
-    describe('list automation triggers', () => {
-        test('should contains at least RECORD_INIT trigger', async () => {
-            const triggersDef = await adminUserSdk.ListAutomationTriggersDef();
-            expect(triggersDef.automationTriggersDef.length).toBeGreaterThanOrEqual(1);
-
-            expect(triggersDef.automationTriggersDef).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        eventAction: AutomationRuleEventAction.RECORD_INIT,
-                        topics: [AutomationTriggerDefTopics.LIBRARY],
-                        synchronicity: AutomationTriggerDefSynchronicity.SYNC,
-                    }),
-                ]),
-            );
-        });
-
-        test('non-admin user cannot list triggers', async () => {
-            await expect(nonAdminUserSdk.ListAutomationTriggersDef()).rejects.toThrow('Action forbidden');
         });
     });
 });

@@ -26,9 +26,7 @@ import {type IAutomationPipelineDomain} from './pipeline/pipeline';
 import {type IAutomationRulesCache} from './automationRulesCache';
 import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesToTrigger';
 import {type IAutomationTriggers} from './triggers/automationTriggers';
-import {type AutomationTriggerDef} from './triggers/_types';
 import {type AutomationPipelineExecution, type AutomationPipelineValidation} from './pipeline/_types';
-import {type AutomationRuleActions} from './actions/_types';
 import {type IAutomationActionsRegistry} from './automationActionsRegistry';
 import {type IAutomationJsonSchemaFormDomain} from './form/automationJsonSchemaForm';
 import {type IAutomationUiJsonSchemaFormDomain} from './form/automationUiJsonSchemaForm';
@@ -75,8 +73,6 @@ export interface IAutomationDomain {
     updateAutomationRule({rule, ctx}: {rule: IUpdateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     deleteAutomationRule({ruleId, ctx}: {ruleId: string; ctx: IQueryInfos}): Promise<IAutomationRule>;
     triggerRules(params: ITriggerRulesParams): Promise<void>;
-
-    listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): Promise<AutomationTriggerDef[]>;
 }
 
 export interface IAutomationDomainDeps {
@@ -181,10 +177,6 @@ export default function ({
             } catch (error) {
                 logger.error(`Error while triggering ${event.action} rules with topic ${event.topic}: ${error.stack}`);
             }
-        },
-        async listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): Promise<AutomationTriggerDef[]> {
-            await _hasManageAutomationPermissionOrThrow(ctx);
-            return automationTriggers.listAutomationTriggersDef({ctx});
         },
         async getAutomationRules({params, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
@@ -366,10 +358,6 @@ function automationDisabled(): IAutomationDomain {
         },
         async triggerRules(): Promise<void> {
             logger.silly('Automation system is disabled. Skipping rules trigger.');
-        },
-        async listAutomationTriggersDef(): Promise<AutomationTriggerDef[]> {
-            logger.silly('Automation system is disabled. Skipping listing automation triggers definitions.');
-            return [];
         },
     };
 }

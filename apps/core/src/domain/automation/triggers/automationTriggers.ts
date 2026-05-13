@@ -1,31 +1,13 @@
-import {ZodObject, type ZodRawShape, type ZodType} from 'zod';
 import {type AutomationRuleTrigger} from '../../../_types/automation';
 import {Errors} from '../../../_types/errors';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import ValidationError from '../../../errors/ValidationError';
 import {type IAutomationTriggersRegistry} from './automationTriggersRegistry';
-import {type AutomationTriggerDef, AutomationTriggerDefSynchronicity, AutomationTriggerDefTopics} from './_types';
+import {AutomationTriggerDefSynchronicity} from './_types';
 
 export interface IAutomationTriggers {
-    listAutomationTriggersDef({ctx}: {ctx: IQueryInfos}): AutomationTriggerDef[];
     validateAutomationRuleTrigger(ruleTrigger: AutomationRuleTrigger, ctx: IQueryInfos): Promise<void>;
 }
-
-// Maps Zod object keys (lowercase topic property names) to AutomationTriggerDefTopics enum values.
-// Extend this map when adding a new entry to AutomationTriggerDefTopics.
-const TOPIC_KEY_TO_ENUM: Record<string, AutomationTriggerDefTopics> = {
-    library: AutomationTriggerDefTopics.LIBRARY,
-    attribute: AutomationTriggerDefTopics.ATTRIBUTE,
-};
-
-const _getTopicsFromSchema = (schema?: ZodType): AutomationTriggerDefTopics[] => {
-    if (!schema || !(schema instanceof ZodObject)) {
-        return [];
-    }
-    return Object.keys((schema as ZodObject<ZodRawShape>).shape)
-        .filter(k => k in TOPIC_KEY_TO_ENUM)
-        .map(k => TOPIC_KEY_TO_ENUM[k]);
-};
 
 export interface IAutomationTriggersDeps {
     'core.domain.automation.triggers.registry': IAutomationTriggersRegistry;
@@ -35,13 +17,6 @@ export default function ({
     'core.domain.automation.triggers.registry': triggersRegistry,
 }: IAutomationTriggersDeps): IAutomationTriggers {
     return {
-        listAutomationTriggersDef: ({ctx}) =>
-            triggersRegistry.listTriggers().map(({eventAction, topicSchema, synchronicity}) => ({
-                eventAction,
-                topics: _getTopicsFromSchema(topicSchema),
-                synchronicity,
-            })),
-
         validateAutomationRuleTrigger: async ({eventAction, eventTopic, synchronous}, ctx) => {
             const triggerDef = triggersRegistry.getTrigger(eventAction);
 

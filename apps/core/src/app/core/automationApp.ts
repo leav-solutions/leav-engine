@@ -9,12 +9,7 @@ import {
 } from '../../_types/automation';
 import {type IPaginationParams, type ISortParams, type IList} from '../../_types/list';
 import {type IAutomationTriggersRegistry} from '../..//domain/automation/triggers/automationTriggersRegistry';
-import {
-    AutomationTriggerDefSynchronicity,
-    AutomationTriggerDefTopics,
-    type AutomationTriggerDef,
-} from '../../domain/automation/triggers/_types';
-import {type AutomationRuleActions, type IAutomationAction} from '../../domain/automation/actions/_types';
+import {type IAutomationAction} from '../../domain/automation/actions/_types';
 import {type IAutomationActionsRegistry} from '../../domain/automation/automationActionsRegistry';
 import {type IAppModule} from '../../_types/shared';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
@@ -53,19 +48,6 @@ export default function ({
                             .listTriggers()
                             .map(def => def.eventAction)
                             .join(' ')}
-                    }
-
-                    enum AutomationTriggerDefSynchronicity {
-                        ${Object.values(AutomationTriggerDefSynchronicity).join('\n')}
-                    }
-                    enum AutomationTriggerDefTopics {
-                        ${Object.values(AutomationTriggerDefTopics).join('\n')}
-                    }
-                
-                    type AutomationTriggerDef {
-                        eventAction: AutomationRuleEventAction!,
-                        topics: [AutomationTriggerDefTopics!]!,
-                        synchronicity: AutomationTriggerDefSynchronicity!,
                     }
 
                     type AutomationRuleTrigger {
@@ -181,7 +163,6 @@ export default function ({
                             pagination: Pagination,
                             sort: AutomationRulesSortInput
                         ): AutomationRulesList!
-                        automationTriggersDef: [AutomationTriggerDef!]!
                         automationRuleForm(formType: AutomationRuleJsonSchemaFormType!): AutomationRuleForm!
                     }
 
@@ -207,9 +188,6 @@ export default function ({
                                 },
                                 ctx,
                             });
-                        },
-                        async automationTriggersDef(parent, args, ctx: IQueryInfos): Promise<AutomationTriggerDef[]> {
-                            return automationDomain.listAutomationTriggersDef({ctx});
                         },
                         async automationRuleForm(
                             parent,
