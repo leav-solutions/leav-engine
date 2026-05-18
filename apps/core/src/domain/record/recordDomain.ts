@@ -42,12 +42,6 @@ export interface IDuplicateRecordRules {
 }
 
 export interface IRecordDomain {
-    /**
-     * Create empty record
-     * Used when create a record, set active to false and inCreation to true
-     */
-    createEmptyRecord(params: {library: string; ctx: IQueryInfos}): Promise<IRecord>;
-
     activateNewRecord(params: {
         library: string;
         recordId: string;
@@ -171,13 +165,6 @@ export default function ({
 }: IRecordDomainDeps): IRecordDomain {
     const ret: IRecordDomain = {
         find: findRecordsHelper,
-        createEmptyRecord({library, ctx}) {
-            return createRecordHelper({
-                library,
-                ctx,
-                active: false,
-            });
-        },
         async activateNewRecord({library, recordId, formId, skipVerifyRequiredAttributes, ctx}) {
             const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
 
@@ -282,7 +269,7 @@ export default function ({
         }): Promise<ICreateRecordResult> {
             let createdRecord: IRecord;
             try {
-                createdRecord = await this.createEmptyRecord({library, ctx});
+                createdRecord = await createRecordHelper({library, ctx, active: false});
                 // Make sure we don't have any id_value hanging on as we're on creation here
                 const cleanValues = (values ?? []).map(v => ({...v, id_value: null}));
 

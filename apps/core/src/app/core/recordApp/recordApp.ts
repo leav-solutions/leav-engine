@@ -285,7 +285,6 @@ export default function ({
                     }
 
                     extend type Mutation {
-                        createEmptyRecord(library: ID!): CreateRecordResult!
                         # activateNewRecord should not have use CreateRecordResult, because it is now coupled with createRecord !
                         # This methode does not need to return record !
                         activateNewRecord(library: ID!, recordId: ID!, formId: String): CreateRecordResult!
@@ -361,18 +360,6 @@ export default function ({
                         },
                     },
                     Mutation: {
-                        async createEmptyRecord(_, {library}: ICreateRecordParams, ctx: IQueryInfos) {
-                            const record = await recordDomain.createEmptyRecord({
-                                library,
-                                ctx,
-                            });
-
-                            return {
-                                record,
-                                // TODO : remove valuesErrors after all fronts are updated
-                                valuesErrors: null,
-                            };
-                        },
                         async activateNewRecord(_, {library, recordId, formId}, ctx: IQueryInfos) {
                             return recordDomain.activateNewRecord({
                                 library,
