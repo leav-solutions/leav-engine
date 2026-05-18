@@ -1,42 +1,68 @@
-import {type Channel} from 'amqplib';
-import * as amqp from 'amqplib/callback_api';
+import {afterEach, beforeEach, vi} from 'vitest';
+import * as amqp from 'amqplib';
+import {type FSWatcher} from 'chokidar';
 import * as fs from 'fs';
 import {startWatch} from '../../setupWatcher/setupWatcher';
+import {resetWatchState} from '../../watch/watch';
 import {getConfig} from '../../config';
 import path from 'path';
 
+const debugLog = false;
+
 describe('integration test automate-scan', () => {
     console.info = vi.fn();
+
+    // Connections opened by the running test, closed in afterEach to avoid zombie connections
+    // (e.g. when a test fails before its consumer received a message).
+    let watcher: FSWatcher | undefined;
+    let consumerConnection: amqp.ChannelModel | undefined;
+
+    beforeEach(async () => {
+        const config = await getConfig();
+
+        // Start each test from a clean fixtures directory so leftover files don't pollute the scan.
+        fs.rmSync(config.rootPath, {recursive: true, force: true});
+        fs.mkdirSync(config.rootPath, {recursive: true});
+
+        // Clear pending timers and inode/path maps leaking from a previous test.
+        resetWatchState();
+
+        // Drop any stale/delayed message still sitting in the shared durable queue.
+        await purgeQueue();
+    });
+
+    afterEach(async () => {
+        await watcher?.close();
+        watcher = undefined;
+
+        await consumerConnection?.close().catch(() => undefined);
+        consumerConnection = undefined;
+
+        resetWatchState();
+    });
 
     test('create a file and check if event send to rabbitmq', async () => {
         expect.assertions(2);
 
         const config = await getConfig();
-
         const pathTmpFile = config.rootPath + '/file_' + Math.random().toString();
-        const watcher = await startWatch();
+
+        watcher = await startWatch();
+        await waitWatcherReady(watcher);
+        debugLog && console.log(new Date(), '[create] Watcher ready');
 
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        // Wait for the init to finish
-        watcher.on('ready', async () => {
-            await fs.promises.writeFile(pathTmpFile, Math.random().toString());
-        });
-
-        await new Promise<void>((resolve, reject) => {
-            initRabbitMQ(async (channel: Channel, msg: string) => {
-                watcher.close();
-                // Get the message consume
-
-                // Delete the file create for the test
-                await fs.promises.unlink(pathTmpFile);
-
-                // Test if the message is correct
+        await new Promise<void>(async (resolve, reject) => {
+            await initRabbitMQ(msg => {
+                debugLog && console.log(new Date(), '[create] Message received from RabbitMQ:', msg);
                 expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('CREATE'));
-
                 resolve();
             }).catch(reject);
+
+            debugLog && console.log(new Date(), '[create] Creating file for test');
+            await fs.promises.writeFile(pathTmpFile, Math.random().toString());
         });
     });
 
@@ -44,58 +70,53 @@ describe('integration test automate-scan', () => {
         expect.assertions(2);
 
         const config = await getConfig();
-
         const pathTmpFile = config.rootPath + '/file_' + Math.random().toString();
 
         await fs.promises.writeFile(pathTmpFile, Math.random().toString());
 
-        const watcher = await startWatch();
+        watcher = await startWatch();
+        await waitWatcherReady(watcher);
+        debugLog && console.log(new Date(), '[update] Watcher ready');
+
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        // Wait for the init to finish
-        watcher.on('ready', async () => {
-            await fs.promises.writeFile(pathTmpFile, Math.random().toString());
-        });
-
-        await new Promise<void>((resolve, reject) => {
-            initRabbitMQ(async (channel: Channel, msg: string) => {
-                watcher.close();
-
+        await new Promise<void>(async (resolve, reject) => {
+            await initRabbitMQ(msg => {
+                debugLog && console.log(new Date(), '[update] Message received from RabbitMQ:', msg);
                 expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('UPDATE'));
-                await fs.promises.unlink(pathTmpFile);
-
                 resolve();
             }).catch(reject);
+
+            debugLog && console.log(new Date(), '[update] Updating file for test');
+            await fs.promises.writeFile(pathTmpFile, Math.random().toString());
         });
     });
 
     test('delete a file and check if event send to rabbitmq', async () => {
-        const config = await getConfig();
+        expect.assertions(2);
 
+        const config = await getConfig();
         const pathTmpFile = config.rootPath + '/file_' + Math.random().toString();
 
         await fs.promises.writeFile(pathTmpFile, Math.random().toString());
 
-        const watcher = await startWatch();
+        watcher = await startWatch();
+        await waitWatcherReady(watcher);
+        debugLog && console.log(new Date(), '[delete] Watcher ready');
+
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        // Wait for the init to finish
-        watcher.on('ready', async () => {
-            if (fs.existsSync(pathTmpFile)) {
-                await fs.promises.unlink(pathTmpFile);
-            }
-        });
-
-        await new Promise<void>((resolve, reject) => {
-            initRabbitMQ(async (channel: Channel, msg: string) => {
-                watcher.close();
-
+        await new Promise<void>(async (resolve, reject) => {
+            await initRabbitMQ(msg => {
+                debugLog && console.log(new Date(), '[delete] Message received from RabbitMQ:', msg);
                 expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('REMOVE'));
-
                 resolve();
             }).catch(reject);
+
+            debugLog && console.log(new Date(), '[delete] Deleting file for test');
+            await fs.promises.unlink(pathTmpFile);
         });
     });
 
@@ -103,32 +124,27 @@ describe('integration test automate-scan', () => {
         expect.assertions(2);
 
         const config = await getConfig();
-
         const pathTmpFile = config.rootPath + '/file1_' + Math.random().toString();
         const newPathTmpFile = config.rootPath + '/file2_' + Math.random().toString();
 
         await fs.promises.writeFile(pathTmpFile, Math.random().toString());
 
-        const watcher = await startWatch();
+        watcher = await startWatch();
+        await waitWatcherReady(watcher);
+        debugLog && console.log(new Date(), '[rename] Watcher ready');
+
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        // Wait for the init to finish
-        watcher.on('ready', async () => {
-            if (fs.existsSync(pathTmpFile)) {
-                await fs.promises.rename(pathTmpFile, newPathTmpFile);
-            }
-        });
-
-        await new Promise<void>((resolve, reject) => {
-            initRabbitMQ(async (channel: Channel, msg: string) => {
-                watcher.close();
-
+        await new Promise<void>(async (resolve, reject) => {
+            await initRabbitMQ(msg => {
+                debugLog && console.log(new Date(), '[rename] Message received from RabbitMQ:', msg);
                 expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
-                await fs.promises.unlink(newPathTmpFile);
-
                 resolve();
             }).catch(reject);
+
+            debugLog && console.log(new Date(), '[rename] Renaming file for test');
+            await fs.promises.rename(pathTmpFile, newPathTmpFile);
         });
     });
 
@@ -136,7 +152,6 @@ describe('integration test automate-scan', () => {
         expect.assertions(2);
 
         const config = await getConfig();
-
         const fileName = 'file_' + Math.random().toString();
         const pathTmpFile = config.rootPath + '/' + fileName;
         const newPathTmpFile = config.rootPath + '/1/' + fileName;
@@ -146,26 +161,22 @@ describe('integration test automate-scan', () => {
             await fs.promises.mkdir(path.dirname(newPathTmpFile));
         }
 
-        const watcher = await startWatch();
+        watcher = await startWatch();
+        await waitWatcherReady(watcher);
+        debugLog && console.log(new Date(), '[move] Watcher ready');
+
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        // Wait for the init to finish
-        watcher.on('ready', async () => {
-            if (fs.existsSync(pathTmpFile)) {
-                await fs.promises.rename(pathTmpFile, newPathTmpFile);
-            }
-        });
-
-        await new Promise<void>((resolve, reject) => {
-            initRabbitMQ(async (channel: Channel, msg: string) => {
-                watcher.close();
-
+        await new Promise<void>(async (resolve, reject) => {
+            await initRabbitMQ(msg => {
+                debugLog && console.log(new Date(), '[move] Message received from RabbitMQ:', msg);
                 expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
-                await fs.promises.unlink(newPathTmpFile);
-
                 resolve();
             }).catch(reject);
+
+            debugLog && console.log(new Date(), '[move] Moving file for test');
+            await fs.promises.rename(pathTmpFile, newPathTmpFile);
         });
     });
 
@@ -173,7 +184,6 @@ describe('integration test automate-scan', () => {
         expect.assertions(2);
 
         const config = await getConfig();
-
         const pathTmpFile = config.rootPath + '/file1_' + Math.random().toString();
         const newPathTmpFile = config.rootPath + '/1/file2_' + Math.random().toString();
 
@@ -182,60 +192,79 @@ describe('integration test automate-scan', () => {
             await fs.promises.mkdir(path.dirname(newPathTmpFile));
         }
 
-        const watcher = await startWatch();
+        watcher = await startWatch();
+        await waitWatcherReady(watcher);
+        debugLog && console.log(new Date(), '[move & rename] Watcher ready');
+
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        // Wait for the init to finish
-        watcher.on('ready', async () => {
-            if (fs.existsSync(pathTmpFile)) {
-                await fs.promises.rename(pathTmpFile, newPathTmpFile);
-            }
-        });
-
-        await new Promise<void>((resolve, reject) => {
-            initRabbitMQ(async (channel: Channel, msg: string) => {
-                watcher.close();
-
+        await new Promise<void>(async (resolve, reject) => {
+            await initRabbitMQ(msg => {
+                debugLog && console.log(new Date(), '[move & rename] Message received from RabbitMQ:', msg);
                 expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
-
-                await fs.promises.unlink(newPathTmpFile);
-
                 resolve();
             }).catch(reject);
+
+            debugLog && console.log(new Date(), '[move & rename] Moving and renaming file for test');
+            await fs.promises.rename(pathTmpFile, newPathTmpFile);
         });
     });
-});
 
-const initRabbitMQ = async (callback: (channel: any, msg: string) => void) => {
-    const config = await getConfig();
+    // Wait for chokidar to finish its initial scan before performing the FS action.
+    // Until 'ready' fires, events are treated as init (redis only) and NOT published to RabbitMQ,
+    // so acting too early makes the awaited event silently disappear → test timeout.
+    const waitWatcherReady = (_watcher: FSWatcher) =>
+        new Promise<void>(resolve => {
+            _watcher.once('ready', () => resolve());
+        });
 
-    const amqpConfig = {
-        protocol: config.amqp.protocol,
-        hostname: config.amqp.hostname,
-        username: config.amqp.username,
-        password: config.amqp.password,
+    const getAmqpConfig = async (): Promise<amqp.Options.Connect> => {
+        const config = await getConfig();
+
+        return {
+            protocol: config.amqp.protocol,
+            hostname: config.amqp.hostname,
+            username: config.amqp.username,
+            password: config.amqp.password,
+        };
     };
 
-    amqp.connect(amqpConfig, async (error0, connection) => {
-        if (error0) {
-            throw error0;
+    const purgeQueue = async () => {
+        const config = await getConfig();
+        const connection = await amqp.connect(await getAmqpConfig());
+
+        try {
+            const channel = await connection.createChannel();
+            await channel.assertQueue(config.amqp.queue, {durable: true});
+            await channel.purgeQueue(config.amqp.queue);
+            await channel.close();
+        } finally {
+            await connection.close();
         }
+    };
 
-        connection.createChannel(async (error1, channel) => {
-            if (error1) {
-                throw error1;
-            }
+    const initRabbitMQ = async (callback: (msg: string) => void) => {
+        const config = await getConfig();
 
-            channel.consume(
-                config.amqp.queue,
-                msg => {
-                    const msgText = msg.content.toString();
-                    callback(channel, msgText);
-                    channel.close(() => undefined);
-                },
-                {noAck: true},
-            );
-        });
-    });
-};
+        consumerConnection = await amqp.connect(await getAmqpConfig());
+        const channel = await consumerConnection.createChannel();
+
+        await channel.assertQueue(config.amqp.queue, {durable: true});
+        await channel.consume(
+            config.amqp.queue,
+            msg => {
+                if (!msg) {
+                    return;
+                }
+
+                try {
+                    callback(msg.content.toString());
+                } catch (e) {
+                    console.error(new Date(), '[RabbitMQ] Error processing message:', e);
+                }
+            },
+            {noAck: true},
+        );
+    };
+});

@@ -269,6 +269,28 @@ const clearTmp = (path: string, inode: number) => {
     delete pathsTmp[path];
 };
 
+// Reset all module-level state. Test-only utility: lets integration tests run in isolation
+// by clearing pending timers (which would otherwise publish stray events after watcher.close())
+// and the inode/path maps (which would otherwise leak and trigger false MOVE detection).
+export const resetWatchState = () => {
+    for (const inode of Object.keys(timeoutRefs)) {
+        clearTimeout(timeoutRefs[inode as any]);
+        delete timeoutRefs[inode as any];
+    }
+
+    for (const inode of Object.keys(inodesTmp)) {
+        delete inodesTmp[inode as any];
+    }
+
+    for (const path of Object.keys(pathsTmp)) {
+        delete pathsTmp[path];
+    }
+
+    inits.length = 0;
+    initsCount = 0;
+    working = false;
+};
+
 const _createHashFromFile = async (filePath: string): Promise<string> => {
     try {
         const hash = createHash('md5');
