@@ -22,7 +22,7 @@
     "devDependencies": {
         "prettier": "3.3.3",
         "typescript": "5.9.3",
-        "vitest": "4.1.5"
+        "vitest": "4.1.6"
     },
     "dependencies": {
         "app-root-path": "3.1.0"
