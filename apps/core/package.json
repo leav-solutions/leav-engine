@@ -58,7 +58,7 @@
         "graphql-request": "7.4.0",
         "jest-when": "3.7.0",
         "prettier": "3.3.3",
-        "tsx": "4.21.0",
+        "tsx": "4.22.1",
         "typescript": "5.9.3",
         "vitest": "4.1.6"
     },
