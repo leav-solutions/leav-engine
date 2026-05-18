@@ -57,7 +57,7 @@
         "eventsource": "4.1.0",
         "graphql-request": "7.4.0",
         "jest-when": "3.7.0",
-        "prettier": "3.3.3",
+        "prettier": "3.8.3",
         "tsx": "4.22.1",
         "typescript": "5.9.3",
         "vitest": "4.1.6"
