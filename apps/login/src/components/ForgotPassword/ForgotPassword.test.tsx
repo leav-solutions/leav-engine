@@ -1,23 +1,21 @@
 import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {KitApp} from 'aristid-ds';
-import {enableFetchMocks} from 'jest-fetch-mock';
 import {MemoryRouter} from 'react-router-dom';
+import {type Mock} from 'vitest';
 import ForgotPassword from './ForgotPassword';
 
 global.ASYNC_VALIDATOR_NO_WARNING = 1; // Suppress some really weird warning coming from ant-design during testing
-
-enableFetchMocks();
 
 window.matchMedia = query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
 });
 
 const _renderComponent = () =>
@@ -36,7 +34,7 @@ const _enterValidEmailAndSubmit = () => {
 
 describe('ForgotPassword', () => {
     test('Display error msg if user is not found', async () => {
-        (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
+        (fetch as Mock) = vi.fn().mockReturnValue({
             status: 401,
             ok: false,
         });
@@ -53,7 +51,7 @@ describe('ForgotPassword', () => {
     });
 
     test('Display success message if email has been sent', async () => {
-        (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
+        (fetch as Mock) = vi.fn().mockReturnValue({
             status: 200,
             ok: true,
         });
@@ -70,7 +68,7 @@ describe('ForgotPassword', () => {
     });
 
     test('Display error msg if server is down', async () => {
-        (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
+        (fetch as Mock) = vi.fn().mockReturnValue({
             status: 500,
             ok: false,
         });

@@ -3,27 +3,23 @@ import * as useAuthChecker from '../../../hooks/useAuthChecker';
 import * as useRedirectToDest from '../../../hooks/useRedirectToDest';
 import AuthHandler from './AuthHandler';
 
-jest.mock('../../../hooks/useRedirectToDest', () => ({
-    useRedirectToDest: jest.fn().mockReturnValue({
-        redirectToDest: jest.fn(),
-    }),
+vi.mock('../../../hooks/useRedirectToDest', () => ({
+    useRedirectToDest: vi.fn().mockReturnValue({redirectToDest: vi.fn()}),
 }));
 
 describe('AuthHandler', () => {
-    const mockRedirectToDest = jest.fn();
+    const mockRedirectToDest = vi.fn();
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     beforeAll(() => {
-        jest.spyOn(useRedirectToDest, 'useRedirectToDest').mockReturnValue({
-            redirectToDest: mockRedirectToDest,
-        });
+        vi.spyOn(useRedirectToDest, 'useRedirectToDest').mockReturnValue({redirectToDest: mockRedirectToDest});
     });
 
     test('If user already authenticated, redirect to dest', async () => {
-        jest.spyOn(useAuthChecker, 'useAuthChecker').mockReturnValue('success');
+        vi.spyOn(useAuthChecker, 'useAuthChecker').mockReturnValue('success');
 
         render(<AuthHandler>Test</AuthHandler>);
 
@@ -32,7 +28,7 @@ describe('AuthHandler', () => {
     });
 
     test('If user not already authenticated, render login form', async () => {
-        jest.spyOn(useAuthChecker, 'useAuthChecker').mockReturnValue('fail');
+        vi.spyOn(useAuthChecker, 'useAuthChecker').mockReturnValue('fail');
 
         render(
             <AuthHandler>
