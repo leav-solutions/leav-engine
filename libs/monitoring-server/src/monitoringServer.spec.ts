@@ -1,5 +1,4 @@
 import {monitoringServer} from './monitoringServer';
-import fetch from 'node-fetch';
 
 describe('monitoringServer', () => {
     let server: ReturnType<typeof monitoringServer>;

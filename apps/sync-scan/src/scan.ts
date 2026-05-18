@@ -5,7 +5,6 @@ import {type ApolloLink, type DocumentNode} from 'apollo-link';
 import {createHttpLink} from 'apollo-link-http';
 import fs from 'fs';
 import gql from 'graphql-tag';
-import fetch from 'node-fetch';
 import walk from 'walk';
 import * as utils from './utils';
 import {type IConfig} from './_types/config';
