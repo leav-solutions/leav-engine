@@ -111,7 +111,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
         currentRecord?.label && currentRecord.label.trim() ? currentRecord.label : t('record_edition.new_record');
 
     useEffect(() => {
-        const createEmptyRecordFunction = async () => {
+        const createRecordFunction = async () => {
             const values = useGetInitialRecordValues();
             const {data} = await createRecord({
                 variables: {
@@ -132,7 +132,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
         };
 
         if (open && isCreation && !currentRecord) {
-            createEmptyRecordFunction();
+            createRecordFunction();
         }
     }, [open, currentRecord]);
 

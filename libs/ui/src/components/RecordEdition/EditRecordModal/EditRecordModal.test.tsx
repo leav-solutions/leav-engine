@@ -148,13 +148,13 @@ describe('EditRecordModal', () => {
             expect(mockOnClose).toHaveBeenCalled();
         });
 
-        test('Should call createEmptyRecord if modal is opened', async () => {
+        test('Should call createRecord if modal is opened', async () => {
             render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={null} />);
 
             expect(mockUseCreateRecordMutation).toHaveBeenCalled();
         });
 
-        test('Should not call createEmptyRecord if modal is not opened', async () => {
+        test('Should not call createRecord if modal is not opened', async () => {
             render(<EditRecordModal open={false} library="test_lib" onClose={jest.fn()} record={null} />);
 
             expect(mockUseCreateRecordMutation).not.toHaveBeenCalled();

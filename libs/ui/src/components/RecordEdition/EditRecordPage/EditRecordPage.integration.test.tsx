@@ -24,11 +24,6 @@ jest.mock('_ui/hooks/useCanEditRecord', () => ({
     useCanEditRecord: () => ({loading: false, canEdit: true, isReadOnly: false}),
 }));
 
-const createEmptyRecordMock = jest.fn();
-jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useCreateEmptyRecordMutation.ts', () => () => ({
-    createEmptyRecord: createEmptyRecordMock,
-}));
-
 const saveValuesMock = jest.fn();
 jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation.ts', () => () => ({
     saveValues: saveValuesMock,
@@ -333,7 +328,7 @@ describe('EditRecordPage', () => {
 
             render(
                 <EditRecordPage
-                    onCreate={createEmptyRecordMock}
+                    onCreate={jest.fn()}
                     library={mockRecord.library.id}
                     onClose={jest.fn()}
                     record={null}

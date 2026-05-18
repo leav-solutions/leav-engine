@@ -39,11 +39,15 @@ describe('Indexation', () => {
             ) { id }
         }`);
 
-        const rec1 = await makeGraphQlCall(`mutation { createEmptyRecord(library: "${testLibName}") { record {id} } }`);
-        const rec2 = await makeGraphQlCall(`mutation { createEmptyRecord(library: "${testLibName}") { record {id} } }`);
+        const rec1 = await makeGraphQlCall(
+            `mutation { createRecord(library: "${testLibName}", skipActivate: true) { record {id} } }`,
+        );
+        const rec2 = await makeGraphQlCall(
+            `mutation { createRecord(library: "${testLibName}", skipActivate: true) { record {id} } }`,
+        );
 
-        record1 = rec1.data.data.createEmptyRecord.record.id;
-        record2 = rec2.data.data.createEmptyRecord.record.id;
+        record1 = rec1.data.data.createRecord.record.id;
+        record2 = rec2.data.data.createRecord.record.id;
 
         await makeGraphQlCall(`mutation {
             saveValue(

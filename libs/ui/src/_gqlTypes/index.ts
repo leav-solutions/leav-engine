@@ -170,7 +170,7 @@ export type AttributeInput = {
   required?: InputMaybe<Scalars['Boolean']['input']>;
   reverse_link?: InputMaybe<Scalars['String']['input']>;
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
-  /**  only for link and standard attribute  */
+  /**  only for link or standard attribute  */
   smart_filter?: InputMaybe<SmartFilterConfInput>;
   type?: InputMaybe<AttributeType>;
   unique?: InputMaybe<Scalars['Boolean']['input']>;
@@ -226,6 +226,11 @@ export enum AutomationRuleEventAction {
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
   VALUE_SAVE = 'VALUE_SAVE'
+}
+
+export enum AutomationRuleJsonSchemaFormType {
+  creation = 'creation',
+  edition = 'edition'
 }
 
 export type AutomationRulePipelineInput = {
@@ -475,17 +480,6 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
-}
-
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -885,30 +879,6 @@ export type RecordsPagination = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type ReportFramingAttributeFilterItemInput = {
-  attributeId: Scalars['String']['input'];
-  values: Array<ReportFramingAttributeFilterValueItemInput>;
-  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type ReportFramingAttributeFilterValueItemInput = {
-  formattedValue?: InputMaybe<Scalars['String']['input']>;
-  rawValue: Scalars['String']['input'];
-};
-
-export type ReportFramingContentInput = {
-  filters?: InputMaybe<ReportFramingFiltersInput>;
-};
-
-export type ReportFramingFiltersInput = {
-  /**  only for excel header filter display  */
-  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
-  campaigns?: InputMaybe<Array<RecordFilterInput>>;
-  categories?: InputMaybe<Array<Scalars['String']['input']>>;
-  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
-  search?: InputMaybe<Scalars['String']['input']>;
-};
-
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -994,7 +964,6 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
@@ -1205,6 +1174,47 @@ export enum ViewTypes {
   list = 'list',
   timeline = 'timeline'
 }
+
+export type ViewV2CreateInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
+  display: ViewV2DisplayInput;
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  label: Scalars['SystemTranslation']['input'];
+  library: Scalars['ID']['input'];
+  shared: Scalars['Boolean']['input'];
+  sort?: InputMaybe<Array<RecordSortInput>>;
+  valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
+};
+
+export type ViewV2DisplayInput = {
+  type: ViewV2Types;
+};
+
+export enum ViewV2Types {
+  cards = 'cards',
+  list = 'list',
+  timeline = 'timeline'
+}
+
+export type ViewV2UpdateInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  display?: InputMaybe<ViewV2DisplayInput>;
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  library?: InputMaybe<Scalars['ID']['input']>;
+  shared?: InputMaybe<Scalars['Boolean']['input']>;
+  sort?: InputMaybe<Array<RecordSortInput>>;
+  valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
+};
+
+export type ViewV2ValuesVersionInput = {
+  treeId: Scalars['ID']['input'];
+  treeNode: Scalars['ID']['input'];
+};
 
 export type ViewValuesVersionInput = {
   treeId: Scalars['String']['input'];
@@ -1718,13 +1728,6 @@ export type ActivateRecordsMutationVariables = Exact<{
 
 
 export type ActivateRecordsMutation = { activateRecords: Array<{ id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }> };
-
-export type CreateEmptyRecordMutationVariables = Exact<{
-  library: Scalars['ID']['input'];
-}>;
-
-
-export type CreateEmptyRecordMutation = { createEmptyRecord: { record?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } };
 
 export type CreateRecordMutationVariables = Exact<{
   library: Scalars['ID']['input'];
@@ -4415,41 +4418,6 @@ export function useActivateRecordsMutation(baseOptions?: Apollo.MutationHookOpti
 export type ActivateRecordsMutationHookResult = ReturnType<typeof useActivateRecordsMutation>;
 export type ActivateRecordsMutationResult = Apollo.MutationResult<ActivateRecordsMutation>;
 export type ActivateRecordsMutationOptions = Apollo.BaseMutationOptions<ActivateRecordsMutation, ActivateRecordsMutationVariables>;
-export const CreateEmptyRecordDocument = gql`
-    mutation createEmptyRecord($library: ID!) {
-  createEmptyRecord(library: $library) {
-    record {
-      ...RecordIdentity
-    }
-  }
-}
-    ${RecordIdentityFragmentDoc}`;
-export type CreateEmptyRecordMutationFn = Apollo.MutationFunction<CreateEmptyRecordMutation, CreateEmptyRecordMutationVariables>;
-
-/**
- * __useCreateEmptyRecordMutation__
- *
- * To run a mutation, you first call `useCreateEmptyRecordMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateEmptyRecordMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createEmptyRecordMutation, { data, loading, error }] = useCreateEmptyRecordMutation({
- *   variables: {
- *      library: // value for 'library'
- *   },
- * });
- */
-export function useCreateEmptyRecordMutation(baseOptions?: Apollo.MutationHookOptions<CreateEmptyRecordMutation, CreateEmptyRecordMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateEmptyRecordMutation, CreateEmptyRecordMutationVariables>(CreateEmptyRecordDocument, options);
-      }
-export type CreateEmptyRecordMutationHookResult = ReturnType<typeof useCreateEmptyRecordMutation>;
-export type CreateEmptyRecordMutationResult = Apollo.MutationResult<CreateEmptyRecordMutation>;
-export type CreateEmptyRecordMutationOptions = Apollo.BaseMutationOptions<CreateEmptyRecordMutation, CreateEmptyRecordMutationVariables>;
 export const CreateRecordDocument = gql`
     mutation CREATE_RECORD($library: ID!, $skipActivate: Boolean, $data: CreateRecordDataInput) {
   createRecord(library: $library, skipActivate: $skipActivate, data: $data) {

@@ -281,6 +281,11 @@ export type AttributePermissionsArgs = {
   record?: InputMaybe<AttributePermissionsRecord>;
 };
 
+export type AttributeDependentValueInput = {
+  attributeId: Scalars['ID']['input'];
+  nodeId?: InputMaybe<Scalars['ID']['input']>;
+};
+
 export enum AttributeFormat {
   boolean = 'boolean',
   color = 'color',
@@ -313,7 +318,7 @@ export type AttributeInput = {
   required?: InputMaybe<Scalars['Boolean']['input']>;
   reverse_link?: InputMaybe<Scalars['String']['input']>;
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
-  /**  only for link attribute  */
+  /**  only for link or standard attribute  */
   smart_filter?: InputMaybe<SmartFilterConfInput>;
   type?: InputMaybe<AttributeType>;
   unique?: InputMaybe<Scalars['Boolean']['input']>;
@@ -370,53 +375,59 @@ export type AutomationRule = {
   active: Scalars['Boolean']['output'];
   createdAt: Scalars['Int']['output'];
   createdBy: Scalars['String']['output'];
-  description?: Maybe<Scalars['SystemTranslation']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
-  label: Scalars['SystemTranslation']['output'];
+  label: Scalars['String']['output'];
   modifiedAt: Scalars['Int']['output'];
   modifiedBy: Scalars['String']['output'];
+  pipeline: AutomationRulePipeline;
   trigger: AutomationRuleTrigger;
 };
 
-
-export type AutomationRuleLabelArgs = {
-  lang?: InputMaybe<Array<AvailableLanguage>>;
-};
+export enum AutomationRuleActions {
+  condition = 'condition',
+  error = 'error',
+  jexlCalculation = 'jexlCalculation',
+  log = 'log',
+  modifyAttribute = 'modifyAttribute',
+  notification = 'notification'
+}
 
 export enum AutomationRuleEventAction {
-  API_KEY_DELETE = 'API_KEY_DELETE',
-  API_KEY_SAVE = 'API_KEY_SAVE',
-  APP_DELETE = 'APP_DELETE',
-  APP_SAVE = 'APP_SAVE',
-  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
-  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
-  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
-  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
-  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
-  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
-  DATA_IMPORT_END = 'DATA_IMPORT_END',
-  DATA_IMPORT_START = 'DATA_IMPORT_START',
-  EXPORT_END = 'EXPORT_END',
-  EXPORT_START = 'EXPORT_START',
-  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
-  LIBRARY_DELETE = 'LIBRARY_DELETE',
-  LIBRARY_PURGE = 'LIBRARY_PURGE',
-  LIBRARY_SAVE = 'LIBRARY_SAVE',
-  PERMISSION_SAVE = 'PERMISSION_SAVE',
-  RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
-  TASKS_DELETE = 'TASKS_DELETE',
-  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
-  TREE_DELETE = 'TREE_DELETE',
-  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
-  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
-  TREE_SAVE = 'TREE_SAVE',
-  VALUE_DELETE = 'VALUE_DELETE',
-  VALUE_SAVE = 'VALUE_SAVE',
-  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
-  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+  VALUE_SAVE = 'VALUE_SAVE'
 }
+
+export type AutomationRuleForm = {
+  jsonSchema: Scalars['JSONObject']['output'];
+  uiSchema: Scalars['JSONObject']['output'];
+};
+
+export enum AutomationRuleJsonSchemaFormType {
+  creation = 'creation',
+  edition = 'edition'
+}
+
+export type AutomationRulePipeline = {
+  steps: Array<AutomationRulePipelineStep>;
+};
+
+export type AutomationRulePipelineInput = {
+  steps: Array<AutomationRulePipelineStepInput>;
+};
+
+export type AutomationRulePipelineStep = {
+  name?: Maybe<Scalars['String']['output']>;
+  params: Scalars['JSON']['output'];
+  type: AutomationRuleActions;
+};
+
+export type AutomationRulePipelineStepInput = {
+  name?: InputMaybe<Scalars['String']['input']>;
+  params: Scalars['JSON']['input'];
+  type: AutomationRuleActions;
+};
 
 export enum AutomationRuleSortableFields {
   id = 'id'
@@ -451,10 +462,39 @@ export type AutomationRulesSortInput = {
   order?: InputMaybe<SortOrder>;
 };
 
+export type AutomationTriggerDef = {
+  eventAction: AutomationRuleEventAction;
+  synchronicity: AutomationTriggerDefSynchronicity;
+  topics: Array<AutomationTriggerDefTopics>;
+};
+
+export enum AutomationTriggerDefSynchronicity {
+  ASYNC = 'ASYNC',
+  BOTH = 'BOTH',
+  SYNC = 'SYNC'
+}
+
+export enum AutomationTriggerDefTopics {
+  ATTRIBUTE = 'ATTRIBUTE',
+  LIBRARY = 'LIBRARY'
+}
+
 export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
+
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
 
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
@@ -463,8 +503,10 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
 };
 
 export type CreateAutomationRuleInput = {
-  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
-  label: Scalars['SystemTranslation']['input'];
+  active: Scalars['Boolean']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  label: Scalars['String']['input'];
+  pipeline: AutomationRulePipelineInput;
   trigger: AutomationRuleTriggerInput;
 };
 
@@ -540,7 +582,10 @@ export enum EventAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
+  AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
   AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_DELETE = 'AUTOMATION_RULE_DELETE',
   AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
   CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
@@ -553,6 +598,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -1033,7 +1080,10 @@ export enum LogAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
+  AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
   AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_DELETE = 'AUTOMATION_RULE_DELETE',
   AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
   CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
@@ -1046,6 +1096,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -1148,7 +1200,7 @@ export type LogUnknownApplicationEntity = {
 
 export type LogUnknownAutomationRuleEntity = {
   id: Scalars['ID']['output'];
-  label: Scalars['SystemTranslation']['output'];
+  label: Scalars['String']['output'];
 };
 
 export type LogUnknownEntity = {
@@ -1170,6 +1222,17 @@ export type Logs = {
   total: Scalars['Int']['output'];
 };
 
+export type MoveThematicResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+  originalId: Scalars['ID']['output'];
+};
+
+export type MoveThematicsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  thematics?: Maybe<Array<MoveThematicResultThematic>>;
+};
+
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -1182,13 +1245,14 @@ export type Mutation = {
   cancelTask: Scalars['Boolean']['output'];
   createAutomationRule: AutomationRule;
   createDirectory: Record;
-  createEmptyRecord: CreateRecordResult;
   createRecord: CreateRecordResult;
+  createViewV2: ViewV2;
   deactivateRecords: Array<Record>;
   deleteAllNotifications: Array<Notification>;
   deleteApiKey: ApiKey;
   deleteApplication: Application;
   deleteAttribute: Attribute;
+  deleteAutomationRule: AutomationRule;
   deleteForm?: Maybe<Form>;
   deleteLibrary: Library;
   deleteNotification: Notification;
@@ -1199,16 +1263,21 @@ export type Mutation = {
   deleteValue: Array<GenericValue>;
   deleteVersionProfile: VersionProfile;
   deleteView: View;
+  deleteViewV2: ViewV2;
   forcePreviewsGeneration: Scalars['Boolean']['output'];
   importConfig: Scalars['ID']['output'];
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
+  initRenewCampaigns: Scalars['String']['output'];
+  moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
+  removeCampaigns: RemoveCampaignsResult;
+  removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1229,7 +1298,9 @@ export type Mutation = {
   treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
   updateAutomationRule: AutomationRule;
+  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
+  updateViewV2: ViewV2;
   upload: Array<UploadData>;
 };
 
@@ -1265,15 +1336,15 @@ export type MutationCreateDirectoryArgs = {
 };
 
 
-export type MutationCreateEmptyRecordArgs = {
-  library: Scalars['ID']['input'];
-};
-
-
 export type MutationCreateRecordArgs = {
   data?: InputMaybe<CreateRecordDataInput>;
   library: Scalars['ID']['input'];
   skipActivate?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+
+export type MutationCreateViewV2Args = {
+  view: ViewV2CreateInput;
 };
 
 
@@ -1296,6 +1367,11 @@ export type MutationDeleteApplicationArgs = {
 
 export type MutationDeleteAttributeArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
+};
+
+
+export type MutationDeleteAutomationRuleArgs = {
+  ruleId: Scalars['ID']['input'];
 };
 
 
@@ -1349,6 +1425,11 @@ export type MutationDeleteViewArgs = {
 };
 
 
+export type MutationDeleteViewV2Args = {
+  viewId: Scalars['ID']['input'];
+};
+
+
 export type MutationForcePreviewsGenerationArgs = {
   failedOnly?: InputMaybe<Scalars['Boolean']['input']>;
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
@@ -1383,6 +1464,21 @@ export type MutationIndexRecordsArgs = {
 };
 
 
+export type MutationInitRenewCampaignsArgs = {
+  campaigns: Array<CampaignToRenew>;
+  fromPacId: Scalars['String']['input'];
+  redirectUrl: Scalars['String']['input'];
+  toPacId: Scalars['String']['input'];
+};
+
+
+export type MutationMoveOrCopyCampaignThematicsArgs = {
+  moveThematic: Scalars['Boolean']['input'];
+  thematics: Array<ThematicToRenew>;
+  toCampaignId: Scalars['String']['input'];
+};
+
+
 export type MutationPostDiscussionCommentArgs = {
   comment?: InputMaybe<DiscussionCommentInput>;
 };
@@ -1401,6 +1497,16 @@ export type MutationPurgeMultipleValuesArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveCampaignsArgs = {
+  campaignsIds: Array<Scalars['ID']['input']>;
+};
+
+
+export type MutationRemoveStructureItemsArgs = {
+  structureItemIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1514,8 +1620,18 @@ export type MutationUpdateAutomationRuleArgs = {
 };
 
 
+export type MutationUpdateCampaignsDatesArgs = {
+  campaigns: Array<CampaignToUpdateDates>;
+};
+
+
 export type MutationUpdateViewArgs = {
   view: ViewInputPartial;
+};
+
+
+export type MutationUpdateViewV2Args = {
+  view: ViewV2UpdateInput;
 };
 
 
@@ -1731,7 +1847,9 @@ export type Query = {
   applications?: Maybe<ApplicationsList>;
   applicationsModules: Array<ApplicationModule>;
   attributes?: Maybe<AttributesList>;
+  automationRuleForm: AutomationRuleForm;
   automationRules: AutomationRulesList;
+  automationTriggersDef: Array<AutomationTriggerDef>;
   availableActions?: Maybe<Array<Action>>;
   doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
   export: Scalars['String']['output'];
@@ -1760,7 +1878,9 @@ export type Query = {
   version: Scalars['String']['output'];
   versionProfiles: VersionProfileList;
   view: View;
+  viewV2: ViewV2;
   views: ViewsList;
+  viewsV2: ViewsV2List;
 };
 
 
@@ -1782,6 +1902,11 @@ export type QueryAttributesArgs = {
   filters?: InputMaybe<AttributesFiltersInput>;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortAttributes>;
+};
+
+
+export type QueryAutomationRuleFormArgs = {
+  formType: AutomationRuleJsonSchemaFormType;
 };
 
 
@@ -1951,8 +2076,18 @@ export type QueryViewArgs = {
 };
 
 
+export type QueryViewV2Args = {
+  viewId: Scalars['ID']['input'];
+};
+
+
 export type QueryViewsArgs = {
   library: Scalars['String']['input'];
+};
+
+
+export type QueryViewsV2Args = {
+  library: Scalars['ID']['input'];
 };
 
 export type Record = {
@@ -2083,6 +2218,17 @@ export type RecordInput = {
   library: Scalars['String']['input'];
 };
 
+export type RecordNewCommentEvent = {
+  comment: Record;
+  record: Record;
+};
+
+export type RecordNewCommentFilterInput = {
+  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  libraries?: InputMaybe<Array<Scalars['ID']['input']>>;
+  records?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
 export type RecordPermissions = {
   access_record: Scalars['Boolean']['output'];
   access_record_by_default: Scalars['Boolean']['output'];
@@ -2152,6 +2298,18 @@ export type RecordsPagination = {
 export type RelatedEntity = {
   label: Scalars['String']['output'];
   url: Scalars['String']['output'];
+};
+
+export type RenewCampaignResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+  thematic_id: Scalars['ID']['output'];
+};
+
+export type SaveCampaignsDatesResult = {
+  campaign_id: Scalars['ID']['output'];
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<GenericValue>;
 };
 
 export type SaveValueBulkMappingInput = {
@@ -2245,6 +2403,7 @@ export type StandardAttribute = Attribute & {
   readonly: Scalars['Boolean']['output'];
   required: Scalars['Boolean']['output'];
   settings?: Maybe<Scalars['JSONObject']['output']>;
+  smart_filter?: Maybe<SmartFilterConf>;
   system: Scalars['Boolean']['output'];
   type: AttributeType;
   unique?: Maybe<Scalars['Boolean']['output']>;
@@ -2274,6 +2433,11 @@ export type StandardDateRangeValuesListConf = {
   values?: Maybe<Array<DateRangeValue>>;
 };
 
+export type StandardDistinctValues = GenericDistinctValues & {
+  count: Scalars['Int']['output'];
+  value?: Maybe<Scalars['Any']['output']>;
+};
+
 export type StandardStringValuesListConf = {
   allowFreeEntry?: Maybe<Scalars['Boolean']['output']>;
   allowListUpdate?: Maybe<Scalars['Boolean']['output']>;
@@ -2297,6 +2461,7 @@ export type StreamProgress = {
 export type Subscription = {
   applicationEvent: ApplicationEvent;
   notification: Notification;
+  recordNewComment: RecordNewCommentEvent;
   recordUpdate: RecordUpdateEvent;
   task: Task;
   treeEvent: TreeEvent;
@@ -2306,6 +2471,11 @@ export type Subscription = {
 
 export type SubscriptionApplicationEventArgs = {
   filters?: InputMaybe<ApplicationEventFiltersInput>;
+};
+
+
+export type SubscriptionRecordNewCommentArgs = {
+  filters?: InputMaybe<RecordNewCommentFilterInput>;
 };
 
 
@@ -2380,12 +2550,18 @@ export enum TaskType {
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
 };
 
 export type Tree = {
@@ -2451,6 +2627,11 @@ export type TreeAttributeLabelArgs = {
 
 export type TreeAttributePermissionsArgs = {
   record?: InputMaybe<AttributePermissionsRecord>;
+};
+
+
+export type TreeAttributeTreeValuesArgs = {
+  attributeDependentValue?: InputMaybe<AttributeDependentValueInput>;
 };
 
 export enum TreeBehavior {
@@ -2654,10 +2835,11 @@ export enum TreesSortableFields {
 
 export type UpdateAutomationRuleInput = {
   active?: InputMaybe<Scalars['Boolean']['input']>;
-  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['ID']['input'];
-  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
-  trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  pipeline?: InputMaybe<AutomationRulePipelineInput>;
+  trigger?: InputMaybe<AutomationRuleTriggerInput>;
 };
 
 export type UploadData = {
@@ -2874,6 +3056,72 @@ export enum ViewTypes {
   timeline = 'timeline'
 }
 
+export type ViewV2 = {
+  /**  The whoAmI column will never be included in attributes because is already hard-coded to be present */
+  attributes?: Maybe<Array<Attribute>>;
+  created_at: Scalars['Int']['output'];
+  created_by: Record;
+  display: ViewV2Display;
+  filters?: Maybe<Array<RecordFilter>>;
+  id: Scalars['ID']['output'];
+  label: Scalars['SystemTranslation']['output'];
+  library: Scalars['ID']['output'];
+  modified_at: Scalars['Int']['output'];
+  shared: Scalars['Boolean']['output'];
+  sort?: Maybe<Array<RecordSort>>;
+  valuesVersions?: Maybe<Array<ViewV2ValuesVersion>>;
+};
+
+export type ViewV2CreateInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
+  display: ViewV2DisplayInput;
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  label: Scalars['SystemTranslation']['input'];
+  library: Scalars['ID']['input'];
+  shared: Scalars['Boolean']['input'];
+  sort?: InputMaybe<Array<RecordSortInput>>;
+  valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
+};
+
+export type ViewV2Display = {
+  type: ViewV2Types;
+};
+
+export type ViewV2DisplayInput = {
+  type: ViewV2Types;
+};
+
+export enum ViewV2Types {
+  cards = 'cards',
+  list = 'list',
+  timeline = 'timeline'
+}
+
+export type ViewV2UpdateInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  display?: InputMaybe<ViewV2DisplayInput>;
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  library?: InputMaybe<Scalars['ID']['input']>;
+  shared?: InputMaybe<Scalars['Boolean']['input']>;
+  sort?: InputMaybe<Array<RecordSortInput>>;
+  valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
+};
+
+export type ViewV2ValuesVersion = {
+  treeId: Scalars['ID']['output'];
+  treeNode: TreeNode;
+};
+
+export type ViewV2ValuesVersionInput = {
+  treeId: Scalars['ID']['input'];
+  treeNode: Scalars['ID']['input'];
+};
+
 export type ViewValuesVersion = {
   treeId: Scalars['String']['output'];
   treeNode: TreeNode;
@@ -2887,6 +3135,21 @@ export type ViewValuesVersionInput = {
 export type ViewsList = {
   list: Array<View>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type ViewsV2List = {
+  list: Array<ViewV2>;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type RemoveCampaignsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
+};
+
+export type RemoveStructureItemsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
 };
 
 export type SaveValueBatchResult = {

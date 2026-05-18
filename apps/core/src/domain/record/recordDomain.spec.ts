@@ -106,7 +106,7 @@ describe('RecordDomain', () => {
     beforeEach(() => {
         vi.clearAllMocks();
     });
-    describe('createEmptyRecord', () => {
+    describe('createRecordHelper (empty record)', () => {
         test('Should create a new empty record', async function () {
             const createdRecordData = {
                 id: '222435651',
@@ -116,29 +116,18 @@ describe('RecordDomain', () => {
             };
             const mockRecRepo = {createRecord: global.__mockPromise(createdRecordData)} satisfies Mockify<IRecordRepo>;
 
-            const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getLibraryFullTextAttributes: global.__mockPromise([]),
-            };
-
             const mockLibraryPermissionDomain: Mockify<ILibraryPermissionDomain> = {
                 getLibraryPermission: global.__mockPromise(true),
             };
 
-            const recDomain = recordDomain({
-                ...depsBase,
+            const createHelper = createRecordHelper({
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
                 'core.infra.record': mockRecRepo as IRecordRepo,
-                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
-                'core.domain.record.helpers.createRecord': createRecordHelper({
-                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.infra.record': mockRecRepo as IRecordRepo,
-                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
-                }),
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
             });
 
-            const createdEmptyRecord = await recDomain.createEmptyRecord({library: 'test', ctx});
+            const createdEmptyRecord = await createHelper({library: 'test', ctx, active: false});
 
             expect(mockRecRepo.createRecord.mock.calls.length).toBe(1);
             expect(typeof mockRecRepo.createRecord.mock.calls[0][0]).toBe('object');
@@ -175,6 +164,13 @@ describe('RecordDomain', () => {
                 getLibraryPermission: global.__mockPromise(true),
             };
 
+            const createHelper = createRecordHelper({
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                'core.infra.record': mockRecRepo as IRecordRepo,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
+            });
+
             const recDomain = recordDomain({
                 ...depsBase,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
@@ -183,15 +179,10 @@ describe('RecordDomain', () => {
                 'core.infra.form': formRepo as IFormRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
-                'core.domain.record.helpers.createRecord': createRecordHelper({
-                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.infra.record': mockRecRepo as IRecordRepo,
-                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
-                }),
+                'core.domain.record.helpers.createRecord': createHelper,
             });
 
-            const createdEmptyRecord = await recDomain.createEmptyRecord({library: 'test', ctx});
+            const createdEmptyRecord = await createHelper({library: 'test', ctx, active: false});
             const activatedRecord = await recDomain.activateNewRecord({
                 library: 'test',
                 recordId: createdEmptyRecord.id,
@@ -233,6 +224,13 @@ describe('RecordDomain', () => {
                 getRecordFieldValue: vi.fn(),
             };
 
+            const createHelper = createRecordHelper({
+                'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
+                'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
+                'core.infra.record': mockRecRepo as IRecordRepo,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
+            });
+
             const recDomain = recordDomain({
                 ...depsBase,
                 'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
@@ -241,16 +239,11 @@ describe('RecordDomain', () => {
                 'core.infra.form': formRepo as IFormRepo,
                 'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
                 'core.domain.value': mockValueDomain as IValueDomain,
-                'core.domain.record.helpers.createRecord': createRecordHelper({
-                    'core.domain.eventsManager': mockEventsManager as IEventsManagerDomain,
-                    'core.domain.permission.library': mockLibraryPermissionDomain as ILibraryPermissionDomain,
-                    'core.infra.record': mockRecRepo as IRecordRepo,
-                    'core.domain.automation': mockAutomationDomain as IAutomationDomain,
-                }),
+                'core.domain.record.helpers.createRecord': createHelper,
                 'core.utils': mockUtils as IUtils,
             });
 
-            const createdEmptyRecord = await recDomain.createEmptyRecord({library: 'test', ctx});
+            const createdEmptyRecord = await createHelper({library: 'test', ctx, active: false});
             const activatedRecord = await recDomain.activateNewRecord({
                 library: 'test',
                 recordId: createdEmptyRecord.id,

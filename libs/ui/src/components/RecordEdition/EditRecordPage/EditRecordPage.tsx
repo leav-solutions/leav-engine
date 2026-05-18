@@ -97,7 +97,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
     }, []);
 
     useEffect(() => {
-        const createEmptyRecordFunction = async () => {
+        const createRecordFunction = async () => {
             const values = useGetInitialRecordValues();
             const {data} = await createRecord({
                 variables: {
@@ -117,7 +117,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
         };
 
         if (isCreation && !isReady) {
-            createEmptyRecordFunction();
+            createRecordFunction();
         }
     }, []);
 
