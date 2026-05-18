@@ -172,8 +172,8 @@ const columns = await exportProfileDomain.getColumnsFromProfileConfig('profileLa
 
 **Returns:**
 
--   Array of `IExportColumn` objects if successful
--   `undefined` if the configuration is invalid or an error occurs
+- Array of `IExportColumn` objects if successful
+- `undefined` if the configuration is invalid or an error occurs
 
 ### Behavior
 
@@ -189,12 +189,12 @@ const columns = await exportProfileDomain.getColumnsFromProfileConfig('profileLa
 
 The configuration is validated using Joi schema with the following rules:
 
--   **defaultProfile**: Must be a non-empty string
--   **profiles**: Must have at least 1 profile
--   **profile.label**: Must be a non-empty string
--   **profile.columns**: Must have at least 1 column
--   **column.columnLabel**: Can be any string (including null/empty)
--   **column.attribute**: Can be any string (including null/empty)
+- **defaultProfile**: Must be a non-empty string
+- **profiles**: Must have at least 1 profile
+- **profile.label**: Must be a non-empty string
+- **profile.columns**: Must have at least 1 column
+- **column.columnLabel**: Can be any string (including null/empty)
+- **column.attribute**: Can be any string (including null/empty)
 
 ## Common Issues
 

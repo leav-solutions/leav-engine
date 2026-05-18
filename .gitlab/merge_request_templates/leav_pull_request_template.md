@@ -2,8 +2,8 @@
 
 Definition Of Review
 
--   [ ] Own code review done (add notes for others)
--   [ ] Write message in teams channel
+- [ ] Own code review done (add notes for others)
+- [ ] Write message in teams channel
 
     ```
      <Title>
@@ -19,9 +19,9 @@ Definition Of Review
 
 Definition Of Mergeable
 
--   [ ] 2 approves
--   [ ] 1 functional review - US has been tested
--   [ ] Every comment is handled - blocking ones have been resolved by reviewer
--   [ ] Design OK
--   [ ] Can be tested by POs
--   [ ] PR was introduced during daily meeting
+- [ ] 2 approves
+- [ ] 1 functional review - US has been tested
+- [ ] Every comment is handled - blocking ones have been resolved by reviewer
+- [ ] Design OK
+- [ ] Can be tested by POs
+- [ ] PR was introduced during daily meeting

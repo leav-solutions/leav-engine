@@ -9,10 +9,10 @@ les apps `portal` et `login` de l'affichage.
 
 ## Stack
 
--   React + Vite + TypeScript
--   Apollo Client + GraphQL codegen, graphql-ws (subscriptions)
--   React Router, styled-components, Ant Design, aristid-ds
--   i18next
+- React + Vite + TypeScript
+- Apollo Client + GraphQL codegen, graphql-ws (subscriptions)
+- React Router, styled-components, Ant Design, aristid-ds
+- i18next
 
 ## Build
 

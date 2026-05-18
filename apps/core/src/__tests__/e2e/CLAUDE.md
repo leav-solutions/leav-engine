@@ -4,9 +4,9 @@ Mémo Claude pour écrire un test e2e.
 
 ## Quand
 
--   Valider l'**API GraphQL** au niveau du bord, contre un vrai serveur `core` qui tourne.
--   Cibles : chemins critiques CRUD, permissions/ACL, contrats GraphQL, scénarios multi-mutations.
--   La logique métier reste couverte par les unitaires (`*.spec.ts`) et l'intégration ([`__tests__/integration/`](../integration/)). N'ajoute pas un e2e si un test moins coûteux suffit.
+- Valider l'**API GraphQL** au niveau du bord, contre un vrai serveur `core` qui tourne.
+- Cibles : chemins critiques CRUD, permissions/ACL, contrats GraphQL, scénarios multi-mutations.
+- La logique métier reste couverte par les unitaires (`*.spec.ts`) et l'intégration ([`__tests__/integration/`](../integration/)). N'ajoute pas un e2e si un test moins coûteux suffit.
 
 ## Pattern moderne (à suivre pour tout nouveau test)
 
@@ -25,10 +25,10 @@ Pas de regen nécessaire si tu modifies seulement le `.test.ts` (ou les valeurs 
 
 ## Conventions GraphQL
 
--   Une opération **nommée** par bloc : `query GetXxx(...)`, `mutation CreateXxx(...)`. Le nom devient la méthode du SDK (`adminUserSdk.GetXxx`) et le préfixe des types (`GetXxxQuery`, `GetXxxQueryVariables`).
--   **PascalCase** pour les noms d'opérations.
--   Variables GraphQL (`$rule: CreateAutomationRuleInput!`) plutôt que valeurs inline.
--   Fragments autorisés mais à éviter sauf gain réel ; les exemples actuels n'en utilisent quasiment pas.
+- Une opération **nommée** par bloc : `query GetXxx(...)`, `mutation CreateXxx(...)`. Le nom devient la méthode du SDK (`adminUserSdk.GetXxx`) et le préfixe des types (`GetXxxQuery`, `GetXxxQueryVariables`).
+- **PascalCase** pour les noms d'opérations.
+- Variables GraphQL (`$rule: CreateAutomationRuleInput!`) plutôt que valeurs inline.
+- Fragments autorisés mais à éviter sauf gain réel ; les exemples actuels n'en utilisent quasiment pas.
 
 ## Pièges codegen (à lire avant d'écrire)
 
@@ -43,9 +43,9 @@ Le codegen est configuré avec [`enumValues: 'keep'`](../../../codegen.ts) — l
 
 **Règles à appliquer systématiquement :**
 
--   **Importer** enums, inputs et types d'opérations **uniquement depuis `_gqlTypes`** — jamais depuis `src/_types/`. Mélanger les deux mondes finit toujours par un cast ou une erreur runtime.
--   **Vérifier le nom exact** d'un enum/input avant de le citer : `grep -E "^export (enum|type) NomCherché" apps/core/src/__tests__/e2e/_gqlTypes/index.ts`. C'est un seul fichier de ~2000 lignes, grep est instantané.
--   **Si une méthode du SDK n'existe pas** (`Property 'CreateXxx' does not exist on type ...`), c'est presque toujours que tu as oublié de relancer `yarn graphql-generate` après avoir modifié un `.graphql`.
+- **Importer** enums, inputs et types d'opérations **uniquement depuis `_gqlTypes`** — jamais depuis `src/_types/`. Mélanger les deux mondes finit toujours par un cast ou une erreur runtime.
+- **Vérifier le nom exact** d'un enum/input avant de le citer : `grep -E "^export (enum|type) NomCherché" apps/core/src/__tests__/e2e/_gqlTypes/index.ts`. C'est un seul fichier de ~2000 lignes, grep est instantané.
+- **Si une méthode du SDK n'existe pas** (`Property 'CreateXxx' does not exist on type ...`), c'est presque toujours que tu as oublié de relancer `yarn graphql-generate` après avoir modifié un `.graphql`.
 
 ## SDK et utilisateurs
 
@@ -113,8 +113,8 @@ Les répertoires [`filesManager/`](filesManager/) et [`indexationManager/`](inde
 
 **N'utilise jamais ces APIs dans un nouveau test :**
 
--   `makeGraphQlCall(query: string, ...)` — l'ancien helper qui prend une string GraphQL ([`api/e2eUtils.ts:105`](api/e2eUtils.ts#L105)).
--   `importFileGraphQlCall(...)` — variante upload de fichier, même problème.
--   Les helpers historiques basés sur `makeGraphQlCall` exportés par `api/e2eUtils.ts` : `gqlSaveAttribute`, `gqlSaveTree`, `gqlCreateRecord`, `gqlAddElemToTree`, `gqlSaveLibrary`, etc. Ils restent uniquement pour la maintenance des tests existants.
+- `makeGraphQlCall(query: string, ...)` — l'ancien helper qui prend une string GraphQL ([`api/e2eUtils.ts:105`](api/e2eUtils.ts#L105)).
+- `importFileGraphQlCall(...)` — variante upload de fichier, même problème.
+- Les helpers historiques basés sur `makeGraphQlCall` exportés par `api/e2eUtils.ts` : `gqlSaveAttribute`, `gqlSaveTree`, `gqlCreateRecord`, `gqlAddElemToTree`, `gqlSaveLibrary`, etc. Ils restent uniquement pour la maintenance des tests existants.
 
 S'il manque une opération CRUD partagée (ex. créer une library de fixture), écris-la dans un `.graphql` partagé plutôt que de réutiliser un de ces helpers string-based.

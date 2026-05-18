@@ -33,8 +33,8 @@ Two reasons drive this decision:
 
 ## Consequences
 
--   `_gqlTypes/index.ts` files may contain types specific to external plugins (e.g., xstream).
-    This is expected and acceptable.
--   Reviewers should not flag the presence of plugin-specific types in generated files.
--   The `.gitattributes` entry (`linguist-generated=true`) on `_gqlTypes/index.ts` files is a
-    prerequisite for this approach to remain low-noise in MR diffs.
+- `_gqlTypes/index.ts` files may contain types specific to external plugins (e.g., xstream).
+  This is expected and acceptable.
+- Reviewers should not flag the presence of plugin-specific types in generated files.
+- The `.gitattributes` entry (`linguist-generated=true`) on `_gqlTypes/index.ts` files is a
+  prerequisite for this approach to remain low-noise in MR diffs.

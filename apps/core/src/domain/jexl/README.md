@@ -1,9 +1,9 @@
 # Jexl in leav
 
--   [Functional documentation](https://aristid.atlassian.net/wiki/spaces/PRODUIT/pages/2087256077/Calcul+Jexl)
--   Base language module: [jexl](https://github.com/TomFrost/jexl)
--   Extended language module: [jexl-extended](https://github.com/konnektr-io/jexl-extended)
--   POC: https://gitlab.aristid.com/dev/leav/pocs/poc-preprocessing
+- [Functional documentation](https://aristid.atlassian.net/wiki/spaces/PRODUIT/pages/2087256077/Calcul+Jexl)
+- Base language module: [jexl](https://github.com/TomFrost/jexl)
+- Extended language module: [jexl-extended](https://github.com/konnektr-io/jexl-extended)
+- POC: https://gitlab.aristid.com/dev/leav/pocs/poc-preprocessing
 
 ## Possible evolutions
 

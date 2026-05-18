@@ -11,10 +11,10 @@ Supporte le découpage multi-pages (documents).
 
 ## Stack
 
--   Node.js + TypeScript
--   RabbitMQ (`amqplib`) — communication asynchrone via AMQP
--   `@leav/message-broker` pour l'abstraction AMQP
--   `@leav/config-manager` pour la configuration
+- Node.js + TypeScript
+- RabbitMQ (`amqplib`) — communication asynchrone via AMQP
+- `@leav/message-broker` pour l'abstraction AMQP
+- `@leav/config-manager` pour la configuration
 
 ## Structure
 

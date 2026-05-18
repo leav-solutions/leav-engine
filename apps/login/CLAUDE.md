@@ -7,10 +7,10 @@ UI d'authentification locale : formulaire de login, mot de passe oublié, réini
 
 ## Stack
 
--   React + Vite + TypeScript
--   Apollo Client (GraphQL), React Router
--   styled-components, aristid-ds
--   i18next
+- React + Vite + TypeScript
+- Apollo Client (GraphQL), React Router
+- styled-components, aristid-ds
+- i18next
 
 ## Build
 

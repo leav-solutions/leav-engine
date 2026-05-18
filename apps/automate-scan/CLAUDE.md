@@ -11,11 +11,11 @@ Publie les événements AMQP avec : type, inode, chemins avant/après, timestamp
 
 ## Stack
 
--   Node.js + TypeScript
--   chokidar (surveillance fichiers, polling configurable)
--   Redis (cache inode→path)
--   RabbitMQ / `@leav/message-broker` (publication événements)
--   `@leav/monitoring-server` (health check)
+- Node.js + TypeScript
+- chokidar (surveillance fichiers, polling configurable)
+- Redis (cache inode→path)
+- RabbitMQ / `@leav/message-broker` (publication événements)
+- `@leav/monitoring-server` (health check)
 
 ## Structure
 
@@ -32,7 +32,7 @@ src/
 
 ## Relation avec sync-scan
 
--   `automate-scan` — surveillance **continue** (tourne en permanence)
--   `sync-scan` — réconciliation **ponctuelle** (synchronise l'état FS ↔ base de données)
+- `automate-scan` — surveillance **continue** (tourne en permanence)
+- `sync-scan` — réconciliation **ponctuelle** (synchronise l'état FS ↔ base de données)
 
 Les deux publient sur la même queue RabbitMQ.

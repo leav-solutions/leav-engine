@@ -67,7 +67,7 @@ Enabling HTTPS access is highly recommended when you'll run LEAV-Engine on a pub
 
 Here are the few modifications on the base docker-compose file to do so:
 
--   On the `core` service, add these labels:
+- On the `core` service, add these labels:
 
     ```
     - traefik.http.routers.core.rule=Host(`<your public domain>`)
@@ -75,7 +75,7 @@ Here are the few modifications on the base docker-compose file to do so:
     - traefik.http.routers.core.tls.certresolver=letsencrypt
     ```
 
--   On the `traefik` service, add these labels:
+- On the `traefik` service, add these labels:
 
     ```
     - "--entrypoints.websecure.address=:443"
@@ -86,26 +86,26 @@ Here are the few modifications on the base docker-compose file to do so:
     - "--certificatesresolvers.letsencrypt.leav_engine.tlschallenge=true"
     ```
 
--   On the `traefik` service, open the port 443:
+- On the `traefik` service, open the port 443:
 
     ```
     - "443:443"
     ```
 
--   On the `traefik` service, add a volume to store the certificates:
+- On the `traefik` service, add a volume to store the certificates:
 
     ```
     - lets_encrypt_cert:/letsencrypt
     ```
 
--   Add the certificates volume to the volumes section:
+- Add the certificates volume to the volumes section:
 
     ```
     lets_encrypt_cert:
         driver: local
     ```
 
--   Don't forget to use secure protocols in public URLs:
+- Don't forget to use secure protocols in public URLs:
 
     ```
     SERVER_PUBLIC_URL: https://<your public domain>
@@ -116,10 +116,10 @@ Here are the few modifications on the base docker-compose file to do so:
 In order to speed up the DB queries, it's possible to enable ArangoDB's query cache.
 To do so:
 
--   Create a `conf` folder right beside the `docker-compose.prod.yml` with a `arangodb` folder in it
--   Copy our [arangod.conf](https://github.com/leav-solutions/leav-engine/blob/main/docker/conf/arangodb/arangod.conf)
-    file in it.
--   Mount this directory in the `arangodb` service, by adding this volume in the `docker-compose.prod.yml` file:
+- Create a `conf` folder right beside the `docker-compose.prod.yml` with a `arangodb` folder in it
+- Copy our [arangod.conf](https://github.com/leav-solutions/leav-engine/blob/main/docker/conf/arangodb/arangod.conf)
+  file in it.
+- Mount this directory in the `arangodb` service, by adding this volume in the `docker-compose.prod.yml` file:
 
 ```
 - ./conf/arangodb/arangod.conf:/etc/arangodb3/arangod.conf
@@ -185,16 +185,16 @@ More infos about profiles can be found [here](https://docs.docker.com/compose/pr
 
 ## Update nodejs docker image
 
--   Get the current node version from gitlab-ci.yml default.image (for instance node:24-alpine3.21)
--   Replace that version in the following files
-    -   .gitlab-ci.yml
-    -   docker/DOCKERFILES/CORE/Dockerfile
-    -   docker/DOCKERFILES/PREVIEW_GENERATOR/Dockerfile
-    -   docker/DOCKERFILES/build/core.Dockerfile
-    -   docker/DOCKERFILES/build/generic.Dockerfile
-    -   docker/DOCKERFILES/build/prebuild.Dockerfile
-    -   docker/docker-compose.yml
--   For your local stack, rebuild your images
+- Get the current node version from gitlab-ci.yml default.image (for instance node:24-alpine3.21)
+- Replace that version in the following files
+    - .gitlab-ci.yml
+    - docker/DOCKERFILES/CORE/Dockerfile
+    - docker/DOCKERFILES/PREVIEW_GENERATOR/Dockerfile
+    - docker/DOCKERFILES/build/core.Dockerfile
+    - docker/DOCKERFILES/build/generic.Dockerfile
+    - docker/DOCKERFILES/build/prebuild.Dockerfile
+    - docker/docker-compose.yml
+- For your local stack, rebuild your images
 
 ```shell
 docker compose build --pull
@@ -284,9 +284,9 @@ declared in `package.json` must be prefixed with `@leav` so that Yarn will be aw
 
 IMPORTANT: a shared lib has to be built in order to be used by other project. So, when your lib is ready:
 
--   Run `yarn build`
--   **commit the `dist` folder**
--   In `package.json` the `main` file must be in the `dist` folder.
+- Run `yarn build`
+- **commit the `dist` folder**
+- In `package.json` the `main` file must be in the `dist` folder.
 
 Don't forget to enable definition files in `tsconfig.json` to offer a smooth Typescript experience to other devs using
 your lib ;)
@@ -385,15 +385,15 @@ the `index.html` file of this app folder.
 
 A few environment variables are available in the script with all settings required to build the app:
 
--   `LEAV_API_URL`: full URL of the GraphQL API (eg: https://your-domain.com/graphql)
--   `LEAV_WS_URL`: full URL of the GraphQL WS API, used for subscriptions (eg: wss://your-domain.com/graphql)
--   `LEAV_AUTH_URL`: full URL of the auth endpoint (eg: https://your-domain.com/auth/authenticate)
--   `LEAV_DEFAULT_LANG`: default language, configured in core configuration
--   `LEAV_AVAILABLE_LANG`: available languages, configured in core configuration
--   `LEAV_LOGIN_ENDPOINT`: global login endpoint
--   `LEAV_APP_ENDPOINT`: app endpoint
--   `LEAV_APPLICATION_ID`: app ID
--   `LEAV_DEST_FOLDER`: destination folder. All files needed to run the instance must land here.
+- `LEAV_API_URL`: full URL of the GraphQL API (eg: https://your-domain.com/graphql)
+- `LEAV_WS_URL`: full URL of the GraphQL WS API, used for subscriptions (eg: wss://your-domain.com/graphql)
+- `LEAV_AUTH_URL`: full URL of the auth endpoint (eg: https://your-domain.com/auth/authenticate)
+- `LEAV_DEFAULT_LANG`: default language, configured in core configuration
+- `LEAV_AVAILABLE_LANG`: available languages, configured in core configuration
+- `LEAV_LOGIN_ENDPOINT`: global login endpoint
+- `LEAV_APP_ENDPOINT`: app endpoint
+- `LEAV_APPLICATION_ID`: app ID
+- `LEAV_DEST_FOLDER`: destination folder. All files needed to run the instance must land here.
 
 ### Un-installation
 
@@ -404,8 +404,8 @@ This script is responsible for cleaning up everything it needs before the core d
 
 A few environment variables are available in the script:
 
--   `LEAV_APPLICATION_ID`: Application ID
--   `LEAV_DEST_FOLDER`: instance folder
+- `LEAV_APPLICATION_ID`: Application ID
+- `LEAV_DEST_FOLDER`: instance folder
 
 ## Run in light mode
 
@@ -420,9 +420,9 @@ The light.yml file will avoid to start admin, login, data-studio and portal serv
 
 ### Prerequisites
 
--   Create a .env file in /apps/core with the following content:
--   Follow this guide to get your
-    GITHUB_TOKEN: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
+- Create a .env file in /apps/core with the following content:
+- Follow this guide to get your
+  GITHUB_TOKEN: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
 
 ```
 GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -430,13 +430,13 @@ GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ### Execution
 
--   Run the following command in docker folder:
+- Run the following command in docker folder:
 
 ```shell
 docker compose -f docker-compose.yml -f light.yml up -d
 ```
 
--   Then you can access the core at http://core.leav.localhost
+- Then you can access the core at http://core.leav.localhost
 
 ## Mail
 
@@ -444,9 +444,9 @@ docker compose -f docker-compose.yml -f light.yml up -d
 
 Locally, we use [mailpit](https://mailpit.axllent.org/) as the mail server. All emails sent by LEAV are received in this mailbox, regardless of their destination address. It is also used in the core's e2e-api tests.
 
--   To receive email notifications, in `docker/docker-compose.yml`, set `NOTIFICATION_EMAIL_ENABLE: "true"`
--   Start the docker-compose stack with `docker compose --profile 'mail' up -d`
--   Access the mailbox at: http://mailpit.leav.localhost/
+- To receive email notifications, in `docker/docker-compose.yml`, set `NOTIFICATION_EMAIL_ENABLE: "true"`
+- Start the docker-compose stack with `docker compose --profile 'mail' up -d`
+- Access the mailbox at: http://mailpit.leav.localhost/
 
 ## OIDC
 
@@ -482,7 +482,7 @@ login/password default authentification mechanism.
 
 4. Currently, the træfik roots you to dev version of front apps (**portal**, **data-studio**…), 2 solutions:
 
--   Manually stop docker front containers and build apps to [`/applications`](./apps/core/applications) folder in core.
+- Manually stop docker front containers and build apps to [`/applications`](./apps/core/applications) folder in core.
 
     ```
     yarn run fronts:build:install
@@ -490,18 +490,18 @@ login/password default authentification mechanism.
     docker stop docker-login-1 docker-portal-1 docker-admin-1 docker-data-studio-1 docker-app-studio-1
     ```
 
--   Build apps to [`/applications`](./apps/core/applications) and register under new paths
+- Build apps to [`/applications`](./apps/core/applications) and register under new paths
 
 ### 📦 Dependency Management
 
 This project uses Renovate to automatically manage dependency updates. Renovate scans the repository and creates Merge
 Requests (MRs) for outdated packages. (https://docs.renovatebot.com)
 
--   Configuration: Project-specific settings are located in renovate.json.
--   Global Runner: The bot is executed via the internal runner at GitLab Renovate
-    Runner. (https://gitlab.aristid.com/dev/renovate-runner )
--   Schedule: Updates run weekly on Mondays at 7:20 AM.
--   Limits: To prevent noise, Renovate is capped at creating a maximum of 5 MRs per execution.
+- Configuration: Project-specific settings are located in renovate.json.
+- Global Runner: The bot is executed via the internal runner at GitLab Renovate
+  Runner. (https://gitlab.aristid.com/dev/renovate-runner )
+- Schedule: Updates run weekly on Mondays at 7:20 AM.
+- Limits: To prevent noise, Renovate is capped at creating a maximum of 5 MRs per execution.
 
 ### Credentials
 
@@ -513,9 +513,9 @@ You can reach keycloak admin console on: [keycloak.leav.localhost](http://keyclo
 
 ### Documentation
 
--   [Init and login](./docs/oidc/OIDC-Init-Login.svg)
--   [Renewrefresh and refresh](./docs/oidc/OIDC-Renewrefresh-Refresh.svg)
--   [Logout](./docs/oidc/OIDC-Logout.svg)
+- [Init and login](./docs/oidc/OIDC-Init-Login.svg)
+- [Renewrefresh and refresh](./docs/oidc/OIDC-Renewrefresh-Refresh.svg)
+- [Logout](./docs/oidc/OIDC-Logout.svg)
 
 # License
 

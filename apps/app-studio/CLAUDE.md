@@ -75,11 +75,11 @@ src/
 
 ### Modes d'affichage des panneaux
 
--   `undefined` → premier niveau de navigation — implicitement `fullpage` (il faut toujours un panneau pleine page pour afficher quelque chose à l'écran)
--   `fullpage` → affichage pleine page explicite, ex. ouverture d'un PAC depuis la liste des PACs
--   `slider` → panneau latéral glissant
--   `popup` → modal dialog
--   Flap panels → panneaux latéraux via `flapRecordId/flapLibraryId/flapPanelId`
+- `undefined` → premier niveau de navigation — implicitement `fullpage` (il faut toujours un panneau pleine page pour afficher quelque chose à l'écran)
+- `fullpage` → affichage pleine page explicite, ex. ouverture d'un PAC depuis la liste des PACs
+- `slider` → panneau latéral glissant
+- `popup` → modal dialog
+- Flap panels → panneaux latéraux via `flapRecordId/flapLibraryId/flapPanelId`
 
 ---
 
@@ -89,12 +89,12 @@ Les panneaux `custom` (iframes) communiquent via `useIFrameMessengerClient` (`@l
 
 Handlers disponibles (`panel-custom/message-handlers/`) :
 
--   `onNavigateToPanel` — naviguer vers un panneau configuré
--   `onOpenFlapPanel` / `onCloseFlapPanel` — ouvrir/fermer un panneau latéral
--   `onClosePanel` — fermer le panneau courant
--   `onGetPanelConfig` — récupérer la config JSON du panneau
--   `onAlert` / `onNotification` / `onModalConfirm` — UI notifications
--   Synchronisation de langue entre frames
+- `onNavigateToPanel` — naviguer vers un panneau configuré
+- `onOpenFlapPanel` / `onCloseFlapPanel` — ouvrir/fermer un panneau latéral
+- `onClosePanel` — fermer le panneau courant
+- `onGetPanelConfig` — récupérer la config JSON du panneau
+- `onAlert` / `onNotification` / `onModalConfirm` — UI notifications
+- Synchronisation de langue entre frames
 
 ---
 
@@ -102,9 +102,9 @@ Handlers disponibles (`panel-custom/message-handlers/`) :
 
 URL pattern : `/:workspaceId/:panelId/:recordId?/:where?/:recordPanelId?`
 
--   `where` : `slider` ou `popup` pour les panneaux secondaires
--   Flap : `.../flap/:flapRecordId/:flapLibraryId/:flapPanelId`
--   `retrievePanelDetails()` — utilitaire pour retrouver un panneau par ID dans la config
+- `where` : `slider` ou `popup` pour les panneaux secondaires
+- Flap : `.../flap/:flapRecordId/:flapLibraryId/:flapPanelId`
+- `retrievePanelDetails()` — utilitaire pour retrouver un panneau par ID dans la config
 
 ### Convention `useParams()`
 
@@ -141,6 +141,6 @@ InitNetwork → InitTranslation → InitUser → InitTheme
 
 ## Tests
 
--   Framework : Jest + Testing Library
--   Fichiers : `*.spec.tsx` / `*.spec.ts` colocalisés dans `__tests__/`
--   Génération des types GraphQL : `graphql-codegen` (même pattern que `libs/ui`)
+- Framework : Jest + Testing Library
+- Fichiers : `*.spec.tsx` / `*.spec.ts` colocalisés dans `__tests__/`
+- Génération des types GraphQL : `graphql-codegen` (même pattern que `libs/ui`)

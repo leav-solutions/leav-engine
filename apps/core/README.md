@@ -70,29 +70,29 @@ In addition to unit tests, there are integration (internal) and end-to-end (api)
 End-to-end or integration testing needs to be run inside the container as it starts a server, access to the DB, etc.
 This can be done by either:
 
--   Need to run with mailpit: `docker compose --profile mail up -d`
--   Running a shell in the _core_ container and executing `yarn run test:e2e` or `yarn run test:e2e:api` or
-    `yarn run test:integration`
--   Executing the command from your machine: `docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e`
+- Need to run with mailpit: `docker compose --profile mail up -d`
+- Running a shell in the _core_ container and executing `yarn run test:e2e` or `yarn run test:e2e:api` or
+  `yarn run test:integration`
+- Executing the command from your machine: `docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e`
 
 #### Add graphql query in e2e tests
 
--   Add .graphql file anywhere in src/\_\_tests\_\_/e2e/
--   Start your local stack (`docker compose ...`)
--   Setup your ./apolloApiKey.js from ./apolloApiKey.js.example
+- Add .graphql file anywhere in src/\_\_tests\_\_/e2e/
+- Start your local stack (`docker compose ...`)
+- Setup your ./apolloApiKey.js from ./apolloApiKey.js.example
 
 ```
 yarn run graphql-generate
 ```
 
--   And use them like
+- And use them like
 
 ```ts
 import {e2eSdk} from '../e2eUtils';
 await e2eSdk.SaveApiKey();
 ```
 
--   Do not try to share to much graphql among test, expect for very common usage like create library, attributes ...
+- Do not try to share to much graphql among test, expect for very common usage like create library, attributes ...
 
 ## Debugging in your IDE
 

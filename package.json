@@ -19,7 +19,7 @@
         "prettier:fix": "prettier --write",
         "prettier:fix:all": "prettier --write .",
         "prettier:check": "prettier --check .",
-        "format:all": "yarn prettier && yarn lint",
+        "format:all": "yarn prettier:fix:all && yarn lint",
         "tscheck": "yarn workspaces foreach -vpA --exclude 'libs/types' run tscheck",
         "translations:check": "node ./scripts/compareTranslations.js",
         "postinstall": "husky install",
@@ -49,7 +49,7 @@
         "husky": "6.0.0",
         "jest-watch-typeahead": "2.2.2",
         "lint-staged": "16.4.0",
-        "prettier": "3.3.3",
+        "prettier": "3.8.3",
         "typescript": "5.9.3"
     },
     "resolutions": {

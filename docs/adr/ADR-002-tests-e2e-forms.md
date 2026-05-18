@@ -12,7 +12,6 @@ We have therefore decided to implement end-to-end testing on Leav forms.
 ### Options:
 
 1. Repository
-
     1. Leav
        Pros: - Low effort to add to CI - Is consistant with the mono repo
        Cons:
@@ -21,13 +20,11 @@ We have therefore decided to implement end-to-end testing on Leav forms.
        Cons: - Can break if we don't pay attention
 
 2. Technical stack
-
     1. Playwright - cf: [xstream ADR](https://gitlab.aristid.com/dev/xstream/engine/xstream/-/blob/develop/apps/fronts/front-xstream-creative/docs/ADR-004-end-to-end-testing-tool.md?ref_type=heads#end-to-end-testing-tool)
     2. What applications should we run? everything? only what's necessary (leav core, indexation service for search)? data-studio, app-studio?
     3. How to run the tests in a local environment ? run another core? change db?
 
 3. Frequency
-
     1. every day
        Pros: - Takes time between the break and fix - Is non blocking for development
     2. each PR
@@ -35,7 +32,6 @@ We have therefore decided to implement end-to-end testing on Leav forms.
        Cons: - Slower CI
 
 4. How to handle data
-
     1. Realistic (ex: campaign, offer)
        Pros: - Closer to reality
     2. Abstract (ex: tree, linked field)
@@ -71,7 +67,7 @@ We have therefore decided to implement end-to-end testing on Leav forms.
 
 ## Actions
 
--   US : Update gitlab CI to deploy a version with core + indexation manager on the existing environment
--   US : Write script to initialize the database and an app-studio. This script will also have to flush caches (redis, rabbitmq...). This script will be run every time we run the tests.
--   US : Update gitlab CI to add a new job that runs the e2e tests. This job will have to be scheduled every day and should also allow to be ran manually
--   US : Publish a message on Teams when the CI that run e2e tests is KO US : Create a process to handle who have to check why the tests are KO and redirect to the correct squad to fix them. Hint: weekly tribe might be a good time to pass the torch between squads.
+- US : Update gitlab CI to deploy a version with core + indexation manager on the existing environment
+- US : Write script to initialize the database and an app-studio. This script will also have to flush caches (redis, rabbitmq...). This script will be run every time we run the tests.
+- US : Update gitlab CI to add a new job that runs the e2e tests. This job will have to be scheduled every day and should also allow to be ran manually
+- US : Publish a message on Teams when the CI that run e2e tests is KO US : Create a process to handle who have to check why the tests are KO and redirect to the correct squad to fix them. Hint: weekly tribe might be a good time to pass the torch between squads.

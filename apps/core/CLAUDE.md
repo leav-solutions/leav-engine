@@ -51,19 +51,19 @@ src/
 
 ⚠️ Le schéma GraphQL n'est **pas statique** — il est **généré dynamiquement** à l'exécution.
 
--   `src/app/graphql/graphqlApp.ts` assemble le schéma en agrégeant les modules
--   Chaque domaine expose `getGraphQLSchema()` → `{typeDefs: string, resolvers: object}`
--   Des champs GraphQL sont générés par Library (ex: `libraries_query`, `products_mutation`)
--   Signature standard d'un resolver : `(parent, args, ctx: IQueryInfos) => Promise<T>`
+- `src/app/graphql/graphqlApp.ts` assemble le schéma en agrégeant les modules
+- Chaque domaine expose `getGraphQLSchema()` → `{typeDefs: string, resolvers: object}`
+- Des champs GraphQL sont générés par Library (ex: `libraries_query`, `products_mutation`)
+- Signature standard d'un resolver : `(parent, args, ctx: IQueryInfos) => Promise<T>`
 
 ---
 
 ## Injection de dépendances (Awilix)
 
--   `src/depsManager.ts` — container DI
--   Convention-based : scanne les dossiers `app/`, `domain/`, `infra/`, `interface/`, `utils/`
--   Nommage en dot-notation : `core.domain.library`, `core.app.core.record`
--   Toutes les dépendances sont injectées via destructuration dans les factory functions
+- `src/depsManager.ts` — container DI
+- Convention-based : scanne les dossiers `app/`, `domain/`, `infra/`, `interface/`, `utils/`
+- Nommage en dot-notation : `core.domain.library`, `core.app.core.record`
+- Toutes les dépendances sont injectées via destructuration dans les factory functions
 
 ---
 
@@ -110,18 +110,18 @@ record lié, ou nœud d'arbre), le `id_value`, la `version`, et les `metadata`.
 
 Modèle à trois niveaux : Admin → Library → Record.
 
--   Héritage depuis les nœuds parents dans les arbres
--   Permissions par attribut (lecture/écriture)
--   Chaque fonction reçoit `ctx: IQueryInfos` (user, session, permissions)
--   Logique centralisée dans `src/domain/permission/`
+- Héritage depuis les nœuds parents dans les arbres
+- Permissions par attribut (lecture/écriture)
+- Chaque fonction reçoit `ctx: IQueryInfos` (user, session, permissions)
+- Logique centralisée dans `src/domain/permission/`
 
 ---
 
 ## Architecture événementielle
 
--   RabbitMQ pour les événements asynchrones
--   `IEventsManagerDomain` publie les événements domaine (CREATE, UPDATE, DELETE, UNLINK…)
--   Découple le core des effets de bord (notifications, indexation, tâches)
+- RabbitMQ pour les événements asynchrones
+- `IEventsManagerDomain` publie les événements domaine (CREATE, UPDATE, DELETE, UNLINK…)
+- Découple le core des effets de bord (notifications, indexation, tâches)
 
 ---
 
@@ -138,5 +138,5 @@ docker exec -i $(docker container ls -aqf "name=core") yarn run test:integration
 docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e:api
 ```
 
--   Tests unitaires : `*.spec.ts` colocalisés avec la source
--   Tests intégration/e2e : `src/__tests__/`
+- Tests unitaires : `*.spec.ts` colocalisés avec la source
+- Tests intégration/e2e : `src/__tests__/`

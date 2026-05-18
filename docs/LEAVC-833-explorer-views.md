@@ -13,12 +13,12 @@ ou `freezeView: true`), l'utilisateur ne peut pas personnaliser son affichage ni
 
 L'objectif est d'introduire un **modèle de vues à deux niveaux** :
 
--   **Niveau administrateur** — configure une vue de référence en définissant les attributs
-    disponibles pour les colonnes, les filtres et les tris. Il partage cette vue avec tous les
-    utilisateurs.
--   **Niveau utilisateur** — à partir d'une vue partagée, personnalise son propre affichage
-    (colonnes visibles, filtres épinglés, tris) et peut sauvegarder dans une **vue personnelle**,
-    clone indépendant de la vue partagée d'origine.
+- **Niveau administrateur** — configure une vue de référence en définissant les attributs
+  disponibles pour les colonnes, les filtres et les tris. Il partage cette vue avec tous les
+  utilisateurs.
+- **Niveau utilisateur** — à partir d'une vue partagée, personnalise son propre affichage
+  (colonnes visibles, filtres épinglés, tris) et peut sauvegarder dans une **vue personnelle**,
+  clone indépendant de la vue partagée d'origine.
 
 ### Structure du side panel (4 onglets)
 
@@ -31,15 +31,15 @@ L'objectif est d'introduire un **modèle de vues à deux niveaux** :
 
 ### Comportements clés
 
--   Une vue partagée n'est modifiable que par son créateur.
--   Quand un utilisateur personnalise une vue partagée et la sauvegarde, il crée un **clone
-    indépendant**. Toute modification ultérieure de la vue partagée n'impacte pas ses vues
-    personnelles.
--   Si l'Explorer est appelé **sans id de vue** → fallback : une seule colonne "carte d'identité",
-    aucun filtre. Un utilisateur sans droits admin n'a accès à aucun attribut pour configurer sa vue.
--   Si l'Explorer est appelé **avec un id de vue partagée** → cette vue s'affiche telle quelle.
--   Périmètre de partage actuel : **global** (tout le monde). Partage par groupes d'utilisateurs
-    prévu dans une version ultérieure.
+- Une vue partagée n'est modifiable que par son créateur.
+- Quand un utilisateur personnalise une vue partagée et la sauvegarde, il crée un **clone
+  indépendant**. Toute modification ultérieure de la vue partagée n'impacte pas ses vues
+  personnelles.
+- Si l'Explorer est appelé **sans id de vue** → fallback : une seule colonne "carte d'identité",
+  aucun filtre. Un utilisateur sans droits admin n'a accès à aucun attribut pour configurer sa vue.
+- Si l'Explorer est appelé **avec un id de vue partagée** → cette vue s'affiche telle quelle.
+- Périmètre de partage actuel : **global** (tout le monde). Partage par groupes d'utilisateurs
+  prévu dans une version ultérieure.
 
 ### Découpage EPIC (à affiner avec les devs)
 
@@ -69,10 +69,10 @@ et doit communiquer en temps réel avec le panneau Explorer associé dans les de
 
 **Communication inter-panneaux — contrainte centrale :**
 
--   Config panel → Explorer : envoie la vue courante en JSON à chaque changement via un Store avec
-    subscribe
--   Explorer → Config panel : notifie quand les filtres/tris sont modifiés directement depuis la
-    barre de l'Explorer
+- Config panel → Explorer : envoie la vue courante en JSON à chaque changement via un Store avec
+  subscribe
+- Explorer → Config panel : notifie quand les filtres/tris sont modifiés directement depuis la
+  barre de l'Explorer
 
 L'approche "récupère la vue depuis le backend" est **rejetée** : la vue peut être dans un état
 non-sauvegardé → la vue sérialisée doit être transmise directement en mémoire.
@@ -185,8 +185,8 @@ tris (les tris ne sont modifiables que depuis le panneau viewConfig).
 L'Explorer expose un callback générique pour notifier d'un changement de filtres, dans
 `defaultCallbacks.viewConfig` :
 
--   `defaultCallbacks.viewConfig.onFiltersChange?: (payload: FiltersChangePayload) => void`
-    avec `FiltersChangePayload = { filters: UIFilter[]; filtersOperator: 'AND' | 'OR' }`
+- `defaultCallbacks.viewConfig.onFiltersChange?: (payload: FiltersChangePayload) => void`
+  avec `FiltersChangePayload = { filters: UIFilter[]; filtersOperator: 'AND' | 'OR' }`
 
 App-studio branche ce callback sur le dispatcher `explorer-view-changed`. `PanelViewConfig`
 reçoit la notification via le messenger.
@@ -223,10 +223,10 @@ routing garantit qu'il est toujours rendu dans un slider.
 
 **`apps/app-studio/src/modules/ApplicationRouting/content/panel-view-config/PanelViewConfig.tsx`**
 
--   Reçoit `onViewChanged` en prop (callback fourni par app-studio, branché sur le dispatcher
-    `explorer-view-changed`)
--   4 onglets : Affichage, Filtres, Tris, Catalogue
--   Bouton de sauvegarde : persiste la vue via le nouvel endpoint
+- Reçoit `onViewChanged` en prop (callback fourni par app-studio, branché sur le dispatcher
+  `explorer-view-changed`)
+- 4 onglets : Affichage, Filtres, Tris, Catalogue
+- Bouton de sauvegarde : persiste la vue via le nouvel endpoint
 
 Structure interne :
 
@@ -330,12 +330,12 @@ via le messenger.
 
 Quand ce chantier reviendra, points d'attention :
 
--   Le `viewConfig` devra pouvoir cibler un panneau `custom` (iframe) en plus d'un `explorer` —
-    d'où le choix de `targetPanelId` plutôt que `explorerPanelId` dès maintenant.
--   Les sous-panneaux (iframes) utiliseront le même protocole `message-to-panel` — pas de
-    changement architectural, juste de nouveaux types de messages.
--   Le flux de sauvegarde devra orchestrer : persistance des données custom (BFF) puis persistance
-    de la vue LEAV générique via le nouvel endpoint.
+- Le `viewConfig` devra pouvoir cibler un panneau `custom` (iframe) en plus d'un `explorer` —
+  d'où le choix de `targetPanelId` plutôt que `explorerPanelId` dès maintenant.
+- Les sous-panneaux (iframes) utiliseront le même protocole `message-to-panel` — pas de
+  changement architectural, juste de nouveaux types de messages.
+- Le flux de sauvegarde devra orchestrer : persistance des données custom (BFF) puis persistance
+  de la vue LEAV générique via le nouvel endpoint.
 
 ---
 
@@ -365,11 +365,11 @@ Au clic sur "Sauvegarder" dans `PanelViewConfig` :
 
 ## Ce qui est explicitement hors scope
 
--   La partie backend d'agrégation des vues (générique + custom + prefs user) — chantier séparé
--   La migration AMP vers app-studio — sujet parallèle bloqué sur cette décision
--   Gestion des attributs en mode timeline / double timeline — squad PAC
--   Partage des vues par groupes d'utilisateurs — version ultérieure
--   Le renommage/suppression de l'existant dans `manage-view-settings/` de l'Explorer
+- La partie backend d'agrégation des vues (générique + custom + prefs user) — chantier séparé
+- La migration AMP vers app-studio — sujet parallèle bloqué sur cette décision
+- Gestion des attributs en mode timeline / double timeline — squad PAC
+- Partage des vues par groupes d'utilisateurs — version ultérieure
+- Le renommage/suppression de l'existant dans `manage-view-settings/` de l'Explorer
 
 ---
 
@@ -399,13 +399,12 @@ Au clic sur "Sauvegarder" dans `PanelViewConfig` :
     token (cf. `IAccessTokenPayload` dans `apps/core/src/app/auth/authApp.ts`) et disponibles
     dans `ctx.groupsId` côté resolver. Le groupe admin a l'id `'1'` (`adminsGroupId` dans
     `apps/core/src/_constants/users.ts`). Il suffit de les exposer côté GraphQL :
-
-    -   Étendre la query `me` dans `core` pour retourner `groupsId: [String]` (depuis `ctx`,
-        sans requête DB supplémentaire)
-    -   Étendre `getUserIdentity.graphql` (app-studio) pour récupérer ce champ
-    -   Mettre à jour `IUserContextData` (`libs/ui`) pour inclure `groupsId: string[]`
-    -   Créer un hook `useIsViewConfigAdmin` dans `PanelViewConfig` :
-        `ctx.groupsId.includes('1')`
+    - Étendre la query `me` dans `core` pour retourner `groupsId: [String]` (depuis `ctx`,
+      sans requête DB supplémentaire)
+    - Étendre `getUserIdentity.graphql` (app-studio) pour récupérer ce champ
+    - Mettre à jour `IUserContextData` (`libs/ui`) pour inclure `groupsId: string[]`
+    - Créer un hook `useIsViewConfigAdmin` dans `PanelViewConfig` :
+      `ctx.groupsId.includes('1')`
 
     C'est un prérequis pour tous les onglets : les sections "attributs disponibles"
     ne sont visibles qu'en mode admin.

@@ -19,8 +19,8 @@ If we tried to extend the triptych pattern directly for the flap, we would face 
 
 The router cannot distinguish between:
 
--   A new level of navigation (next triptych: `/:recordId/:where/:recordPanelId`)
--   Flap-specific parameters (`/:flapRecordId/:flapLibraryId/:flapPanelId`)
+- A new level of navigation (next triptych: `/:recordId/:where/:recordPanelId`)
+- Flap-specific parameters (`/:flapRecordId/:flapLibraryId/:flapPanelId`)
 
 This ambiguity would cause routing conflicts, as the router would match `:flapRecordId` as a new `:recordId` parameter.
 
@@ -44,10 +44,10 @@ The complete pattern with flap becomes:
 
 Where:
 
--   **flap**: Literal string that acts as a discriminant
--   **flapRecordId**: The ID of the record displayed in the flap
--   **flapLibraryId**: The library of the record (needed for context)
--   **flapPanelId**: The specific flap panel to display (e.g., "comments", "history")
+- **flap**: Literal string that acts as a discriminant
+- **flapRecordId**: The ID of the record displayed in the flap
+- **flapLibraryId**: The library of the record (needed for context)
+- **flapPanelId**: The specific flap panel to display (e.g., "comments", "history")
 
 #### Example URLs
 
@@ -67,6 +67,6 @@ Where:
 
 ### Implementation Notes
 
--   The `recordWherePanelWithFlap` route **must** be defined before `recordWherePanel` in the router configuration to ensure proper matching
--   The flap can be opened on any level of the triptych hierarchy
--   The flap pattern does not support recursion (you cannot open a flap within a flap)
+- The `recordWherePanelWithFlap` route **must** be defined before `recordWherePanel` in the router configuration to ensure proper matching
+- The flap can be opened on any level of the triptych hierarchy
+- The flap pattern does not support recursion (you cannot open a flap within a flap)

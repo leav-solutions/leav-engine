@@ -8035,7 +8035,7 @@ __metadata:
   resolution: "@leav/app-root-path@workspace:libs/app-root-path"
   dependencies:
     app-root-path: "npm:3.1.0"
-    prettier: "npm:3.3.3"
+    prettier: "npm:3.8.3"
     typescript: "npm:5.9.3"
     vitest: "npm:4.1.6"
   languageName: unknown
@@ -8045,7 +8045,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/config-manager@workspace:libs/config-manager"
   dependencies:
-    prettier: "npm:3.3.3"
+    prettier: "npm:3.8.3"
     typescript: "npm:5.9.3"
     vitest: "npm:4.1.6"
   languageName: unknown
@@ -12733,7 +12733,7 @@ __metadata:
     app-root-path: "npm:3.1.0"
     chokidar: "npm:4.0.3"
     lodash: "npm:4.18.1"
-    prettier: "npm:3.3.3"
+    prettier: "npm:3.8.3"
     redis: "npm:5.10.0"
     tsx: "npm:4.22.1"
     typescript: "npm:5.9.3"
@@ -14650,7 +14650,7 @@ __metadata:
     node-cron: "npm:4.2.1"
     nodemailer: "npm:7.0.13"
     openid-client: "npm:5.6.5"
-    prettier: "npm:3.3.3"
+    prettier: "npm:3.8.3"
     progress-stream: "npm:2.0.0"
     redis: "npm:5.10.0"
     tsx: "npm:4.22.1"
@@ -21599,7 +21599,7 @@ __metadata:
     husky: "npm:6.0.0"
     jest-watch-typeahead: "npm:2.2.2"
     lint-staged: "npm:16.4.0"
-    prettier: "npm:3.3.3"
+    prettier: "npm:3.8.3"
     typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
@@ -24030,12 +24030,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.3.3":
-  version: 3.3.3
-  resolution: "prettier@npm:3.3.3"
+"prettier@npm:3.8.3":
+  version: 3.8.3
+  resolution: "prettier@npm:3.8.3"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10/5beac1f30b5b40162532b8e2f7c3a4eb650910a2695e9c8512a62ffdc09dae93190c29db9107fa7f26d1b6c71aad3628ecb9b5de1ecb0911191099be109434d7
+  checksum: 10/4b3b12cbb29e4c96bed936e5d070167552500c18d37676fb3e0caae6199c42860662608e4dc116230698f6e2bb0267ef2548158224c92d40f188d309d72fdd6f
   languageName: node
   linkType: hard
 
@@ -24118,7 +24118,7 @@ __metadata:
     "@types/node": "npm:24.12.4"
     amqplib: "npm:0.10.9"
     fast-xml-parser: "npm:5.8.0"
-    prettier: "npm:3.3.3"
+    prettier: "npm:3.8.3"
     tsx: "npm:4.22.1"
     typescript: "npm:5.9.3"
     vitest: "npm:4.1.6"
@@ -27791,7 +27791,7 @@ __metadata:
     graphql-tag: "npm:2.12.6"
     joi: "npm:18.2.1"
     node-fetch: "npm:2.6.7"
-    prettier: "npm:3.3.3"
+    prettier: "npm:3.8.3"
     tsx: "npm:4.22.1"
     typescript: "npm:5.9.3"
     vitest: "npm:4.1.6"
