@@ -265,17 +265,6 @@ export type AutomationRulesSortInput = {
   order?: InputMaybe<SortOrder>;
 };
 
-export enum AutomationTriggerDefSynchronicity {
-  ASYNC = 'ASYNC',
-  BOTH = 'BOTH',
-  SYNC = 'SYNC'
-}
-
-export enum AutomationTriggerDefTopics {
-  ATTRIBUTE = 'ATTRIBUTE',
-  LIBRARY = 'LIBRARY'
-}
-
 export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
@@ -1329,11 +1318,6 @@ export type DeleteAutomationRuleMutationVariables = Exact<{
 
 export type DeleteAutomationRuleMutation = { deleteAutomationRule: { id: string } };
 
-export type ListAutomationTriggersDefQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type ListAutomationTriggersDefQuery = { automationTriggersDef: Array<{ eventAction: AutomationRuleEventAction, topics: Array<AutomationTriggerDefTopics>, synchronicity: AutomationTriggerDefSynchronicity }> };
-
 export type GetAutomationRuleFormQueryVariables = Exact<{
   formType: AutomationRuleJsonSchemaFormType;
 }>;
@@ -1702,15 +1686,6 @@ export const DeleteAutomationRuleDocument = gql`
     mutation DeleteAutomationRule($ruleId: ID!) {
   deleteAutomationRule(ruleId: $ruleId) {
     id
-  }
-}
-    `;
-export const ListAutomationTriggersDefDocument = gql`
-    query ListAutomationTriggersDef {
-  automationTriggersDef {
-    eventAction
-    topics
-    synchronicity
   }
 }
     `;
@@ -2098,9 +2073,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     DeleteAutomationRule(variables: DeleteAutomationRuleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteAutomationRuleMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteAutomationRuleMutation>({ document: DeleteAutomationRuleDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteAutomationRule', 'mutation', variables);
-    },
-    ListAutomationTriggersDef(variables?: ListAutomationTriggersDefQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<ListAutomationTriggersDefQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<ListAutomationTriggersDefQuery>({ document: ListAutomationTriggersDefDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'ListAutomationTriggersDef', 'query', variables);
     },
     GetAutomationRuleForm(variables: GetAutomationRuleFormQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetAutomationRuleFormQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetAutomationRuleFormQuery>({ document: GetAutomationRuleFormDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetAutomationRuleForm', 'query', variables);

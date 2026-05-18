@@ -1,7 +1,7 @@
 import {type AutomationPipelineStepValidation} from '../actions/_types';
 import {type AutomationPipelineValidation, type AutomationRulePipelineStep} from './_types';
 
-export function pipelineStepValidation<Params>(
+export function pipelineStepValidation<Params = Record<string, unknown>>(
     pipelineToValidate: AutomationPipelineValidation,
     stepIndex: number,
 ): AutomationPipelineStepValidation<Params> {

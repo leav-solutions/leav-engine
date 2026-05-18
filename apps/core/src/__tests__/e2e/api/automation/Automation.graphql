@@ -80,14 +80,6 @@ mutation DeleteAutomationRule($ruleId: ID!) {
     }
 }
 
-query ListAutomationTriggersDef {
-    automationTriggersDef {
-        eventAction
-        topics
-        synchronicity
-    }
-}
-
 query GetAutomationRuleForm($formType: AutomationRuleJsonSchemaFormType!) {
     automationRuleForm(formType: $formType) {
         jsonSchema

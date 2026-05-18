@@ -13,6 +13,7 @@ import {type INotificationDomain} from '../../../../../domain/notification/notif
 import {TaskPriority} from '../../../../../_types/tasksManager';
 import {type TTrpc} from '../../../../../app/trpc/trpcApp';
 import {type IEventsManagerDomain} from '../../../../../domain/eventsManager/eventsManagerDomain';
+import {fakePluginAutomationAction} from './domain/fakeAutomationAction';
 
 interface IDeps {
     translator: i18n;
@@ -199,6 +200,8 @@ export default function ({
             });
 
             extensionPoints.registerStart(async () => fakeDomain.startPlugin());
+
+            extensionPoints.registerAutomationAction(fakePluginAutomationAction);
         },
     };
 }

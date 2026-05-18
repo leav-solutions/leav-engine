@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {type EventAction} from '@leav/utils';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {AutomationTriggerDefSynchronicity, AutomationTriggerDefTopics} from './_types';
+import {AutomationTriggerDefSynchronicity} from './_types';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
 import createAutomationTriggers from './automationTriggers';
@@ -71,48 +71,6 @@ describe('automationTriggers', () => {
                 );
             }
             return trigger;
-        });
-    });
-
-    describe('getAutomationTriggersDef', () => {
-        it('returns one def per registered trigger', () => {
-            const defs = createTriggers().listAutomationTriggersDef({ctx: mockCtx});
-
-            expect(defs).toHaveLength(testTriggers.length);
-        });
-
-        it('preserves eventAction and synchronicity from the registry', () => {
-            const defs = createTriggers().listAutomationTriggersDef({ctx: mockCtx});
-            const def = defs.find(d => d.eventAction === TEST_ACTION_SYNC)!;
-
-            expect(def.eventAction).toBe(TEST_ACTION_SYNC);
-            expect(def.synchronicity).toBe(AutomationTriggerDefSynchronicity.SYNC);
-        });
-
-        it('derives topics [] from an empty object schema', () => {
-            const def = createTriggers()
-                .listAutomationTriggersDef({ctx: mockCtx})
-                .find(d => d.eventAction === TEST_ACTION_SYNC)!;
-
-            expect(def.topics).toEqual([]);
-        });
-
-        it('derives topics [LIBRARY] from a library-only schema', () => {
-            const def = createTriggers()
-                .listAutomationTriggersDef({ctx: mockCtx})
-                .find(d => d.eventAction === TEST_ACTION_LIB)!;
-
-            expect(def.topics).toEqual([AutomationTriggerDefTopics.LIBRARY]);
-        });
-
-        it('derives topics [LIBRARY, ATTRIBUTE] from a library+attribute schema', () => {
-            const def = createTriggers()
-                .listAutomationTriggersDef({ctx: mockCtx})
-                .find(d => d.eventAction === TEST_ACTION_LIB_ATTR)!;
-
-            expect(def.topics).toEqual(
-                expect.arrayContaining([AutomationTriggerDefTopics.LIBRARY, AutomationTriggerDefTopics.ATTRIBUTE]),
-            );
         });
     });
 

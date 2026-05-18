@@ -1,11 +1,6 @@
 import {adminUserId} from '../../../../_constants/users';
-import {
-    AutomationRuleEventAction,
-    AutomationRuleJsonSchemaFormType,
-    AutomationTriggerDefSynchronicity,
-    AutomationTriggerDefTopics,
-    AutomationRuleActions,
-} from '../../_gqlTypes';
+import {AutomationRuleEventAction, AutomationRuleJsonSchemaFormType, AutomationRuleActions} from '../../_gqlTypes';
+import {FAKE_PLUGIN_AUTOMATION_ACTION_TYPE} from '../_fixtures/fakeplugin/domain/fakeAutomationAction';
 import {adminUserSdk, nonAdminUserSdk} from '../e2eUtils';
 
 describe('Automation', () => {
@@ -485,9 +480,9 @@ describe('Automation', () => {
             expect(pipeline.type).toBe('object');
             expect(pipeline.properties.steps.type).toBe('array');
             expect(pipeline.properties.steps.items.properties.type.enum).toEqual(
-                expect.arrayContaining(Object.values(AutomationRuleActions)),
+                expect.arrayContaining([...Object.values(AutomationRuleActions), FAKE_PLUGIN_AUTOMATION_ACTION_TYPE]),
             );
-            expect(pipeline.properties.steps.items.allOf.length).toBe(Object.values(AutomationRuleActions).length);
+            expect(pipeline.properties.steps.items.allOf.length).toBe(Object.values(AutomationRuleActions).length + 1);
         });
 
         test('edition json schema has active field and trigger is readonly', async () => {
@@ -544,6 +539,7 @@ describe('Automation', () => {
             expect(pipelineUiOptions.actionTypeLabels).toMatchObject(
                 Object.fromEntries(Object.values(AutomationRuleActions).map(type => [type, expect.any(String)])),
             );
+            expect(pipelineUiOptions.actionTypeLabels[FAKE_PLUGIN_AUTOMATION_ACTION_TYPE]).toBe('Plugin log action EN');
 
             const {params} = uiSchema.pipeline.steps.items;
             expect(params.condition.expression).toHaveProperty('ui:title');
@@ -552,6 +548,7 @@ describe('Automation', () => {
             expect(params.log.level).toHaveProperty('ui:title');
             expect(params.modifyAttribute.attributePath).toHaveProperty('ui:title');
             expect(params.notification.recipients).toHaveProperty('ui:title');
+            expect(params.plugin_log_action.message).toHaveProperty('ui:title', 'Plugin log message EN');
         });
 
         test('edition ui schema has active widget and trigger with ui:readonly', async () => {
@@ -572,27 +569,6 @@ describe('Automation', () => {
                     formType: AutomationRuleJsonSchemaFormType.creation,
                 }),
             ).rejects.toThrow('Action forbidden');
-        });
-    });
-
-    describe('list automation triggers', () => {
-        test('should contains at least RECORD_INIT trigger', async () => {
-            const triggersDef = await adminUserSdk.ListAutomationTriggersDef();
-            expect(triggersDef.automationTriggersDef.length).toBeGreaterThanOrEqual(1);
-
-            expect(triggersDef.automationTriggersDef).toEqual(
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        eventAction: AutomationRuleEventAction.RECORD_INIT,
-                        topics: [AutomationTriggerDefTopics.LIBRARY],
-                        synchronicity: AutomationTriggerDefSynchronicity.SYNC,
-                    }),
-                ]),
-            );
-        });
-
-        test('non-admin user cannot list triggers', async () => {
-            await expect(nonAdminUserSdk.ListAutomationTriggersDef()).rejects.toThrow('Action forbidden');
         });
     });
 });

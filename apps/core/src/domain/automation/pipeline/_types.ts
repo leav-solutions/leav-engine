@@ -5,7 +5,7 @@ export type AutomationRulePipeline = {
     steps: AutomationRulePipelineStep[];
 };
 
-export type AutomationRulePipelineStep<Params = unknown> = {
+export type AutomationRulePipelineStep<Params = Record<string, unknown>> = {
     type: AutomationRuleActions | string; // string for custom/plugin actions
     name?: string;
     params: Params;

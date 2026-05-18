@@ -4,6 +4,7 @@ import {type IAutomationAction, type AutomationRuleActions} from './actions/_typ
 
 export interface IAutomationActionsRegistry {
     getAction(type: AutomationRuleActions | string): IAutomationAction | undefined;
+    registerAction(actions: IAutomationAction): void;
     listAvailableActions(): IAutomationAction[];
 }
 
@@ -35,6 +36,9 @@ export default function ({
     return {
         getAction(type): IAutomationAction | undefined {
             return _getActionsRegistry().get(type);
+        },
+        registerAction(action) {
+            _getActionsRegistry().set(action.type, action);
         },
         listAvailableActions() {
             return [..._getActionsRegistry().values()];
