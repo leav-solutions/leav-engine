@@ -18,11 +18,11 @@ Exécution en une passe : scan FS + scan GraphQL → algorithme de matching → 
 
 ## Stack
 
--   Node.js + TypeScript
--   Apollo Client (requêtes GraphQL pour lire la base)
--   `walk` (traversal récursif du FS avec listes allow/ignore)
--   RabbitMQ / `@leav/message-broker`
--   Joi (validation de la config)
+- Node.js + TypeScript
+- Apollo Client (requêtes GraphQL pour lire la base)
+- `walk` (traversal récursif du FS avec listes allow/ignore)
+- RabbitMQ / `@leav/message-broker`
+- Joi (validation de la config)
 
 ## Structure
 
@@ -38,7 +38,7 @@ src/
 
 ## Relation avec automate-scan
 
--   `sync-scan` — réconciliation **ponctuelle** (on-demand ou périodique)
--   `automate-scan` — surveillance **continue** (temps réel)
+- `sync-scan` — réconciliation **ponctuelle** (on-demand ou périodique)
+- `automate-scan` — surveillance **continue** (temps réel)
 
 Les deux publient sur la même queue RabbitMQ.

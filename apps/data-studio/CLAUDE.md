@@ -8,8 +8,8 @@ libraries, édition de valeurs). Historiquement premier consommateur de `@leav/u
 
 ## Stack
 
--   React + Vite
--   Apollo Client + apollo-upload-client
--   Redux + Redux Toolkit
--   Ant Design + `@leav/ui`
--   i18next, TypeScript, Jest
+- React + Vite
+- Apollo Client + apollo-upload-client
+- Redux + Redux Toolkit
+- Ant Design + `@leav/ui`
+- i18next, TypeScript, Jest

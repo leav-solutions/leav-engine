@@ -10,12 +10,12 @@ Inclut une feature **history** pour consulter l'historique des actions (remplace
 
 ## Stack
 
--   React + Vite + TypeScript
--   Apollo Client + GraphQL
--   Redux + Redux Toolkit (state management)
--   `aristid-ds` (design system cible) + `semantic-ui-react` (migration en cours)
--   Formik (formulaires), react-dnd (drag & drop)
--   i18next, Jest
+- React + Vite + TypeScript
+- Apollo Client + GraphQL
+- Redux + Redux Toolkit (state management)
+- `aristid-ds` (design system cible) + `semantic-ui-react` (migration en cours)
+- Formik (formulaires), react-dnd (drag & drop)
+- i18next, Jest
 
 ## Structure
 

@@ -59,19 +59,22 @@ interface IRecordPropertyBase<T extends RecordPropertyParam> {
 type RecordPropertyParam = 'clean' | 'raw';
 type DefaultRecordPropertyParam = 'clean';
 
-export interface IRecordPropertyStandard<T extends RecordPropertyParam = DefaultRecordPropertyParam>
-    extends IRecordPropertyBase<T> {
+export interface IRecordPropertyStandard<
+    T extends RecordPropertyParam = DefaultRecordPropertyParam,
+> extends IRecordPropertyBase<T> {
     payload?: string | null;
     raw_payload?: string | null;
 }
 
-export interface IRecordPropertyLink<T extends RecordPropertyParam = DefaultRecordPropertyParam>
-    extends IRecordPropertyBase<T> {
+export interface IRecordPropertyLink<
+    T extends RecordPropertyParam = DefaultRecordPropertyParam,
+> extends IRecordPropertyBase<T> {
     linkValue?: ILinkValue | null;
 }
 
-export interface IRecordPropertyTree<T extends RecordPropertyParam = DefaultRecordPropertyParam>
-    extends IRecordPropertyBase<T> {
+export interface IRecordPropertyTree<
+    T extends RecordPropertyParam = DefaultRecordPropertyParam,
+> extends IRecordPropertyBase<T> {
     treeValue?: ITreeValue | null;
 }
 

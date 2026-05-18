@@ -106,10 +106,10 @@ src/
 
 **Props clés :**
 
--   `entrypoint` — Library cible (obligatoire)
--   `defaultMassActions` — `'deactivate' | 'export' | 'editAttribute' | 'generatePreviews'`
--   `defaultPrimaryActions` — `'create'`
--   `defaultActionsForItem` — `'replaceLink' | 'remove' | 'activate'`
+- `entrypoint` — Library cible (obligatoire)
+- `defaultMassActions` — `'deactivate' | 'export' | 'editAttribute' | 'generatePreviews'`
+- `defaultPrimaryActions` — `'create'`
+- `defaultActionsForItem` — `'replaceLink' | 'remove' | 'activate'`
 
 **API compound exposée :**
 
@@ -123,10 +123,10 @@ Explorer.SettingsSidePanel;
 
 ## Tests
 
--   Framework : Jest + Testing Library
--   Wrapper obligatoire : `TestProviders` (`src/_tests/TestProviders.tsx`)
-    — fournit MockedProvider Apollo, MemoryRouter, contextes User/Lang, Design System
--   Fichiers de test colocalisés avec le composant : `MonComposant.test.tsx`
+- Framework : Jest + Testing Library
+- Wrapper obligatoire : `TestProviders` (`src/_tests/TestProviders.tsx`)
+  — fournit MockedProvider Apollo, MemoryRouter, contextes User/Lang, Design System
+- Fichiers de test colocalisés avec le composant : `MonComposant.test.tsx`
 
 ---
 

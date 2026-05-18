@@ -15,8 +15,8 @@ depuis `apps/core`, destinée aux **développeurs de plugins** qui étendent le 
 Publié automatiquement sur **npm public** (`@aristid/leav-types`) via GitLab CI,
 déclenché par tout changement dans `apps/core/**/*` :
 
--   **`next`** — à chaque push sur `develop`
--   **`latest`** — sur les releases taguées
+- **`next`** — à chaque push sur `develop`
+- **`latest`** — sur les releases taguées
 
 ```bash
 # Commande de génération (lancée par le CI)

@@ -14,27 +14,27 @@ sans redéveloppement applicatif.
 
 Il est **multi-modèle** :
 
--   modèle tabulaire (colonnes classiques)
--   modèle EAV (Entity-Attribute-Value) pour les données multivaluées
--   modèle relationnel pour les liens entre entités
+- modèle tabulaire (colonnes classiques)
+- modèle EAV (Entity-Attribute-Value) pour les données multivaluées
+- modèle relationnel pour les liens entre entités
 
 ### Le pattern LEAV
 
 C'est une extension du pattern classique **EAV (Entity-Attribute-Value)** :
 
--   **Library** — le méta-modèle : définit ce qu'est une Entity, quels Attributs elle peut avoir,
-    leurs types, leurs règles de validation. Le schéma est lui-même une donnée gérée par le système.
-    La Library est aussi ce qui introduit les **relations entre éléments** : un Attribute peut être
-    de type "liaison" (`link`) et pointer vers des Entities d'une autre Library. C'est ce qui élève
-    LEAV au-dessus d'un EAV basique — le graphe de données est modélisable sans migration de schéma.
--   **Entity** — une instance de donnée (ex : un produit, une personne, une session)
--   **Attribute** — une propriété d'une Entity (ex : couleur, poids, durée). Deux types de liaisons
-    permettent d'exprimer des relations inter-Library :
-    -   **`link`** — lien simple vers une Library classique (collection plate d'Entities)
-    -   **`tree`** — lien avancé vers une Library arborescente : c'est un type de Library à part
-        entière dont les Entities sont organisées en hiérarchie de nœuds, avec ses propres règles de
-        gestion. Permet de modéliser taxonomies, structures organisationnelles, workflows, etc.
--   **Value** — la valeur concrète d'un Attribute pour une Entity donnée
+- **Library** — le méta-modèle : définit ce qu'est une Entity, quels Attributs elle peut avoir,
+  leurs types, leurs règles de validation. Le schéma est lui-même une donnée gérée par le système.
+  La Library est aussi ce qui introduit les **relations entre éléments** : un Attribute peut être
+  de type "liaison" (`link`) et pointer vers des Entities d'une autre Library. C'est ce qui élève
+  LEAV au-dessus d'un EAV basique — le graphe de données est modélisable sans migration de schéma.
+- **Entity** — une instance de donnée (ex : un produit, une personne, une session)
+- **Attribute** — une propriété d'une Entity (ex : couleur, poids, durée). Deux types de liaisons
+  permettent d'exprimer des relations inter-Library :
+    - **`link`** — lien simple vers une Library classique (collection plate d'Entities)
+    - **`tree`** — lien avancé vers une Library arborescente : c'est un type de Library à part
+      entière dont les Entities sont organisées en hiérarchie de nœuds, avec ses propres règles de
+      gestion. Permet de modéliser taxonomies, structures organisationnelles, workflows, etc.
+- **Value** — la valeur concrète d'un Attribute pour une Entity donnée
 
 ---
 
@@ -53,23 +53,23 @@ C'est une extension du pattern classique **EAV (Entity-Attribute-Value)** :
 
 ### Infra locale (dev)
 
--   **Docker / Docker Compose** pour orchestrer les services
--   **Traefik** comme reverse proxy local
+- **Docker / Docker Compose** pour orchestrer les services
+- **Traefik** comme reverse proxy local
 
 ### Infra production
 
--   **Kubernetes (K8s)** — Docker est conservé pour les images, mais plus de Docker Compose ni de Traefik
--   **Keycloak + OIDC** pour l'authentification (remplace l'app `login` locale)
+- **Kubernetes (K8s)** — Docker est conservé pour les images, mais plus de Docker Compose ni de Traefik
+- **Keycloak + OIDC** pour l'authentification (remplace l'app `login` locale)
 
 Les packages internes utilisent le préfixe `@leav/`.
 
 ### Design System — aristid-ds
 
--   Composants React préfixés `Kit` (`KitButton`, `KitTable`…), interfaces `IKit`
--   Wrapping d'Ant Design 5 avec theming par tokens — utiliser `useKitTheme()` pour accéder au thème
--   Ne jamais importer depuis `antd/lib` — utiliser `antd` ou `antd/es`
--   Distribué en commit-pin (pas de semver stable) dans `@leav/ui`, `app-studio`, `admin`
--   Migration en cours dans `apps/admin` : `semantic-ui-react` → `aristid-ds`. Ne pas utiliser `semantic-ui-react` dans du nouveau code.
+- Composants React préfixés `Kit` (`KitButton`, `KitTable`…), interfaces `IKit`
+- Wrapping d'Ant Design 5 avec theming par tokens — utiliser `useKitTheme()` pour accéder au thème
+- Ne jamais importer depuis `antd/lib` — utiliser `antd` ou `antd/es`
+- Distribué en commit-pin (pas de semver stable) dans `@leav/ui`, `app-studio`, `admin`
+- Migration en cours dans `apps/admin` : `semantic-ui-react` → `aristid-ds`. Ne pas utiliser `semantic-ui-react` dans du nouveau code.
 
 ---
 
@@ -119,14 +119,14 @@ Chaque app dans `apps/`, peut avoir son propre `CLAUDE.md` avec ses spécificit�
 
 ## Principes architecturaux clés
 
--   **Schéma = donnée** : la définition du modèle (Library) est stockée et gérée comme n'importe
-    quelle autre donnée. Pas de migration DDL pour changer de schéma.
--   **API GraphQL générique** : les resolvers sont générés dynamiquement en fonction de la Library,
-    pas écrits à la main pour chaque type de données.
--   **ArangoDB comme socle** : le choix d'un graph-document store est intentionnel — les relations
-    entre entités sont des first-class citizens, ce qui évite les jointures EAV catastrophiques
-    des SGBDR classiques.
--   **Découplage par messages** : RabbitMQ assure la communication asynchrone entre les apps.
+- **Schéma = donnée** : la définition du modèle (Library) est stockée et gérée comme n'importe
+  quelle autre donnée. Pas de migration DDL pour changer de schéma.
+- **API GraphQL générique** : les resolvers sont générés dynamiquement en fonction de la Library,
+  pas écrits à la main pour chaque type de données.
+- **ArangoDB comme socle** : le choix d'un graph-document store est intentionnel — les relations
+  entre entités sont des first-class citizens, ce qui évite les jointures EAV catastrophiques
+  des SGBDR classiques.
+- **Découplage par messages** : RabbitMQ assure la communication asynchrone entre les apps.
 
 ---
 
@@ -184,22 +184,22 @@ Voir [`CODING_GUIDELINES.md`](CODING_GUIDELINES.md) — source de vérité pour 
 
 ### En cours
 
--   **Suppression de `data-studio`** — remplacement progressif par `explorer-studio`, une instance de `app-studio`. Ne pas ajouter de code dans `data-studio`.
+- **Suppression de `data-studio`** — remplacement progressif par `explorer-studio`, une instance de `app-studio`. Ne pas ajouter de code dans `data-studio`.
 
 ### Planifiés
 
--   **Restructuration de `@leav/ui`** — une fois `data-studio` supprimé, nettoyer et restructurer la lib pour mettre en avant les composants publics : `Explorer`, composants de formulaire, composants de filtres. Ce chantier est bloqué par la suppression complète de `data-studio`.
--   **AMP → instance `app-studio`** — objectif long terme de faire d'AMP une instance de `app-studio` (comme `explorer-studio`). `app-studio` devra être enrichi pour couvrir les besoins d'AMP. Permettra un nouveau cycle de nettoyage de `@leav/ui`.
--   **DX plugins `core`** — simplifier le développement des plugins core pour les consommateurs externes. Situation actuelle : imports incorrects dans `xstream/apps/plugins/`, nécessite un `git sparse-checkout` ; AMP utilise `core` via image Docker. Chantier porté par l'équipe core (Sébastien / Jérémy).
--   **Migration TypeScript `strict`** — `tsconfig.json` a `strict: true` mais court-circuité par 6 overrides (`strictNullChecks: false`, `noImplicitAny: false`, etc.). À activer progressivement, app par app — jamais en une seule PR globale.
+- **Restructuration de `@leav/ui`** — une fois `data-studio` supprimé, nettoyer et restructurer la lib pour mettre en avant les composants publics : `Explorer`, composants de formulaire, composants de filtres. Ce chantier est bloqué par la suppression complète de `data-studio`.
+- **AMP → instance `app-studio`** — objectif long terme de faire d'AMP une instance de `app-studio` (comme `explorer-studio`). `app-studio` devra être enrichi pour couvrir les besoins d'AMP. Permettra un nouveau cycle de nettoyage de `@leav/ui`.
+- **DX plugins `core`** — simplifier le développement des plugins core pour les consommateurs externes. Situation actuelle : imports incorrects dans `xstream/apps/plugins/`, nécessite un `git sparse-checkout` ; AMP utilise `core` via image Docker. Chantier porté par l'équipe core (Sébastien / Jérémy).
+- **Migration TypeScript `strict`** — `tsconfig.json` a `strict: true` mais court-circuité par 6 overrides (`strictNullChecks: false`, `noImplicitAny: false`, etc.). À activer progressivement, app par app — jamais en une seule PR globale.
 
 ---
 
 ## Ce qu'il faut savoir avant de modifier du code
 
--   [ ] À compléter : patterns de gestion des permissions
--   [ ] À compléter : gestion des versions de valeurs (versioning)
--   [ ] À compléter : pièges connus / zones sensibles
+- [ ] À compléter : patterns de gestion des permissions
+- [ ] À compléter : gestion des versions de valeurs (versioning)
+- [ ] À compléter : pièges connus / zones sensibles
 
 ---
 

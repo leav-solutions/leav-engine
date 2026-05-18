@@ -8,7 +8,7 @@ Apply the boy-scout rule:
 
 # Generalities
 
--   Keep the code [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) but don't overinterpret it and avoid bad abstractions.
+- Keep the code [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) but don't overinterpret it and avoid bad abstractions.
 
 ```ts
 /** Good application of the DRY principle */
@@ -57,7 +57,7 @@ function performOperation(operationType: string, value1: number, value2: number)
 }
 ```
 
--   Respect the Separation of Concern principle
+- Respect the Separation of Concern principle
 
 ```ts
 // Bad
@@ -85,16 +85,16 @@ function calculateAverage(numbers: number[]): number {
 }
 ```
 
--   Prefer clean and explicit code over comments. If necessary, explain the why, not the how.
--   [Functional programming](https://en.wikipedia.org/wiki/Functional_programming) is preferred. Classes are allowed only for specific situations (like a custom `Error` class)
--   Use pure functions as much as possible. Avoid mutating params.
+- Prefer clean and explicit code over comments. If necessary, explain the why, not the how.
+- [Functional programming](https://en.wikipedia.org/wiki/Functional_programming) is preferred. Classes are allowed only for specific situations (like a custom `Error` class)
+- Use pure functions as much as possible. Avoid mutating params.
 
 ## Naming
 
--   Prefer long names over short but hard to read or understand names. Too many abbreviations might actually make reading more difficult. Rule of thumbs: if you cannot pronounce it out loud, it's probably not a good name.
--   Internal (= not exported) functions are prefixed by `_`
--   Folder name: plural if several modules inside
--   Database fields can use snake_case
+- Prefer long names over short but hard to read or understand names. Too many abbreviations might actually make reading more difficult. Rule of thumbs: if you cannot pronounce it out loud, it's probably not a good name.
+- Internal (= not exported) functions are prefixed by `_`
+- Folder name: plural if several modules inside
+- Database fields can use snake_case
 
 ### TypeScript
 
@@ -134,20 +134,20 @@ const KitButtonStyled = styled(KitButton)`...`;
 
 ### `console`
 
--   Forbidden in `apps/core` and backend apps
--   In frontend apps (`libs/ui`, `apps/admin`, `apps/app-studio`…): only `console.warn`, `console.error` and `console.info` are allowed
+- Forbidden in `apps/core` and backend apps
+- In frontend apps (`libs/ui`, `apps/admin`, `apps/app-studio`…): only `console.warn`, `console.error` and `console.info` are allowed
 
 ## Tests
 
--   Test-Driven Development is encouraged.
--   A test coverage of 100% is not mandatory. Tests must make sense and give confidence in the code.
--   Snapshot tests must only be used in very specific situations. They're very sensitive and subject to a lot of false-positives. Prefer testing the logic and business rules of your code.
+- Test-Driven Development is encouraged.
+- A test coverage of 100% is not mandatory. Tests must make sense and give confidence in the code.
+- Snapshot tests must only be used in very specific situations. They're very sensitive and subject to a lot of false-positives. Prefer testing the logic and business rules of your code.
 
 ## Types
 
--   Global types must be placed in a folder named `_types` at the root of `src`. Types that are more specific to a little part of your code and are not used globally could have their own `_types.ts` file, placed where it makes more sense.
--   When a file starts to have a lot of types definitions in it, consider moving it into its own `_types.ts`
--   Types used across multiple apps should go to the `@leav/utils` package.
+- Global types must be placed in a folder named `_types` at the root of `src`. Types that are more specific to a little part of your code and are not used globally could have their own `_types.ts` file, placed where it makes more sense.
+- When a file starts to have a lot of types definitions in it, consider moving it into its own `_types.ts`
+- Types used across multiple apps should go to the `@leav/utils` package.
 
 # Frontend apps
 
@@ -155,24 +155,24 @@ The following rules apply to frontend development only, specifically on a React 
 
 ## Generalities
 
--   Separate logic from the UI as much as possible. It will make your component easier to read, and the logic will be easier to test and reason about.
+- Separate logic from the UI as much as possible. It will make your component easier to read, and the logic will be easier to test and reason about.
 
 ## Custom Hooks
 
--   Hooks name always start by `use` (e.g. `useLang` )
--   Each custom hook must have its own folder, containing these files:
-    -   `useMyHook.ts`
-    -   `useMyHook.test.ts`
-    -   `index.ts` exporting `useMyHook`
--   Folder is named after hook's name
--   Each hook must be unit-tested
--   All reusable hooks are in the hooks folder, at the project root
+- Hooks name always start by `use` (e.g. `useLang` )
+- Each custom hook must have its own folder, containing these files:
+    - `useMyHook.ts`
+    - `useMyHook.test.ts`
+    - `index.ts` exporting `useMyHook`
+- Folder is named after hook's name
+- Each hook must be unit-tested
+- All reusable hooks are in the hooks folder, at the project root
 
 ## Props
 
--   Props are named in camelCase
--   If prop is a function called on an event (click, submit...), name must start with `on` (e.g. `onSubmit`). Function passed to this prop must start with `_handle` (e.g. `_handleSubmit`)
--   Don't pass a function directly when calling a component. Use a variable instead. It improves readability.
+- Props are named in camelCase
+- If prop is a function called on an event (click, submit...), name must start with `on` (e.g. `onSubmit`). Function passed to this prop must start with `_handle` (e.g. `_handleSubmit`)
+- Don't pass a function directly when calling a component. Use a variable instead. It improves readability.
 
 ```jsx
 // Bad
@@ -185,16 +185,16 @@ const _handleSubmit = () => { /* Handle submit... */ };
 
 ## Testing
 
--   Use [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) through the wrapper available in `_tests/testUtils.tsx`. It includes automatically all global providers (like Apollo or Redux)
--   Prefer using `getByRole` : it encourages using accessibility best practices (possible roles are available [here](https://www.w3.org/TR/html-aria/#docconformance))
--   Use the [Testing Playground](https://testing-playground.com/) to find the best selector for your use case
--   Use `getByTestId` only on last resort
--   Don't use non-standard roles (e.g. `<div role="myOwnRole">...</div>`)
--   Small integration tests, testing a whole feature, might make more sense than testing all presentational components individually
--   Mock generated query hooks instead of using Apollo `MockedResponse` inside `render` or `renderHook`
--   Use `jest.spyOn` on the `* as gqlTypes` namespace to mock generated hooks
--   Do not mock `useSharedTranslation` — the test environment already returns translation keys as-is
--   Do not add `jest.clearAllMocks()` in `beforeEach` unless a specific test requires it
+- Use [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) through the wrapper available in `_tests/testUtils.tsx`. It includes automatically all global providers (like Apollo or Redux)
+- Prefer using `getByRole` : it encourages using accessibility best practices (possible roles are available [here](https://www.w3.org/TR/html-aria/#docconformance))
+- Use the [Testing Playground](https://testing-playground.com/) to find the best selector for your use case
+- Use `getByTestId` only on last resort
+- Don't use non-standard roles (e.g. `<div role="myOwnRole">...</div>`)
+- Small integration tests, testing a whole feature, might make more sense than testing all presentational components individually
+- Mock generated query hooks instead of using Apollo `MockedResponse` inside `render` or `renderHook`
+- Use `jest.spyOn` on the `* as gqlTypes` namespace to mock generated hooks
+- Do not mock `useSharedTranslation` — the test environment already returns translation keys as-is
+- Do not add `jest.clearAllMocks()` in `beforeEach` unless a specific test requires it
 
 ```ts
 // ✅ Good
@@ -210,7 +210,7 @@ const mocks: MockedResponse[] = [{request: {...}, result: {...}}];
 renderHook(() => useMyHook(), {mocks});
 ```
 
--   Destructure `result` directly from `renderHook` to avoid repeating `result.current` in assertions
+- Destructure `result` directly from `renderHook` to avoid repeating `result.current` in assertions
 
 ```ts
 // ✅ Good
@@ -226,11 +226,11 @@ expect(result.current.value).toBe(42);
 
 ## Folder structure
 
--   One component per file, one folder per component, the same name as the component. Containing at least these files
-    -   `Component.tsx`
-    -   `Component.test.tsx`
-    -   `index.ts` exporting `Component`. It allows directly importing the component by its folder name.
--   Folders’ structure must look similar to the component tree at runtime. For example:
+- One component per file, one folder per component, the same name as the component. Containing at least these files
+    - `Component.tsx`
+    - `Component.test.tsx`
+    - `index.ts` exporting `Component`. It allows directly importing the component by its folder name.
+- Folders’ structure must look similar to the component tree at runtime. For example:
 
 **Components**: Parent > Child > Grandchild
 
@@ -251,18 +251,18 @@ Parent/
 
 ## Sharing components
 
--   If a component is used in different, unrelated branches within one app it must go to the `shared` folder (e.g. `shared/MySharedComponent`)
--   If a component might be used across multiple apps, it belongs to `@leav/ui`
--   If a component is very generic and might be used across multiple unrelated projects, we'll consider adding it to the design system
+- If a component is used in different, unrelated branches within one app it must go to the `shared` folder (e.g. `shared/MySharedComponent`)
+- If a component might be used across multiple apps, it belongs to `@leav/ui`
+- If a component is very generic and might be used across multiple unrelated projects, we'll consider adding it to the design system
 
 ## Styles
 
--   **`aristid-ds` is the target design system.** Always prefer its components over creating a custom styled component from scratch.
--   Use **CSS modules** for any custom styling — it is the new target approach.
--   `styled-components` exists in legacy code — do not add new ones.
--   Never use `semantic-ui-react` for new components — migration only.
--   Avoid inline styles.
--   Always use design system tokens for colors, spacing, typography, etc. No hardcoded values.
+- **`aristid-ds` is the target design system.** Always prefer its components over creating a custom styled component from scratch.
+- Use **CSS modules** for any custom styling — it is the new target approach.
+- `styled-components` exists in legacy code — do not add new ones.
+- Never use `semantic-ui-react` for new components — migration only.
+- Avoid inline styles.
+- Always use design system tokens for colors, spacing, typography, etc. No hardcoded values.
 
 ```tsx
 // Bad — styled-components (legacy)
@@ -282,15 +282,15 @@ import {container} from './styles.module.css';
 
 ## Operations
 
--   Place operations in a `_queries/` folder **close to the usage** (e.g. `src/components/Explorer/_queries/`).
--   The global `src/_queries/` folder is legacy — do not add new operations there.
--   File naming: `operationNameQuery.graphql` / `operationNameMutation.graphql` (see [Naming](#files)).
+- Place operations in a `_queries/` folder **close to the usage** (e.g. `src/components/Explorer/_queries/`).
+- The global `src/_queries/` folder is legacy — do not add new operations there.
+- File naming: `operationNameQuery.graphql` / `operationNameMutation.graphql` (see [Naming](#files)).
 
 ## Code generation
 
--   Run `yarn graphql-generate` after adding or modifying an operation to regenerate `_gqlTypes/index.ts`.
--   **Never modify `_gqlTypes/index.ts` by hand** — it is fully regenerated on each run.
--   Each app/lib requiring codegen has an `apolloApiKey.js.example`. Copy it to `apolloApiKey.js` and fill in a valid token (generate one in the admin API keys panel).
+- Run `yarn graphql-generate` after adding or modifying an operation to regenerate `_gqlTypes/index.ts`.
+- **Never modify `_gqlTypes/index.ts` by hand** — it is fully regenerated on each run.
+- Each app/lib requiring codegen has an `apolloApiKey.js.example`. Copy it to `apolloApiKey.js` and fill in a valid token (generate one in the admin API keys panel).
 
 ## Fragments
 
@@ -340,8 +340,8 @@ if (value.__typename === 'StandardValue') {
 
 Error handling is centralized in the Apollo error link (`useInitApollo`):
 
--   `401` / `UNAUTHENTICATED` → redirect to login
--   `graphQLErrors` → logged as `console.warn`
--   `networkError` → message normalized for display
+- `401` / `UNAUTHENTICATED` → redirect to login
+- `graphQLErrors` → logged as `console.warn`
+- `networkError` → message normalized for display
 
 Do not add GraphQL error handling inside individual components — let the error link handle it.
