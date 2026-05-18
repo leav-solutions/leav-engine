@@ -699,7 +699,7 @@ e2e-sync-scan:
 
 e2e-playwright:
   stage: post-build-test
-  image: mcr.microsoft.com/playwright:v1.59.1-noble
+  image: mcr.microsoft.com/playwright:v1.60.0-noble
   variables:
     FF_NETWORK_PER_BUILD: 1 # important for core to connect to services https://docs.gitlab.com/ci/services/#connecting-services
     BASE_URL: "http://leav_core:4001"
