@@ -21,6 +21,8 @@ interface IDeps {
     'core.domain.value': IValueDomain;
 }
 
+const JEXL_CONTEXT_KEY = '$';
+
 export interface IJexlDomain {
     eval<Return = unknown, Ctx extends JexlContext = JexlContext>(expression: string, context?: Ctx): Promise<Return>;
     validate(expression: string): Promise<void>;
@@ -121,7 +123,9 @@ export default function ({'core.domain.value': valueDomain}: IDeps): IJexlDomain
     return {
         eval: (expression, context) =>
             // Maybe introduce caching of compiled expressions if performance is an issue
-            jexl.eval(expression, context),
+            jexl.eval(expression, {
+                [JEXL_CONTEXT_KEY]: context,
+            }),
         validate: async expression => {
             try {
                 await jexl.compile(expression);

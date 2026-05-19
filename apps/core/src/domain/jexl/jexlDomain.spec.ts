@@ -148,7 +148,7 @@ describe('jexlDomain', () => {
 
         test('should access fields from context', async () => {
             const recordCtx = domain.buildRecordContext(mockRecord, ctx);
-            const result = await domain.eval('id', recordCtx);
+            const result = await domain.eval('$.id', recordCtx);
             expect(result).toBe(mockRecord.id);
         });
 
@@ -182,8 +182,8 @@ describe('jexlDomain', () => {
                     {currentRecord: domain.buildRecordContext(mockRecord, ctx)},
                     ctx,
                 );
-                const result = await domain.eval('currentRecord | getValues("my_attr")', rootCtx);
-                const resultF = await domain.eval('getValues(currentRecord, "my_attr")', rootCtx);
+                const result = await domain.eval('$.currentRecord | getValues("my_attr")', rootCtx);
+                const resultF = await domain.eval('getValues($.currentRecord, "my_attr")', rootCtx);
 
                 expect(mockValueDomain.getValues).toHaveBeenCalledWith({
                     attribute: 'my_attr',
@@ -204,8 +204,8 @@ describe('jexlDomain', () => {
                     {currentRecord: domain.buildRecordContext(mockRecord, ctx)},
                     ctx,
                 );
-                const result = await domain.eval('currentRecord | getValues("campaigns")', rootCtx);
-                const resultF = await domain.eval('getValues(currentRecord, "campaigns")', rootCtx);
+                const result = await domain.eval('$.currentRecord | getValues("campaigns")', rootCtx);
+                const resultF = await domain.eval('getValues($.currentRecord, "campaigns")', rootCtx);
 
                 expect(result[0]).toMatchObject({
                     __jexlContextType: JexlContextType.RECORD,
@@ -231,8 +231,8 @@ describe('jexlDomain', () => {
                     {currentRecord: domain.buildRecordContext(mockRecord, ctx)},
                     ctx,
                 );
-                const result = await domain.eval('currentRecord | getValues("categories")', rootCtx);
-                const resultF = await domain.eval('getValues(currentRecord, "categories")', rootCtx);
+                const result = await domain.eval('$.currentRecord | getValues("categories")', rootCtx);
+                const resultF = await domain.eval('getValues($.currentRecord, "categories")', rootCtx);
 
                 expect(result[0]).toMatchObject({__jexlContextType: JexlContextType.TREE_NODE, id: 'node1'});
                 expect(resultF[0]).toMatchObject({__jexlContextType: JexlContextType.TREE_NODE, id: 'node1'});
@@ -248,7 +248,7 @@ describe('jexlDomain', () => {
                     record: {id: mockRecord.id, library: mockRecord.library},
                 };
                 const rootCtx = domain.buildRootContext({currentNode: domain.buildTreeNodeContext(treeNode, ctx)}, ctx);
-                const result = await domain.eval('currentNode | getValues("my_attr")', rootCtx);
+                const result = await domain.eval('$.currentNode | getValues("my_attr")', rootCtx);
 
                 expect(mockValueDomain.getValues).toHaveBeenCalledWith({
                     attribute: 'my_attr',
@@ -282,7 +282,7 @@ describe('jexlDomain', () => {
                     {currentRecord: domain.buildRecordContext(mockRecord, ctx)},
                     ctx,
                 );
-                await expect(domain.eval('currentRecord | getValues("attr")', rootCtx)).rejects.toThrow(
+                await expect(domain.eval('$.currentRecord | getValues("attr")', rootCtx)).rejects.toThrow(
                     'DB connection failed',
                 );
             });
@@ -303,7 +303,7 @@ describe('jexlDomain', () => {
         });
 
         test('should resolve for a valid getValues expression', async () => {
-            await expect(domain.validate('currentRecord | getValues("label") | first')).resolves.toBeUndefined();
+            await expect(domain.validate('$.currentRecord | getValues("label") | first')).resolves.toBeUndefined();
         });
 
         test('should reject for an expression truncated after an operator', async () => {
@@ -325,7 +325,7 @@ describe('jexlDomain', () => {
 
             const rootCtx = domain.buildRootContext({currentRecord: domain.buildRecordContext(mockRecord, ctx)}, ctx);
             const result = await domain.eval(
-                '"copy: " + (currentRecord | getValues("label") | first | uppercase)',
+                '"copy: " + ($.currentRecord | getValues("label") | first | uppercase)',
                 rootCtx,
             );
             expect(result).toBe('copy: HELLO');
@@ -342,7 +342,7 @@ describe('jexlDomain', () => {
 
             const rootCtx = domain.buildRootContext({currentRecord: domain.buildRecordContext(mockRecord, ctx)}, ctx);
             const result = await domain.eval(
-                'currentRecord | getValues("campaigns") | map("value | getValues(\'campaigns_label\') | first")',
+                '$.currentRecord | getValues("campaigns") | map("value | getValues(\'campaigns_label\') | first")',
                 rootCtx,
             );
             expect(result).toEqual(['label1', 'label2']);
@@ -350,7 +350,7 @@ describe('jexlDomain', () => {
 
         test('currentValues | map("value * 2"): double all values (save action pattern)', async () => {
             const rootCtx = domain.buildRootContext({currentValues: [2, 5, 10]}, ctx);
-            const result = await domain.eval('currentValues | map("value * 2")', rootCtx);
+            const result = await domain.eval('$.currentValues | map("value * 2")', rootCtx);
             expect(result).toEqual([4, 10, 20]);
         });
 
@@ -359,7 +359,7 @@ describe('jexlDomain', () => {
 
             const rootCtx = domain.buildRootContext({}, ctx);
             const result = await domain.eval(
-                'currentUser.lang + " - " + first(getValues(currentUser.record, "email"))',
+                '$.currentUser.lang + " - " + first(getValues($.currentUser.record, "email"))',
                 rootCtx,
             );
             expect(result).toBe('fr - seb@aristid.com');
