@@ -1,8 +1,8 @@
 import useLocalStorage from '../../../hooks/useLocalStorage';
 import styled from 'styled-components';
+import {Outlet} from 'react-router-dom';
 import {NavigationMenu} from '../../../modules/navigation-menu/NavigationMenu';
 import Header from '../Header';
-import {InitAdminRouter} from '../../../modules/routes/InitAdminRouter';
 
 const headerHeight = '3rem';
 
@@ -42,7 +42,7 @@ function Home(): JSX.Element {
             </HeaderWrapper>
             <NavigationMenu isOpen={!isMenuCollapsed} onOpenChanged={_handleToggleMenu} />
             <Content className="content flex-col" style={{overflowX: 'auto'}}>
-                <InitAdminRouter />
+                <Outlet />
             </Content>
         </HomeWrapper>
     );

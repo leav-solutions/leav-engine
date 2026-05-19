@@ -15,13 +15,13 @@ import {
 
 enableFetchMocks();
 
-jest.mock(
-    '../Home',
-    () =>
-        function Home() {
-            return <div>Home</div>;
-        },
-);
+jest.mock('../../../config/router/adminRouter', () => {
+    const React = require('react');
+    const {createMemoryRouter} = require('react-router-dom');
+    return {
+        adminRouter: createMemoryRouter([{path: '/', element: React.createElement('div', null, 'Home')}]),
+    };
+});
 
 jest.mock(
     '../MessagesDisplay',
@@ -126,7 +126,7 @@ test('Renders app', async () => {
         },
     ];
 
-    render(<App />, {apolloMocks: mocks, cacheSettings: {possibleTypes: {Record: ['User']}}});
+    render(<App />, {apolloMocks: mocks, cacheSettings: {possibleTypes: {Record: ['User']}}, noRouter: true});
 
     expect(await screen.findByText('Home')).toBeInTheDocument();
 });

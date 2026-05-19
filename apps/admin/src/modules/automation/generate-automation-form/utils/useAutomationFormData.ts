@@ -53,6 +53,7 @@ export const useAutomationFormData = ({
     onSubmit,
 }: UseAutomationFormDataParams) => {
     const [formData, setFormData] = useState<AutomationFormValues>(initialValues);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const hasUnsavedChanges = useMemo(() => {
         if (!formSchema) {
@@ -83,12 +84,17 @@ export const useAutomationFormData = ({
         setFormData(data);
     };
 
-    const handleFormSubmit = ({formData: submittedData}: IChangeEvent<AutomationFormValues>) => {
+    const handleFormSubmit = async ({formData: submittedData}: IChangeEvent<AutomationFormValues>) => {
         if (!submittedData) {
             return;
         }
 
-        onSubmit(submittedData);
+        setIsSubmitting(true);
+        try {
+            await onSubmit(submittedData);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const addPipelineStep = (actionType: AutomationRuleActions) => {
@@ -100,5 +106,5 @@ export const useAutomationFormData = ({
         }));
     };
 
-    return {formData, hasUnsavedChanges, handleChange, handleFormSubmit, addPipelineStep};
+    return {formData, hasUnsavedChanges, isSubmitting, handleChange, handleFormSubmit, addPipelineStep};
 };

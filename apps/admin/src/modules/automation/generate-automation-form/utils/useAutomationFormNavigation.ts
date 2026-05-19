@@ -1,42 +1,42 @@
-import {useCallback, useEffect} from 'react';
+import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
+import {useBlocker} from 'react-router-dom';
 import {BREAK_TWO_LINES} from '_ui/constants';
 import {useConfirmModal} from '_ui/hooks/useConfirmModal';
 
 type UseAutomationFormNavigationParams = {
-    hasUnsavedChanges: boolean;
-    onCancel: () => void;
+    shouldBlockNavigation: boolean;
 };
 
 /**
- * Handles navigation away from the automation form.
- * Shows a confirmation modal if there are unsaved changes, and intercepts
- * browser back/forward navigation via the popstate event.
+ * Registers a navigation blocker on the automation form: when the form has
+ * unsaved changes, any attempt to navigate away (Cancel button, BackButton,
+ * sidebar, browser back/forward, programmatic navigate) is intercepted and a
+ * confirmation modal is opened. Confirming proceeds to the requested
+ * destination; cancelling stays on the form.
+ *
+ * The blocker is bypassed while `isSubmitting` is true so that the navigation
+ * triggered by a successful submit does not surface the confirmation modal.
  */
-export const useAutomationFormNavigation = ({hasUnsavedChanges, onCancel}: UseAutomationFormNavigationParams) => {
+export const useAutomationFormNavigation = ({shouldBlockNavigation}: UseAutomationFormNavigationParams) => {
     const {t} = useTranslation();
     const {openConfirmModal} = useConfirmModal();
 
-    const handleCancel = useCallback(() => {
-        if (!hasUnsavedChanges) {
-            onCancel();
+    const blocker = useBlocker(
+        ({currentLocation, nextLocation}) =>
+            shouldBlockNavigation && currentLocation.pathname !== nextLocation.pathname,
+    );
+
+    useEffect(() => {
+        if (blocker.state !== 'blocked') {
             return;
         }
 
         openConfirmModal({
             title: t('automation.form.unsaved_changes.title'),
             content: t('automation.form.unsaved_changes.content') + BREAK_TWO_LINES + t('admin.are_you_sure'),
-            onOk: onCancel,
+            onOk: () => blocker.proceed(),
+            onCancel: () => blocker.reset(),
         });
-    }, [hasUnsavedChanges, onCancel, t, openConfirmModal]);
-
-    // Note: useBlocker (react-router-dom) would be the idiomatic way to intercept all navigations,
-    // but it requires a data router (createBrowserRouter). Until the admin router is migrated,
-    // we fall back to the native popstate event to catch browser back/forward navigation.
-    useEffect(() => {
-        window.addEventListener('popstate', handleCancel);
-        return () => window.removeEventListener('popstate', handleCancel);
-    }, [handleCancel]);
-
-    return {handleCancel};
+    }, [blocker, openConfirmModal, t]);
 };

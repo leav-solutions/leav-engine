@@ -2,8 +2,9 @@ import React from 'react';
 import {act, render, screen} from '../../../_tests/testUtils';
 import Home from './Home';
 
-jest.mock('../../../modules/routes/InitAdminRouter', () => ({
-    InitAdminRouter: function InitAdminRouter() {
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    Outlet: function Outlet() {
         return <div>Routes</div>;
     },
 }));

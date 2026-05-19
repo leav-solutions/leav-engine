@@ -23,7 +23,7 @@ export const NavigationMenu = ({isOpen, onOpenChanged}: INavigationMenuProps) =>
             items={menuItems}
             onOpenChanged={onOpenChanged}
             onMenuClick={_handleMenuItemClick}
-            defaultActiveItemKey={activeItemKey}
+            activeItemKey={activeItemKey}
         />
     );
 };

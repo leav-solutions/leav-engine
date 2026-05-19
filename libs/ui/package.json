@@ -40,7 +40,7 @@
         "@types/jest": "29.5.14",
         "@types/react": "18.2.14",
         "@types/react-dom": "18.2.6",
-        "aristid-ds": "15.3.1-3917c51",
+        "aristid-ds": "15.3.1-77762e7",
         "babel-jest": "29.7.0",
         "graphql": "16.14.0",
         "i18next": "22.5.1",
@@ -58,7 +58,7 @@
     },
     "peerDependencies": {
         "@apollo/client": ">=3.8.1",
-        "aristid-ds": "15.3.1-3917c51",
+        "aristid-ds": "15.3.1-77762e7",
         "i18next": ">=22.5.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",

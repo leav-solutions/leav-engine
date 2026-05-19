@@ -12,7 +12,7 @@ export const AutomationCreation = () => {
     const handleBack = () => navigate(AdminAbsolutePaths.automation);
 
     const handleSubmit = async (values: AutomationFormValues) => {
-        createAutomationRule(values, handleBack);
+        await createAutomationRule(values, handleBack);
     };
 
     return (

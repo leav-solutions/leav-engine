@@ -10,6 +10,7 @@ interface ICustomRenderOptions extends RenderOptions {
     apolloMocks?: readonly MockedResponse[];
     cacheSettings?: InMemoryCacheConfig;
     routerProps?: MemoryRouterProps;
+    noRouter?: boolean;
     storeState?: Partial<RootState>;
     [key: string]: any;
 }

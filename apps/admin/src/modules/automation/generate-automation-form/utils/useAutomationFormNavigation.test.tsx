@@ -6,91 +6,62 @@ jest.mock('_ui/hooks/useConfirmModal', () => ({
     useConfirmModal: () => ({openConfirmModal: mockOpenConfirmModal}),
 }));
 
+const mockUseBlocker = jest.fn();
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useBlocker: (...args: unknown[]) => mockUseBlocker(...args),
+}));
+
 describe('useAutomationFormNavigation', () => {
-    beforeEach(() => jest.clearAllMocks());
-
-    describe('handleCancel', () => {
-        describe('when there are no unsaved changes', () => {
-            test('calls onCancel directly without opening a modal', () => {
-                const mockOnCancel = jest.fn();
-
-                const {result} = renderHook(() =>
-                    useAutomationFormNavigation({hasUnsavedChanges: false, onCancel: mockOnCancel}),
-                );
-
-                act(() => {
-                    result.current.handleCancel();
-                });
-
-                expect(mockOnCancel).toHaveBeenCalledTimes(1);
-                expect(mockOpenConfirmModal).not.toHaveBeenCalled();
-            });
-        });
-
-        describe('when there are unsaved changes', () => {
-            test('opens a confirmation modal instead of calling onCancel directly', () => {
-                const mockOnCancel = jest.fn();
-
-                const {result} = renderHook(() =>
-                    useAutomationFormNavigation({hasUnsavedChanges: true, onCancel: mockOnCancel}),
-                );
-
-                act(() => {
-                    result.current.handleCancel();
-                });
-
-                expect(mockOpenConfirmModal).toHaveBeenCalledTimes(1);
-                expect(mockOnCancel).not.toHaveBeenCalled();
-            });
-
-            test('the modal onOk callback calls onCancel', () => {
-                const mockOnCancel = jest.fn();
-
-                const {result} = renderHook(() =>
-                    useAutomationFormNavigation({hasUnsavedChanges: true, onCancel: mockOnCancel}),
-                );
-
-                act(() => {
-                    result.current.handleCancel();
-                });
-
-                const {onOk} = mockOpenConfirmModal.mock.calls[0][0];
-
-                act(() => {
-                    onOk();
-                });
-
-                expect(mockOnCancel).toHaveBeenCalledTimes(1);
-            });
-        });
+    beforeEach(() => {
+        jest.clearAllMocks();
+        mockUseBlocker.mockReturnValue({state: 'unblocked', proceed: jest.fn(), reset: jest.fn()});
     });
 
-    describe('popstate listener', () => {
-        test('triggers handleCancel on popstate event', () => {
-            const mockOnCancel = jest.fn();
+    test('the blocker function only blocks when shouldBlockNavigation is true and pathname changes', () => {
+        renderHook(() => useAutomationFormNavigation({shouldBlockNavigation: true}));
 
-            renderHook(() => useAutomationFormNavigation({hasUnsavedChanges: false, onCancel: mockOnCancel}));
+        const shouldBlock = mockUseBlocker.mock.calls[0][0];
 
-            act(() => {
-                window.dispatchEvent(new PopStateEvent('popstate'));
-            });
+        expect(shouldBlock({currentLocation: {pathname: '/a'}, nextLocation: {pathname: '/b'}})).toBe(true);
+        expect(shouldBlock({currentLocation: {pathname: '/a'}, nextLocation: {pathname: '/a'}})).toBe(false);
+    });
 
-            expect(mockOnCancel).toHaveBeenCalledTimes(1);
+    test('the blocker function never blocks when shouldBlockNavigation is false', () => {
+        renderHook(() => useAutomationFormNavigation({shouldBlockNavigation: false}));
+
+        const shouldBlock = mockUseBlocker.mock.calls[0][0];
+
+        expect(shouldBlock({currentLocation: {pathname: '/a'}, nextLocation: {pathname: '/b'}})).toBe(false);
+    });
+
+    test('opens the confirmation modal when blocker state is blocked', () => {
+        const proceed = jest.fn();
+        const reset = jest.fn();
+        mockUseBlocker.mockReturnValue({state: 'blocked', proceed, reset});
+
+        renderHook(() => useAutomationFormNavigation({shouldBlockNavigation: true}));
+
+        expect(mockOpenConfirmModal).toHaveBeenCalledTimes(1);
+
+        const {onOk, onCancel} = mockOpenConfirmModal.mock.calls[0][0];
+
+        act(() => {
+            onOk();
         });
+        expect(proceed).toHaveBeenCalledTimes(1);
 
-        test('removes the listener on unmount', () => {
-            const mockOnCancel = jest.fn();
-            const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
-
-            const {unmount} = renderHook(() =>
-                useAutomationFormNavigation({hasUnsavedChanges: false, onCancel: mockOnCancel}),
-            );
-
-            unmount();
-
-            expect(removeEventListenerSpy).toHaveBeenCalledWith('popstate', expect.any(Function));
-
-            removeEventListenerSpy.mockRestore();
+        act(() => {
+            onCancel();
         });
+        expect(reset).toHaveBeenCalledTimes(1);
+    });
+
+    test('does not open the modal when blocker state is unblocked', () => {
+        mockUseBlocker.mockReturnValue({state: 'unblocked', proceed: jest.fn(), reset: jest.fn()});
+
+        renderHook(() => useAutomationFormNavigation({shouldBlockNavigation: true}));
+
+        expect(mockOpenConfirmModal).not.toHaveBeenCalled();
     });
 });

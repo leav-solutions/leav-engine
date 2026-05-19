@@ -200,7 +200,7 @@ describe('useAutomationFormData', () => {
     });
 
     describe('handleFormSubmit', () => {
-        test('calls onSubmit with submitted form data', () => {
+        test('calls onSubmit with submitted form data', async () => {
             const {result} = renderHook(() =>
                 useAutomationFormData({
                     initialValues: mockInitialValues,
@@ -210,14 +210,16 @@ describe('useAutomationFormData', () => {
                 }),
             );
 
-            act(() => {
-                result.current.handleFormSubmit({formData: mockInitialValues} as IChangeEvent<AutomationFormValues>);
+            await act(async () => {
+                await result.current.handleFormSubmit({
+                    formData: mockInitialValues,
+                } as IChangeEvent<AutomationFormValues>);
             });
 
             expect(mockOnSubmit).toHaveBeenCalledWith(mockInitialValues);
         });
 
-        test('does not call onSubmit when formData is undefined', () => {
+        test('does not call onSubmit when formData is undefined', async () => {
             const {result} = renderHook(() =>
                 useAutomationFormData({
                     initialValues: mockInitialValues,
@@ -227,11 +229,84 @@ describe('useAutomationFormData', () => {
                 }),
             );
 
-            act(() => {
-                result.current.handleFormSubmit({formData: undefined} as IChangeEvent<AutomationFormValues>);
+            await act(async () => {
+                await result.current.handleFormSubmit({formData: undefined} as IChangeEvent<AutomationFormValues>);
             });
 
             expect(mockOnSubmit).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('isSubmitting', () => {
+        test('is false by default', () => {
+            const {result} = renderHook(() =>
+                useAutomationFormData({
+                    initialValues: mockInitialValues,
+                    isCreationForm: false,
+                    formSchema: mockSchema,
+                    onSubmit: mockOnSubmit,
+                }),
+            );
+
+            expect(result.current.isSubmitting).toBe(false);
+        });
+
+        test('is true while onSubmit is pending and back to false after success', async () => {
+            let resolveOnSubmit: () => void = jest.fn();
+            const pendingOnSubmit = jest.fn(
+                () =>
+                    new Promise<void>(resolve => {
+                        resolveOnSubmit = resolve;
+                    }),
+            );
+
+            const {result} = renderHook(() =>
+                useAutomationFormData({
+                    initialValues: mockInitialValues,
+                    isCreationForm: false,
+                    formSchema: mockSchema,
+                    onSubmit: pendingOnSubmit,
+                }),
+            );
+
+            let submitPromise: Promise<void> = Promise.resolve();
+            act(() => {
+                submitPromise = result.current.handleFormSubmit({
+                    formData: mockInitialValues,
+                } as IChangeEvent<AutomationFormValues>);
+            });
+
+            expect(result.current.isSubmitting).toBe(true);
+
+            await act(async () => {
+                resolveOnSubmit();
+                await submitPromise;
+            });
+
+            expect(result.current.isSubmitting).toBe(false);
+        });
+
+        test('is reset to false when onSubmit rejects', async () => {
+            const rejectingOnSubmit = jest.fn(() => Promise.reject(new Error('boom')));
+
+            const {result} = renderHook(() =>
+                useAutomationFormData({
+                    initialValues: mockInitialValues,
+                    isCreationForm: false,
+                    formSchema: mockSchema,
+                    onSubmit: rejectingOnSubmit,
+                }),
+            );
+
+            await act(async () => {
+                await expect(
+                    result.current.handleFormSubmit({
+                        formData: mockInitialValues,
+                    } as IChangeEvent<AutomationFormValues>),
+                ).rejects.toThrow('boom');
+            });
+
+            expect(result.current.isSubmitting).toBe(false);
         });
     });
 });
