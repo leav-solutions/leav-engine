@@ -246,7 +246,7 @@ describe('Integration tests about managing view settings feature', () => {
 
         expect(screen.getByText(/configure-display/)).toBeVisible();
 
-        await userEvent.click(screen.getByRole('button', {name: /back/}));
+        await userEvent.click(screen.getByRole('button', {name: /Précédent/}));
 
         expect(screen.getByRole('heading', {name: /router-menu/})).toBeVisible();
     });
@@ -750,7 +750,7 @@ describe('Integration tests about managing view settings feature', () => {
 
             expect(within(activeSorts).getAllByRole('listitem')).toHaveLength(2);
 
-            await userEvent.click(screen.getByRole('button', {name: /back/}));
+            await userEvent.click(screen.getByRole('button', {name: /Précédent/}));
             await userEvent.click(screen.getByRole('button', {name: /reinit/}));
 
             await userEvent.click(screen.getByRole('button', {name: /sort-items/}));

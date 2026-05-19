@@ -7,17 +7,18 @@ import {useEffect, useState} from 'react';
 import {DndProvider} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
 import {useTranslation} from 'react-i18next';
+import {RouterProvider} from 'react-router-dom';
 import {Message} from 'semantic-ui-react';
 import * as yup from 'yup';
 import {ErrorDisplayTypes} from '../../../_types/errors';
 import {APP_ENDPOINT} from '../../../constants';
+import {adminRouter} from '../../../config/router/adminRouter';
 import {getSysTranslationQueryLanguage, permsArrayToObject} from '../../../utils/utils';
 import LangContext from '../../shared/LangContext';
 import {LangContext as LeavUILangContext} from '_ui/contexts';
 import Loading from '../../shared/Loading';
 import UserContext from '../../shared/UserContext';
 import {type IUserContext} from '../../shared/UserContext/UserContext';
-import Home from '../Home';
 import MessagesDisplay from '../MessagesDisplay';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
@@ -169,7 +170,7 @@ const App = (): JSX.Element => {
                         <ApplicationContext.Provider value={applicationContextData}>
                             <div className="App height100">
                                 <MessagesDisplay />
-                                <Home />
+                                <RouterProvider router={adminRouter} />
                             </div>
                         </ApplicationContext.Provider>
                     </UserContext.Provider>

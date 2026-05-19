@@ -1,6 +1,7 @@
 import {type RouteObject} from 'react-router-dom';
 import {AdminAbsolutePaths, AdminUnreachablePaths} from './paths';
 import {PermissionsActions} from '../../_gqlTypes';
+import Home from '../../components/app/Home';
 import Dashboard from '../../components/app/Dashboard';
 import General from '../../components/general/General';
 import ProtectedRoute from '../../components/shared/ProtectedRoute';
@@ -23,99 +24,131 @@ import {AutomationEdition} from '../pages/AutomationEdition';
 
 // Note:
 // - For historic routes, we don't use the children routes feature as they don't have an <Outlet/> and are not nested
+// - The root <Home/> is a layout route: it renders the shell (header + sidebar) and an <Outlet/> for the active route
 export const adminRoutes: RouteObject[] = [
     {
-        path: AdminAbsolutePaths.root,
-        element: <Dashboard />,
-    },
-    {
-        path: AdminAbsolutePaths.general,
-        element: <General />,
-    },
-    {
-        path: AdminAbsolutePaths.libraries,
-        element: <ProtectedRoute permissions={[PermissionsActions.admin_access_libraries]} component={Libraries} />,
-    },
-    {
-        path: `${AdminAbsolutePaths.libraries}/${AdminUnreachablePaths.edit}`,
-        element: <ProtectedRoute permissions={[PermissionsActions.admin_access_libraries]} component={EditLibrary} />,
-    },
-    {
-        path: AdminAbsolutePaths.attributes,
-        element: <ProtectedRoute permissions={[PermissionsActions.admin_access_attributes]} component={Attributes} />,
-    },
-    {
-        path: `${AdminAbsolutePaths.attributes}/${AdminUnreachablePaths.edit}`,
-        element: (
-            <ProtectedRoute permissions={[PermissionsActions.admin_access_attributes]} component={EditAttribute} />
-        ),
-    },
-    {
-        path: AdminAbsolutePaths.trees,
-        element: <ProtectedRoute permissions={[PermissionsActions.admin_access_trees]} component={Trees} />,
-    },
-    {
-        path: `${AdminAbsolutePaths.trees}/${AdminUnreachablePaths.edit}`,
-        element: <ProtectedRoute permissions={[PermissionsActions.admin_access_trees]} component={EditTree} />,
-    },
-    {
-        path: AdminAbsolutePaths.applications,
-        element: (
-            <ProtectedRoute permissions={[PermissionsActions.admin_access_applications]} component={Applications} />
-        ),
-    },
-    {
-        path: `${AdminAbsolutePaths.applications}/${AdminUnreachablePaths.edit}`,
-        element: (
-            <ProtectedRoute permissions={[PermissionsActions.admin_access_applications]} component={EditApplication} />
-        ),
-    },
-    {
-        path: AdminAbsolutePaths.version_profiles,
-        element: (
-            <ProtectedRoute
-                permissions={[PermissionsActions.admin_access_version_profiles]}
-                component={VersionProfiles}
-            />
-        ),
-    },
-    {
-        path: `${AdminAbsolutePaths.version_profiles}/${AdminUnreachablePaths.edit}`,
-        element: (
-            <ProtectedRoute
-                permissions={[PermissionsActions.admin_access_version_profiles]}
-                component={EditVersionProfile}
-            />
-        ),
-    },
-    {
-        path: AdminAbsolutePaths.tasks,
-        element: <ProtectedRoute permissions={[PermissionsActions.admin_access_tasks]} component={Tasks} />,
-    },
-    {
-        path: AdminAbsolutePaths.logs,
-        element: <ProtectedRoute permissions={[PermissionsActions.admin_access_logs]} component={HistoryList} />,
-    },
-    {
-        path: AdminAbsolutePaths.automation,
-        element: (
-            <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={AutomationList} />
-        ),
-    },
-    {
-        path: `${AdminAbsolutePaths.automation}/${AdminUnreachablePaths.create}`,
-        element: (
-            <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={AutomationCreation} />
-        ),
-    },
-    {
-        path: `${AdminAbsolutePaths.automation}/${AdminUnreachablePaths.edit}`,
-        element: (
-            <ProtectedRoute permissions={[PermissionsActions.admin_manage_automation]} component={AutomationEdition} />
-        ),
-    },
-    {
-        path: AdminAbsolutePaths.notFound,
-        element: <NotFound />,
+        element: <Home />,
+        children: [
+            {
+                path: AdminAbsolutePaths.root,
+                element: <Dashboard />,
+            },
+            {
+                path: AdminAbsolutePaths.general,
+                element: <General />,
+            },
+            {
+                path: AdminAbsolutePaths.libraries,
+                element: (
+                    <ProtectedRoute permissions={[PermissionsActions.admin_access_libraries]} component={Libraries} />
+                ),
+            },
+            {
+                path: `${AdminAbsolutePaths.libraries}/${AdminUnreachablePaths.edit}`,
+                element: (
+                    <ProtectedRoute permissions={[PermissionsActions.admin_access_libraries]} component={EditLibrary} />
+                ),
+            },
+            {
+                path: AdminAbsolutePaths.attributes,
+                element: (
+                    <ProtectedRoute permissions={[PermissionsActions.admin_access_attributes]} component={Attributes} />
+                ),
+            },
+            {
+                path: `${AdminAbsolutePaths.attributes}/${AdminUnreachablePaths.edit}`,
+                element: (
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_access_attributes]}
+                        component={EditAttribute}
+                    />
+                ),
+            },
+            {
+                path: AdminAbsolutePaths.trees,
+                element: <ProtectedRoute permissions={[PermissionsActions.admin_access_trees]} component={Trees} />,
+            },
+            {
+                path: `${AdminAbsolutePaths.trees}/${AdminUnreachablePaths.edit}`,
+                element: <ProtectedRoute permissions={[PermissionsActions.admin_access_trees]} component={EditTree} />,
+            },
+            {
+                path: AdminAbsolutePaths.applications,
+                element: (
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_access_applications]}
+                        component={Applications}
+                    />
+                ),
+            },
+            {
+                path: `${AdminAbsolutePaths.applications}/${AdminUnreachablePaths.edit}`,
+                element: (
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_access_applications]}
+                        component={EditApplication}
+                    />
+                ),
+            },
+            {
+                path: AdminAbsolutePaths.version_profiles,
+                element: (
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_access_version_profiles]}
+                        component={VersionProfiles}
+                    />
+                ),
+            },
+            {
+                path: `${AdminAbsolutePaths.version_profiles}/${AdminUnreachablePaths.edit}`,
+                element: (
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_access_version_profiles]}
+                        component={EditVersionProfile}
+                    />
+                ),
+            },
+            {
+                path: AdminAbsolutePaths.tasks,
+                element: <ProtectedRoute permissions={[PermissionsActions.admin_access_tasks]} component={Tasks} />,
+            },
+            {
+                path: AdminAbsolutePaths.logs,
+                element: (
+                    <ProtectedRoute permissions={[PermissionsActions.admin_access_logs]} component={HistoryList} />
+                ),
+            },
+            {
+                path: AdminAbsolutePaths.automation,
+                element: (
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_manage_automation]}
+                        component={AutomationList}
+                    />
+                ),
+            },
+            {
+                path: `${AdminAbsolutePaths.automation}/${AdminUnreachablePaths.create}`,
+                element: (
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_manage_automation]}
+                        component={AutomationCreation}
+                    />
+                ),
+            },
+            {
+                path: `${AdminAbsolutePaths.automation}/${AdminUnreachablePaths.edit}`,
+                element: (
+                    <ProtectedRoute
+                        permissions={[PermissionsActions.admin_manage_automation]}
+                        component={AutomationEdition}
+                    />
+                ),
+            },
+            {
+                path: AdminAbsolutePaths.notFound,
+                element: <NotFound />,
+            },
+        ],
     },
 ];

@@ -1,6 +1,5 @@
 import ApolloHandler from './components/app/ApolloHandler';
 import App from './components/app/App';
-import {InitRouting} from './config/router/InitRouting';
 import ErrorDisplay from './components/shared/ErrorDisplay';
 import 'fomantic-ui-less/semantic.less';
 import {Suspense, useEffect, useState} from 'react';
@@ -45,15 +44,13 @@ export function Index() {
             <Suspense fallback={<Loader active inline="centered" style={{margin: '15rem auto'}} />}>
                 <ReduxProvider store={store}>
                     <ApolloHandler>
-                        <InitRouting>
-                            <KitApp
-                                locale={{
-                                    locale: localeByLang[lang],
-                                }}
-                            >
-                                <App />
-                            </KitApp>
-                        </InitRouting>
+                        <KitApp
+                            locale={{
+                                locale: localeByLang[lang],
+                            }}
+                        >
+                            <App />
+                        </KitApp>
                     </ApolloHandler>
                 </ReduxProvider>
             </Suspense>

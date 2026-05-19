@@ -17,6 +17,8 @@ interface IProvidersProps {
     apolloMocks?: readonly MockedResponse[];
     cacheSettings?: InMemoryCacheConfig;
     routerProps?: MemoryRouterProps;
+    /** Opt out of wrapping in MemoryRouter — for components that provide their own router (e.g. RouterProvider). */
+    noRouter?: boolean;
     storeState?: Partial<RootState>;
     globalSettings?: GET_GLOBAL_SETTINGS_globalSettings;
     userPermissions?: {[permName: string]: boolean};
@@ -27,6 +29,7 @@ export const TestProviders = ({
     apolloMocks,
     cacheSettings,
     routerProps,
+    noRouter,
     storeState,
     globalSettings,
     userPermissions,
@@ -47,7 +50,11 @@ export const TestProviders = ({
                     <MockedUserContextProvider permissions={userPermissions}>
                         <ApplicationContext.Provider value={appContextData}>
                             <KitApp>
-                                <MemoryRouter {...routerProps}>{children as ReactElement}</MemoryRouter>
+                                {noRouter ? (
+                                    (children as ReactElement)
+                                ) : (
+                                    <MemoryRouter {...routerProps}>{children as ReactElement}</MemoryRouter>
+                                )}
                             </KitApp>
                         </ApplicationContext.Provider>
                     </MockedUserContextProvider>

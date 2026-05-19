@@ -20,7 +20,7 @@
         "@bugsnag/plugin-react": "8.9.0",
         "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
-        "aristid-ds": "15.3.1-3917c51",
+        "aristid-ds": "15.3.1-77762e7",
         "classnames": "2.5.1",
         "dayjs": "1.11.20",
         "graphql": "16.14.0",

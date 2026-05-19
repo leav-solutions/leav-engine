@@ -38,14 +38,15 @@ export const AutomationForm = ({initialValues, mutationLoading, formType, onSubm
 
     const {formSchema, uiSchema, loading: schemaLoading} = useGetAutomationRuleForm({formType});
 
-    const {formData, hasUnsavedChanges, handleChange, handleFormSubmit, addPipelineStep} = useAutomationFormData({
-        initialValues,
-        isCreationForm,
-        formSchema,
-        onSubmit,
-    });
+    const {formData, hasUnsavedChanges, isSubmitting, handleChange, handleFormSubmit, addPipelineStep} =
+        useAutomationFormData({
+            initialValues,
+            isCreationForm,
+            formSchema,
+            onSubmit,
+        });
 
-    const {handleCancel} = useAutomationFormNavigation({hasUnsavedChanges, onCancel});
+    useAutomationFormNavigation({shouldBlockNavigation: hasUnsavedChanges && !isSubmitting});
 
     const handleSubmitClick = () => {
         formRef.current?.submit();
@@ -64,7 +65,7 @@ export const AutomationForm = ({initialValues, mutationLoading, formType, onSubm
                     <PageHeader
                         extraAlignLeft={
                             <KitSpace direction="horizontal" size="xs">
-                                <BackButton onClick={handleCancel} />
+                                <BackButton onClick={onCancel} />
                                 <KitIdCard
                                     title={
                                         isCreationForm
@@ -77,7 +78,7 @@ export const AutomationForm = ({initialValues, mutationLoading, formType, onSubm
                         }
                         extraAlignRight={
                             <KitSpace direction="horizontal" size="xs">
-                                <KitButton size="m" onClick={handleCancel}>
+                                <KitButton size="m" onClick={onCancel}>
                                     {t('admin.cancel')}
                                 </KitButton>
                                 <KitButton
