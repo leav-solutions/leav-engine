@@ -119,6 +119,14 @@ export default function ({
             jwtid: crypto.randomUUID(),
         });
 
+    const _getAuthCookieOptions = (host: string | null): CookieOptions => ({
+        httpOnly: true,
+        sameSite: config.auth.cookie.sameSite,
+        secure: config.auth.cookie.secure,
+        domain: config.auth.cookie.withDomain ? host : undefined,
+        path: config.server.basePath || '/',
+    });
+
     const _getAuthCookieArgs = (
         cookieName: AuthCookieName,
         value: string,
@@ -136,12 +144,8 @@ export default function ({
             throw new AuthenticationError('Missing host, cannot scope cookie domain.');
         }
         const cookieOptions: CookieOptions = {
-            httpOnly: true,
-            sameSite: config.auth.cookie.sameSite,
-            secure: config.auth.cookie.secure,
+            ..._getAuthCookieOptions(host),
             expires: new Date(Date.now() + cookieExpires),
-            domain: config.auth.cookie.withDomain ? host : undefined,
-            path: config.server.basePath || '/',
         };
 
         return [cookieName, value, cookieOptions];
@@ -437,8 +441,9 @@ export default function ({
                 const host = req.headers.host ?? null;
                 const {refreshToken} = req.cookies;
 
-                res.cookie(..._getAuthCookieArgs(ACCESS_TOKEN_COOKIE_NAME, '', host));
-                res.cookie(..._getAuthCookieArgs(REFRESH_TOKEN_COOKIE_NAME, '', host));
+                const cookieOptions = _getAuthCookieOptions(host);
+                res.clearCookie(ACCESS_TOKEN_COOKIE_NAME, cookieOptions);
+                res.clearCookie(REFRESH_TOKEN_COOKIE_NAME, cookieOptions);
 
                 if (config.auth.oidc.enable) {
                     try {

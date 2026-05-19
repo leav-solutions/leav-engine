@@ -285,7 +285,7 @@ describe('authApp', () => {
                 cookies: vi.fn().mockReturnValue({access_token: 'access_token'}),
             };
             const response = {
-                cookie: vi.fn(),
+                clearCookie: vi.fn(),
                 status: vi.fn().mockReturnValueOnce({
                     json: identity,
                 }),
@@ -297,17 +297,15 @@ describe('authApp', () => {
             expect(response.status).toHaveBeenCalledWith(200);
             expect(result).toEqual({});
             expect(oidcClientServiceMock.getLogoutUrl).not.toHaveBeenCalled();
-            expect(response.cookie).toHaveBeenCalledTimes(2);
-            expect(response.cookie).toHaveBeenCalledWith('accessToken', '', {
-                expires: expect.any(Date),
+            expect(response.clearCookie).toHaveBeenCalledTimes(2);
+            expect(response.clearCookie).toHaveBeenCalledWith('accessToken', {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
                 domain: undefined,
                 path: '/',
             });
-            expect(response.cookie).toHaveBeenCalledWith('refreshToken', '', {
-                expires: expect.any(Date),
+            expect(response.clearCookie).toHaveBeenCalledWith('refreshToken', {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
@@ -350,7 +348,7 @@ describe('authApp', () => {
                 cookies: vi.fn().mockReturnValue({access_token: 'access_token'}),
             };
             const response = {
-                cookie: vi.fn(),
+                clearCookie: vi.fn(),
                 status: vi.fn().mockReturnValueOnce({
                     json: identity,
                 }),
@@ -366,17 +364,15 @@ describe('authApp', () => {
             });
             expect(oidcClientServiceMock.getLogoutUrl).toHaveBeenCalledTimes(1);
             expect(oidcClientServiceMock.getLogoutUrl).toHaveBeenCalledWith({userId: '1'});
-            expect(response.cookie).toHaveBeenCalledTimes(2);
-            expect(response.cookie).toHaveBeenCalledWith('accessToken', '', {
-                expires: expect.any(Date),
+            expect(response.clearCookie).toHaveBeenCalledTimes(2);
+            expect(response.clearCookie).toHaveBeenCalledWith('accessToken', {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
                 domain: undefined,
                 path: '/',
             });
-            expect(response.cookie).toHaveBeenCalledWith('refreshToken', '', {
-                expires: expect.any(Date),
+            expect(response.clearCookie).toHaveBeenCalledWith('refreshToken', {
                 httpOnly: true,
                 sameSite: 'lax',
                 secure: false,
