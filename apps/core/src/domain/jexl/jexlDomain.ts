@@ -9,6 +9,7 @@ import {type ITreeNode} from '../../_types/tree';
 import jexl from './jexlExtended';
 import {
     type JexlContext,
+    type JexlContextByType,
     JexlContextType,
     type JexlRecordContext,
     type JexlRootContext,
@@ -162,28 +163,45 @@ export default function ({
     jexl.addTransform('toNode', _toNode);
     jexl.addFunction('toNode', _toNode);
 
+    function addJexlContext<Type extends JexlContextType>(
+        jexlContext: Omit<JexlContext, '__jexlContextType' | '__getJexlQueryCtx'>,
+        type: Type,
+        ctx: IQueryInfos,
+    ): JexlContextByType[Type] {
+        // Define non-enumerable properties to avoid serializing them when context is a return value of a jexl expression
+        // and to avoid conflicts with user-defined properties in jexl expressions, readonly and non-configurable to prevent accidental modifications
+        Object.defineProperty(jexlContext, '__jexlContextType', {
+            value: type,
+            enumerable: false,
+            writable: false,
+            configurable: false,
+        });
+        Object.defineProperty(jexlContext, '__getJexlQueryCtx', {
+            value: () => ctx,
+            enumerable: false,
+            writable: false,
+            configurable: false,
+        });
+
+        return jexlContext as JexlContextByType[Type];
+    }
+
     function buildRecordContext(record: IRecord, ctx: IQueryInfos): JexlRecordContext {
-        return {
-            ...record,
-            __jexlContextType: JexlContextType.RECORD,
-            __getJexlQueryCtx: () => ctx,
-        };
+        return addJexlContext({...record}, JexlContextType.RECORD, ctx);
     }
 
     function buildTreeNodeContext(treeNode: ITreeNode, ctx: IQueryInfos): JexlTreeNodeContext {
-        return {
-            ...treeNode,
-            __jexlContextType: JexlContextType.TREE_NODE,
-            __getJexlQueryCtx: () => ctx,
-        };
+        return addJexlContext({...treeNode}, JexlContextType.TREE_NODE, ctx);
     }
     function buildUserContext(ctx: IQueryInfos): JexlUserContext {
-        return {
-            __jexlContextType: JexlContextType.USER,
-            record: buildRecordContext({id: ctx.userId, library: 'users'}, ctx),
-            lang: ctx.lang,
-            __getJexlQueryCtx: () => ctx,
-        };
+        return addJexlContext(
+            {
+                record: buildRecordContext({id: ctx.userId, library: 'users'}, ctx),
+                lang: ctx.lang,
+            },
+            JexlContextType.USER,
+            ctx,
+        );
     }
 
     const _isRecordPayload = (payload: IValue['payload']): payload is IRecord =>
@@ -204,12 +222,14 @@ export default function ({
     }
 
     function buildRootContext<T>(contextData: T, ctx: IQueryInfos): JexlRootContext<T> {
-        return {
-            ...contextData,
-            currentUser: buildUserContext(ctx),
-            __jexlContextType: JexlContextType.ROOT,
-            __getJexlQueryCtx: () => ctx,
-        };
+        return addJexlContext(
+            {
+                ...contextData,
+                currentUser: buildUserContext(ctx),
+            },
+            JexlContextType.ROOT,
+            ctx,
+        ) as JexlRootContext<T>;
     }
 
     return {

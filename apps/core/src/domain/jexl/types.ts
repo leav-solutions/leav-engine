@@ -43,3 +43,10 @@ export type JexlUserContext = JexlContext<JexlContextType.USER> & {
 };
 
 export type JexlValueContext = IStandardValue['payload'] | JexlRecordContext | JexlTreeNodeContext;
+
+export type JexlContextByType = {
+    [JexlContextType.ROOT]: JexlRootContext;
+    [JexlContextType.RECORD]: JexlRecordContext;
+    [JexlContextType.TREE_NODE]: JexlTreeNodeContext;
+    [JexlContextType.USER]: JexlUserContext;
+};
