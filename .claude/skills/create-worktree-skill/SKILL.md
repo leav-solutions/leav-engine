@@ -45,20 +45,20 @@ If the project isn't JS, skip this step.
 
 Three common shapes:
 
--   **Same diff as current branch** — Copy file contents from the main working tree. `git show <ref>:<path>` from inside the worktree is the cleanest way.
--   **Cherry-pick** — `git cherry-pick <sha>` if the change already exists as a commit somewhere.
--   **Fresh edits** — the user describes the change, apply it with normal Edit/Write tools inside the worktree path.
+- **Same diff as current branch** — Copy file contents from the main working tree. `git show <ref>:<path>` from inside the worktree is the cleanest way.
+- **Cherry-pick** — `git cherry-pick <sha>` if the change already exists as a commit somewhere.
+- **Fresh edits** — the user describes the change, apply it with normal Edit/Write tools inside the worktree path.
 
 ### 5. Commit on the target branch
 
 Two modes — ask if it's not explicit:
 
--   **Amend the last commit** (when the change "belongs" to the existing top commit of the target branch):
+- **Amend the last commit** (when the change "belongs" to the existing top commit of the target branch):
     ```bash
     git commit --amend --no-edit         # keep message
     git commit --amend -m "<new msg>"    # rewrite message
     ```
--   **New commit** otherwise:
+- **New commit** otherwise:
     ```bash
     git commit -m "<msg>"
     ```
@@ -72,9 +72,9 @@ git push origin <target-branch>                       # if new commit, fast-forw
 
 **Hard rules:**
 
--   Never `--force`. Always `--force-with-lease`.
--   If the target branch is `main` / `master` / `develop` / `trunk` and the push is destructive, **stop and confirm** even if the user is being terse.
--   If the user said "ne push pas" / "review en local" earlier in the conversation, the boundary stays active — commit but don't push.
+- Never `--force`. Always `--force-with-lease`.
+- If the target branch is `main` / `master` / `develop` / `trunk` and the push is destructive, **stop and confirm** even if the user is being terse.
+- If the user said "ne push pas" / "review en local" earlier in the conversation, the boundary stays active — commit but don't push.
 
 ### 7. Cleanup
 
@@ -96,18 +96,18 @@ These must hold before, during, and after the operation:
 
 ## Anti-patterns to refuse
 
--   ❌ `git checkout <other-branch>` while the user has WIP — destroys context
--   ❌ `git stash && git checkout ... && ... && git stash pop` — clunky, error-prone, breaks if there are conflicts on pop
--   ❌ `--no-verify` to skip hooks — masks real environment problems
--   ❌ `git push --force` — use `--force-with-lease`
--   ❌ Amending and force-pushing without explicit user permission when the branch is shared
+- ❌ `git checkout <other-branch>` while the user has WIP — destroys context
+- ❌ `git stash && git checkout ... && ... && git stash pop` — clunky, error-prone, breaks if there are conflicts on pop
+- ❌ `--no-verify` to skip hooks — masks real environment problems
+- ❌ `git push --force` — use `--force-with-lease`
+- ❌ Amending and force-pushing without explicit user permission when the branch is shared
 
 ## Reporting back
 
 When done, tell the user concisely:
 
--   which target branch was updated (and the new commit SHA)
--   whether you pushed or just committed locally
--   confirm the main working tree is intact
+- which target branch was updated (and the new commit SHA)
+- whether you pushed or just committed locally
+- confirm the main working tree is intact
 
 Example: _"Push fait sur `refacto/use-antd-es-only` (commit `6836a3dc8`). Worktree nettoyé, branche locale `<current-branch>` inchangée."_
