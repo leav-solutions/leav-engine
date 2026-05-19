@@ -1,10 +1,12 @@
 import {type IValueDomain} from '../value/valueDomain';
+import {type IRecordDomain} from '../record/recordDomain';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type ITreeNode} from '../../_types/tree';
 import {mockRecord} from '../../__tests__/mocks/record';
 import {mockStandardValue} from '../../__tests__/mocks/value';
 import jexlDomain from './jexlDomain';
 import {JexlContextType} from './types';
+import {AttributeCondition} from '../../_types/record';
 
 describe('jexlDomain', () => {
     const ctx: IQueryInfos = {userId: '42', queryId: 'jexlTest', lang: 'fr'};
@@ -13,7 +15,14 @@ describe('jexlDomain', () => {
         getValues: vi.fn(),
     };
 
-    const domain = jexlDomain({'core.domain.value': mockValueDomain as IValueDomain});
+    const mockRecordDomain: Mockify<IRecordDomain> = {
+        find: vi.fn(),
+    };
+
+    const domain = jexlDomain({
+        'core.domain.value': mockValueDomain as IValueDomain,
+        'core.domain.record': mockRecordDomain as IRecordDomain,
+    });
 
     beforeEach(() => {
         vi.clearAllMocks();
@@ -286,6 +295,56 @@ describe('jexlDomain', () => {
                     'DB connection failed',
                 );
             });
+        });
+    });
+
+    describe('getRecord function', () => {
+        test('should call recordDomain.find with correct params and return a record context', async () => {
+            const mockRecordData = {id: 'rec123', library: 'lib1'};
+            mockRecordDomain.find.mockResolvedValue({list: [mockRecordData], total: 1});
+
+            const rootCtx = domain.buildRootContext({}, ctx);
+            const result = await domain.eval('getRecord($, "lib1", "rec123")', rootCtx);
+            const resultF = await domain.eval('$ | getRecord("lib1", "rec123")', rootCtx);
+
+            expect(mockRecordDomain.find).toHaveBeenCalledWith({
+                params: {
+                    library: 'lib1',
+                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: 'rec123'}],
+                    pagination: {
+                        limit: 1,
+                        offset: 0,
+                    },
+                },
+                ctx,
+            });
+            expect(result).toMatchObject({
+                __jexlContextType: JexlContextType.RECORD,
+                id: 'rec123',
+                library: 'lib1',
+            });
+            expect(resultF).toMatchObject({
+                __jexlContextType: JexlContextType.RECORD,
+                id: 'rec123',
+                library: 'lib1',
+            });
+        });
+
+        test('should throw when called on a non-ROOT context', async () => {
+            const recordCtx = domain.buildRecordContext(mockRecord, ctx);
+            const evalCtx = {wrongRoot: recordCtx} as any;
+            await expect(domain.eval('getRecord($, "lib1", "rec123")', evalCtx)).rejects.toThrow(
+                'getRecord function can only be used on root context',
+            );
+        });
+
+        test('should throw when recordDomain.find returns no results', async () => {
+            mockRecordDomain.find.mockResolvedValue({list: [], total: 0});
+
+            const rootCtx = domain.buildRootContext({}, ctx);
+            await expect(domain.eval('getRecord($, "lib1", "nonexistent")', rootCtx)).rejects.toThrow(
+                'Record with id nonexistent not found in library lib1',
+            );
         });
     });
 

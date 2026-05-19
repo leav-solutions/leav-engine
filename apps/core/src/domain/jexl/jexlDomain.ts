@@ -1,7 +1,8 @@
 import {logger} from '@leav/logger';
 import {type IValueDomain} from '../value/valueDomain';
+import {type IRecordDomain} from '../record/recordDomain';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {type IRecord} from '../../_types/record';
+import {AttributeCondition, Operator, type IRecord} from '../../_types/record';
 import {type IValue} from '../../_types/value';
 import {type ITreeNode} from '../../_types/tree';
 import jexl from './jexlExtended';
@@ -19,6 +20,7 @@ import ValidationError from '../../errors/ValidationError';
 
 interface IDeps {
     'core.domain.value': IValueDomain;
+    'core.domain.record': IRecordDomain;
 }
 
 const JEXL_CONTEXT_KEY = '$';
@@ -34,7 +36,7 @@ export interface IJexlDomain {
     buildValuesContext: (values: IValue[], ctx: IQueryInfos) => JexlValueContext[];
 }
 
-export default function ({'core.domain.value': valueDomain}: IDeps): IJexlDomain {
+export default function ({'core.domain.value': valueDomain, 'core.domain.record': recordDomain}: IDeps): IJexlDomain {
     const _getValues = async (
         value: JexlRecordContext | JexlTreeNodeContext,
         attributePath: string,
@@ -69,6 +71,45 @@ export default function ({'core.domain.value': valueDomain}: IDeps): IJexlDomain
 
     jexl.addTransform('getValues', _getValues);
     jexl.addFunction('getValues', _getValues);
+
+    const _getRecord = async (
+        rootContext: JexlRootContext,
+        libraryId: string,
+        recordId: string,
+    ): Promise<JexlRecordContext> => {
+        if (rootContext == null || rootContext.__jexlContextType !== JexlContextType.ROOT) {
+            throw new Error('getRecord function can only be used on root context');
+        }
+
+        const ctx = rootContext.__getJexlQueryCtx();
+
+        try {
+            const record = await recordDomain
+                .find({
+                    params: {
+                        library: libraryId,
+                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: recordId}],
+                        pagination: {limit: 1, offset: 0},
+                    },
+                    ctx,
+                })
+                .then(res => res.list[0]);
+
+            if (record == null) {
+                throw new Error(`Record with id ${recordId} not found in library ${libraryId}`);
+            }
+
+            return buildRecordContext(record, ctx);
+        } catch (error) {
+            logger.error(
+                `Error fetching record for getRecord function for record ${libraryId}/${recordId}: ${error.stack}`,
+            );
+            throw error;
+        }
+    };
+
+    jexl.addTransform('getRecord', _getRecord);
+    jexl.addFunction('getRecord', _getRecord);
 
     function buildRecordContext(record: IRecord, ctx: IQueryInfos): JexlRecordContext {
         return {
