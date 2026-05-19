@@ -1,5 +1,6 @@
 import {type IValueDomain} from '../value/valueDomain';
 import {type IRecordDomain} from '../record/recordDomain';
+import {type ITreeDomain} from '../tree/treeDomain';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type ITreeNode} from '../../_types/tree';
 import {mockRecord} from '../../__tests__/mocks/record';
@@ -19,9 +20,14 @@ describe('jexlDomain', () => {
         find: vi.fn(),
     };
 
+    const mockTreeDomain: Mockify<ITreeDomain> = {
+        getNodesByRecord: vi.fn(),
+    };
+
     const domain = jexlDomain({
         'core.domain.value': mockValueDomain as IValueDomain,
         'core.domain.record': mockRecordDomain as IRecordDomain,
+        'core.domain.tree': mockTreeDomain as ITreeDomain,
     });
 
     beforeEach(() => {
@@ -344,6 +350,45 @@ describe('jexlDomain', () => {
             const rootCtx = domain.buildRootContext({}, ctx);
             await expect(domain.eval('getRecord($, "lib1", "nonexistent")', rootCtx)).rejects.toThrow(
                 'Record with id nonexistent not found in library lib1',
+            );
+        });
+    });
+
+    describe('toNode transform', () => {
+        test('should call treeDomain.getNodesByRecord with correct params and return only the first node', async () => {
+            const mockNodes = ['node1', 'node2'];
+            mockTreeDomain.getNodesByRecord.mockResolvedValue(mockNodes);
+
+            const rootCtx = domain.buildRootContext({currentRecord: domain.buildRecordContext(mockRecord, ctx)}, ctx);
+            const result = await domain.eval('$.currentRecord | toNode("tree_id")', rootCtx);
+            const resultF = await domain.eval('toNode($.currentRecord, "tree_id")', rootCtx);
+
+            expect(mockTreeDomain.getNodesByRecord).toHaveBeenCalledWith({
+                treeId: 'tree_id',
+                record: {id: mockRecord.id, library: mockRecord.library},
+                ctx,
+            });
+            expect(result).toEqual(
+                expect.objectContaining({__jexlContextType: JexlContextType.TREE_NODE, id: 'node1'}),
+            );
+            expect(resultF).toEqual(
+                expect.objectContaining({__jexlContextType: JexlContextType.TREE_NODE, id: 'node1'}),
+            );
+        });
+
+        test('should throw when called on a non-record context', async () => {
+            const rootCtx = domain.buildRootContext({}, ctx);
+            await expect(domain.eval('$ | toNode("tree_id")', rootCtx)).rejects.toThrow(
+                'toNode transform can only be used on record context',
+            );
+        });
+
+        test('should throw when treeDomain.getNodesByRecord returns no results', async () => {
+            mockTreeDomain.getNodesByRecord.mockResolvedValue([]);
+
+            const rootCtx = domain.buildRootContext({currentRecord: domain.buildRecordContext(mockRecord, ctx)}, ctx);
+            await expect(domain.eval('$.currentRecord | toNode("tree_id")', rootCtx)).rejects.toThrow(
+                'No tree node found in tree tree_id for record my_lib/123456',
             );
         });
     });
