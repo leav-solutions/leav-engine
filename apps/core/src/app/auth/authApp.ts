@@ -381,7 +381,7 @@ export default function ({
                         const {login, password} = req.body;
 
                         if (typeof login === 'undefined' || typeof password === 'undefined') {
-                            return res.status(401).send('Missing credentials');
+                            throw new AuthenticationError('Missing credentials');
                         }
 
                         const systemCtx = _getSystemContextFromQuery(req, 'authenticate');
@@ -396,7 +396,7 @@ export default function ({
                         });
 
                         if (!users.list.length) {
-                            return res.status(401).send('Invalid credentials');
+                            throw new AuthenticationError('Invalid credentials');
                         }
 
                         // Check if password is correct
@@ -404,7 +404,7 @@ export default function ({
                         const isValidPwd = await userDomain.verifyPassword(user.id, password, systemCtx);
 
                         if (!isValidPwd) {
-                            return res.status(401).send('Invalid credentials');
+                            throw new AuthenticationError('Invalid credentials');
                         }
 
                         const accessToken = await _generateAccessToken(user.id, systemCtx);
@@ -477,7 +477,7 @@ export default function ({
                         });
 
                         if (!users.list.length) {
-                            return res.status(401).send('Email not found');
+                            throw new AuthenticationError('Email not found');
                         }
 
                         const user = users.list[0];
@@ -591,18 +591,25 @@ export default function ({
                     const userSessionId = (await sessionRepo.getData([`${SESSION_CACHE_HEADER}:${refreshToken}`]))[0];
 
                     if (!userSessionId) {
-                        return res.status(401).send('Invalid session');
+                        throw new AuthenticationError('Invalid session');
                     }
 
                     // We check if user agent is the same
                     if (payload.agent !== req.headers['user-agent']) {
-                        return res.status(401).send('Invalid session');
+                        throw new AuthenticationError('Invalid session');
                     }
 
                     await _generateAccessAndRefreshTokens(payload.userId, req.headers, res, systemCtx);
 
                     return res.status(200).json({});
                 } catch (err) {
+                    // Temporary log to debug login checker, to be removed after debugging
+                    config.auth.debugLog &&
+                        logger.warn(`Auth login-checker error ${err.stack}`, {
+                            error: err,
+                            headers: req.headers,
+                            cookies: req.cookies,
+                        });
                     return next(err);
                 }
             });
@@ -684,7 +691,9 @@ export default function ({
                     groupsId,
                 };
             } catch (err) {
-                config.auth.debugLog && logger.error(`Auth validateRequestToken error ${err.stack}`);
+                config.auth.debugLog &&
+                    !err.message?.match(/No api key provided/) && // Filter to avoid too much logs
+                    logger.warn(`Auth validateRequestToken error ${err.stack}`);
                 throw err;
             }
         },
