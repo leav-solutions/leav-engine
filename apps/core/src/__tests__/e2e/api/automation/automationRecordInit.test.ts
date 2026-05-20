@@ -126,7 +126,7 @@ describe('Automation RECORD_INIT', () => {
                     type: AutomationRuleActions.notification,
                     params: {
                         title: 'Record initialized',
-                        recipients: "$.currentRecord | getValues('created_by') | map('value.id')", // notify the creator of the record
+                        recipients: "$.currentRecord | getValues('created_by')", // notify the creator of the record
                         message:
                             '"Record with id " +  $.currentRecord.id + " has been initialized at year " + (($.currentRecord | getValues(\'created_at\') | first) * 1000) | dateTimeFormat("yyyy")',
                         mail: true,

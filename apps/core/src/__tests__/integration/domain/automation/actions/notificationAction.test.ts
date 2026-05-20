@@ -1,11 +1,13 @@
 import {type AutomationRuleEventTopic, SyncAutomationRuleEventAction} from '../../../../../_types/automation';
 import {type IQueryInfos} from '../../../../../_types/queryInfos';
-import {systemUserId} from '../../../../../_constants/users';
+import {adminUserId, systemUserId} from '../../../../../_constants/users';
 import {ActionExecutionResultStatus, type IAutomationAction} from '../../../../../domain/automation/actions/_types';
 import {type NotificationActionParams} from '../../../../../domain/automation/actions/notificationAction';
 import {type INotificationDomain} from '../../../../../domain/notification/notificationDomain';
 import {getCoreDep} from '../../../integrationTestUtils';
 import {type IAutomationPipelineExecutionState} from '../../../../../domain/automation/pipeline/_types';
+import {USERS_LIBRARY} from '../../../../../_types/library';
+import {type IRecord} from '../../../../../_types/record';
 
 describe('notificationAction', () => {
     let notificationAction: IAutomationAction<NotificationActionParams>;
@@ -39,14 +41,18 @@ describe('notificationAction', () => {
     describe('execute — result structure', () => {
         it('returns userIdsNotified with the recipients resolved by the Jexl expression', async () => {
             const result = await notificationAction.execute(
-                {title: 'Test', recipients: `["${systemUserId}", "42"]`, message: '"hello"'},
+                {
+                    title: 'Test',
+                    recipients: `[getRecord($, "${USERS_LIBRARY}", "${systemUserId}"), getRecord($, "${USERS_LIBRARY}", "${adminUserId}")]`,
+                    message: '"hello"',
+                },
                 baseState,
                 ctx,
             );
 
             expect(result).toEqual({
                 status: ActionExecutionResultStatus.CONTINUE,
-                result: {userIdsNotified: [systemUserId, '42']},
+                result: {userIdsNotified: [systemUserId, adminUserId]},
             });
         });
 
@@ -67,11 +73,11 @@ describe('notificationAction', () => {
         it('exposes pipeline results in the recipients expression', async () => {
             const state: IAutomationPipelineExecutionState = {
                 ...baseState,
-                results: {targetUserId: systemUserId},
+                results: {targetUser: {id: systemUserId, library: USERS_LIBRARY} as IRecord},
             };
 
             const result = await notificationAction.execute(
-                {title: 'Test', recipients: '[$.results.targetUserId]', message: '"msg"'},
+                {title: 'Test', recipients: '[$.results.targetUser]', message: '"msg"'},
                 state,
                 ctx,
             );
@@ -89,7 +95,11 @@ describe('notificationAction', () => {
             };
 
             await notificationAction.execute(
-                {title: 'Test', recipients: `["${systemUserId}"]`, message: '$.results.greeting + " !"'},
+                {
+                    title: 'Test',
+                    recipients: `getRecord($, "${USERS_LIBRARY}", "${systemUserId}")`,
+                    message: '$.results.greeting + " !"',
+                },
                 state,
                 ctx,
             );
@@ -100,7 +110,11 @@ describe('notificationAction', () => {
 
         it('evaluates the message Jexl expression', async () => {
             await notificationAction.execute(
-                {title: 'Alert', recipients: `["${systemUserId}"]`, message: '"Hello " + "World"'},
+                {
+                    title: 'Alert',
+                    recipients: `getRecord($, "${USERS_LIBRARY}", "${systemUserId}")`,
+                    message: '"Hello " + "World"',
+                },
                 baseState,
                 ctx,
             );
@@ -113,8 +127,7 @@ describe('notificationAction', () => {
     describe('execute — Jexl context with record in eventTopic', () => {
         const record = {
             id: 'rec_notif_001',
-            libraryId: 'test_library',
-            assigneeId: systemUserId,
+            libraryId: 'users',
         } as AutomationRuleEventTopic['record'];
 
         const stateWithRecord: IAutomationPipelineExecutionState = {
@@ -127,20 +140,24 @@ describe('notificationAction', () => {
 
         it('exposes currentRecord fields in the recipients expression', async () => {
             const result = await notificationAction.execute(
-                {title: 'Test', recipients: '[$.currentRecord.assigneeId]', message: '"msg"'},
+                {title: 'Test', recipients: '[$.currentRecord]', message: '"msg"'},
                 stateWithRecord,
                 ctx,
             );
 
             expect(result).toEqual({
                 status: ActionExecutionResultStatus.CONTINUE,
-                result: {userIdsNotified: [systemUserId]},
+                result: {userIdsNotified: ['rec_notif_001']},
             });
         });
 
         it('exposes currentRecord fields in the message expression', async () => {
             await notificationAction.execute(
-                {title: 'Test', recipients: `["${systemUserId}"]`, message: '"Record: " + $.currentRecord.id'},
+                {
+                    title: 'Test',
+                    recipients: `getRecord($, "${USERS_LIBRARY}", "${systemUserId}")`,
+                    message: '"Record: " + $.currentRecord.id',
+                },
                 stateWithRecord,
                 ctx,
             );
