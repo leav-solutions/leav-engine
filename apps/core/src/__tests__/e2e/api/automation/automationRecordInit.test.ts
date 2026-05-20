@@ -335,7 +335,7 @@ describe('Automation RECORD_INIT', () => {
                     {
                         type: AutomationRuleActions.jexlCalculation,
                         params: {
-                            formula: `[{ id: "${e2eGuestUser().userId}" }, { id: "${e2eNonAdminUser().userId}" }]`,
+                            formula: `[getRecord($, "users", "${e2eGuestUser().userId}"), getRecord($, "users", "${e2eNonAdminUser().userId}")]`,
                         },
                     },
                     {
@@ -352,7 +352,7 @@ describe('Automation RECORD_INIT', () => {
                 await adminUserSdk.DeleteAutomationRule({ruleId});
             });
 
-            test('should set value from previous step result (jexl calculation)', async () => {
+            test('should set value from previous step result (jexl calculation with getRecord)', async () => {
                 const res = await adminUserSdk.GetRecordByIdLinkValuesProperty({
                     attributeId: testLibraryUsersAttrId,
                     libraryId: testLibraryId,
@@ -375,7 +375,7 @@ describe('Automation RECORD_INIT', () => {
                     {
                         type: AutomationRuleActions.jexlCalculation,
                         params: {
-                            formula: `[{ id: "${adminsGroupId}" }]`,
+                            formula: `[getRecord($, "users_groups", "${adminsGroupId}") | toNode("users_groups")]`,
                         },
                     },
                     {
@@ -392,7 +392,7 @@ describe('Automation RECORD_INIT', () => {
                 await adminUserSdk.DeleteAutomationRule({ruleId});
             });
 
-            test('should set value from previous step result (jexl calculation)', async () => {
+            test('should set value from previous step result (jexl calculation with getRecord and toNode)', async () => {
                 const res = await adminUserSdk.GetRecordByIdTreeValuesProperty({
                     attributeId: testLibraryGroupsAttrId,
                     libraryId: testLibraryId,
