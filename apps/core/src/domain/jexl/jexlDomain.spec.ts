@@ -28,6 +28,7 @@ describe('jexlDomain', () => {
         'core.domain.value': mockValueDomain as IValueDomain,
         'core.domain.record': mockRecordDomain as IRecordDomain,
         'core.domain.tree': mockTreeDomain as ITreeDomain,
+        config: {actions: {jexl: {debug: false}}} as any, // Cast to any to avoid needing to mock the entire config
     });
 
     beforeEach(() => {

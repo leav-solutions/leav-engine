@@ -3,9 +3,10 @@ import {type IValueDomain} from '../value/valueDomain';
 import {type IRecordDomain} from '../record/recordDomain';
 import {type ITreeDomain} from '../tree/treeDomain';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {AttributeCondition, Operator, type IRecord} from '../../_types/record';
+import {AttributeCondition, type IRecord} from '../../_types/record';
 import {type IValue} from '../../_types/value';
 import {type ITreeNode} from '../../_types/tree';
+import {type IConfig} from '../../_types/config';
 import jexl from './jexlExtended';
 import {
     type JexlContext,
@@ -24,6 +25,7 @@ interface IDeps {
     'core.domain.value': IValueDomain;
     'core.domain.record': IRecordDomain;
     'core.domain.tree': ITreeDomain;
+    config: IConfig;
 }
 
 const JEXL_CONTEXT_KEY = '$';
@@ -43,7 +45,10 @@ export default function ({
     'core.domain.value': valueDomain,
     'core.domain.record': recordDomain,
     'core.domain.tree': treeDomain,
+    config,
 }: IDeps): IJexlDomain {
+    const debug = config.actions.jexl.debug ?? false;
+
     const _getValues = async (
         value: JexlRecordContext | JexlTreeNodeContext,
         attributePath: string,
@@ -69,9 +74,10 @@ export default function ({
             });
             return buildValuesContext(values, ctx);
         } catch (error) {
-            logger.error(
-                `Error fetching values for attribute ${attributePath} in getValues transform for record ${valueRecord.library}/${valueRecord.id}: ${error.stack}`,
-            );
+            debug &&
+                logger.debug(
+                    `Error fetching values for attribute ${attributePath} in getValues transform for record ${valueRecord.library}/${valueRecord.id}: ${error.stack}`,
+                );
             throw error;
         }
     };
@@ -108,9 +114,10 @@ export default function ({
 
             return buildRecordContext(record, ctx);
         } catch (error) {
-            logger.error(
-                `Error fetching record for getRecord function for record ${libraryId}/${recordId}: ${error.stack}`,
-            );
+            debug &&
+                logger.debug(
+                    `Error fetching record for getRecord function for record ${libraryId}/${recordId}: ${error.stack}`,
+                );
             throw error;
         }
     };
@@ -153,9 +160,10 @@ export default function ({
                 ctx,
             );
         } catch (error) {
-            logger.error(
-                `Error fetching tree node for toNode transform for record ${recordContext.library}/${recordContext.id} in tree ${treeId}: ${error.stack}`,
-            );
+            debug &&
+                logger.debug(
+                    `Error fetching tree node for toNode transform for record ${recordContext.library}/${recordContext.id} in tree ${treeId}: ${error.stack}`,
+                );
             throw error;
         }
     };
