@@ -65,10 +65,16 @@ export interface IAutomationRuleRepoDeps {
     'core.infra.db.dbUtils': IDbUtils;
 }
 
-export default function ({
-    'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null,
-}: IAutomationRuleRepoDeps): IAutomationRuleRepo {
+export interface IAutomationRuleRepoParams {
+    collectionName?: string; // usefull for integration test to avoid conflict between test files
+}
+
+export default function (
+    {'core.infra.db.dbService': dbService = null, 'core.infra.db.dbUtils': dbUtils = null}: IAutomationRuleRepoDeps,
+    repoParams?: IAutomationRuleRepoParams,
+): IAutomationRuleRepo {
+    const collectionName = repoParams?.collectionName || AUTOMATION_RULES_COLLECTION_NAME;
+
     const automationRuleFromDbDocument = (doc: IAutomationRuleDbDocument): IAutomationRule =>
         dbUtils.cleanup<IAutomationRule>(doc);
 
@@ -94,7 +100,7 @@ export default function ({
 
     return {
         async createAutomationRule(rule, ctx) {
-            const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
+            const collection = dbService.db.collection(collectionName);
             const docToInsert = createDocumentFromAutomationRule(rule, ctx);
 
             const newAutomationRule = await dbService.execute<IAutomationRuleDbDocument[]>({
@@ -105,7 +111,7 @@ export default function ({
             return automationRuleFromDbDocument(newAutomationRule[0]);
         },
         async updateAutomationRule(rule, ctx) {
-            const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
+            const collection = dbService.db.collection(collectionName);
             const docToUpdate = updateDocumentFromAutomationRule(rule, ctx);
 
             const updatedAutomationRule = await dbService.execute<IAutomationRuleDbDocument[]>({
@@ -119,7 +125,7 @@ export default function ({
             return automationRuleFromDbDocument(updatedAutomationRule[0]);
         },
         async deleteAutomationRule(ruleId, ctx) {
-            const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
+            const collection = dbService.db.collection(collectionName);
 
             const oldAutomationRule = await dbService.execute<IAutomationRuleDbDocument[]>({
                 query: aql`
@@ -132,7 +138,7 @@ export default function ({
             return automationRuleFromDbDocument(oldAutomationRule[0]);
         },
         async getActiveAutomationRulesForCache(ctx) {
-            const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
+            const collection = dbService.db.collection(collectionName);
 
             return dbService.execute<AutomationRuleIndexEntry[]>({
                 query: aql`
@@ -195,7 +201,7 @@ export default function ({
 
             return dbUtils.findCoreEntity<IAutomationRule, IAutomationRuleDbDocument>({
                 ...findCoreEntityParams,
-                collectionName: AUTOMATION_RULES_COLLECTION_NAME,
+                collectionName,
                 customFilterConditions,
                 mapFromDbDocument: automationRuleFromDbDocument,
                 ctx,

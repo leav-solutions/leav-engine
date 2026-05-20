@@ -8,13 +8,18 @@ import automationRulesCacheFactory, {
     ruleCacheKey,
     type IAutomationRulesCache,
 } from '../../../../domain/automation/automationRulesCache';
-import {
+import automationRuleRepoFactory, {
     AUTOMATION_RULES_COLLECTION_NAME,
     type IAutomationRuleRepo,
 } from '../../../../infra/automation/automationRuleRepo';
 import {ECacheType, type ICacheService, type ICachesService} from '../../../../infra/cache/cacheService';
-import {clearAllCollectionDocuments, getAutomationRuleRepo} from '../../infra/integrationTestRepoUtils';
+import {clearAllCollectionDocuments} from '../../infra/integrationTestRepoUtils';
 import {getCoreDep} from '../../integrationTestUtils';
+import {type IDbService} from '../../../../infra/db/dbService';
+import {type IDbUtils} from '../../../../infra/db/dbUtils';
+
+// avoid conflict with apps/core/src/__tests__/integration/infra/automationRuleRepo.test.ts
+const automationRuleCacheCollectionName = `cache_${AUTOMATION_RULES_COLLECTION_NAME}`;
 
 describe('automationRulesCache', () => {
     let rulesCacheEnabled: IAutomationRulesCache;
@@ -42,12 +47,22 @@ describe('automationRulesCache', () => {
             buildCtx(),
         );
 
-    beforeAll(() => {
-        rulesCacheEnabled = getCoreDep<IAutomationRulesCache>('core.domain.automation.rulesCache');
-        automationRuleRepo = getAutomationRuleRepo();
+    beforeAll(async () => {
         const cachesService = getCoreDep<ICachesService>('core.infra.cache.cacheService');
+        const dbService = getCoreDep<IDbService>('core.infra.db.dbService');
+        const dbUtils = getCoreDep<IDbUtils>('core.infra.db.dbUtils');
         ramCache = cachesService.getCache(ECacheType.RAM);
+        automationRuleRepo = automationRuleRepoFactory(
+            {'core.infra.db.dbService': dbService, 'core.infra.db.dbUtils': dbUtils},
+            {collectionName: automationRuleCacheCollectionName},
+        );
+        await dbService.createCollection(automationRuleCacheCollectionName);
 
+        rulesCacheEnabled = automationRulesCacheFactory({
+            'core.infra.cache.cacheService': cachesService,
+            'core.infra.automation.rule': automationRuleRepo,
+            config: {automation: {cache: {enable: true}}} as IConfig,
+        });
         rulesCacheDisabled = automationRulesCacheFactory({
             'core.infra.cache.cacheService': cachesService,
             'core.infra.automation.rule': automationRuleRepo,
@@ -56,7 +71,7 @@ describe('automationRulesCache', () => {
     });
 
     afterEach(async () => {
-        await clearAllCollectionDocuments(AUTOMATION_RULES_COLLECTION_NAME);
+        await clearAllCollectionDocuments(automationRuleCacheCollectionName);
         await ramCache.deleteAll('automation:rules:*');
     });
 
