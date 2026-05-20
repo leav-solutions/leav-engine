@@ -124,12 +124,14 @@ export default function ({
         }
 
         const eventTopic = event.topic as Record<string, unknown>;
-        return Object.entries(ruleTopic).some(([key, value]) => isDeepStrictEqual(eventTopic[key], value));
+
+        return Object.entries(ruleTopic).every(([key, value]) => isDeepStrictEqual(eventTopic[key], value));
     };
 
     return {
         getRulesToTrigger: async (event, synchronous, ctx) => {
             const index = await _loadIndex(ctx);
+
             const matchingIds = index
                 .filter(entry => _indexEntryMatchesEvent(entry, event, synchronous))
                 .map(entry => entry.id);

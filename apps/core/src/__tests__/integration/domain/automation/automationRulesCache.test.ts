@@ -1,8 +1,9 @@
 import {EventAction} from '@leav/utils';
 import {systemUserId} from '../../../../_constants/users';
 import {type ICreateAutomationRule, SyncAutomationRuleEventAction} from '../../../../_types/automation';
+import {type IConfig} from '../../../../_types/config';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
-import {
+import automationRulesCacheFactory, {
     INDEX_RULES_CACHE_KEY,
     ruleCacheKey,
     type IAutomationRulesCache,
@@ -16,7 +17,8 @@ import {clearAllCollectionDocuments, getAutomationRuleRepo} from '../../infra/in
 import {getCoreDep} from '../../integrationTestUtils';
 
 describe('automationRulesCache', () => {
-    let rulesCache: IAutomationRulesCache;
+    let rulesCacheEnabled: IAutomationRulesCache;
+    let rulesCacheDisabled: IAutomationRulesCache;
     let automationRuleRepo: IAutomationRuleRepo;
     let ramCache: ICacheService;
 
@@ -41,9 +43,16 @@ describe('automationRulesCache', () => {
         );
 
     beforeAll(() => {
-        rulesCache = getCoreDep<IAutomationRulesCache>('core.domain.automation.rulesCache');
+        rulesCacheEnabled = getCoreDep<IAutomationRulesCache>('core.domain.automation.rulesCache');
         automationRuleRepo = getAutomationRuleRepo();
-        ramCache = getCoreDep<ICachesService>('core.infra.cache.cacheService').getCache(ECacheType.RAM);
+        const cachesService = getCoreDep<ICachesService>('core.infra.cache.cacheService');
+        ramCache = cachesService.getCache(ECacheType.RAM);
+
+        rulesCacheDisabled = automationRulesCacheFactory({
+            'core.infra.cache.cacheService': cachesService,
+            'core.infra.automation.rule': automationRuleRepo,
+            config: {automation: {cache: {enable: false}}} as IConfig,
+        });
     });
 
     afterEach(async () => {
@@ -51,17 +60,220 @@ describe('automationRulesCache', () => {
         await ramCache.deleteAll('automation:rules:*');
     });
 
-    describe('getRulesToTrigger — Arango → Redis chain', () => {
-        it('returns [] when no rule is persisted', async () => {
-            const matched = await rulesCache.getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'any'}},
+    describe.each([
+        {label: 'cache disabled', getCache: () => rulesCacheDisabled},
+        {label: 'cache enabled', getCache: () => rulesCacheEnabled},
+    ])('getRulesToTrigger — $label', ({getCache}) => {
+        const recordRef42 = {id: '42', libraryId: 'products'};
+
+        let ruleIds: Record<string, string>;
+
+        beforeEach(async () => {
+            ruleIds = {};
+
+            const fixtures: Array<{key: string; overrides: Partial<ICreateAutomationRule>}> = [
+                {
+                    key: 'asyncNoTopic',
+                    overrides: {
+                        label: 'async-no-topic',
+                        trigger: {synchronous: false, eventAction: EventAction.RECORD_SAVE},
+                    },
+                },
+                {
+                    key: 'asyncEmptyTopic',
+                    overrides: {
+                        label: 'async-empty-topic',
+                        trigger: {synchronous: false, eventAction: EventAction.RECORD_SAVE, eventTopic: {}},
+                    },
+                },
+                {
+                    key: 'asyncLibProducts',
+                    overrides: {
+                        label: 'async-lib-products',
+                        trigger: {
+                            synchronous: false,
+                            eventAction: EventAction.RECORD_SAVE,
+                            eventTopic: {library: 'products'},
+                        },
+                    },
+                },
+                {
+                    key: 'asyncLibOrders',
+                    overrides: {
+                        label: 'async-lib-orders',
+                        trigger: {
+                            synchronous: false,
+                            eventAction: EventAction.RECORD_SAVE,
+                            eventTopic: {library: 'orders'},
+                        },
+                    },
+                },
+                {
+                    key: 'asyncLibAttrColor',
+                    overrides: {
+                        label: 'async-lib-attr-color',
+                        trigger: {
+                            synchronous: false,
+                            eventAction: EventAction.VALUE_SAVE,
+                            eventTopic: {library: 'products', attribute: 'color'},
+                        },
+                    },
+                },
+                {
+                    key: 'asyncRecordDelete',
+                    overrides: {
+                        label: 'async-record-delete',
+                        trigger: {synchronous: false, eventAction: EventAction.RECORD_DELETE},
+                    },
+                },
+                {
+                    key: 'inactiveAsyncLibProducts',
+                    overrides: {
+                        label: 'inactive-async-lib-products',
+                        active: false,
+                        trigger: {
+                            synchronous: false,
+                            eventAction: EventAction.RECORD_SAVE,
+                            eventTopic: {library: 'products'},
+                        },
+                    },
+                },
+                {
+                    key: 'syncNoTopic',
+                    overrides: {
+                        label: 'sync-no-topic',
+                        trigger: {synchronous: true, eventAction: EventAction.RECORD_SAVE},
+                    },
+                },
+                {
+                    key: 'syncRecordRef',
+                    overrides: {
+                        label: 'sync-record-ref',
+                        trigger: {
+                            synchronous: true,
+                            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {record: recordRef42},
+                        },
+                    },
+                },
+            ];
+
+            for (const {key, overrides} of fixtures) {
+                const rule = await makeRule(overrides);
+                ruleIds[key] = rule.id;
+            }
+        });
+
+        const matchedKeys = (matched: Array<{id: string}>): string[] =>
+            matched.map(r => Object.entries(ruleIds).find(([, id]) => id === r.id)?.[0] ?? 'UNKNOWN').sort();
+
+        it('matches all async no-topic / empty-topic rules on action+sync, ignoring topic-constrained rules with unrelated topic', async () => {
+            const matched = await getCache().getRulesToTrigger(
+                {action: EventAction.RECORD_SAVE, topic: {library: 'lib'}},
                 false,
                 buildCtx(),
             );
 
-            expect(matched).toEqual([]);
+            expect(matchedKeys(matched)).toEqual(['asyncEmptyTopic', 'asyncNoTopic']);
         });
 
+        it('matches when a primitive topic field equals the event value', async () => {
+            const matched = await getCache().getRulesToTrigger(
+                {
+                    action: EventAction.RECORD_SAVE,
+                    topic: {library: 'products', record: {id: '1', libraryId: 'products'}},
+                },
+                false,
+                buildCtx(),
+            );
+
+            expect(matchedKeys(matched)).toEqual(['asyncEmptyTopic', 'asyncLibProducts', 'asyncNoTopic']);
+        });
+
+        it('does not match topic-constrained rules when no rule topic field equals any event value', async () => {
+            const matched = await getCache().getRulesToTrigger(
+                {action: EventAction.RECORD_SAVE, topic: {library: 'nonexistent'}},
+                false,
+                buildCtx(),
+            );
+
+            expect(matchedKeys(matched)).toEqual(['asyncEmptyTopic', 'asyncNoTopic']);
+        });
+
+        it('requires AND semantics across all rule topic fields', async () => {
+            const matched = await getCache().getRulesToTrigger(
+                {action: EventAction.VALUE_SAVE, topic: {library: 'products', attribute: 'unrelated'}},
+                false,
+                buildCtx(),
+            );
+
+            // No VALUE_SAVE rule with a topic that fully matches; no async-no-topic rule on VALUE_SAVE either.
+            expect(matchedKeys(matched)).toEqual([]);
+        });
+
+        it('matches a nested record object via deep equality', async () => {
+            const matched = await getCache().getRulesToTrigger(
+                {
+                    action: SyncAutomationRuleEventAction.RECORD_INIT,
+                    topic: {library: 'products', record: {...recordRef42}},
+                },
+                true,
+                buildCtx(),
+            );
+
+            expect(matchedKeys(matched)).toEqual(['syncRecordRef']);
+        });
+
+        it('skips rules with mismatched synchronous flag', async () => {
+            const matched = await getCache().getRulesToTrigger(
+                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                true,
+                buildCtx(),
+            );
+
+            // syncNoTopic is the only sync rule with action RECORD_SAVE.
+            expect(matchedKeys(matched)).toEqual(['syncNoTopic']);
+        });
+
+        it('skips rules with mismatched eventAction', async () => {
+            const matched = await getCache().getRulesToTrigger(
+                {action: EventAction.TREE_SAVE, topic: {library: 'products'}},
+                false,
+                buildCtx(),
+            );
+
+            expect(matchedKeys(matched)).toEqual([]);
+        });
+
+        it('excludes inactive rules even when action and topic match', async () => {
+            const matched = await getCache().getRulesToTrigger(
+                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                false,
+                buildCtx(),
+            );
+
+            expect(matchedKeys(matched)).not.toContain('inactiveAsyncLibProducts');
+            expect(matchedKeys(matched)).toEqual(['asyncEmptyTopic', 'asyncLibProducts', 'asyncNoTopic']);
+        });
+
+        it('routes rules to the correct synchronous channel', async () => {
+            const matchedSync = await getCache().getRulesToTrigger(
+                {action: SyncAutomationRuleEventAction.RECORD_INIT, topic: {library: 'products', record: recordRef42}},
+                true,
+                buildCtx(),
+            );
+            expect(matchedKeys(matchedSync)).toEqual(['syncRecordRef']);
+
+            const matchedAsync = await getCache().getRulesToTrigger(
+                {action: SyncAutomationRuleEventAction.RECORD_INIT, topic: {library: 'products', record: recordRef42}},
+                false,
+                buildCtx(),
+            );
+            expect(matchedKeys(matchedAsync)).toEqual([]);
+        });
+    });
+
+    describe('cache mechanics — cache enabled only', () => {
         it('populates the index with only {id, trigger} and the per-rule key with the full rule', async () => {
             const rule = await makeRule({
                 label: 'rule-cached',
@@ -73,7 +285,7 @@ describe('automationRulesCache', () => {
                 pipeline: {steps: [{type: 'log', params: {message: 'hi', level: 'info'}}]},
             });
 
-            const matched = await rulesCache.getRulesToTrigger(
+            const matched = await rulesCacheEnabled.getRulesToTrigger(
                 {
                     action: EventAction.RECORD_SAVE,
                     topic: {library: 'products', record: {id: '1', libraryId: 'products'}},
@@ -90,7 +302,6 @@ describe('automationRulesCache', () => {
             expect(rawIndex).not.toBeNull();
             const cachedIndex = JSON.parse(rawIndex as string);
             expect(cachedIndex).toEqual([{id: rule.id, trigger: rule.trigger}]);
-            // The index entry must not carry the pipeline.
             expect(cachedIndex[0]).not.toHaveProperty('pipeline');
             expect(cachedIndex[0]).not.toHaveProperty('label');
 
@@ -119,7 +330,7 @@ describe('automationRulesCache', () => {
                 },
             });
 
-            await rulesCache.getRulesToTrigger(
+            await rulesCacheEnabled.getRulesToTrigger(
                 {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
@@ -134,7 +345,7 @@ describe('automationRulesCache', () => {
             expect(aBefore).not.toBeNull();
             expect(bBefore).not.toBeNull();
 
-            await rulesCache.invalidate(ruleA.id);
+            await rulesCacheEnabled.invalidate(ruleA.id);
 
             const [idxAfter, aAfter, bAfter] = await ramCache.getData([
                 INDEX_RULES_CACHE_KEY,
@@ -164,19 +375,16 @@ describe('automationRulesCache', () => {
                 },
             });
 
-            // Prime the index (it now references both A and B).
-            await rulesCache.getRulesToTrigger(
+            await rulesCacheEnabled.getRulesToTrigger(
                 {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
             );
 
-            // Delete A directly via the repo (bypass the domain → cache not invalidated)
-            // and evict A from the per-rule cache to force a repo lookup on next access.
             await automationRuleRepo.deleteAutomationRule(ruleA.id, buildCtx());
             await ramCache.deleteData([ruleCacheKey(ruleA.id)]);
 
-            const matched = await rulesCache.getRulesToTrigger(
+            const matched = await rulesCacheEnabled.getRulesToTrigger(
                 {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
@@ -195,14 +403,13 @@ describe('automationRulesCache', () => {
                 },
             });
 
-            const firstCall = await rulesCache.getRulesToTrigger(
+            const firstCall = await rulesCacheEnabled.getRulesToTrigger(
                 {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
             );
             expect(firstCall.map(r => r.id)).toEqual([ruleA.id]);
 
-            // Insert a 2nd rule directly via the repo: bypasses the domain, no invalidation.
             const ruleB = await makeRule({
                 label: 'rule-B',
                 trigger: {
@@ -212,7 +419,7 @@ describe('automationRulesCache', () => {
                 },
             });
 
-            const secondCall = await rulesCache.getRulesToTrigger(
+            const secondCall = await rulesCacheEnabled.getRulesToTrigger(
                 {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
@@ -230,7 +437,7 @@ describe('automationRulesCache', () => {
                 },
             });
 
-            await rulesCache.getRulesToTrigger(
+            await rulesCacheEnabled.getRulesToTrigger(
                 {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
@@ -244,126 +451,17 @@ describe('automationRulesCache', () => {
                 },
             });
 
-            await rulesCache.invalidate();
+            await rulesCacheEnabled.invalidate();
 
             const [rawAfterInvalidate] = await ramCache.getData([INDEX_RULES_CACHE_KEY]);
             expect(rawAfterInvalidate).toBeNull();
 
-            const afterInvalidate = await rulesCache.getRulesToTrigger(
+            const afterInvalidate = await rulesCacheEnabled.getRulesToTrigger(
                 {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
             );
             expect(afterInvalidate.map(r => r.id).sort()).toEqual([ruleA.id, ruleB.id].sort());
-        });
-
-        it('excludes inactive rules even when action and topic match', async () => {
-            await makeRule({
-                label: 'inactive-rule',
-                active: false,
-                trigger: {
-                    synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
-                    eventTopic: {library: 'products'},
-                },
-            });
-            const activeRule = await makeRule({
-                label: 'active-rule',
-                active: true,
-                trigger: {
-                    synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
-                    eventTopic: {library: 'products'},
-                },
-            });
-
-            const matched = await rulesCache.getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
-                false,
-                buildCtx(),
-            );
-
-            expect(matched.map(r => r.id)).toEqual([activeRule.id]);
-        });
-
-        it('matches rules whose topic fields OR-match the event topic, ignoring others', async () => {
-            const ruleLibA = await makeRule({
-                label: 'rule-lib-A',
-                trigger: {
-                    synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
-                    eventTopic: {library: 'A'},
-                },
-            });
-            await makeRule({
-                label: 'rule-lib-B',
-                trigger: {
-                    synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
-                    eventTopic: {library: 'B'},
-                },
-            });
-            const ruleLibAAttr = await makeRule({
-                label: 'rule-lib-A-attr',
-                trigger: {
-                    synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
-                    eventTopic: {library: 'A', attribute: 'attr1'},
-                },
-            });
-            const ruleNoTopic = await makeRule({
-                label: 'rule-no-topic',
-                trigger: {
-                    synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
-                },
-            });
-
-            const matched = await rulesCache.getRulesToTrigger(
-                {
-                    action: EventAction.RECORD_SAVE,
-                    topic: {library: 'A', record: {id: '1', libraryId: 'A'}},
-                },
-                false,
-                buildCtx(),
-            );
-
-            expect(matched.map(r => r.id).sort()).toEqual([ruleLibA.id, ruleLibAAttr.id, ruleNoTopic.id].sort());
-        });
-
-        it('routes rules based on synchronous flag', async () => {
-            const syncRule = await makeRule({
-                label: 'sync-rule',
-                trigger: {
-                    synchronous: true,
-                    eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
-                    eventTopic: {library: 'products'},
-                },
-            });
-            const asyncRule = await makeRule({
-                label: 'async-rule',
-                trigger: {
-                    synchronous: false,
-                    eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
-                    eventTopic: {library: 'products'},
-                },
-            });
-
-            const matchedSync = await rulesCache.getRulesToTrigger(
-                {action: SyncAutomationRuleEventAction.RECORD_INIT, topic: {library: 'products'}},
-                true,
-                buildCtx(),
-            );
-            expect(matchedSync.map(r => r.id)).toEqual([syncRule.id]);
-
-            await rulesCache.invalidate();
-
-            const matchedAsync = await rulesCache.getRulesToTrigger(
-                {action: SyncAutomationRuleEventAction.RECORD_INIT, topic: {library: 'products'}},
-                false,
-                buildCtx(),
-            );
-            expect(matchedAsync.map(r => r.id)).toEqual([asyncRule.id]);
         });
     });
 });

@@ -11,7 +11,6 @@ import {
 import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '../../_types/shared';
-import {type ISystemTranslation} from '../../_types/systemTranslation';
 import {type IDbDocument} from '../db/_types';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
@@ -155,6 +154,26 @@ export default function ({
 
             const {partialMatchOnEventTopic, ...findCoreEntityParams} = {...defaultParams, ...params};
 
+            const buildEventTopicFilter = (eventTopic: Record<string, unknown>): GeneratedAqlQuery => {
+                const eventTopicEntries = Object.entries(eventTopic);
+                const valueConditions = eventTopicEntries.map(([eventTopicSubKey, eventTopicSubVal]) =>
+                    partialMatchOnEventTopic
+                        ? aql`(el.trigger.eventTopic.${eventTopicSubKey} == ${eventTopicSubVal} OR el.trigger.eventTopic.${eventTopicSubKey} == null)`
+                        : aql`(el.trigger.eventTopic.${eventTopicSubKey} == ${eventTopicSubVal})`,
+                );
+
+                // Ensure that the rule's eventTopic does not have extra keys that are not in the event, otherwise it would match events that only partially match the filter
+                const allowedKeys = eventTopicEntries.map(([k]) => k);
+                const subsetConstraint =
+                    partialMatchOnEventTopic && allowedKeys.length > 0
+                        ? [
+                              aql`(NOT IS_OBJECT(el.trigger.eventTopic) OR COUNT(MINUS(ATTRIBUTES(el.trigger.eventTopic, true), ${allowedKeys})) == 0)`,
+                          ]
+                        : [];
+
+                return join([...valueConditions, ...subsetConstraint], ' AND ');
+            };
+
             const customFilterConditions =
                 params.filters?.trigger !== undefined
                     ? {
@@ -165,13 +184,7 @@ export default function ({
                               const parts = Object.entries(filterVal as Record<string, unknown>).map(
                                   ([subKey, subVal]) =>
                                       subKey === 'eventTopic'
-                                          ? join(
-                                                Object.entries(subVal as Record<string, unknown>).map(
-                                                    ([eventTopicSubKey, eventTopicSubVal]) =>
-                                                        aql`el.trigger.eventTopic.${eventTopicSubKey} == ${eventTopicSubVal}`,
-                                                ),
-                                                partialMatchOnEventTopic ? ' OR ' : ' AND ',
-                                            )
+                                          ? buildEventTopicFilter(subVal as Record<string, unknown>)
                                           : aql`el.trigger.${subKey} == ${subVal}`,
                               );
 
