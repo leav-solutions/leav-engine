@@ -8,5 +8,5 @@
     },
     "references": [{"path": "./tsconfig.build.json"}],
     "include": ["src/**/*.spec.ts", "src/**/__tests__/**/*"],
-    "exclude": []
+    "exclude": ["src/plugins"]
 }
