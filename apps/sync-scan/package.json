@@ -7,6 +7,7 @@
         "start": "node .",
         "start:dev": "NODE_ENV=development tsx src/index.ts",
         "build": "tsc -b tsconfig.build.json",
+        "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
         "test": "vitest run -c vitest.unit.config.ts",
         "test:ci": "vitest run -c vitest.unit.config.ts --maxWorkers=2 --reporter=verbose",
         "test:commit": "vitest run -c vitest.unit.config.ts --changed",

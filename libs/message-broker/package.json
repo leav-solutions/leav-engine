@@ -5,6 +5,7 @@
     "scripts": {
         "prepublishOnly": "npm run build",
         "build": "tsc --build tsconfig.build.json",
+        "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
         "tscheck": "tsc --noEmit -p tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
         "tscheck:watch": "tsc -w --noEmit -p tsconfig.build.json",
         "test": "vitest run -c vitest.config.ts",
