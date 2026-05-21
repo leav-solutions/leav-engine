@@ -121,6 +121,11 @@ export default function ({
         return join(queryParts);
     }
 
+    function _filterMigrationFile(file: string): boolean {
+        // We want to ignore .map and .d.ts files in migrations folder
+        return file.indexOf('.map') === -1 && !file.endsWith('.d.ts');
+    }
+
     const ret = {
         /**
          * Run database migrations.
@@ -156,9 +161,7 @@ export default function ({
             /*** Core migrations ***/
             // Load migrations files
             const migrationsDir = path.resolve(__dirname, 'migrations');
-            const migrationFiles = (await fs.promises.readdir(migrationsDir)).filter(
-                file => file.indexOf('.map') === -1,
-            );
+            const migrationFiles = (await fs.promises.readdir(migrationsDir)).filter(_filterMigrationFile);
 
             await _runMigrationFiles(migrationFiles, migrationsDir);
 
@@ -174,7 +177,7 @@ export default function ({
                 }
 
                 const pluginMigrationFiles = (await fs.promises.readdir(pluginMigrationFolderPath)).filter(
-                    file => file.indexOf('.map') === -1,
+                    _filterMigrationFile,
                 );
 
                 await _runMigrationFiles(pluginMigrationFiles, pluginMigrationFolderPath, pluginName);
