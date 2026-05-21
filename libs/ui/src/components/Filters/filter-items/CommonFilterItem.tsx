@@ -74,28 +74,26 @@ export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
 }) => {
     const {t} = useSharedTranslation();
 
-    let canReset = true;
+    const canReset = !isActiveAttribute(filter);
 
-    // Active attribute is a special case, we need to handle it differently
-    if (isActiveAttribute(filter)) {
-        canReset = false;
-
-        if (!filter.value) {
-            filter.value = 'true';
-            filter.formattedValue = t('explorer.true');
-        }
-    }
+    // Active attribute always shows "true" — derive without mutating the store object
+    const displayFilter: UIFilter =
+        isActiveAttribute(filter) && !filter.value
+            ? {...filter, value: 'true', formattedValue: t('explorer.true')}
+            : filter;
 
     return (
         <FilterStyled
             disabled={disabled}
             readonly={readonly}
             expandable={!readonly}
-            label={filter.attribute.label}
-            values={getFilterValues(filter, t)}
+            label={displayFilter.attribute.label}
+            values={getFilterValues(displayFilter, t)}
             dropDownProps={{
                 placement: 'bottomLeft',
-                dropdownRender: () => <FilterDropDown filter={filter} canReset={canReset} canRemove={!isPinned} />,
+                dropdownRender: () => (
+                    <FilterDropDown filter={displayFilter} canReset={canReset} canRemove={!isPinned} />
+                ),
             }}
             showSingleValue
         />
