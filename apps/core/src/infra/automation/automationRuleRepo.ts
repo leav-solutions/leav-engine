@@ -11,7 +11,6 @@ import {
 import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '../../_types/shared';
-import {type ISystemTranslation} from '../../_types/systemTranslation';
 import {type IDbDocument} from '../db/_types';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
@@ -66,10 +65,16 @@ export interface IAutomationRuleRepoDeps {
     'core.infra.db.dbUtils': IDbUtils;
 }
 
-export default function ({
-    'core.infra.db.dbService': dbService = null,
-    'core.infra.db.dbUtils': dbUtils = null,
-}: IAutomationRuleRepoDeps): IAutomationRuleRepo {
+export interface IAutomationRuleRepoParams {
+    collectionName?: string; // usefull for integration test to avoid conflict between test files
+}
+
+export default function (
+    {'core.infra.db.dbService': dbService = null, 'core.infra.db.dbUtils': dbUtils = null}: IAutomationRuleRepoDeps,
+    repoParams?: IAutomationRuleRepoParams,
+): IAutomationRuleRepo {
+    const collectionName = repoParams?.collectionName || AUTOMATION_RULES_COLLECTION_NAME;
+
     const automationRuleFromDbDocument = (doc: IAutomationRuleDbDocument): IAutomationRule =>
         dbUtils.cleanup<IAutomationRule>(doc);
 
@@ -95,7 +100,7 @@ export default function ({
 
     return {
         async createAutomationRule(rule, ctx) {
-            const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
+            const collection = dbService.db.collection(collectionName);
             const docToInsert = createDocumentFromAutomationRule(rule, ctx);
 
             const newAutomationRule = await dbService.execute<IAutomationRuleDbDocument[]>({
@@ -106,7 +111,7 @@ export default function ({
             return automationRuleFromDbDocument(newAutomationRule[0]);
         },
         async updateAutomationRule(rule, ctx) {
-            const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
+            const collection = dbService.db.collection(collectionName);
             const docToUpdate = updateDocumentFromAutomationRule(rule, ctx);
 
             const updatedAutomationRule = await dbService.execute<IAutomationRuleDbDocument[]>({
@@ -120,7 +125,7 @@ export default function ({
             return automationRuleFromDbDocument(updatedAutomationRule[0]);
         },
         async deleteAutomationRule(ruleId, ctx) {
-            const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
+            const collection = dbService.db.collection(collectionName);
 
             const oldAutomationRule = await dbService.execute<IAutomationRuleDbDocument[]>({
                 query: aql`
@@ -133,7 +138,7 @@ export default function ({
             return automationRuleFromDbDocument(oldAutomationRule[0]);
         },
         async getActiveAutomationRulesForCache(ctx) {
-            const collection = dbService.db.collection(AUTOMATION_RULES_COLLECTION_NAME);
+            const collection = dbService.db.collection(collectionName);
 
             return dbService.execute<AutomationRuleIndexEntry[]>({
                 query: aql`
@@ -155,6 +160,26 @@ export default function ({
 
             const {partialMatchOnEventTopic, ...findCoreEntityParams} = {...defaultParams, ...params};
 
+            const buildEventTopicFilter = (eventTopic: Record<string, unknown>): GeneratedAqlQuery => {
+                const eventTopicEntries = Object.entries(eventTopic);
+                const valueConditions = eventTopicEntries.map(([eventTopicSubKey, eventTopicSubVal]) =>
+                    partialMatchOnEventTopic
+                        ? aql`(el.trigger.eventTopic.${eventTopicSubKey} == ${eventTopicSubVal} OR el.trigger.eventTopic.${eventTopicSubKey} == null)`
+                        : aql`(el.trigger.eventTopic.${eventTopicSubKey} == ${eventTopicSubVal})`,
+                );
+
+                // Ensure that the rule's eventTopic does not have extra keys that are not in the event, otherwise it would match events that only partially match the filter
+                const allowedKeys = eventTopicEntries.map(([k]) => k);
+                const subsetConstraint =
+                    partialMatchOnEventTopic && allowedKeys.length > 0
+                        ? [
+                              aql`(NOT IS_OBJECT(el.trigger.eventTopic) OR COUNT(MINUS(ATTRIBUTES(el.trigger.eventTopic, true), ${allowedKeys})) == 0)`,
+                          ]
+                        : [];
+
+                return join([...valueConditions, ...subsetConstraint], ' AND ');
+            };
+
             const customFilterConditions =
                 params.filters?.trigger !== undefined
                     ? {
@@ -165,13 +190,7 @@ export default function ({
                               const parts = Object.entries(filterVal as Record<string, unknown>).map(
                                   ([subKey, subVal]) =>
                                       subKey === 'eventTopic'
-                                          ? join(
-                                                Object.entries(subVal as Record<string, unknown>).map(
-                                                    ([eventTopicSubKey, eventTopicSubVal]) =>
-                                                        aql`el.trigger.eventTopic.${eventTopicSubKey} == ${eventTopicSubVal}`,
-                                                ),
-                                                partialMatchOnEventTopic ? ' OR ' : ' AND ',
-                                            )
+                                          ? buildEventTopicFilter(subVal as Record<string, unknown>)
                                           : aql`el.trigger.${subKey} == ${subVal}`,
                               );
 
@@ -182,7 +201,7 @@ export default function ({
 
             return dbUtils.findCoreEntity<IAutomationRule, IAutomationRuleDbDocument>({
                 ...findCoreEntityParams,
-                collectionName: AUTOMATION_RULES_COLLECTION_NAME,
+                collectionName,
                 customFilterConditions,
                 mapFromDbDocument: automationRuleFromDbDocument,
                 ctx,
