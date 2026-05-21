@@ -32,10 +32,7 @@ const _getDateRequestFilters = ({field, condition, value}: IUIFilterStandard): R
                 {
                     field,
                     condition,
-                    value: JSON.stringify({
-                        from,
-                        to,
-                    }),
+                    value: JSON.stringify({from, to}),
                 },
             ];
         case RecordFilterCondition.NOT_EQUAL:
@@ -55,28 +52,21 @@ const _getDateRequestFilters = ({field, condition, value}: IUIFilterStandard): R
                 },
             ];
         default:
-            return [
-                {
-                    field,
-                    condition,
-                    value,
-                },
-            ];
+            return [{field, condition, value}];
     }
 };
 
-const _getBooleanRequestFilters = (filter: IUIFilterStandard): RecordFilterInput[] => {
-    if (filter.value === 'false') {
+const _getBooleanRequestFilters = ({field, condition, value}: IUIFilterStandard): RecordFilterInput[] => {
+    if (value === 'false') {
         return [
             {
-                field: filter.field,
+                field,
                 condition: AttributeConditionFilter.NOT_EQUAL,
                 value: 'true',
             },
         ];
     }
-
-    return [{field: filter.field, condition: filter.condition, value: filter.value}];
+    return [{field, condition, value}];
 };
 
 const _addValuesListForFilters = (valuesList: string[]): RecordFilterInput[] => [
@@ -97,43 +87,38 @@ const _addValuesListForFilters = (valuesList: string[]): RecordFilterInput[] => 
 const _generateConditionsFromMultipleValues = (
     filter: IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
 ): RecordFilterInput[] => {
-    const value = filter.value;
+    const {value, condition} = filter;
     const nodes = isUIFilterTree(filter) ? filter.nodes : undefined;
 
-    if (!value || value.length === 0) {
+    if (!value?.length) {
         return [];
     }
-    const filtersWithOperators: RecordFilterInput[] = [];
-    value.forEach((recordId, idx) => {
-        if (idx === 0 && value.length > 1) {
-            filtersWithOperators.push({operator: RecordFilterOperator.OPEN_BRACKET});
-        }
-        if (nodes?.length > 0) {
-            filtersWithOperators.push({
-                value: recordId,
-                condition: filter.condition,
-                field: `${filter.attribute.id}.${nodes[0].libraryId}.id`,
-            });
-        } else {
-            filtersWithOperators.push({
-                value: recordId,
-                condition: filter.condition,
-                field: Array.isArray(filter.field) ? filter.field[idx] : filter.field,
-            });
-        }
-        if (idx < value.length - 1) {
-            filtersWithOperators.push({
-                operator:
-                    filter.condition === RecordFilterCondition.NOT_EQUAL
-                        ? RecordFilterOperator.AND
-                        : RecordFilterOperator.OR,
-            });
-        }
-        if (value.length > 1 && idx >= value.length - 1) {
-            filtersWithOperators.push({operator: RecordFilterOperator.CLOSE_BRACKET});
-        }
-    });
-    return filtersWithOperators;
+
+    const multiValueOperator =
+        condition === RecordFilterCondition.NOT_EQUAL ? RecordFilterOperator.AND : RecordFilterOperator.OR;
+
+    const conditions: RecordFilterInput[] = value.map((recordId, idx) => ({
+        value: recordId,
+        condition,
+        field: nodes?.length
+            ? `${filter.attribute.id}.${nodes[0].libraryId}.id`
+            : Array.isArray(filter.field)
+              ? filter.field[idx]
+              : filter.field,
+    }));
+
+    if (conditions.length === 1) {
+        return conditions;
+    }
+
+    return [
+        {operator: RecordFilterOperator.OPEN_BRACKET},
+        ...interleaveElement(
+            {operator: multiValueOperator},
+            conditions.map(c => [c]),
+        ),
+        {operator: RecordFilterOperator.CLOSE_BRACKET},
+    ];
 };
 
 const _addEmptyCondition = (baseConditions: RecordFilterInput[], filter: UIFilter): RecordFilterInput[] => {
@@ -142,7 +127,7 @@ const _addEmptyCondition = (baseConditions: RecordFilterInput[], filter: UIFilte
         filter.value !== undefined &&
         (!Array.isArray(filter.value) || filter.value.length > 0);
 
-    // patch because field contains multiple informations & can be empty
+    // field can contain multiple entries or be absent — fall back to attribute id
     const field = (Array.isArray(filter.field) ? filter.field[0] : filter.field) || filter.attribute.id;
     const emptyCondition = {
         field,
@@ -152,15 +137,127 @@ const _addEmptyCondition = (baseConditions: RecordFilterInput[], filter: UIFilte
 
     if (!hasValue) {
         return [emptyCondition];
-    } else {
-        return [
-            {operator: RecordFilterOperator.OPEN_BRACKET},
-            ...baseConditions,
-            {operator: RecordFilterOperator.OR},
-            emptyCondition,
-            {operator: RecordFilterOperator.CLOSE_BRACKET},
-        ];
     }
+
+    return [
+        {operator: RecordFilterOperator.OPEN_BRACKET},
+        ...baseConditions,
+        {operator: RecordFilterOperator.OR},
+        emptyCondition,
+        {operator: RecordFilterOperator.CLOSE_BRACKET},
+    ];
+};
+
+const _applyEmptyValues = (baseConditions: RecordFilterInput[], filter: UIFilter): RecordFilterInput[] =>
+    filter.withEmptyValues ? _addEmptyCondition(baseConditions, filter) : baseConditions;
+
+const _filterIsActive = (filter: UIFilter): boolean => {
+    if (filter.withEmptyValues) {
+        return true;
+    }
+
+    if (isUIFilterTree(filter)) {
+        // Skip if: (Toggle ON + no user selection) OR (No user selection + no initial value)
+        const noUserSelectionNoInitialValue = filter.userNodes == null && (!filter.value || filter.value.length === 0);
+        const toggleOnNoUserSelection = filter.includeHiddenOptions && filter.userNodes == null;
+        return !(noUserSelectionNoInitialValue || toggleOnNoUserSelection);
+    }
+
+    if (isUIFilterWithSmartFilter(filter)) {
+        return (
+            (filter.value !== null && filter.value.length > 0) ||
+            !!(filter.condition && nullValueConditions.includes(filter.condition))
+        );
+    }
+
+    if (isUIFilterThrough(filter)) {
+        return !!(
+            filter.subField &&
+            filter.subCondition &&
+            (filter.value !== null || nullValueConditions.includes(filter.subCondition))
+        );
+    }
+
+    if (isUIFilterValueList(filter)) {
+        return !!(
+            (filter.condition && filter.value?.length) ||
+            (filter.condition && nullValueConditions.includes(filter.condition))
+        );
+    }
+
+    return filter.value !== null || !!(filter.condition && nullValueConditions.includes(filter.condition));
+};
+
+const _filterToRecordInputs = (filter: UIFilter): RecordFilterInput[] => {
+    if (isUIFilterValueList(filter) || isUIFilterTree(filter) || isUIFilterWithSmartFilter(filter)) {
+        const field = (Array.isArray(filter.field) ? filter.field[0] : filter.field) || filter.attribute.id;
+
+        if (filter.condition && nullValueConditions.includes(filter.condition)) {
+            const baseConditions: RecordFilterInput[] = [
+                {
+                    field,
+                    condition: filter.condition,
+                    value: null,
+                },
+            ];
+            return _applyEmptyValues(
+                baseConditions,
+                filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
+            );
+        }
+
+        if (isUIFilterTree(filter)) {
+            // No user selection (null or undefined): add IS_EMPTY to filters
+            // TODO : include IS_EMPTY to permissions
+            if (filter.userNodes == null) {
+                if (filter.withEmptyValues) {
+                    return [{field, condition: RecordFilterCondition.IS_EMPTY, value: null}];
+                }
+                const baseConditions = _generateConditionsFromMultipleValues(filter as IUIFilterTree);
+                return _addEmptyCondition(baseConditions, filter as IUIFilterTree);
+            }
+        }
+
+        const baseConditions = _generateConditionsFromMultipleValues(
+            filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
+        );
+        return _applyEmptyValues(baseConditions, filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler);
+    }
+
+    // Normalize condition and field for THROUGH and link-with-value-list filters
+    const condition =
+        filter.condition === AttributeConditionFilter.THROUGH
+            ? (filter as IUIFilterThrough).subCondition
+            : filter.condition;
+    let field =
+        filter.condition === AttributeConditionFilter.THROUGH
+            ? `${filter.field}.${(filter as IUIFilterThrough).subField}`
+            : filter.field;
+
+    // When a link attribute has a values list, we must filter on the linked record id
+    if (isUIFilterLinkWithValueList(filter) && typeof field === 'string' && !field.endsWith('.id')) {
+        field = `${field}.id`;
+    }
+
+    if (isUIFilterStandard(filter as UIFilter)) {
+        switch ((filter as IUIFilterStandard).attribute.format) {
+            case AttributeFormat.date:
+                return _getDateRequestFilters({...filter, condition, field} as IUIFilterStandard);
+            case AttributeFormat.boolean:
+                return _getBooleanRequestFilters({...filter, condition, field} as IUIFilterStandard);
+            default:
+                break;
+        }
+    }
+
+    const baseConditions: RecordFilterInput[] = [
+        {
+            field: field as string,
+            condition: condition as RecordFilterCondition,
+            value: (filter as IUIFilterStandard | IUIFilterLink | IUIFilterThrough).value,
+        },
+    ];
+    return _applyEmptyValues(baseConditions, filter);
 };
 
 export const prepareFiltersForRequest = (
@@ -168,130 +265,15 @@ export const prepareFiltersForRequest = (
     filtersOperator?: FiltersOperator,
     valuesList?: string[],
 ): RecordFilterInput[] => {
-    const interleaveFilter = interleaveElement(
-        {operator: filtersOperator === 'OR' ? RecordFilterOperator.OR : RecordFilterOperator.AND},
-        filters
-            .filter(filter => {
-                if (filter.withEmptyValues) {
-                    return true;
-                }
-                if (isUIFilterTree(filter)) {
-                    // Skip if: (Toggle ON + no user selection) OR (No user selection + no initial value)
-                    const noUserSelectionNoInitialValue =
-                        filter.userNodes == null && (!filter.value || filter.value.length === 0);
-                    const toggleOnNoUserSelection = filter.includeHiddenOptions && filter.userNodes == null;
-                    return !(noUserSelectionNoInitialValue || toggleOnNoUserSelection);
-                }
-                if (isUIFilterWithSmartFilter(filter)) {
-                    return (
-                        (filter.value !== null && filter.value.length > 0) ||
-                        (filter.condition && nullValueConditions.includes(filter.condition))
-                    );
-                }
-
-                if (isUIFilterThrough(filter)) {
-                    return (
-                        filter.subField &&
-                        filter.subCondition &&
-                        (filter.value !== null || nullValueConditions.includes(filter.subCondition))
-                    );
-                }
-
-                if (isUIFilterValueList(filter)) {
-                    return (
-                        (!!filter.condition && filter.value?.length) ||
-                        (filter.condition && nullValueConditions.includes(filter.condition))
-                    );
-                }
-
-                return filter.value !== null || (filter.condition && nullValueConditions.includes(filter.condition));
-            })
-            .map(filter => {
-                if (isUIFilterTree(filter)) {
-                    return filter;
-                }
-                const condition =
-                    filter.condition === AttributeConditionFilter.THROUGH ? filter.subCondition : filter.condition;
-                let field =
-                    filter.condition === AttributeConditionFilter.THROUGH
-                        ? `${filter.field}.${filter.subField}`
-                        : filter.field;
-
-                // When a link attribute has a values list, we must filter on the linked record id
-                if (isUIFilterLinkWithValueList(filter) && typeof field === 'string' && !field.endsWith('.id')) {
-                    field = `${field}.id`;
-                }
-
-                return {...filter, condition, field};
-            })
-            .map(filter => {
-                //@ts-ignore typscript does not recognize filter as a UIFilter
-                if (isUIFilterValueList(filter) || isUIFilterTree(filter) || isUIFilterWithSmartFilter(filter)) {
-                    const field = (Array.isArray(filter.field) ? filter.field[0] : filter.field) || filter.attribute.id;
-                    if (filter.condition && nullValueConditions.includes(filter.condition)) {
-                        const baseConditions: RecordFilterInput[] = [
-                            {
-                                field,
-                                condition: filter.condition,
-                                value: null,
-                            },
-                        ];
-                        return !filter.withEmptyValues
-                            ? baseConditions
-                            : _addEmptyCondition(
-                                  baseConditions,
-                                  filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
-                              );
-                    }
-                    if (isUIFilterTree(filter)) {
-                        // No user selection (null or undefined): add IS_EMPTY to filters
-                        // TODO : include IS_EMPTY to permissions
-                        if (filter.userNodes == null) {
-                            if (filter.withEmptyValues) {
-                                return [{field, condition: RecordFilterCondition.IS_EMPTY, value: null}];
-                            }
-                            const baseConditions = _generateConditionsFromMultipleValues(filter as IUIFilterTree);
-                            return _addEmptyCondition(baseConditions, filter as IUIFilterTree);
-                        }
-                    }
-                    const baseConditions = _generateConditionsFromMultipleValues(
-                        filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
-                    );
-                    return !filter.withEmptyValues
-                        ? baseConditions
-                        : _addEmptyCondition(
-                              baseConditions,
-                              filter as IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
-                          );
-                }
-
-                if (isUIFilterStandard(filter as UIFilter)) {
-                    switch (filter.attribute.format) {
-                        case AttributeFormat.date:
-                            return _getDateRequestFilters(filter as IUIFilterStandard);
-                        case AttributeFormat.boolean:
-                            return _getBooleanRequestFilters(filter as IUIFilterStandard);
-                        default:
-                            break;
-                    }
-                }
-                const filterWithStringValue = filter as IUIFilterStandard | IUIFilterLink | IUIFilterThrough;
-                const baseConditions: RecordFilterInput[] = [
-                    {
-                        field: filterWithStringValue.field as string,
-                        condition: filterWithStringValue.condition as RecordFilterCondition,
-                        value: filterWithStringValue.value,
-                    },
-                ];
-                return !filter.withEmptyValues
-                    ? baseConditions
-                    : _addEmptyCondition(baseConditions, filter as UIFilter);
-            }),
-    );
+    const operator = filtersOperator === 'OR' ? RecordFilterOperator.OR : RecordFilterOperator.AND;
+    const recordFilters = interleaveElement(
+        {operator},
+        filters.filter(_filterIsActive).map(_filterToRecordInputs),
+    ) as RecordFilterInput[];
 
     return [
-        ...interleaveFilter,
-        ...(interleaveFilter.length > 0 && valuesList ? [{operator: RecordFilterOperator.AND}] : []),
+        ...recordFilters,
+        ...(recordFilters.length > 0 && valuesList ? [{operator: RecordFilterOperator.AND}] : []),
         ...(valuesList ? _addValuesListForFilters(valuesList) : []),
     ];
 };

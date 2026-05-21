@@ -131,29 +131,16 @@ export const getFirstConditionByFilterType = (
 
 export const useConditionsOptionsByType = (filter: UIFilter) => {
     const {t} = useSharedTranslation();
+    const allowedConditions = getFirstConditionByFilterType(filter);
 
     return {
         conditionOptionsByType: getAttributeConditionOptions(t)
-            .filter(({value}) => {
-                // Use special condition set for text fields with closed list values
-                if (isUIFilterValueList(filter)) {
-                    return valueListTextConditions.includes(value as RecordFilterCondition);
-                }
-                if (isUIFilterStandard(filter)) {
-                    return conditionsByFormat[filter.attribute.format].includes(value as RecordFilterCondition);
-                }
-                if (isUIFilterLink(filter) || isUIFilterThrough(filter)) {
-                    return linkFilterConditions.includes(value);
-                }
-                if (isUIFilterTree(filter)) {
-                    return treeFilterConditions.includes(value as RecordFilterCondition);
-                }
-            })
+            .filter(({value}) => allowedConditions.includes(value))
             .map(option => ({
                 ...option,
                 label:
                     isUIFilterStandard(filter) && option.textByFormat?.[filter.attribute.format]
-                        ? option.textByFormat?.[filter.attribute.format]
+                        ? option.textByFormat[filter.attribute.format]
                         : option.label,
             })),
     };

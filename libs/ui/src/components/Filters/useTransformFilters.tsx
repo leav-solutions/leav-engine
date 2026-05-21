@@ -35,6 +35,19 @@ import dayjs from 'dayjs';
 import {type TFunction} from 'i18next';
 import {type ITreeFilters} from './context/useGetTreeFilters';
 
+// --- Shared types ---
+
+type QueryAttributeItem = NonNullable<ExplorerAttributesQuery['attributes']>['list'][number];
+
+type AttributeDetailsLinkAttributeWithPermissionsFragment = AttributeDetailsLinkAttributeFragment & {
+    permissions: {access_attribute: boolean};
+};
+type AttributeDetailsTreeAttributeWithPermissionsFragment = AttributeDetailsTreeAttributeFragment & {
+    permissions: {access_attribute: boolean};
+};
+
+// --- Type guards ---
+
 const _isValidFieldFilter = (filter: ViewDetailsFilterFragment | UIFilter): filter is ValidFieldFilter =>
     !!filter.field;
 
@@ -43,7 +56,7 @@ const _isValidFieldFilterThrough = (filter: ValidFilter): filter is ValidFieldFi
 
 const _isValidFieldFilterStandardValuesList = (
     filter: ValidFilter,
-    attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number],
+    attribute: QueryAttributeItem,
 ): filter is ValidFieldFilterStandardValuesList & {attribute: StandardAttributeDetailsFragment} =>
     valueListTextConditions.includes(filter.condition as RecordFilterCondition) &&
     [AttributeType.simple, AttributeType.advanced].includes(attribute.type) &&
@@ -52,23 +65,148 @@ const _isValidFieldFilterStandardValuesList = (
 
 const _isValidFieldFilterLinkValuesList = (
     filter: ValidFilter,
-    attribute: NonNullable<ExplorerAttributesQuery['attributes']>['list'][number],
+    attribute: QueryAttributeItem,
 ): filter is ValidFieldFilterLinkValuesList & {attribute: LinkAttributeDetailsFragment} =>
     valueListTextConditions.includes(filter.condition as RecordFilterCondition) &&
     [AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type) &&
     'valuesList' in attribute &&
     !!attribute.valuesList?.enable;
 
-type AttributeDetailsLinkAttributeWithPermissionsFragment = AttributeDetailsLinkAttributeFragment & {
-    permissions: {
-        access_attribute: boolean;
+// --- Per-type converters (pure, module-level) ---
+
+const _toStandardUIFilter = (
+    filter: ValidFilter,
+    attributeData: QueryAttributeItem,
+    base: IUIFilterBaseAttribute,
+    t: TFunction,
+): IUIFilterStandard | IUIFilterStandardValueList => {
+    if (_isValidFieldFilterStandardValuesList(filter, attributeData)) {
+        const newFilter: IUIFilterStandardValueList = {
+            field: filter.field,
+            // TODO: save filter values as string[] when filter and handle fields with libraries
+            value: filter.value ? [filter.value] : [],
+            hidden: filter.hidden ?? false,
+            id: window.crypto.randomUUID(),
+            condition: (filter.condition as RecordFilterCondition) ?? null,
+            attribute: {
+                ...base,
+                format: attributeData.format!,
+                valuesList: (attributeData as StandardAttributeDetailsFragment).valuesList!,
+            },
+            withEmptyValues: filter.withEmptyValues ?? false,
+        };
+        return newFilter;
+    }
+
+    let formattedValue: string;
+    if (attributeData.format === AttributeFormat.boolean && filter.value) {
+        formattedValue = filter.value === 'true' ? t('explorer.true') : t('explorer.false');
+    }
+    if (attributeData.format === AttributeFormat.date && filter.value) {
+        formattedValue = dayjs(filter.value).format('YYYY-MM-DD');
+    }
+
+    const newFilter: IUIFilterStandard = {
+        field: filter.field,
+        value: filter.value ?? null,
+        formattedValue,
+        hidden: filter.hidden ?? false,
+        id: window.crypto.randomUUID(),
+        condition: (filter.condition as RecordFilterCondition) ?? null,
+        attribute: {
+            ...base,
+            format: attributeData.format!,
+            smartFilter: (attributeData as StandardAttributeDetailsFragment).smart_filter ?? undefined,
+        },
+        withEmptyValues: filter.withEmptyValues ?? false,
     };
+    return newFilter;
 };
-type AttributeDetailsTreeAttributeWithPermissionsFragment = AttributeDetailsTreeAttributeFragment & {
-    permissions: {
-        access_attribute: boolean;
+
+const _toLinkUIFilter = (
+    filter: ValidFilter,
+    attributeData: AttributeDetailsLinkAttributeWithPermissionsFragment,
+    base: IUIFilterBaseAttribute,
+): IUIFilterThrough | IUIFilterLinkValueList | IUIFilterLink => {
+    if (_isValidFieldFilterThrough(filter)) {
+        const newFilter: IUIFilterThrough = {
+            field: filter.field,
+            value: filter.value ?? null,
+            hidden: filter.hidden ?? false,
+            id: window.crypto.randomUUID(),
+            condition: filter.condition,
+            attribute: {
+                ...base,
+                linkedLibrary: attributeData.linked_library!,
+                smartFilter: attributeData.smart_filter ?? undefined,
+            },
+            subCondition: (filter.subCondition as RecordFilterCondition) ?? null,
+            subField: filter.subField,
+        };
+        return newFilter;
+    }
+
+    if (_isValidFieldFilterLinkValuesList(filter, attributeData)) {
+        const newFilter: IUIFilterLinkValueList = {
+            field: filter.field,
+            // TODO: save filter values as string[] when filter and handle fields with libraries
+            value: filter.value ? [filter.value] : [],
+            hidden: filter.hidden ?? false,
+            id: window.crypto.randomUUID(),
+            condition: filter.condition,
+            attribute: {
+                ...base,
+                linkedLibrary: attributeData.linked_library!,
+                valuesList: (attributeData as LinkAttributeDetailsFragment).valuesList!,
+                smartFilter: attributeData.smart_filter ?? undefined,
+            },
+            withEmptyValues: filter.withEmptyValues ?? false,
+        };
+        return newFilter;
+    }
+
+    const newFilter: IUIFilterLink = {
+        field: filter.field,
+        value: filter.value ?? null,
+        hidden: filter.hidden ?? false,
+        id: window.crypto.randomUUID(),
+        condition: filter.condition,
+        attribute: {
+            ...base,
+            linkedLibrary: attributeData.linked_library!,
+            smartFilter: attributeData.smart_filter ?? undefined,
+        },
     };
+    return newFilter;
 };
+
+const _toTreeUIFilter = (
+    filter: ValidFilter,
+    attributeData: AttributeDetailsTreeAttributeWithPermissionsFragment,
+    base: IUIFilterBaseAttribute,
+    treeFilters: ITreeFilters,
+): IUIFilterTree => {
+    const treeData = treeFilters[filter.field];
+
+    const newFilter: IUIFilterTree = {
+        field: [filter.field],
+        // TODO: save filter values as string[] when tree filter and handle fields with libraries
+        value: filter.value ? [filter.value] : (treeData?.map(tree => tree.value) ?? null),
+        formattedValue: filter.value ? [filter.value] : treeData?.map(tree => tree.label),
+        nodes: filter.value ? undefined : treeData?.map(tree => ({libraryId: tree.libraryId, nodeId: tree.nodeId})),
+        hidden: filter.hidden ?? false,
+        id: window.crypto.randomUUID(),
+        attribute: {
+            ...base,
+            linkedTree: attributeData.linked_tree!,
+        },
+        condition: (filter.condition as RecordFilterCondition) ?? RecordFilterCondition.EQUAL,
+        withEmptyValues: filter.withEmptyValues ?? false,
+    };
+    return newFilter;
+};
+
+// --- Public exports ---
 
 export const isLinkAttributeDetails = (
     linkAttributeData: NonNullable<ExplorerLinkAttributeQuery['attributes']>['list'][number],
@@ -83,7 +221,7 @@ export const isLinkAttributeDetails = (
 
 export type ValidFiltersArgument = GetViewsListQuery['views']['list'][number]['filters'] | UIFilter[];
 
-export type AttributesById = Record<string, NonNullable<ExplorerAttributesQuery['attributes']>['list'][number]>;
+export type AttributesById = Record<string, QueryAttributeItem>;
 
 export const useTransformFilters = () => {
     const {lang} = useLang();
@@ -93,11 +231,10 @@ export const useTransformFilters = () => {
             if (!_isValidFieldFilter(filter)) {
                 return acc;
             }
-            const _isThroughFilter = filter.field.includes('.');
 
-            if (_isThroughFilter) {
-                // Hack because view filters does not have the necessary data to be transformed directly to UI filter,
-                // we need to split the field to get the subCondition and subField for through filter, may be fix after LEAVC-569
+            if (filter.field.includes('.')) {
+                // Hack: view filters lack the data to transform directly to UI filter —
+                // split the field to extract subCondition and subField. May be fixed after LEAVC-569.
                 const [field, ...subFields] = filter.field.split('.');
                 const throughFilter: ValidFieldFilterThrough = {
                     field,
@@ -127,152 +264,33 @@ export const useTransformFilters = () => {
         t: TFunction;
     }): UIFilter[] =>
         (filters ?? []).reduce<UIFilter[]>((acc, filter) => {
-            if (!attributesDataById[filter.field]) {
+            const attributeData = attributesDataById[filter.field];
+            if (!attributeData) {
                 console.warn(`Attribute ${filter.field} from user view not found in database.`);
                 return acc;
             }
 
-            const filterAttributeBase: IUIFilterBaseAttribute = {
-                id: attributesDataById[filter.field].id,
-                label: localizedTranslation(attributesDataById[filter.field].label, lang),
-                type: attributesDataById[filter.field].type,
+            const base: IUIFilterBaseAttribute = {
+                id: attributeData.id,
+                label: localizedTranslation(attributeData.label, lang),
+                type: attributeData.type,
             };
 
-            // filter is standardFilter
-            if (isStandardAttribute(filterAttributeBase.type)) {
-                const attributeData = attributesDataById[filter.field];
-                if (_isValidFieldFilterStandardValuesList(filter, attributeData)) {
-                    const newFilter: IUIFilterStandardValueList = {
-                        field: filter.field,
-                        // TODO : save filter values as string[] when filter and handle fields with libraries
-                        value: filter.value ? [filter.value] : [],
-                        hidden: filter.hidden ?? false,
-                        id: window.crypto.randomUUID(),
-                        condition: (filter.condition as RecordFilterCondition) ?? null,
-                        attribute: {
-                            ...filterAttributeBase,
-                            format: attributeData.format!,
-                            valuesList: (attributeData as StandardAttributeDetailsFragment).valuesList!,
-                        },
-                        withEmptyValues: filter.withEmptyValues ?? false,
-                    };
-                    acc.push(newFilter);
-                } else {
-                    let formattedValue: string;
-                    if (attributeData.format === AttributeFormat.boolean && filter.value) {
-                        formattedValue = filter.value === 'true' ? t('explorer.true') : t('explorer.false');
-                    }
-
-                    if (attributeData.format === AttributeFormat.date && filter.value) {
-                        formattedValue = dayjs(filter.value).format('YYYY-MM-DD');
-                    }
-
-                    const newFilter: IUIFilterStandard = {
-                        field: filter.field,
-                        value: filter.value ?? null,
-                        formattedValue,
-                        hidden: filter.hidden ?? false,
-                        id: window.crypto.randomUUID(),
-                        condition: (filter.condition as RecordFilterCondition) ?? null,
-                        attribute: {
-                            ...filterAttributeBase,
-                            format: attributeData.format!,
-                            smartFilter: (attributeData as StandardAttributeDetailsFragment).smart_filter ?? undefined,
-                        },
-                        withEmptyValues: filter.withEmptyValues ?? false,
-                    };
-                    acc.push(newFilter);
-                }
+            if (isStandardAttribute(base.type)) {
+                acc.push(_toStandardUIFilter(filter, attributeData, base, t));
+                return acc;
             }
 
-            if (isLinkAttribute(filterAttributeBase.type)) {
-                const attributeData = attributesDataById[
-                    filter.field
-                ] as AttributeDetailsLinkAttributeWithPermissionsFragment;
-                if (_isValidFieldFilterThrough(filter)) {
-                    const newFilter: IUIFilterThrough = {
-                        field: filter.field,
-                        value: filter.value ?? null,
-                        hidden: filter.hidden ?? false,
-                        id: window.crypto.randomUUID(),
-                        condition: filter.condition,
-                        attribute: {
-                            ...filterAttributeBase,
-                            linkedLibrary: attributeData.linked_library!,
-                            smartFilter: attributeData.smart_filter ?? undefined,
-                        },
-                        subCondition: filter.subCondition ?? null,
-                        subField: filter.subField,
-                    };
-                    acc.push(newFilter);
-                } else if (_isValidFieldFilterLinkValuesList(filter, attributeData)) {
-                    const newFilter: IUIFilterLinkValueList = {
-                        field: filter.field,
-                        // TODO : save filter values as string[] when filter and handle fields with libraries
-                        value: filter.value ? [filter.value] : [],
-                        hidden: filter.hidden ?? false,
-                        id: window.crypto.randomUUID(),
-                        condition: filter.condition,
-                        attribute: {
-                            ...filterAttributeBase,
-                            linkedLibrary: attributeData.linked_library!,
-                            valuesList: (attributeData as LinkAttributeDetailsFragment).valuesList!,
-                            smartFilter: attributeData.smart_filter ?? undefined,
-                        },
-                        withEmptyValues: filter.withEmptyValues ?? false,
-                    };
-
-                    acc.push(newFilter);
-                } else {
-                    const newFilter: IUIFilterLink = {
-                        field: filter.field,
-                        value: filter.value ?? null,
-                        hidden: filter.hidden ?? false,
-                        id: window.crypto.randomUUID(),
-                        condition: filter.condition,
-                        attribute: {
-                            ...filterAttributeBase,
-                            linkedLibrary: attributeData.linked_library!,
-                            smartFilter: attributeData.smart_filter ?? undefined,
-                        },
-                    };
-
-                    acc.push(newFilter);
-                }
+            if (isLinkAttribute(base.type)) {
+                const linkAttr = attributeData as AttributeDetailsLinkAttributeWithPermissionsFragment;
+                acc.push(_toLinkUIFilter(filter, linkAttr, base));
+                return acc;
             }
 
-            if (isTreeAttribute(filterAttributeBase.type) && !_isValidFieldFilterThrough(filter)) {
-                const attributeData = attributesDataById[
-                    filter.field
-                ] as AttributeDetailsTreeAttributeWithPermissionsFragment;
-                const newFilter: IUIFilterTree = {
-                    field: [filter.field],
-                    // TODO : save filter values as string[] when tree filter and handle fields with libraries
-                    value: filter.value
-                        ? [filter.value]
-                        : treeFilters[filter.field]
-                          ? treeFilters[filter.field].map(tree => tree.value)
-                          : null,
-                    formattedValue: filter.value
-                        ? [filter.value]
-                        : treeFilters[filter.field]
-                          ? treeFilters[filter.field].map(tree => tree.label)
-                          : undefined,
-                    nodes: filter.value
-                        ? undefined
-                        : treeFilters[filter.field]
-                          ? treeFilters[filter.field].map(tree => ({libraryId: tree.libraryId, nodeId: tree.nodeId}))
-                          : undefined,
-                    hidden: filter.hidden ?? false,
-                    id: window.crypto.randomUUID(),
-                    attribute: {
-                        ...filterAttributeBase,
-                        linkedTree: attributeData.linked_tree!,
-                    },
-                    condition: filter.condition ?? RecordFilterCondition.EQUAL,
-                    withEmptyValues: filter.withEmptyValues ?? false,
-                };
-                acc.push(newFilter);
+            if (isTreeAttribute(base.type) && !_isValidFieldFilterThrough(filter)) {
+                const treeAttr = attributeData as AttributeDetailsTreeAttributeWithPermissionsFragment;
+                acc.push(_toTreeUIFilter(filter, treeAttr, base, treeFilters));
+                return acc;
             }
 
             return acc;
