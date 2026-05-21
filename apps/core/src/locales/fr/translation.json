@@ -58,6 +58,7 @@
         "INVALID_VALUES": "Valeurs non valides",
         "INVALID_VARIABLE_FUNCTION": "Nom de fonction de variable inconnu : {{functionName}}",
         "INVALID_VERSION": "Version non valide: ",
+        "INVALID_VIEW_V2_INPUT": "Vue invalide : {{details}}",
         "LIBRARY_FORBIDDEN_AS_CHILD": "Librairie non autorisée pour les parents sélectionnés",
         "METADATA_PERMISSION_ERROR": "Action interdite sur les champs {{fields}}",
         "MISSING_ACTION_PREFIX": "Préfixe manquant sur les actions: {{actions}}",

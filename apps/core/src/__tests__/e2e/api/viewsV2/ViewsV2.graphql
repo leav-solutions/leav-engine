@@ -14,22 +14,32 @@ query GetViewsV2($library: ID!) {
                     id
                 }
             }
+            display {
+                type
+                attributes {
+                    attribute {
+                        id
+                    }
+                    visible
+                }
+            }
             modified_at
             created_at
             shared
             label
             filters {
-                field
-                value
+                pinned
+                attributes {
+                    id
+                }
+                values
                 condition
-                operator
             }
-            sort {
-                field
+            sorts {
+                attributes {
+                    id
+                }
                 order
-            }
-            attributes {
-                id
             }
         }
     }

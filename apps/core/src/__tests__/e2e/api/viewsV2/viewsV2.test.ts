@@ -14,11 +14,24 @@ describe('ViewsV2', () => {
             const {createViewV2} = await adminUserSdk.CreateViewV2({
                 view: {
                     library: testLibName,
-                    display: {type: ViewV2Types.list},
+                    display: {
+                        type: ViewV2Types.list,
+                        attributes: [
+                            {attributeId: 'id', visible: true},
+                            {attributeId: 'label', visible: true},
+                        ],
+                    },
                     shared: true,
                     label: {en: 'test_first_view'},
-                    filters: [{field: 'label', value: 'Test', condition: RecordFilterCondition.EQUAL}],
-                    sort: [{field: 'created_at', order: SortOrder.asc}],
+                    filters: [
+                        {
+                            pinned: false,
+                            attributes: ['label'],
+                            values: ['Test'],
+                            condition: RecordFilterCondition.EQUAL,
+                        },
+                    ],
+                    sorts: [{attributes: ['created_at'], order: SortOrder.asc}],
                 },
             });
 
@@ -30,12 +43,46 @@ describe('ViewsV2', () => {
             const {viewsV2} = await adminUserSdk.GetViewsV2({library: testLibName});
 
             expect(viewsV2.list.length).toBeGreaterThanOrEqual(1);
-            expect(viewsV2.list[0].created_by.whoAmI.id).toBeTruthy();
+
+            const createdView = viewsV2.list[0];
+            expect(createdView.created_by.whoAmI.id).toBeTruthy();
+            expect(createdView.shared).toBe(true);
+            expect(createdView.label).toEqual({en: 'test_first_view'});
+            expect(createdView.display).toEqual({
+                type: ViewV2Types.list,
+                attributes: [
+                    {attribute: expect.objectContaining({id: 'id'}), visible: true},
+                    {attribute: expect.objectContaining({id: 'label'}), visible: true},
+                ],
+            });
+            expect(createdView.filters).toEqual([
+                {
+                    pinned: false,
+                    attributes: [expect.objectContaining({id: 'label'})],
+                    values: ['Test'],
+                    condition: RecordFilterCondition.EQUAL,
+                },
+            ]);
+            expect(createdView.sorts).toEqual([
+                {
+                    attributes: [expect.objectContaining({id: 'created_at'})],
+                    order: SortOrder.asc,
+                },
+            ]);
         });
 
         test('Update viewV2', async () => {
             const {updateViewV2} = await adminUserSdk.UpdateViewV2({
-                view: {id: viewId, display: {type: ViewV2Types.list}},
+                view: {
+                    id: viewId,
+                    display: {
+                        type: ViewV2Types.list,
+                        attributes: [
+                            {attributeId: 'id', visible: true},
+                            {attributeId: 'label', visible: true},
+                        ],
+                    },
+                },
             });
 
             expect(updateViewV2.id).toBe(viewId);
@@ -53,11 +100,24 @@ describe('ViewsV2', () => {
             const {createViewV2} = await adminUserSdk.CreateViewV2({
                 view: {
                     library: testLibName,
-                    display: {type: ViewV2Types.list},
+                    display: {
+                        type: ViewV2Types.list,
+                        attributes: [
+                            {attributeId: 'id', visible: true},
+                            {attributeId: 'label', visible: true},
+                        ],
+                    },
                     shared,
                     label: {en: 'test_first_view'},
-                    filters: [{field: 'label', value: 'Test', condition: RecordFilterCondition.EQUAL}],
-                    sort: [{field: 'created_at', order: SortOrder.asc}],
+                    filters: [
+                        {
+                            pinned: false,
+                            attributes: ['label'],
+                            values: ['Test'],
+                            condition: RecordFilterCondition.EQUAL,
+                        },
+                    ],
+                    sorts: [{attributes: ['created_at'], order: SortOrder.asc}],
                 },
             });
             return createViewV2.id;
@@ -72,7 +132,7 @@ describe('ViewsV2', () => {
             it('Should not be able to edit viewsV2 owned by other users', async () => {
                 const id = await createViewAsAdmin(false);
                 await expect(
-                    guestUserSdk.UpdateViewV2({view: {id, display: {type: ViewV2Types.list}}}),
+                    guestUserSdk.UpdateViewV2({view: {id, display: {type: ViewV2Types.list, attributes: []}}}),
                 ).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
             });
 
@@ -91,7 +151,7 @@ describe('ViewsV2', () => {
             it('Should not be able to edit shared viewsV2 owned by other users', async () => {
                 const id = await createViewAsAdmin(true);
                 await expect(
-                    guestUserSdk.UpdateViewV2({view: {id, display: {type: ViewV2Types.list}}}),
+                    guestUserSdk.UpdateViewV2({view: {id, display: {type: ViewV2Types.list, attributes: []}}}),
                 ).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
             });
 

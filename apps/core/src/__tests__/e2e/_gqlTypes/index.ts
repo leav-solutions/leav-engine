@@ -1201,19 +1201,36 @@ export enum ViewTypes {
 }
 
 export type ViewV2CreateInput = {
-  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
-  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   display: ViewV2DisplayInput;
-  filters?: InputMaybe<Array<RecordFilterInput>>;
+  filters?: InputMaybe<Array<ViewV2FilterInput>>;
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
   shared: Scalars['Boolean']['input'];
-  sort?: InputMaybe<Array<RecordSortInput>>;
+  sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
 
+export type ViewV2DisplayAttributeInput = {
+  attributeId: Scalars['ID']['input'];
+  visible: Scalars['Boolean']['input'];
+};
+
 export type ViewV2DisplayInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<ViewV2DisplayAttributeInput>>;
   type: ViewV2Types;
+};
+
+export type ViewV2FilterInput = {
+  attributes: Array<Scalars['ID']['input']>;
+  condition: RecordFilterCondition;
+  pinned: Scalars['Boolean']['input'];
+  values: Array<InputMaybe<Scalars['String']['input']>>;
+};
+
+export type ViewV2SortInput = {
+  attributes: Array<Scalars['ID']['input']>;
+  order: SortOrder;
 };
 
 export enum ViewV2Types {
@@ -1223,16 +1240,14 @@ export enum ViewV2Types {
 }
 
 export type ViewV2UpdateInput = {
-  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
-  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   display?: InputMaybe<ViewV2DisplayInput>;
-  filters?: InputMaybe<Array<RecordFilterInput>>;
+  filters?: InputMaybe<Array<ViewV2FilterInput>>;
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
-  sort?: InputMaybe<Array<RecordSortInput>>;
+  sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
 
@@ -1493,7 +1508,7 @@ export type GetViewsV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, created_by: { whoAmI: { id: string } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, attributes?: Array<{ id: string }> | null }> } };
+export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, created_by: { whoAmI: { id: string } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, attributes: Array<{ id: string }> }>, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string }> }> }> } };
 
 export type GetViewV2QueryVariables = Exact<{
   viewId: Scalars['ID']['input'];
@@ -1991,22 +2006,32 @@ export const GetViewsV2Document = gql`
           id
         }
       }
+      display {
+        type
+        attributes {
+          attribute {
+            id
+          }
+          visible
+        }
+      }
       modified_at
       created_at
       shared
       label
       filters {
-        field
-        value
+        pinned
+        attributes {
+          id
+        }
+        values
         condition
-        operator
       }
-      sort {
-        field
+      sorts {
+        attributes {
+          id
+        }
         order
-      }
-      attributes {
-        id
       }
     }
   }

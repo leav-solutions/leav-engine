@@ -2,6 +2,7 @@ import {type IValidateHelper} from '../helpers/validate';
 import {type ITreeDomain} from '../tree/treeDomain';
 import {type IViewV2Repo} from '../../infra/viewV2/viewV2Repo';
 import dayjs from 'dayjs';
+import {type z} from 'zod';
 import {type IUtils} from '../../utils/utils';
 import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
@@ -14,6 +15,7 @@ import {
     type IViewV2UpdateInput,
     type IViewV2ValuesVersion,
 } from '../../_types/viewsV2';
+import {viewV2UpdateFieldsSchema, viewV2UserFieldsSchema} from './viewV2ZodSchema';
 
 export interface IViewV2Domain {
     createViewV2(input: IViewV2CreateInput, ctx: IQueryInfos): Promise<IViewV2>;
@@ -36,6 +38,22 @@ export default function ({
     'core.infra.viewV2': viewV2Repo,
     'core.utils': utils,
 }: IViewV2DomainDeps): IViewV2Domain {
+    const _parseInput = <T extends z.ZodTypeAny>(schema: T, input: unknown): void => {
+        const result = schema.safeParse(input);
+        if (result.success) {
+            return;
+        }
+        const details = result.error.issues.reduce(
+            (acc, issue) => {
+                const path = issue.path.join('.') || '_root';
+                acc[path] = {msg: Errors.INVALID_VIEW_V2_INPUT, vars: {details: issue.message}};
+                return acc;
+            },
+            {} as Record<string, {msg: string; vars: Record<string, unknown>}>,
+        );
+        throw new ValidationError(details, 'Invalid view v2 input');
+    };
+
     const _validateValuesVersions = async (valuesVersions: IViewV2ValuesVersion, ctx: IQueryInfos): Promise<void> => {
         for (const treeId of Object.keys(valuesVersions)) {
             await validationHelper.validateTree(treeId, true, ctx);
@@ -61,6 +79,8 @@ export default function ({
 
     return {
         async createViewV2(input: IViewV2CreateInput, ctx: IQueryInfos): Promise<IViewV2> {
+            _parseInput(viewV2UserFieldsSchema, input);
+
             await validationHelper.validateLibrary(input.library, ctx);
 
             if (input.valuesVersions) {
@@ -73,12 +93,14 @@ export default function ({
                 {
                     library: input.library,
                     label: input.label,
-                    display: input.display,
+                    display: {
+                        type: input.display.type,
+                        attributes: input.display.attributes ?? [],
+                    },
                     shared: input.shared,
                     filters: input.filters ?? [],
-                    sort: input.sort ?? [],
+                    sorts: input.sorts ?? [],
                     valuesVersions: input.valuesVersions,
-                    attributes: input.attributes ?? [],
                     created_by: ctx.userId,
                     created_at: now,
                     modified_at: now,
@@ -87,6 +109,9 @@ export default function ({
             );
         },
         async updateViewV2(input: IViewV2UpdateInput, ctx: IQueryInfos): Promise<IViewV2> {
+            const {id: _id, ...userFields} = input;
+            _parseInput(viewV2UpdateFieldsSchema, userFields);
+
             if (input.library !== undefined) {
                 await validationHelper.validateLibrary(input.library, ctx);
             }
