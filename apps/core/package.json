@@ -27,8 +27,8 @@
         "build": "scripts/build.js",
         "clean": "rm -rf dist dist-spec dist-types tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
         "build-types": "tsc -b tsconfig.types.json",
-        "tscheck": "tsc --noEmit -p tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
-        "tscheck:watch": "tsc -w --noEmit -p tsconfig.build.json"
+        "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
+        "tscheck:watch": "tsc -b -w tsconfig.json"
     },
     "main": "dist/index.js",
     "author": "",

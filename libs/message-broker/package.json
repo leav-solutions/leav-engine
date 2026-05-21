@@ -6,8 +6,8 @@
         "prepublishOnly": "npm run build",
         "build": "tsc --build tsconfig.build.json",
         "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
-        "tscheck": "tsc --noEmit -p tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
-        "tscheck:watch": "tsc -w --noEmit -p tsconfig.build.json",
+        "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
+        "tscheck:watch": "tsc -b -w tsconfig.json",
         "test": "vitest run -c vitest.config.ts",
         "test:ci": "vitest run -c vitest.config.ts --maxWorkers=2 --reporter=verbose",
         "test:commit": "vitest run -c vitest.config.ts --changed"
