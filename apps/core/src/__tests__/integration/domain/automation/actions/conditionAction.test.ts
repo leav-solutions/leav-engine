@@ -72,7 +72,7 @@ describe('conditionAction', () => {
                 results: {previousStep: 42},
             };
 
-            const result = await action.execute({expression: 'results.previousStep == 42'}, stateWithResults, ctx);
+            const result = await action.execute({expression: '$.results.previousStep == 42'}, stateWithResults, ctx);
             expect(result).toEqual({status: ActionExecutionResultStatus.CONTINUE, result: true});
         });
     });
@@ -93,7 +93,7 @@ describe('conditionAction', () => {
                 ...baseState,
                 results: {previousStep: 0},
             };
-            const result = await action.execute({expression: 'results.previousStep == 1'}, stateWithResults, ctx);
+            const result = await action.execute({expression: '$.results.previousStep == 1'}, stateWithResults, ctx);
             expect(result).toEqual({status: ActionExecutionResultStatus.STOP, reason: 'condition returned false'});
         });
     });
@@ -128,12 +128,12 @@ describe('conditionAction', () => {
         };
 
         it('returns CONTINUE when a record field satisfies the condition', async () => {
-            const result = await action.execute({expression: 'currentRecord.price > 10'}, stateWithRecord, ctx);
+            const result = await action.execute({expression: '$.currentRecord.price > 10'}, stateWithRecord, ctx);
             expect(result).toEqual({status: ActionExecutionResultStatus.CONTINUE, result: true});
         });
 
         it('returns STOP when a record field does not satisfy the condition', async () => {
-            const result = await action.execute({expression: 'currentRecord.price > 100'}, stateWithRecord, ctx);
+            const result = await action.execute({expression: '$.currentRecord.price > 100'}, stateWithRecord, ctx);
             expect(result).toEqual({status: ActionExecutionResultStatus.STOP, reason: 'condition returned false'});
         });
 
@@ -144,7 +144,7 @@ describe('conditionAction', () => {
             };
 
             const result = await action.execute(
-                {expression: 'currentRecord.price < results.threshold'},
+                {expression: '$.currentRecord.price < $.results.threshold'},
                 stateWithBoth,
                 ctx,
             );

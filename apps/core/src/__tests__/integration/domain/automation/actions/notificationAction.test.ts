@@ -71,7 +71,7 @@ describe('notificationAction', () => {
             };
 
             const result = await notificationAction.execute(
-                {title: 'Test', recipients: '[results.targetUserId]', message: '"msg"'},
+                {title: 'Test', recipients: '[$.results.targetUserId]', message: '"msg"'},
                 state,
                 ctx,
             );
@@ -89,7 +89,7 @@ describe('notificationAction', () => {
             };
 
             await notificationAction.execute(
-                {title: 'Test', recipients: `["${systemUserId}"]`, message: 'results.greeting + " !"'},
+                {title: 'Test', recipients: `["${systemUserId}"]`, message: '$.results.greeting + " !"'},
                 state,
                 ctx,
             );
@@ -127,7 +127,7 @@ describe('notificationAction', () => {
 
         it('exposes currentRecord fields in the recipients expression', async () => {
             const result = await notificationAction.execute(
-                {title: 'Test', recipients: '[currentRecord.assigneeId]', message: '"msg"'},
+                {title: 'Test', recipients: '[$.currentRecord.assigneeId]', message: '"msg"'},
                 stateWithRecord,
                 ctx,
             );
@@ -140,7 +140,7 @@ describe('notificationAction', () => {
 
         it('exposes currentRecord fields in the message expression', async () => {
             await notificationAction.execute(
-                {title: 'Test', recipients: `["${systemUserId}"]`, message: '"Record: " + currentRecord.id'},
+                {title: 'Test', recipients: `["${systemUserId}"]`, message: '"Record: " + $.currentRecord.id'},
                 stateWithRecord,
                 ctx,
             );

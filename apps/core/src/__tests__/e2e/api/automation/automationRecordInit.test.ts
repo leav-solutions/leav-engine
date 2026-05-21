@@ -126,9 +126,9 @@ describe('Automation RECORD_INIT', () => {
                     type: AutomationRuleActions.notification,
                     params: {
                         title: 'Record initialized',
-                        recipients: "currentRecord | getValues('created_by') | map('value.id')", // notify the creator of the record
+                        recipients: "$.currentRecord | getValues('created_by') | map('value.id')", // notify the creator of the record
                         message:
-                            '"Record with id " +  currentRecord.id + " has been initialized at year " + ((currentRecord | getValues(\'created_at\') | first) * 1000) | dateTimeFormat("yyyy")',
+                            '"Record with id " +  $.currentRecord.id + " has been initialized at year " + (($.currentRecord | getValues(\'created_at\') | first) * 1000) | dateTimeFormat("yyyy")',
                         mail: true,
                     } satisfies NotificationActionParams,
                 },
@@ -159,7 +159,7 @@ describe('Automation RECORD_INIT', () => {
                         type: AutomationRuleActions.jexlCalculation,
                         params: {
                             formula:
-                                "\"Default library label from email: \" + currentRecord | getValues('created_by') | first | getValues('email') | first",
+                                "\"Default library label from email: \" + $.currentRecord | getValues('created_by') | first | getValues('email') | first",
                         },
                     },
                     {
@@ -335,7 +335,7 @@ describe('Automation RECORD_INIT', () => {
                     {
                         type: AutomationRuleActions.jexlCalculation,
                         params: {
-                            formula: `[{ id: "${e2eGuestUser().userId}" }, { id: "${e2eNonAdminUser().userId}" }]`,
+                            formula: `[getRecord($, "users", "${e2eGuestUser().userId}"), getRecord($, "users", "${e2eNonAdminUser().userId}")]`,
                         },
                     },
                     {
@@ -352,7 +352,7 @@ describe('Automation RECORD_INIT', () => {
                 await adminUserSdk.DeleteAutomationRule({ruleId});
             });
 
-            test('should set value from previous step result (jexl calculation)', async () => {
+            test('should set value from previous step result (jexl calculation with getRecord)', async () => {
                 const res = await adminUserSdk.GetRecordByIdLinkValuesProperty({
                     attributeId: testLibraryUsersAttrId,
                     libraryId: testLibraryId,
@@ -375,7 +375,7 @@ describe('Automation RECORD_INIT', () => {
                     {
                         type: AutomationRuleActions.jexlCalculation,
                         params: {
-                            formula: `[{ id: "${adminsGroupId}" }]`,
+                            formula: `[getRecord($, "users_groups", "${adminsGroupId}") | toNode("users_groups")]`,
                         },
                     },
                     {
@@ -392,7 +392,7 @@ describe('Automation RECORD_INIT', () => {
                 await adminUserSdk.DeleteAutomationRule({ruleId});
             });
 
-            test('should set value from previous step result (jexl calculation)', async () => {
+            test('should set value from previous step result (jexl calculation with getRecord and toNode)', async () => {
                 const res = await adminUserSdk.GetRecordByIdTreeValuesProperty({
                     attributeId: testLibraryGroupsAttrId,
                     libraryId: testLibraryId,

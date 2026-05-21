@@ -78,7 +78,7 @@ describe('jexlCalculationAction', () => {
                                 params: [
                                     {
                                         name: 'Formula',
-                                        value: `currentRecord | getValues("${attrSimpleId}") | first | length`,
+                                        value: `$.currentRecord | getValues("${attrSimpleId}") | first | length`,
                                     },
                                 ],
                             },
@@ -114,7 +114,7 @@ describe('jexlCalculationAction', () => {
                                 params: [
                                     {
                                         name: 'Formula',
-                                        value: 'currentValues | map("value | uppercase")',
+                                        value: '$.currentValues | map("value | uppercase")',
                                     },
                                 ],
                             },
@@ -161,7 +161,7 @@ describe('jexlCalculationAction', () => {
                                 params: [
                                     {
                                         name: 'Formula',
-                                        value: 'currentUser.lang + " - " + first(getValues(currentUser.record, "email"))',
+                                        value: '$.currentUser.lang + " - " + first(getValues($.currentUser.record, "email"))',
                                     },
                                 ],
                             },
