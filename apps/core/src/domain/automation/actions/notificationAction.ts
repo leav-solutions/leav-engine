@@ -4,6 +4,9 @@ import {type ZodMetaUISchema} from '../../../_types/jsonSchemaForm';
 import {type INotificationDomain} from '../../notification/notificationDomain';
 import {NotificationChannels} from '../../../_types/notification';
 import {type IJexlAutomation} from '../jexl/jexlAutomation';
+import {type IRecord} from '../../../_types/record';
+import {USERS_LIBRARY} from '../../../_types/library';
+import ValidationError from '../../../errors/ValidationError';
 
 const notificationActionParamsSchema = z.object({
     title: z.string().meta({
@@ -17,7 +20,7 @@ const notificationActionParamsSchema = z.object({
     recipients: z.string().meta({
         title: 'Recipients (Jexl expression)',
         description:
-            'The Jexl expression to determine the recipients of the notification with a list of userIds (https://aristid.atlassian.net/wiki/spaces/PRODUIT/pages/2087256077/Calcul+Jexl). ',
+            'The Jexl expression to determine the recipients of the notification with a list of user record (https://aristid.atlassian.net/wiki/spaces/PRODUIT/pages/2087256077/Calcul+Jexl). ',
         ui: {
             title: 'automation.form.pipeline.params.notification.recipients',
             placeholder: 'automation.form.pipeline.params.notification.recipients_placeholder',
@@ -56,6 +59,14 @@ export default function ({
     'core.domain.automation.jexl': jexlAutomation,
     'core.domain.notification': notification,
 }: INotificationActionDeps): IAutomationAction<NotificationActionParams> {
+    function _checkIsUserRecord(record: IRecord): boolean {
+        return typeof record.id === 'string' && record.library === USERS_LIBRARY;
+    }
+
+    function _extractRecordIds(records: IRecord[], library: string): string[] {
+        return records.filter(record => record.library === library).map(record => record.id);
+    }
+
     return {
         type: AutomationRuleActions.NOTIFICATION,
         paramsSchema: notificationActionParamsSchema,
@@ -70,14 +81,34 @@ export default function ({
 
             const jexlCtx = jexlAutomation.buildAutomationContext(state, ctx);
 
-            const userIds = await jexlAutomation.eval<string[]>(recipients, jexlCtx);
+            // For now, accept ony users record, but later we could accept groups as well
+            const recipientsRecordMaybeArray = await jexlAutomation.eval<IRecord | IRecord[]>(recipients, jexlCtx);
             const message = await jexlAutomation.eval<string>(jexlMessage, jexlCtx);
 
-            if (!Array.isArray(userIds) || !userIds.every(id => typeof id === 'string')) {
-                throw new Error('Recipients expression must evaluate to an array of strings.');
+            const recipientsRecords = Array.isArray(recipientsRecordMaybeArray)
+                ? recipientsRecordMaybeArray
+                : [recipientsRecordMaybeArray];
+            if (!recipientsRecords.every(_checkIsUserRecord)) {
+                throw new ValidationError(
+                    {
+                        recipients: 'Recipients expression must evaluate to a single or array of user records',
+                    },
+                    'Invalid recipients',
+                    true,
+                    {recipientsRecords},
+                );
             } else if (typeof message !== 'string') {
-                throw new Error('Message expression must evaluate to a string.');
+                throw new ValidationError(
+                    {
+                        message: 'Message expression must evaluate to a string.',
+                    },
+                    'Invalid message',
+                    true,
+                    {message},
+                );
             }
+
+            const userIds = _extractRecordIds(recipientsRecords, USERS_LIBRARY);
 
             if (userIds.length) {
                 await notification.createNotification(
