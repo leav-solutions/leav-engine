@@ -26,8 +26,8 @@
         "benchmark": "tsx src/ benchmark",
         "build": "scripts/build.js",
         "build-types": "tsc -b tsconfig.types.json",
-        "tscheck": "tsc --noEmit -p .",
-        "tscheck:watch": "tsc -w --noEmit -p tsconfig.json"
+        "tscheck": "tsc --noEmit -p tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
+        "tscheck:watch": "tsc -w --noEmit -p tsconfig.build.json"
     },
     "main": "dist/index.js",
     "author": "",

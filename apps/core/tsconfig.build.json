@@ -5,13 +5,18 @@
         "rootDir": "src",
         "outDir": "dist",
         "isolatedModules": false,
-        "declarationMap": false,
-        "declaration": false,
         "sourceMap": true,
-        "composite": false,
+        "composite": true,
+        "tsBuildInfoFile": "dist/tsconfig.build.tsbuildinfo",
         "resolveJsonModule": true,
         "noImplicitReturns": true,
-        // temporary while plugins still develop/test/build in leav src
+        "typeRoots": [
+            "./src/_types",
+            "./node_modules/@types",
+            "./node_modules",
+            "../../node_modules/@types",
+            "../../node_modules"
+        ],
         "paths": {
             "@leav/core/*": ["./src/*"],
             "@leav/*": ["../../libs/*/src"]

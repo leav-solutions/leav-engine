@@ -1,7 +1,7 @@
 import {getConfig} from '../config';
 import {sendToRabbitMQ} from '../rabbitmq/rabbitmq';
 import {setData} from '../redis/redis';
-import {type IParamsExtends} from './../types';
+import {type IConfig, type IParamsExtends} from './../types';
 import {handleCreate, handleDelete, handleMove, handleUpdate} from './events';
 import {checkEvent} from './watch';
 
@@ -172,7 +172,7 @@ describe('test checkEvent', () => {
                 allowFilesList: '',
                 ignoreFilesList: file,
                 rootPath: '/files',
-            }),
+            } as IConfig),
         );
 
         const params = {
@@ -195,7 +195,7 @@ describe('test checkEvent', () => {
                 allowFilesList: '',
                 ignoreFilesList: file + 1,
                 rootPath: '/files',
-            }),
+            } as IConfig),
         );
 
         const params = {

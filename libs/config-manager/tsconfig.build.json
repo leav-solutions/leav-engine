@@ -4,7 +4,10 @@
         "outDir": "dist",
         "rootDir": "src",
         "composite": true,
-        "noImplicitReturns": true
+        "isolatedModules": false,
+        "strictNullChecks": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true
     },
     "include": ["./src"],
     "exclude": ["**/__tests__"]

@@ -13,8 +13,8 @@
         "test:watch": "vitest -c vitest.unit.config.ts",
         "test:integration": "NODE_OPTIONS='--import tsx' vitest run -c vitest.integration.config.ts",
         "prettier": "prettier --write 'src/**/*.ts'",
-        "tscheck": "tsc --noEmit -p .",
-        "tscheck:watch": "tsc -w --noEmit -p ."
+        "tscheck": "tsc --noEmit -p tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
+        "tscheck:watch": "tsc -w --noEmit -p tsconfig.build.json"
     },
     "author": "",
     "license": "LGPL3",

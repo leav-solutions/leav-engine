@@ -1,23 +1,4 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-        "types": ["vitest/globals", "vitest/node", "node"],
-        "outDir": "dist",
-        "isolatedModules": false,
-        "typeRoots": [
-            "./src/_types",
-            "./node_modules/@types",
-            "./node_modules",
-            "../../node_modules/@types",
-            "../../node_modules"
-        ],
-        "noImplicitReturns": true,
-        // "strictNullChecks": true
-        // temporary while plugins still develop/test/build in leav src
-        "paths": {
-            "@leav/core/*": ["./src/*"],
-            "@leav/*": ["../../libs/*/src"]
-        }
-    },
-    "exclude": ["applications"]
+    "files": [],
+    "references": [{"path": "./tsconfig.build.json"}, {"path": "./tsconfig.spec.json"}]
 }

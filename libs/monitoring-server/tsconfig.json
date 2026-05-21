@@ -1,11 +1,4 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "isolatedModules": false,
-        "strictNullChecks": true,
-        "noImplicitReturns": true,
-        "noUnusedLocals": true
-    },
-    "exclude": ["node_modules", "**/dist/**/*", "**/*.spec.ts", "**/*.test.ts"]
+    "files": [],
+    "references": [{"path": "./tsconfig.build.json"}, {"path": "./tsconfig.spec.json"}]
 }
