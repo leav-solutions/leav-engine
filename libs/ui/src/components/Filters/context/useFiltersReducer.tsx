@@ -17,11 +17,6 @@ export interface IFiltersProviderProps {
     skip: boolean;
 }
 
-type ViewListItem = GetViewsListQuery['views']['list'][number];
-
-const _selectUserView = (viewList: ViewListItem[], viewId?: string): ViewListItem | null =>
-    (viewId && viewList.find(v => v.id === viewId)) || viewList.at(-1) || null;
-
 export const useFiltersReducer = ({
     libraryId,
     viewId,
@@ -40,25 +35,38 @@ export const useFiltersReducer = ({
 
     const needToReload = refetchViews || (libraryId && libraryId !== filtersData.libraryId);
 
-    const {data: viewData, loading: viewsLoading} = useGetViewsListQuery({
+    const {
+        /**
+         * List of my views and shared views
+         */
+        data: viewData,
+        loading: viewsLoading,
+    } = useGetViewsListQuery({
         skip: skip || (libraryId === null && !needToReload),
-        variables: {libraryId: libraryId as string},
+        variables: {
+            libraryId: libraryId as string,
+        },
     });
 
     const {data: treeFilters, loading: treeFiltersLoading} = useGetTreeFilters({libraryId, skip});
 
-    const userView = _selectUserView(viewData?.views?.list ?? [], viewId);
+    let userView: GetViewsListQuery['views']['list'][number] | undefined;
+    if (viewId) {
+        userView = viewData?.views?.list?.find(viewItem => viewItem.id === viewId);
+    }
+    userView = userView ?? viewData?.views?.list?.at(-1) ?? null;
 
-    const allFilters = useMemo(() => {
-        const defaultFilters = toValidFilters(filters ?? []);
-        const viewFilters = ignoreViewByDefault ? [] : toValidFilters(userView?.filters ?? []);
-        return defaultFilters.concat(viewFilters);
-    }, [filters, userView, ignoreViewByDefault]);
+    const userViewFilters = ignoreViewByDefault ? [] : toValidFilters(userView?.filters ?? []);
 
-    const attributesToGet = useMemo(() => allFilters.map(f => f.field), [allFilters]);
+    const preparedDefaultFilters = toValidFilters(filters ?? []);
+    const allFilters = preparedDefaultFilters.concat(userViewFilters);
+
+    const attributesToGet = allFilters.map(filter => filter.field);
 
     const {data: attributesData, loading: attributesLoading} = useExplorerAttributesQuery({
-        variables: {ids: attributesToGet},
+        variables: {
+            ids: attributesToGet,
+        },
         skip: libraryId === null || viewsLoading || attributesToGet.length === 0,
     });
 
@@ -76,7 +84,7 @@ export const useFiltersReducer = ({
     useEffect(() => {
         if (!viewsLoading && !treeFiltersLoading) {
             setRefetchViews(false);
-            const uiFilters = toUIFilters({filters: allFilters, treeFilters, attributesDataById, t});
+            const uiFilters = toUIFilters({filters: allFilters ?? [], treeFilters, attributesDataById, t});
             dispatch({
                 type: 'RESET',
                 payload: {

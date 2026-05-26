@@ -124,68 +124,58 @@ export type UIFiltersAction =
     | IUIFiltersActionRestoreInitialViewSettings
     | IUIFiltersActionUpdateViewListAndCurrentView;
 
-const _buildSmartThroughFilter = (payload: IUIFiltersActionAddFilter['payload']): IUIFilterThrough => {
-    const through = (payload.attribute as IUIFilterLinkAttribute)?.smartFilter?.through;
-    return {
-        ...payload,
-        field: payload.field as string,
-        id: window.crypto.randomUUID(),
-        condition: ThroughConditionFilter.THROUGH,
-        subCondition: AttributeConditionFilter.EQUAL,
-        subField: `${through.id}.id`,
-        value: null,
-    };
-};
-
-const _buildTreeFilter = (
-    payload: IUIFiltersActionAddFilter['payload'],
-    initialFilters: IUIFiltersState['initialFilters'],
-): UIFilter => {
-    const existing = initialFilters.find(f => f.attribute.id === payload.attribute.id);
-    if (existing) {
-        // TODO: include IS_EMPTY to permissions
-        return {...existing, withEmptyValues: true};
-    }
-    return {
-        ...payload,
-        id: window.crypto.randomUUID(),
-        field: Array.isArray(payload.field) ? payload.field : [payload.field],
-        condition: hasOnlyNoValueConditions((payload as IUIFilterStandard).attribute.format)
-            ? null
-            : (getFirstConditionByFilterType(payload as UIFilter) as RecordFilterCondition[])[0],
-        value: null,
-    };
-};
-
-const _buildDefaultFilter = (payload: IUIFiltersActionAddFilter['payload']): UIFilter => {
-    let condition: RecordFilterCondition | null = null;
-    if (payload.attribute.valuesList?.enable || isUIFilterWithSmartFilter(payload as UIFilter)) {
-        condition = AttributeConditionFilter.EQUAL;
-    } else {
-        condition = hasOnlyNoValueConditions((payload as IUIFilterStandard).attribute.format)
-            ? null
-            : (conditionsByFormat[(payload as IUIFilterStandard).attribute.format][0] ?? null);
-    }
-    return {
-        ...payload,
-        field: isLinkAttribute(payload.attribute.type) ? `${payload.field}.id` : (payload.field as string),
-        id: window.crypto.randomUUID(),
-        condition,
-        value: null,
-    };
-};
-
 const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
+    const hasValueList = payload.attribute.valuesList?.enable;
     const isSmartFilter = isUIFilterWithSmartFilter(payload as UIFilter);
-    const smartFilterThrough = (payload.attribute as IUIFilterLinkAttribute)?.smartFilter?.through;
+    let condition: RecordFilterCondition | null = hasOnlyNoValueConditions(
+        (payload as IUIFilterStandard).attribute.format,
+    )
+        ? null
+        : (conditionsByFormat[(payload as IUIFilterStandard).attribute.format][0] ?? null);
+    if (hasValueList || isSmartFilter) {
+        condition = AttributeConditionFilter.EQUAL;
+    }
 
-    let filterToAdd: UIFilter;
-    if (isSmartFilter && smartFilterThrough) {
-        filterToAdd = _buildSmartThroughFilter(payload);
+    let filterToAdd;
+    if (isSmartFilter && (payload.attribute as IUIFilterLinkAttribute).smartFilter.through) {
+        if ((payload.attribute as IUIFilterLinkAttribute).smartFilter.through) {
+            filterToAdd = {
+                ...payload,
+                field: payload.field as string,
+                id: window.crypto.randomUUID(),
+                condition: ThroughConditionFilter.THROUGH,
+                subCondition: AttributeConditionFilter.EQUAL,
+                subField: `${(payload.attribute as IUIFilterLinkAttribute).smartFilter.through.id}.id`,
+                value: null,
+            } satisfies IUIFilterThrough;
+        }
     } else if (isUIFilterTree(payload as UIFilter)) {
-        filterToAdd = _buildTreeFilter(payload, state.initialFilters);
+        const filterWithDefaultValues = state.initialFilters.find(
+            initialFilter => initialFilter.attribute.id === payload.attribute.id,
+        );
+        if (filterWithDefaultValues !== undefined) {
+            // TODO : include IS_EMPTY to permissions
+            filterToAdd = {...filterWithDefaultValues, withEmptyValues: true};
+        } else {
+            filterToAdd = {
+                ...payload,
+                id: window.crypto.randomUUID(),
+                field: Array.isArray(payload.field) ? payload.field : [payload.field],
+                condition: hasOnlyNoValueConditions((payload as IUIFilterStandard).attribute.format)
+                    ? null
+                    : (getFirstConditionByFilterType(payload as UIFilter) as RecordFilterCondition[])[0],
+                value: null,
+            };
+        }
     } else {
-        filterToAdd = _buildDefaultFilter(payload);
+        filterToAdd = {
+            ...payload,
+            field: isLinkAttribute(payload.attribute.type) ? `${payload.field}.id` : (payload.field as string),
+            id: window.crypto.randomUUID(),
+            condition,
+            value: null,
+            valuesList: hasValueList ? payload.attribute.valuesList : undefined,
+        };
     }
 
     return {
