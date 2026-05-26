@@ -4,7 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import partialRight from 'lodash/partialRight';
 import trimEnd from 'lodash/trimEnd';
 import upperFirst from 'lodash/upperFirst';
-import minimatch from 'minimatch';
+import {minimatch} from 'minimatch';
 import * as extensions from './MIMEByExtension.json';
 import {AttributeType} from './types/attributes';
 import {FileType} from './types/files';
