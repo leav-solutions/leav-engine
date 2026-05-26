@@ -2,7 +2,7 @@
 # We're using the "multi-stage build" feature of Docker in order to limit the size of the final image.
 
 # Create base builder
-FROM node:24.15.0-alpine3.23 AS builder
+FROM node:24.16.0-alpine3.23 AS builder
 WORKDIR /build
 
 # Copy required files for builds
@@ -53,7 +53,7 @@ RUN rsync -av \
     rm -rf .yarn yarn.lock .yarnrc.yml
 
 ### RUNNER FOR CORE ###
-FROM node:24.15.0-alpine3.23 AS runner
+FROM node:24.16.0-alpine3.23 AS runner
 WORKDIR /app
 
 COPY --from=builder /install ./
