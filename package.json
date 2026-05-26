@@ -65,7 +65,7 @@
         "git-url-parse": "13",
         "glob-parent": ">=5.1.2",
         "@types/express": ">=4.17.21",
-        "ts-jest": "29.4.9",
+        "ts-jest": "29.4.11",
         "@elastic/transport:undici": "^6.25.0",
         "minimatch@^3.0.4": "^3.1.5",
         "minimatch@^3.0.5": "^3.1.5",
