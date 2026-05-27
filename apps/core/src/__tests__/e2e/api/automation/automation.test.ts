@@ -485,17 +485,23 @@ describe('Automation', () => {
             expect(pipeline.properties.steps.items.allOf.length).toBe(Object.values(AutomationRuleActions).length + 1);
         });
 
-        test('edition json schema has active field and trigger is readonly', async () => {
+        test('edition json schema has active field, eventAction and eventTopic readonly, synchronous follows trigger type', async () => {
             const result = await adminUserSdk.GetAutomationRuleForm({
                 formType: AutomationRuleJsonSchemaFormType.edition,
             });
             const schema = result.automationRuleForm.jsonSchema;
 
             expect(schema.properties).toHaveProperty('active');
-            expect(schema.properties.trigger.readOnly).toBe(true);
+
+            expect(schema.properties.trigger.readOnly).toBeUndefined();
+            expect(schema.properties.trigger.properties.eventAction.readOnly).toBe(true);
 
             expect(Array.isArray(schema.properties.trigger.allOf)).toBe(true);
             expect(schema.properties.trigger.allOf.length).toBeGreaterThanOrEqual(3);
+
+            for (const branch of schema.properties.trigger.allOf) {
+                expect(branch.then.properties.eventTopic.readOnly).toBe(true);
+            }
         });
 
         test('$defs contains a single entry per key when multiple triggers share the same $defs key', async () => {

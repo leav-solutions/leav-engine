@@ -81,6 +81,7 @@ export default function ({
                     eventAction: {
                         type: 'string',
                         enum: triggers.map(t => t.eventAction),
+                        ...(isEdition ? {readOnly: true} : {}),
                     },
                 },
                 required: ['eventAction'],
@@ -91,7 +92,10 @@ export default function ({
                     },
                     then: {
                         properties: {
-                            eventTopic: eventTopicSchema,
+                            eventTopic: {
+                                ...eventTopicSchema,
+                                ...(isEdition ? {readOnly: true} : {}),
+                            },
                             synchronous: (() => {
                                 switch (trigger.synchronicity) {
                                     case AutomationTriggerDefSynchronicity.SYNC:
@@ -161,10 +165,7 @@ export default function ({
                     description: {
                         type: 'string',
                     },
-                    trigger: {
-                        ...triggerSchema,
-                        ...(isEdition ? {readOnly: true} : {}),
-                    },
+                    trigger: triggerSchema,
                     pipeline: pipelineSchema,
                 },
                 required: ['label', 'trigger'],
