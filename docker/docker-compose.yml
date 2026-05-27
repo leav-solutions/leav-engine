@@ -193,7 +193,7 @@ services:
       - "traefik.http.routers.core.priority=10"
     environment:
       <<: [*env-core, *env-amqp, *env-logger, *env-monitoring]
-      CORE_MODES: server,indexationManager,tasksManager:master,tasksManager:worker,filesManager
+      CORE_MODES: server,indexationManager,tasksManager:master,tasksManager:worker,filesManager,automation
       OTEL_SERVICE_NAME: core
     volumes:
       # We must load every volume for installation

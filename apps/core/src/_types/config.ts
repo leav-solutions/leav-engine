@@ -54,6 +54,9 @@ export interface IConfig {
 export interface IAutomation {
     enable: boolean;
     cache: IAutomationCache;
+    queues: {
+        events: string;
+    };
 }
 
 export interface IAutomationCache {
@@ -68,6 +71,7 @@ export enum CoreMode {
     TASKS_MANAGER_MASTER = 'tasksManager:master',
     TASKS_MANAGER_WORKER = 'tasksManager:worker',
     LOGS_COLLECTOR = 'logsCollector',
+    AUTOMATION = 'automation',
 
     /**
      * Default, to do db migration, or import ...
@@ -80,6 +84,7 @@ export enum CoreMode {
      *   CoreMode.INDEXATION_MANAGER,
      *   CoreMode.TASKS_MANAGER_MASTER,
      *   CoreMode.TASKS_MANAGER_WORKER,
+     *   CoreMode.AUTOMATION,
      * ]
      */
     E2E_PLAYWRIGHT = 'e2ePlaywright',
@@ -90,6 +95,7 @@ export const CORE_MODES_E2E_PLAYWRIGHT = [
     CoreMode.INDEXATION_MANAGER,
     CoreMode.TASKS_MANAGER_MASTER,
     CoreMode.TASKS_MANAGER_WORKER,
+    CoreMode.AUTOMATION,
     // no CoreMode.LOGS_COLLECTOR yet because not needed in e2e tests, need elasticsearch
     // no CoreMode.FILES_MANAGER yet because not needed in e2e tests
 ];

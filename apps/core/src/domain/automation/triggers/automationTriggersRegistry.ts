@@ -48,6 +48,11 @@ export default function ({
             topicSchema: topics.libraryAndOptAttributeSchema,
             synchronicity: AutomationTriggerDefSynchronicity.BOTH,
         },
+        {
+            eventAction: EventAction.VALUE_DELETE,
+            topicSchema: topics.libraryAndOptAttributeSchema,
+            synchronicity: AutomationTriggerDefSynchronicity.ASYNC,
+        },
     ];
 
     return {

@@ -74,6 +74,24 @@ describe('automationTriggers', () => {
         });
     });
 
+    describe('isEventActionInTriggers', () => {
+        it('returns true when the eventAction is registered in the triggers registry', () => {
+            const triggers = createTriggers();
+            expect(triggers.isEventActionInTriggers(TEST_ACTION_SYNC, true)).toBe(true);
+            expect(triggers.isEventActionInTriggers(TEST_ACTION_SYNC, false)).toBe(false);
+            expect(triggers.isEventActionInTriggers(TEST_ACTION_ASYNC, false)).toBe(true);
+            expect(triggers.isEventActionInTriggers(TEST_ACTION_ASYNC, true)).toBe(false);
+            expect(triggers.isEventActionInTriggers(TEST_ACTION_BOTH, true)).toBe(true);
+            expect(triggers.isEventActionInTriggers(TEST_ACTION_BOTH, false)).toBe(true);
+        });
+
+        it('returns false when the eventAction is not registered', () => {
+            const triggers = createTriggers();
+            expect(triggers.isEventActionInTriggers('UNKNOWN_ACTION' as EventAction, true)).toBe(false);
+            expect(triggers.isEventActionInTriggers('UNKNOWN_ACTION' as EventAction, false)).toBe(false);
+        });
+    });
+
     describe('validateAutomationRuleTrigger', () => {
         describe('unknown event action', () => {
             it('throws ValidationError when no trigger is registered for the event action', async () => {

@@ -26,7 +26,6 @@ import {type IAutomationPipelineDomain} from './pipeline/pipeline';
 import {type IAutomationRulesCache} from './automationRulesCache';
 import {type IAutomationTriggers} from './triggers/automationTriggers';
 import {type AutomationPipelineExecution, type AutomationPipelineValidation} from './pipeline/_types';
-import {type IAutomationActionsRegistry} from './automationActionsRegistry';
 import {type IAutomationJsonSchemaFormDomain} from './form/automationJsonSchemaForm';
 import {type IAutomationUiJsonSchemaFormDomain} from './form/automationUiJsonSchemaForm';
 import {type UiSchema, type RJSFSchema} from '@rjsf/utils';
@@ -84,7 +83,6 @@ export interface IAutomationDomainDeps {
     'core.domain.automation.pipeline': IAutomationPipelineDomain;
     'core.domain.automation.rulesCache': IAutomationRulesCache;
     'core.infra.automation.rule': IAutomationRuleRepo;
-    'core.domain.automation.actionsRegistry': IAutomationActionsRegistry;
     config: IConfig;
 }
 
@@ -97,7 +95,6 @@ export default function ({
     'core.domain.automation.pipeline': pipelineDomain,
     'core.domain.automation.rulesCache': automationRulesCache,
     'core.infra.automation.rule': automationRuleRepo,
-    'core.domain.automation.actionsRegistry': automationActionsRegistry,
     config,
 }: IAutomationDomainDeps): IAutomationDomain {
     if (config.automation.enable === false) {
@@ -149,6 +146,10 @@ export default function ({
             const baseAttrs = {event_action: event.action, synchronous};
             let outcome: 'matched' | 'no_match' | 'error' = 'no_match';
 
+            if (!automationTriggers.isEventActionInTriggers(event.action, synchronous)) {
+                return;
+            }
+
             try {
                 const rules = await _getRulesToTrigger(event, synchronous, ctx);
                 triggerRulesMatched.record(rules.length, baseAttrs);
@@ -160,8 +161,12 @@ export default function ({
                     synchronous,
                 };
 
+                if (!rules.length) {
+                    return;
+                }
+
                 logger.verbose(
-                    `Triggering ${rules.length} automation rules for event action ${event.action} and topic ${JSON.stringify(event.topic)}`,
+                    `Triggering ${rules.length} automation rules for event action ${event.action} (${synchronous ? 'synchronous' : 'asynchronous'}) and topic ${JSON.stringify(event.topic)}`,
                 );
 
                 await Promise.all(
