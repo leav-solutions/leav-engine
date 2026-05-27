@@ -9,17 +9,17 @@ services:
       context: .
       dockerfile: ./DOCKERFILES/KEYCLOAK/Dockerfile
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
       KC_DB: postgres
       KC_DB_URL: "jdbc:postgresql://postgres/keycloak"
       KC_DB_USERNAME: keycloak
       KC_DB_PASSWORD: password
       KC_HOSTNAME_STRICT: false
-      KC_HOSTNAME_STRICT_BACKCHANNEL: false
       KC_LOG_LEVEL: info,org.keycloak.events:debug
       KC_HTTP_ENABLED: true
       KC_HEALTH_ENABLED: true
+      KC_PROXY_HEADERS: xforwarded
     depends_on:
       postgres:
         condition: service_healthy
@@ -46,7 +46,7 @@ services:
       - "8080:8080"
 
   postgres:
-    image: postgres:17
+    image: postgres:18
     environment:
       POSTGRES_DB: keycloak
       POSTGRES_USER: keycloak
@@ -57,7 +57,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
 
 volumes:
   pgdata:
