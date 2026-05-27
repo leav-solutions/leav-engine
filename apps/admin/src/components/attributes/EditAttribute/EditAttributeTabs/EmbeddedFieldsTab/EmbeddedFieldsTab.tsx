@@ -245,7 +245,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
             const treeData = removeNodeAtPath({
                 treeData: treeItems,
                 path: info.path,
-                getNodeKey: ({treeIndex}) => treeIndex,
+                getNodeKey: ({treeIndex}) => String(treeIndex),
             });
 
             setTreeItems(treeData as ITreeItem[]);
