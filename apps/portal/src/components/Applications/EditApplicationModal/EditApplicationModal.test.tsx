@@ -5,9 +5,9 @@ import EditApplicationModal from './EditApplicationModal';
 describe('EditApplicationModal', () => {
     test('Show EditApplication', async () => {
         // Mock EditApplication from @leav/ui
-        jest.spyOn(leavUi, 'EditApplication').mockImplementation(() => <div>EditApplication</div>);
+        vi.spyOn(leavUi, 'EditApplication').mockImplementation(() => <div>EditApplication</div>);
 
-        const mockOnClose = jest.fn();
+        const mockOnClose = vi.fn();
         render(<EditApplicationModal open onClose={mockOnClose} />);
 
         expect(screen.getByText(/new_app/)).toBeInTheDocument();

@@ -33,7 +33,7 @@ const mockI18n = {
     options: {
         fallbackLng: ['en'],
     },
-    changeLanguage: jest.fn(),
+    changeLanguage: vi.fn(),
 };
 
 const mockT = (arg, variables) => `${[arg, ...(!!variables ? Object.values(variables) : [])].join('|')}`;
@@ -63,4 +63,8 @@ module.exports = {
     getDefaults: reactI18next.getDefaults,
     setI18n: reactI18next.setI18n,
     getI18n: reactI18next.getI18n,
+    initReactI18next: {
+        type: '3rdParty',
+        init: i18next => i18next,
+    },
 };

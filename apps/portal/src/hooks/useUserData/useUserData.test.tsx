@@ -15,7 +15,7 @@ describe('useUserData', () => {
 
     test('Throw if no context provided', async () => {
         const errorLogger = console.error;
-        console.error = jest.fn();
+        console.error = vi.fn();
         expect(() => renderHook(() => useUserData())).toThrowError();
 
         console.error = errorLogger;
