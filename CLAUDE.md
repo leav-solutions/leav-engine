@@ -88,6 +88,9 @@ leav-engine/
 │   ├── automate-scan/     # Surveillance FS en temps réel → événements RabbitMQ
 │   ├── core/              # API GraphQL principale (port 4001) — tourne aussi en mode
 │   │                      # indexationManager, tasksManager, filesManager, logsCollector
+│   ├── mcp-runtime/       # Serveur MCP (Model Context Protocol) — expose les outils LEAV
+│   │                      # aux agents IA (graphql, rest à venir, trpc à venir).
+│   │                      # Stateless, conçu pour K8s. Auth par apiKey utilisateur.
 │   ├── data-studio/       # ⚠️ SUPPRESSION EN COURS — remplacé par une instance app-studio nommée explorer-studio. Ne pas y ajouter de code.
 │   ├── login/             # ⚠️ Local uniquement — en prod : Keycloak + OIDC
 │   ├── portal/            # Listing générique des applications disponibles
@@ -142,6 +145,7 @@ Chaque app dans `apps/`, peut avoir son propre `CLAUDE.md` avec ses spécificit�
 | ArangoDB UI       | `http://arango.leav.localhost`                                                    |
 | RabbitMQ UI       | `http://rabbitmq.leav.localhost`                                                  |
 | Traefik dashboard | `http://traefik.leav.localhost`                                                   |
+| MCP Runtime       | `http://mcp.leav.localhost`                                                       |
 | Redis Commander   | `http://redis.leav.localhost` (profil `debug`)                                    |
 | Kibana            | `http://kibana.leav.localhost` (profil `logs`)                                    |
 | Mailpit           | `http://mailpit.leav.localhost` (profil `mail`)                                   |

@@ -360,6 +360,24 @@ More infos: https://docs.docker.com/compose/reference/logs/
 
 ---
 
+## MCP Runtime
+
+`apps/mcp-runtime` exposes LEAV tools to AI agents via the [Model Context Protocol](https://modelcontextprotocol.io/).
+
+It runs as a standalone HTTP server (default port `3000`) and proxies requests to the LEAV GraphQL API.
+
+| Endpoint      | Description                              |
+| ------------- | ---------------------------------------- |
+| `POST /mcp`   | MCP tool calls (JSON-RPC over HTTP)      |
+| `GET /mcp`    | SSE stream for server-sent notifications |
+| `GET /health` | K8s liveness / readiness probe           |
+
+Available tools: `graphql` — executes any GraphQL query or mutation against the LEAV core.
+
+See [`apps/mcp-runtime/README.md`](./apps/mcp-runtime/README.md) for setup and usage details.
+
+---
+
 ## Applications
 
 ### Adding new modules
