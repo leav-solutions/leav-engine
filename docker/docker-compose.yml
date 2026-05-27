@@ -13,6 +13,7 @@ x-dir-portal: &dir-portal /app/apps/portal
 x-dir-automate_scan: &dir-automate_scan /app/apps/automate-scan
 x-dir-preview_generator: &dir-preview_generator /app/apps/preview-generator
 x-dir-sync_scan: &dir-sync_scan /app/apps/sync-scan
+x-dir-mcp_runtime: &dir-mcp_runtime /app/apps/mcp-runtime
 
 x-volume-yarn: &volume-yarn yarn:/app/.yarn
 x-volume-shared-modules: &volume-shared-modules node_modules_shared:/app/node_modules
@@ -25,6 +26,7 @@ x-volume-portal-modules: &volume-portal-modules node_modules_portal:/app/apps/po
 x-volume-preview_generator-modules: &volume-preview_generator-modules node_modules_preview-generator:/app/apps/preview-generator/node_modules
 x-volume-automate_scan-modules: &volume-automate_scan-modules node_modules_automate-scan:/app/apps/automate-scan/node_modules
 x-volume-sync_scan-modules: &volume-sync_scan-modules node_modules_sync-scan:/app/apps/sync-scan/node_modules
+x-volume-mcp_runtime-modules: &volume-mcp_runtime-modules node_modules_mcp-runtime:/app/apps/mcp-runtime/node_modules
 x-volume-config_manager-modules: &volume-config_manager-modules node_modules_config-manager:/app/libs/config-manager/node_modules
 x-volume-app_root_path-modules: &volume-app_root_path-modules node_modules_app-root-path:/app/libs/app-root-path/node_modules
 x-volume-utils-modules: &volume-utils-modules node_modules_utils:/app/libs/utils/node_modules
@@ -122,6 +124,9 @@ x-env-logger: &env-logger
   # LOG_ADDITIONAL_META_VERSION: "develop"
   # LOG_ADDITIONAL_META_APP: "xstream"
 
+x-env-mcp-runtime: &env-mcp-runtime # Internal Docker network URL — core listens on port 4001 inside the leav network
+  CORE_URL: http://core:4001
+
 x-env-sync-scan: &env-sync-scan
   ALLOW_FILES_LIST: *allow-list
   IGNORE_FILES_LIST: *ignore-list
@@ -199,6 +204,7 @@ services:
       - *volume-preview_generator-modules
       - *volume-automate_scan-modules
       - *volume-sync_scan-modules
+      - *volume-mcp_runtime-modules
       - *volume-app_root_path-modules
       - *volume-config_manager-modules
       - *volume-logger-modules
@@ -391,6 +397,34 @@ services:
       core:
         condition: service_healthy
     command: [sh, -c, "yarn run start"]
+
+  mcp-runtime:
+    profiles: ["mcp"]
+    image: node:24.16.0-alpine3.23
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mcp-runtime.rule=Host(`mcp.leav.localhost`)"
+      - "traefik.http.services.mcp-runtime.loadbalancer.server.port=3000"
+      - "traefik.http.routers.mcp-runtime.entrypoints=web"
+    environment:
+      <<: [*env-logger, *env-mcp-runtime]
+    volumes:
+      - *mount_point-repo
+      - *mount_point-scripts
+      - *volume-yarn
+      - *volume-shared-modules
+      - *volume-mcp_runtime-modules
+      - *volume-app_root_path-modules
+      - *volume-config_manager-modules
+      - *volume-logger-modules
+      - *volume-monitoring_server-modules
+      - *mount_point-yarn_releases
+    working_dir: *dir-mcp_runtime
+    healthcheck: *healthcheck-localhost-44444
+    depends_on:
+      core:
+        condition: service_healthy
+    command: [sh, -c, "yarn run start:watch"]
 
   automate-scan:
     profiles: ["automate"]
@@ -647,6 +681,8 @@ volumes:
   node_modules_automate-scan:
     driver: local
   node_modules_sync-scan:
+    driver: local
+  node_modules_mcp-runtime:
     driver: local
   node_modules_config-manager:
     driver: local

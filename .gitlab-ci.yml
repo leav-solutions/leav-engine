@@ -455,6 +455,24 @@ apps/sync-scan-unit-tests:
         - libs/config-manager/**/*
         - libs/message-broker/**/*
         - libs/utils/**/*
+
+apps/mcp-runtime-unit-tests:
+  stage: test
+  script:
+    - yarn workspaces focus mcp-runtime
+    - yarn workspace mcp-runtime run test:ci
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *mr_rule
+      changes:
+        - *new_lib_installed_changes
+        - apps/mcp-runtime/**/*
+        - libs/config-manager/**/*
+        - libs/logger/**/*
 ## Unit tests
 ##########
 
