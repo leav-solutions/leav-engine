@@ -4,8 +4,8 @@ import useAuthChecker from './useAuthChecker';
 
 describe('useAuthChecker', () => {
     test('Success case', async () => {
-        jest.spyOn(leavUi, 'useLoginChecker').mockReturnValue({
-            loginChecker: jest.fn(),
+        vi.spyOn(leavUi, 'useLoginChecker').mockReturnValue({
+            loginChecker: vi.fn(),
         });
 
         const {result, rerender} = renderHook(() => useAuthChecker());
@@ -20,8 +20,8 @@ describe('useAuthChecker', () => {
     });
 
     test('Fail case', async () => {
-        jest.spyOn(leavUi, 'useLoginChecker').mockReturnValue({
-            loginChecker: jest.fn().mockRejectedValue(new Error('')),
+        vi.spyOn(leavUi, 'useLoginChecker').mockReturnValue({
+            loginChecker: vi.fn().mockRejectedValue(new Error('')),
         });
 
         const {result, rerender} = renderHook(() => useAuthChecker());

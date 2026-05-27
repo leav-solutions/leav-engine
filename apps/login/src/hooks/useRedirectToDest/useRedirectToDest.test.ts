@@ -2,12 +2,12 @@ import {act, renderHook} from '@testing-library/react';
 import * as useQueryParams from '../useQueryParams';
 import useRedirectToDest from './useRedirectToDest';
 
-jest.mock('react-router-dom', () => ({
-    useQueryParams: jest.fn(),
+vi.mock('react-router-dom', () => ({
+    useQueryParams: vi.fn(),
 }));
 
 describe('useRedirectToDest', () => {
-    const replaceMock = jest.fn();
+    const replaceMock = vi.fn();
     const mockLocation: Location = {...location, replace: replaceMock, search: ''};
 
     beforeAll(() => {
@@ -19,7 +19,7 @@ describe('useRedirectToDest', () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     afterAll(() => {
@@ -33,7 +33,7 @@ describe('useRedirectToDest', () => {
 
     it('should redirect to the destination when it is present in the query params', () => {
         const dest = encodeURIComponent('/dashboard?query=1&params=2');
-        jest.spyOn(useQueryParams, 'useQueryParams').mockReturnValue({dest});
+        vi.spyOn(useQueryParams, 'useQueryParams').mockReturnValue({dest});
 
         const {result} = renderHook(() => useRedirectToDest());
 
@@ -45,7 +45,7 @@ describe('useRedirectToDest', () => {
     });
 
     it('should redirect to the default destination when it is not present in the query params', () => {
-        jest.spyOn(useQueryParams, 'useQueryParams').mockReturnValue({});
+        vi.spyOn(useQueryParams, 'useQueryParams').mockReturnValue({});
         const {result} = renderHook(() => useRedirectToDest());
 
         act(() => {

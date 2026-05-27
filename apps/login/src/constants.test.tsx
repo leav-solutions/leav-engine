@@ -5,12 +5,12 @@ describe('constants', () => {
     let constants: typeof ConstantsType;
 
     describe('with /campaigns-manager base URL', () => {
-        beforeAll(() => {
+        beforeAll(async () => {
             window.__global_base_url__ = '/campaigns-manager';
             window.__dynamic_base__ = '/campaigns-manager/app/login';
 
-            jest.resetModules();
-            constants = require('./constants');
+            vi.resetModules();
+            constants = await import('./constants');
         });
 
         it('should set GLOBAL_BASE_URL without trailing slash', () => {
@@ -23,12 +23,12 @@ describe('constants', () => {
     });
 
     describe('with empty base URL', () => {
-        beforeAll(() => {
+        beforeAll(async () => {
             window.__global_base_url__ = '';
             window.__dynamic_base__ = '/app/login';
 
-            jest.resetModules();
-            constants = require('./constants');
+            vi.resetModules();
+            constants = await import('./constants');
         });
 
         it('should set GLOBAL_BASE_URL without trailing slash', () => {

@@ -33,17 +33,15 @@ const mockI18n = {
     options: {
         fallbackLng: ['en'],
     },
-    changeLanguage: jest.fn(),
+    changeLanguage: vi.fn(),
 };
 
 const mockT = (arg, variables) => `${[arg, ...(!!variables ? Object.values(variables) : [])].join('|')}`;
 
-const mockUseTranslation = () => {
-    return {
-        t: mockT,
-        i18n: mockI18n,
-    };
-};
+const mockUseTranslation = () => ({
+    t: mockT,
+    i18n: mockI18n,
+});
 
 module.exports = {
     // this mock makes sure any components using the translate HoC receive the t function as a prop

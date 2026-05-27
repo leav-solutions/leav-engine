@@ -1,26 +1,24 @@
 import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {KitApp} from 'aristid-ds';
-import {enableFetchMocks} from 'jest-fetch-mock';
 import {MemoryRouter} from 'react-router-dom';
+import {type Mock} from 'vitest';
 import Login from './Login';
-
-enableFetchMocks();
 
 window.matchMedia = query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
 });
 
-jest.mock('react-router-dom', () => ({
-    ...(jest.requireActual('react-router-dom') as {}),
-    useParams: jest
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual<object>('react-router-dom')),
+    useParams: vi
         .fn()
         .mockReturnValueOnce({dest: '/'})
         .mockReturnValueOnce({dest: '/'})
@@ -45,7 +43,7 @@ const _enterCredentialsAndSubmit = () => {
 
 describe('Login', () => {
     const {location} = window;
-    const mockLocation: Location = {...location, replace: jest.fn(), search: ''};
+    const mockLocation: Location = {...location, replace: vi.fn(), search: ''};
 
     beforeAll(() => {
         Object.defineProperty(window, 'location', {
@@ -56,7 +54,7 @@ describe('Login', () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     afterAll(() => {
@@ -69,7 +67,7 @@ describe('Login', () => {
     });
 
     test('Type credentials in login form and redirects to root', async () => {
-        (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
+        (fetch as Mock) = vi.fn().mockReturnValue({
             status: 200,
             ok: true,
             json: async () => ({
@@ -89,7 +87,7 @@ describe('Login', () => {
     });
 
     test('Type credentials in login form and redirects to given path', async () => {
-        (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
+        (fetch as Mock) = vi.fn().mockReturnValue({
             status: 200,
             ok: true,
             json: async () => ({
@@ -109,7 +107,7 @@ describe('Login', () => {
     });
 
     test('Display message if bad credentials', async () => {
-        (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
+        (fetch as Mock) = vi.fn().mockReturnValue({
             status: 401,
             ok: false,
         });
@@ -127,7 +125,7 @@ describe('Login', () => {
     });
 
     test('Display message if server is down', async () => {
-        (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
+        (fetch as Mock) = vi.fn().mockReturnValue({
             status: 500,
             ok: false,
         });

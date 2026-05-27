@@ -1,25 +1,23 @@
 import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {KitApp} from 'aristid-ds';
-import {enableFetchMocks} from 'jest-fetch-mock';
 import {MemoryRouter} from 'react-router-dom';
+import {type Mock} from 'vitest';
 import ResetPassword from './ResetPassword';
-
-enableFetchMocks();
 
 window.matchMedia = query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
 });
 
-jest.mock('react-router-dom', () => ({
-    ...(jest.requireActual('react-router-dom') as {}),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual<object>('react-router-dom')),
     useParams: () => ({token: '123456'}),
 }));
 
@@ -40,7 +38,7 @@ const _enterPasswordsAndSubmit = () => {
 
 describe('ResetPassword', () => {
     const {location} = window;
-    const mockLocation: Location = {...location, replace: jest.fn(), search: ''};
+    const mockLocation: Location = {...location, replace: vi.fn(), search: ''};
 
     beforeAll(() => {
         Object.defineProperty(window, 'location', {
@@ -51,7 +49,7 @@ describe('ResetPassword', () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     afterAll(() => {
@@ -64,7 +62,7 @@ describe('ResetPassword', () => {
     });
 
     test('Type passwords in form and redirects to root', async () => {
-        (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
+        (fetch as Mock) = vi.fn().mockReturnValue({
             status: 200,
             ok: true,
         });
@@ -81,7 +79,7 @@ describe('ResetPassword', () => {
     });
 
     test('Display message if token is invalid', async () => {
-        (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
+        (fetch as Mock) = vi.fn().mockReturnValue({
             status: 401,
             ok: false,
         });
@@ -99,7 +97,7 @@ describe('ResetPassword', () => {
     });
 
     test('Display message if password is not valid', async () => {
-        (fetch as jest.FunctionLike) = jest.fn().mockReturnValue({
+        (fetch as Mock) = vi.fn().mockReturnValue({
             status: 422,
             ok: false,
         });
