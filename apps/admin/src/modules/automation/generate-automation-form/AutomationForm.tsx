@@ -27,7 +27,7 @@ type AutomationFormProps = {
     initialValues: AutomationFormValues | null;
     mutationLoading: boolean;
     formType: AutomationRuleJsonSchemaFormType;
-    onSubmit: (values: AutomationFormValues) => Promise<void>;
+    onSubmit: (values: AutomationFormValues) => Promise<boolean>;
     onCancel: () => void;
 };
 

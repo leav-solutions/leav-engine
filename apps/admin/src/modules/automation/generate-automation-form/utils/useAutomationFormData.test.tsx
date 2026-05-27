@@ -52,7 +52,7 @@ const mockInitialValues: AutomationFormValues = {
     trigger: {eventAction: AutomationRuleEventAction.RECORD_INIT, synchronous: true},
 };
 
-const mockOnSubmit = jest.fn();
+const mockOnSubmit = jest.fn<Promise<boolean>, [AutomationFormValues]>().mockResolvedValue(true);
 
 describe('useAutomationFormData', () => {
     beforeEach(() => jest.clearAllMocks());
@@ -237,6 +237,89 @@ describe('useAutomationFormData', () => {
         });
     });
 
+    describe('baseline reset after submit', () => {
+        test('hasUnsavedChanges becomes false after a successful submit in edition mode', async () => {
+            const successfulOnSubmit = jest.fn<Promise<boolean>, [AutomationFormValues]>().mockResolvedValue(true);
+
+            const {result} = renderHook(() =>
+                useAutomationFormData({
+                    initialValues: mockInitialValues,
+                    isCreationForm: false,
+                    formSchema: mockSchema,
+                    onSubmit: successfulOnSubmit,
+                }),
+            );
+
+            const updated = {...mockInitialValues, label: 'Updated label'};
+            act(() => {
+                result.current.handleChange({formData: updated} as IChangeEvent<AutomationFormValues>);
+            });
+            expect(result.current.hasUnsavedChanges).toBe(true);
+
+            await act(async () => {
+                await result.current.handleFormSubmit({formData: updated} as IChangeEvent<AutomationFormValues>);
+            });
+
+            expect(result.current.hasUnsavedChanges).toBe(false);
+        });
+
+        test('hasUnsavedChanges stays true after a failed submit (onSubmit resolves to false)', async () => {
+            const failingOnSubmit = jest.fn<Promise<boolean>, [AutomationFormValues]>().mockResolvedValue(false);
+
+            const {result} = renderHook(() =>
+                useAutomationFormData({
+                    initialValues: mockInitialValues,
+                    isCreationForm: false,
+                    formSchema: mockSchema,
+                    onSubmit: failingOnSubmit,
+                }),
+            );
+
+            const updated = {...mockInitialValues, label: 'Updated label'};
+            act(() => {
+                result.current.handleChange({formData: updated} as IChangeEvent<AutomationFormValues>);
+            });
+
+            await act(async () => {
+                await result.current.handleFormSubmit({formData: updated} as IChangeEvent<AutomationFormValues>);
+            });
+
+            expect(result.current.hasUnsavedChanges).toBe(true);
+        });
+
+        test('hasUnsavedChanges becomes true again when the form is edited after a successful submit', async () => {
+            const successfulOnSubmit = jest.fn<Promise<boolean>, [AutomationFormValues]>().mockResolvedValue(true);
+
+            const {result} = renderHook(() =>
+                useAutomationFormData({
+                    initialValues: mockInitialValues,
+                    isCreationForm: false,
+                    formSchema: mockSchema,
+                    onSubmit: successfulOnSubmit,
+                }),
+            );
+
+            const firstSubmitData = {...mockInitialValues, label: 'First edit'};
+            act(() => {
+                result.current.handleChange({formData: firstSubmitData} as IChangeEvent<AutomationFormValues>);
+            });
+            await act(async () => {
+                await result.current.handleFormSubmit({
+                    formData: firstSubmitData,
+                } as IChangeEvent<AutomationFormValues>);
+            });
+            expect(result.current.hasUnsavedChanges).toBe(false);
+
+            act(() => {
+                result.current.handleChange({
+                    formData: {...firstSubmitData, label: 'Second edit'},
+                } as IChangeEvent<AutomationFormValues>);
+            });
+
+            expect(result.current.hasUnsavedChanges).toBe(true);
+        });
+    });
+
     describe('isSubmitting', () => {
         test('is false by default', () => {
             const {result} = renderHook(() =>
@@ -252,10 +335,10 @@ describe('useAutomationFormData', () => {
         });
 
         test('is true while onSubmit is pending and back to false after success', async () => {
-            let resolveOnSubmit: () => void = jest.fn();
+            let resolveOnSubmit: (value: boolean) => void = jest.fn();
             const pendingOnSubmit = jest.fn(
                 () =>
-                    new Promise<void>(resolve => {
+                    new Promise<boolean>(resolve => {
                         resolveOnSubmit = resolve;
                     }),
             );
@@ -279,7 +362,7 @@ describe('useAutomationFormData', () => {
             expect(result.current.isSubmitting).toBe(true);
 
             await act(async () => {
-                resolveOnSubmit();
+                resolveOnSubmit(true);
                 await submitPromise;
             });
 

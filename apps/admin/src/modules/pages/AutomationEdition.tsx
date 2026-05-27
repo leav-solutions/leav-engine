@@ -15,9 +15,7 @@ export const AutomationEdition = () => {
 
     const handleBack = () => navigate(AdminAbsolutePaths.automation);
 
-    const handleSubmit = async (values: AutomationFormValues) => {
-        await editAutomationRule(id!, values, handleBack);
-    };
+    const handleSubmit = async (values: AutomationFormValues): Promise<boolean> => editAutomationRule(id!, values);
 
     if (dataLoading) {
         return <KitLoader />;

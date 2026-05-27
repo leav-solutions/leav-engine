@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {type IChangeEvent} from '@rjsf/core';
 import {deepEquals, getDefaultFormState, type RJSFSchema} from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
@@ -9,7 +9,7 @@ type UseAutomationFormDataParams = {
     initialValues: AutomationFormValues | null;
     isCreationForm: boolean;
     formSchema: RJSFSchema | null;
-    onSubmit: (values: AutomationFormValues) => Promise<void>;
+    onSubmit: (values: AutomationFormValues) => Promise<boolean>;
 };
 
 const normalize = (data: unknown): unknown => {
@@ -54,14 +54,24 @@ export const useAutomationFormData = ({
 }: UseAutomationFormDataParams) => {
     const [formData, setFormData] = useState<AutomationFormValues>(initialValues);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [baseline, setBaseline] = useState<AutomationFormValues | null>(isCreationForm ? null : initialValues);
+
+    // initialValues arrives asynchronously in edition mode (GraphQL query). Sync the baseline
+    // once when it first becomes available; never re-sync afterwards to avoid silently discarding
+    // unsaved user edits if a refetch were to fire.
+    useEffect(() => {
+        if (!isCreationForm && initialValues && baseline === null) {
+            setBaseline(initialValues);
+        }
+    }, [initialValues, isCreationForm, baseline]);
 
     const hasUnsavedChanges = useMemo(() => {
         if (!formSchema) {
             return false;
         }
-        const baseline = isCreationForm ? getDefaultFormState(validator, formSchema, null) : initialValues;
-        return !deepEquals(normalize(formData), normalize(baseline));
-    }, [formData, initialValues, isCreationForm, formSchema]);
+        const reference = baseline ?? getDefaultFormState(validator, formSchema, null);
+        return !deepEquals(normalize(formData), normalize(reference));
+    }, [formData, baseline, formSchema]);
 
     const handleChange = ({formData: newFormData}: IChangeEvent<AutomationFormValues>) => {
         let data = newFormData;
@@ -91,7 +101,10 @@ export const useAutomationFormData = ({
 
         setIsSubmitting(true);
         try {
-            await onSubmit(submittedData);
+            const success = await onSubmit(submittedData);
+            if (success) {
+                setBaseline(submittedData);
+            }
         } finally {
             setIsSubmitting(false);
         }
