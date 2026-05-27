@@ -1,7 +1,11 @@
 {
-    "extends": "./tsconfig.json",
+    "extends": "./tsconfig.build.json",
     "compilerOptions": {
+        "outDir": "dist-spec",
+        "composite": true,
         "types": ["vitest/globals", "node"]
     },
-    "include": ["src/**/*.spec.ts"]
+    "references": [{"path": "./tsconfig.build.json"}],
+    "include": ["src/**/*.spec.ts"],
+    "exclude": []
 }

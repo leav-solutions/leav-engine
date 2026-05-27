@@ -5,17 +5,18 @@
         "rootDir": "src",
         "outDir": "dist",
         "isolatedModules": false,
-        "declarationMap": false,
-        "declaration": false,
         "sourceMap": true,
-        "composite": false,
+        "composite": true,
+        "tsBuildInfoFile": "dist/tsconfig.build.tsbuildinfo",
         "resolveJsonModule": true,
         "noImplicitReturns": true,
-        // temporary while plugins still develop/test/build in leav src
-        "paths": {
-            "@leav/core/*": ["./src/*"],
-            "@leav/*": ["../../libs/*/src"]
-        }
+        "typeRoots": [
+            "./src/_types",
+            "./node_modules/@types",
+            "./node_modules",
+            "../../node_modules/@types",
+            "../../node_modules"
+        ]
     },
     "references": [
         {
@@ -38,5 +39,5 @@
         }
     ],
     "include": ["src/**/*", "src/**/*.json"],
-    "exclude": ["node_modules", "**/*.spec.ts", "**/__tests__", "applications", "scripts", "dist"]
+    "exclude": ["node_modules", "**/*.spec.ts", "**/__tests__", "applications", "scripts", "dist", "src/plugins"]
 }

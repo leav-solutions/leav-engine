@@ -8,8 +8,9 @@
         "test:commit": "vitest run -c vitest.config.ts --changed",
         "prepublishOnly": "npm run build",
         "build": "tsc --build tsconfig.build.json",
-        "tscheck": "tsc --noEmit -p .",
-        "tscheck:watch": "tsc -w --noEmit -p ."
+        "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
+        "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
+        "tscheck:watch": "tsc -b -w tsconfig.json"
     },
     "main": "dist/index",
     "keywords": [

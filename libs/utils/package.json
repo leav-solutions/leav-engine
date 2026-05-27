@@ -13,6 +13,7 @@
     "scripts": {
         "prepublishOnly": "npm run build",
         "build": "tsc --project tsconfig.esm.json && tsc --project tsconfig.json",
+        "clean": "rm -rf dist",
         "tscheck": "tsc --noEmit -p .",
         "tscheck:watch": "tsc -w --noEmit -p .",
         "test": "vitest run -c vitest.config.ts",

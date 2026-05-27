@@ -5,9 +5,8 @@
         "rootDir": "src",
         "outDir": "dist",
         "isolatedModules": false,
-        "declarationMap": false,
-        "declaration": false,
-        "sourceMap": true
+        "sourceMap": true,
+        "composite": true
     },
     "references": [
         {
