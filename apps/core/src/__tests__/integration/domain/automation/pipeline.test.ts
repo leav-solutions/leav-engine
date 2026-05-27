@@ -27,39 +27,6 @@ describe('automation pipeline', () => {
             },
         });
 
-        it('should execute a simple pipeline with log action', async () => {
-            await expect(
-                pipelineDomain.executePipeline(
-                    createPipelineToExecute([
-                        {
-                            type: AutomationRuleActions.LOG,
-                            params: {
-                                message: 'Test log from automation pipeline.test.ts',
-                                level: 'info',
-                            },
-                        },
-                    ]),
-                    ctx,
-                ),
-            ).resolves.toBeTruthy();
-        });
-
-        it('should interrupt a pipeline with error action', async () => {
-            await expect(
-                pipelineDomain.executePipeline(
-                    createPipelineToExecute([
-                        {
-                            type: AutomationRuleActions.ERROR,
-                            params: {
-                                message: 'This is an error',
-                            },
-                        },
-                    ]),
-                    ctx,
-                ),
-            ).resolves.toBeFalsy();
-        });
-
         it('should execute a pipeline with condition action that continues', async () => {
             await expect(
                 pipelineDomain.executePipeline(
@@ -71,9 +38,9 @@ describe('automation pipeline', () => {
                             },
                         },
                         {
-                            type: AutomationRuleActions.ERROR,
+                            type: AutomationRuleActions.JEXL_EXPRESSION,
                             params: {
-                                message: 'Will stop this pipeline',
+                                formula: 'false',
                             },
                         },
                     ]),
@@ -93,9 +60,9 @@ describe('automation pipeline', () => {
                             },
                         },
                         {
-                            type: AutomationRuleActions.ERROR,
+                            type: AutomationRuleActions.JEXL_EXPRESSION,
                             params: {
-                                message: 'Pipeline already stopped',
+                                formula: 'false',
                             },
                         },
                     ]),

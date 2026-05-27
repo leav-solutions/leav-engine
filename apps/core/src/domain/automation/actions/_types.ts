@@ -5,7 +5,7 @@ import {type AutomationRuleTrigger} from '../../../_types/automation';
 
 export enum AutomationRuleActions {
     CONDITION = 'condition',
-    JEXL_CALCULATION = 'jexlCalculation',
+    JEXL_EXPRESSION = 'jexlExpression',
     MODIFY_ATTRIBUTE = 'modifyAttribute',
     NOTIFICATION = 'notification',
 }

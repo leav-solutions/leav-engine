@@ -136,7 +136,7 @@
             "validateEmail": "Validate Email",
             "validateURL": "Validate URL",
             "excelCalculation": "Excel calculation",
-            "jexlCalculation": "Jexl expression",
+            "jexlExpression": "Jexl expression",
             "inheritanceCalculation": "Inheritance",
             "replaceAnotherAttribute": "Replace in another attribute",
             "toUppercase": "Convert to Uppercase",
@@ -158,7 +158,7 @@
             "validateEmail": "Check if value is a string matching email format',",
             "validateURL": "Check if value is a string matching URL format",
             "validateRegex": "Check if value is a string matching given regex",
-            "jexlCalculation": "Runs a Jexl formula, context: currentRecord, currentUser{lang,record}, currentValues (https://aristid.atlassian.net/wiki/spaces/PRODUIT/pages/2087256077/Calcul+Jexl)",
+            "jexlExpression": "Runs a Jexl formula, context: currentRecord, currentUser{lang,record}, currentValues (https://aristid.atlassian.net/wiki/spaces/PRODUIT/pages/2087256077/Calcul+Jexl)",
             "excelCalculation": "Runs an Excel formula. You can insert attributes values, ex : {getValue(label)} will be replace by the value of attribute with identifier label. The input value of the action is available under {input()}. Do not start formula with a \"=\". Usable functions : input(), first(), last(), firstDate(), lastDate(), sum(), avg(), concat(separator), getValue(id_attribut). Ex : {getValue(linked_products).getValue(price).sum()",
             "inheritanceCalculation": "Runs an heritage. Usable functions : first(), last(), firstDate(), lastDate(), dedup(), getValue(id_attribute). Ex : getValue(linked_products).getValue(picture).dedup()",
             "replaceAnotherAttribute": "Replace values in another attribute, may be preceded by a calculation/inheritance to prepare values",
@@ -340,10 +340,8 @@
             },
             "pipeline": {
                 "types": {
-                    "log": "Log",
                     "condition": "Test condition",
-                    "error": "Error",
-                    "jexlCalculation": "Jexl expression",
+                    "jexlExpression": "Jexl expression",
                     "modifyAttribute": "Modify attribute",
                     "notification": "Notification"
                 },
@@ -354,23 +352,13 @@
                 "action_name": "Action name",
                 "action_name_placeholder": "Add the action name",
                 "params": {
-                    "log": {
-                        "message": "Message",
-                        "message_placeholder": "Enter the message",
-                        "level": "Log level",
-                        "level_placeholder": "Select a log level"
-                    },
-                    "error": {
-                        "message": "Message",
-                        "message_placeholder": "Enter the message"
-                    },
                     "condition": {
                         "expression": "Condition (Jexl)",
                         "expression_placeholder": "Enter a Jexl expression"
                     },
-                    "jexl_calculation": {
-                        "formula": "Jexl expression",
-                        "formula_placeholder": "Enter a Jexl expression"
+                    "jexl_expression": {
+                        "expression": "Jexl expression",
+                        "expression_placeholder": "Enter a Jexl expression"
                     },
                     "modify_attribute": {
                         "attribute_path": "Attribute path",

@@ -252,7 +252,7 @@ export default function ({
             } catch (error) {
                 throw new ValidationError(
                     {
-                        formula: {
+                        expression: {
                             msg: Errors.INVALID_JEXL_EXPRESSION,
                             vars: {
                                 error: error.message,

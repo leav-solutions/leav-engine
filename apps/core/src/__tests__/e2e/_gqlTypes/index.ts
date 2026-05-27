@@ -215,7 +215,7 @@ export enum AttributesSortableFields {
 
 export enum AutomationRuleActions {
   condition = 'condition',
-  jexlCalculation = 'jexlCalculation',
+  jexlExpression = 'jexlExpression',
   modifyAttribute = 'modifyAttribute',
   notification = 'notification'
 }

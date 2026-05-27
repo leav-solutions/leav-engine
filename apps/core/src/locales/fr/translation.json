@@ -136,7 +136,7 @@
             "validateURL": "Valider l'URL",
             "validateRegex": "Valider la RegEx",
             "excelCalculation": "Calcul Excel",
-            "jexlCalculation": "Expression Jexl",
+            "jexlExpression": "Expression Jexl",
             "inheritanceCalculation": "Héritage",
             "replaceAnotherAttribute": "Remplacer dans un autre attribut",
             "toUppercase": "Convertir en majuscules",
@@ -157,7 +157,7 @@
             "validateFormat": "Vérifier si la valeur correspond au format de l'attribut",
             "validateEmail": "Vérifier si la valeur est un email valide",
             "validateURL": "Vérifier si la valeur est une URL valide",
-            "jexlCalculation": "Exécute une formule Jexl, contexte : currentRecord, currentUser{lang,record}, currentValues (https://aristid.atlassian.net/wiki/spaces/PRODUIT/pages/2087256077/Calcul+Jexl)",
+            "jexlExpression": "Exécute une formule Jexl, contexte : currentRecord, currentUser{lang,record}, currentValues (https://aristid.atlassian.net/wiki/spaces/PRODUIT/pages/2087256077/Calcul+Jexl)",
             "validateRegex": "Vérifier si la valeur est une chaîne de caractères qui correspond à une expression régulière donnée susdit",
             "excelCalculation": "Exécute une formule Excel. Vous pouvez insérer des valeurs d'attributs, ex : {getValue(libelle)} sera remplacé par la valeur de l'attribut ayant l'id libelle. La valeur en entrée de l'action est disponible via {input()}. Ne commencez pas la formule par \"=\". Fonctions utilisables : input(), first(), last(), firstDate(), lastDate(), sum(), avg(), concat(separateur), dedup(), getValue(id_attribut). Ex : {getValue(produits_lies).getValue(prix).sum()}",
             "inheritanceCalculation": "Exécute un héritage. Fonctions utilisables : first(), last(), firstDate(), lastDate(), dedup(), getValue(id_attribut). Ex : getValue(produits_lies).getValue(image).dedup()",
@@ -340,10 +340,8 @@
             },
             "pipeline": {
                 "types": {
-                    "log": "Log",
                     "condition": "Condition de test",
-                    "error": "Erreur",
-                    "jexlCalculation": "Expression Jexl",
+                    "jexlExpression": "Expression Jexl",
                     "modifyAttribute": "Modifier un attribut",
                     "notification": "Notification"
                 },
@@ -354,23 +352,13 @@
                 "action_name": "Nom de l’action",
                 "action_name_placeholder": "Ajoutez le nom de l’action",
                 "params": {
-                    "log": {
-                        "message": "Message",
-                        "message_placeholder": "Saisissez le message",
-                        "level": "Niveau de log",
-                        "level_placeholder": "Sélectionnez un niveau de log"
-                    },
-                    "error": {
-                        "message": "Message",
-                        "message_placeholder": "Saisissez le message"
-                    },
                     "condition": {
                         "expression": "Condition (Jexl)",
                         "expression_placeholder": "Saisissez une expression Jexl"
                     },
-                    "jexl_calculation": {
-                        "formula": "Expression Jexl",
-                        "formula_placeholder": "Saisissez une expression Jexl"
+                    "jexl_expression": {
+                        "expression": "Expression Jexl",
+                        "expression_placeholder": "Saisissez une expression Jexl"
                     },
                     "modify_attribute": {
                         "attribute_path": "Chemin de l’attribut",

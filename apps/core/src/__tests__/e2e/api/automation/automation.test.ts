@@ -549,7 +549,7 @@ describe('Automation', () => {
 
             const {params} = uiSchema.pipeline.steps.items;
             expect(params.condition.expression).toHaveProperty('ui:title');
-            expect(params.jexlCalculation.formula).toHaveProperty('ui:title');
+            expect(params.jexlExpression.expression).toHaveProperty('ui:title');
             expect(params.modifyAttribute.attributePath).toHaveProperty('ui:title');
             expect(params.notification.recipients).toHaveProperty('ui:title');
             expect(params.plugin_log_action.message).toHaveProperty('ui:title', 'Plugin log message EN');
