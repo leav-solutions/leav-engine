@@ -650,22 +650,6 @@ const valueDomain = function ({
             // This is especially useful when the linked record is later purged and its label would be unrecoverable.
             const recordLabel = await _maybeGetLinkedRecordLabel(attribute, savedValue, ctx);
 
-            await automationDomain.triggerRules({
-                event: {
-                    action: EventAction.VALUE_SAVE,
-                    topic: {
-                        library,
-                        attribute: attribute.id,
-                        record: {
-                            id: record.id,
-                            libraryId: library,
-                        },
-                    },
-                },
-                synchronous: true,
-                ctx,
-            });
-
             await eventsManager.sendDatabaseEvent<EventAction.VALUE_SAVE>(
                 {
                     action: EventAction.VALUE_SAVE,
@@ -683,6 +667,22 @@ const valueDomain = function ({
                 },
                 ctx,
             );
+
+            await automationDomain.triggerRules({
+                event: {
+                    action: EventAction.VALUE_SAVE,
+                    topic: {
+                        library,
+                        attribute: attribute.id,
+                        record: {
+                            id: record.id,
+                            libraryId: library,
+                        },
+                    },
+                },
+                synchronous: true,
+                ctx,
+            });
 
             if (valueBefore) {
                 // a new join record was create in saveBalue/saveValueBatch, need to remove older if any
