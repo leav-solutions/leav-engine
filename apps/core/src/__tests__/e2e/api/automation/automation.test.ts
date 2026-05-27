@@ -33,9 +33,9 @@ describe('Automation', () => {
                         pipeline: {
                             steps: [
                                 {
-                                    type: AutomationRuleActions.log,
-                                    name: 'my-log',
-                                    params: {message: 'hello from pipeline'},
+                                    type: AutomationRuleActions.condition,
+                                    name: 'my-condition',
+                                    params: {expression: 'true'},
                                 },
                                 {
                                     type: AutomationRuleActions.condition,
@@ -73,9 +73,9 @@ describe('Automation', () => {
                     pipeline: {
                         steps: [
                             {
-                                type: AutomationRuleActions.log,
-                                name: 'my-log',
-                                params: {message: 'hello from pipeline'},
+                                type: AutomationRuleActions.condition,
+                                name: 'my-condition',
+                                params: {expression: 'true'},
                             },
                             {
                                 type: AutomationRuleActions.condition,
@@ -104,8 +104,8 @@ describe('Automation', () => {
                         pipeline: {
                             steps: [
                                 {
-                                    type: AutomationRuleActions.log,
-                                    params: {}, // missing required 'message'
+                                    type: AutomationRuleActions.condition,
+                                    params: {}, // missing required 'expression'
                                 },
                             ],
                         },
@@ -262,8 +262,8 @@ describe('Automation', () => {
                         pipeline: {
                             steps: [
                                 {
-                                    type: AutomationRuleActions.log,
-                                    params: {message: 'updated pipeline step'},
+                                    type: AutomationRuleActions.condition,
+                                    params: {expression: 'false'},
                                 },
                             ],
                         },
@@ -279,9 +279,9 @@ describe('Automation', () => {
                     pipeline: {
                         steps: [
                             {
-                                type: AutomationRuleActions.log,
+                                type: AutomationRuleActions.condition,
                                 name: null,
-                                params: {message: 'updated pipeline step'},
+                                params: {expression: 'false'},
                             },
                         ],
                     },
@@ -299,8 +299,8 @@ describe('Automation', () => {
                         pipeline: {
                             steps: [
                                 {
-                                    type: AutomationRuleActions.log,
-                                    params: {}, // missing required 'message'
+                                    type: AutomationRuleActions.condition,
+                                    params: {}, // missing required 'expression'
                                 },
                             ],
                         },
@@ -550,8 +550,6 @@ describe('Automation', () => {
             const {params} = uiSchema.pipeline.steps.items;
             expect(params.condition.expression).toHaveProperty('ui:title');
             expect(params.jexlCalculation.formula).toHaveProperty('ui:title');
-            expect(params.log.message).toHaveProperty('ui:title');
-            expect(params.log.level).toHaveProperty('ui:title');
             expect(params.modifyAttribute.attributePath).toHaveProperty('ui:title');
             expect(params.notification.recipients).toHaveProperty('ui:title');
             expect(params.plugin_log_action.message).toHaveProperty('ui:title', 'Plugin log message EN');

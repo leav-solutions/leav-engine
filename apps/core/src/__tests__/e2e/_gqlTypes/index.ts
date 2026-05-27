@@ -215,9 +215,7 @@ export enum AttributesSortableFields {
 
 export enum AutomationRuleActions {
   condition = 'condition',
-  error = 'error',
   jexlCalculation = 'jexlCalculation',
-  log = 'log',
   modifyAttribute = 'modifyAttribute',
   notification = 'notification'
 }
@@ -244,6 +242,7 @@ export type AutomationRulePipelineStepInput = {
 };
 
 export enum AutomationRuleSortableFields {
+  active = 'active',
   id = 'id'
 }
 
@@ -469,17 +468,6 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
-}
-
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {

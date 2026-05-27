@@ -1,12 +1,11 @@
 # Automation pipeline actions
 
-For now, only 3 actions for development testing.
+For now, only 4 actions are available.
 
 - `condition` to test pipeline stop
-- `error` to test action throw error
-- `log` to stdout message during pipeline
-
-Except condition that will be mutated, otherwise the two other will be removed.
+- `jexlCalculation` to test jexl calculation
+- `modifyAttribute` to test modify attribute
+- `notification` to test notification
 
 ## Add action
 
