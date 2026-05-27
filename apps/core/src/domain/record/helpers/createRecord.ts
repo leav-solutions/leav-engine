@@ -50,21 +50,6 @@ export default function ({
 
         const newRecord = await recordRepo.createRecord({libraryId: library, recordData, ctx});
 
-        await automationDomain.triggerRules({
-            event: {
-                action: SyncAutomationRuleEventAction.RECORD_INIT,
-                topic: {
-                    library,
-                    record: {
-                        id: newRecord.id,
-                        libraryId: library,
-                    },
-                },
-            },
-            synchronous: true,
-            ctx,
-        });
-
         // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
         // important to send for indexation manager
         await eventsManager.sendDatabaseEvent<EventAction.RECORD_SAVE>(
@@ -81,6 +66,21 @@ export default function ({
             },
             ctx,
         );
+
+        await automationDomain.triggerRules({
+            event: {
+                action: SyncAutomationRuleEventAction.RECORD_INIT,
+                topic: {
+                    library,
+                    record: {
+                        id: newRecord.id,
+                        libraryId: library,
+                    },
+                },
+            },
+            synchronous: true,
+            ctx,
+        });
 
         return newRecord;
     };
