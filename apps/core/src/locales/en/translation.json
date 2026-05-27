@@ -136,7 +136,7 @@
             "validateEmail": "Validate Email",
             "validateURL": "Validate URL",
             "excelCalculation": "Excel calculation",
-            "jexlCalculation": "Jexl calculation",
+            "jexlCalculation": "Jexl expression",
             "inheritanceCalculation": "Inheritance",
             "replaceAnotherAttribute": "Replace in another attribute",
             "toUppercase": "Convert to Uppercase",
@@ -343,7 +343,7 @@
                     "log": "Log",
                     "condition": "Test condition",
                     "error": "Error",
-                    "jexlCalculation": "Jexl calculation",
+                    "jexlCalculation": "Jexl expression",
                     "modifyAttribute": "Modify attribute",
                     "notification": "Notification"
                 },

@@ -136,7 +136,7 @@
             "validateURL": "Valider l'URL",
             "validateRegex": "Valider la RegEx",
             "excelCalculation": "Calcul Excel",
-            "jexlCalculation": "Calcul Jexl",
+            "jexlCalculation": "Expression Jexl",
             "inheritanceCalculation": "Héritage",
             "replaceAnotherAttribute": "Remplacer dans un autre attribut",
             "toUppercase": "Convertir en majuscules",
@@ -343,7 +343,7 @@
                     "log": "Log",
                     "condition": "Condition de test",
                     "error": "Erreur",
-                    "jexlCalculation": "Calcul Jexl",
+                    "jexlCalculation": "Expression Jexl",
                     "modifyAttribute": "Modifier un attribut",
                     "notification": "Notification"
                 },
