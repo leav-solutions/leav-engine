@@ -183,6 +183,10 @@ docker compose --profile automate up
 
 More infos about profiles can be found [here](https://docs.docker.com/compose/profiles/)
 
+### Monitoring
+
+[docker/monitoring](./docker/monitoring/README.md)
+
 ## Update nodejs docker image
 
 - Get the current node version from gitlab-ci.yml default.image (for instance node:24-alpine3.21)
