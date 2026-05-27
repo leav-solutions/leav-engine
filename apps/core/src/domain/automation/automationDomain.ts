@@ -30,6 +30,7 @@ import {type IAutomationActionsRegistry} from './automationActionsRegistry';
 import {type IAutomationJsonSchemaFormDomain} from './form/automationJsonSchemaForm';
 import {type IAutomationUiJsonSchemaFormDomain} from './form/automationUiJsonSchemaForm';
 import {type UiSchema, type RJSFSchema} from '@rjsf/utils';
+import {triggerCounter, triggerDuration, triggerRulesFetchDuration, triggerRulesMatched} from './_metrics';
 
 export interface IGetAutomationRulesParams extends IGetCoreEntitiesParams {
     filters?: ICoreEntityFilterOptions & {
@@ -132,14 +133,27 @@ export default function ({
         event: {action: AutomationRuleEventAction; topic?: AutomationRuleEventTopic},
         synchronous: boolean,
         ctx: IQueryInfos,
-    ): Promise<IAutomationRule[]> => automationRulesCache.getRulesToTrigger(event, synchronous, ctx);
+    ): Promise<IAutomationRule[]> => {
+        const start = Date.now();
+        try {
+            return await automationRulesCache.getRulesToTrigger(event, synchronous, ctx);
+        } finally {
+            triggerRulesFetchDuration.record(Date.now() - start, {event_action: event.action, synchronous});
+        }
+    };
 
     return {
         async triggerRules(params): Promise<void> {
             const {event, synchronous, ctx} = params;
+            const start = Date.now();
+            const baseAttrs = {event_action: event.action, synchronous};
+            let outcome: 'matched' | 'no_match' | 'error' = 'no_match';
 
             try {
                 const rules = await _getRulesToTrigger(event, synchronous, ctx);
+                triggerRulesMatched.record(rules.length, baseAttrs);
+                outcome = rules.length > 0 ? 'matched' : 'no_match';
+
                 const trigger: AutomationRuleTrigger = {
                     eventAction: event.action,
                     eventTopic: event.topic,
@@ -169,7 +183,11 @@ export default function ({
                     }),
                 );
             } catch (error) {
+                outcome = 'error';
                 logger.error(`Error while triggering ${event.action} rules with topic ${event.topic}: ${error.stack}`);
+            } finally {
+                triggerCounter.add(1, {...baseAttrs, outcome});
+                triggerDuration.record(Date.now() - start, {...baseAttrs, outcome});
             }
         },
         async getAutomationRules({params, ctx}) {
