@@ -523,11 +523,11 @@ Requests (MRs) for outdated packages. (https://docs.renovatebot.com)
 
 ### Credentials
 
-When redirect to OIDC service login page, the credentials are: `admin/admin`
+When redirect to OIDC service login page, the credentials are: `admin@example.com/admin`
 
 ### Administration
 
-You can reach keycloak admin console on: [keycloak.leav.localhost](http://keycloak.leav.localhost).
+You can reach keycloak admin console on: [keycloak.leav.localhost](http://keycloak.leav.localhost), accessible by `admin/admin`.
 
 ### Documentation
 

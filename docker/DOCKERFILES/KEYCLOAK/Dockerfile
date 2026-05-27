@@ -1,4 +1,4 @@
-FROM quay.io/keycloak/keycloak:23.0.5 as builder
+FROM quay.io/keycloak/keycloak:26.5.7 as builder
 
 ENV KC_HEALTH_ENABLED=true
 ENV KC_METRICS_ENABLED=true
@@ -7,7 +7,7 @@ ENV KC_CACHE=ispn
 
 RUN /opt/keycloak/bin/kc.sh build
 
-FROM quay.io/keycloak/keycloak:23.0.5 as run
+FROM quay.io/keycloak/keycloak:26.5.7 as run
 
 COPY --from=builder /opt/keycloak/lib/quarkus/ /opt/keycloak/lib/quarkus/
 
