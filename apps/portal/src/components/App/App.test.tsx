@@ -1,4 +1,3 @@
-import {getApplicationByIdQuery} from '../../queries/applications/getApplicationByIdQuery';
 import {getApplicationsEventsSubscription} from '../../queries/applications/getApplicationsEventsSubscription';
 import {getGlobalSettingsQuery} from '../../queries/globalSettings/getGlobalSettingsQuery';
 import {getMe} from '../../queries/me/me';
@@ -7,32 +6,26 @@ import {render, screen} from '../../_tests/testUtils';
 import App from './App';
 import {getApplicationsQuery} from '../../queries/applications/getApplicationsQuery';
 import {getLangs} from '../../queries/core/getLangs';
-import {enableFetchMocks} from 'jest-fetch-mock';
 
-enableFetchMocks();
+vi.mock('../UserMenu', () => ({
+    default: function UserMenu() {
+        return <div>UserMenu</div>;
+    },
+}));
 
-jest.mock(
-    '../UserMenu',
-    () =>
-        function UserMenu() {
-            return <div>UserMenu</div>;
-        },
-);
+vi.mock('../Applications', () => ({
+    default: function Applications() {
+        return <div>Applications</div>;
+    },
+}));
 
-jest.mock(
-    '../Applications',
-    () =>
-        function Applications() {
-            return <div>Applications</div>;
-        },
-);
-
-jest.mock('../../constants', () => ({
+vi.mock('../../constants', async () => ({
+    ...(await vi.importActual<object>('../../constants')),
     APP_ENDPOINT: 'portal',
 }));
 
-jest.mock('../../hooks/useApplicationEventsSubscription', () => ({
-    useApplicationEventsSubscription: jest.fn(),
+vi.mock('../../hooks/useApplicationEventsSubscription', () => ({
+    useApplicationEventsSubscription: vi.fn(),
 }));
 
 describe('App', () => {

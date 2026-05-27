@@ -9,7 +9,7 @@ import * as useApplicationsPermissions from '../../hooks/useApplicationsPermissi
 import Applications from './Applications';
 import {CONSULTED_APPS_KEY, FAVORITES_APPS_KEY} from './_constants';
 
-jest.mock('../../hooks/useApplicationsPermissions', () => ({
+vi.mock('../../hooks/useApplicationsPermissions', () => ({
     useApplicationsPermissions: () => ({
         loading: false,
         canCreate: true,
@@ -20,7 +20,7 @@ jest.mock('../../hooks/useApplicationsPermissions', () => ({
 
 describe('Applications', () => {
     const {location} = window;
-    const mockLocation: Location = {...location, assign: jest.fn(), search: ''};
+    const mockLocation: Location = {...location, assign: vi.fn(), search: ''};
 
     beforeAll(() => {
         Object.defineProperty(window, 'location', {
@@ -40,7 +40,7 @@ describe('Applications', () => {
     });
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const mocks = [
@@ -205,8 +205,8 @@ describe('Applications', () => {
     });
 
     test('If not allowed, cannot create a new app', async () => {
-        // Override jest mock for this test only to return false for canCreate
-        jest.spyOn(useApplicationsPermissions, 'useApplicationsPermissions').mockImplementation(() => ({
+        // Override mock for this test only to return false for canCreate
+        vi.spyOn(useApplicationsPermissions, 'useApplicationsPermissions').mockImplementation(() => ({
             loading: false,
             canCreate: false,
             canDelete: true,

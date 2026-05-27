@@ -11,12 +11,12 @@ describe('UserMenu', () => {
         lang: ['en'],
         availableLangs: ['fr', 'en'],
         defaultLang: 'en',
-        setLang: jest.fn(),
+        setLang: vi.fn(),
     };
 
     test('Open menu and click on elements', async () => {
-        const mockLogout = jest.fn();
-        jest.spyOn(leavUi, 'useAuth').mockReturnValue({
+        const mockLogout = vi.fn();
+        vi.spyOn(leavUi, 'useAuth').mockReturnValue({
             logout: mockLogout,
         });
 
