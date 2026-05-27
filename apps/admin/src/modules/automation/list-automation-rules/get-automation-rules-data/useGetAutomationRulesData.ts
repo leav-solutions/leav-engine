@@ -27,7 +27,7 @@ export const useGetAutomationRulesData = ({currentPage, pageSize, filters}: UseG
         variables: {
             filters,
             sort: {
-                field: AutomationRuleSortableFields.id,
+                field: AutomationRuleSortableFields.active,
                 order: SortOrder.desc,
             },
             pagination: {
