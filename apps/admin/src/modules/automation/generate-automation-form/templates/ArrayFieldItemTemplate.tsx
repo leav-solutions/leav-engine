@@ -6,7 +6,6 @@ import {useTranslation} from 'react-i18next';
 import {useConfirmModal} from '_ui/hooks/useConfirmModal';
 import {type AutomationFormContext} from '../../types';
 import {arrayFieldItemTemplate} from './arrayFieldItemTemplate.module.css';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 
 export const ArrayFieldItemTemplate = ({
     children,
@@ -55,7 +54,7 @@ export const ArrayFieldItemTemplate = ({
                     extra: (
                         <KitSpace direction="horizontal" size="xs" onClick={e => e.stopPropagation()}>
                             {hasMoveDown && (
-                                <KitTooltip title={moveDownLabel} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+                                <KitTooltip title={moveDownLabel}>
                                     <KitButton
                                         type="secondary"
                                         size="m"
@@ -65,7 +64,7 @@ export const ArrayFieldItemTemplate = ({
                                 </KitTooltip>
                             )}
                             {hasMoveUp && (
-                                <KitTooltip title={moveUpLabel} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+                                <KitTooltip title={moveUpLabel}>
                                     <KitButton
                                         type="secondary"
                                         size="m"
@@ -75,7 +74,7 @@ export const ArrayFieldItemTemplate = ({
                                 </KitTooltip>
                             )}
                             {hasRemove && (
-                                <KitTooltip title={deleteLabel} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+                                <KitTooltip title={deleteLabel}>
                                     <KitButton
                                         type="secondary"
                                         size="m"

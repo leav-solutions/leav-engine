@@ -26,7 +26,7 @@ export const ToggleSidebarButton: FunctionComponent = () => {
     }
 
     return (
-        <KitTooltip title={buttonLabel} mouseEnterDelay={1}>
+        <KitTooltip title={buttonLabel}>
             <KitButton
                 id={EDIT_RECORD_SIDEBAR_TOGGLE_BUTON_ID}
                 type="secondary"

@@ -4,7 +4,6 @@ import {cloneElement, useRef} from 'react';
 import {KitButton, KitDropDown, KitTooltip} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 import {faEllipsisH} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
@@ -71,11 +70,7 @@ export const TableNameCell = ({item, itemActions}: ITableNameCellProps) => {
                             : resolveItemActionProp(item, disabled);
 
                         return (
-                            <KitTooltip
-                                key={actionIndex}
-                                title={resolveItemActionProp(item, label)}
-                                mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
-                            >
+                            <KitTooltip key={actionIndex} title={resolveItemActionProp(item, label)}>
                                 <KitButton
                                     size="m"
                                     aria-label={resolveItemActionProp(item, label)}
@@ -110,10 +105,7 @@ export const TableNameCell = ({item, itemActions}: ITableNameCellProps) => {
                                 })),
                         }}
                     >
-                        <KitTooltip
-                            title={t('explorer.more-actions')}
-                            mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
-                        >
+                        <KitTooltip title={t('explorer.more-actions')}>
                             <KitButton
                                 size="m"
                                 aria-label={t('explorer.more-actions') ?? undefined}

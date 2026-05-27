@@ -6,7 +6,6 @@ import {KitButton, KitIdCard, KitProgress, KitSpace, KitTag, KitTooltip, KitTypo
 import {activityCenterTag} from '../activityCenter.module.css';
 import {type IKitNotification} from 'aristid-ds/dist/Kit/Feedback/Notification/types';
 import {type ReactNode} from 'react';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 import {type Task} from './types';
 
 interface ITaskDisplayData {
@@ -79,7 +78,7 @@ const buildArchiveUserTaskButton = (
     onArchiveUserTasks: (tasks: Task[]) => void,
     t: TFunction,
 ): ReactNode => (
-    <KitTooltip title={t('global.delete')} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+    <KitTooltip title={t('global.delete')}>
         <KitButton
             type="tertiary"
             size="s"

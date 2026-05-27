@@ -2,9 +2,8 @@ import {faComment, faInfo} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitTooltip} from 'aristid-ds';
 import {type FunctionComponent} from 'react';
-import {generatePath, useLocation, useNavigate, useParams, useSearchParams} from 'react-router-dom';
+import {generatePath, useNavigate, useParams, useSearchParams} from 'react-router-dom';
 import {RelativePaths} from '../../router/paths';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '@leav/ui';
 import {useTranslation} from 'react-i18next';
 import {type FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID, BLANK_PANEL_ID} from '../../../../constants';
 import {REDIRECT_URL_QUERY_PARAM} from '../../content/panel-custom/message-handlers/useNavigateToPanel';
@@ -36,7 +35,7 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({
     const shouldPreventClose = isTargetFlapAlreadyOpen && recordPanelId === BLANK_PANEL_ID;
 
     return (
-        <KitTooltip title={buttonTitle} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+        <KitTooltip title={buttonTitle}>
             <KitButton
                 size="m"
                 aria-label={buttonTitle}
