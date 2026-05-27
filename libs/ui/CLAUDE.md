@@ -32,7 +32,7 @@ grep -rh --include="*.ts" --include="*.tsx" "from '@leav/ui'" \   # cherche les 
 
 **Utilitaires :** `gqlPossibleTypes`, `prepareFiltersForRequest`
 
-**Constantes :** `NEW_RECORD_ID`, `SUCCESS_ALERT_DURATION`, `TOOLTIP_DEFAULT_DELAY_IN_SECONDS`
+**Constantes :** `NEW_RECORD_ID`, `SUCCESS_ALERT_DURATION`
 
 **Types :** `ILangContext`, `UIFilter`, `IRecordIdentityWhoAmI`, `ITreeNodeWithRecord`, `ErrorDisplayTypes`
 

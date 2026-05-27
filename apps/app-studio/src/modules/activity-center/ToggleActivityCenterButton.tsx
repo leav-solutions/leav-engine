@@ -4,7 +4,6 @@ import {KitBadge, KitButton, KitSidePanel, KitSidePanelHeader, KitTooltip} from 
 import {ACTIVITY_CENTER_TARGET_ID} from '../../constants';
 import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '@leav/ui';
 import {createPortal} from 'react-dom';
 import {ActivityCenter} from './ActivityCenter';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
@@ -46,7 +45,7 @@ export const ToggleActivityCenterButton = () => {
 
     return (
         <>
-            <KitTooltip title={toggleButtonLabel} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+            <KitTooltip title={toggleButtonLabel}>
                 <KitBadge dot={userHasNewActivity}>
                     <KitButton
                         className={toggleActivityCenterButton}

@@ -1,4 +1,5 @@
 const commonModuleNameMapper = require('../../jestModuleNameMapper');
+
 module.exports = {
     testEnvironment: 'jest-environment-jsdom',
     moduleFileExtensions: ['ts', 'tsx', 'js'],
@@ -29,7 +30,13 @@ module.exports = {
         '^.+\\.svg$': '<rootDir>/src/_tests/svgTransform.js',
         '^.+\\.js$': ['babel-jest', {rootMode: 'upward'}],
     },
-    transformIgnorePatterns: ['node_modules/(?!(antd|@babel/runtime|@uidotdev/usehooks)/)'],
+    /*
+     * aristid-ds nests color-convert / color-name which are ESM-only; whitelist them so babel-jest
+     * transforms them. Drop after the Vitest migration, which handles ESM natively.
+     */
+    transformIgnorePatterns: [
+        'node_modules/(?!(antd|@babel/runtime|@uidotdev/usehooks|aristid-ds|color-convert|color-name)/)',
+    ],
     testRegex: '.test.(ts|tsx)$',
     moduleNameMapper: {
         ...commonModuleNameMapper,

@@ -12,7 +12,6 @@ import {
     type SubmitValueFunc,
 } from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {SelectRecordForLinkModal} from '_ui/components/SelectRecordForLinkModal';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 import {AntForm, KitButton, KitTooltip} from 'aristid-ds';
 import {type Dispatch, type SetStateAction, useState} from 'react';
 import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
@@ -107,10 +106,7 @@ export const useLinkRecord = ({
     return {
         LinkRecordButton: !isReadOnly ? (
             <>
-                <KitTooltip
-                    title={isReplacementMode ? t('global.replace') : t('global.add')}
-                    mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
-                >
+                <KitTooltip title={isReplacementMode ? t('global.replace') : t('global.add')}>
                     <KitButton
                         type="secondary"
                         size="m"

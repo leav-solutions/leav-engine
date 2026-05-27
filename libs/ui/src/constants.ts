@@ -56,8 +56,6 @@ export const GLOBAL_BASE_URL = window.__global_base_url__ || '';
 export const PREFIX_USER_VIEWS_ORDER_KEY = 'user_views_order_';
 export const PREFIX_SHARED_VIEWS_ORDER_KEY = 'shared_views_order_';
 
-export const TOOLTIP_DEFAULT_DELAY_IN_SECONDS = 0.5;
-
 export const INFO_NOTIFICATION_DURATION = 5_000;
 export const ERROR_NOTIFICATION_DURATION = 5_000;
 export const SUCCESS_NOTIFICATION_DURATION = 5_000;

@@ -1,7 +1,6 @@
 import {useState, type FunctionComponent} from 'react';
 import {faExpand, faTableColumns, faWindowRestore} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 import {KitButton, KitDropDown, KitTooltip} from 'aristid-ds';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {RelativePaths} from '../../router/paths';
@@ -93,7 +92,7 @@ export const PanelDisplayModeSelector: FunctionComponent = () => {
                 setIsDropdownOpen(open);
             }}
         >
-            <KitTooltip title={t('display_mode.select_display')} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+            <KitTooltip title={t('display_mode.select_display')}>
                 <KitButton
                     size="m"
                     aria-label={t('display_mode.select_display')}

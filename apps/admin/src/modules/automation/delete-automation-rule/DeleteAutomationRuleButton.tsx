@@ -1,7 +1,6 @@
 import {KitTooltip, KitButton} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash} from '@fortawesome/free-solid-svg-icons';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 import {useTranslation} from 'react-i18next';
 
 type DeleteAutomationRuleButtonProps = {
@@ -12,7 +11,7 @@ export const DeleteAutomationRuleButton = ({onClick}: DeleteAutomationRuleButton
     const {t} = useTranslation();
 
     return (
-        <KitTooltip title={t('admin.remove')} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+        <KitTooltip title={t('admin.remove')}>
             <KitButton
                 size="s"
                 icon={<FontAwesomeIcon icon={faTrash} />}

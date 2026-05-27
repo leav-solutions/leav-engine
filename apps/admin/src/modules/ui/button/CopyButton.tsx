@@ -3,7 +3,7 @@ import {faCopy} from '@fortawesome/free-solid-svg-icons';
 import {KitAlert, KitButton, KitTooltip} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {type MouseEventHandler} from 'react';
-import {SUCCESS_ALERT_DURATION, TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
+import {SUCCESS_ALERT_DURATION} from '_ui/constants';
 
 type CopyButtonProps = {
     title: string;
@@ -30,11 +30,7 @@ export const CopyButton = ({className, iconColor, title, value}: CopyButtonProps
     };
 
     return (
-        <KitTooltip
-            title={t('logs.copy_button.copy')}
-            mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
-            placement="bottom"
-        >
+        <KitTooltip title={t('logs.copy_button.copy')} placement="bottom">
             <KitButton
                 className={className}
                 type="tertiary"

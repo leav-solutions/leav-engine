@@ -20,7 +20,13 @@ module.exports = {
         '^.+\\.svg$': '<rootDir>/src/_tests/svgTransform.js',
         '^.+\\.js$': ['babel-jest', {rootMode: 'upward'}],
     },
-    transformIgnorePatterns: ['node_modules/(?!(@uidotdev/usehooks|react-dnd-test-backend|@x0k/json-schema-merge)/)'],
+    /*
+     * aristid-ds nests color-convert / color-name which are ESM-only; whitelist them so babel-jest
+     * transforms them. Drop after the Vitest migration, which handles ESM natively.
+     */
+    transformIgnorePatterns: [
+        'node_modules/(?!(@uidotdev/usehooks|react-dnd-test-backend|@x0k/json-schema-merge|aristid-ds|color-convert|color-name)/)',
+    ],
     testRegex: '.test.(tsx)$',
     moduleNameMapper: {
         ...commonModuleNameMapper,

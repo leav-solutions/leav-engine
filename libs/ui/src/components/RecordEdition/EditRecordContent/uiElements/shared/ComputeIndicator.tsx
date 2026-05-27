@@ -5,7 +5,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faLayerGroup, faSquareRootAlt} from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 
 const ComputeIndicatorWrapper = styled.div`
     font-size: calc(var(--general-typography-fontSize7) * 1px);
@@ -27,18 +26,12 @@ export const ComputeIndicator: FunctionComponent<IComputeIndicatorProps> = ({cal
     return (
         <ComputeIndicatorWrapper>
             {shouldDisplayComputedIcon && (
-                <KitTooltip
-                    title={t('record_edition.calculated_value')}
-                    mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
-                >
+                <KitTooltip title={t('record_edition.calculated_value')}>
                     <FontAwesomeIcon icon={faSquareRootAlt} />
                 </KitTooltip>
             )}
             {shouldDisplayOverridedIcon && (
-                <KitTooltip
-                    title={t('record_edition.overrided_value')}
-                    mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}
-                >
+                <KitTooltip title={t('record_edition.overrided_value')}>
                     <FontAwesomeIcon icon={faLayerGroup} />
                 </KitTooltip>
             )}

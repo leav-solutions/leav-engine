@@ -13,7 +13,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {type ReactNode} from 'react';
 import {type TFunction} from 'i18next';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 
 interface INotificationDisplayData {
     notificationType: IKitNotification['type'];
@@ -73,7 +72,7 @@ const _buildNotificationArchiveButtons = (
     t: TFunction,
     onArchiveUserNotifications: (notifications: Notification[]) => void,
 ) => (
-    <KitTooltip title={t('global.delete')} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+    <KitTooltip title={t('global.delete')}>
         <KitButton
             type="tertiary"
             size="s"

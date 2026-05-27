@@ -2,7 +2,6 @@ import {useState} from 'react';
 import {KitButton, KitDropDown, KitTooltip} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';
-import {TOOLTIP_DEFAULT_DELAY_IN_SECONDS} from '_ui/constants';
 import {type AutomationRuleActions} from '../../../../../_gqlTypes';
 
 type ActionTypeItem = {value: AutomationRuleActions; label: string};
@@ -33,7 +32,7 @@ export const AddPipelineStepButton = ({actionTypes, onAdd, addLabel}: AddPipelin
                 getPopupContainer={triggerNode => triggerNode.parentElement ?? document.body}
                 placement="bottomRight"
             >
-                <KitTooltip title={addLabel} mouseEnterDelay={TOOLTIP_DEFAULT_DELAY_IN_SECONDS}>
+                <KitTooltip title={addLabel}>
                     <KitButton type="secondary" icon={<FontAwesomeIcon icon={faPlus} />} active={isOpen} />
                 </KitTooltip>
             </KitDropDown>
