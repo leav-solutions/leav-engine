@@ -19,12 +19,12 @@ describe('createGraphqlHandler', () => {
     });
 
     describe('when executing a query', () => {
-        it('should POST to CORE_URL/graphql with apiKey as query param', async () => {
+        it('should POST to CORE_URL/graphql with key as query param', async () => {
             const handler = createGraphqlHandler(CORE_URL);
             await handler({query: QUERY, apiKey: API_KEY});
 
             expect(mockFetch).toHaveBeenCalledWith(
-                `${CORE_URL}/graphql?apiKey=${API_KEY}`,
+                `${CORE_URL}/graphql?key=${API_KEY}`,
                 expect.objectContaining({method: 'POST'}),
             );
         });
