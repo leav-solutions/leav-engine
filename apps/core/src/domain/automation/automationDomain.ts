@@ -24,7 +24,6 @@ import {isArangoError} from 'arangojs/error';
 import {type IConfig} from '../../_types/config';
 import {type IAutomationPipelineDomain} from './pipeline/pipeline';
 import {type IAutomationRulesCache} from './automationRulesCache';
-import {buildFakeRulesToTrigger, TRIGGER_FAKER_RULES_FOR_DEV} from './fakeRulesToTrigger';
 import {type IAutomationTriggers} from './triggers/automationTriggers';
 import {type AutomationPipelineExecution, type AutomationPipelineValidation} from './pipeline/_types';
 import {type IAutomationActionsRegistry} from './automationActionsRegistry';
@@ -133,12 +132,7 @@ export default function ({
         event: {action: AutomationRuleEventAction; topic?: AutomationRuleEventTopic},
         synchronous: boolean,
         ctx: IQueryInfos,
-    ): Promise<IAutomationRule[]> => {
-        if (TRIGGER_FAKER_RULES_FOR_DEV) {
-            return buildFakeRulesToTrigger(event, synchronous, ctx);
-        }
-        return automationRulesCache.getRulesToTrigger(event, synchronous, ctx);
-    };
+    ): Promise<IAutomationRule[]> => automationRulesCache.getRulesToTrigger(event, synchronous, ctx);
 
     return {
         async triggerRules(params): Promise<void> {

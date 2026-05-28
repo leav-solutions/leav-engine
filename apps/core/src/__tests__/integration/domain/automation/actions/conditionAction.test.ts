@@ -49,7 +49,7 @@ describe('conditionAction', () => {
             const error = await action.validateStep?.(makeValidateParams('1 ++ 1'), ctx).catch(err => err);
 
             expect(error).toBeInstanceOf(ValidationError);
-            expect((error as ValidationError<any>).fields!.formula).toMatchObject({
+            expect((error as ValidationError<any>).fields!.expression).toMatchObject({
                 msg: Errors.INVALID_JEXL_EXPRESSION,
             });
         });

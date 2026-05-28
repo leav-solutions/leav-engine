@@ -11,8 +11,15 @@ export const AutomationCreation = () => {
 
     const handleBack = () => navigate(AdminAbsolutePaths.automation);
 
-    const handleSubmit = async (values: AutomationFormValues) => {
-        await createAutomationRule(values, handleBack);
+    const handleSubmit = async (values: AutomationFormValues): Promise<boolean> => {
+        const newId = await createAutomationRule(values);
+
+        if (newId === null) {
+            return false;
+        }
+
+        navigate(`${AdminAbsolutePaths.automation}/edit/${newId}`);
+        return true;
     };
 
     return (

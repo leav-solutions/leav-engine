@@ -33,9 +33,9 @@ describe('Automation', () => {
                         pipeline: {
                             steps: [
                                 {
-                                    type: AutomationRuleActions.log,
-                                    name: 'my-log',
-                                    params: {message: 'hello from pipeline'},
+                                    type: AutomationRuleActions.condition,
+                                    name: 'my-condition',
+                                    params: {expression: 'true'},
                                 },
                                 {
                                     type: AutomationRuleActions.condition,
@@ -73,9 +73,9 @@ describe('Automation', () => {
                     pipeline: {
                         steps: [
                             {
-                                type: AutomationRuleActions.log,
-                                name: 'my-log',
-                                params: {message: 'hello from pipeline'},
+                                type: AutomationRuleActions.condition,
+                                name: 'my-condition',
+                                params: {expression: 'true'},
                             },
                             {
                                 type: AutomationRuleActions.condition,
@@ -104,8 +104,8 @@ describe('Automation', () => {
                         pipeline: {
                             steps: [
                                 {
-                                    type: AutomationRuleActions.log,
-                                    params: {}, // missing required 'message'
+                                    type: AutomationRuleActions.condition,
+                                    params: {}, // missing required 'expression'
                                 },
                             ],
                         },
@@ -262,8 +262,8 @@ describe('Automation', () => {
                         pipeline: {
                             steps: [
                                 {
-                                    type: AutomationRuleActions.log,
-                                    params: {message: 'updated pipeline step'},
+                                    type: AutomationRuleActions.condition,
+                                    params: {expression: 'false'},
                                 },
                             ],
                         },
@@ -279,9 +279,9 @@ describe('Automation', () => {
                     pipeline: {
                         steps: [
                             {
-                                type: AutomationRuleActions.log,
+                                type: AutomationRuleActions.condition,
                                 name: null,
-                                params: {message: 'updated pipeline step'},
+                                params: {expression: 'false'},
                             },
                         ],
                     },
@@ -299,8 +299,8 @@ describe('Automation', () => {
                         pipeline: {
                             steps: [
                                 {
-                                    type: AutomationRuleActions.log,
-                                    params: {}, // missing required 'message'
+                                    type: AutomationRuleActions.condition,
+                                    params: {}, // missing required 'expression'
                                 },
                             ],
                         },
@@ -485,17 +485,23 @@ describe('Automation', () => {
             expect(pipeline.properties.steps.items.allOf.length).toBe(Object.values(AutomationRuleActions).length + 1);
         });
 
-        test('edition json schema has active field and trigger is readonly', async () => {
+        test('edition json schema has active field, eventAction and eventTopic readonly, synchronous follows trigger type', async () => {
             const result = await adminUserSdk.GetAutomationRuleForm({
                 formType: AutomationRuleJsonSchemaFormType.edition,
             });
             const schema = result.automationRuleForm.jsonSchema;
 
             expect(schema.properties).toHaveProperty('active');
-            expect(schema.properties.trigger.readOnly).toBe(true);
+
+            expect(schema.properties.trigger.readOnly).toBeUndefined();
+            expect(schema.properties.trigger.properties.eventAction.readOnly).toBe(true);
 
             expect(Array.isArray(schema.properties.trigger.allOf)).toBe(true);
             expect(schema.properties.trigger.allOf.length).toBeGreaterThanOrEqual(3);
+
+            for (const branch of schema.properties.trigger.allOf) {
+                expect(branch.then.properties.eventTopic.readOnly).toBe(true);
+            }
         });
 
         test('$defs contains a single entry per key when multiple triggers share the same $defs key', async () => {
@@ -543,9 +549,7 @@ describe('Automation', () => {
 
             const {params} = uiSchema.pipeline.steps.items;
             expect(params.condition.expression).toHaveProperty('ui:title');
-            expect(params.jexlCalculation.formula).toHaveProperty('ui:title');
-            expect(params.log.message).toHaveProperty('ui:title');
-            expect(params.log.level).toHaveProperty('ui:title');
+            expect(params.jexlExpression.expression).toHaveProperty('ui:title');
             expect(params.modifyAttribute.attributePath).toHaveProperty('ui:title');
             expect(params.notification.recipients).toHaveProperty('ui:title');
             expect(params.plugin_log_action.message).toHaveProperty('ui:title', 'Plugin log message EN');

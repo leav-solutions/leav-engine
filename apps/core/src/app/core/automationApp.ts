@@ -92,6 +92,7 @@ export default function ({
 
                     enum AutomationRuleSortableFields {
                         id
+                        active
                     }
 
                     input AutomationRulesSortInput {

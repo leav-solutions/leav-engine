@@ -156,9 +156,9 @@ describe('Automation RECORD_INIT', () => {
             beforeAll(async () => {
                 ruleId = await createRecordInitRule([
                     {
-                        type: AutomationRuleActions.jexlCalculation,
+                        type: AutomationRuleActions.jexlExpression,
                         params: {
-                            formula:
+                            expression:
                                 "\"Default library label from email: \" + $.currentRecord | getValues('created_by') | first | getValues('email') | first",
                         },
                     },
@@ -194,9 +194,9 @@ describe('Automation RECORD_INIT', () => {
             beforeAll(async () => {
                 ruleId = await createRecordInitRule([
                     {
-                        type: AutomationRuleActions.jexlCalculation,
+                        type: AutomationRuleActions.jexlExpression,
                         params: {
-                            formula: '["#ff0000", "#00ff00", "#0000ff"]',
+                            expression: '["#ff0000", "#00ff00", "#0000ff"]',
                         },
                     },
                     {
@@ -233,9 +233,9 @@ describe('Automation RECORD_INIT', () => {
                 beforeAll(async () => {
                     await updateRecordInitRule(ruleId, [
                         {
-                            type: AutomationRuleActions.jexlCalculation,
+                            type: AutomationRuleActions.jexlExpression,
                             params: {
-                                formula: '["#ff0000", "#00ff00", "#0000ff"]',
+                                expression: '["#ff0000", "#00ff00", "#0000ff"]',
                             },
                         },
                         {
@@ -246,9 +246,9 @@ describe('Automation RECORD_INIT', () => {
                             },
                         },
                         {
-                            type: AutomationRuleActions.jexlCalculation,
+                            type: AutomationRuleActions.jexlExpression,
                             params: {
-                                formula: '["#ff00dd", "#0000ff"]',
+                                expression: '["#ff00dd", "#0000ff"]',
                             },
                         },
                         {
@@ -281,9 +281,9 @@ describe('Automation RECORD_INIT', () => {
                 beforeAll(async () => {
                     await updateRecordInitRule(ruleId, [
                         {
-                            type: AutomationRuleActions.jexlCalculation,
+                            type: AutomationRuleActions.jexlExpression,
                             params: {
-                                formula: '["#ff0000", "#00ff00", "#0000ff"]',
+                                expression: '["#ff0000", "#00ff00", "#0000ff"]',
                             },
                         },
                         {
@@ -294,9 +294,9 @@ describe('Automation RECORD_INIT', () => {
                             },
                         },
                         {
-                            type: AutomationRuleActions.jexlCalculation,
+                            type: AutomationRuleActions.jexlExpression,
                             params: {
-                                formula: '["#ff00dd", "#0000ff"]',
+                                expression: '["#ff00dd", "#0000ff"]',
                             },
                         },
                         {
@@ -333,9 +333,9 @@ describe('Automation RECORD_INIT', () => {
             beforeAll(async () => {
                 ruleId = await createRecordInitRule([
                     {
-                        type: AutomationRuleActions.jexlCalculation,
+                        type: AutomationRuleActions.jexlExpression,
                         params: {
-                            formula: `[getRecord($, "users", "${e2eGuestUser().userId}"), getRecord($, "users", "${e2eNonAdminUser().userId}")]`,
+                            expression: `[getRecord($, "users", "${e2eGuestUser().userId}"), getRecord($, "users", "${e2eNonAdminUser().userId}")]`,
                         },
                     },
                     {
@@ -373,9 +373,9 @@ describe('Automation RECORD_INIT', () => {
             beforeAll(async () => {
                 ruleId = await createRecordInitRule([
                     {
-                        type: AutomationRuleActions.jexlCalculation,
+                        type: AutomationRuleActions.jexlExpression,
                         params: {
-                            formula: `[getRecord($, "users_groups", "${adminsGroupId}") | toNode("users_groups")]`,
+                            expression: `[getRecord($, "users_groups", "${adminsGroupId}") | toNode("users_groups")]`,
                         },
                     },
                     {
@@ -417,8 +417,8 @@ describe('Automation RECORD_INIT', () => {
                         params: {expression: 'true'} satisfies ConditionActionParams,
                     },
                     {
-                        type: AutomationRuleActions.jexlCalculation,
-                        params: {formula: '"condition was true"'},
+                        type: AutomationRuleActions.jexlExpression,
+                        params: {expression: '"condition was true"'},
                     },
                     {
                         type: AutomationRuleActions.modifyAttribute,
@@ -453,8 +453,8 @@ describe('Automation RECORD_INIT', () => {
                         params: {expression: 'false'} satisfies ConditionActionParams,
                     },
                     {
-                        type: AutomationRuleActions.jexlCalculation,
-                        params: {formula: '"should not be set"'},
+                        type: AutomationRuleActions.jexlExpression,
+                        params: {expression: '"should not be set"'},
                     },
                     {
                         type: AutomationRuleActions.modifyAttribute,
@@ -533,9 +533,9 @@ describe('Automation RECORD_INIT', () => {
             await expect(
                 createRecordInitRule([
                     {
-                        type: AutomationRuleActions.jexlCalculation,
+                        type: AutomationRuleActions.jexlExpression,
                         params: {
-                            formula: '"Default library label"',
+                            expression: '"Default library label"',
                         },
                     },
                     {

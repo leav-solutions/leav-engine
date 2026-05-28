@@ -30,7 +30,7 @@ export const useEditAutomationRule = () => {
         });
     };
 
-    const handleEditAutomation = async (id: string, rule: AutomationFormValues, onSuccess: () => void) => {
+    const handleEditAutomation = async (id: string, rule: AutomationFormValues): Promise<boolean> => {
         const {active, label, description, trigger, pipeline} = rule;
 
         try {
@@ -49,13 +49,14 @@ export const useEditAutomationRule = () => {
 
             if (errors) {
                 displayErrorAlert(errors[0].message);
-                return;
+                return false;
             }
 
             displaySuccessAlert();
-            onSuccess();
+            return true;
         } catch (error) {
             displayErrorAlert(error instanceof Error ? error.message : String(error));
+            return false;
         }
     };
 

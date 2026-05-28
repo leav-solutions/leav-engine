@@ -215,9 +215,7 @@ export enum AttributesSortableFields {
 
 export enum AutomationRuleActions {
   condition = 'condition',
-  error = 'error',
-  jexlCalculation = 'jexlCalculation',
-  log = 'log',
+  jexlExpression = 'jexlExpression',
   modifyAttribute = 'modifyAttribute',
   notification = 'notification'
 }
@@ -244,6 +242,7 @@ export type AutomationRulePipelineStepInput = {
 };
 
 export enum AutomationRuleSortableFields {
+  active = 'active',
   id = 'id'
 }
 
@@ -264,17 +263,6 @@ export type AutomationRulesSortInput = {
   field: AutomationRuleSortableFields;
   order?: InputMaybe<SortOrder>;
 };
-
-export enum AutomationTriggerDefSynchronicity {
-  ASYNC = 'ASYNC',
-  BOTH = 'BOTH',
-  SYNC = 'SYNC'
-}
-
-export enum AutomationTriggerDefTopics {
-  ATTRIBUTE = 'ATTRIBUTE',
-  LIBRARY = 'LIBRARY'
-}
 
 export enum AvailableLanguage {
   en = 'en',
@@ -1201,19 +1189,36 @@ export enum ViewTypes {
 }
 
 export type ViewV2CreateInput = {
-  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
-  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   display: ViewV2DisplayInput;
-  filters?: InputMaybe<Array<RecordFilterInput>>;
+  filters?: InputMaybe<Array<ViewV2FilterInput>>;
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
   shared: Scalars['Boolean']['input'];
-  sort?: InputMaybe<Array<RecordSortInput>>;
+  sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
 
+export type ViewV2DisplayAttributeInput = {
+  attributeId: Scalars['ID']['input'];
+  visible: Scalars['Boolean']['input'];
+};
+
 export type ViewV2DisplayInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<ViewV2DisplayAttributeInput>>;
   type: ViewV2Types;
+};
+
+export type ViewV2FilterInput = {
+  attributes: Array<Scalars['ID']['input']>;
+  condition: RecordFilterCondition;
+  pinned: Scalars['Boolean']['input'];
+  values: Array<InputMaybe<Scalars['String']['input']>>;
+};
+
+export type ViewV2SortInput = {
+  attributes: Array<Scalars['ID']['input']>;
+  order: SortOrder;
 };
 
 export enum ViewV2Types {
@@ -1223,16 +1228,14 @@ export enum ViewV2Types {
 }
 
 export type ViewV2UpdateInput = {
-  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
-  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   display?: InputMaybe<ViewV2DisplayInput>;
-  filters?: InputMaybe<Array<RecordFilterInput>>;
+  filters?: InputMaybe<Array<ViewV2FilterInput>>;
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
-  sort?: InputMaybe<Array<RecordSortInput>>;
+  sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
 

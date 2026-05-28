@@ -74,7 +74,7 @@ export const AutomationTable = ({
             key: 'active',
             width: ColumnWidth.XS,
             render: (active: boolean) => (
-                <KitTag type={active ? 'success' : 'neutral'} style={{width: 'fit-content'}}>
+                <KitTag type={active ? 'primary' : 'secondary'} style={{width: 'fit-content'}}>
                     <KitIdCard description={active ? t('admin.active') : t('admin.inactive')} />
                 </KitTag>
             ),

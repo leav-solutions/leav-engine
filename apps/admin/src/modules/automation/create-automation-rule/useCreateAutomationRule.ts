@@ -33,11 +33,11 @@ export const useCreateAutomationRule = () => {
         });
     };
 
-    const handleCreateAutomation = async (rule: AutomationFormValues, onSuccess: () => void) => {
+    const handleCreateAutomation = async (rule: AutomationFormValues): Promise<string | null> => {
         const {label, description, trigger, pipeline} = rule;
 
         try {
-            const {errors} = await createAutomationRule({
+            const {data, errors} = await createAutomationRule({
                 variables: {
                     rule: {
                         active: INACTIVE_RULE,
@@ -51,13 +51,14 @@ export const useCreateAutomationRule = () => {
 
             if (errors) {
                 displayErrorAlert(errors[0].message);
-                return;
+                return null;
             }
 
             displaySuccessAlert();
-            onSuccess();
+            return data?.createAutomationRule?.id ?? null;
         } catch (error) {
             displayErrorAlert(error instanceof Error ? error.message : String(error));
+            return null;
         }
     };
 

@@ -4,10 +4,8 @@ import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type AutomationRuleTrigger} from '../../../_types/automation';
 
 export enum AutomationRuleActions {
-    LOG = 'log',
     CONDITION = 'condition',
-    ERROR = 'error',
-    JEXL_CALCULATION = 'jexlCalculation',
+    JEXL_EXPRESSION = 'jexlExpression',
     MODIFY_ATTRIBUTE = 'modifyAttribute',
     NOTIFICATION = 'notification',
 }

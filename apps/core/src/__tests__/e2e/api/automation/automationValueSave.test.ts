@@ -58,7 +58,7 @@ describe('Automation VALUE_SAVE', () => {
         beforeAll(async () => {
             ruleId = await createValueSaveRule(
                 [
-                    {type: AutomationRuleActions.jexlCalculation, params: {formula: '"derived from source"'}},
+                    {type: AutomationRuleActions.jexlExpression, params: {expression: '"derived from source"'}},
                     {
                         type: AutomationRuleActions.modifyAttribute,
                         params: {attributePath: targetAttrId, mode: 'replace'},
@@ -94,7 +94,7 @@ describe('Automation VALUE_SAVE', () => {
         beforeAll(async () => {
             ruleId = await createValueSaveRule(
                 [
-                    {type: AutomationRuleActions.jexlCalculation, params: {formula: '"wildcard fired"'}},
+                    {type: AutomationRuleActions.jexlExpression, params: {expression: '"wildcard fired"'}},
                     {
                         type: AutomationRuleActions.modifyAttribute,
                         params: {attributePath: targetAttrId, mode: 'replace'},

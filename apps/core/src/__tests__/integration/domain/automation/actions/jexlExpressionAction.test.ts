@@ -2,15 +2,15 @@ import {type AutomationRuleEventTopic, SyncAutomationRuleEventAction} from '../.
 import {type IQueryInfos} from '../../../../../_types/queryInfos';
 import {systemUserId} from '../../../../../_constants/users';
 import {ActionExecutionResultStatus, type IAutomationAction} from '../../../../../domain/automation/actions/_types';
-import {type JexlCalculationActionParams} from '../../../../../domain/automation/actions/jexlCalculationAutomationAction';
+import {type JexlExpressionActionParams} from '../../../../../domain/automation/actions/jexlExpressionAction';
 import {Errors} from '../../../../../_types/errors';
 import ValidationError from '../../../../../errors/ValidationError';
 import {getCoreDep} from '../../../integrationTestUtils';
 import {type IAutomationPipelineExecutionState} from '../../../../../domain/automation/pipeline/_types';
 import {pipelineStepValidation} from '../../../../../domain/automation/pipeline/stepValidation';
 
-describe('jexlCalculationAutomationAction', () => {
-    let action: IAutomationAction<JexlCalculationActionParams>;
+describe('jexlExpressionAction', () => {
+    let action: IAutomationAction<JexlExpressionActionParams>;
     const ctx: IQueryInfos = {userId: systemUserId};
 
     const trigger = {
@@ -28,16 +28,16 @@ describe('jexlCalculationAutomationAction', () => {
     };
 
     beforeAll(() => {
-        action = getCoreDep<IAutomationAction<JexlCalculationActionParams>>(
-            'core.domain.automation.actions.jexlCalculation',
+        action = getCoreDep<IAutomationAction<JexlExpressionActionParams>>(
+            'core.domain.automation.actions.jexlExpression',
         );
     });
 
     describe('validateParams', () => {
-        const makeValidateParams = (formula: string) =>
-            pipelineStepValidation<JexlCalculationActionParams>(
+        const makeValidateParams = (expression: string) =>
+            pipelineStepValidation<JexlExpressionActionParams>(
                 {
-                    steps: [{params: {formula}, type: 'jexlCalculation'}],
+                    steps: [{params: {expression}, type: 'jexlExpression'}],
                     trigger,
                 },
                 0,
@@ -61,7 +61,7 @@ describe('jexlCalculationAutomationAction', () => {
                 caughtError = err;
             }
             expect(caughtError).toBeInstanceOf(ValidationError);
-            expect((caughtError as ValidationError<any>).fields!.formula).toMatchObject({
+            expect((caughtError as ValidationError<any>).fields!.expression).toMatchObject({
                 msg: Errors.INVALID_JEXL_EXPRESSION,
             });
         });
@@ -69,12 +69,12 @@ describe('jexlCalculationAutomationAction', () => {
 
     describe('execute — without record', () => {
         it('evaluates a simple arithmetic expression', async () => {
-            const result = await action.execute({formula: '2 + 3'}, baseState, ctx);
+            const result = await action.execute({expression: '2 + 3'}, baseState, ctx);
             expect(result).toEqual({status: ActionExecutionResultStatus.CONTINUE, result: 5});
         });
 
         it('returns a string result', async () => {
-            const result = await action.execute({formula: '"hello" + " world"'}, baseState, ctx);
+            const result = await action.execute({expression: '"hello" + " world"'}, baseState, ctx);
             expect(result).toEqual({status: ActionExecutionResultStatus.CONTINUE, result: 'hello world'});
         });
 
@@ -83,12 +83,12 @@ describe('jexlCalculationAutomationAction', () => {
                 ...baseState,
                 results: {previousStep: 10},
             };
-            const result = await action.execute({formula: '$.results.previousStep * 3'}, stateWithResults, ctx);
+            const result = await action.execute({expression: '$.results.previousStep * 3'}, stateWithResults, ctx);
             expect(result).toEqual({status: ActionExecutionResultStatus.CONTINUE, result: 30});
         });
 
         it('always returns status CONTINUE', async () => {
-            const result = await action.execute({formula: 'true'}, baseState, ctx);
+            const result = await action.execute({expression: 'true'}, baseState, ctx);
             expect(result).toMatchObject({status: ActionExecutionResultStatus.CONTINUE});
         });
     });
@@ -110,18 +110,18 @@ describe('jexlCalculationAutomationAction', () => {
             },
         };
 
-        it('exposes currentRecord.id in the formula', async () => {
-            const result = await action.execute({formula: '$.currentRecord.id'}, stateWithRecord, ctx);
+        it('exposes currentRecord.id in the expression', async () => {
+            const result = await action.execute({expression: '$.currentRecord.id'}, stateWithRecord, ctx);
             expect(result).toEqual({status: ActionExecutionResultStatus.CONTINUE, result: 'rec_001'});
         });
 
-        it('exposes currentRecord.library in the formula', async () => {
-            const result = await action.execute({formula: '$.currentRecord.library'}, stateWithRecord, ctx);
+        it('exposes currentRecord.library in the expression', async () => {
+            const result = await action.execute({expression: '$.currentRecord.library'}, stateWithRecord, ctx);
             expect(result).toEqual({status: ActionExecutionResultStatus.CONTINUE, result: 'products'});
         });
 
         it('exposes custom simple attributes from the record', async () => {
-            const result = await action.execute({formula: '$.currentRecord.price * 2'}, stateWithRecord, ctx);
+            const result = await action.execute({expression: '$.currentRecord.price * 2'}, stateWithRecord, ctx);
             expect(result).toEqual({status: ActionExecutionResultStatus.CONTINUE, result: 84});
         });
 
@@ -131,7 +131,7 @@ describe('jexlCalculationAutomationAction', () => {
                 results: {discount: 10},
             };
             const result = await action.execute(
-                {formula: '$.currentRecord.price - $.results.discount'},
+                {expression: '$.currentRecord.price - $.results.discount'},
                 stateWithBoth,
                 ctx,
             );
@@ -140,7 +140,7 @@ describe('jexlCalculationAutomationAction', () => {
 
         it('builds a string from currentRecord fields', async () => {
             const result = await action.execute(
-                {formula: '$.currentRecord.label + " (" + $.currentRecord.library + ")"'},
+                {expression: '$.currentRecord.label + " (" + $.currentRecord.library + ")"'},
                 stateWithRecord,
                 ctx,
             );

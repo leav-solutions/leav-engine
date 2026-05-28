@@ -5,19 +5,19 @@ import {type IConfig} from '../../../_types/config';
 import {ActionExecutionResultStatus, AutomationRuleActions, type IAutomationAction} from './_types';
 import {type IJexlAutomation} from '../jexl/jexlAutomation';
 
-const jexlCalculationActionParamsSchema = z.object({
-    formula: z.string().meta({
+const jexlExpressionActionParamsSchema = z.object({
+    expression: z.string().meta({
         title: 'Jexl expression',
         description:
             'The Jexl expression to evaluate when this action is executed. https://aristid.atlassian.net/wiki/spaces/PRODUIT/pages/2087256077/Calcul+Jexl',
         ui: {
-            title: 'automation.form.pipeline.params.jexl_calculation.formula',
-            placeholder: 'automation.form.pipeline.params.jexl_calculation.formula_placeholder',
+            title: 'automation.form.pipeline.params.jexl_expression.expression',
+            placeholder: 'automation.form.pipeline.params.jexl_expression.expression_placeholder',
         },
     } satisfies ZodMetaUISchema),
 });
 
-export type JexlCalculationActionParams = z.infer<typeof jexlCalculationActionParamsSchema>;
+export type JexlExpressionActionParams = z.infer<typeof jexlExpressionActionParamsSchema>;
 
 interface IDeps {
     'core.domain.automation.jexl': IJexlAutomation;
@@ -27,18 +27,18 @@ interface IDeps {
 export default function ({
     'core.domain.automation.jexl': jexlAutomation,
     config,
-}: IDeps): IAutomationAction<JexlCalculationActionParams> {
+}: IDeps): IAutomationAction<JexlExpressionActionParams> {
     const debug = config.actions?.jexl?.debug ?? false;
 
     return {
-        type: AutomationRuleActions.JEXL_CALCULATION,
-        paramsSchema: jexlCalculationActionParamsSchema,
-        validateStep: params => jexlAutomation.validate(params.step.params.formula),
+        type: AutomationRuleActions.JEXL_EXPRESSION,
+        paramsSchema: jexlExpressionActionParamsSchema,
+        validateStep: params => jexlAutomation.validate(params.step.params.expression),
         async execute(params, state, ctx) {
             const jexlCtx = jexlAutomation.buildAutomationContext(state, ctx);
-            const result = await jexlAutomation.eval(params.formula, jexlCtx);
+            const result = await jexlAutomation.eval(params.expression, jexlCtx);
 
-            debug && logger.debug(`Jexl calculation in automation: ${params.formula} => ${JSON.stringify(result)}`);
+            debug && logger.debug(`Jexl expression in automation: ${params.expression} => ${JSON.stringify(result)}`);
 
             return {
                 status: ActionExecutionResultStatus.CONTINUE,
