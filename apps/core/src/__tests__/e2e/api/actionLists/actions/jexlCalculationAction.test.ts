@@ -2,10 +2,10 @@ import {ActionsListEvents} from '../../../../../_types/actionsList';
 import {adminUserSdk} from '../../e2eUtils';
 import {AttributeFormat, AttributeType} from '../../../_gqlTypes';
 
-describe('jexlExpressionAction', () => {
-    const libraryId = 'test_jexl_expression_action_library';
-    const attrSimpleId = 'test_jexl_expression_action_simple_attr';
-    const attrCalcSimpleId = 'test_jexl_expression_action_calc_simple_attr';
+describe('jexlCalculationAction', () => {
+    const libraryId = 'test_jexl_calculation_action_library';
+    const attrSimpleId = 'test_jexl_calculation_action_simple_attr';
+    const attrCalcSimpleId = 'test_jexl_calculation_action_calc_simple_attr';
 
     let recordId: string;
     const aSimpleString = 'a simple string';
@@ -14,7 +14,7 @@ describe('jexlExpressionAction', () => {
         await adminUserSdk.SaveAttribute({
             attribute: {
                 id: attrSimpleId,
-                label: {en: 'Test jexl expression action simple attr'},
+                label: {en: 'Test jexl calculation action simple attr'},
                 type: AttributeType.simple,
                 format: AttributeFormat.text,
             },
@@ -23,7 +23,7 @@ describe('jexlExpressionAction', () => {
         await adminUserSdk.SaveAttribute({
             attribute: {
                 id: attrCalcSimpleId,
-                label: {en: 'Test jexl expression action calc simple attr'},
+                label: {en: 'Test jexl calculation action calc simple attr'},
                 type: AttributeType.simple,
                 format: AttributeFormat.text,
             },
@@ -31,7 +31,7 @@ describe('jexlExpressionAction', () => {
         await adminUserSdk.SaveLibrary({
             library: {
                 id: libraryId,
-                label: {en: 'Test jexl expression action lib'},
+                label: {en: 'Test jexl calculation action lib'},
                 attributes: [attrSimpleId, attrCalcSimpleId],
             },
         });
@@ -63,7 +63,7 @@ describe('jexlExpressionAction', () => {
             await adminUserSdk.SaveAttribute({
                 attribute: {
                     id: attrCalcSimpleId,
-                    label: {en: 'Test jexl expression action calc simple attr'},
+                    label: {en: 'Test jexl calculation action calc simple attr'},
                     type: AttributeType.simple,
                     format: AttributeFormat.text,
                     actions_list: {
@@ -74,7 +74,7 @@ describe('jexlExpressionAction', () => {
                         ],
                         [ActionsListEvents.GET_VALUE]: [
                             {
-                                id: 'jexlExpression',
+                                id: 'jexlCalculation',
                                 params: [
                                     {
                                         name: 'Formula',
@@ -101,7 +101,7 @@ describe('jexlExpressionAction', () => {
             await adminUserSdk.SaveAttribute({
                 attribute: {
                     id: attrCalcSimpleId,
-                    label: {en: 'Test jexl expression action calc simple attr'},
+                    label: {en: 'Test jexl calculation action calc simple attr'},
                     type: AttributeType.simple,
                     format: AttributeFormat.text,
                     actions_list: {
@@ -110,7 +110,7 @@ describe('jexlExpressionAction', () => {
                                 id: 'validateFormat',
                             },
                             {
-                                id: 'jexlExpression',
+                                id: 'jexlCalculation',
                                 params: [
                                     {
                                         name: 'Formula',
@@ -146,7 +146,7 @@ describe('jexlExpressionAction', () => {
             await adminUserSdk.SaveAttribute({
                 attribute: {
                     id: attrCalcSimpleId,
-                    label: {en: 'Test jexl expression action calc simple attr'},
+                    label: {en: 'Test jexl calculation action calc simple attr'},
                     type: AttributeType.simple,
                     format: AttributeFormat.text,
                     actions_list: {
@@ -157,7 +157,7 @@ describe('jexlExpressionAction', () => {
                         ],
                         [ActionsListEvents.GET_VALUE]: [
                             {
-                                id: 'jexlExpression',
+                                id: 'jexlCalculation',
                                 params: [
                                     {
                                         name: 'Formula',

@@ -30,9 +30,9 @@ export default function ({'core.domain.jexl': jexlDomain, config}: IDeps): IActi
     });
 
     return {
-        id: 'jexlExpression',
-        name: 'Jexl expression',
-        description: 'Performs a Jexl expression',
+        id: 'jexlCalculation',
+        name: 'Jexl calculation',
+        description: 'Performs a Jexl calculation',
         input_types: [
             ActionsListIOTypes.STRING,
             ActionsListIOTypes.NUMBER,
@@ -50,7 +50,7 @@ export default function ({'core.domain.jexl': jexlDomain, config}: IDeps): IActi
             {
                 name: 'Description',
                 type: 'string',
-                description: 'Quick description of your expression',
+                description: 'Quick description of your calculation',
                 required: true,
                 helper_value: 'Your description',
             },
@@ -90,7 +90,7 @@ export default function ({'core.domain.jexl': jexlDomain, config}: IDeps): IActi
 
                 const result = await jexlDomain.eval(formula, jexlCtx);
 
-                debug && logger.debug(`Jexl expression: ${formula} => ${JSON.stringify(result)}`);
+                debug && logger.debug(`Jexl calculation: ${formula} => ${JSON.stringify(result)}`);
 
                 const finalResults: IValue[] = Array.isArray(result)
                     ? result.map(r => _buildValueResult(r))
@@ -101,7 +101,7 @@ export default function ({'core.domain.jexl': jexlDomain, config}: IDeps): IActi
                     errors: [],
                 };
             } catch (error) {
-                debug && logger.debug(`Jexl expression error: ${formula} => ${error.message}`);
+                debug && logger.debug(`Jexl calculation error: ${formula} => ${error.message}`);
                 throw error;
             }
         },
