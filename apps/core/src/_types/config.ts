@@ -280,6 +280,7 @@ export interface IIndexationManager {
     queues: {
         events: string;
     };
+    fuzzySearch: boolean;
 }
 
 export interface ITasksManager {

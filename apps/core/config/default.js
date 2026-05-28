@@ -217,6 +217,7 @@ module.exports = {
         queues: {
             events: 'indexation_events',
         },
+        fuzzySearch: envToBool(process.env.INDEXATION_FUZZY_SEARCH, true),
     },
     debug: envToBool(process.env.DEBUG, false),
     defaultUserId: '2', // Used for DB migration and any other action that is not bound to a real user

@@ -214,6 +214,7 @@ export const validateConfig = (conf: IConfig) => {
             queues: Joi.object().keys({
                 events: Joi.string().required(),
             }),
+            fuzzySearch: Joi.boolean().required(),
         }),
         tasksManager: Joi.object().keys({
             checkingInterval: Joi.number().required(),
