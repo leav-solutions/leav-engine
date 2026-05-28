@@ -1,7 +1,7 @@
+import {type CreateAnalyzerOptions, type CreateNgramAnalyzerOptions} from 'arangojs/analyzer';
 import {type IDbService} from '../db/dbService';
 import type * as Config from '../../_types/config';
 import {type IRecordRepo} from '../record/recordRepo';
-import {type GetSearchQuery} from './helpers/getSearchQuery';
 import {type IQueryInfos} from '../../_types/queryInfos';
 
 interface IRecordIndexData {
@@ -13,20 +13,20 @@ export interface IIndexationService {
     listLibrary(libraryId: string): Promise<void>;
     isLibraryListed(libraryId: string): Promise<boolean>;
     indexRecord(libraryId: string, recordId: string, data: IRecordIndexData, ctx: IQueryInfos): Promise<void>;
-    getSearchQuery: GetSearchQuery;
 }
 
 interface IDeps {
     config?: Config.IConfig;
     'core.infra.db.dbService'?: IDbService;
     'core.infra.record'?: IRecordRepo;
-    'core.infra.indexation.helpers.getSearchQuery'?: GetSearchQuery;
 }
 
 export const CORE_INDEX_INPUT_ANALYZER = 'core_index_input';
 export const CORE_INDEX_ANALYZER = 'core_index';
+export const CORE_INDEX_NGRAM_ANALYZER = 'core_index_ngram';
 export const CORE_INDEX_VIEW = 'core_index';
 export const CORE_INDEX_FIELD = 'core_index';
+export const CORE_INDEX_NGRAM_THRESHOLD = 0.7;
 
 const _getCoreIndexView = libraryId => `${CORE_INDEX_VIEW}_${libraryId}`;
 
@@ -34,7 +34,6 @@ export default function ({
     config = null,
     'core.infra.db.dbService': dbService = null,
     'core.infra.record': recordRepo = null,
-    'core.infra.indexation.helpers.getSearchQuery': getSearchQuery = null,
 }: IDeps): IIndexationService {
     return {
         async init(): Promise<void> {
@@ -73,25 +72,57 @@ export default function ({
                     features: ['frequency', 'norm'],
                 });
             }
+
+            // Create ngram analyzer for typo-tolerant fuzzy search via NGRAM_MATCH
+            if (!analyzers.find(a => a.name === `${config.db.name}::${CORE_INDEX_NGRAM_ANALYZER}`)) {
+                // streamType is supported by ArangoDB but missing from arangojs 8.8.1 typedef
+                const ngramProperties: CreateNgramAnalyzerOptions['properties'] & {streamType?: string} = {
+                    min: 3,
+                    max: 3,
+                    preserveOriginal: false,
+                    streamType: 'utf8',
+                };
+                const ngramOptions: CreateAnalyzerOptions = {
+                    type: 'ngram',
+                    properties: ngramProperties,
+                    features: ['frequency', 'norm', 'position'],
+                };
+                await dbService.createAnalyzer(CORE_INDEX_NGRAM_ANALYZER, ngramOptions);
+            }
         },
         async listLibrary(libraryId: string): Promise<void> {
-            await dbService.createView(_getCoreIndexView(libraryId), {
-                type: 'arangosearch',
-                links: {
-                    [libraryId]: {
-                        analyzers: [CORE_INDEX_ANALYZER],
-                        fields: {
-                            [CORE_INDEX_FIELD]: {
-                                includeAllFields: true,
-                            },
+            const viewName = _getCoreIndexView(libraryId);
+            const links = {
+                [libraryId]: {
+                    analyzers: [CORE_INDEX_ANALYZER, CORE_INDEX_NGRAM_ANALYZER],
+                    fields: {
+                        [CORE_INDEX_FIELD]: {
+                            includeAllFields: true,
                         },
                     },
                 },
-            });
+            };
+
+            const existingViews = await dbService.views();
+            if (existingViews.find(v => v.name === viewName)) {
+                // View may exist with stale/empty links (e.g. after the underlying collection was dropped).
+                // Update its properties so the link is always wired to the current collection.
+                await dbService.db.view(viewName).updateProperties({links});
+            } else {
+                await dbService.createView(viewName, {type: 'arangosearch', links});
+            }
         },
         async isLibraryListed(libraryId: string): Promise<boolean> {
+            const viewName = _getCoreIndexView(libraryId);
             const views = await dbService.views();
-            return !!views.find(v => v.name === _getCoreIndexView(libraryId));
+            if (!views.find(v => v.name === viewName)) {
+                return false;
+            }
+
+            // A view can exist with stale/empty links (e.g. after the underlying collection was dropped).
+            // Treat such zombie views as "not listed" so listLibrary re-wires them.
+            const props = await dbService.db.view(viewName).properties();
+            return !!(props as {links?: object}).links?.[libraryId];
         },
         async indexRecord(libraryId, recordId, data, ctx) {
             await recordRepo.updateRecord({
@@ -100,6 +131,5 @@ export default function ({
                 ctx,
             });
         },
-        getSearchQuery,
     };
 }

@@ -1,6 +1,14 @@
 import {type IRecordSort} from '../../../_types/record';
 import {type GeneratedAqlQuery, aql, join, literal} from 'arangojs/aql';
-import {CORE_INDEX_ANALYZER, CORE_INDEX_FIELD, CORE_INDEX_INPUT_ANALYZER, CORE_INDEX_VIEW} from '../indexationService';
+import type * as Config from '../../../_types/config';
+import {
+    CORE_INDEX_ANALYZER,
+    CORE_INDEX_FIELD,
+    CORE_INDEX_INPUT_ANALYZER,
+    CORE_INDEX_NGRAM_ANALYZER,
+    CORE_INDEX_NGRAM_THRESHOLD,
+    CORE_INDEX_VIEW,
+} from '../indexationService';
 
 export type GetSearchQuery = (
     libraryId: string,
@@ -9,18 +17,31 @@ export type GetSearchQuery = (
     sort?: IRecordSort,
 ) => GeneratedAqlQuery;
 
-export default function (): GetSearchQuery {
+interface IDeps {
+    config?: Config.IConfig;
+}
+
+export default function ({config = null}: IDeps = {}): GetSearchQuery {
     return (libraryId: string, fields: string[], search: string, sort?: IRecordSort): GeneratedAqlQuery => {
         if (!fields.length) {
             return aql`[]`;
         }
 
+        const fuzzySearchEnabled = config?.indexationManager?.fuzzySearch ?? true;
+
         const queryParts = [aql`FOR doc IN ${literal(`${CORE_INDEX_VIEW}_${libraryId}`)} SEARCH`];
 
         for (const [i, field] of fields.entries()) {
-            queryParts.push(
-                aql`ANALYZER(TOKENS(${search}, ${CORE_INDEX_INPUT_ANALYZER}) ALL IN doc.${CORE_INDEX_FIELD}.${field}, ${CORE_INDEX_ANALYZER})`,
-            );
+            const exactMatch = aql`ANALYZER(TOKENS(${search}, ${CORE_INDEX_INPUT_ANALYZER}) ALL IN doc.${CORE_INDEX_FIELD}.${field}, ${CORE_INDEX_ANALYZER})`;
+
+            if (fuzzySearchEnabled) {
+                queryParts.push(
+                    aql`(${exactMatch}
+                        OR NGRAM_MATCH(doc.${CORE_INDEX_FIELD}.${field}, ${search}, ${CORE_INDEX_NGRAM_THRESHOLD}, ${CORE_INDEX_NGRAM_ANALYZER}))`,
+                );
+            } else {
+                queryParts.push(aql`(${exactMatch})`);
+            }
 
             if (i < fields.length - 1) {
                 queryParts.push(aql`OR`);

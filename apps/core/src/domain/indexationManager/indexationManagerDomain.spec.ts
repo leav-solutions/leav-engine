@@ -63,6 +63,7 @@ describe('Indexation Manager', () => {
             queues: {
                 events: 'events_queue',
             },
+            fuzzySearch: true,
         },
         amqp: {
             exchange: 'test_exchange',
