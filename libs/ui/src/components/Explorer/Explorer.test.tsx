@@ -4,9 +4,8 @@
 // In this case, the spyOn is too complex to implement, prefer using the mocks parameter of render method.
 //
 import {createRef} from 'react';
-import {render, screen, within} from '_ui/_tests/testUtils';
+import {waitFor, render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
-import {waitFor} from '@testing-library/react';
 import {type Mockify} from '_ui/__mocks__/utils';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faStar, faCheck, faCog, faEdit, faTrash} from '@fortawesome/free-solid-svg-icons';
@@ -757,6 +756,7 @@ describe('Explorer', () => {
 
     const explorerLinkAttribute = {
         id: 'link_attribute',
+        type: gqlTypes.AttributeType.advanced_link,
         multiple_values: true,
         permissions: {
             access_attribute: true,
@@ -774,6 +774,8 @@ describe('Explorer', () => {
             },
             __typename: 'Library',
         },
+        valuesList: [],
+        smart_filter: null,
         __typename: 'LinkAttribute',
     };
 
@@ -786,6 +788,48 @@ describe('Explorer', () => {
             data: gqlTypes.ExplorerLinkAttributeQuery;
         };
     }
+
+    const explorerLinkAttributeNoPermissions = {
+        id: 'link_attribute',
+        type: gqlTypes.AttributeType.advanced_link,
+        multiple_values: true,
+        label: {
+            en: 'Delivery Platforms',
+            fr: 'Plateformes de diffusion',
+            __typename: 'Translation',
+        },
+        permissions: {
+            access_attribute: true,
+            edit_value: false,
+            __typename: 'AttributePermissions',
+        },
+        linked_library: {
+            id: 'delivery_platforms',
+            label: {
+                fr: 'Plateformes de diffusion',
+            },
+            __typename: 'Library',
+        },
+        valuesList: [],
+        smart_filter: null,
+        __typename: 'LinkAttribute',
+    };
+
+    const ExplorerLinkAttributeWithoutPermissionsQueryMock: IExplorerLinkAttributeQueryMockType = {
+        request: {
+            query: gqlTypes.ExplorerLinkAttributeDocument,
+            variables: {
+                id: linkEntrypoint.linkAttributeId,
+            },
+        },
+        result: {
+            data: {
+                attributes: {
+                    list: [explorerLinkAttributeNoPermissions],
+                },
+            },
+        },
+    };
 
     const ExplorerLinkAttributeQueryMock: IExplorerLinkAttributeQueryMockType = {
         request: {
@@ -1317,6 +1361,7 @@ describe('Explorer', () => {
 
         expect(screen.getByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
         expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
+
         await user.click(screen.getByText('global.confirm'));
 
         expect(mockDeactivateMutation).toHaveBeenCalled();
@@ -1648,7 +1693,6 @@ describe('Explorer', () => {
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
-
             expect(customActions[0].callback).not.toHaveBeenCalled();
         });
     });
@@ -1688,6 +1732,9 @@ describe('Explorer', () => {
                     <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                         <Explorer entrypoint={linkEntrypoint} showCreateOnNoResultOnly />
                     </Explorer.EditSettingsContextProvider>,
+                    {
+                        mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock],
+                    },
                 );
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
@@ -1747,6 +1794,9 @@ describe('Explorer', () => {
                     <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                         <Explorer entrypoint={{...linkEntrypoint}} showCreateOnNoResultOnly />
                     </Explorer.EditSettingsContextProvider>,
+                    {
+                        mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock],
+                    },
                 );
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
@@ -1883,7 +1933,9 @@ describe('Explorer', () => {
             expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
             expect(explorerRef.current?.linkAction).toBeNull();
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
+
             await user.click(screen.getByRole('button', {name: 'test button'}));
+
             expect(screen.getByText(EditRecordModalMock)).toBeInTheDocument();
             expect(editRecordFn).toHaveBeenCalledWith(expect.objectContaining({creationFormId: 'test-creation'}));
         });
@@ -2021,6 +2073,7 @@ describe('Explorer', () => {
             expect(screen.getByText(LinkRecordModalMock)).toBeVisible();
 
             const createRecordButton = screen.getByRole('button', {name: 'link-record'});
+
             await user.click(createRecordButton);
             expect(onLink).toHaveBeenCalledWith([987654]);
         });
@@ -2430,7 +2483,9 @@ describe('Explorer', () => {
             const rows = await screen.findAllByRole('row');
             expect(rows).toHaveLength(2); // 2 linked records
             expect(rows[0]).toHaveTextContent(mockRecords[0].whoAmI.label);
+
             await user.click(screen.getAllByRole('button', {name: 'Test 1'})[0]);
+
             expect(actionCallback).toBeCalledWith(
                 expect.objectContaining({
                     id_value: mockExplorerLinkDataQueryResultProperty[0].id_value,
@@ -2930,7 +2985,6 @@ describe('Explorer', () => {
 
             // WHEN the user clicks on the mass deactivate action
             await user.click(within(screen.getByRole('status')).getByRole('button', {name: /massAction.deactivate/}));
-
             // THEN a confirmation modal is displayed
             expect(screen.getByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
             expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
@@ -2955,7 +3009,7 @@ describe('Explorer', () => {
             expect(onDeactivate).toHaveBeenCalledWith(expectedDeactivateFilters, [firstRecord.id, secondRecord.id]);
 
             // AND the selection is cleared
-            waitFor(() => expect(screen.queryByRole('status')).not.toBeVisible());
+            await waitFor(() => expect(screen.queryByRole('status')).not.toBeVisible());
         });
 
         // For an unknown reason, the success alert from last test is still present in the next test and makes it fail
@@ -3074,43 +3128,6 @@ describe('Explorer', () => {
                             multiple_values: false,
                         },
                     ],
-                },
-            },
-        };
-
-        const explorerLinkAttributeNoPermissions = {
-            id: 'link_attribute',
-            multiple_values: true,
-            label: {
-                en: 'Delivery Platforms',
-                fr: 'Plateformes de diffusion',
-            },
-            permissions: {
-                access_attribute: true,
-                edit_value: false,
-                __typename: 'AttributePermissions',
-            },
-            linked_library: {
-                id: 'delivery_platforms',
-                label: {
-                    fr: 'Plateformes de diffusion',
-                },
-                __typename: 'Library',
-            },
-            __typename: 'LinkAttribute',
-        };
-        const ExplorerLinkAttributeWithoutPermissionsQueryMock: IExplorerLinkAttributeQueryMockType = {
-            request: {
-                query: gqlTypes.ExplorerLinkAttributeDocument,
-                variables: {
-                    id: linkEntrypoint.linkAttributeId,
-                },
-            },
-            result: {
-                data: {
-                    attributes: {
-                        list: [explorerLinkAttributeNoPermissions],
-                    },
                 },
             },
         };

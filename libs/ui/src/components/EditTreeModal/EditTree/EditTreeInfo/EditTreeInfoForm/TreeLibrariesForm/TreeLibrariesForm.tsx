@@ -5,7 +5,7 @@ import {type ComponentProps, type ReactNode, useState} from 'react';
 import styled, {type CSSObject} from 'styled-components';
 import {type LibraryLightFragment, type TreeDetailsFragment} from '../../../../../../_gqlTypes';
 import {PreviewSize} from '../../../../../../constants';
-import useLang from '../../../../../../hooks/useLang';
+import useLang from '../../../../../../hooks/useLang/useLang';
 import {useSharedTranslation} from '../../../../../../hooks/useSharedTranslation';
 import {EntityCard, type IEntityData} from '../../../../../EntityCard';
 import FieldsGroup from '../../../../../FieldsGroup';

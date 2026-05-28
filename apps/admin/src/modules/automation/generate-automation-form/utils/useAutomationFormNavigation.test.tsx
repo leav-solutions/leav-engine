@@ -2,7 +2,7 @@ import {act, renderHook} from '@testing-library/react';
 import {useAutomationFormNavigation} from './useAutomationFormNavigation';
 
 const mockOpenConfirmModal = jest.fn();
-jest.mock('_ui/hooks/useConfirmModal', () => ({
+jest.mock('_ui/hooks/useConfirmModal/useConfirmModal', () => ({
     useConfirmModal: () => ({openConfirmModal: mockOpenConfirmModal}),
 }));
 

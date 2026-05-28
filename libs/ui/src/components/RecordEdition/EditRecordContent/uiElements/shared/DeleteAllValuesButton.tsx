@@ -1,5 +1,5 @@
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useConfirmModal} from '_ui/hooks/useConfirmModal';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
 import {KitButton} from 'aristid-ds';
 import {type FunctionComponent} from 'react';
 

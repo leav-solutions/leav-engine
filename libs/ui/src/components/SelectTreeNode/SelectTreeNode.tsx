@@ -7,7 +7,7 @@ import {
     useTreeDataQueryQuery,
 } from '_ui/_gqlTypes';
 import {ErrorDisplay} from '../..';
-import useLang from '../../hooks/useLang';
+import useLang from '../../hooks/useLang/useLang';
 import {type ITreeNodeWithRecord} from '../../types/trees';
 import {SelectTreeNodeContent} from './SelectTreeNodeContent';
 import {SelectTreeNodeContentSkeleton} from './SelectTreeNodeContentSkeleton';

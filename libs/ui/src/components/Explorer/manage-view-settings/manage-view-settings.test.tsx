@@ -15,6 +15,7 @@ import {type IViewSettingsState} from './store-view-settings/viewSettingsReducer
 import {useFiltersReducer} from '_ui/components/Filters/context/useFiltersReducer';
 import {FiltersContext} from '_ui/components/Filters/context/filtersContext';
 import {KitModal} from 'aristid-ds';
+import {mockLibraryWithDetails} from '_ui/__mocks__/common/library';
 
 KitModal.setAppElement(document.body);
 
@@ -194,6 +195,14 @@ describe('Integration tests about managing view settings feature', () => {
         },
     };
 
+    const mockGetLibraryByIdQuery: Mockify<typeof gqlTypes.useGetLibraryByIdQuery> = {
+        data: {
+            libraries: {
+                list: [mockLibraryWithDetails],
+            },
+        },
+    };
+
     let getViewsListSpy: jest.SpyInstance;
     beforeAll(() => {
         jest.spyOn(gqlTypes, 'useGetAttributesByLibWithPermissionsQuery').mockReturnValue(
@@ -224,6 +233,10 @@ describe('Integration tests about managing view settings feature', () => {
         ]);
 
         jest.spyOn(gqlTypes, 'useMeQuery').mockImplementation(() => mockMeResult as gqlTypes.MeQueryResult);
+
+        jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
+            () => mockGetLibraryByIdQuery as gqlTypes.GetLibraryByIdQueryResult,
+        );
     });
 
     test('should be able to open panel and navigate inside to advanced setting and go back', async () => {

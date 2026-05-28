@@ -2,7 +2,7 @@ import {localizedTranslation} from '@leav/utils';
 import {Form, Space} from 'antd';
 import {KitSelect} from 'aristid-ds';
 import styled from 'styled-components';
-import useLang from '_ui/hooks/useLang';
+import useLang from '_ui/hooks/useLang/useLang';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     type AttributesByLibAttributeFragment,

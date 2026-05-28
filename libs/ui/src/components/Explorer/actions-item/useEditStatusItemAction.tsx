@@ -1,5 +1,5 @@
 import {type Dispatch, useMemo} from 'react';
-import {useConfirmModal} from '_ui/hooks/useConfirmModal';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
 import {
     type ActivateRecordsMutation,
     type DeactivateRecordsMutation,

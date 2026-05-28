@@ -1,5 +1,5 @@
 import {renderHook} from '_ui/_tests/testUtils';
-import useLang from '.';
+import useLang from './useLang';
 import {MockedLangContextProvider} from '../../testing';
 
 describe('useLang', () => {
