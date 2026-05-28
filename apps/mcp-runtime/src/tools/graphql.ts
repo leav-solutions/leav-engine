@@ -30,7 +30,7 @@ export const createGraphqlHandler =
     async ({query, variables, apiKey}: GraphqlToolInput) => {
         // URL constructor handles trailing slashes and encoding — safer than string concatenation
         const url = new URL('/graphql', coreUrl);
-        url.searchParams.set('apiKey', apiKey);
+        url.searchParams.set('key', apiKey);
 
         const response = await fetch(url.toString(), {
             method: 'POST',
