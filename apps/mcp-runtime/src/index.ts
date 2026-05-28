@@ -3,7 +3,14 @@ import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/st
 import express, {type Request, type Response} from 'express';
 import {logger} from '@leav/logger';
 import {monitoringServer} from '@leav/monitoring-server';
-import {createGraphqlHandler, graphqlInputSchema, graphqlToolDescription, graphqlToolName} from './tools/graphql';
+import {
+    createGraphqlHandler,
+    graphqlInputSchema,
+    graphqlMutationToolDescription,
+    graphqlMutationToolName,
+    graphqlQueryToolDescription,
+    graphqlQueryToolName,
+} from './tools/graphql';
 
 const PORT = Number(process.env.PORT ?? 3000);
 const CORE_URL = process.env.CORE_URL;
@@ -38,8 +45,14 @@ app.all('/mcp', async (req: Request, res: Response) => {
     // Register every tool on this server instance before connecting.
     // rest and trpc tools will be added here once implemented (LEAVC-888).
     server.registerTool(
-        graphqlToolName,
-        {description: graphqlToolDescription, inputSchema: graphqlInputSchema},
+        graphqlQueryToolName,
+        {description: graphqlQueryToolDescription, inputSchema: graphqlInputSchema},
+        createGraphqlHandler(CORE_URL),
+    );
+
+    server.registerTool(
+        graphqlMutationToolName,
+        {description: graphqlMutationToolDescription, inputSchema: graphqlInputSchema},
         createGraphqlHandler(CORE_URL),
     );
 
