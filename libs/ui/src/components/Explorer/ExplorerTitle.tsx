@@ -1,6 +1,6 @@
 import {localizedTranslation} from '@leav/utils';
 import {useExplorerLibraryDetailsQuery, useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
-import useLang from '_ui/hooks/useLang';
+import useLang from '_ui/hooks/useLang/useLang';
 import {AntSkeleton} from 'aristid-ds';
 import {type FunctionComponent} from 'react';
 import {type Entrypoint, type IEntrypointLink} from './_types';

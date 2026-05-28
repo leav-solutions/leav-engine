@@ -2,7 +2,7 @@ import {type Dispatch, useMemo} from 'react';
 import {KitAlert} from 'aristid-ds';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useConfirmModal} from '_ui/hooks/useConfirmModal';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
 import {type FeatureHook, type IMassActions} from '../_types';
 import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {MASS_SELECTION_ALL} from '../_constants';

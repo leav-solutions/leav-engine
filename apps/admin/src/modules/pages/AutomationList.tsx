@@ -13,7 +13,7 @@ import {PageContainer} from '../ui/page/PageContainer';
 import {PageHeader} from '../ui/page/PageHeader';
 import {PageContentContainer} from '../ui/page/PageContentContainer';
 import {useTranslation} from 'react-i18next';
-import {useConfirmModal} from '_ui/hooks/useConfirmModal';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
 
 export const AutomationList = () => {
     const navigate = useNavigate();

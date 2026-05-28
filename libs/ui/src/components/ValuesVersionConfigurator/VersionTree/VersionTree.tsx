@@ -8,7 +8,7 @@ import React, {type SyntheticEvent} from 'react';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {themeVars} from '../../../antdTheme';
-import useLang from '../../../hooks/useLang';
+import useLang from '../../../hooks/useLang/useLang';
 import {type ITreeNode} from '../../../types/trees';
 import {type GetVersionableAttributesByLibraryQuery} from '../../../_gqlTypes';
 import {SelectTreeNodeModalOld} from '../../SelectTreeNodeModalOld';

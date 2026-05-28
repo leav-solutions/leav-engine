@@ -21,7 +21,7 @@ jest.mock('_ui/hooks/useSharedTranslation', () => ({
     useSharedTranslation: jest.fn(),
 }));
 
-jest.mock('_ui/hooks/useLang');
+jest.mock('_ui/hooks/useLang/useLang');
 
 jest.mock('./useGetTreeFilters', () => ({
     useGetTreeFilters: jest.fn(),

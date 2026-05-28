@@ -8,7 +8,7 @@ import {
     useForcePreviewsGenerationMutation,
     useGetLibraryPreviewsSettingsQuery,
 } from '_ui/_gqlTypes';
-import useLang from '../../hooks/useLang';
+import useLang from '../../hooks/useLang/useLang';
 import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import {INFO_NOTIFICATION_DURATION, SUCCESS_NOTIFICATION_DURATION} from '_ui/constants';

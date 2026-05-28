@@ -1,6 +1,6 @@
 import {KitSpace, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useConfirmModal} from '_ui/hooks/useConfirmModal';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
 
 export type UseCreateCancelConfirmHook = (onConfirm: () => void) => () => void;
 

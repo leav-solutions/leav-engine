@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowDown, faArrowUp, faTrash} from '@fortawesome/free-solid-svg-icons';
 import {getUiOptions, type ArrayFieldItemTemplateProps} from '@rjsf/utils';
 import {useTranslation} from 'react-i18next';
-import {useConfirmModal} from '_ui/hooks/useConfirmModal';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
 import {type AutomationFormContext} from '../../types';
 import {arrayFieldItemTemplate} from './arrayFieldItemTemplate.module.css';
 

@@ -2,7 +2,7 @@ import {useEffect} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useBlocker} from 'react-router-dom';
 import {BREAK_TWO_LINES} from '_ui/constants';
-import {useConfirmModal} from '_ui/hooks/useConfirmModal';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
 
 type UseAutomationFormNavigationParams = {
     shouldBlockNavigation: boolean;

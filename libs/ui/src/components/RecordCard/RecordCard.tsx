@@ -1,5 +1,5 @@
 import {localizedTranslation} from '@leav/utils';
-import useLang from '_ui/hooks/useLang';
+import useLang from '_ui/hooks/useLang/useLang';
 import {PreviewSize} from '../../constants';
 import {type IRecordIdentityWhoAmI} from '../../types/records';
 import {EntityCard, type IEntityData} from '../EntityCard';

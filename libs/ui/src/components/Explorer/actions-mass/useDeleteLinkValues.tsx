@@ -4,7 +4,7 @@ import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTyp
 import {type Dispatch, type Key, useMemo} from 'react';
 import {useExplorerData} from '../_queries/useExplorerData';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {useConfirmModal} from '_ui/hooks/useConfirmModal';
+import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {BREAK_TWO_LINES} from '_ui/constants';
 import {type IValueToSubmit} from '_ui/components/RecordEdition/EditRecordContent/_types';
