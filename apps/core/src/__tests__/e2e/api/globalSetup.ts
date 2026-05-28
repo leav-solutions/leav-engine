@@ -18,6 +18,7 @@ import {type IDbUtils} from '../../../infra/db/dbUtils';
 import {type IServer} from '../../../interface/server';
 import {type ISessionRepo} from '../../../infra/session/sessionRepo';
 import {type ITasksManagerInterface} from '../../../interface/tasksManager';
+import {type IAutomationInterface} from '../../../interface/automation';
 import {type IRecordDomain} from '../../../domain/record/recordDomain';
 import {USERS_GROUPS_LIBRARY, USERS_LIBRARY} from '../../../_types/library';
 import {type GetSystemQueryContext} from '../../../utils/helpers/getSystemQueryContext';
@@ -187,11 +188,13 @@ export async function setup(project: TestProject) {
 
         const server: IServer = coreContainer.cradle['core.interface.server'];
         const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
+        const automation: IAutomationInterface = coreContainer.cradle['core.interface.automation'];
 
         await server.init();
         await server.initConsumers();
         await tasksManager.initMaster();
         await tasksManager.initWorker();
+        await automation.init();
 
         await _createUsersAndGroups(coreContainer, project);
     } catch (e) {

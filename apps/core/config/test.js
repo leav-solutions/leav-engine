@@ -83,5 +83,8 @@ module.exports = {
         cache: {
             enable: true,
         },
+        queues: {
+            events: 'test_automation_events',
+        },
     },
 };
