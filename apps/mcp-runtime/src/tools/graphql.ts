@@ -1,8 +1,14 @@
 import {z} from 'zod';
 
-export const graphqlToolName = 'graphql' as const;
+export const graphqlQueryToolName = 'graphql_query' as const;
+export const graphqlMutationToolName = 'graphql_mutation' as const;
 
-export const graphqlToolDescription = 'Execute a GraphQL query or mutation against the LEAV instance';
+export const graphqlQueryToolDescription =
+    'Execute a read-only GraphQL query against the LEAV instance. Use this for fetching data.';
+
+export const graphqlMutationToolDescription =
+    'Execute a GraphQL mutation against the LEAV instance. ' +
+    'IMPORTANT: always show the user the full mutation and variables, and ask for explicit confirmation before calling this tool.';
 
 // Zod schema used by McpServer.registerTool() to validate inputs and generate the JSON Schema
 // exposed to the AI agent. Each field description is shown to the agent as documentation.
