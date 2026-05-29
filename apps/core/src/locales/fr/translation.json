@@ -53,7 +53,7 @@
         "INVALID_JEXL_EXPRESSION": "Expression JEXL invalide: {{error}}",
         "INVALID_SORT_FIELDS": "Les champs de tri ne sont pas valides",
         "INVALID_TREE_FILTER_FORMAT": "Un filtre sur un arbre doit avoir une condition, un champ et un treeId",
-        "INVALID_UUID_FORMAT": "Format d'UUID non valide, UUID v4 attendu",
+        "INVALID_UUID_FORMAT": "Format d'UUID non valide",
         "INVALID_URL": "URL non valide",
         "INVALID_VALUES_VERSIONS_SETTINGS_BAD_NODE_ID": "L'élement {{nodeId}} ne fait pas partir de l'arbre {{treeId}}",
         "INVALID_VALUES": "Valeurs non valides",

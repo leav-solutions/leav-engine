@@ -53,7 +53,7 @@
         "INVALID_JEXL_EXPRESSION": "Invalid JEXL expression: {{error}}",
         "INVALID_SORT_FIELDS": "Invalid sort fields",
         "INVALID_TREE_FILTER_FORMAT": "Classified filter must have condition, value and treeId",
-        "INVALID_UUID_FORMAT": "Invalid UUID format, expected UUID v4",
+        "INVALID_UUID_FORMAT": "Invalid UUID format",
         "INVALID_URL": "Invalid URL",
         "INVALID_VALUES_VERSIONS_SETTINGS_BAD_NODE_ID": "Element {{nodeId}} does not belong to tree {{treeId}}",
         "INVALID_VALUES": "Invalid values",

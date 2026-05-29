@@ -11,7 +11,7 @@ import PermissionError from '../../../errors/PermissionError';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
 import {UUID_ATTRIBUTE_ID} from '../../../_constants/attributes';
-import {isValidUuidV4} from '../../../utils/helpers/validateUuid';
+import {isValidUuid} from '../../../utils/helpers/validateUuid';
 import {type ICreateRecordValueError} from '../_types';
 import {type IAutomationDomain} from '../../automation/automationDomain';
 import {SyncAutomationRuleEventAction} from '../../../_types/automation';
@@ -39,7 +39,7 @@ export default function ({
     'core.domain.automation': automationDomain,
 }: IDeps): CreateRecordHelper {
     return async ({library, active, ctx, uuid}) => {
-        if (uuid !== undefined && !isValidUuidV4(uuid)) {
+        if (uuid !== undefined && !isValidUuid(uuid)) {
             throw new ValidationError<{uuid: string}>({[UUID_ATTRIBUTE_ID]: Errors.INVALID_UUID_FORMAT});
         }
 
