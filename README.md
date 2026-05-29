@@ -304,6 +304,27 @@ import {mySuperFunc} from '@leav/my_lib';
 mySuperFunc();
 ```
 
+### `@leav` npm registry (GitLab)
+
+`@leav/*` packages are published to the project's GitLab npm registry. CI authenticates via
+`CI_JOB_TOKEN`; for local access (manual publish, or installing a `@leav` package from the registry
+instead of the workspace) set up your personal token without committing it:
+
+- Create a [Personal Access Token in Gitlab](https://gitlab.aristid.com/-/user_settings/personal_access_tokens) with `api` for read and write (or `read_api` for read only)
+
+- Add in your home `~/.yarnrc.yml`
+
+```yaml
+npmScopes:
+    leav:
+        npmRegistryServer: 'https://gitlab.aristid.com/api/v4/projects/822/packages/npm/'
+        npmPublishRegistry: 'https://gitlab.aristid.com/api/v4/projects/822/packages/npm/'
+        npmAlwaysAuth: true
+        npmAuthToken: <PAT>
+```
+
+- Verify access with `yarn npm info @leav/utils`, should output json with name, versions ...
+
 ---
 
 ## Database
