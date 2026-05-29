@@ -53,7 +53,7 @@ variables:
   DISABLE_E2E_JOBS: "false"
   DISABLE_E2E_PLAYWRIGHT_JOBS: "false"
   DISABLE_BUILD_DOCKER_JOBS: "false"
-  DISABLE_PUBLISH_NPM_JOBS: "false"
+  DISABLE_BUILD_NPM_JOBS: "false"
   # If use npmjs.org public registry
   NPM_TOKEN: ""
 
@@ -937,9 +937,9 @@ build-docker-sync-scan:
 ##########
 
 ##########
-## Publish npm packages
-.disable_publish_npm_rule: &disable_publish_npm_rule
-  if: $DISABLE_PUBLISH_NPM_JOBS == "true"
+## Build npm packages
+.disable_build_npm_rule: &disable_build_npm_rule
+  if: $DISABLE_BUILD_NPM_JOBS == "true"
   when: never
 
 .login_npm_registry_script: &login_npm_registry_script
@@ -951,234 +951,76 @@ build-docker-sync-scan:
       echo "NPM_TOKEN not defined, skip npm login"
     fi
 
-# Ensure we can build a package in MR
-test-build-npm-leav-types:
-  stage: test
-  script:
-    - yarn workspaces focus core
-    - yarn workspace @aristid/leav-types generate
-  cache:
-    <<: *yarn_cache
-  rules:
-    - *disable_publish_npm_rule
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        # libs/types is a projection of apps/core
-        - apps/core/**/*
-        - *new_lib_installed_changes
-      when: on_success
-
-test-build-npm-leav-ui:
-  stage: test
-  script:
-    - yarn workspaces focus @leav/ui
-    - yarn workspace @leav/ui build
-  cache:
-    <<: *yarn_cache
-  rules:
-    - *disable_publish_npm_rule
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - libs/ui/**/*
-        - *new_lib_installed_changes
-      when: on_success
-
-test-build-npm-leav-utils:
-  stage: test
-  script:
-    - yarn workspaces focus @leav/utils
-    - yarn workspace @leav/utils build
-  cache:
-    <<: *yarn_cache
-  rules:
-    - *disable_publish_npm_rule
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - libs/utils/**/*
-        - *new_lib_installed_changes
-      when: on_success
-
-publish-npm-leav-types-next:
+.build_npm: &build_npm
   stage: build
   script:
     - apk add --no-cache jq
     - *login_npm_registry_script
-    - VERSION=$(npm --silent -workspace @aristid/leav-types run get-version)-$CI_COMMIT_SHORT_SHA
     - |
-      echo "Check if version @aristid/leav-types@$VERSION already exists on npm"
-      EXISTS=$(npm --silent view @aristid/leav-types@$VERSION version || echo "")
-      if [ -n "$EXISTS" ]; then
-        echo "Version @aristid/leav-types@$VERSION already exists on npm, skipping publish."
-      else
-        echo "Publishing @aristid/leav-types@$VERSION to npm"
-        echo yarn workspaces focus core
-        yarn workspaces focus core
-        echo yarn workspace @aristid/leav-types generate
-        yarn workspace @aristid/leav-types generate
-        # Do not use 'yarn workspace @aristid/leav-types version xxx' because it needs git !
-        echo yarn workspace @aristid/leav-types set-version -- $VERSION
-        yarn workspace @aristid/leav-types set-version -- $VERSION
-        echo yarn workspace @aristid/leav-types publish --tag next
-        yarn workspace @aristid/leav-types publish --tag next
+      if [ -n "$CI_COMMIT_TAG" ] || [ "$CI_COMMIT_BRANCH" == "develop" ]; then
+        BASE_VERSION=$(npm --silent -workspace $PKG run get-version)
+        if [ -n "$CI_COMMIT_TAG" ]; then
+          NPM_TAG="latest"
+          VERSION="$BASE_VERSION"
+        else
+          NPM_TAG="next"
+          VERSION="$BASE_VERSION-$CI_COMMIT_SHORT_SHA"
+        fi
+        echo "Check if version $PKG@$VERSION already exists on npm"
+        EXISTS=$(npm --silent view $PKG@$VERSION version || echo "")
+        if [ -n "$EXISTS" ]; then
+          echo "Version $PKG@$VERSION already exists on npm, skipping publish."
+        else
+          echo "Publishing $PKG@$VERSION to npm (tag: $NPM_TAG)"
+          yarn workspaces focus $FOCUS
+          yarn workspace $PKG build
+          # Do not use 'yarn workspace $PKG version xxx' because it needs git !
+          yarn workspace $PKG set-version -- $VERSION
+          yarn workspace $PKG publish --tag $NPM_TAG
+        fi
+      else # Merge request
+        echo "Not on a release or develop branch: build then pack the package as a downloadable artifact (no publish)"
+        yarn workspaces focus $FOCUS
+        yarn workspace $PKG build
+        yarn workspace $PKG pack --out "$CI_PROJECT_DIR/npm-pack/%s-%v.tgz"
       fi
   cache:
     <<: *yarn_cache
+  artifacts:
+    paths:
+      - npm-pack/*.tgz
+    expire_in: 1 week
   rules:
-    - *disable_publish_npm_rule
+    - *disable_build_npm_rule
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
       changes:
-        # libs/types is a projection of apps/core
-        - apps/core/**/*
+        - $PATH_CHANGES
       when: on_success
-
-publish-npm-leav-types-latest:
-  stage: build
-  script:
-    - apk add --no-cache jq
-    - *login_npm_registry_script
-    - VERSION=$(npm --silent -workspace @aristid/leav-types run get-version)
-    - |
-      echo "Check if version @aristid/leav-types@$VERSION already exists on npm"
-      EXISTS=$(npm --silent view @aristid/leav-types@$VERSION version || echo "")
-      if [ -n "$EXISTS" ]; then
-        echo "Version @aristid/leav-types@$VERSION already exists on npm, skipping publish."
-      else
-        echo "Publishing @aristid/leav-types@$VERSION to npm"
-        echo yarn workspaces focus core
-        yarn workspaces focus core
-        echo yarn workspace @aristid/leav-types generate
-        yarn workspace @aristid/leav-types generate
-        # Do not use 'yarn workspace @aristid/leav-types version xxx' because it needs git !
-        echo yarn workspace @aristid/leav-types set-version -- $VERSION
-        yarn workspace @aristid/leav-types set-version -- $VERSION
-        echo yarn workspace @aristid/leav-types publish --tag latest
-        yarn workspace @aristid/leav-types publish --tag latest
-      fi
-  cache:
-    <<: *yarn_cache
-  rules:
-    - *disable_publish_npm_rule
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG
       when: on_success
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      allow_failure: true # To make job optional in MR pipelines
+      when: manual
 
-publish-npm-leav-ui-next:
-  stage: build
-  script:
-    - apk add --no-cache jq
-    - *login_npm_registry_script
-    - VERSION=$(npm --silent -workspace @leav/ui run get-version)-$CI_COMMIT_SHORT_SHA
-    - |
-      echo "Check if version @leav/ui@$VERSION already exists on npm"
-      EXISTS=$(npm --silent view @leav/ui@$VERSION version || echo "")
-      if [ -n "$EXISTS" ]; then
-        echo "Version @leav/ui@$VERSION already exists on npm, skipping publish."
-      else
-        echo "Publishing @leav/ui@$VERSION to npm"
-        echo yarn workspaces focus @leav/ui
-        yarn workspaces focus @leav/ui
-        echo yarn workspace @leav/ui build
-        yarn workspace @leav/ui build
-        # Do not use 'yarn workspace @leav/ui version xxx' because it needs git !
-        echo yarn workspace @leav/ui set-version -- $VERSION
-        yarn workspace @leav/ui set-version -- $VERSION
-        echo yarn workspace @leav/ui publish --tag next
-        yarn workspace @leav/ui publish --tag next
-      fi
-  cache:
-    <<: *yarn_cache
-  rules:
-    - *disable_publish_npm_rule
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
-      changes:
-        - libs/ui/**/*
-      when: on_success
+build-npm-leav-types:
+  <<: *build_npm
+  variables:
+    PKG: "@aristid/leav-types"
+    FOCUS: core
+    PATH_CHANGES: apps/core/**/* # libs/types is a projection of apps/core
 
-publish-npm-leav-ui-latest:
-  stage: build
-  when: manual
-  script:
-    - apk add --no-cache jq
-    - *login_npm_registry_script
-    - VERSION=$(npm --silent -workspace @leav/ui run get-version)
-    - |
-      echo "Check if version @leav/ui@$VERSION already exists on npm"
-      EXISTS=$(npm --silent view @leav/ui@$VERSION version || echo "")
-      if [ -n "$EXISTS" ]; then
-        echo "Version @leav/ui@$VERSION already exists on npm, skipping publish."
-      else
-        echo "Publishing @leav/ui@$VERSION to npm"
-        echo yarn workspaces focus @leav/ui
-        yarn workspaces focus @leav/ui
-        echo yarn workspace @leav/ui build
-        yarn workspace @leav/ui build
-        echo yarn workspace @leav/ui publish --tag latest
-        yarn workspace @leav/ui publish --tag latest
-      fi
-  cache:
-    <<: *yarn_cache
-  rules:
-    - *disable_publish_npm_rule
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG
-      when: on_success
+build-npm-leav-ui:
+  <<: *build_npm
+  variables:
+    PKG: "@leav/ui"
+    FOCUS: "@leav/ui"
+    PATH_CHANGES: libs/ui/**/*
 
-publish-npm-leav-utils-next:
-  stage: build
-  script:
-    - apk add --no-cache jq
-    - *login_npm_registry_script
-    - VERSION=$(npm --silent -workspace @leav/utils run get-version)-$CI_COMMIT_SHORT_SHA
-    - |
-      echo "Check if version @leav/utils@$VERSION already exists on npm"
-      EXISTS=$(npm --silent view @leav/utils@$VERSION version || echo "")
-      if [ -n "$EXISTS" ]; then
-        echo "Version @leav/utils@$VERSION already exists on npm, skipping publish."
-      else
-        echo "Publishing @leav/utils@$VERSION to npm"
-        echo yarn workspaces focus @leav/utils
-        yarn workspaces focus @leav/utils
-        echo yarn workspace @leav/utils build
-        yarn workspace @leav/utils build
-        # Do not use 'yarn workspace @leav/utils version xxx' because it needs git !
-        echo yarn workspace @leav/utils set-version -- $VERSION
-        yarn workspace @leav/utils set-version -- $VERSION
-        echo yarn workspace @leav/utils publish --tag next
-        yarn workspace @leav/utils publish --tag next
-      fi
-  cache:
-    <<: *yarn_cache
-  rules:
-    - *disable_publish_npm_rule
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
-      changes:
-        - libs/utils/**/*
-      when: on_success
-
-publish-npm-leav-utils-latest:
-  stage: build
-  when: manual
-  script:
-    - apk add --no-cache jq
-    - *login_npm_registry_script
-    - VERSION=$(npm --silent -workspace @leav/utils run get-version)
-    - |
-      echo "Check if version @leav/utils@$VERSION already exists on npm"
-      EXISTS=$(npm --silent view @leav/utils@$VERSION version || echo "")
-      if [ -n "$EXISTS" ]; then
-        echo "Version @leav/utils@$VERSION already exists on npm, skipping publish."
-      else
-        echo "Publishing @leav/utils@$VERSION to npm"
-        echo yarn workspaces focus @leav/utils
-        yarn workspaces focus @leav/utils
-        echo yarn workspace @leav/utils build
-        yarn workspace @leav/utils build
-        echo yarn workspace @leav/utils publish --tag latest
-        yarn workspace @leav/utils publish --tag latest
-      fi
-  cache:
-    <<: *yarn_cache
-  rules:
-    - *disable_publish_npm_rule
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG
-      when: on_success
-## Publish npm packages
+build-npm-leav-utils:
+  <<: *build_npm
+  variables:
+    PKG: "@leav/utils"
+    FOCUS: "@leav/utils"
+    PATH_CHANGES: libs/utils/**/*
+## Build npm packages
 ##########
