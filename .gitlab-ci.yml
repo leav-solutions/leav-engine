@@ -1018,8 +1018,8 @@ publish-npm-leav-types-next:
         # Do not use 'yarn workspace @aristid/leav-types version xxx' because it needs git !
         echo yarn workspace @aristid/leav-types set-version -- $VERSION
         yarn workspace @aristid/leav-types set-version -- $VERSION
-        echo yarn workspace @aristid/leav-types publish-types --tag next
-        yarn workspace @aristid/leav-types publish-types --tag next
+        echo yarn workspace @aristid/leav-types publish --tag next
+        yarn workspace @aristid/leav-types publish --tag next
       fi
   cache:
     <<: *yarn_cache
@@ -1051,8 +1051,8 @@ publish-npm-leav-types-latest:
         # Do not use 'yarn workspace @aristid/leav-types version xxx' because it needs git !
         echo yarn workspace @aristid/leav-types set-version -- $VERSION
         yarn workspace @aristid/leav-types set-version -- $VERSION
-        echo yarn workspace @aristid/leav-types publish-types --tag latest
-        yarn workspace @aristid/leav-types publish-types --tag latest
+        echo yarn workspace @aristid/leav-types publish --tag latest
+        yarn workspace @aristid/leav-types publish --tag latest
       fi
   cache:
     <<: *yarn_cache
@@ -1081,8 +1081,8 @@ publish-npm-leav-ui-next:
         # Do not use 'yarn workspace @leav/ui version xxx' because it needs git !
         echo yarn workspace @leav/ui set-version -- $VERSION
         yarn workspace @leav/ui set-version -- $VERSION
-        echo yarn workspace @leav/ui publish-ui --tag next
-        yarn workspace @leav/ui publish-ui --tag next
+        echo yarn workspace @leav/ui publish --tag next
+        yarn workspace @leav/ui publish --tag next
       fi
   cache:
     <<: *yarn_cache
@@ -1111,8 +1111,8 @@ publish-npm-leav-ui-latest:
         yarn workspaces focus @leav/ui
         echo yarn workspace @leav/ui build
         yarn workspace @leav/ui build
-        echo yarn workspace @leav/ui publish-ui --tag latest
-        yarn workspace @leav/ui publish-ui --tag latest
+        echo yarn workspace @leav/ui publish --tag latest
+        yarn workspace @leav/ui publish --tag latest
       fi
   cache:
     <<: *yarn_cache
@@ -1141,8 +1141,8 @@ publish-npm-leav-utils-next:
         # Do not use 'yarn workspace @leav/utils version xxx' because it needs git !
         echo yarn workspace @leav/utils set-version -- $VERSION
         yarn workspace @leav/utils set-version -- $VERSION
-        echo yarn workspace @leav/utils publish-utils --tag next
-        yarn workspace @leav/utils publish-utils --tag next
+        echo yarn workspace @leav/utils publish --tag next
+        yarn workspace @leav/utils publish --tag next
       fi
   cache:
     <<: *yarn_cache
@@ -1171,8 +1171,8 @@ publish-npm-leav-utils-latest:
         yarn workspaces focus @leav/utils
         echo yarn workspace @leav/utils build
         yarn workspace @leav/utils build
-        echo yarn workspace @leav/utils publish-utils --tag latest
-        yarn workspace @leav/utils publish-utils --tag latest
+        echo yarn workspace @leav/utils publish --tag latest
+        yarn workspace @leav/utils publish --tag latest
       fi
   cache:
     <<: *yarn_cache
