@@ -1,5 +1,5 @@
 import {defineConfig, devices} from '@playwright/test';
-import config from './src/config';
+import baseConfig from './src/config';
 
 /**
  * Read environment variables from file.
@@ -27,7 +27,7 @@ export default defineConfig({
     // globalSetup: 'global-setup.ts',
     use: {
         /* Base URL to use in actions like `await page.goto('/')`. */
-        baseURL: config.baseUrl,
+        baseURL: baseConfig.baseUrl,
 
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'on-first-retry',

@@ -15,7 +15,9 @@ import {
     TEST_TEXT_RECORD_INITIAL_VALUE,
     TEST_TEXT_RECORD_LABEL,
 } from '../constants';
-import './polyfillCryptoRandomUUID';
+import {setupCryptoRandomUUIDPolyfill} from '@leav/e2e-test-utils';
+
+setupCryptoRandomUUIDPolyfill(test);
 
 test.describe('Standard type field scenario', () => {
     test.beforeEach(async ({page}) => {

@@ -107,6 +107,7 @@ export type ApplicationInput = {
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   module?: InputMaybe<Scalars['String']['input']>;
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
+  system?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<ApplicationType>;
 };
 
@@ -130,6 +131,11 @@ export type ApplicationsFiltersInput = {
   module?: InputMaybe<Scalars['String']['input']>;
   system?: InputMaybe<Scalars['Boolean']['input']>;
   type?: InputMaybe<Array<InputMaybe<ApplicationType>>>;
+};
+
+export type AttributeDependentValueInput = {
+  attributeId: Scalars['ID']['input'];
+  nodeId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export enum AttributeFormat {
@@ -164,7 +170,7 @@ export type AttributeInput = {
   required?: InputMaybe<Scalars['Boolean']['input']>;
   reverse_link?: InputMaybe<Scalars['String']['input']>;
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
-  /**  only for link attribute  */
+  /**  only for link or standard attribute  */
   smart_filter?: InputMaybe<SmartFilterConfInput>;
   type?: InputMaybe<AttributeType>;
   unique?: InputMaybe<Scalars['Boolean']['input']>;
@@ -207,6 +213,57 @@ export enum AttributesSortableFields {
   type = 'type'
 }
 
+export enum AutomationRuleActions {
+  condition = 'condition',
+  jexlExpression = 'jexlExpression',
+  modifyAttribute = 'modifyAttribute',
+  notification = 'notification'
+}
+
+export enum AutomationRuleEventAction {
+  RECORD_INIT = 'RECORD_INIT',
+  RECORD_SAVE = 'RECORD_SAVE',
+  VALUE_SAVE = 'VALUE_SAVE'
+}
+
+export enum AutomationRuleJsonSchemaFormType {
+  creation = 'creation',
+  edition = 'edition'
+}
+
+export type AutomationRulePipelineInput = {
+  steps: Array<AutomationRulePipelineStepInput>;
+};
+
+export type AutomationRulePipelineStepInput = {
+  name?: InputMaybe<Scalars['String']['input']>;
+  params: Scalars['JSON']['input'];
+  type: AutomationRuleActions;
+};
+
+export enum AutomationRuleSortableFields {
+  active = 'active',
+  id = 'id'
+}
+
+export type AutomationRuleTriggerInput = {
+  eventAction: AutomationRuleEventAction;
+  eventTopic?: InputMaybe<EventTopicInput>;
+  synchronous: Scalars['Boolean']['input'];
+};
+
+export type AutomationRulesFiltersInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  id?: InputMaybe<Scalars['ID']['input']>;
+  label?: InputMaybe<Scalars['String']['input']>;
+  trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
+};
+
+export type AutomationRulesSortInput = {
+  field: AutomationRuleSortableFields;
+  order?: InputMaybe<SortOrder>;
+};
+
 export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
@@ -216,6 +273,14 @@ export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
   libraryId: Scalars['ID']['input'];
+};
+
+export type CreateAutomationRuleInput = {
+  active: Scalars['Boolean']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  label: Scalars['String']['input'];
+  pipeline: AutomationRulePipelineInput;
+  trigger: AutomationRuleTriggerInput;
 };
 
 export type CreateRecordDataInput = {
@@ -258,6 +323,66 @@ export type EmbeddedAttributeInput = {
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   validation_regex?: InputMaybe<Scalars['String']['input']>;
+};
+
+export enum EventAction {
+  API_KEY_DELETE = 'API_KEY_DELETE',
+  API_KEY_SAVE = 'API_KEY_SAVE',
+  APP_DELETE = 'APP_DELETE',
+  APP_SAVE = 'APP_SAVE',
+  ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
+  ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
+  AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_DELETE = 'AUTOMATION_RULE_DELETE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
+  CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
+  CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
+  DATA_IMPORT_END = 'DATA_IMPORT_END',
+  DATA_IMPORT_START = 'DATA_IMPORT_START',
+  EXPORT_END = 'EXPORT_END',
+  EXPORT_START = 'EXPORT_START',
+  GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
+  LIBRARY_DELETE = 'LIBRARY_DELETE',
+  LIBRARY_PURGE = 'LIBRARY_PURGE',
+  LIBRARY_SAVE = 'LIBRARY_SAVE',
+  PERMISSION_SAVE = 'PERMISSION_SAVE',
+  RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_SAVE = 'RECORD_SAVE',
+  TASKS_DELETE = 'TASKS_DELETE',
+  TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
+  TREE_DELETE = 'TREE_DELETE',
+  TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
+  TREE_MOVE_ELEMENT = 'TREE_MOVE_ELEMENT',
+  TREE_SAVE = 'TREE_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
+  VALUE_SAVE = 'VALUE_SAVE',
+  VERSION_PROFILE_DELETE = 'VERSION_PROFILE_DELETE',
+  VERSION_PROFILE_SAVE = 'VERSION_PROFILE_SAVE'
+}
+
+export type EventTopicInput = {
+  apiKey?: InputMaybe<Scalars['String']['input']>;
+  application?: InputMaybe<Scalars['String']['input']>;
+  attribute?: InputMaybe<Scalars['String']['input']>;
+  automationRule?: InputMaybe<Scalars['String']['input']>;
+  filename?: InputMaybe<Scalars['String']['input']>;
+  library?: InputMaybe<Scalars['String']['input']>;
+  permission?: InputMaybe<EventTopicPermissionInput>;
+  profile?: InputMaybe<Scalars['String']['input']>;
+  record?: InputMaybe<EventTopicRecordInput>;
+  tree?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type EventTopicPermissionInput = {
+  applyTo?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['String']['input'];
+};
+
+export type EventTopicRecordInput = {
+  id: Scalars['String']['input'];
+  libraryId: Scalars['String']['input'];
 };
 
 export type FileInput = {
@@ -416,6 +541,11 @@ export enum LogAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
+  AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
+  AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
+  AUTOMATION_RULE_DELETE = 'AUTOMATION_RULE_DELETE',
+  AUTOMATION_RULE_UPDATE = 'AUTOMATION_RULE_UPDATE',
   CONFIG_IMPORT_END = 'CONFIG_IMPORT_END',
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
@@ -473,6 +603,7 @@ export enum LogSortableField {
 export type LogTopicFilterInput = {
   apiKey?: InputMaybe<Scalars['String']['input']>;
   attribute?: InputMaybe<Scalars['String']['input']>;
+  automationRule?: InputMaybe<Scalars['String']['input']>;
   filename?: InputMaybe<Scalars['String']['input']>;
   library?: InputMaybe<Scalars['String']['input']>;
   permission?: InputMaybe<LogTopicPermissionFilterInput>;
@@ -491,11 +622,6 @@ export type LogTopicRecordFilterInput = {
   libraryId?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type MapValueInput = {
-  after?: InputMaybe<Scalars['ID']['input']>;
-  before?: InputMaybe<Scalars['ID']['input']>;
-};
-
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -512,6 +638,12 @@ export enum NotificationLevel {
 export type Pagination = {
   limit: Scalars['Int']['input'];
   offset: Scalars['Int']['input'];
+};
+
+export type PartialAutomationRuleTriggerInput = {
+  eventAction?: InputMaybe<AutomationRuleEventAction>;
+  eventTopic?: InputMaybe<EventTopicInput>;
+  synchronous?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type PermissionActionInput = {
@@ -590,6 +722,7 @@ export enum PermissionsActions {
   admin_import_config_clear_database = 'admin_import_config_clear_database',
   admin_library = 'admin_library',
   admin_list_plugins = 'admin_list_plugins',
+  admin_manage_automation = 'admin_manage_automation',
   admin_manage_global_preferences = 'admin_manage_global_preferences',
   create_record = 'create_record',
   delete_record = 'delete_record',
@@ -687,6 +820,12 @@ export type RecordInput = {
   library: Scalars['String']['input'];
 };
 
+export type RecordNewCommentFilterInput = {
+  ignoreOwnEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  libraries?: InputMaybe<Array<Scalars['ID']['input']>>;
+  records?: InputMaybe<Array<Scalars['ID']['input']>>;
+};
+
 export enum RecordPermissionsActions {
   access_record = 'access_record',
   access_record_by_default = 'access_record_by_default',
@@ -710,6 +849,16 @@ export type RecordsPagination = {
   cursor?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type SaveValueBulkMappingInput = {
+  dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
+  values: Array<SaveValueBulkMappingValueInput>;
+};
+
+export type SaveValueBulkMappingValueInput = {
+  after?: InputMaybe<Scalars['ID']['input']>;
+  before?: InputMaybe<Scalars['ID']['input']>;
 };
 
 export type SheetInput = {
@@ -866,6 +1015,15 @@ export enum TreesSortableFields {
   system = 'system'
 }
 
+export type UpdateAutomationRuleInput = {
+  active?: InputMaybe<Scalars['Boolean']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['String']['input']>;
+  pipeline?: InputMaybe<AutomationRulePipelineInput>;
+  trigger?: InputMaybe<AutomationRuleTriggerInput>;
+};
+
 export type UploadFiltersInput = {
   uid?: InputMaybe<Scalars['String']['input']>;
   userId?: InputMaybe<Scalars['ID']['input']>;
@@ -942,6 +1100,7 @@ export type ViewDisplayInput = {
 };
 
 export type ViewInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<Scalars['String']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
@@ -956,6 +1115,7 @@ export type ViewInput = {
 };
 
 export type ViewInputPartial = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<Scalars['String']['input']>>;
   color?: InputMaybe<Scalars['String']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
@@ -980,6 +1140,62 @@ export enum ViewTypes {
   list = 'list',
   timeline = 'timeline'
 }
+
+export type ViewV2CreateInput = {
+  display: ViewV2DisplayInput;
+  filters?: InputMaybe<Array<ViewV2FilterInput>>;
+  label: Scalars['SystemTranslation']['input'];
+  library: Scalars['ID']['input'];
+  shared: Scalars['Boolean']['input'];
+  sorts?: InputMaybe<Array<ViewV2SortInput>>;
+  valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
+};
+
+export type ViewV2DisplayAttributeInput = {
+  attributeId: Scalars['ID']['input'];
+  visible: Scalars['Boolean']['input'];
+};
+
+export type ViewV2DisplayInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<ViewV2DisplayAttributeInput>>;
+  type: ViewV2Types;
+};
+
+export type ViewV2FilterInput = {
+  attributes: Array<Scalars['ID']['input']>;
+  condition: RecordFilterCondition;
+  pinned: Scalars['Boolean']['input'];
+  values: Array<InputMaybe<Scalars['String']['input']>>;
+};
+
+export type ViewV2SortInput = {
+  attributes: Array<Scalars['ID']['input']>;
+  order: SortOrder;
+};
+
+export enum ViewV2Types {
+  cards = 'cards',
+  list = 'list',
+  timeline = 'timeline'
+}
+
+export type ViewV2UpdateInput = {
+  description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
+  display?: InputMaybe<ViewV2DisplayInput>;
+  filters?: InputMaybe<Array<ViewV2FilterInput>>;
+  id: Scalars['ID']['input'];
+  label?: InputMaybe<Scalars['SystemTranslation']['input']>;
+  library?: InputMaybe<Scalars['ID']['input']>;
+  shared?: InputMaybe<Scalars['Boolean']['input']>;
+  sorts?: InputMaybe<Array<ViewV2SortInput>>;
+  valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
+};
+
+export type ViewV2ValuesVersionInput = {
+  treeId: Scalars['ID']['input'];
+  treeNode: Scalars['ID']['input'];
+};
 
 export type ViewValuesVersionInput = {
   treeId: Scalars['String']['input'];
@@ -1021,43 +1237,6 @@ export type DeleteLibraryMutationVariables = Exact<{
 
 export type DeleteLibraryMutation = { deleteLibrary: { id: string } };
 
-export type ImportDataMutationVariables = Exact<{
-  file: Scalars['Upload']['input'];
-}>;
-
-
-export type ImportDataMutation = { importData: string };
-
-export type GetRecordsQueryVariables = Exact<{
-  library: Scalars['ID']['input'];
-}>;
-
-
-export type GetRecordsQuery = { records: { list: Array<{ id: string }> } };
-
-export type DeactivateRecordsMutationVariables = Exact<{
-  libraryId: Scalars['String']['input'];
-  recordsIds: Array<Scalars['String']['input']> | Scalars['String']['input'];
-}>;
-
-
-export type DeactivateRecordsMutation = { deactivateRecords: Array<{ id: string }> };
-
-export type PurgeRecordMutationVariables = Exact<{
-  libraryId: Scalars['ID']['input'];
-  recordId: Scalars['ID']['input'];
-}>;
-
-
-export type PurgeRecordMutation = { purgeRecord: { id: string } };
-
-export type GetTasksQueryVariables = Exact<{
-  filters?: InputMaybe<TaskFiltersInput>;
-}>;
-
-
-export type GetTasksQuery = { tasks: { list: Array<{ id: string, status: TaskStatus }> } };
-
 
 export const SaveApplicationDocument = gql`
     mutation SaveApplication($application: ApplicationInput!) {
@@ -1097,44 +1276,6 @@ export const DeleteLibraryDocument = gql`
   }
 }
     `;
-export const ImportDataDocument = gql`
-    mutation ImportData($file: Upload!) {
-  importData(file: $file)
-}
-    `;
-export const GetRecordsDocument = gql`
-    query GetRecords($library: ID!) {
-  records(library: $library, retrieveInactive: true) {
-    list {
-      id
-    }
-  }
-}
-    `;
-export const DeactivateRecordsDocument = gql`
-    mutation DeactivateRecords($libraryId: String!, $recordsIds: [String!]!) {
-  deactivateRecords(libraryId: $libraryId, recordsIds: $recordsIds) {
-    id
-  }
-}
-    `;
-export const PurgeRecordDocument = gql`
-    mutation PurgeRecord($libraryId: ID!, $recordId: ID!) {
-  purgeRecord(libraryId: $libraryId, recordId: $recordId) {
-    id
-  }
-}
-    `;
-export const GetTasksDocument = gql`
-    query GetTasks($filters: TaskFiltersInput) {
-  tasks(filters: $filters) {
-    list {
-      id
-      status
-    }
-  }
-}
-    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string, variables?: any) => Promise<T>;
 
@@ -1157,21 +1298,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     DeleteLibrary(variables: DeleteLibraryMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteLibraryMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteLibraryMutation>({ document: DeleteLibraryDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteLibrary', 'mutation', variables);
-    },
-    ImportData(variables: ImportDataMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<ImportDataMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<ImportDataMutation>({ document: ImportDataDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'ImportData', 'mutation', variables);
-    },
-    GetRecords(variables: GetRecordsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordsQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetRecordsQuery>({ document: GetRecordsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecords', 'query', variables);
-    },
-    DeactivateRecords(variables: DeactivateRecordsMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeactivateRecordsMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<DeactivateRecordsMutation>({ document: DeactivateRecordsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeactivateRecords', 'mutation', variables);
-    },
-    PurgeRecord(variables: PurgeRecordMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<PurgeRecordMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<PurgeRecordMutation>({ document: PurgeRecordDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'PurgeRecord', 'mutation', variables);
-    },
-    GetTasks(variables?: GetTasksQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetTasksQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<GetTasksQuery>({ document: GetTasksDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetTasks', 'query', variables);
     }
   };
 }

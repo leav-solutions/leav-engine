@@ -8180,9 +8180,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@leav/e2e-utils@workspace:libs/e2e-utils":
+"@leav/e2e-test-utils@workspace:*, @leav/e2e-test-utils@workspace:libs/e2e-test-utils":
   version: 0.0.0-use.local
-  resolution: "@leav/e2e-utils@workspace:libs/e2e-utils"
+  resolution: "@leav/e2e-test-utils@workspace:libs/e2e-test-utils"
   dependencies:
     "@graphql-codegen/add": "npm:5.0.3"
     "@graphql-codegen/cli": "npm:6.3.1"
@@ -16907,6 +16907,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:5.0.10"
     "@graphql-codegen/typescript-graphql-request": "npm:6.4.0"
     "@graphql-codegen/typescript-operations": "npm:5.1.0"
+    "@leav/e2e-test-utils": "workspace:*"
     "@playwright/test": "npm:1.60.0"
     graphql: "npm:16.14.0"
     graphql-request: "npm:7.4.0"
