@@ -1,0 +1,96 @@
+## Stack partially copied from https://gitlab.aristid.com/dev/xstream/creative/creative-factory/-/blob/develop/docker-compose.monitoring.yml?ref_type=heads
+
+### Images ###
+x-otel-collector-image: &otel_collector_image otel/opentelemetry-collector:0.152.0
+x-prometheus-image: &prometheus_image prom/prometheus:v3.11.3
+x-grafana-image: &grafana_image grafana/grafana:12.4.3
+
+name: monitoring
+
+########################
+# SUPPORTING RESOURCES #
+########################
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
+##############
+# CONTAINERS #
+##############
+services:
+  otel-collector:
+    image: *otel_collector_image
+    command: ["--config", "/etc/otel/config.yaml"]
+    volumes:
+      - ./otel/collector.yaml:/etc/otel/config.yaml:ro
+    ports:
+      - "4317:4317" # OTLP gRPC
+      - "4318:4318" # OTLP HTTP
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+  prometheus:
+    image: *prometheus_image
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml" # The config path inside the container
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--web.enable-otlp-receiver" # Accepts OTLP format at /api/v1/otlp/v1/metrics
+
+      - "--web.enable-remote-write-receiver" # Allow OTel Collector to push metrics
+      - "--enable-feature=exemplar-storage"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.leav.localhost`)
+      - traefik.http.services.prometheus.loadbalancer.server.port=9090
+      - traefik.http.routers.prometheus.entrypoints=web
+    volumes:
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+  grafana:
+    image: *grafana_image
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_FEATURE_TOGGLES_ENABLE=traceqlEditor metricsSummary
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:3000/api/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.rule=Host(`grafana.leav.localhost`)
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+      - traefik.http.routers.grafana.entrypoints=web
+    depends_on:
+      prometheus:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    external: true

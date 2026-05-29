@@ -54,6 +54,7 @@ x-ignore-files-list: &ignore-list ""
 
 x-env-core: &env-core
   NODE_ENV: development
+  NODE_OPTIONS: "--trace-warnings"
   ARANGO_URL: http://root:@arangodb:8529
   DB_NAME: leav_core
   INSTANCE_ID: leav_engine
@@ -127,6 +128,14 @@ x-env-logger: &env-logger
 x-env-mcp-runtime: &env-mcp-runtime # Internal Docker network URL — core listens on port 4001 inside the leav network
   CORE_URL: http://core:4001
 
+x-env-monitoring: &env-monitoring
+  OTEL_AUTO_INSTRUMENT: ${OTEL_AUTO_INSTRUMENT:-}
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+  OTEL_NODE_RESOURCE_DETECTORS: env,host,serviceinstance
+  OTEL_LOGS_EXPORTER: none # no yet loki for now at least
+  OTEL_TRACES_EXPORTER: none # no yet tempo for now at least
+  # OTEL_LOG_LEVEL: info
+
 x-env-sync-scan: &env-sync-scan
   ALLOW_FILES_LIST: *allow-list
   IGNORE_FILES_LIST: *ignore-list
@@ -183,8 +192,9 @@ services:
       - "traefik.http.routers.core.entrypoints=web"
       - "traefik.http.routers.core.priority=10"
     environment:
-      <<: [*env-core, *env-amqp, *env-logger]
+      <<: [*env-core, *env-amqp, *env-logger, *env-monitoring]
       CORE_MODES: server,indexationManager,tasksManager:master,tasksManager:worker,filesManager
+      OTEL_SERVICE_NAME: core
     volumes:
       # We must load every volume for installation
       - *mount_point-repo
@@ -224,6 +234,9 @@ services:
       arangodb:
         condition: service_healthy
     command: [sh, -c, "/scripts/start-core.sh"]
+    networks:
+      - default
+      - monitoring
 
   # Logs collector in separate container because it depends in logs profile with elasticsearch
   logs-collector:
@@ -526,6 +539,9 @@ services:
       - "traefik.http.routers.dashboard.rule=Host(`traefik.leav.localhost`)"
       - "traefik.http.routers.dashboard.service=api@internal"
       - "traefik.http.routers.dashboard.entrypoints=web"
+    networks:
+      - default
+      - monitoring
 
   arangodb:
     image: *arango_image
@@ -708,3 +724,6 @@ volumes:
 networks:
   default:
     name: leav
+  monitoring:
+    driver: bridge
+    name: monitoring

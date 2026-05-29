@@ -33,5 +33,13 @@ done
 echo "📚 Run migration scripts"
 yarn run db:migrate:dev
 
+# Enable NODE_OPTIONS only AFTER yarn install + db migrate.
+# Setting it earlier would crash the first `yarn install` (the OTel package isn't
+# in node_modules yet) and would needlessly instrument every yarn/migrate process.
+if [ "$OTEL_AUTO_INSTRUMENT" = "1" ] || [ "$OTEL_AUTO_INSTRUMENT" = "true" ]; then
+  export NODE_OPTIONS="--import @opentelemetry/auto-instrumentations-node/register${NODE_OPTIONS:+ $NODE_OPTIONS}"
+  echo "🔭 OTel auto-instrumentation enabled (NODE_OPTIONS=$NODE_OPTIONS)"
+fi
+
 echo "🛒 Start the server in watch mode"
-yarn run start:watch
+exec yarn run start:watch
