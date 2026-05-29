@@ -1041,5 +1041,12 @@ build-npm-leav-utils:
     PKG: "@leav/utils"
     FOCUS: "@leav/utils"
     PATH_CHANGES: libs/utils/**/*
+
+build-npm-leav-e2e-test-utils:
+  <<: *build_npm
+  variables:
+    PKG: "@leav/e2e-test-utils"
+    FOCUS: "@leav/e2e-test-utils"
+    PATH_CHANGES: libs/e2e-test-utils/**/*
 ## Build npm packages
 ##########
