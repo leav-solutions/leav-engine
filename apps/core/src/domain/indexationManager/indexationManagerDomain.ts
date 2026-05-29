@@ -220,74 +220,92 @@ export default function ({
     };
 
     const _onMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
-        amqpService.consumer.channel.ack(msg);
-
-        const event: IDbEvent = JSON.parse(msg.content.toString());
-        const ctx = getSystemQueryContext('indexationManager:onMessage');
-
         try {
+            const event: IDbEvent = JSON.parse(msg.content.toString());
+            const ctx = getSystemQueryContext('indexationManager:onMessage');
+
             _validateMsg(event);
-        } catch (e) {
-            logger.error(`Indexation Manager - Invalid message received: ${e.message}`, {
-                msg: {
-                    ...msg,
-                    content: msg.content.toString(),
-                },
-            });
-        }
 
-        const payload = event.payload;
-        switch (event.payload.action) {
-            case EventAction.RECORD_SAVE: {
-                await _indexDatabase({
-                    findRecordParams: {
-                        library: payload.topic.record.libraryId,
-                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}],
-                        retrieveInactive: true,
-                    },
-                    ctx,
-                    forceNoTask: true,
-                });
-
-                break;
-            }
-            case EventAction.LIBRARY_SAVE: {
-                const oldSettings = payload.before;
-                const newSettings = payload.after;
-                const attrsToDel = difference(
-                    oldSettings?.fullTextAttributes,
-                    newSettings?.fullTextAttributes,
-                ) as string[];
-                const attrsToAdd = difference(
-                    newSettings?.fullTextAttributes,
-                    oldSettings?.fullTextAttributes,
-                ) as string[];
-
-                if (!isEqual(oldSettings?.fullTextAttributes?.sort(), newSettings?.fullTextAttributes?.sort())) {
+            const payload = event.payload;
+            switch (event.payload.action) {
+                case EventAction.RECORD_SAVE: {
                     await _indexDatabase({
-                        findRecordParams: {library: payload.topic.library, retrieveInactive: true},
+                        findRecordParams: {
+                            library: payload.topic.record.libraryId,
+                            filters: [
+                                {field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id},
+                            ],
+                            retrieveInactive: true,
+                        },
                         ctx,
-                        attributes: {up: attrsToAdd, del: attrsToDel},
+                        forceNoTask: true,
                     });
+
+                    break;
                 }
+                case EventAction.LIBRARY_SAVE: {
+                    const oldSettings = payload.before;
+                    const newSettings = payload.after;
+                    const attrsToDel = difference(
+                        oldSettings?.fullTextAttributes,
+                        newSettings?.fullTextAttributes,
+                    ) as string[];
+                    const attrsToAdd = difference(
+                        newSettings?.fullTextAttributes,
+                        oldSettings?.fullTextAttributes,
+                    ) as string[];
 
-                // if label change we re-index all linked libraries
-                if (newSettings.recordIdentityConf?.label !== newSettings?.recordIdentityConf?.label) {
-                    await _indexLinkedLibraries(newSettings.id, ctx);
+                    if (!isEqual(oldSettings?.fullTextAttributes?.sort(), newSettings?.fullTextAttributes?.sort())) {
+                        await _indexDatabase({
+                            findRecordParams: {library: payload.topic.library, retrieveInactive: true},
+                            ctx,
+                            attributes: {up: attrsToAdd, del: attrsToDel},
+                        });
+                    }
+
+                    // if label change we re-index all linked libraries
+                    if (newSettings.recordIdentityConf?.label !== newSettings?.recordIdentityConf?.label) {
+                        await _indexLinkedLibraries(newSettings.id, ctx);
+                    }
+
+                    break;
                 }
+                case EventAction.VALUE_SAVE: {
+                    const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(
+                        payload.topic.library,
+                        ctx,
+                    );
 
-                break;
-            }
-            case EventAction.VALUE_SAVE: {
-                const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(
-                    payload.topic.library,
-                    ctx,
-                );
+                    const isActivated = payload.topic.attribute === 'active' && payload.after.value === true;
+                    const isAttrToIndex = fullTextAttributes.map(a => a.id).includes(payload.topic.attribute);
 
-                const isActivated = payload.topic.attribute === 'active' && payload.after.value === true;
-                const isAttrToIndex = fullTextAttributes.map(a => a.id).includes(payload.topic.attribute);
+                    if (isActivated || isAttrToIndex) {
+                        await _indexDatabase({
+                            findRecordParams: {
+                                library: payload.topic.library,
+                                filters: [
+                                    {field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id},
+                                ],
+                                retrieveInactive: true,
+                            },
+                            ctx,
+                            attributes: isActivated || !isAttrToIndex ? null : {up: [payload.topic.attribute]},
+                            forceNoTask: true,
+                        });
+                    }
 
-                if (isActivated || isAttrToIndex) {
+                    // if the new attribute's value is the label of the library
+                    // we have to re-index all linked libraries
+                    const library = await libraryDomain.getLibraryProperties(payload.topic.library, ctx);
+                    if (library.recordIdentityConf?.label === payload.topic.attribute) {
+                        await _indexLinkedLibraries(payload.topic.library, ctx, payload.topic.record.id);
+                    }
+
+                    break;
+                }
+                case EventAction.VALUE_DELETE: {
+                    const attrProps = await attributeDomain.getAttributeProperties({id: payload.topic.attribute, ctx});
+
                     await _indexDatabase({
                         findRecordParams: {
                             library: payload.topic.library,
@@ -297,45 +315,31 @@ export default function ({
                             retrieveInactive: true,
                         },
                         ctx,
-                        attributes: isActivated || !isAttrToIndex ? null : {up: [payload.topic.attribute]},
+                        attributes: attrProps.multiple_values
+                            ? {up: [payload.topic.attribute]}
+                            : {del: [payload.topic.attribute]},
                         forceNoTask: true,
                     });
-                }
 
-                // if the new attribute's value is the label of the library
-                // we have to re-index all linked libraries
-                const library = await libraryDomain.getLibraryProperties(payload.topic.library, ctx);
-                if (library.recordIdentityConf?.label === payload.topic.attribute) {
-                    await _indexLinkedLibraries(payload.topic.library, ctx, payload.topic.record.id);
-                }
+                    // if the updated/deleted attribute is the label of the library
+                    // we have to re-index all linked libraries
+                    const library = await libraryDomain.getLibraryProperties(payload.topic.library, ctx);
+                    if (library.recordIdentityConf?.label === payload.topic.attribute) {
+                        await _indexLinkedLibraries(payload.topic.library, ctx, payload.topic.record.id);
+                    }
 
-                break;
+                    break;
+                }
             }
-            case EventAction.VALUE_DELETE: {
-                const attrProps = await attributeDomain.getAttributeProperties({id: payload.topic.attribute, ctx});
-
-                await _indexDatabase({
-                    findRecordParams: {
-                        library: payload.topic.library,
-                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id}],
-                        retrieveInactive: true,
-                    },
-                    ctx,
-                    attributes: attrProps.multiple_values
-                        ? {up: [payload.topic.attribute]}
-                        : {del: [payload.topic.attribute]},
-                    forceNoTask: true,
-                });
-
-                // if the updated/deleted attribute is the label of the library
-                // we have to re-index all linked libraries
-                const library = await libraryDomain.getLibraryProperties(payload.topic.library, ctx);
-                if (library.recordIdentityConf?.label === payload.topic.attribute) {
-                    await _indexLinkedLibraries(payload.topic.library, ctx, payload.topic.record.id);
-                }
-
-                break;
-            }
+        } catch (e) {
+            logger.error(`Indexation Manager - Error while processing message: ${e.stack}`, {
+                msg: {
+                    ...msg,
+                    content: msg.content.toString(),
+                },
+            });
+        } finally {
+            amqpService.consumer.channel.ack(msg);
         }
     };
 
