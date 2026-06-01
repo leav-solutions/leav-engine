@@ -329,6 +329,9 @@ export const validateConfig = (conf: IConfig) => {
             cache: Joi.object().keys({
                 enable: Joi.boolean().required(),
             }),
+            queues: Joi.object().keys({
+                events: Joi.string().required(),
+            }),
         }),
     });
 

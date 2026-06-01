@@ -34,14 +34,17 @@ describe('Automation VALUE_SAVE', () => {
         recordId = (await adminUserSdk.CreateRecord({library: testLibraryId})).createRecord.record.id;
     });
 
-    const createValueSaveRule = async (steps: AutomationRulePipelineStepInput[], opts: {attributeFilter?: string}) =>
+    const createValueSaveRule = async (
+        steps: AutomationRulePipelineStepInput[],
+        opts: {attributeFilter?: string; synchronous?: boolean},
+    ) =>
         (
             await adminUserSdk.CreateAutomationRule({
                 rule: {
-                    label: 'VALUE_SAVE sync rule',
+                    label: 'VALUE_SAVE rule for testing',
                     active: true,
                     trigger: {
-                        synchronous: true,
+                        synchronous: opts.synchronous ?? true,
                         eventAction: AutomationRuleEventAction.VALUE_SAVE,
                         eventTopic: {
                             library: testLibraryId,
@@ -86,6 +89,52 @@ describe('Automation VALUE_SAVE', () => {
             });
 
             expect(res.records.list[0].property).toEqual([expect.objectContaining({payload: 'derived from source'})]);
+        });
+    });
+
+    describe('triggers asynchronously on specific attribute', () => {
+        let ruleId: string;
+        beforeAll(async () => {
+            ruleId = await createValueSaveRule(
+                [
+                    {type: AutomationRuleActions.jexlExpression, params: {expression: '"async fired"'}},
+                    {
+                        type: AutomationRuleActions.modifyAttribute,
+                        params: {attributePath: targetAttrId, mode: 'replace'},
+                    },
+                ],
+                {attributeFilter: sourceAttrId, synchronous: false},
+            );
+        });
+        afterAll(async () => {
+            await adminUserSdk.DeleteAutomationRule({ruleId});
+        });
+
+        const waitUntilPropertyPayload = async (attributeId: string, expectedPayload: string, timeoutMs = 2000) => {
+            const deadline = Date.now() + timeoutMs;
+            while (Date.now() < deadline) {
+                const {records} = await adminUserSdk.GetRecordByIdStandardValuesProperty({
+                    attributeId,
+                    libraryId: testLibraryId,
+                    recordId,
+                });
+                if (records.list[0].property.some(v => v?.payload === expectedPayload)) {
+                    return;
+                }
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+            throw new Error(`Timed out waiting for payload "${expectedPayload}" on ${attributeId}`);
+        };
+
+        test('rule fires when value is saved on an unrelated attribute of the library', async () => {
+            await adminUserSdk.SaveValue({
+                libraryId: testLibraryId,
+                attributeId: sourceAttrId,
+                recordId,
+                value: {payload: 'anything'},
+            });
+
+            await waitUntilPropertyPayload(targetAttrId, 'async fired');
         });
     });
 

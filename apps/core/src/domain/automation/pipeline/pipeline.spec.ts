@@ -131,7 +131,9 @@ describe('automation pipeline', () => {
             });
 
             it('sends AUTOMATION_PIPELINE_SUCCESS even when a STOP breaks the loop early', async () => {
-                actionA.execute = vi.fn().mockResolvedValue({status: ActionExecutionResultStatus.STOP});
+                actionA.execute = vi
+                    .fn()
+                    .mockResolvedValue({status: ActionExecutionResultStatus.STOP, reason: 'some reason'});
 
                 await automationPipeline.executePipeline(
                     createPipelineToExecute([makeStep('A'), makeStep('B')]),
@@ -139,7 +141,17 @@ describe('automation pipeline', () => {
                 );
 
                 expect(eventManager.sendDatabaseEvent).toHaveBeenCalledWith(
-                    expect.objectContaining({action: EventAction.AUTOMATION_PIPELINE_SUCCESS}),
+                    expect.objectContaining({
+                        action: EventAction.AUTOMATION_PIPELINE_SUCCESS,
+                        after: {
+                            results: {
+                                '0': expect.objectContaining({
+                                    stopByAction: true,
+                                    reason: 'some reason',
+                                }),
+                            },
+                        },
+                    }),
                     mockCtx,
                 );
             });

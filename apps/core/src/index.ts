@@ -2,6 +2,7 @@ import {amqpService} from '@leav/message-broker';
 import {monitoringServer} from '@leav/monitoring-server';
 import fs from 'fs';
 import {type IConfig, CORE_MODES_E2E_PLAYWRIGHT, CoreMode} from './_types/config';
+import {type IAutomationInterface} from './interface/automation';
 import {type IFilesManagerInterface} from './interface/filesManager';
 import {type IIndexationManagerInterface} from './interface/indexationManager';
 import {type IServer} from './interface/server';
@@ -87,6 +88,7 @@ import {type ICorePluginsApp} from './app/core/pluginsApp';
     const indexationManager: IIndexationManagerInterface = coreContainer.cradle['core.interface.indexationManager'];
     const logsCollector: ILogsCollectorInterface = coreContainer.cradle['core.interface.logsCollector'];
     const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
+    const automation: IAutomationInterface = coreContainer.cradle['core.interface.automation'];
     const cli: ICliInterface = coreContainer.cradle['core.interface.cli'];
     const utils: IUtils = coreContainer.cradle['core.utils'];
     const pluginsApp: ICorePluginsApp = coreContainer.cradle['core.app.core.plugins'];
@@ -147,6 +149,9 @@ import {type ICorePluginsApp} from './app/core/pluginsApp';
                 break;
             case CoreMode.LOGS_COLLECTOR:
                 await logsCollector.init();
+                break;
+            case CoreMode.AUTOMATION:
+                await automation.init();
                 break;
         }
     }

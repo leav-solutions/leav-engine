@@ -170,6 +170,10 @@ export default function ({
                         logger.debug(
                             `Pipeline for rules ${pipelineExec.ruleId} stopped at step "${stepIdentifier}": ${stepResult.reason ?? ''}`,
                         );
+                        _storeStepResult(state, state.stepIndex, step.name, {
+                            stopByAction: true,
+                            reason: stepResult.reason,
+                        });
                         break;
                     }
 

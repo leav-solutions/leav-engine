@@ -271,5 +271,8 @@ module.exports = {
         cache: {
             enable: envToBool(process.env.AUTOMATION_CACHE_ENABLE, true),
         },
+        queues: {
+            events: process.env.AUTOMATIONS_EVENTS_QUEUE || 'automations_events',
+        },
     },
 };
