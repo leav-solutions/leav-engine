@@ -30,6 +30,15 @@ app.use(express.json());
 // Stateless design means any K8s pod can handle any request without shared session state.
 // The cost is negligible: McpServer is just a JavaScript object with a tool registry.
 app.all('/mcp', async (req: Request, res: Response) => {
+    logger.debug('MCP request received', {
+        method: req.method,
+        // JSON-RPC method (e.g. tools/call, tools/list) — only present on POST bodies
+        rpcMethod: req.body?.method,
+        toolName: req.body?.params?.name,
+        rpcId: req.body?.id,
+        userAgent: req.get('user-agent'),
+    });
+
     // sessionIdGenerator: undefined opts into stateless mode — the SDK will not set a
     // Mcp-Session-Id header and will not expect one on subsequent requests
     const transport = new StreamableHTTPServerTransport({
