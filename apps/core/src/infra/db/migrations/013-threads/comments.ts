@@ -5,7 +5,7 @@ import {
     COMMENTS_LIBRARY_ID,
     THREAD_COMMENTS_ATTRIBUTE_ID,
     THREADS_LIBRARY_ID,
-} from './constants';
+} from '../../migrationConstants/threads';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {type IAttributeForRepo} from '../../../attribute/attributeRepo';
 import {LibraryBehavior} from '../../../../_types/library';
@@ -33,9 +33,7 @@ export const commentLibrary: MigrationLibraryToCreate = {
     label: {fr: 'Commentaires', en: 'Comments'},
     system: true,
     behavior: LibraryBehavior.STANDARD,
-    recordIdentityConf: {
-        label: 'label',
-    },
+    recordIdentityConf: {label: 'label'},
     attributes: [
         'id',
         'created_by',

@@ -1,11 +1,11 @@
 import {commonAttributeData, type MigrationLibraryToCreate} from '../../helpers/libraryUtils';
 import {
-    THREAD_STATUSES_TREE_ID,
     COMMENTS_LIBRARY_ID,
-    THREAD_STATUS_ATTRIBUTE_ID,
     THREAD_COMMENTS_ATTRIBUTE_ID,
+    THREAD_STATUS_ATTRIBUTE_ID,
+    THREAD_STATUSES_TREE_ID,
     THREADS_LIBRARY_ID,
-} from './constants';
+} from '../../migrationConstants/threads';
 import {AttributeTypes} from '../../../../_types/attribute';
 import {type IAttributeForRepo} from '../../../attribute/attributeRepo';
 import {LibraryBehavior} from '../../../../_types/library';
@@ -33,9 +33,7 @@ export const threadLibrary: MigrationLibraryToCreate = {
     label: {fr: 'Fils de discussion', en: 'Discussion threads'},
     system: true,
     behavior: LibraryBehavior.STANDARD,
-    recordIdentityConf: {
-        label: 'label',
-    },
+    recordIdentityConf: {label: 'label'},
     attributes: [
         'id',
         'created_by',

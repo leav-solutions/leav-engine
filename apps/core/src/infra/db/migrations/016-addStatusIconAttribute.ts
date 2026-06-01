@@ -2,7 +2,7 @@ import {type IMigration} from '../../../_types/migration';
 import {type IAttributeForRepo, type IAttributeRepo} from '../../attribute/attributeRepo';
 import {type ILibraryRepo} from '../../library/libraryRepo';
 import {commonAttributeData, createAttributes, linkLibraryAttributes} from '../helpers/libraryUtils';
-import {STATUSES_ICON_ID_ATTRIBUTE_ID, STATUSES_LIBRARY_ID} from './013-threads/constants';
+import {STATUSES_ICON_ID_ATTRIBUTE_ID, STATUSES_LIBRARY_ID} from '../migrationConstants/statuses';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 
 interface IDeps {

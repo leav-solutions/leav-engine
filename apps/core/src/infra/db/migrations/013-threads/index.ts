@@ -13,7 +13,7 @@ import {commentAttributes, commentLibrary} from './comments';
 import {threadLibrary, threadsAttributes} from './threads';
 import {statusesAttributes, statusesLibrary, threadStatusTree} from './statuses';
 import {aql} from 'arangojs';
-import {COMMENTS_LIBRARY_ID, THREADS_LIBRARY_ID} from './constants';
+import {COMMENTS_LIBRARY_ID, THREADS_LIBRARY_ID} from '../../migrationConstants/threads';
 import {AttributeTypes} from '../../../../_types/attribute';
 import {DISCUSSION_THREADS_ATTRIBUTE_ID} from '../../../../_constants/attributes';
 

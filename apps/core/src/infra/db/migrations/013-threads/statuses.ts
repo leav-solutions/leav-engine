@@ -3,12 +3,12 @@ import {
     type MigrationLibraryToCreate,
     type MigrationTreeToCreate,
 } from '../../helpers/libraryUtils';
+import {THREAD_STATUSES_TREE_ID} from '../../migrationConstants/threads';
 import {
     STATUSES_COLOR_ATTRIBUTE_ID,
     STATUSES_LABEL_ATTRIBUTE_ID,
     STATUSES_LIBRARY_ID,
-    THREAD_STATUSES_TREE_ID,
-} from './constants';
+} from '../../migrationConstants/statuses';
 import {TreeBehavior} from '../../../../_types/tree';
 import {LibraryBehavior} from '../../../../_types/library';
 import {type IAttributeForRepo} from '../../../attribute/attributeRepo';
@@ -47,10 +47,7 @@ export const statusesLibrary: MigrationLibraryToCreate = {
         STATUSES_COLOR_ATTRIBUTE_ID,
     ],
     system: true,
-    recordIdentityConf: {
-        label: STATUSES_LABEL_ATTRIBUTE_ID,
-        color: STATUSES_COLOR_ATTRIBUTE_ID,
-    },
+    recordIdentityConf: {label: STATUSES_LABEL_ATTRIBUTE_ID, color: STATUSES_COLOR_ATTRIBUTE_ID},
     fullTextAttributes: [STATUSES_LABEL_ATTRIBUTE_ID],
 };
 
