@@ -933,6 +933,25 @@ build-docker-sync-scan:
       $DOCKER_PUSH
       .
 
+build-docker-mcp-runtime:
+  <<: *default_docker_build
+  variables:
+    DOCKER_IMAGE_APP: "mcp-runtime"
+  script:
+    - *set_version
+    - docker build
+      --platform $DOCKER_PLATFORM
+      --file docker/DOCKERFILES/build/generic.Dockerfile
+      --build-arg APP=$DOCKER_IMAGE_APP
+      --target runner
+      --label LEAV-Engine
+      --label MCP-Runtime
+      $DOCKER_IMAGE_TAG
+      $DOCKER_IMAGE_LATEST
+      --pull
+      $DOCKER_PUSH
+      .
+
 ## Build / push docker images
 ##########
 
