@@ -73,6 +73,8 @@ interface ITableCellProps {
     attributeProperties: AttributePropertiesFragment;
 }
 
+const TOOLTIP_COLOR = '#ffffff';
+
 export const TableCell: FunctionComponent<ITableCellProps> = ({values, attributeProperties}) => {
     const {t} = useSharedTranslation();
 
@@ -108,9 +110,9 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     case AttributeFormat.boolean:
                         return {
                             children: (
-                                <KitIdCard
-                                    description={value.valuePayload ? String(t('global.yes')) : String(t('global.no'))}
-                                />
+                                <KitTypography.Text color={TOOLTIP_COLOR}>
+                                    {value.valuePayload ? String(t('global.yes')) : String(t('global.no'))}
+                                </KitTypography.Text>
                             ),
                             type: value.valuePayload ? 'primary' : ('neutral' as IKitTag['type']),
                         };
@@ -130,7 +132,11 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         };
                     case AttributeFormat.date_range:
                         return {
-                            children: <KitIdCard description={_getDateRangeValueContent(value.valuePayload)} />,
+                            children: (
+                                <KitTypography.Text color={TOOLTIP_COLOR}>
+                                    {_getDateRangeValueContent(value.valuePayload)}
+                                </KitTypography.Text>
+                            ),
                             type: 'primary',
                         };
                     default:
@@ -139,7 +145,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                                 ? '●●●●●●●●●●●●'
                                 : value.valuePayload;
                         return {
-                            children: <KitIdCard description={valueContent} />,
+                            children: <KitTypography.Text color={TOOLTIP_COLOR}>{valueContent}</KitTypography.Text>,
                             type: 'primary',
                         };
                 }
@@ -152,7 +158,11 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         <TableTagGroup
                             tags={values.map(value => ({
                                 type: 'primary',
-                                children: <KitIdCard description={value.linkPayload?.whoAmI.label ?? undefined} />,
+                                children: (
+                                    <KitTypography.Text color={TOOLTIP_COLOR}>
+                                        {value.linkPayload?.whoAmI.label ?? undefined}
+                                    </KitTypography.Text>
+                                ),
                             }))}
                         />
                     );
@@ -190,7 +200,9 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                             tags={values.map(value => ({
                                 type: 'primary',
                                 children: (
-                                    <KitIdCard description={value.treePayload?.record.whoAmI.label ?? undefined} />
+                                    <KitTypography.Text color={TOOLTIP_COLOR}>
+                                        {value.treePayload?.record.whoAmI.label ?? undefined}
+                                    </KitTypography.Text>
                                 ),
                             }))}
                         />
@@ -237,7 +249,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     const valueToDisplay = value.valuePayload ? t('global.yes') : t('global.no');
                     content = (
                         <KitTag key={attributeProperties.id} type={!!value.valuePayload ? 'primary' : 'neutral'}>
-                            <KitIdCard description={valueToDisplay} />
+                            <KitTypography.Text>{valueToDisplay}</KitTypography.Text>
                         </KitTag>
                     );
                     break;
