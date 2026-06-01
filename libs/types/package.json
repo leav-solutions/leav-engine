@@ -6,7 +6,7 @@
         "tscheck": "",
         "test:ci": "",
         "test:commit": "",
-        "publish-types": "yarn npm publish --access public",
+        "publish": "yarn npm publish --access public",
         "generate": "yarn workspace core build-types && mv ../../apps/core/dist-types/* . && rmdir ../../apps/core/dist-types",
         "build": "yarn generate",
         "clean": "rm -rf apps libs",
