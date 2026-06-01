@@ -18,6 +18,10 @@ docker buildx build --platform linux/amd64 --file docker/DOCKERFILES/build/gener
 
 Same as automate-scan
 
+### mcp-runtime
+
+Same as automate-scan
+
 ### preview-generator
 
 ```

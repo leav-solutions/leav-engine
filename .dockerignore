@@ -32,6 +32,7 @@
 **/*.md
 /jestModuleNameMapper.js
 /commitlint.config.cjs
+/renovate.json
 
 **/__tests__/
 **/*.spec.ts
