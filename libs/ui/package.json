@@ -26,7 +26,7 @@
     "repository": "https://github.com/leav-solutions/leav-engine",
     "devDependencies": {
         "@apollo/client": "3.14.1",
-        "@babel/preset-env": "7.29.5",
+        "@babel/preset-env": "7.29.7",
         "@babel/preset-react": "7.28.5",
         "@graphql-codegen/add": "5.0.3",
         "@graphql-codegen/cli": "6.3.1",
@@ -74,7 +74,7 @@
         "@leav/utils": "workspace:libs/utils",
         "@uidotdev/usehooks": "2.4.1",
         "dayjs": "^1.11.13",
-        "dompurify": "3.4.5",
+        "dompurify": "3.4.7",
         "html-react-parser": "4.2.10",
         "i18next-resources-to-backend": "1.2.1",
         "react-markdown": "5.0.3",
