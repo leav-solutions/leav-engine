@@ -1,7 +1,0 @@
-const setupModule = require('./globalSetup');
-
-module.exports = async function () {
-    await setupModule.setup();
-
-    return null;
-};
