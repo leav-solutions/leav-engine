@@ -527,9 +527,8 @@ __metadata:
   resolution: "@aristid/leav-types@workspace:libs/types"
   dependencies:
     "@leav/utils": "workspace:libs/utils"
-    "@types/amqplib": "npm:0.10.8"
     "@types/express": "npm:5.0.6"
-    amqplib: "npm:0.10.9"
+    amqplib: "npm:2.0.1"
     arangojs: "npm:8.8.1"
     awilix: "npm:12.1.1"
     i18next: "npm:24.2.3"
@@ -8196,8 +8195,7 @@ __metadata:
   resolution: "@leav/message-broker@workspace:libs/message-broker"
   dependencies:
     "@leav/logger": "workspace:libs/logger"
-    "@types/amqplib": "npm:0.10.8"
-    amqplib: "npm:0.10.9"
+    amqplib: "npm:2.0.1"
     typescript: "npm:5.9.3"
     vitest: "npm:4.1.7"
   languageName: unknown
@@ -11271,15 +11269,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/amqplib@npm:0.10.8":
-  version: 0.10.8
-  resolution: "@types/amqplib@npm:0.10.8"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10/f924e1c9216979319b94d71c45d5c1954a51fde2d4214cf5f4c5048cc1d928cf5b0a33709378b568a23e503503be6ac36ceeb1f4ddf8e21908b4037f78967041
-  languageName: node
-  linkType: hard
-
 "@types/aria-query@npm:^4.2.0":
   version: 4.2.2
   resolution: "@types/aria-query@npm:4.2.2"
@@ -13088,13 +13077,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"amqplib@npm:0.10.9":
-  version: 0.10.9
-  resolution: "amqplib@npm:0.10.9"
-  dependencies:
-    buffer-more-ints: "npm:~1.0.0"
-    url-parse: "npm:~1.5.10"
-  checksum: 10/99f8cb123cd92903b314e2c829cee080c1d86e702c827624ff7dca4422af23d57301b193441796c0f52ad3544f177484cfe18be25f5d039f80ec7322eedcea5b
+"amqplib@npm:2.0.1":
+  version: 2.0.1
+  resolution: "amqplib@npm:2.0.1"
+  checksum: 10/731c9e8847c620d67e1546a4a98f9364e47c7b413c17d3eb35b38e4709da002e0da4d3f2186df3feb6123113e0a96aa684c2cce762bfbd415eab446ff385df52
   languageName: node
   linkType: hard
 
@@ -13863,9 +13849,8 @@ __metadata:
     "@leav/logger": "workspace:libs/logger"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
-    "@types/amqplib": "npm:0.10.8"
     "@types/node": "npm:24.12.4"
-    amqplib: "npm:0.10.9"
+    amqplib: "npm:2.0.1"
     app-root-path: "npm:3.1.0"
     chokidar: "npm:4.0.3"
     lodash: "npm:4.18.1"
@@ -14580,13 +14565,6 @@ __metadata:
   version: 1.0.2
   resolution: "buffer-indexof-polyfill@npm:1.0.2"
   checksum: 10/808c58a3f06cc6ee2231060959eaa31c490248465f2847e8cfebd3e62563521e67346391caad03ce7616fd765374eb53e941bdd22edb2336431171f46fddcd89
-  languageName: node
-  linkType: hard
-
-"buffer-more-ints@npm:~1.0.0":
-  version: 1.0.0
-  resolution: "buffer-more-ints@npm:1.0.0"
-  checksum: 10/603a7f35793426c8efd733eb716c2c3bf3e2f5bab95ca13ba31546d89ead3636586479c5a0d8438dd015115361a3b09b1b37ddabc170b6d42bc6c6dc2554dc61
   languageName: node
   linkType: hard
 
@@ -15741,7 +15719,6 @@ __metadata:
     "@rjsf/utils": "npm:6.5.3"
     "@trpc/client": "npm:11.16.0"
     "@trpc/server": "npm:11.16.0"
-    "@types/amqplib": "npm:0.10.8"
     "@types/cacache": "npm:20.0.1"
     "@types/compression": "npm:1.8.1"
     "@types/debug": "npm:0.0.31"
@@ -15755,7 +15732,7 @@ __metadata:
     "@types/nodemailer": "npm:6.4.23"
     "@types/ws": "npm:8.5.3"
     add-filename-increment: "npm:1.0.0"
-    amqplib: "npm:0.10.9"
+    amqplib: "npm:2.0.1"
     app-root-path: "npm:3.1.0"
     arangojs: "npm:8.8.1"
     awilix: "npm:12.1.1"
@@ -25455,9 +25432,8 @@ __metadata:
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
-    "@types/amqplib": "npm:0.10.8"
     "@types/node": "npm:24.12.4"
-    amqplib: "npm:0.10.9"
+    amqplib: "npm:2.0.1"
     fast-xml-parser: "npm:5.8.0"
     prettier: "npm:3.8.3"
     tsx: "npm:4.22.4"
@@ -29038,9 +29014,8 @@ __metadata:
     "@leav/logger": "workspace:libs/logger"
     "@leav/message-broker": "workspace:libs/message-broker"
     "@leav/utils": "workspace:*"
-    "@types/amqplib": "npm:0.10.8"
     "@types/node": "npm:24.12.4"
-    amqplib: "npm:0.10.9"
+    amqplib: "npm:2.0.1"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-client: "npm:2.6.10"
     apollo-link: "npm:1.2.14"
@@ -30203,7 +30178,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"url-parse@npm:^1.5.3, url-parse@npm:~1.5.10":
+"url-parse@npm:^1.5.3":
   version: 1.5.10
   resolution: "url-parse@npm:1.5.10"
   dependencies:

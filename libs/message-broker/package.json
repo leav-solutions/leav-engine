@@ -21,13 +21,12 @@
     "author": "",
     "license": "LGPL3",
     "devDependencies": {
-        "@types/amqplib": "0.10.8",
         "typescript": "5.9.3",
         "vitest": "4.1.7"
     },
     "dependencies": {
         "@leav/logger": "workspace:libs/logger",
-        "amqplib": "0.10.9"
+        "amqplib": "2.0.1"
     },
     "stableVersion": "1.0.0"
 }

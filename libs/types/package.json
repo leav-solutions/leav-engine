@@ -17,9 +17,8 @@
     "repository": "https://github.com/leav-solutions/leav-engine",
     "dependencies": {
         "@leav/utils": "workspace:libs/utils",
-        "@types/amqplib": "0.10.8",
         "@types/express": "5.0.6",
-        "amqplib": "0.10.9",
+        "amqplib": "2.0.1",
         "arangojs": "8.8.1",
         "awilix": "12.1.1",
         "i18next": "24.2.3"
