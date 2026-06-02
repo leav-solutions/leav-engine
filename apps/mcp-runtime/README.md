@@ -19,15 +19,15 @@ LEAV core  (GraphQL, REST, tRPC)
 
 **Stateless design:** each MCP request creates a fresh server instance. No session state is stored in memory, so any K8s pod can handle any request.
 
-**Auth:** the user provides their personal LEAV `apiKey` as a tool input. It is forwarded as `?apiKey=xxx` to the LEAV core. This scopes every action to the user's own permissions and produces a traceable audit trail — no shared service account.
+**Auth:** the user provides their personal LEAV `apiKey` as a tool input. It is forwarded as `?key=xxx` to the LEAV core. This scopes every action to the user's own permissions and produces a traceable audit trail — no shared service account.
 
 ## Running locally
 
-The service runs inside the shared Docker Compose stack alongside all other LEAV services — no need to start it separately.
+The service runs inside the shared Docker Compose stack, but it is gated behind the `mcp` profile — it is not started by the default `up`. Pass `--profile mcp` to launch it alongside the other LEAV services.
 
 ```bash
 # From the repo root
-docker compose -f docker/docker-compose.yml up -d
+docker compose -f docker/docker-compose.yml --profile mcp up -d
 ```
 
 `mcp-runtime` is then available at `http://mcp.leav.localhost` (routed by Traefik).
