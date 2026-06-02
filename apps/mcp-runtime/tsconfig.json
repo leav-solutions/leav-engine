@@ -1,4 +1,9 @@
 {
     "files": [],
-    "references": [{"path": "./tsconfig.build.json"}, {"path": "./tsconfig.spec.json"}]
+    "references": [{"path": "./tsconfig.build.json"}, {"path": "./tsconfig.spec.json"}],
+    "compilerOptions": {
+        "paths": {
+            "@leav/*": ["../../libs/*/src"]
+        }
+    }
 }
