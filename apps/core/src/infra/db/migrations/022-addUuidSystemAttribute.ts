@@ -99,7 +99,7 @@ export default function ({
                     type: 'persistent',
                     fields: ['uuid'],
                     unique: true,
-                    sparse: false,
+                    sparse: true,
                     name: 'idx_uuid',
                 });
             }
