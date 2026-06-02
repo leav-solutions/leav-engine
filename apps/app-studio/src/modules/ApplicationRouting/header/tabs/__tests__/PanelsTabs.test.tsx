@@ -1,6 +1,6 @@
 import {render, screen} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
-import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {type Panel} from '_ui/hooks/usePanelMessenger/types';
 import {type Application} from '../../../types';
 import {PanelsTabs} from '../PanelsTabs';
 import {InitTheme} from '../../../../../config/theme/InitTheme';
@@ -41,6 +41,7 @@ describe('PanelsTabs', () => {
     const mockPanel1: Panel = {
         id: 'panel1',
         type: 'explorer',
+        isViewSettingsActive: false,
         name: {fr: 'Panneau 1', en: 'Panel 1'},
         actions: [],
     };
@@ -48,6 +49,7 @@ describe('PanelsTabs', () => {
     const mockPanel2: Panel = {
         id: 'panel2',
         type: 'explorer',
+        isViewSettingsActive: false,
         name: {fr: 'Panneau 2', en: 'Panel 2'},
         actions: [],
     };
@@ -55,6 +57,7 @@ describe('PanelsTabs', () => {
     const mockPanel3: Panel = {
         id: 'panel3',
         type: 'explorer',
+        isViewSettingsActive: false,
         name: {fr: 'Panneau 3', en: 'Panel 3'},
         actions: [],
         isStandalone: true,
@@ -63,6 +66,7 @@ describe('PanelsTabs', () => {
     const mockPanel4: Panel = {
         id: 'panel4',
         type: 'explorer',
+        isViewSettingsActive: false,
         name: {fr: 'Panneau 4', en: 'Panel 4'},
         actions: [],
         hideInCompactMode: true,
@@ -71,6 +75,7 @@ describe('PanelsTabs', () => {
     const mockPanel5: Panel = {
         id: 'panel5',
         type: 'explorer',
+        isViewSettingsActive: false,
         name: {fr: 'Panneau 5', en: 'Panel 5'},
         actions: [],
         icon: 'fa-ice-cream',
@@ -79,6 +84,7 @@ describe('PanelsTabs', () => {
     const mockPanelWithAttribute: Panel & {attributeSource: string; libraryId: string} = {
         id: 'panelWithAttr',
         type: 'explorer',
+        isViewSettingsActive: false,
         name: {fr: 'Panneau avec attribut', en: 'Panel with attribute'},
         actions: [],
         attributeSource: 'campaigns_link',

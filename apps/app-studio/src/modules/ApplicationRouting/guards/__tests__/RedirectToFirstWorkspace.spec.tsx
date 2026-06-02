@@ -43,6 +43,7 @@ describe('RedirectToFirstWorkspace component guard', () => {
                             en: 'MAPs Management',
                         },
                         type: 'explorer',
+                        isViewSettingsActive: false,
                         viewId: '885451776',
                         actions: [
                             {

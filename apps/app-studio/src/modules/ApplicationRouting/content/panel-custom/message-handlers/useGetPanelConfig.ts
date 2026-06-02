@@ -1,4 +1,4 @@
-import {type PanelIFrame, type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type PanelIFrame, type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 import {useApplicationSettingsContext} from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from '../../../../ApplicationRouting/utils/retrievePanelDetails';
 
@@ -6,7 +6,7 @@ import {retrievePanelDetails} from '../../../../ApplicationRouting/utils/retriev
  * Send Panel config data to an iframe requiring it
  */
 export const useGetPanelConfig = (): {
-    getPanelConfig: IUseIFrameMessengerOptions['handlers']['onGetPanelConfig'];
+    getPanelConfig: IUsePanelMessengerOptions['handlers']['onGetPanelConfig'];
 } => {
     const [application] = useApplicationSettingsContext();
 

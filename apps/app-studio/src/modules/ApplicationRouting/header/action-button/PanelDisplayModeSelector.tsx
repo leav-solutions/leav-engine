@@ -6,7 +6,7 @@ import {generatePath, useNavigate, useParams} from 'react-router-dom';
 import {RelativePaths} from '../../router/paths';
 import {useTranslation} from 'react-i18next';
 import {DisplayModeItem} from './DisplayModeItem';
-import {type Where} from '_ui/hooks/useIFrameMessenger/types';
+import {type Where} from '_ui/hooks/usePanelMessenger/types';
 
 export const PanelDisplayModeSelector: FunctionComponent = () => {
     const {t} = useTranslation();

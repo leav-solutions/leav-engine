@@ -1,8 +1,8 @@
 import {KitModal} from 'aristid-ds';
-import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 
 export const useOpenConfirmModal = () => {
-    const openConfirmModal: IUseIFrameMessengerOptions['handlers']['onModalConfirm'] = data => {
+    const openConfirmModal: IUsePanelMessengerOptions['handlers']['onModalConfirm'] = data => {
         KitModal[data.type]?.({
             ...data,
             width: '100%',

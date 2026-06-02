@@ -48,6 +48,7 @@ describe('useNavigateToPanel', () => {
                             {
                                 id: 'panelIdTest',
                                 type: 'explorer',
+                                isViewSettingsActive: false,
                                 actions: [],
                             },
                         ],
@@ -93,6 +94,7 @@ describe('useNavigateToPanel', () => {
                             {
                                 id: 'panelIdTest',
                                 type: 'explorer',
+                                isViewSettingsActive: false,
                                 actions: [],
                             },
                         ],
@@ -137,6 +139,7 @@ describe('useNavigateToPanel', () => {
                             {
                                 id: 'panelIdTest',
                                 type: 'explorer',
+                                isViewSettingsActive: false,
                                 actions: [],
                             },
                         ],
@@ -227,6 +230,7 @@ describe('useNavigateToPanel', () => {
                             {
                                 id: 'panelIdTest',
                                 type: 'explorer',
+                                isViewSettingsActive: false,
                                 actions: [],
                             },
                         ],
@@ -283,6 +287,7 @@ describe('useNavigateToPanel', () => {
                                 {
                                     id: 'panelIdTest',
                                     type: 'explorer',
+                                    isViewSettingsActive: false,
                                     actions: [],
                                 },
                             ],
@@ -328,6 +333,7 @@ describe('useNavigateToPanel', () => {
                                 {
                                     id: 'panelIdTest',
                                     type: 'explorer',
+                                    isViewSettingsActive: false,
                                     actions: [],
                                 },
                             ],

@@ -1,5 +1,5 @@
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
-import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 import {useApplicationSettingsContext} from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {RelativePaths} from '../../../router/paths';
 import {type Application} from '../../../types';
@@ -18,7 +18,7 @@ export const INIIAL_VALUES_QUERY_PARAMS = 'formInitialValues';
  * - From `:where/:panelId`, navigate to `/:where/:panelId/:recordId/:where/:panelId/flap/:flapRecordId/:flapLibraryId/:flapPanelId`
  */
 export const useNavigateToPanel = (): {
-    navigateToPanel: IUseIFrameMessengerOptions['handlers']['onNavigateToPanel'];
+    navigateToPanel: IUsePanelMessengerOptions['handlers']['onNavigateToPanel'];
 } => {
     const navigate = useNavigate();
     const {where: currentWhere} = useParams();

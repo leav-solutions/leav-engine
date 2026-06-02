@@ -1,6 +1,6 @@
 import {useParams} from 'react-router-dom';
-import {InformationAndHistory} from '../../information-and-history/InformationAndHistory';
-import {Thread} from '../../thread/Thread';
+import {InformationAndHistory} from './flap-information-and-history/InformationAndHistory';
+import {Thread} from './flap-thread/Thread';
 
 export const FlapContent = () => {
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =

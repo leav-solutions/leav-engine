@@ -1,4 +1,4 @@
-import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 import {RelativePaths} from '../../../router/paths';
 import {generatePath, useNavigate, useParams} from 'react-router-dom';
 
@@ -10,7 +10,7 @@ import {generatePath, useNavigate, useParams} from 'react-router-dom';
  * - From `/:recordId/:where/:recordPanelId`, navigate to `/:recordId/:where/:recordPanelId/flap/:flapRecordId/:flapLibraryId/:flapPanelId`
  */
 export const useOpenFlapPanel = (): {
-    openFlapPanel: IUseIFrameMessengerOptions['handlers']['onOpenFlapPanel'];
+    openFlapPanel: IUsePanelMessengerOptions['handlers']['onOpenFlapPanel'];
 } => {
     const navigate = useNavigate();
     const {flapPanelId: currentFlapPanelId} = useParams();

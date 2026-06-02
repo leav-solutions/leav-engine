@@ -1,8 +1,8 @@
 import {KitAlert} from 'aristid-ds';
-import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 
 export const useOpenAlert = () => {
-    const openAlert: IUseIFrameMessengerOptions['handlers']['onAlert'] = data => {
+    const openAlert: IUsePanelMessengerOptions['handlers']['onAlert'] = data => {
         KitAlert[data.type]?.({
             ...data,
         });

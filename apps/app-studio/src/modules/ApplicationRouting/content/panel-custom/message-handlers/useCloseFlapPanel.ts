@@ -1,4 +1,4 @@
-import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 import {RelativePaths} from '../../../router/paths';
 import {useNavigate} from 'react-router-dom';
 
@@ -9,7 +9,7 @@ import {useNavigate} from 'react-router-dom';
  * - From `/:recordId/:where/:recordPanelId/flap/:flapRecordId/:flapLibraryId/:flapPanelId`, navigate to `/:recordId/:where/:recordPanelId`
  */
 export const useCloseFlapPanel = (): {
-    closeFlapPanel: IUseIFrameMessengerOptions['handlers']['onCloseFlapPanel'];
+    closeFlapPanel: IUsePanelMessengerOptions['handlers']['onCloseFlapPanel'];
 } => {
     const navigate = useNavigate();
 

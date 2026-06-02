@@ -8,7 +8,7 @@ import {useApplicationSettingsContext} from '../../../../config/application-inst
 import {AbsolutePaths, RelativePaths} from '../../router/paths';
 import {tabsWrapper, sliderTabsWrapper} from './panelsTabs.module.css';
 import {useGetPanelsAttributeCounts} from './panels-attribute-counts/useGetPanelsAttributeCounts';
-import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {type Panel} from '_ui/hooks/usePanelMessenger/types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 interface IPanelsTabsProps {

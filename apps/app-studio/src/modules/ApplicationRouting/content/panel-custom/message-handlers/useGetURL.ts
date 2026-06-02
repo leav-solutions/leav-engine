@@ -1,4 +1,4 @@
-import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 import {RelativePaths} from '../../../../ApplicationRouting/router/paths';
 import {generatePath} from 'react-router-dom';
 
@@ -11,7 +11,7 @@ import {generatePath} from 'react-router-dom';
  * If flap or panel parameters are provided, update the URL accordingly
  */
 export const useGetURL = (): {
-    getURL: IUseIFrameMessengerOptions['handlers']['onGetUrl'];
+    getURL: IUsePanelMessengerOptions['handlers']['onGetUrl'];
 } => ({
     getURL: ({onGetUrl, flapParams, panelParams}) => {
         let url = typeof window !== 'undefined' ? window.location.href : '';

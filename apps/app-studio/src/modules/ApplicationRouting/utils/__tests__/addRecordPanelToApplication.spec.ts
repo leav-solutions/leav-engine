@@ -1,9 +1,15 @@
-import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {type Panel} from '_ui/hooks/usePanelMessenger/types';
 import {type Application} from '../../types';
 import {addRecordPanelToApplication} from '../addRecordPanelToApplication';
 
 describe('addRecordPanelToApplication method', () => {
-    const mockPanel: Panel = {id: 'newPanelId', name: {fr: 'New Panel'}, type: 'explorer', actions: []};
+    const mockPanel: Panel = {
+        id: 'newPanelId',
+        name: {fr: 'New Panel'},
+        type: 'explorer',
+        isViewSettingsActive: false,
+        actions: [],
+    };
     const emptyApplication: Application = {
         workspaces: [
             {

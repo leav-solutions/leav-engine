@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {RecordFilterCondition, usePanelAttributeCountLazyQuery} from '../../../../../__generated__';
-import {type AttributeExplorerPanel} from '_ui/hooks/useIFrameMessenger/types';
+import {type AttributeExplorerPanel} from '_ui/hooks/usePanelMessenger/types';
 
 interface IUseGetPanelsAttributeCounts {
     panels: AttributeExplorerPanel[];

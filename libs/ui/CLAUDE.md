@@ -134,9 +134,13 @@ Explorer.SettingsSidePanel;
 
 ```bash
 # Depuis libs/ui
-yarn build               # Génère dist/ — doit être commité pour être consommé par les apps
+yarn build               # Génère dist/ (build local optionnel — voir ci-dessous)
 yarn test                # Tests unitaires
 yarn graphql-generate    # Régénère _gqlTypes/index.ts
 ```
 
-> ⚠️ Le dossier `dist/` doit être commité après chaque modification publiable.
+> ℹ️ Le dossier `dist/` est **gitignoré** : il n'est pas committé. C'est le job CI
+> `build-npm-leav-ui` (`.gitlab-ci.yml`, déclenché sur tout changement dans `libs/ui/**`)
+> qui reconstruit et publie le package `@leav/ui` consommé par les apps.
+> En local, `app-studio` résout `@leav/ui` vers `src/` (alias `_ui`), donc `tscheck` et les
+> tests passent sans build préalable. Le `yarn build` local ne sert qu'à vérifier le bundle.

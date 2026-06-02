@@ -1,4 +1,4 @@
-import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 import {generatePath, useNavigate} from 'react-router-dom';
 import {useApplicationSettingsContext} from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {addRecordPanelToApplication} from '../../../utils/addRecordPanelToApplication';
@@ -10,7 +10,7 @@ import {RelativePaths} from '../../../router/paths';
  * Example: From `:where/:panelId`, navigate to `/:where/:panelId/:recordId/:where/:panelId`
  */
 export const useNavigateToIframe = (): {
-    navigateToIframe: IUseIFrameMessengerOptions['handlers']['onNavigateToIframe'];
+    navigateToIframe: IUsePanelMessengerOptions['handlers']['onNavigateToIframe'];
 } => {
     const navigate = useNavigate();
 
