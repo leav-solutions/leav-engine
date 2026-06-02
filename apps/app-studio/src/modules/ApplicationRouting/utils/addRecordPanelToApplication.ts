@@ -1,4 +1,4 @@
-import {type LibraryId, type Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {type LibraryId, type Panel} from '_ui/hooks/usePanelMessenger/types';
 import {type Application} from '../types';
 
 /**

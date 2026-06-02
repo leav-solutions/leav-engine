@@ -46,6 +46,7 @@ describe('useNavigateToIframe', () => {
                             {
                                 id: 'panelIdTest',
                                 type: 'explorer',
+                                isViewSettingsActive: false,
                                 actions: [],
                             },
                         ],

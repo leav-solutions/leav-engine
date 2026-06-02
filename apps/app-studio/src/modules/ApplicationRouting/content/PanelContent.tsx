@@ -1,6 +1,6 @@
 import {type FunctionComponent} from 'react';
 import {EditRecordPage} from '@leav/ui';
-import {type Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {type Panel} from '_ui/hooks/usePanelMessenger/types';
 import {PanelCustom} from './panel-custom/PanelCustom';
 import {PanelLibraryExplorer} from './panel-explorer/PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './panel-explorer/PanelAttributeExplorer';

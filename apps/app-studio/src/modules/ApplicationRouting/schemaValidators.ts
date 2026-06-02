@@ -1,6 +1,6 @@
 import type * as z from 'zod/v4';
 import {type ApplicationSchema} from './schema';
-import {type LibraryId, type Panel} from '_ui/hooks/useIFrameMessenger/types';
+import {type LibraryId, type Panel} from '_ui/hooks/usePanelMessenger/types';
 
 interface ICheckContext {
     value: z.infer<typeof ApplicationSchema>;

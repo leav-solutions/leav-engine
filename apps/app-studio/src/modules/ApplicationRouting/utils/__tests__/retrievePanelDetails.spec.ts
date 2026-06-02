@@ -44,6 +44,7 @@ describe('retrievePanelDetails', () => {
                         {
                             id: panelId,
                             type: 'explorer',
+                            isViewSettingsActive: false,
                             actions: [],
                         },
                     ],
@@ -61,6 +62,7 @@ describe('retrievePanelDetails', () => {
         expect(currentPanel).toEqual({
             id: panelId,
             type: 'explorer',
+            isViewSettingsActive: false,
             actions: [],
         });
     });

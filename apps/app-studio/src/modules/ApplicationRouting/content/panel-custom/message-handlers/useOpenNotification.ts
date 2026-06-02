@@ -1,8 +1,8 @@
 import {KitNotification} from 'aristid-ds';
-import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 
 export const useOpenNotification = () => {
-    const openNotification: IUseIFrameMessengerOptions['handlers']['onNotification'] = data => {
+    const openNotification: IUsePanelMessengerOptions['handlers']['onNotification'] = data => {
         KitNotification[data.type]?.({
             ...data,
         });

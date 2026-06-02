@@ -4,7 +4,7 @@ import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/typ
 import {useNavigate, useParams} from 'react-router-dom';
 import {RelativePaths} from './router/paths';
 import {PanelHeader} from './header/PanelHeader';
-import {Flap} from './Flap';
+import {FlapContent} from './content/FlapContent';
 import {flapContainer} from './flap.module.css';
 
 export const FlapContainer = forwardRef<KitSidePanelRef>((_, refFlap) => {
@@ -13,7 +13,7 @@ export const FlapContainer = forwardRef<KitSidePanelRef>((_, refFlap) => {
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId} = useParams();
 
     if (where === 'slider') {
-        return <Flap />;
+        return <FlapContent />;
     }
 
     return (
@@ -37,7 +37,7 @@ export const FlapContainer = forwardRef<KitSidePanelRef>((_, refFlap) => {
             showSeparator
             closeOnEsc
         >
-            <Flap />
+            <FlapContent />
         </KitSidePanel>
     );
 });

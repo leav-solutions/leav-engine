@@ -1,6 +1,6 @@
 import {MockedProvider} from '@apollo/client/testing';
 import {renderHook, waitFor} from '@testing-library/react';
-import {type AttributeExplorerPanel} from '_ui/hooks/useIFrameMessenger/types';
+import {type AttributeExplorerPanel} from '_ui/hooks/usePanelMessenger/types';
 import {PanelAttributeCountDocument, RecordFilterCondition} from '../../../../../../__generated__';
 import {useGetPanelsAttributeCounts} from '../useGetPanelsAttributeCounts';
 
@@ -8,6 +8,7 @@ describe('useGetPanelsAttributeCounts', () => {
     const mockPanel1: AttributeExplorerPanel = {
         id: 'panel1',
         type: 'explorer',
+        isViewSettingsActive: false,
         attributeSource: 'campaigns_link',
         libraryId: 'campaigns',
         actions: [],
@@ -16,6 +17,7 @@ describe('useGetPanelsAttributeCounts', () => {
     const mockPanel2: AttributeExplorerPanel = {
         id: 'panel2',
         type: 'explorer',
+        isViewSettingsActive: false,
         attributeSource: 'products_link',
         libraryId: 'products',
         actions: [],

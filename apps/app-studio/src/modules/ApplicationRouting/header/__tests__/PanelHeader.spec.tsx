@@ -107,6 +107,7 @@ describe('PanelHeader', () => {
                     fr: 'un',
                 },
                 type: 'explorer',
+                isViewSettingsActive: false,
                 actions: [],
             },
         });
@@ -278,6 +279,7 @@ describe('PanelHeader', () => {
                         fr: 'un',
                     },
                     type: 'explorer',
+                    isViewSettingsActive: false,
                     actions: [],
                 },
             });

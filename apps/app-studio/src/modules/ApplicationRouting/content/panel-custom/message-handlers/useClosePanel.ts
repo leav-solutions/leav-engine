@@ -1,5 +1,5 @@
 import {useLocation, useNavigate} from 'react-router-dom';
-import {type IUseIFrameMessengerOptions} from '_ui/hooks/useIFrameMessenger/types';
+import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 import {deleteRecordPanelFromURL} from '../../../utils/deleteRecordPanelFromURL';
 
 /**
@@ -10,7 +10,7 @@ import {deleteRecordPanelFromURL} from '../../../utils/deleteRecordPanelFromURL'
  * @returns The function to close the panel
  */
 export const useClosePanel = (): {
-    closePanel: IUseIFrameMessengerOptions['handlers']['onClosePanel'];
+    closePanel: IUsePanelMessengerOptions['handlers']['onClosePanel'];
 } => {
     const navigate = useNavigate();
     const location = useLocation();

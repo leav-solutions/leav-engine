@@ -1,5 +1,5 @@
 import type * as z from 'zod/v4';
-import {type ExplorerPropsSchema, type ItemActionsSchema} from '_ui/hooks/useIFrameMessenger/schema';
+import {type ExplorerPropsSchema, type ItemActionsSchema} from '_ui/hooks/usePanelMessenger/schema';
 import {type ApplicationSchema} from './schema';
 
 export type ExplorerProps = z.infer<typeof ExplorerPropsSchema>;

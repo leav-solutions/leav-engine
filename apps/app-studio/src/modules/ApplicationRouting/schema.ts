@@ -1,5 +1,5 @@
 import * as z from 'zod/v4';
-import {FontAwesomeIconSchema, LanguageSchema, LibraryIdSchema, PanelSchema} from '_ui/hooks/useIFrameMessenger/schema';
+import {FontAwesomeIconSchema, LanguageSchema, LibraryIdSchema, PanelSchema} from '_ui/hooks/usePanelMessenger/schema';
 import {
     checkExplorerItemActionTargetPanelIdExistence,
     checkPanelIdsUniqueness,

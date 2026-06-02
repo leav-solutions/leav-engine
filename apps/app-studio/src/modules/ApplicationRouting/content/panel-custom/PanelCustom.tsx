@@ -1,5 +1,5 @@
 import {type FunctionComponent, useContext, useEffect, useRef} from 'react';
-import {LangContext, useIFrameMessengerHandlers} from '@leav/ui';
+import {LangContext, usePanelIFrameHandlers} from '@leav/ui';
 import {useOpenNotification} from './message-handlers/useOpenNotification';
 import {useOpenAlert} from './message-handlers/useOpenAlert';
 import {useOpenConfirmModal} from './message-handlers/useOpenConfirmModal';
@@ -32,7 +32,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
     const {getPanelConfig} = useGetPanelConfig();
     const {getURL} = useGetURL();
 
-    const {changeLangInFrame} = useIFrameMessengerHandlers(iframeRef, {
+    const {changeLangInFrame} = usePanelIFrameHandlers(iframeRef, {
         onModalConfirm: openConfirmModal,
         onAlert: openAlert,
         onNotification: openNotification,

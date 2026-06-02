@@ -55,6 +55,7 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
                             en: 'Campaigns list',
                         },
                         type: 'explorer',
+                        isViewSettingsActive: false,
                         viewId: '123456',
                         actions: [],
                     },
