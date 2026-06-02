@@ -34,8 +34,11 @@ export type GraphqlToolInput = {
 export const createGraphqlHandler =
     (coreUrl: string) =>
     async ({query, variables, apiKey}: GraphqlToolInput) => {
-        // URL constructor handles trailing slashes and encoding — safer than string concatenation
-        const url = new URL('/graphql', coreUrl);
+        // URL constructor handles encoding — safer than string concatenation.
+        // coreUrl may include a base path (e.g. http://host/core), so append /graphql
+        // to the existing pathname instead of using '/graphql' which would replace it.
+        const url = new URL(coreUrl);
+        url.pathname = `${url.pathname.replace(/\/$/, '')}/graphql`;
         url.searchParams.set('key', apiKey);
 
         const response = await fetch(url.toString(), {
