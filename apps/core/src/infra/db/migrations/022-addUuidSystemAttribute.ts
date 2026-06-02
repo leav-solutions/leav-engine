@@ -48,7 +48,7 @@ export default function ({
                 },
             };
 
-            // 1. Create the uuid attribute if it does not exist yet
+            // 1. Create or update the uuid attribute
             const existingAttribute = await attributeRepo.getAttributes({
                 params: {filters: {id: UUID_ATTRIBUTE_ID}},
                 ctx,
@@ -56,6 +56,8 @@ export default function ({
 
             if (!existingAttribute.list.length) {
                 await attributeRepo.createAttribute({attrData: uuidAttribute, ctx});
+            } else {
+                await attributeRepo.updateAttribute({attrData: uuidAttribute, ctx});
             }
 
             // 2. Fetch all existing libraries
@@ -96,7 +98,7 @@ export default function ({
                 await collection.ensureIndex({
                     type: 'persistent',
                     fields: ['uuid'],
-                    unique: false,
+                    unique: true,
                     sparse: false,
                     name: 'idx_uuid',
                 });
