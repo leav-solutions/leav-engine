@@ -1,6 +1,6 @@
 {
     "name": "mcp-runtime",
-    "version": "1.14.0",
+    "version": "1.15.0",
     "description": "MCP server exposing LEAV APIs as tools for AI agents",
     "main": "dist/index.js",
     "scripts": {
