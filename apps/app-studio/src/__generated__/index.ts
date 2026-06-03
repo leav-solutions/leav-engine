@@ -462,23 +462,6 @@ export type AutomationRulesSortInput = {
   order?: InputMaybe<SortOrder>;
 };
 
-export type AutomationTriggerDef = {
-  eventAction: AutomationRuleEventAction;
-  synchronicity: AutomationTriggerDefSynchronicity;
-  topics: Array<AutomationTriggerDefTopics>;
-};
-
-export enum AutomationTriggerDefSynchronicity {
-  ASYNC = 'ASYNC',
-  BOTH = 'BOTH',
-  SYNC = 'SYNC'
-}
-
-export enum AutomationTriggerDefTopics {
-  ATTRIBUTE = 'ATTRIBUTE',
-  LIBRARY = 'LIBRARY'
-}
-
 export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
@@ -1849,7 +1832,6 @@ export type Query = {
   attributes?: Maybe<AttributesList>;
   automationRuleForm: AutomationRuleForm;
   automationRules: AutomationRulesList;
-  automationTriggersDef: Array<AutomationTriggerDef>;
   availableActions?: Maybe<Array<Action>>;
   doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
   export: Scalars['String']['output'];
@@ -3057,39 +3039,72 @@ export enum ViewTypes {
 }
 
 export type ViewV2 = {
-  /**  The whoAmI column will never be included in attributes because is already hard-coded to be present */
-  attributes?: Maybe<Array<Attribute>>;
   created_at: Scalars['Int']['output'];
   created_by: Record;
   display: ViewV2Display;
-  filters?: Maybe<Array<RecordFilter>>;
+  filters: Array<ViewV2Filter>;
   id: Scalars['ID']['output'];
   label: Scalars['SystemTranslation']['output'];
   library: Scalars['ID']['output'];
   modified_at: Scalars['Int']['output'];
   shared: Scalars['Boolean']['output'];
-  sort?: Maybe<Array<RecordSort>>;
+  sorts: Array<ViewV2Sort>;
   valuesVersions?: Maybe<Array<ViewV2ValuesVersion>>;
 };
 
 export type ViewV2CreateInput = {
-  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
-  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   display: ViewV2DisplayInput;
-  filters?: InputMaybe<Array<RecordFilterInput>>;
+  filters?: InputMaybe<Array<ViewV2FilterInput>>;
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
   shared: Scalars['Boolean']['input'];
-  sort?: InputMaybe<Array<RecordSortInput>>;
+  sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
 
 export type ViewV2Display = {
+  attributes: Array<ViewV2DisplayAttribute>;
   type: ViewV2Types;
 };
 
+export type ViewV2DisplayAttribute = {
+  attribute: Attribute;
+  visible: Scalars['Boolean']['output'];
+};
+
+export type ViewV2DisplayAttributeInput = {
+  attributeId: Scalars['ID']['input'];
+  visible: Scalars['Boolean']['input'];
+};
+
 export type ViewV2DisplayInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<ViewV2DisplayAttributeInput>>;
   type: ViewV2Types;
+};
+
+export type ViewV2Filter = {
+  attributes: Array<Attribute>;
+  condition: RecordFilterCondition;
+  pinned: Scalars['Boolean']['output'];
+  values: Array<Maybe<Scalars['String']['output']>>;
+};
+
+export type ViewV2FilterInput = {
+  attributes: Array<Scalars['ID']['input']>;
+  condition: RecordFilterCondition;
+  pinned: Scalars['Boolean']['input'];
+  values: Array<InputMaybe<Scalars['String']['input']>>;
+};
+
+export type ViewV2Sort = {
+  attributes: Array<Attribute>;
+  order: SortOrder;
+};
+
+export type ViewV2SortInput = {
+  attributes: Array<Scalars['ID']['input']>;
+  order: SortOrder;
 };
 
 export enum ViewV2Types {
@@ -3099,16 +3114,14 @@ export enum ViewV2Types {
 }
 
 export type ViewV2UpdateInput = {
-  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
-  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   display?: InputMaybe<ViewV2DisplayInput>;
-  filters?: InputMaybe<Array<RecordFilterInput>>;
+  filters?: InputMaybe<Array<ViewV2FilterInput>>;
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
-  sort?: InputMaybe<Array<RecordSortInput>>;
+  sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
 
@@ -3172,7 +3185,7 @@ export type GetLanguagesQuery = { langs: Array<string | null> };
 export type GetUserIdentityQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserIdentityQuery = { me?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } | null };
+export type GetUserIdentityQuery = { me?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } }, user_groups: Array<{ payload?: { record: { whoAmI: { label?: string | null } } } | null }> } | null };
 
 export type GetLibraryNameQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
@@ -3368,6 +3381,17 @@ export const GetUserIdentityDocument = gql`
       label
       library {
         id
+      }
+    }
+    user_groups: property(attribute: "user_groups") {
+      ... on TreeValue {
+        payload {
+          record {
+            whoAmI {
+              label
+            }
+          }
+        }
       }
     }
   }

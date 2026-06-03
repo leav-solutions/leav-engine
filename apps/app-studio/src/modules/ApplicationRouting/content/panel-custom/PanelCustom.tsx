@@ -11,6 +11,7 @@ import {useCloseFlapPanel} from './message-handlers/useCloseFlapPanel';
 import {iframe} from './panelCustom.module.css';
 import {useGetPanelConfig} from './message-handlers/useGetPanelConfig';
 import {useGetURL} from './message-handlers/useGetURL';
+import {trackMatomoEvent} from './message-handlers/trackMatomoEvent';
 
 interface IPanelCustomProps {
     source: string;
@@ -43,6 +44,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
         onClosePanel: closePanel,
         onGetPanelConfig: getPanelConfig,
         onGetUrl: getURL,
+        onMessage: trackMatomoEvent,
     });
 
     const {lang} = useContext(LangContext);
