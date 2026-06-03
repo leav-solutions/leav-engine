@@ -11,16 +11,16 @@ import {
 import {type IConfig} from '../../../_types/config';
 
 interface IDeps {
-    config?: IConfig;
-    'core.infra.db.dbService'?: IDbService;
-    'core.utils.logger'?: ILogger;
+    config: IConfig;
+    'core.infra.db.dbService': IDbService;
+    'core.utils.logger': ILogger;
 }
 
 export default function ({
-    config = null,
-    'core.infra.db.dbService': dbService = null,
-    'core.utils.logger': logger = null,
-}: IDeps = {}): IMigration {
+    config,
+    'core.infra.db.dbService': dbService,
+    'core.utils.logger': logger,
+}: IDeps): IMigration {
     return {
         async run() {
             const analyzers = await dbService.analyzers();

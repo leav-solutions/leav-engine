@@ -237,6 +237,128 @@ describe('Indexation', () => {
         });
     });
 
+    describe('Case and accent insensitive search', () => {
+        const insensitiveLibName = 'indexation_insensitive_library_test';
+        const insensitiveAttrId = 'indexation_insensitive_attribute_test';
+        let upperCaseRecord: string;
+        let mixedCaseRecord: string;
+        let accentedRecord: string;
+        let mixedAccentRecord: string;
+
+        beforeAll(async () => {
+            await makeGraphQlCall(`mutation {
+                saveAttribute(
+                    attribute: {
+                        id: "${insensitiveAttrId}",
+                        readonly: false,
+                        required: false,
+                        type: simple,
+                        format: text,
+                        label: {fr: "Case/accent attr", en: "Case/accent attr"},
+                    }
+                ) { id }
+            }`);
+
+            await makeGraphQlCall(`mutation {
+                saveLibrary(
+                    library: {
+                        id: "${insensitiveLibName}",
+                        attributes: ["${insensitiveAttrId}"],
+                        fullTextAttributes: ["${insensitiveAttrId}"]
+                    }
+                ) { id }
+            }`);
+
+            const createAndSetValue = async (value: string) => {
+                const res = await makeGraphQlCall(
+                    `mutation { createRecord(library: "${insensitiveLibName}", skipActivate: true) { record {id} } }`,
+                );
+                const id = res.data.data.createRecord.record.id;
+                await makeGraphQlCall(`mutation {
+                    saveValue(
+                        library: "${insensitiveLibName}",
+                        recordId: "${id}",
+                        attribute: "${insensitiveAttrId}",
+                        value: {payload: "${value}"}
+                    ) { id_value }
+                }`);
+                return id;
+            };
+
+            upperCaseRecord = await createAndSetValue('PRODUIT');
+            mixedCaseRecord = await createAndSetValue('MaCaRoNi');
+            accentedRecord = await createAndSetValue('éléphant');
+            mixedAccentRecord = await createAndSetValue('Crème Brûlée');
+
+            await makeGraphQlCall(`mutation {
+                activateRecords(
+                    libraryId: "${insensitiveLibName}",
+                    recordsIds: ["${upperCaseRecord}", "${mixedCaseRecord}", "${accentedRecord}", "${mixedAccentRecord}"],
+                ) { id }
+            }`);
+
+            // Wait for indexation to complete — using the exact (analyzer-based) match path,
+            // which is already case+accent insensitive, before exercising the fuzzy variants below.
+            await searchUntil(`library: "${insensitiveLibName}", searchQuery: "produit"`, r =>
+                r.list.some(record => record.id === upperCaseRecord),
+            );
+            await searchUntil(`library: "${insensitiveLibName}", searchQuery: "macaroni"`, r =>
+                r.list.some(record => record.id === mixedCaseRecord),
+            );
+            await searchUntil(`library: "${insensitiveLibName}", searchQuery: "elephant"`, r =>
+                r.list.some(record => record.id === accentedRecord),
+            );
+            await searchUntil(`library: "${insensitiveLibName}", searchQuery: "creme brulee"`, r =>
+                r.list.some(record => record.id === mixedAccentRecord),
+            );
+        });
+
+        const search = async (query: string) => {
+            const records = await searchRecords(`library: "${insensitiveLibName}", searchQuery: "${query}"`);
+            return records.list.map(r => r.id);
+        };
+
+        test('Lowercase query finds uppercase-indexed value: "produit" finds "PRODUIT"', async () => {
+            const ids = await search('produit');
+            expect(ids).toContain(upperCaseRecord);
+        });
+
+        test('Uppercase query finds lowercase-indexed value: "ÉLÉPHANT" finds "éléphant"', async () => {
+            const ids = await search('ÉLÉPHANT');
+            expect(ids).toContain(accentedRecord);
+        });
+
+        test('Mixed-case query finds mixed-case-indexed value: "macaroni" finds "MaCaRoNi"', async () => {
+            const ids = await search('macaroni');
+            expect(ids).toContain(mixedCaseRecord);
+        });
+
+        test('Unaccented query finds accented-indexed value: "elephant" finds "éléphant"', async () => {
+            const ids = await search('elephant');
+            expect(ids).toContain(accentedRecord);
+        });
+
+        test('Accented query finds unaccented-indexed value: "éléphant" finds "éléphant"', async () => {
+            const ids = await search('éléphant');
+            expect(ids).toContain(accentedRecord);
+        });
+
+        test('Unaccented query finds mixed-accent indexed value: "creme brulee" finds "Crème Brûlée"', async () => {
+            const ids = await search('creme brulee');
+            expect(ids).toContain(mixedAccentRecord);
+        });
+
+        test('Fuzzy: lowercase substring finds uppercase value: "rodu" finds "PRODUIT"', async () => {
+            const ids = await search('rodu');
+            expect(ids).toContain(upperCaseRecord);
+        });
+
+        test('Fuzzy: unaccented substring finds accented value: "leph" finds "éléphant"', async () => {
+            const ids = await search('leph');
+            expect(ids).toContain(accentedRecord);
+        });
+    });
+
     test('Search records with from / size params', async () => {
         const records = await searchRecords(
             `library: "${testLibName}", searchQuery: "admin", pagination: {limit: 1, offset: 0}, sort: {field: "id", order: asc}`,

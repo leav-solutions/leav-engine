@@ -1,4 +1,4 @@
-import {type CreateAnalyzerOptions, type CreateNgramAnalyzerOptions} from 'arangojs/analyzer';
+import {type CreateNgramAnalyzerOptions, type CreatePipelineAnalyzerOptions} from 'arangojs/analyzer';
 import {type IDbService} from '../db/dbService';
 import type * as Config from '../../_types/config';
 import {type IRecordRepo} from '../record/recordRepo';
@@ -73,21 +73,34 @@ export default function ({
                 });
             }
 
-            // Create ngram analyzer for typo-tolerant fuzzy search via NGRAM_MATCH
+            // Create ngram analyzer for typo-tolerant fuzzy search via NGRAM_MATCH.
+            // Pipeline: normalize (lower-case, strip accents) THEN generate ngrams,
+            // so indexing "PRODÜIT" and searching "produit" produce overlapping ngrams.
             if (!analyzers.find(a => a.name === `${config.db.name}::${CORE_INDEX_NGRAM_ANALYZER}`)) {
                 // streamType is supported by ArangoDB but missing from arangojs 8.8.1 typedef
-                const ngramProperties: CreateNgramAnalyzerOptions['properties'] & {streamType?: string} = {
-                    min: 3,
-                    max: 3,
-                    preserveOriginal: false,
-                    streamType: 'utf8',
-                };
-                const ngramOptions: CreateAnalyzerOptions = {
+                const ngramStep: CreateNgramAnalyzerOptions & {properties: {streamType?: string}} = {
                     type: 'ngram',
-                    properties: ngramProperties,
+                    properties: {
+                        min: 3,
+                        max: 3,
+                        preserveOriginal: false,
+                        streamType: 'utf8',
+                    },
+                };
+                const pipelineOptions: CreatePipelineAnalyzerOptions = {
+                    type: 'pipeline',
+                    properties: {
+                        pipeline: [
+                            {
+                                type: 'norm',
+                                properties: {locale: 'en', case: 'lower', accent: false},
+                            },
+                            ngramStep,
+                        ],
+                    },
                     features: ['frequency', 'norm', 'position'],
                 };
-                await dbService.createAnalyzer(CORE_INDEX_NGRAM_ANALYZER, ngramOptions);
+                await dbService.createAnalyzer(CORE_INDEX_NGRAM_ANALYZER, pipelineOptions);
             }
         },
         async listLibrary(libraryId: string): Promise<void> {
