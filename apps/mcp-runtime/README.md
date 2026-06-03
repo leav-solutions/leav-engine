@@ -97,9 +97,26 @@ Claude will discover the available tools automatically via the MCP handshake.
 
 ## MCP tools
 
-### `graphql`
+### `graphql_schema_guide`
 
-Execute a GraphQL query or mutation against the LEAV instance.
+Returns a static, hand-written cookbook of the LEAV core GraphQL API (read libraries/records/views,
+create records/attributes/libraries, save values) with ready-to-use examples and the key enums.
+Takes no input.
+
+The agent is told (via the `graphql_query` / `graphql_mutation` descriptions) to call this **first**
+and to **never run schema introspection** (`__schema` / `__type`): the generic API is static and
+identical on every LEAV instance, so introspecting it only wastes the agent's context. Only a
+library's own attributes are dynamic, and those are discovered through the `libraries` / `attributes`
+queries the guide documents.
+
+The cookbook lives in `src/tools/schemaGuide.ts` as a string constant (bundled by `tsc`, no extra
+build step). **When the core GraphQL schema changes** (`apps/core/src/app/core/**/*App.ts`), update
+that file to keep the examples accurate.
+
+### `graphql_query` / `graphql_mutation`
+
+Execute a read-only query (`graphql_query`) or a mutation (`graphql_mutation`) against the LEAV
+instance.
 
 | Input       | Type   | Required | Description                                   |
 | ----------- | ------ | -------- | --------------------------------------------- |

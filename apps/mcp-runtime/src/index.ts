@@ -11,6 +11,12 @@ import {
     graphqlQueryToolDescription,
     graphqlQueryToolName,
 } from './tools/graphql';
+import {
+    graphqlSchemaGuideInputSchema,
+    graphqlSchemaGuideToolDescription,
+    graphqlSchemaGuideToolName,
+    schemaGuideHandler,
+} from './tools/schemaGuide';
 
 const PORT = Number(process.env.PORT ?? 3000);
 const CORE_URL = process.env.CORE_URL;
@@ -53,6 +59,14 @@ app.all('/mcp', async (req: Request, res: Response) => {
 
     // Register every tool on this server instance before connecting.
     // rest and trpc tools will be added here once implemented (LEAVC-888).
+
+    // Static schema cookbook: lets the agent learn the generic API without introspecting it.
+    server.registerTool(
+        graphqlSchemaGuideToolName,
+        {description: graphqlSchemaGuideToolDescription, inputSchema: graphqlSchemaGuideInputSchema},
+        schemaGuideHandler,
+    );
+
     server.registerTool(
         graphqlQueryToolName,
         {description: graphqlQueryToolDescription, inputSchema: graphqlInputSchema},
