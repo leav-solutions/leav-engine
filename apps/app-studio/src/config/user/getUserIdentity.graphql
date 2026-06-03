@@ -8,5 +8,16 @@ query getUserIdentity {
                 id
             }
         }
+        user_groups: property(attribute: "user_groups") {
+            ... on TreeValue {
+                payload {
+                    record {
+                        whoAmI {
+                            label
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,9 +1,22 @@
 import {useGetUserIdentityQuery} from '../../__generated__';
 import {type IUserContext, UserContext} from '@leav/ui';
-import {type FunctionComponent, useMemo} from 'react';
+import {type FunctionComponent, useEffect, useMemo} from 'react';
+import {matomo} from '../../services/matomo';
 
 export const InitUser: FunctionComponent = ({children}) => {
-    const {data: userData, error} = useGetUserIdentityQuery();
+    const {data: userData, error, loading} = useGetUserIdentityQuery();
+
+    useEffect(() => {
+        if (loading) {
+            return;
+        }
+        const groups =
+            userData?.me?.user_groups
+                ?.map(v => v.payload.record.whoAmI.label)
+                .sort()
+                .join(' | ') ?? '';
+        matomo.setUserRole(groups);
+    }, [loading]);
 
     const userIdentity = useMemo<IUserContext>(() => {
         if (userData?.me) {
