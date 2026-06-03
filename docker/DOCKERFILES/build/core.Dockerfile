@@ -63,6 +63,12 @@ COPY assets/ ./assets
 # Dependencies needed to retrieve files metadata with exiftool-vendored pkg
 RUN apk --update --no-cache add perl pkgconfig
 
+# Security scan: remove forbidden tooling from the final image.
+# apk (apk-tools) is purged last so the `apk add` step above still works.
+# lsof and vi are busybox applets — we only drop the symlinks, busybox stays.
+RUN rm -f /usr/bin/lsof /usr/bin/vi /sbin/apk \
+    && rm -rf /etc/apk /lib/apk /usr/share/apk /var/cache/apk
+
 # Get ready for runtime
 WORKDIR /app/apps/core
 ENV APP_ROOT_PATH=/app/apps/core

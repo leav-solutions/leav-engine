@@ -53,7 +53,10 @@ RUN rsync -av \
     yarn workspaces focus $APP --production && \
     rm -rf .yarn yarn.lock .yarnrc.yml
 
-FROM node:24.16.0-alpine3.23 AS runner
+# Shared runtime base. Not a build target on its own: the actual final images are
+# `runner` and `runner-preview-generator` below. Kept separate so apk can be purged
+# per leaf (preview-generator still needs apk to install its extra libs).
+FROM node:24.16.0-alpine3.23 AS runner-base
 ARG APP
 WORKDIR /app
 
@@ -68,8 +71,18 @@ ENV SKIP_YARN_COREPACK_CHECK=1
 
 CMD ["yarn", "run",  "start"]
 
+### RUNNER FOR MOST APPS (automate-scan, sync-scan, mcp-runtime…) ###
+FROM runner-base AS runner
+
+# Security scan: remove forbidden tooling from the final image.
+# apk (apk-tools) is purged last so the `apk add` step above still works.
+# lsof and vi are busybox applets — we only drop the symlinks, busybox stays.
+RUN rm -f /usr/bin/lsof /usr/bin/vi /sbin/apk \
+    && rm -rf /etc/apk /lib/apk /usr/share/apk /var/cache/apk
+
 ### RUNNER FOR PREVIEW-GENERATOR ###
-FROM runner AS runner-preview-generator
+# Branches from runner-base (not runner) so apk is still available for the installs below.
+FROM runner-base AS runner-preview-generator
 ## Install libs required for previews generation
 
 # imagemagick is used to convert images
@@ -106,3 +119,9 @@ RUN apk --no-cache add \
     && ln -sf /usr/bin/python3 /usr/bin/python \
     && apk del curl \
     && rm -rf /var/cache/apk/*
+
+# Security scan: remove forbidden tooling from the final image.
+# apk (apk-tools) is purged last so the `apk add` step above still works.
+# lsof and vi are busybox applets — we only drop the symlinks, busybox stays.
+RUN rm -f /usr/bin/lsof /usr/bin/vi /sbin/apk \
+    && rm -rf /etc/apk /lib/apk /usr/share/apk /var/cache/apk
