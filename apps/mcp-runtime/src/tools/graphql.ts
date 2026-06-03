@@ -3,11 +3,19 @@ import {z} from 'zod';
 export const graphqlQueryToolName = 'graphql_query' as const;
 export const graphqlMutationToolName = 'graphql_mutation' as const;
 
+// Both descriptions point to the graphql_schema_guide tool and forbid introspection: the generic
+// LEAV API is static and fully documented there, so introspecting __schema only wastes context.
 export const graphqlQueryToolDescription =
-    'Execute a read-only GraphQL query against the LEAV instance. Use this for fetching data.';
+    'Execute a read-only GraphQL query against the LEAV instance. Use this for fetching data. ' +
+    'Before writing a query, call the graphql_schema_guide tool to get the available operations and ' +
+    'examples. Do NOT introspect the schema (__schema / __type): the generic API is static and the ' +
+    'guide already covers it.';
 
 export const graphqlMutationToolDescription =
     'Execute a GraphQL mutation against the LEAV instance. ' +
+    'Before writing a mutation, call the graphql_schema_guide tool for the available operations and ' +
+    'examples. Do NOT introspect the schema (__schema / __type): the generic API is static and the ' +
+    'guide already covers it. ' +
     'IMPORTANT: always show the user the full mutation and variables, and ask for explicit confirmation before calling this tool.';
 
 // Zod schema used by McpServer.registerTool() to validate inputs and generate the JSON Schema
