@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+        "composite": true,
+        "isolatedModules": false,
+        "strictNullChecks": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": true
+    },
+    "include": ["./src"],
+    "exclude": ["**/*.spec.ts"]
+}

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {TaskStatus} from '../_gqlTypes';
 import {GenericClient} from './GenericClient';
 
@@ -6,9 +7,9 @@ export interface ITask {
     status: TaskStatus;
 }
 
-export class TaskUtil extends GenericClient {
+export class TasksClient extends GenericClient {
     public async getTask(taskId: string): Promise<ITask> {
-        const res = await this.sdk.GetTasks({
+        const res = await this.baseSdk.GetTasks({
             filters: {id: taskId},
         });
         return res.tasks.list[0];

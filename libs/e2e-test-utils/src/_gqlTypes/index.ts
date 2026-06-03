@@ -1,4 +1,3 @@
-import {IPreviewScalar} from '@leav/utils'
 import { GraphQLClient, RequestOptions } from 'graphql-request';
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
@@ -21,7 +20,7 @@ export type Scalars = {
   FullTreeContent: { input: any; output: any; }
   JSON: { input: any; output: any; }
   JSONObject: { input: any; output: any; }
-  Preview: { input: IPreviewScalar; output: IPreviewScalar; }
+  Preview: { input: any; output: any; }
   SystemTranslation: { input: any; output: any; }
   SystemTranslationOptional: { input: any; output: any; }
   TaskPriority: { input: any; output: any; }
@@ -1202,77 +1201,79 @@ export type ViewValuesVersionInput = {
   treeNode: Scalars['String']['input'];
 };
 
-export type SaveApplicationMutationVariables = Exact<{
-  application: ApplicationInput;
+export type ImportDataMutationVariables = Exact<{
+  file: Scalars['Upload']['input'];
 }>;
 
 
-export type SaveApplicationMutation = { saveApplication: { endpoint?: string | null, module?: string | null, type: ApplicationType, id: string } };
+export type ImportDataMutation = { importData: string };
 
-export type SaveAttributeMutationVariables = Exact<{
-  attribute: AttributeInput;
+export type GetRecordsQueryVariables = Exact<{
+  library: Scalars['ID']['input'];
 }>;
 
 
-export type SaveAttributeMutation = { saveAttribute: { id: string } };
+export type GetRecordsQuery = { records: { list: Array<{ id: string }> } };
 
-export type DeleteAttributeMutationVariables = Exact<{
-  attributeId: Scalars['ID']['input'];
+export type DeactivateRecordsMutationVariables = Exact<{
+  libraryId: Scalars['String']['input'];
+  recordsIds: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
 
-export type DeleteAttributeMutation = { deleteAttribute: { id: string } };
+export type DeactivateRecordsMutation = { deactivateRecords: Array<{ id: string }> };
 
-export type SaveLibraryMutationVariables = Exact<{
-  library: LibraryInput;
-}>;
-
-
-export type SaveLibraryMutation = { saveLibrary: { id: string } };
-
-export type DeleteLibraryMutationVariables = Exact<{
+export type PurgeRecordMutationVariables = Exact<{
   libraryId: Scalars['ID']['input'];
+  recordId: Scalars['ID']['input'];
 }>;
 
 
-export type DeleteLibraryMutation = { deleteLibrary: { id: string } };
+export type PurgeRecordMutation = { purgeRecord: { id: string } };
+
+export type GetTasksQueryVariables = Exact<{
+  filters?: InputMaybe<TaskFiltersInput>;
+}>;
 
 
-export const SaveApplicationDocument = gql`
-    mutation SaveApplication($application: ApplicationInput!) {
-  saveApplication(application: $application) {
-    endpoint
-    module
-    type
+export type GetTasksQuery = { tasks: { list: Array<{ id: string, status: TaskStatus }> } };
+
+
+export const ImportDataDocument = gql`
+    mutation ImportData($file: Upload!) {
+  importData(file: $file)
+}
+    `;
+export const GetRecordsDocument = gql`
+    query GetRecords($library: ID!) {
+  records(library: $library, retrieveInactive: true) {
+    list {
+      id
+    }
+  }
+}
+    `;
+export const DeactivateRecordsDocument = gql`
+    mutation DeactivateRecords($libraryId: String!, $recordsIds: [String!]!) {
+  deactivateRecords(libraryId: $libraryId, recordsIds: $recordsIds) {
     id
   }
 }
     `;
-export const SaveAttributeDocument = gql`
-    mutation SaveAttribute($attribute: AttributeInput!) {
-  saveAttribute(attribute: $attribute) {
+export const PurgeRecordDocument = gql`
+    mutation PurgeRecord($libraryId: ID!, $recordId: ID!) {
+  purgeRecord(libraryId: $libraryId, recordId: $recordId) {
     id
   }
 }
     `;
-export const DeleteAttributeDocument = gql`
-    mutation DeleteAttribute($attributeId: ID!) {
-  deleteAttribute(id: $attributeId) {
-    id
-  }
-}
-    `;
-export const SaveLibraryDocument = gql`
-    mutation SaveLibrary($library: LibraryInput!) {
-  saveLibrary(library: $library) {
-    id
-  }
-}
-    `;
-export const DeleteLibraryDocument = gql`
-    mutation DeleteLibrary($libraryId: ID!) {
-  deleteLibrary(id: $libraryId) {
-    id
+export const GetTasksDocument = gql`
+    query GetTasks($filters: TaskFiltersInput) {
+  tasks(filters: $filters) {
+    list {
+      id
+      status
+    }
   }
 }
     `;
@@ -1284,20 +1285,20 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
-    SaveApplication(variables: SaveApplicationMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveApplicationMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<SaveApplicationMutation>({ document: SaveApplicationDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveApplication', 'mutation', variables);
+    ImportData(variables: ImportDataMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<ImportDataMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ImportDataMutation>({ document: ImportDataDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'ImportData', 'mutation', variables);
     },
-    SaveAttribute(variables: SaveAttributeMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveAttributeMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<SaveAttributeMutation>({ document: SaveAttributeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveAttribute', 'mutation', variables);
+    GetRecords(variables: GetRecordsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecordsQuery>({ document: GetRecordsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecords', 'query', variables);
     },
-    DeleteAttribute(variables: DeleteAttributeMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteAttributeMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<DeleteAttributeMutation>({ document: DeleteAttributeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteAttribute', 'mutation', variables);
+    DeactivateRecords(variables: DeactivateRecordsMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeactivateRecordsMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeactivateRecordsMutation>({ document: DeactivateRecordsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeactivateRecords', 'mutation', variables);
     },
-    SaveLibrary(variables: SaveLibraryMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveLibraryMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<SaveLibraryMutation>({ document: SaveLibraryDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveLibrary', 'mutation', variables);
+    PurgeRecord(variables: PurgeRecordMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<PurgeRecordMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<PurgeRecordMutation>({ document: PurgeRecordDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'PurgeRecord', 'mutation', variables);
     },
-    DeleteLibrary(variables: DeleteLibraryMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteLibraryMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<DeleteLibraryMutation>({ document: DeleteLibraryDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteLibrary', 'mutation', variables);
+    GetTasks(variables?: GetTasksQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetTasksQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetTasksQuery>({ document: GetTasksDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetTasks', 'query', variables);
     }
   };
 }

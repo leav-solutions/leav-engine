@@ -1,0 +1,31 @@
+{
+    "name": "@leav/e2e-test-utils",
+    "version": "1.14.0",
+    "description": "Basic utilities for e2e tests, setup data",
+    "main": "./src/index",
+    "publishConfig": {
+        "main": "./dist/index"
+    },
+    "scripts": {
+        "graphql-generate": "graphql-codegen --config ./codegen.ts",
+        "build": "tsc --build tsconfig.build.json",
+        "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo",
+        "tscheck": "tsc -b tsconfig.build.json",
+        "tscheck:watch": "tsc -b -w tsconfig.json"
+    },
+    "dependencies": {
+        "graphql": "16.14.0",
+        "graphql-request": "7.4.0",
+        "graphql-tag": "2.12.6"
+    },
+    "devDependencies": {
+        "@graphql-codegen/add": "5.0.3",
+        "@graphql-codegen/cli": "6.3.1",
+        "@graphql-codegen/client-preset": "4.8.3",
+        "@graphql-codegen/typescript": "5.0.10",
+        "@graphql-codegen/typescript-graphql-request": "6.4.0",
+        "@graphql-codegen/typescript-operations": "5.1.0",
+        "@playwright/test": "1.60.0",
+        "typescript": "5.9.3"
+    }
+}

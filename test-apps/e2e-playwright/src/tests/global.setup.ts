@@ -1,9 +1,9 @@
 import {test as setup} from '@playwright/test';
+import {RecordsClient} from '@leav/e2e-test-utils';
 import {ApplicationClient} from '../utils/ApplicationClient';
 import {AttributeClient} from '../utils/AttributeClient';
 import {LibraryClient} from '../utils/LibraryClient';
 import {initialData} from '../data';
-import {DataClient} from '../utils/DataClient';
 import {AttributeFormat, AttributeType} from '../_gqlTypes';
 import {
     STANDARD_FIELD_ATTRIBUTE_BOOLEAN_ID,
@@ -105,7 +105,7 @@ setup('Create test database', async ({}) => {
         STANDARD_FIELD_ATTRIBUTE_DROPDOWN_ID,
     ]);
 
-    const dataClient = new DataClient();
-    await dataClient.importData(JSON.stringify(initialData));
+    const recordsClient = new RecordsClient();
+    await recordsClient.importDataJson(JSON.stringify(initialData));
     console.info('GlobalSetup finished.');
 });

@@ -1,5 +1,5 @@
 import {test as teardown} from '@playwright/test';
-import {DataClient} from '../utils/DataClient';
+import {RecordsClient} from '@leav/e2e-test-utils';
 import {LibraryClient} from '../utils/LibraryClient';
 import {AttributeClient} from '../utils/AttributeClient';
 import {
@@ -16,8 +16,8 @@ import {
 
 teardown('Delete datas, libraries et attributes', async ({}) => {
     console.info('Deleting data ...');
-    const dataClient = new DataClient();
-    await dataClient.deleteData([STANDARD_FIELD_LIBRARY_ID]);
+    const recordsClient = new RecordsClient();
+    await recordsClient.deleteAndPurgeLibrariesRecords([STANDARD_FIELD_LIBRARY_ID]);
 
     const libraryClient = new LibraryClient();
     await libraryClient.deleteLibrary([STANDARD_FIELD_LIBRARY_ID]);

@@ -1,9 +1,9 @@
 import {GenericClient} from './GenericClient';
-import {TaskUtil} from './TaskUtils';
+import {TasksClient as TaskUtils} from './TasksClient';
 import {ImportDataDocument, TaskStatus, type ImportDataMutation, type ImportDataMutationVariables} from '../_gqlTypes';
 
-export class DataClient extends GenericClient {
-    public async importData(serializedData: string): Promise<string> {
+export class RecordsClient extends GenericClient {
+    public async importDataJson(serializedData: string): Promise<string> {
         const res = await this.graphqlRequestWithFiles<ImportDataMutation, ImportDataMutationVariables>(
             ImportDataDocument,
             [{variableName: 'file', file: new File([serializedData], 'data.json', {type: 'application/json'})}],
@@ -13,7 +13,7 @@ export class DataClient extends GenericClient {
         if (!taskId) {
             throw new Error('Import taskId not returned');
         }
-        const taskUtil = new TaskUtil();
+        const taskUtil = new TaskUtils();
         const task = await taskUtil.waitForTaskCompletion(taskId);
         if (task.status !== TaskStatus.DONE) {
             throw new Error('Task ' + taskId + ' finished with status ' + task.status);
@@ -21,16 +21,16 @@ export class DataClient extends GenericClient {
         return taskId;
     }
 
-    public async deleteData(librariesId: string[]): Promise<void> {
+    public async deleteAndPurgeLibrariesRecords(librariesId: string[]): Promise<void> {
         for (const libraryId of librariesId) {
-            const recordsResponse = await this.sdk.GetRecords({library: libraryId});
+            const recordsResponse = await this.baseSdk.GetRecords({library: libraryId});
             const records = recordsResponse?.records?.list ?? [];
             const recordsId = records.map(r => r.id);
 
-            await this.sdk.DeactivateRecords({libraryId, recordsIds: recordsId});
+            await this.baseSdk.DeactivateRecords({libraryId, recordsIds: recordsId});
 
             for (const r of recordsId) {
-                await this.sdk.PurgeRecord({libraryId, recordId: r});
+                await this.baseSdk.PurgeRecord({libraryId, recordId: r});
             }
         }
     }
