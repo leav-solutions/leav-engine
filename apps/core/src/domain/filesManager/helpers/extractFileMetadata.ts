@@ -17,7 +17,7 @@ export const extractFileMetadata = async (
     let fileData: IFileMetadata = {};
     const rootPath = getRootPathByKey(rootKey, config);
     const fullPath = path.join(rootPath, filePath);
-    const exifData = await exiftool.read<IAllTags>(fullPath, ['-FileSize#']);
+    const exifData = await exiftool.read<IAllTags>(fullPath, {readArgs: ['-FileSize#']});
 
     const rawMimeType = exifData.MIMEType;
     const splittedMimeType = exifData.MIMEType.split('/');
