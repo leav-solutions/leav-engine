@@ -2,7 +2,8 @@ import ErrorDisplay from '../../shared/ErrorDisplay';
 import useUserData from '../../../hooks/useUserData';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {VscLayers} from 'react-icons/vsc';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faLayerGroup} from '@fortawesome/free-solid-svg-icons';
 import {Link, useNavigate} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -16,7 +17,7 @@ const Title = styled(Header)`
     gap: 0.5rem;
 `;
 
-function VersionProfiles(): JSX.Element {
+const VersionProfiles = () => {
     const {t} = useTranslation();
     const [filters, setFilters] = useState<VersionProfilesFiltersInput>({});
     const userData = useUserData();
@@ -44,7 +45,7 @@ function VersionProfiles(): JSX.Element {
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
                     <Title size="large">
-                        <VscLayers size={30} />
+                        <FontAwesomeIcon icon={faLayerGroup} />
                         {t('version_profiles.title')}
                     </Title>
                 </Grid.Column>
@@ -72,6 +73,6 @@ function VersionProfiles(): JSX.Element {
             )}
         </>
     );
-}
+};
 
 export default VersionProfiles;

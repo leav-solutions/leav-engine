@@ -1,7 +1,9 @@
 import LibraryIcon from '../../../shared/LibraryIcon';
-import React, {useState} from 'react';
+import {type ComponentProps, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {AiOutlineFileSearch} from 'react-icons/ai';
+import {KitSpace} from 'aristid-ds';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faSearch} from '@fortawesome/free-solid-svg-icons';
 import {useNavigate, useLocation} from 'react-router-dom';
 import {Button, Grid, Header, Tab, type TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -26,7 +28,7 @@ interface IEditLibraryTabsProps {
     readOnly: boolean;
 }
 
-const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Element => {
+const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps) => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
@@ -104,7 +106,7 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
         tabName ? panes.findIndex(p => tabName === p.key) : 0,
     );
 
-    const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
+    const _handleOnTabChange: ComponentProps<typeof Tab>['onTabChange'] = (event, data) => {
         if (data.panes && data.activeIndex !== undefined) {
             setActiveIndex(Number(data.activeIndex.toString()));
             navigate(`#${data.panes[data.activeIndex].key}`);
@@ -137,7 +139,10 @@ const EditLibraryTabs = ({library, readOnly}: IEditLibraryTabsProps): JSX.Elemen
                             loading={indexLoading}
                             aria-label="index"
                         >
-                            <AiOutlineFileSearch /> {t('libraries.index_fulltext_search')}
+                            <KitSpace>
+                                <FontAwesomeIcon icon={faSearch} />
+                                {t('libraries.index_fulltext_search')}
+                            </KitSpace>
                         </Button>
                     </Grid.Column>
                 )}
