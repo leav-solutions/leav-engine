@@ -9517,7 +9517,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@photostructure/tz-lookup@npm:^11.2.0":
+"@photostructure/tz-lookup@npm:^11.5.0":
   version: 11.5.0
   resolution: "@photostructure/tz-lookup@npm:11.5.0"
   checksum: 10/065fe42bea45ed46d1742fa063db83dc8a6ea550d1679b85b9df58ef9848e4f829cfb292261e56be9e6e22ee82aa56d483381f34fa00f374745e42c6a5b03d5c
@@ -11818,7 +11818,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/luxon@npm:^3.6.0":
+"@types/luxon@npm:^3.7.1":
   version: 3.7.1
   resolution: "@types/luxon@npm:3.7.1"
   checksum: 10/c7bc164c278393ea0be938f986c74b4cddfab9013b1aff4495b016f771ded1d5b7b7b4825b2c7f0b8799edce19c5f531c28ff434ab3dedf994ac2d99a20fd4c4
@@ -14257,10 +14257,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"batch-cluster@npm:^13.0.0":
-  version: 13.0.0
-  resolution: "batch-cluster@npm:13.0.0"
-  checksum: 10/9e1301f07856297a9187410d47bcff0fc34f600cfc16054168e8bcff6ec0d6e0a9ee0299170ae176049032911e266ac48e8868f91df3ca5b63f17b07c4b40dfd
+"batch-cluster@npm:^18.0.0":
+  version: 18.0.0
+  resolution: "batch-cluster@npm:18.0.0"
+  checksum: 10/b62862ebc9ae1182c083091e722095f9e1e45be3246606be704ab2c157bfa9112da49f0ff99661d48f971d0023800e21f17296cd0b123cc94eb05c434d30df54
   languageName: node
   linkType: hard
 
@@ -15766,7 +15766,7 @@ __metadata:
     dayjs: "npm:1.11.21"
     eventsource: "npm:4.1.0"
     exceljs: "npm:4.4.0"
-    exiftool-vendored: "npm:29.3.0"
+    exiftool-vendored: "npm:36.0.0"
     express: "npm:4.22.2"
     express-useragent: "npm:1.0.15"
     graphql: "npm:16.14.0"
@@ -18088,39 +18088,39 @@ __metadata:
   languageName: node
   linkType: hard
 
-"exiftool-vendored.exe@npm:13.26.0":
-  version: 13.26.0
-  resolution: "exiftool-vendored.exe@npm:13.26.0"
+"exiftool-vendored.exe@npm:13.59.0":
+  version: 13.59.0
+  resolution: "exiftool-vendored.exe@npm:13.59.0"
   conditions: os=win32
   languageName: node
   linkType: hard
 
-"exiftool-vendored.pl@npm:13.26.0":
-  version: 13.26.0
-  resolution: "exiftool-vendored.pl@npm:13.26.0"
+"exiftool-vendored.pl@npm:13.59.0":
+  version: 13.59.0
+  resolution: "exiftool-vendored.pl@npm:13.59.0"
   bin:
     exiftool: bin/exiftool
   conditions: "!os=win32"
   languageName: node
   linkType: hard
 
-"exiftool-vendored@npm:29.3.0":
-  version: 29.3.0
-  resolution: "exiftool-vendored@npm:29.3.0"
+"exiftool-vendored@npm:36.0.0":
+  version: 36.0.0
+  resolution: "exiftool-vendored@npm:36.0.0"
   dependencies:
-    "@photostructure/tz-lookup": "npm:^11.2.0"
-    "@types/luxon": "npm:^3.6.0"
-    batch-cluster: "npm:^13.0.0"
-    exiftool-vendored.exe: "npm:13.26.0"
-    exiftool-vendored.pl: "npm:13.26.0"
+    "@photostructure/tz-lookup": "npm:^11.5.0"
+    "@types/luxon": "npm:^3.7.1"
+    batch-cluster: "npm:^18.0.0"
+    exiftool-vendored.exe: "npm:13.59.0"
+    exiftool-vendored.pl: "npm:13.59.0"
     he: "npm:^1.2.0"
-    luxon: "npm:^3.6.1"
+    luxon: "npm:^3.7.2"
   dependenciesMeta:
     exiftool-vendored.exe:
       optional: true
     exiftool-vendored.pl:
       optional: true
-  checksum: 10/d1142146132e020c18cd4622f2db5195294722a79b1d8a3b47f66e75c61272cf23626db5a4fc174144105cd4993684e114e95236bde05cc4f3df93e8c9c97c59
+  checksum: 10/bdb92aba627c1c713f10678cb32abcfce7babe0636f204b31b665726c3cc7e6a46ff2b84016cf40c5bf6d86e2d23adcb5d8db7f6e76697abe0a7b42fd4a5f552
   languageName: node
   linkType: hard
 
@@ -23600,7 +23600,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:^3.6.1":
+"luxon@npm:^3.7.2":
   version: 3.7.2
   resolution: "luxon@npm:3.7.2"
   checksum: 10/b24cd205ed306ce7415991687897dcc4027921ae413c9116590bc33a95f93b86ce52cf74ba72b4f5c5ab1c10090517f54ac8edfb127c049e0bf55b90dc2260be
