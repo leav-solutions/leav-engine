@@ -55,6 +55,7 @@ export interface IRecordDomain {
         values?: ISaveValue[];
         verifyRequiredAttributes?: boolean;
         skipActivate?: boolean;
+        uuid?: string;
         ctx: IQueryInfos;
     }): Promise<ICreateRecordResult>;
 
@@ -265,11 +266,12 @@ export default function ({
             values,
             verifyRequiredAttributes,
             skipActivate,
+            uuid,
             ctx,
         }): Promise<ICreateRecordResult> {
             let createdRecord: IRecord;
             try {
-                createdRecord = await createRecordHelper({library, ctx, active: false});
+                createdRecord = await createRecordHelper({library, ctx, active: false, uuid});
                 // Make sure we don't have any id_value hanging on as we're on creation here
                 const cleanValues = (values ?? []).map(v => ({...v, id_value: null}));
 
