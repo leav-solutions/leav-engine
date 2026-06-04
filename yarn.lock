@@ -12970,7 +12970,6 @@ __metadata:
     react-dnd-test-backend: "npm:16.0.1"
     react-dom: "npm:18.2.0"
     react-i18next: "npm:12"
-    react-icons: "npm:4.7.1"
     react-markdown: "npm:5.0.3"
     react-redux: "npm:7.2.9"
     react-router-dom: "npm:6.30.4"
@@ -26698,15 +26697,6 @@ __metadata:
     react-native:
       optional: true
   checksum: 10/94d7ed6e361e359f07a1c900ff22900adb2022f4dc08beda8b749788609f6d520abbe7ae73b3a8e37dfc8fc162581c293d84ef5339f3f43246843d550f88d38b
-  languageName: node
-  linkType: hard
-
-"react-icons@npm:4.7.1":
-  version: 4.7.1
-  resolution: "react-icons@npm:4.7.1"
-  peerDependencies:
-    react: "*"
-  checksum: 10/c838bed471a1a1f15bb5f6930c43f7bce3ac70d804e36dd440f1b2e7834ebfda60b52ab306cb3830a0a53cb42d77630a9803db89b5fe662f3f7fb5c6556e5070
   languageName: node
   linkType: hard
 

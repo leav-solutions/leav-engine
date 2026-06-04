@@ -1,7 +1,8 @@
 import {useCurrentApplicationContext} from '../../../context/CurrentApplicationContext';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {AiOutlineDatabase} from 'react-icons/ai';
+import {faBook} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {Link, useNavigate} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -17,7 +18,7 @@ const Title = styled(Header)`
     gap: 0.5rem;
 `;
 
-const Libraries = (): JSX.Element => {
+const Libraries = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const userData = useUserData();
@@ -49,7 +50,7 @@ const Libraries = (): JSX.Element => {
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
                     <Title size="large">
-                        <AiOutlineDatabase size={30} />
+                        <FontAwesomeIcon icon={faBook} />
                         {t('libraries.title')}
                     </Title>
                 </Grid.Column>

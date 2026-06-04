@@ -1,7 +1,8 @@
 import {type ApolloError} from '@apollo/client';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {BiSpreadsheet} from 'react-icons/bi';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faRectangleList} from '@fortawesome/free-solid-svg-icons';
 import {Link, useNavigate} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -26,7 +27,7 @@ interface IAttributesFilters {
     isSystem?: boolean;
 }
 
-const Attributes = (): JSX.Element => {
+const Attributes = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [filters, setFilters] = useState<IAttributesFilters>({});
@@ -60,7 +61,7 @@ const Attributes = (): JSX.Element => {
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
                     <Title size="large">
-                        <BiSpreadsheet size={30} />
+                        <FontAwesomeIcon icon={faRectangleList} />
                         {t('attributes.title')}
                     </Title>
                 </Grid.Column>

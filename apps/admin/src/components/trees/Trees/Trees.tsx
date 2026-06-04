@@ -3,7 +3,8 @@ import Loading from '../../shared/Loading';
 import {useCurrentApplicationContext} from '../../../context/CurrentApplicationContext';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {RiNodeTree} from 'react-icons/ri';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faFolderTree} from '@fortawesome/free-solid-svg-icons';
 import {Link, useNavigate} from 'react-router-dom';
 import {Button, Grid, Header, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -52,7 +53,7 @@ const Trees = (): JSX.Element => {
             <Grid>
                 <Grid.Column textAlign="left" floated="left" width={8} verticalAlign="middle">
                     <Title size="large">
-                        <RiNodeTree size={30} />
+                        <FontAwesomeIcon icon={faFolderTree} />
                         {t('trees.title')}
                     </Title>
                 </Grid.Column>
