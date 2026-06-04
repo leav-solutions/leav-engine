@@ -15752,7 +15752,7 @@ __metadata:
     ms: "npm:2.1.3"
     nanoid: "npm:3.3.12"
     node-cron: "npm:4.2.1"
-    nodemailer: "npm:7.0.13"
+    nodemailer: "npm:8.0.10"
     openid-client: "npm:5.7.1"
     prettier: "npm:3.8.3"
     progress-stream: "npm:2.0.0"
@@ -24298,10 +24298,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:7.0.13":
-  version: 7.0.13
-  resolution: "nodemailer@npm:7.0.13"
-  checksum: 10/4ae37bfb6896f1555de150c1098a7c1b28eb1da240a4c7adede81a8af0dcc184298cfbf804930599c076ea574428e0c18c6b28f0dc2072cebb30c1da5fd0b688
+"nodemailer@npm:8.0.10":
+  version: 8.0.10
+  resolution: "nodemailer@npm:8.0.10"
+  checksum: 10/b46d7636257c2ddb68f47cdba40f7b2c544e0030185c8a9c8af907ae29fd754a7147742e48bad9c31541a1368a22d6dbab46b16e37ad5eb99128ca00f2d03178
   languageName: node
   linkType: hard
 
