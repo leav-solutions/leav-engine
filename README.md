@@ -477,32 +477,20 @@ login/password default authentification mechanism.
 
 ### Configuration
 
-1. Create a `/apps/core/config/local.js` with this template:
-
-    ```javascript
-    module.exports = {
-        auth: {
-            oidc: {
-                enable: true,
-            },
-        },
-    };
-    ```
-
-2. Due to docker network, you need to edit `/etc/hosts` file to add this line:
+1. Due to docker network, you need to edit `/etc/hosts` file to add this line:
 
     ```
     127.0.0.1           keycloak
     ```
 
-3. Launch docker stack with composition: this will start postgre and keycloak service and modify core to wait for
+2. Launch docker stack with composition: this will start postgre and keycloak service and modify core to wait for
    healthy containers.
 
     ```shell
     docker compose -f docker/docker-compose.yml -f docker/docker-compose.oidc.yml up -d
     ```
 
-4. Currently, the træfik roots you to dev version of front apps (**portal**, **data-studio**…), 2 solutions:
+3. Currently, the træfik roots you to dev version of front apps (**portal**, **data-studio**…), 2 solutions:
 
 - Manually stop docker front containers and build apps to [`/applications`](./apps/core/applications) folder in core.
 
