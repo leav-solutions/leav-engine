@@ -34,6 +34,10 @@ workflow:
   if: $CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "develop" && $SCHEDULED_ACTION == "e2e-playwright"
   when: on_success
 
+.schedule_dependency_audit: &schedule_dependency_audit
+  if: $CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "develop" && $SCHEDULED_ACTION == "dependency-audit"
+  when: on_success
+
 .new_lib_installed_changes: &new_lib_installed_changes yarn.lock
 
 variables:
@@ -127,6 +131,21 @@ validate-renovate-config:
       changes:
         - renovate.json
 
+audit-production-dependencies:
+  stage: test
+  script:
+    # Human-readable output in the logs; its exit code drives the job status
+    - yarn npm audit --recursive --severity high --environment production --all
+  rules:
+    - *disable_check_rule
+    - *schedule_dependency_audit
+    - <<: *mr_rule
+      allow_failure: true # informational job: never breaks the pipeline
+      changes:
+        - yarn.lock
+    - <<: *mr_rule
+      allow_failure: true # informational job: never breaks the pipeline
+      when: manual
 ## Other checks
 ##########
 
