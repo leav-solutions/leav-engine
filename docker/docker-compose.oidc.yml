@@ -3,6 +3,9 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
+    environment:
+      OIDC_ENABLE: "true"
+      OIDC_ENABLE_AUTO_PROVISIONING: "true"
 
   keycloak:
     build:
