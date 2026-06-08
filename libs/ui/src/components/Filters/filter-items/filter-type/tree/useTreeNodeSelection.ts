@@ -85,16 +85,32 @@ export const useTreeNodeSelection = ({
                         (node): node is ITreeNode =>
                             node !== undefined && node.accessRecordByDefaultPermission !== false,
                     );
-                const hasKept = keptNodes.length > 0;
-                const mappedKept = hasKept ? keptNodes.map(n => ({nodeId: n.id, libraryId: n.libraryId})) : null;
-                onFilterChange({
-                    ...filter,
-                    includeHiddenOptions: false,
-                    nodes: mappedKept,
-                    value: hasKept ? keptNodes.map(n => n.recordId) : null,
-                    userNodes: mappedKept,
-                    userFormattedValue: hasKept ? keptNodes.map(n => n.title) : null,
-                });
+                if (keptNodes.length > 0) {
+                    const mappedKept = keptNodes.map(n => ({nodeId: n.id, libraryId: n.libraryId}));
+                    onFilterChange({
+                        ...filter,
+                        includeHiddenOptions: false,
+                        nodes: mappedKept,
+                        value: keptNodes.map(n => n.recordId),
+                        userNodes: mappedKept,
+                        userFormattedValue: keptNodes.map(n => n.title),
+                    });
+                } else {
+                    // No user-selected node survives the toggle off: fall back to the initial
+                    // state (no user selection, network filter on default-visible nodes only).
+                    const networkNodes = [...flattenTreeData.values()].filter(
+                        node => node.accessRecordByDefaultPermission === true,
+                    );
+                    onFilterChange({
+                        ...filter,
+                        includeHiddenOptions: false,
+                        nodes: networkNodes.map(n => ({nodeId: n.id, libraryId: n.libraryId})),
+                        value: networkNodes.map(n => n.recordId),
+                        formattedValue: networkNodes.map(n => n.title),
+                        userNodes: null,
+                        userFormattedValue: null,
+                    });
+                }
             } else {
                 onFilterChange({...filter, includeHiddenOptions: true});
             }
