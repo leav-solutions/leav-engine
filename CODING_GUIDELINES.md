@@ -86,6 +86,7 @@ function calculateAverage(numbers: number[]): number {
 ```
 
 - Prefer clean and explicit code over comments. If necessary, explain the why, not the how.
+- Comments are written in English, like the rest of the codebase.
 - [Functional programming](https://en.wikipedia.org/wiki/Functional_programming) is preferred. Classes are allowed only for specific situations (like a custom `Error` class)
 - Use pure functions as much as possible. Avoid mutating params.
 
