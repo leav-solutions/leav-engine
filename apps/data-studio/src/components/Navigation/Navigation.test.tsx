@@ -15,12 +15,12 @@ import {mockTreeNodePermissions} from '../../__mocks__/common/treeElements';
 import {getTreeListQuery} from '../../graphQL/queries/trees/getTreeListQuery';
 import Navigation from './Navigation';
 
-jest.mock('react-router-dom', () => ({
-    useParams: jest.fn(() => ({treeId: 'TreeId'})),
-    useHistory: jest.fn(),
+vi.mock('react-router-dom', () => ({
+    useParams: vi.fn(() => ({treeId: 'TreeId'})),
+    useHistory: vi.fn(),
 }));
 
-jest.mock('../../hooks/useActiveTree', () => ({
+vi.mock('../../hooks/useActiveTree', () => ({
     useActiveTree: () => [
         {
             id: 'my_tree',
@@ -29,17 +29,17 @@ jest.mock('../../hooks/useActiveTree', () => ({
             label: 'My Tree Label',
             permissions: {...mockTreeNodePermissions},
         },
-        jest.fn(),
+        vi.fn(),
     ],
 }));
 
-jest.mock('../../hooks/useTreeEventsSubscription', () => ({
-    useTreeEventsSubscription: jest.fn(),
+vi.mock('../../hooks/useTreeEventsSubscription', () => ({
+    useTreeEventsSubscription: vi.fn(),
 }));
 
-jest.mock('@leav/ui', () => ({
-    ...jest.requireActual('@leav/ui'),
-    useRecordUpdateSubscription: jest.fn(),
+vi.mock('@leav/ui', async () => ({
+    ...(await vi.importActual<object>('@leav/ui')),
+    useRecordUpdateSubscription: vi.fn(),
 }));
 
 describe('Navigation', () => {

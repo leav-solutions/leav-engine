@@ -1,49 +1,43 @@
 import {render, screen} from '../../_tests/testUtils';
 import Router from './Router';
 
-jest.mock(
-    '../TopBar',
-    () =>
-        function TopBar() {
-            return <div>TopBar</div>;
-        },
-);
+vi.mock('../TopBar', () => ({
+    default: function TopBar() {
+        return <div>TopBar</div>;
+    },
+}));
 
-jest.mock(
-    '../Sidebar',
-    () =>
-        function Sidebar() {
-            return <div>Sidebar</div>;
-        },
-);
+vi.mock('../Sidebar', () => ({
+    default: function Sidebar() {
+        return <div>Sidebar</div>;
+    },
+}));
 
-jest.mock(
-    '../UserPanel',
-    () =>
-        function UserPanel() {
-            return <div>UserPanel</div>;
-        },
-);
+vi.mock('../UserPanel', () => ({
+    default: function UserPanel() {
+        return <div>UserPanel</div>;
+    },
+}));
 
-jest.mock(
-    '../NotifsPanel',
-    () =>
-        function NotifsPanel() {
-            return <div>NotifsPanel</div>;
-        },
-);
+vi.mock('../NotifsPanel', () => ({
+    default: function NotifsPanel() {
+        return <div>NotifsPanel</div>;
+    },
+}));
 
-jest.mock(
-    './Routes',
-    () =>
-        function Routes() {
-            return <div>Routes</div>;
-        },
-);
+vi.mock('./Routes', () => ({
+    default: function Routes() {
+        return <div>Routes</div>;
+    },
+}));
 
-jest.mock('../../reduxStore/notifications', () => jest.fn());
+vi.mock('../../reduxStore/notifications', async importOriginal => ({
+    ...(await importOriginal<object>()),
+    default: vi.fn(),
+}));
 
-jest.mock('../../constants', () => ({
+vi.mock('../../constants', async importOriginal => ({
+    ...(await importOriginal<object>()),
     APP_BASE_URL: '',
 }));
 

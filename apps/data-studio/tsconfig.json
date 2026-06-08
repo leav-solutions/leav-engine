@@ -1,12 +1,4 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "module": "esnext",
-        "noEmit": true,
-        "skipLibCheck": true,
-        "types": ["jest"],
-        "jsx": "react-jsx"
-    },
-    "include": ["src"]
+    "files": [],
+    "references": [{"path": "./tsconfig.build.json"}, {"path": "./tsconfig.spec.json"}]
 }

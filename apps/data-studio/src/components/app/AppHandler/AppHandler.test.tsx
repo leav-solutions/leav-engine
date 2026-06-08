@@ -4,23 +4,19 @@ import {getGlobalSettingsQuery} from '../../../graphQL/queries/globalSettings/ge
 import {getTasks} from '../../../graphQL/queries/tasks/getTasks';
 import {getMe} from '../../../graphQL/queries/userData/me';
 import {getTaskUpdates} from '../../../graphQL/subscribes/tasks/getTaskUpdates';
-import {enableFetchMocks} from 'jest-fetch-mock';
 import {act, render, screen} from '../../../_tests/testUtils';
 import {mockApplicationDetails} from '../../../__mocks__/common/applications';
 import {mockTask} from '../../../__mocks__/common/task';
 import AppHandler from './AppHandler';
 
-enableFetchMocks();
+vi.mock('../../Router', () => ({
+    default: function Router() {
+        return <div>Router</div>;
+    },
+}));
 
-jest.mock(
-    '../../Router',
-    () =>
-        function Router() {
-            return <div>Router</div>;
-        },
-);
-
-jest.mock('../../../constants', () => ({
+vi.mock('../../../constants', async importOriginal => ({
+    ...(await importOriginal<object>()),
     APP_ENDPOINT: 'data-studio',
 }));
 

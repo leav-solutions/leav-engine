@@ -17,7 +17,7 @@ export const useActiveLibrary = (): [IActiveLibrary | undefined, (newActiveLibra
         },
     };
 
-    const updateActiveLibrary = jest.fn();
+    const updateActiveLibrary = vi.fn();
 
     return [activeLibrary, updateActiveLibrary];
 };

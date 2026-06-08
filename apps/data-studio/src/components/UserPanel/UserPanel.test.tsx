@@ -4,19 +4,19 @@ import {BrowserRouter} from 'react-router-dom';
 import {render, screen, waitFor} from '../../_tests/testUtils';
 import UserPanel from './UserPanel';
 
-const mockDeleteToken = jest.fn();
-jest.mock('@leav/utils', () => ({
-    ...jest.requireActual('@leav/utils'),
-    useAuthToken: jest.fn(() => ({
-        getToken: jest.fn(),
-        saveToken: jest.fn(),
+const {mockDeleteToken} = vi.hoisted(() => ({mockDeleteToken: vi.fn()}));
+vi.mock('@leav/utils', async () => ({
+    ...(await vi.importActual<object>('@leav/utils')),
+    useAuthToken: vi.fn(() => ({
+        getToken: vi.fn(),
+        saveToken: vi.fn(),
         deleteToken: mockDeleteToken,
     })),
 }));
 
 describe('UserPanel', () => {
     const {location} = window;
-    const mockLocation: Location = {...location, reload: jest.fn(), search: ''};
+    const mockLocation: Location = {...location, reload: vi.fn(), search: ''};
 
     beforeAll(() => {
         Object.defineProperty(window, 'location', {
@@ -27,7 +27,7 @@ describe('UserPanel', () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     afterAll(() => {
@@ -42,7 +42,7 @@ describe('UserPanel', () => {
     test('Should display some menu items', async () => {
         render(
             <BrowserRouter>
-                <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
+                <UserPanel userPanelVisible hideUserPanel={vi.fn()} />
             </BrowserRouter>,
         );
 
@@ -50,15 +50,15 @@ describe('UserPanel', () => {
     });
 
     test('On click on logout, log out and redirect to home', async () => {
-        const mockLogout = jest.fn();
+        const mockLogout = vi.fn();
 
-        jest.spyOn(leavUi, 'useAuth').mockImplementation(() => ({
+        vi.spyOn(leavUi, 'useAuth').mockImplementation(() => ({
             logout: mockLogout,
         }));
 
         render(
             <BrowserRouter>
-                <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
+                <UserPanel userPanelVisible hideUserPanel={vi.fn()} />
             </BrowserRouter>,
         );
 
@@ -72,8 +72,8 @@ describe('UserPanel', () => {
     });
 
     test('Can switch language', async () => {
-        const mockUpdateLang = jest.fn();
-        jest.spyOn(leavUi, 'useLang').mockImplementation(() => ({
+        const mockUpdateLang = vi.fn();
+        vi.spyOn(leavUi, 'useLang').mockImplementation(() => ({
             lang: ['en'],
             availableLangs: ['fr', 'en'],
             defaultLang: 'en',
@@ -82,7 +82,7 @@ describe('UserPanel', () => {
 
         render(
             <BrowserRouter>
-                <UserPanel userPanelVisible hideUserPanel={jest.fn()} />
+                <UserPanel userPanelVisible hideUserPanel={vi.fn()} />
             </BrowserRouter>,
         );
 
