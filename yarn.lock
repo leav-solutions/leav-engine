@@ -12204,7 +12204,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:8.5.3, @types/ws@npm:^8.0.0":
+"@types/ws@npm:8.18.1":
+  version: 8.18.1
+  resolution: "@types/ws@npm:8.18.1"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10/1ce05e3174dcacf28dae0e9b854ef1c9a12da44c7ed73617ab6897c5cbe4fccbb155a20be5508ae9a7dde2f83bd80f5cf3baa386b934fc4b40889ec963e94f3a
+  languageName: node
+  linkType: hard
+
+"@types/ws@npm:^8.0.0":
   version: 8.5.3
   resolution: "@types/ws@npm:8.5.3"
   dependencies:
@@ -15711,7 +15720,7 @@ __metadata:
     "@types/ms": "npm:0.7.34"
     "@types/node": "npm:24.13.1"
     "@types/nodemailer": "npm:6.4.23"
-    "@types/ws": "npm:8.5.3"
+    "@types/ws": "npm:8.18.1"
     add-filename-increment: "npm:1.0.0"
     amqplib: "npm:2.0.1"
     app-root-path: "npm:3.1.0"

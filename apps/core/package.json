@@ -52,7 +52,7 @@
         "@types/ms": "0.7.34",
         "@types/node": "24.13.1",
         "@types/nodemailer": "6.4.23",
-        "@types/ws": "8.5.3",
+        "@types/ws": "8.18.1",
         "axios": "1.17.0",
         "eventsource": "4.1.0",
         "graphql-request": "7.4.0",
