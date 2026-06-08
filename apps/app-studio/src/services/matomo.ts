@@ -15,16 +15,18 @@ export const matomo = {
         // ID 1 → User Role, scope Visit
         push(['setCustomDimension', 1, userRole || 'unknown']);
     },
-
     trackEvent(params: {
         category: string;
         action: string;
         name?: string;
         value?: number;
-        pageType?: string;
-        panelName?: string;
-        inComparisonMode?: boolean;
+        customDimensions?: Record<number, string>;
     }) {
+        if (params.customDimensions) {
+            for (const [id, value] of Object.entries(params.customDimensions)) {
+                push(['setCustomDimension', Number(id), value]);
+            }
+        }
         push(['trackEvent', params.category, params.action, params.name, params.value]);
     },
 };

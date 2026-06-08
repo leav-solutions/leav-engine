@@ -6,6 +6,7 @@ interface IMatomoTrackPayload {
     eventAction: string;
     eventName?: string;
     eventValue?: number;
+    customDimensions?: Record<number, string>;
 }
 
 const isMatomoTrackPayload = (data: unknown): data is IMatomoTrackPayload =>
@@ -18,6 +19,7 @@ export const trackMatomoEvent = (data: unknown) => {
             action: data.eventAction,
             name: data.eventName,
             value: data.eventValue,
+            customDimensions: data?.customDimensions,
         });
     }
 };
