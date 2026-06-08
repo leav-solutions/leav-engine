@@ -16,7 +16,7 @@
     "dependencies": {
         "@leav/e2e-test-utils": "workspace:*",
         "@playwright/test": "1.60.0",
-        "graphql": "16.14.0",
+        "graphql": "16.14.1",
         "graphql-request": "7.4.0",
         "graphql-tag": "2.12.6"
     },
