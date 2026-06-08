@@ -20,14 +20,14 @@ describe('DisplayInfo', () => {
     const mockTriggerInfo: IInfo[] = [];
 
     test('should display message content', async () => {
-        const mockSetTriggerInfo = jest.fn();
+        const mockSetTriggerInfo = vi.fn();
 
         await act(async () => {
             render(
                 <DisplayInfo
                     message={mockMessage}
                     activeTimeouts={mockActiveTimeouts}
-                    cancelInfo={jest.fn()}
+                    cancelInfo={vi.fn()}
                     triggerInfos={mockTriggerInfo}
                     setTriggerInfos={mockSetTriggerInfo}
                 />,
@@ -44,14 +44,14 @@ describe('DisplayInfo', () => {
                 type: InfoType.BASIC,
             },
         ];
-        const mockSetTriggerInfo = jest.fn();
+        const mockSetTriggerInfo = vi.fn();
 
         await act(async () => {
             render(
                 <DisplayInfo
                     message={mockMessage}
                     activeTimeouts={mockActiveTimeouts}
-                    cancelInfo={jest.fn()}
+                    cancelInfo={vi.fn()}
                     triggerInfos={mockInfo}
                     setTriggerInfos={mockSetTriggerInfo}
                 />,

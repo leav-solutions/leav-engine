@@ -11,8 +11,8 @@ import {mockTree} from '../../__mocks__/common/tree';
 import {FAVORITE_LIBRARIES_KEY, FAVORITE_TREES_KEY} from '../../constants';
 import Home from './Home';
 
-jest.mock('@leav/ui', () => ({
-    ...jest.requireActual('@leav/ui'),
+vi.mock('@leav/ui', async () => ({
+    ...(await vi.importActual<object>('@leav/ui')),
     ImportModal: () => <div>ImportModal</div>,
 }));
 
@@ -167,7 +167,7 @@ describe('Home', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     test('Display libraries and tree lists', async () => {

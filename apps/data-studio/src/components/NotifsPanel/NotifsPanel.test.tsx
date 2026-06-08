@@ -50,7 +50,7 @@ describe('Notifs panel', () => {
         await act(async () => {
             render(
                 <Router>
-                    <NotifsPanel setNbNotifs={() => jest.fn()} />
+                    <NotifsPanel setNbNotifs={() => vi.fn()} />
                 </Router>,
                 {
                     apolloMocks: mocks,

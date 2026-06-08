@@ -3,7 +3,6 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
-import '@testing-library/jest-dom/extend-expect';
 import {disableFragmentWarnings} from '@apollo/client';
 import React from 'react';
 import dayjs from 'dayjs';
@@ -16,13 +15,25 @@ disableFragmentWarnings();
 // To prevent warnings
 React.useLayoutEffect = React.useEffect;
 
+vi.mock('react-i18next', async () => import('../__mocks__/react-i18next'));
+
+vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        text: async () => '',
+        json: async () => ({}),
+    }),
+);
+
 window.matchMedia = query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
 });

@@ -2,37 +2,29 @@ import {MemoryRouter, Route, Routes} from 'react-router-dom';
 import {act, render, screen} from '../../_tests/testUtils';
 import Workspace from './Workspace';
 
-jest.mock(
-    '../Home',
-    () =>
-        function Home() {
-            return <div>Home</div>;
-        },
-);
+vi.mock('../Home', () => ({
+    default: function Home() {
+        return <div>Home</div>;
+    },
+}));
 
-jest.mock(
-    '../LibraryHome',
-    () =>
-        function LibraryHome() {
-            return <div>LibraryHome</div>;
-        },
-);
+vi.mock('../LibraryHome', () => ({
+    default: function LibraryHome() {
+        return <div>LibraryHome</div>;
+    },
+}));
 
-jest.mock(
-    '../Navigation',
-    () =>
-        function Navigation() {
-            return <div>Navigation</div>;
-        },
-);
+vi.mock('../Navigation', () => ({
+    default: function Navigation() {
+        return <div>Navigation</div>;
+    },
+}));
 
-jest.mock(
-    '../Router/RouteNotFound',
-    () =>
-        function RouteNotFound() {
-            return <div>RouteNotFound</div>;
-        },
-);
+vi.mock('../Router/RouteNotFound', () => ({
+    default: function RouteNotFound() {
+        return <div>RouteNotFound</div>;
+    },
+}));
 
 describe('Workspace', () => {
     test('Render workspace', async () => {

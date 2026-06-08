@@ -41,7 +41,7 @@ export const TestProviders = ({
         lang: ['fr'],
         availableLangs: ['en', 'fr'],
         defaultLang: 'fr',
-        setLang: jest.fn(),
+        setLang: vi.fn(),
     };
 
     const mockUserContext: IUserContext = {
@@ -51,7 +51,7 @@ export const TestProviders = ({
                 ...mockRecord,
             },
         },
-        setUserData: jest.fn(),
+        setUserData: vi.fn(),
     };
 
     return (

@@ -1,0 +1,20 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "module": "esnext",
+        "rootDir": "src",
+        "outDir": "dist",
+        "composite": true,
+        "jsx": "react-jsx"
+    },
+    "references": [
+        {
+            "path": "../../libs/utils/tsconfig.json"
+        },
+        {
+            "path": "../../libs/ui/tsconfig.build.json"
+        }
+    ],
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.test.ts", "**/*.test.tsx", "**/__tests__", "**/__mocks__", "src/_tests", "dist"]
+}
