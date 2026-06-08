@@ -51,3 +51,8 @@ To try gitlab-ci job locally with [gitlab-ci-local](https://github.com/firecow/g
 ```
 gitlab-ci-local e2e-playwright
 ```
+
+## Important note
+
+- Tests must be **independent** and not depend on execution order
+- Each test file must call `setupCryptoRandomUUIDPolyfill(test)` from [`@leav/e2e-test-utils`](../../libs/e2e-test-utils) to polyfill crypto in every test file because gitlab does not run on localhost nor in https so crypto must be polyfilled.
