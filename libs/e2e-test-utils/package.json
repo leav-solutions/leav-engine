@@ -20,7 +20,7 @@
         "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"
     },
     "dependencies": {
-        "graphql": "16.14.0",
+        "graphql": "16.14.1",
         "graphql-request": "7.4.0",
         "graphql-tag": "2.12.6"
     },
