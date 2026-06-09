@@ -4,7 +4,7 @@
 // import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 // import EditTree from './EditTree';
 
-// jest.mock(
+// vi.mock(
 // './EditTreeTabs/CustomConfigTab',
 // () =>
 // function CustomConfigTab() {

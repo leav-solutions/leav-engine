@@ -3,7 +3,7 @@
 // import {mockTreeWithPermConf} from '../../../../../../../__mocks__/trees';
 // import NodePermissionTabContent from './NodePermissionTabContent';
 
-// jest.mock(
+// vi.mock(
 // '../../../../../../permissions/DefineTreePermissionsView',
 // () =>
 // function DefineTreePermissionsView() {
@@ -11,7 +11,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // '../../../../../../permissions/DefinePermByUserGroupView',
 // () =>
 // function DefinePermByUserGroupView() {
@@ -19,10 +19,10 @@
 // },
 // );
 
-// jest.mock('../../../../../../../hooks/useLang');
+// vi.mock('../../../../../../../hooks/useLang');
 
 // describe('NodePermissionTabContent', () => {
-// const onSubmit = jest.fn();
+// const onSubmit = vi.fn();
 
 // test('Snapshot test', async () => {
 // const comp = render(

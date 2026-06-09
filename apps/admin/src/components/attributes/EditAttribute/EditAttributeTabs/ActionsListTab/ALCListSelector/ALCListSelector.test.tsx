@@ -5,7 +5,7 @@
 // describe('ALCListSelector', () => {
 // test('Snapshot test', async () => {
 // const comp = render(
-// <ALCListSelector changeSelectorTo={jest.fn()} currentActionListName="test" connectionFailures={[]} />,
+// <ALCListSelector changeSelectorTo={vi.fn()} currentActionListName="test" connectionFailures={[]} />,
 // );
 
 // expect(comp).toMatchSnapshot();

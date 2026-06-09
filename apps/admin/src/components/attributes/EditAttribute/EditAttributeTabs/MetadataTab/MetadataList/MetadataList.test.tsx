@@ -2,9 +2,9 @@
 // import {AttributeFormat, AttributeType} from '../../../../../../_gqlTypes';
 // import MetadataList from './MetadataList';
 
-// jest.mock('../../../../../../hooks/useLang');
+// vi.mock('../../../../../../hooks/useLang');
 
-// jest.mock(
+// vi.mock(
 // '../../CustomConfigTab',
 // () =>
 // function CustomConfigTab() {
@@ -28,7 +28,7 @@
 // },
 // ];
 
-// const onChange = jest.fn();
+// const onChange = vi.fn();
 
 // test('Show 1 line per field', async () => {
 // const comp = shallow(<MetadataList fields={mockFields} readonly={false} onChange={onChange} />);

@@ -3,7 +3,7 @@ import FakeComp from './FakeComp';
 
 const baseMock = {
     component: <FakeComp />,
-    canDrop: jest.fn(),
+    canDrop: vi.fn(),
     settings: [],
 };
 

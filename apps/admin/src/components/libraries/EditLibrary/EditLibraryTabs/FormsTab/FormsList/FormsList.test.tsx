@@ -4,10 +4,10 @@
 // import {mockFormLight} from '../../../../../../__mocks__/forms';
 // import FormsList from './FormsList';
 
-// jest.mock('../../../../../../hooks/useLang');
-// jest.mock('../../../../../../hooks/useUserData');
+// vi.mock('../../../../../../hooks/useLang');
+// vi.mock('../../../../../../hooks/useUserData');
 
-// jest.mock(
+// vi.mock(
 // '../../../../../shared/ConfirmedButton',
 // () =>
 // function ConfirmedButton() {
@@ -20,10 +20,10 @@
 // {...mockFormLight, id: 'form1'},
 // {...mockFormLight, id: 'form2'},
 // ];
-// const onRowClick = jest.fn();
-// const onCreate = jest.fn();
-// const onDelete = jest.fn();
-// const onFiltersChange = jest.fn();
+// const onRowClick = vi.fn();
+// const onCreate = vi.fn();
+// const onDelete = vi.fn();
+// const onFiltersChange = vi.fn();
 
 // let comp;
 // beforeAll(() => {

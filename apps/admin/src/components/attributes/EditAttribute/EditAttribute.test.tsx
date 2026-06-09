@@ -4,13 +4,11 @@ import {mockAttrAdv} from '../../../__mocks__/attributes';
 import EditAttribute from './EditAttribute';
 import {GetAttributeByIdDocument} from '../../../_gqlTypes';
 
-jest.mock(
-    './EditAttributeTabs',
-    () =>
-        function EditAttributeTabs() {
-            return <div>EditAttributeTabs</div>;
-        },
-);
+vi.mock('./EditAttributeTabs', () => ({
+    default: function EditAttributeTabs() {
+        return <div>EditAttributeTabs</div>;
+    },
+}));
 
 describe('EditAttribute', () => {
     test('Loading and success state', async () => {

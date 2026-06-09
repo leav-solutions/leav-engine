@@ -15,7 +15,7 @@
 // validation_regex: '',
 // };
 
-// const mockAdd = jest.fn();
+// const mockAdd = vi.fn();
 // const mockT: TFunction = () => undefined;
 
 // const comp = mount(<ModalCreateEmbeddedField attrId={mockAttribute.id} add={mockAdd} t={mockT} />);

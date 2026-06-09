@@ -6,10 +6,10 @@
 // import EditRecordInput from './EditRecordInput';
 
 // describe('EditRecordInput', () => {
-// const onSubmit = jest.fn();
-// const onDelete = jest.fn();
-// const onChange = jest.fn();
-// const onCancel = jest.fn();
+// const onSubmit = vi.fn();
+// const onDelete = vi.fn();
+// const onChange = vi.fn();
+// const onCancel = vi.fn();
 
 // const mockValue: IValue = {
 // id_value: null,
@@ -25,7 +25,7 @@
 // id: 'test_attr',
 // };
 
-// beforeEach(jest.clearAllMocks);
+// beforeEach(vi.clearAllMocks);
 
 // test('Render a value', async () => {
 // const comp = shallow(
@@ -107,7 +107,7 @@
 // act(() => {
 // input.simulate('focus');
 // input.simulate('change', {target: {value: 'new_value'}});
-// input.simulate('keypress', {key: 'Enter', target: {blur: jest.fn()}});
+// input.simulate('keypress', {key: 'Enter', target: {blur: vi.fn()}});
 // });
 
 // expect(onSubmit).toHaveBeenCalled();

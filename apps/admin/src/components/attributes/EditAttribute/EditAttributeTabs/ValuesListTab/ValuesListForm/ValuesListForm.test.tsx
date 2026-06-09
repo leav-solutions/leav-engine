@@ -8,7 +8,7 @@
 // } from '../../../../../../__mocks__/attributes';
 // import ValuesListForm from './ValuesListForm';
 
-// jest.mock(
+// vi.mock(
 // './StandardValuesList',
 // () =>
 // function StandardValuesList() {
@@ -16,7 +16,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // './LinkValuesList',
 // () =>
 // function LinkValuesList() {
@@ -26,7 +26,7 @@
 
 // describe('ValuesListForm', () => {
 // test('Load existing conf', async () => {
-// const onSubmit = jest.fn();
+// const onSubmit = vi.fn();
 // const comp = shallow(<ValuesListForm attribute={{...mockAttrSimpleWithValuesList}} onSubmit={onSubmit} />);
 
 // expect(comp.find('FormCheckbox[name="enable"]').prop('checked')).toBe(true);
@@ -35,7 +35,7 @@
 // });
 
 // test('When disabled, hide values list', async () => {
-// const onSubmit = jest.fn();
+// const onSubmit = vi.fn();
 // const comp = shallow(
 // <ValuesListForm
 // attribute={{
@@ -53,7 +53,7 @@
 // });
 
 // test('When changing any value, calls onSubmit ', async () => {
-// const onSubmit = jest.fn();
+// const onSubmit = vi.fn();
 // const comp = mount(<ValuesListForm attribute={{...mockAttrSimpleWithValuesList}} onSubmit={onSubmit} />);
 
 // act(() => {
@@ -77,7 +77,7 @@
 // });
 
 // test('Render form based on attribute type', () => {
-// const onSubmit = jest.fn();
+// const onSubmit = vi.fn();
 
 // Simple
 // const compStd = shallow(<ValuesListForm attribute={{...mockAttrSimpleWithValuesList}} onSubmit={onSubmit} />);

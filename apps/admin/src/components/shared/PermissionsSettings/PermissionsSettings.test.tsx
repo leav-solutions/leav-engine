@@ -28,16 +28,16 @@ describe('PermissionsSettings', () => {
         await userEvent.click(screen.getByText('permissions_settings.title'));
     };
 
-    const _handleChangeSettings = jest.fn();
+    const _handleChangeSettings = vi.fn();
 
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     test('Display permissions attributes and operator', async () => {
         render(
             <PermissionsSettings
                 readonly={false}
                 permissionsSettings={permissionsSettings}
-                onChangeSettings={jest.fn()}
+                onChangeSettings={vi.fn()}
             />,
         );
 
@@ -146,7 +146,7 @@ describe('PermissionsSettings', () => {
             <PermissionsSettings
                 readonly={true}
                 permissionsSettings={permissionsSettings}
-                onChangeSettings={jest.fn()}
+                onChangeSettings={vi.fn()}
             />,
         );
 

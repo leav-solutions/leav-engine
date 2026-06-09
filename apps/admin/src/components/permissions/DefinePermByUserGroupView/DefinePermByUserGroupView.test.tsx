@@ -4,7 +4,7 @@
 // import {PermissionTypes} from '../../../_gqlTypes';
 // import DefinePermByUserGroupView from './DefinePermByUserGroupView';
 
-// jest.mock('../../../hooks/useLang');
+// vi.mock('../../../hooks/useLang');
 
 // describe('DefineAttrPermissionsView', () => {
 // test('Snapshot test', async () => {

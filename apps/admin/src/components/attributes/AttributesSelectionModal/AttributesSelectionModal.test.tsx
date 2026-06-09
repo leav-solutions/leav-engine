@@ -8,7 +8,7 @@
 // import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 // import AttributesSelectionModal from './AttributesSelectionModal';
 
-// jest.mock(
+// vi.mock(
 // './AttributesSelectionList',
 // () =>
 // function AttributesSelectionList() {
@@ -53,8 +53,8 @@
 // },
 // },
 // ];
-// const onSubmit = jest.fn();
-// const onClose = jest.fn();
+// const onSubmit = vi.fn();
+// const onClose = vi.fn();
 // const selection = [];
 
 // let comp;
@@ -85,8 +85,8 @@
 // error: new Error('Boom!'),
 // },
 // ];
-// const onSubmit = jest.fn();
-// const onClose = jest.fn();
+// const onSubmit = vi.fn();
+// const onClose = vi.fn();
 // const selection = [];
 
 // let comp;
@@ -147,8 +147,8 @@
 // },
 // },
 // ];
-// const onSubmit = jest.fn();
-// const onClose = jest.fn();
+// const onSubmit = vi.fn();
+// const onClose = vi.fn();
 // const selection = [];
 
 // let comp;

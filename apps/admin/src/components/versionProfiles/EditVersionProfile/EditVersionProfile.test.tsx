@@ -14,26 +14,22 @@ import {
     SaveVersionProfileDocument,
 } from '../../../_gqlTypes';
 
-jest.mock(
-    '../../attributes/AttributesSelectionModal',
-    () =>
-        function AttributesSelectionModal() {
-            return <div>AttributesSelectionModal</div>;
-        },
-);
+vi.mock('../../attributes/AttributesSelectionModal', () => ({
+    default: function AttributesSelectionModal() {
+        return <div>AttributesSelectionModal</div>;
+    },
+}));
 
-jest.mock(
-    '../../attributes/EditAttribute/EditAttributeTabs/CustomConfigTab',
-    () =>
-        function CustomConfigTab() {
-            return <div>CustomConfigTab</div>;
-        },
-);
+vi.mock('../../attributes/EditAttribute/EditAttributeTabs/CustomConfigTab', () => ({
+    default: function CustomConfigTab() {
+        return <div>CustomConfigTab</div>;
+    },
+}));
 
-const mockUseParams = jest.fn().mockReturnValue({id: mockVersionProfile.id});
+const mockUseParams = vi.fn().mockReturnValue({id: mockVersionProfile.id});
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual<object>('react-router-dom')),
     useParams: () => mockUseParams(),
 }));
 
@@ -78,7 +74,7 @@ describe('EditVersionProfile', () => {
         getTreesMock,
     ];
 
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     test('Render form', async () => {
         render(<EditVersionProfile />, {apolloMocks: mocks});
@@ -100,7 +96,7 @@ describe('EditVersionProfile', () => {
     });
 
     test('If editing is not allowed, inputs are disabled', async () => {
-        const spy = jest.spyOn(useUserData, 'default').mockImplementation(() => ({
+        const spy = vi.spyOn(useUserData, 'default').mockImplementation(() => ({
             id: '1',
             name: 'Test',
             whoAmI: mockRecord,
@@ -161,7 +157,7 @@ describe('EditVersionProfile', () => {
     test('Validate ID uniqueness', async () => {
         mockUseParams.mockReturnValueOnce({id: undefined});
 
-        jest.spyOn(useUserData, 'default').mockImplementation(() => ({
+        vi.spyOn(useUserData, 'default').mockImplementation(() => ({
             id: '1',
             name: 'Test',
             whoAmI: mockRecord,

@@ -8,7 +8,7 @@
 // return undefined;
 // }
 
-// jest.mock('react-dnd', () => ({
+// vi.mock('react-dnd', () => ({
 // useDrag: () => {
 // const isDragging = false;
 // const drag = () => true;

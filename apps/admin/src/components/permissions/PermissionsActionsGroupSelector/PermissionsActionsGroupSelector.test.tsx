@@ -5,7 +5,7 @@ import PermissionsActionsGroupSelector from './PermissionsActionsGroupSelector';
 
 describe('ActionsGroupSelector', () => {
     test('Render test', async () => {
-        const onSelect = jest.fn();
+        const onSelect = vi.fn();
         render(
             <PermissionsActionsGroupSelector
                 actions={{

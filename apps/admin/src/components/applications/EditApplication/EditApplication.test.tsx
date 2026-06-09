@@ -3,34 +3,28 @@ import {mockApplicationDetails} from '../../../__mocks__/common/applications';
 import EditApplication from './EditApplication';
 import {GetApplicationByIdDocument} from '../../../_gqlTypes';
 
-jest.mock(
-    './EditApplicationTabs/InfosTab',
-    () =>
-        function InfosTab() {
-            return <div>InfosTab</div>;
-        },
-);
+vi.mock('./EditApplicationTabs/InfosTab', () => ({
+    default: function InfosTab() {
+        return <div>InfosTab</div>;
+    },
+}));
 
-jest.mock(
-    './EditApplicationTabs/PermissionsTab',
-    () =>
-        function PermissionsTab() {
-            return <div>PermissionsTab</div>;
-        },
-);
+vi.mock('./EditApplicationTabs/PermissionsTab', () => ({
+    default: function PermissionsTab() {
+        return <div>PermissionsTab</div>;
+    },
+}));
 
-jest.mock(
-    './EditApplicationTabs/SettingsTab',
-    () =>
-        function SettingsTab() {
-            return <div>SettingsTab</div>;
-        },
-);
+vi.mock('./EditApplicationTabs/SettingsTab', () => ({
+    default: function SettingsTab() {
+        return <div>SettingsTab</div>;
+    },
+}));
 
-const mockUseParams = jest.fn().mockReturnValue({id: mockApplicationDetails.id});
+const mockUseParams = vi.fn().mockReturnValue({id: mockApplicationDetails.id});
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual<object>('react-router-dom')),
     useLocation: () => ({hash: ''}),
     useParams: () => mockUseParams(),
 }));

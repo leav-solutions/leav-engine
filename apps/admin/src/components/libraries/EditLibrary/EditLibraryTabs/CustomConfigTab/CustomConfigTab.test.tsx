@@ -1,7 +1,7 @@
 import {render, screen} from '../../../../../_tests/testUtils';
 import CustomConfigTab from './CustomConfigTab';
 
-jest.mock('jsoneditor-react', () => ({
+vi.mock('jsoneditor-react', () => ({
     JsonEditor() {
         return <div>JsonEditor</div>;
     },

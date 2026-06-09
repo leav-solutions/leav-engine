@@ -5,13 +5,11 @@ import {mockApiKey} from '../../../../../__mocks__/common/apiKeys';
 import EditApiKeyModal from './EditApiKeyModal';
 import {SaveApiKeyDocument} from '../../../../../_gqlTypes';
 
-jest.mock(
-    '../../../../shared/RecordSelector',
-    () =>
-        function RecordSelector() {
-            return <div>RecordSelector</div>;
-        },
-);
+vi.mock('../../../../shared/RecordSelector', () => ({
+    default: function RecordSelector() {
+        return <div>RecordSelector</div>;
+    },
+}));
 
 describe('EditApiKeyModal', () => {
     test('Render form', async () => {
@@ -24,7 +22,7 @@ describe('EditApiKeyModal', () => {
             },
         };
 
-        render(<EditApiKeyModal apiKey={{...mockApiKey, expiresAt: null}} onClose={jest.fn()} />, {
+        render(<EditApiKeyModal apiKey={{...mockApiKey, expiresAt: null}} onClose={vi.fn()} />, {
             apolloMocks: [saveApiKeyMock],
         });
 

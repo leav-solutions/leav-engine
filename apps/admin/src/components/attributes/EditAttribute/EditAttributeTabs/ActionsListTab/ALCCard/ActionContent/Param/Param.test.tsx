@@ -21,7 +21,7 @@
 // describe('Param', () => {
 // test('Snapshot test', async () => {
 // render(
-// <Param param={paramsMock[0]} changeParam={placeholder} index={0} actionId={0} setBlockCard={jest.fn()} />,
+// <Param param={paramsMock[0]} changeParam={placeholder} index={0} actionId={0} setBlockCard={vi.fn()} />,
 // );
 // expect(true).toBe(true);
 // });

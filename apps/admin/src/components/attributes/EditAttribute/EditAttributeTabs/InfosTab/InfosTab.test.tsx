@@ -7,9 +7,9 @@
 // import InfosTab from './InfosTab';
 // import {GetAttributesDocument, SaveAttributeDocument} from '../../../../../_gqlTypes';
 
-// jest.mock('../../../../../hooks/useLang');
+// vi.mock('../../../../../hooks/useLang');
 
-// jest.mock(
+// vi.mock(
 // './InfosForm',
 // () =>
 // function InfosForm() {
@@ -57,7 +57,7 @@
 // });
 
 // test('Save data on submit and run onPostSave', async () => {
-// const onPostSave = jest.fn();
+// const onPostSave = vi.fn();
 
 // let saveQueryCalled = false;
 // const mocks = [

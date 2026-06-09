@@ -2,7 +2,7 @@
 // import React from 'react';
 // import AttributeCreationModal from './AttributeCreationModal';
 
-// jest.mock(
+// vi.mock(
 // '../EditAttribute',
 // () =>
 // function EditAttribute() {
@@ -11,8 +11,8 @@
 // );
 
 // describe('AttributeCreationModal', () => {
-// const onClose = jest.fn();
-// const onPostSave = jest.fn();
+// const onClose = vi.fn();
+// const onPostSave = vi.fn();
 // test('Render edit attribute form with no attribute', async () => {
 // const comp = shallow(<AttributeCreationModal open onClose={onClose} onPostSave={onPostSave} />);
 

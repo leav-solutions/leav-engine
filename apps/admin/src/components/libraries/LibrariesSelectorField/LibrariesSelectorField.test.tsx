@@ -3,13 +3,13 @@
 // import {mockLibrary} from '../../../__mocks__/libraries';
 // import LibrariesSelectorField from './LibrariesSelectorField';
 
-// jest.mock('../../../utils/utils', () => ({
-// formatIDString: jest.fn().mockImplementation(s => s),
-// localizedLabel: jest.fn().mockImplementation(l => l.fr),
-// getSysTranslationQueryLanguage: jest.fn().mockReturnValue(v => ['fr', 'fr']),
+// vi.mock('../../../utils/utils', () => ({
+// formatIDString: vi.fn().mockImplementation(s => s),
+// localizedLabel: vi.fn().mockImplementation(l => l.fr),
+// getSysTranslationQueryLanguage: vi.fn().mockReturnValue(v => ['fr', 'fr']),
 // }));
 
-// jest.mock('../../../hooks/useLang');
+// vi.mock('../../../hooks/useLang');
 
 // describe('LibrariesSelectorField', () => {
 // test('Snapshot test', async () => {

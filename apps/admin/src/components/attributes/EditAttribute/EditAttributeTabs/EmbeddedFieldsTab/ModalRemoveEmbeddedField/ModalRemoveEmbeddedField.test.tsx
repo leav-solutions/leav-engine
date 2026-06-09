@@ -5,7 +5,7 @@
 // import ModalRemoveEmbeddedField from './ModalRemoveEmbeddedField';
 
 // describe('ModalRemoveEmbeddedField', () => {
-// const mockRemove = jest.fn();
+// const mockRemove = vi.fn();
 // const mockT: TFunction = () => undefined;
 
 // const comp = mount(<ModalRemoveEmbeddedField remove={mockRemove} t={mockT} />);

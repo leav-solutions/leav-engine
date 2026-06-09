@@ -10,17 +10,15 @@ import {act, fireEvent, render, screen, waitFor, within} from '../../../../../_t
 import {mockApplicationDetails, mockApplicationsModules} from '../../../../../__mocks__/common/applications';
 import InfosTab from './InfosTab';
 
-jest.mock(
-    '../../../../shared/FileSelector',
-    () =>
-        function FileSelector() {
-            return <div>FileSelector</div>;
-        },
-);
+vi.mock('../../../../shared/FileSelector', () => ({
+    default: function FileSelector() {
+        return <div>FileSelector</div>;
+    },
+}));
 
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual<object>('react-router-dom')),
     useNavigate: () => mockNavigate,
 }));
 

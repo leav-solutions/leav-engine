@@ -5,7 +5,7 @@
 // import {type ITreeValuesList} from '../../../../../../../_types/attributes';
 // import TreeValuesList from './TreeValuesList';
 
-// jest.mock(
+// vi.mock(
 // '../../../../../../trees/SelectTreeNodeModal',
 // () =>
 // function SelectTreeNodeModal() {
@@ -13,7 +13,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // '../../../../../../shared/RecordCard',
 // () =>
 // function RecordCard() {
@@ -21,7 +21,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // '../../../../../../shared/TreeNodeBreadcrumb',
 // () =>
 // function TreeNodeBreadcrumb() {
@@ -30,7 +30,7 @@
 // );
 
 // describe('TreeValuesList', () => {
-// const onValuesUpdate = jest.fn();
+// const onValuesUpdate = vi.fn();
 // const baseWhoAmI = {
 // id: '132456',
 // label: 'My record',
@@ -95,7 +95,7 @@
 // },
 // ];
 
-// beforeEach(jest.clearAllMocks);
+// beforeEach(vi.clearAllMocks);
 
 // test('Render existing list', async () => {
 // const comp = shallow(

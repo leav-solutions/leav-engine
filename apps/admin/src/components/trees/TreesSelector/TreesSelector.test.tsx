@@ -2,7 +2,7 @@ import {act, render, screen} from '../../../_tests/testUtils';
 import TreesSelector from '.';
 import {TreeBehavior, GetTreesDocument} from '../../../_gqlTypes';
 
-jest.mock('../../../hooks/useLang');
+vi.mock('../../../hooks/useLang');
 
 describe('TreesSelector', () => {
     test('Snapshot test', async () => {

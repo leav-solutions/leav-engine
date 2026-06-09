@@ -8,7 +8,7 @@
 // import {formDataWithTypename} from './EditFormTabs/ContentTab/formBuilderReducer/_fixtures/fixtures';
 // import {GetFormDocument} from '../../../../../../_gqlTypes';
 
-// jest.mock(
+// vi.mock(
 // './EditFormTabs',
 // () =>
 // function EditFormTabs() {

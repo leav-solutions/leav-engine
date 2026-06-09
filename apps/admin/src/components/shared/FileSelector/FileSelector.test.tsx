@@ -2,15 +2,13 @@ import {LibraryBehavior, GetLibrariesDocument} from '../../../_gqlTypes';
 import {render, screen} from '../../../_tests/testUtils';
 import FileSelector from './FileSelector';
 
-jest.mock(
-    '../RecordSelector',
-    () =>
-        function RecordSelector() {
-            return <div>RecordSelector</div>;
-        },
-);
+vi.mock('../RecordSelector', () => ({
+    default: function RecordSelector() {
+        return <div>RecordSelector</div>;
+    },
+}));
 
-jest.mock('../../../hooks/useLang');
+vi.mock('../../../hooks/useLang');
 
 describe('FileSelector', () => {
     const mocks = [
@@ -44,10 +42,10 @@ describe('FileSelector', () => {
             },
         },
     ];
-    afterEach(() => jest.clearAllMocks());
+    afterEach(() => vi.clearAllMocks());
 
     test('Display record selector after fetching libraries', async () => {
-        render(<FileSelector onChange={jest.fn()} value={null} label="icon" />, {apolloMocks: mocks});
+        render(<FileSelector onChange={vi.fn()} value={null} label="icon" />, {apolloMocks: mocks});
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();
 

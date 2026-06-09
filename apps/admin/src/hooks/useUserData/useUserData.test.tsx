@@ -23,7 +23,7 @@
 // test('Throw if no context provided', async () => {
 // Prevent Error about a missing context type from appearing in the console.
 // const errorLogger = console.error;
-// console.error = jest.fn();
+// console.error = vi.fn();
 // expect(() => mount(<CompWithUserData />)).toThrow();
 
 // console.error = errorLogger;

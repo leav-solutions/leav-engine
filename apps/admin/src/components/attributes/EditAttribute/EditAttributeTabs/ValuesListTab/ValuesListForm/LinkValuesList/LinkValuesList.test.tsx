@@ -5,7 +5,7 @@
 // import {type ILinkValuesList} from '../../../../../../../_types/attributes';
 // import LinkValuesList from './LinkValuesList';
 
-// jest.mock(
+// vi.mock(
 // '../../../../../../records/SelectRecordModal',
 // () =>
 // function SelectRecordModal() {
@@ -13,7 +13,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // '../../../../../../records/EditRecordModal',
 // () =>
 // function EditRecordModal() {
@@ -21,7 +21,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // '../../../../../../shared/RecordCard',
 // () =>
 // function RecordCard() {
@@ -30,7 +30,7 @@
 // );
 
 // describe('LinkValuesList', () => {
-// const onValuesUpdate = jest.fn();
+// const onValuesUpdate = vi.fn();
 // const baseWhoAmI = {
 // id: '132456',
 // label: 'My record',
@@ -55,7 +55,7 @@
 // ];
 
 // beforeEach(() => {
-// jest.clearAllMocks();
+// vi.clearAllMocks();
 // });
 
 // test('Render existing list', async () => {
@@ -134,7 +134,7 @@
 // act(() => {
 // comp.find('Button[data-test-id="link-value-delete-btn"]')
 // .first()
-// .simulate('click', {stopPropagation: jest.fn(), preventDefault: jest.fn()});
+// .simulate('click', {stopPropagation: vi.fn(), preventDefault: vi.fn()});
 // });
 
 // expect(onValuesUpdate).toHaveBeenCalled();

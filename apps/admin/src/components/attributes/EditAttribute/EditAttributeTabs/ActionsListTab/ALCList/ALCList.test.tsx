@@ -158,7 +158,7 @@
 // return undefined;
 // }
 
-// jest.mock(
+// vi.mock(
 // '../ALCCard',
 // () =>
 // function ALCCard() {

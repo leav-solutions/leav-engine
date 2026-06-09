@@ -29,10 +29,12 @@ describe('Navigator Reducer', () => {
         const state = reducer(initialState, {
             type: ActionTypes.SET_ROOT_INFOS,
             data: {
-                query: 'test',
+                label: 'test',
+                attributes: [],
             },
         });
-        expect(state.selectedRoot).toBe('test');
+        expect(state.selectedRootLabel).toBe('test');
+        expect(state.selectedRootAttributes).toEqual([]);
     });
     test('Action SET_ROOTS', () => {
         const state = reducer(initialState, {

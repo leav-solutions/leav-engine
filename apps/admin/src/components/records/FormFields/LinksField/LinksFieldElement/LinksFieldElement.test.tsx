@@ -3,7 +3,7 @@
 // import {type ILinkValue} from '../../../../../_types/records';
 // import LinksFieldElement from './LinksFieldElement';
 
-// jest.mock(
+// vi.mock(
 // '../../../../shared/RecordCard',
 // () =>
 // function RecordCard() {
@@ -11,7 +11,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // '../../../EditRecordModal',
 // () =>
 // function EditRecordModal() {
@@ -20,7 +20,7 @@
 // );
 
 // describe('EditRecordFormLinksElement', () => {
-// const onDelete = jest.fn();
+// const onDelete = vi.fn();
 // const mockValue: ILinkValue = {
 // id_value: '98765',
 // linkValue: {

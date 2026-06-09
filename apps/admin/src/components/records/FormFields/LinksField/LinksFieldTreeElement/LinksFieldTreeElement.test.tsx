@@ -3,7 +3,7 @@
 // import {type ITreeLinkValue} from '../../../../../_types/records';
 // import LinksFieldTreeElement from './LinksFieldTreeElement';
 
-// jest.mock(
+// vi.mock(
 // '../../../../shared/TreeNodeBreadcrumb',
 // () =>
 // function TreeNodeBreadcrumb() {
@@ -11,7 +11,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // '../../../EditRecordModal',
 // () =>
 // function EditRecordModal() {
@@ -81,7 +81,7 @@
 // };
 
 // test('Display value and its ancestors', async () => {
-// const onDelete = jest.fn();
+// const onDelete = vi.fn();
 // const comp = shallow(<LinksFieldTreeElement value={value} onDeleteLink={onDelete} />);
 
 // expect(comp.find('TreeNodeBreadcrumb')).toHaveLength(1);

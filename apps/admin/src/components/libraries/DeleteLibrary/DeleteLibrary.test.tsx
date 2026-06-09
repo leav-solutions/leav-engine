@@ -4,7 +4,7 @@ import {type GET_LIBRARIES_libraries_list} from '../../../_gqlTypes/GET_LIBRARIE
 import {type Mockify} from '../../../_types//Mockify';
 import DeleteLibrary from './DeleteLibrary';
 
-jest.mock('../../../hooks/useLang');
+vi.mock('../../../hooks/useLang');
 
 describe('DeleteLibrary', () => {
     test('Disable button on system lib', async () => {

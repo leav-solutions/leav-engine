@@ -43,7 +43,7 @@ describe('ApplicationSwitcher', () => {
         ];
         render(<ApplicationsSwitcher />, {apolloMocks: mocks});
 
-        userEvent.click(screen.getByRole('button', {name: /applications/}));
+        await userEvent.click(screen.getByRole('button', {name: /applications/}));
 
         await screen.findByText('My second app');
 
@@ -55,6 +55,6 @@ describe('ApplicationSwitcher', () => {
 
         expect(screen.queryByText('My first app')).not.toBeInTheDocument(); // => current app, not in the list
 
-        userEvent.click(screen.getByText('My second app'));
+        await userEvent.click(screen.getByText('My second app'));
     });
 });

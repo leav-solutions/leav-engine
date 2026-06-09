@@ -8,7 +8,7 @@
 // import CreateRecordFormContainer from './CreateRecordFormContainer';
 // import {CreateRecordDocument, SaveValueBatchDocument} from '../../../../../_gqlTypes';
 
-// jest.mock(
+// vi.mock(
 // '../CreateRecordForm',
 // () =>
 // function CreateRecordForm() {
@@ -16,7 +16,7 @@
 // },
 // );
 
-// jest.mock('../../../../../hooks/useLang');
+// vi.mock('../../../../../hooks/useLang');
 
 // describe('CreateRecordFormContainer', () => {
 // test('Render form', async () => {
@@ -30,7 +30,7 @@
 // });
 
 // test('Calls onPostSave', async () => {
-// const onPostSave = jest.fn();
+// const onPostSave = vi.fn();
 // const attributes = [{...mockAttrSimple}];
 // const recordDataQuery = getRecordDataQuery(attributes);
 // const mocks = [

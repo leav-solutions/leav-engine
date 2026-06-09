@@ -52,10 +52,10 @@ const mockInitialValues: AutomationFormValues = {
     trigger: {eventAction: AutomationRuleEventAction.RECORD_INIT, synchronous: true},
 };
 
-const mockOnSubmit = jest.fn<Promise<boolean>, [AutomationFormValues]>().mockResolvedValue(true);
+const mockOnSubmit = vi.fn<(values: AutomationFormValues) => Promise<boolean>>().mockResolvedValue(true);
 
 describe('useAutomationFormData', () => {
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     describe('hasUnsavedChanges', () => {
         test('returns false when formSchema is null', () => {
@@ -239,7 +239,9 @@ describe('useAutomationFormData', () => {
 
     describe('baseline reset after submit', () => {
         test('hasUnsavedChanges becomes false after a successful submit in edition mode', async () => {
-            const successfulOnSubmit = jest.fn<Promise<boolean>, [AutomationFormValues]>().mockResolvedValue(true);
+            const successfulOnSubmit = vi
+                .fn<(values: AutomationFormValues) => Promise<boolean>>()
+                .mockResolvedValue(true);
 
             const {result} = renderHook(() =>
                 useAutomationFormData({
@@ -264,7 +266,9 @@ describe('useAutomationFormData', () => {
         });
 
         test('hasUnsavedChanges stays true after a failed submit (onSubmit resolves to false)', async () => {
-            const failingOnSubmit = jest.fn<Promise<boolean>, [AutomationFormValues]>().mockResolvedValue(false);
+            const failingOnSubmit = vi
+                .fn<(values: AutomationFormValues) => Promise<boolean>>()
+                .mockResolvedValue(false);
 
             const {result} = renderHook(() =>
                 useAutomationFormData({
@@ -288,7 +292,9 @@ describe('useAutomationFormData', () => {
         });
 
         test('hasUnsavedChanges becomes true again when the form is edited after a successful submit', async () => {
-            const successfulOnSubmit = jest.fn<Promise<boolean>, [AutomationFormValues]>().mockResolvedValue(true);
+            const successfulOnSubmit = vi
+                .fn<(values: AutomationFormValues) => Promise<boolean>>()
+                .mockResolvedValue(true);
 
             const {result} = renderHook(() =>
                 useAutomationFormData({
@@ -335,8 +341,8 @@ describe('useAutomationFormData', () => {
         });
 
         test('is true while onSubmit is pending and back to false after success', async () => {
-            let resolveOnSubmit: (value: boolean) => void = jest.fn();
-            const pendingOnSubmit = jest.fn(
+            let resolveOnSubmit: (value: boolean) => void = vi.fn();
+            const pendingOnSubmit = vi.fn(
                 () =>
                     new Promise<boolean>(resolve => {
                         resolveOnSubmit = resolve;
@@ -370,7 +376,7 @@ describe('useAutomationFormData', () => {
         });
 
         test('is reset to false when onSubmit rejects', async () => {
-            const rejectingOnSubmit = jest.fn(() => Promise.reject(new Error('boom')));
+            const rejectingOnSubmit = vi.fn(() => Promise.reject(new Error('boom')));
 
             const {result} = renderHook(() =>
                 useAutomationFormData({

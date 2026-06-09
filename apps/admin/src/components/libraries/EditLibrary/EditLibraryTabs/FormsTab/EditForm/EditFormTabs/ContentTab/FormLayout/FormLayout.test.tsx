@@ -4,8 +4,8 @@
 // import {TestBackend} from 'react-dnd-test-backend';
 // import FormLayout from './FormLayout';
 
-// jest.mock('../uiElements');
-// jest.mock('../formBuilderReducer/hook/useFormBuilderReducer');
+// vi.mock('../uiElements');
+// vi.mock('../formBuilderReducer/hook/useFormBuilderReducer');
 
 // describe('FormLayout', () => {
 // test('Snapshot test', async () => {

@@ -9,7 +9,7 @@
 // } from '../../../_gqlTypes';
 // import EditPermissions from './EditPermissions';
 
-// jest.mock('../../../hooks/useLang');
+// vi.mock('../../../hooks/useLang');
 // describe('EditPermissions', () => {
 //     const permParams: GET_PERMISSIONSVariables = {
 //         type: PermissionTypes.admin,

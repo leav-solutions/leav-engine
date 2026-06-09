@@ -7,11 +7,11 @@
 // import {mockInitialState} from '../formBuilderReducer/_fixtures/fixtures';
 // import DependencySettings from './DependencySettings';
 
-// jest.mock('../../../../../../../../../hooks/useLang');
-// jest.mock('../formBuilderReducer/hook/useFormBuilderReducer');
+// vi.mock('../../../../../../../../../hooks/useLang');
+// vi.mock('../formBuilderReducer/hook/useFormBuilderReducer');
 
 // describe('DependencySettings', () => {
-// beforeEach(() => jest.clearAllMocks());
+// beforeEach(() => vi.clearAllMocks());
 
 // test('Render attributes selection', async () => {
 // const comp = shallow(<DependencySettings />);
@@ -25,9 +25,9 @@
 // form: {...mockInitialState.form, dependencyAttributes: []},
 // };
 
-// jest.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockImplementation(() => ({
+// vi.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockImplementation(() => ({
 // state: mockState,
-// dispatch: jest.fn(),
+// dispatch: vi.fn(),
 // }));
 
 // const comp = shallow(<DependencySettings />);
@@ -36,9 +36,9 @@
 // });
 
 // test('Dispatch dependency change', async () => {
-// const mockDispatch = jest.fn();
+// const mockDispatch = vi.fn();
 
-// jest.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockImplementation(() => ({
+// vi.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockImplementation(() => ({
 // state: mockInitialState,
 // dispatch: mockDispatch,
 // }));

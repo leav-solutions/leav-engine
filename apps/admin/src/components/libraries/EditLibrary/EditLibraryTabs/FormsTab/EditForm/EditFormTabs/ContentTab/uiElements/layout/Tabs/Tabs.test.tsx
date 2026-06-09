@@ -6,8 +6,8 @@
 // import {UIElementTypes} from '../../../_types';
 // import Tabs, {type ITabSettings} from './Tabs';
 
-// jest.mock('../../../../../../../../../../../hooks/useLang');
-// jest.mock('../../../formBuilderReducer/formBuilderReducer');
+// vi.mock('../../../../../../../../../../../hooks/useLang');
+// vi.mock('../../../formBuilderReducer/formBuilderReducer');
 
 // describe('Tabs', () => {
 // test('Render tabs', async () => {

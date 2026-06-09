@@ -9,10 +9,10 @@
 // import MockedLangContextProvider from '../../../../__mocks__/MockedLangContextProvider';
 // import CreateRecordForm from './CreateRecordForm';
 
-// jest.mock('../../../../hooks/useLang');
+// vi.mock('../../../../hooks/useLang');
 
 // describe('RecordCreationModal', () => {
-// const onSave = jest.fn();
+// const onSave = vi.fn();
 
 // test('Render 2 attributes', async () => {
 // const component = shallow(

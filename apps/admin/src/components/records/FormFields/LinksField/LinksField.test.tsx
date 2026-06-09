@@ -4,7 +4,7 @@
 // import {mockAttrAdvLink, mockAttrTreeMultival} from '../../../../__mocks__/attributes';
 // import LinksField from './LinksField';
 
-// jest.mock(
+// vi.mock(
 // './LinksFieldElement',
 // () =>
 // function LinksFieldElement() {
@@ -12,7 +12,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // './LinksFieldTreeElement',
 // () =>
 // function LinksFieldTreeElement() {
@@ -20,7 +20,7 @@
 // },
 // );
 
-// jest.mock('../../../../hooks/useLang');
+// vi.mock('../../../../hooks/useLang');
 
 // describe('EditRecordFormLinks', () => {
 // const linkValues: ILinkValue[] = [
@@ -113,7 +113,7 @@
 // },
 // ];
 
-// const onChange = jest.fn();
+// const onChange = vi.fn();
 
 // test('Display table with links values', async () => {
 // const comp = shallow(<LinksField values={linkValues} attribute={{...mockAttrAdvLink}} onChange={onChange} />);

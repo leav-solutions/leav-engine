@@ -4,13 +4,11 @@ import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LI
 import {type Mockify} from '../../../../../_types/Mockify';
 import AttributesTab from './AttributesTab';
 
-jest.mock(
-    '../../../../attributes/EditAttribute/EditAttributeTabs/CustomConfigTab',
-    () =>
-        function CustomConfigTab() {
-            return <div>CustomConfigTab</div>;
-        },
-);
+vi.mock('../../../../attributes/EditAttribute/EditAttributeTabs/CustomConfigTab', () => ({
+    default: function CustomConfigTab() {
+        return <div>CustomConfigTab</div>;
+    },
+}));
 
 describe('AttributesTab', () => {
     test('Snapshot test', async () => {

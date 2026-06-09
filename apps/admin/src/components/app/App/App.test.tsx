@@ -2,7 +2,6 @@ import {type MockedResponse} from '@apollo/client/testing';
 import {render, screen} from '../../../_tests/testUtils';
 import {mockApplicationDetails} from '../../../__mocks__/common/applications';
 import App from '.';
-import {enableFetchMocks} from 'jest-fetch-mock';
 import {
     GetApplicationByEndpointDocument,
     GetGlobalSettingsDocument,
@@ -13,25 +12,24 @@ import {
     PermissionTypes,
 } from '../../../_gqlTypes';
 
-enableFetchMocks();
-
-jest.mock('../../../config/router/adminRouter', () => {
-    const React = require('react');
-    const {createMemoryRouter} = require('react-router-dom');
+vi.mock('../../../config/router/adminRouter', async () => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+    const React = await vi.importActual<typeof import('react')>('react');
+    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+    const {createMemoryRouter} = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
     return {
         adminRouter: createMemoryRouter([{path: '/', element: React.createElement('div', null, 'Home')}]),
     };
 });
 
-jest.mock(
-    '../MessagesDisplay',
-    () =>
-        function MessagesDisplay() {
-            return <div>MessagesDisplay</div>;
-        },
-);
+vi.mock('../MessagesDisplay', () => ({
+    default: function MessagesDisplay() {
+        return <div>MessagesDisplay</div>;
+    },
+}));
 
-jest.mock('../../../constants', () => ({
+vi.mock('../../../constants', async importOriginal => ({
+    ...(await importOriginal<object>()),
     APP_ENDPOINT: 'admin',
 }));
 

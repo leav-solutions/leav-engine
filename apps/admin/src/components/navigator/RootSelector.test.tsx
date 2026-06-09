@@ -50,7 +50,7 @@
 
 // describe('Query states', () => {
 // beforeEach(() => {
-// jest.clearAllMocks();
+// vi.clearAllMocks();
 // });
 
 // test('loading renders a loader', async () => {

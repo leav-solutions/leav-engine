@@ -5,7 +5,7 @@
 // import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';
 // import LibrariesList from './LibrariesList';
 
-// jest.mock('../../../hooks/useLang');
+// vi.mock('../../../hooks/useLang');
 
 // describe('LibrariesList', () => {
 // const libraries = [
@@ -26,9 +26,9 @@
 // },
 // ];
 
-// const onRowClick = jest.fn();
+// const onRowClick = vi.fn();
 
-// const onFiltersUpdate = jest.fn();
+// const onFiltersUpdate = vi.fn();
 // test('Render libraries list with filters', async () => {
 // const comp = shallow(
 // <Router>
@@ -50,7 +50,7 @@
 // });
 
 // test('Calls callback on filter update', () => {
-// const changeFilter = jest.fn();
+// const changeFilter = vi.fn();
 // const comp = mount(
 // <MockedProvider>
 // <MockedUserContextProvider>

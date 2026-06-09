@@ -4,9 +4,9 @@
 // import {mockAttrSimple, mockAttrTree} from '../../../../../../__mocks__/attributes';
 // import PermissionsContent from './PermissionsContent';
 
-// jest.mock('../../../../../../hooks/useLang');
+// vi.mock('../../../../../../hooks/useLang');
 
-// jest.mock(
+// vi.mock(
 // '../../../../../permissions/DefineTreePermissionsView',
 // () =>
 // function DefineTreePermissionsView() {
@@ -14,7 +14,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // '../../../../../permissions/DefinePermByUserGroupView',
 // () =>
 // function DefinePermByUserGroupView() {
@@ -34,7 +34,7 @@
 // relation: PermissionsRelation.and,
 // },
 // };
-// const onSubmit = jest.fn();
+// const onSubmit = vi.fn();
 
 // test('Display 1 tab per tree', async () => {
 // const comp = shallow(<PermissionsContent attribute={attribute} readonly={false} onSubmitSettings={onSubmit} />);

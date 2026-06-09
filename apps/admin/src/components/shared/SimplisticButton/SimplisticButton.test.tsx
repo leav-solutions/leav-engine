@@ -5,7 +5,7 @@ import SimplisticButton from './SimplisticButton';
 
 describe('SimplisticButton', () => {
     test('Render test', async () => {
-        const _handleClick = jest.fn();
+        const _handleClick = vi.fn();
         render(
             <SimplisticButton onClick={_handleClick}>
                 <div>Some child</div>

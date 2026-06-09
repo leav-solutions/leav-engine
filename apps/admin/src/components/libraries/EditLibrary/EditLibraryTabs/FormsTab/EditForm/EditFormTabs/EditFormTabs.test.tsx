@@ -4,30 +4,24 @@ import {mockFormFull} from '../../../../../../../__mocks__/forms';
 import {EditFormContext} from '../hooks/useEditFormContext';
 import EditFormTabs from './EditFormTabs';
 
-jest.mock(
-    './InfosTab',
-    () =>
-        function InfosTab() {
-            return <div>InfosTab</div>;
-        },
-);
+vi.mock('./InfosTab', () => ({
+    default: function InfosTab() {
+        return <div>InfosTab</div>;
+    },
+}));
 
-jest.mock(
-    './ContentTab',
-    () =>
-        function ContentTab() {
-            return <div>ContentTab</div>;
-        },
-);
+vi.mock('./ContentTab', () => ({
+    default: function ContentTab() {
+        return <div>ContentTab</div>;
+    },
+}));
 
 describe('EditFormTabs', () => {
     const mockForm = {...mockFormFull};
 
     test('Display form edition for existing form', async () => {
         render(
-            <EditFormContext.Provider
-                value={{form: mockForm, library: 'test_lib', readonly: false, setForm: jest.fn()}}
-            >
+            <EditFormContext.Provider value={{form: mockForm, library: 'test_lib', readonly: false, setForm: vi.fn()}}>
                 <EditFormTabs />
             </EditFormContext.Provider>,
         );
@@ -41,7 +35,7 @@ describe('EditFormTabs', () => {
 
     test('Display form edition for new form', async () => {
         render(
-            <EditFormContext.Provider value={{form: null, library: 'test_lib', readonly: false, setForm: jest.fn()}}>
+            <EditFormContext.Provider value={{form: null, library: 'test_lib', readonly: false, setForm: vi.fn()}}>
                 <EditFormTabs />
             </EditFormContext.Provider>,
         );

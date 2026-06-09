@@ -3,7 +3,7 @@
 // import {mockLibrary} from '../../../../__mocks__/libraries';
 // import EditRecordFormContainer from './EditRecordFormContainer';
 
-// jest.mock(
+// vi.mock(
 // './EditRecordForm',
 // () =>
 // function EditRecordForm() {

@@ -3,47 +3,37 @@ import {render, screen} from '../../../../_tests/testUtils';
 import {mockTree} from '../../../../__mocks__/trees';
 import EditTreeTabs from './EditTreeTabs';
 
-jest.mock('../../../../hooks/useLang');
+vi.mock('../../../../hooks/useLang');
 
-jest.mock(
-    './InfosTab',
-    () =>
-        function TreeInfosTab() {
-            return <div>TreeInfosTab</div>;
-        },
-);
+vi.mock('./InfosTab', () => ({
+    default: function TreeInfosTab() {
+        return <div>TreeInfosTab</div>;
+    },
+}));
 
-jest.mock(
-    './PermissionsTab',
-    () =>
-        function TreePermissionsTab() {
-            return <div>TreePermissionsTab</div>;
-        },
-);
+vi.mock('./PermissionsTab', () => ({
+    default: function TreePermissionsTab() {
+        return <div>TreePermissionsTab</div>;
+    },
+}));
 
-jest.mock(
-    './CustomConfigTab',
-    () =>
-        function CustomConfigTab() {
-            return <div>CustomConfigTab</div>;
-        },
-);
+vi.mock('./CustomConfigTab', () => ({
+    default: function CustomConfigTab() {
+        return <div>CustomConfigTab</div>;
+    },
+}));
 
-jest.mock(
-    './TreeStructure',
-    () =>
-        function TreeStructure() {
-            return <div>TreeStructure</div>;
-        },
-);
+vi.mock('./TreeStructure', () => ({
+    default: function TreeStructure() {
+        return <div>TreeStructure</div>;
+    },
+}));
 
-jest.mock(
-    '../../TreeExplorer',
-    () =>
-        function TreeExplorer() {
-            return <div>TreeExplorer</div>;
-        },
-);
+vi.mock('../../TreeExplorer', () => ({
+    default: function TreeExplorer() {
+        return <div>TreeExplorer</div>;
+    },
+}));
 
 describe('EditTreeTabs', () => {
     test('Render test', async () => {

@@ -2,40 +2,32 @@ import userEvent from '@testing-library/user-event';
 import {act, render, screen} from '../../../_tests/testUtils';
 import General from './General';
 
-jest.mock(
-    './GeneralInfosTab',
-    () =>
-        function GeneralInfosTab() {
-            return <div>GeneralInfosTab</div>;
-        },
-);
+vi.mock('./GeneralInfosTab', () => ({
+    default: function GeneralInfosTab() {
+        return <div>GeneralInfosTab</div>;
+    },
+}));
 
-jest.mock(
-    './GeneralAdminPermissionsTab',
-    () =>
-        function GeneralAdminPermissionsTab() {
-            return <div>GeneralAdminPermissionsTab</div>;
-        },
-);
+vi.mock('./GeneralAdminPermissionsTab', () => ({
+    default: function GeneralAdminPermissionsTab() {
+        return <div>GeneralAdminPermissionsTab</div>;
+    },
+}));
 
-jest.mock(
-    './GeneralApiKeysTab',
-    () =>
-        function GeneralApiKeysTab() {
-            return <div>GeneralApiKeysTab</div>;
-        },
-);
+vi.mock('./GeneralApiKeysTab', () => ({
+    default: function GeneralApiKeysTab() {
+        return <div>GeneralApiKeysTab</div>;
+    },
+}));
 
-jest.mock(
-    './GeneralCustomConfigTab',
-    () =>
-        function GeneralCustomConfigTab() {
-            return <div>GeneralCustomConfigTab</div>;
-        },
-);
+vi.mock('./GeneralCustomConfigTab', () => ({
+    default: function GeneralCustomConfigTab() {
+        return <div>GeneralCustomConfigTab</div>;
+    },
+}));
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual<object>('react-router-dom')),
     useLocation: () => ({hash: ''}),
 }));
 

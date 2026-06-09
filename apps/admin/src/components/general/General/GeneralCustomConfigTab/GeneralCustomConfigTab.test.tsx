@@ -2,7 +2,7 @@ import {render, screen, waitFor} from '../../../../_tests/testUtils';
 import GeneralCustomConfigTab from './GeneralCustomConfigTab';
 import {GetGlobalSettingsDocument} from '../../../../_gqlTypes';
 
-jest.mock('jsoneditor-react', () => ({
+vi.mock('jsoneditor-react', () => ({
     JsonEditor() {
         return <div>JsonEditor</div>;
     },

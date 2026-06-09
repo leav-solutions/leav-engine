@@ -3,9 +3,9 @@
 // import {mockTreeWithPermConf} from '../../../../../../__mocks__/trees';
 // import PermissionsContent from './PermissionsContent';
 
-// jest.mock('../../../../../../hooks/useLang');
+// vi.mock('../../../../../../hooks/useLang');
 
-// jest.mock(
+// vi.mock(
 // '../../../../../permissions/DefinePermByUserGroupView',
 // () =>
 // function DefinePermByUserGroupView() {
@@ -13,7 +13,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // '../../../../../permissions/DefineTreePermissionsView',
 // () =>
 // function DefineTreePermissionsView() {
@@ -22,7 +22,7 @@
 // );
 
 // describe('PermissionsContent', () => {
-// const onSubmit = jest.fn();
+// const onSubmit = vi.fn();
 
 // test('Display 1 tab per library + "tree" tab', async () => {
 // const comp = shallow(

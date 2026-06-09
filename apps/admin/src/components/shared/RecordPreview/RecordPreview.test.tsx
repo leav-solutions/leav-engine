@@ -3,9 +3,9 @@
 // import React from 'react';
 // import RecordPreview from './RecordPreview';
 
-// jest.mock('../../../utils/utils', () => ({
-// getInvertColor: jest.fn().mockImplementation(() => '#FFFFFF'),
-// stringToColor: jest.fn().mockImplementation(() => '#000000'),
+// vi.mock('../../../utils/utils', () => ({
+// getInvertColor: vi.fn().mockImplementation(() => '#FFFFFF'),
+// stringToColor: vi.fn().mockImplementation(() => '#000000'),
 // }));
 
 // describe('RecordPreview', () => {

@@ -1,10 +1,10 @@
 module.exports = {
-    connect: (mapStateToProps, mapDispatchToProps) => ReactComponent => ({
+    connect: (mapStateToProps, mapDispatchToProps) => reactComponent => ({
         mapStateToProps,
         mapDispatchToProps,
-        ReactComponent,
+        ReactComponent: reactComponent,
     }),
-    useDispatch: jest.fn(),
-    useSelector: jest.fn(),
+    useDispatch: vi.fn(),
+    useSelector: vi.fn(),
     Provider: ({children}) => children,
 };

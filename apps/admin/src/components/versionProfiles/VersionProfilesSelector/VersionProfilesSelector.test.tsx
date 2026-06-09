@@ -25,7 +25,7 @@ describe('VersionProfilesSelector', () => {
             },
         ];
 
-        const mockOnChange = jest.fn();
+        const mockOnChange = vi.fn();
         render(<VersionProfilesSelector onChange={mockOnChange} clearable />, {apolloMocks: mocks});
 
         expect(screen.getByRole('combobox').className).toContain('loading');

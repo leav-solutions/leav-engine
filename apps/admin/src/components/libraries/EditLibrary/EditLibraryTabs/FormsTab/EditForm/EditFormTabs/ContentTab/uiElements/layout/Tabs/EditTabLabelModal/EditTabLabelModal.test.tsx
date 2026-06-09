@@ -6,7 +6,7 @@
 // import {type IFormElement, UIElementTypes} from '../../../../_types';
 // import EditTabLabelModal from './EditTabLabelModal';
 
-// jest.mock('../../../../../../../../../../../../hooks/useLang');
+// vi.mock('../../../../../../../../../../../../hooks/useLang');
 
 // describe('EditTabLabelModal', () => {
 // test('Snapshot test', async () => {
@@ -37,7 +37,7 @@
 // id: '12345',
 // label: {fr: 'test_tab'},
 // }}
-// onClose={jest.fn()}
+// onClose={vi.fn()}
 // open
 // />,
 // );

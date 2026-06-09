@@ -3,18 +3,16 @@ import {PermissionsActions, GetLibByIdDocument} from '../../../_gqlTypes';
 import {render, screen} from '../../../_tests/testUtils';
 import EditLibrary from './EditLibrary';
 
-jest.mock(
-    './EditLibraryTabs',
-    () =>
-        function EditLibraryTabs() {
-            return <div>EditLibraryTabs</div>;
-        },
-);
+vi.mock('./EditLibraryTabs', () => ({
+    default: function EditLibraryTabs() {
+        return <div>EditLibraryTabs</div>;
+    },
+}));
 
-const mockUseParams = jest.fn().mockReturnValue({id: 'test'});
+const mockUseParams = vi.fn().mockReturnValue({id: 'test'});
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual<object>('react-router-dom')),
     useParams: () => mockUseParams(),
 }));
 

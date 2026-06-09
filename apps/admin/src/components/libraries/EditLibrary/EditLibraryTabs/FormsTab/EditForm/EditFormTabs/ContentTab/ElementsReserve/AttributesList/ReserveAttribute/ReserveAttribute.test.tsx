@@ -5,12 +5,12 @@
 // import {mockAttrSimple} from '../../../../../../../../../../../__mocks__/attributes';
 // import ReserveAttribute from './ReserveAttribute';
 
-// jest.mock('../../../../../../../../../../../hooks/useLang');
-// jest.mock('../../../formBuilderReducer/hook/useFormBuilderReducer');
+// vi.mock('../../../../../../../../../../../hooks/useLang');
+// vi.mock('../../../formBuilderReducer/hook/useFormBuilderReducer');
 
-// jest.mock('react', () => ({
-// ...jest.requireActual('react'),
-// useLayoutEffect: jest.requireActual('react').useEffect,
+// vi.mock('react', () => ({
+// ...vi.importActual('react'),
+// useLayoutEffect: vi.importActual('react').useEffect,
 // }));
 
 // describe('ReserveAttribute', () => {

@@ -4,13 +4,11 @@ import {mockLibrary} from '../../../__mocks__/libraries';
 import Libraries from './Libraries';
 import {GetLibrariesDocument} from '../../../_gqlTypes';
 
-jest.mock(
-    '../LibrariesList',
-    () =>
-        function LibrariesList() {
-            return <div>LibrariesList</div>;
-        },
-);
+vi.mock('../LibrariesList', () => ({
+    default: function LibrariesList() {
+        return <div>LibrariesList</div>;
+    },
+}));
 
 describe('Libraries', () => {
     test('Snapshot test', async () => {

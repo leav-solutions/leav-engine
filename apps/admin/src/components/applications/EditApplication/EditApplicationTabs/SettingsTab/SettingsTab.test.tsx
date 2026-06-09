@@ -4,7 +4,7 @@ import {render, screen} from '../../../../../_tests/testUtils';
 import {mockEditApplicationContextValue} from '../../../../../__mocks__/common/applications';
 import SettingsTab from './SettingsTab';
 
-jest.mock('jsoneditor-react', () => ({
+vi.mock('jsoneditor-react', () => ({
     JsonEditor() {
         return <div>JsonEditor</div>;
     },

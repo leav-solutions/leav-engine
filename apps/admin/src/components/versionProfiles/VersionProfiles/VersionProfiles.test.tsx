@@ -4,9 +4,9 @@ import {mockVersionProfile} from '../../../__mocks__/common/versionProfiles';
 import VersionProfiles from './VersionProfiles';
 import {DeleteVersionProfileDocument, GetVersionProfilesDocument} from '../../../_gqlTypes';
 
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual<object>('react-router-dom')),
     useNavigate: () => mockNavigate,
 }));
 

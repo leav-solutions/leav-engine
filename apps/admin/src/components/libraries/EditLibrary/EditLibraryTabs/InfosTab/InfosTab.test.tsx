@@ -11,7 +11,7 @@ import {fireEvent, render, screen, waitFor} from '../../../../../_tests/testUtil
 import {mockLibrary} from '../../../../../__mocks__/libraries';
 import InfosTab from './InfosTab';
 
-jest.mock('../../../../../hooks/useLang');
+vi.mock('../../../../../hooks/useLang');
 
 describe('InfosTab', () => {
     const variables = {

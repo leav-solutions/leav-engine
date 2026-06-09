@@ -7,7 +7,7 @@
 // import EditRecord from './EditRecord';
 // import {GetLibByIdDocument} from '../../../_gqlTypes';
 
-// jest.mock(
+// vi.mock(
 // './EditRecordForm',
 // () =>
 // function RecordEditionForm() {
@@ -112,7 +112,7 @@
 // },
 // ];
 
-// const onLabelUpdate = jest.fn();
+// const onLabelUpdate = vi.fn();
 
 // let comp;
 // await act(async () => {

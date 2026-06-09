@@ -3,15 +3,13 @@ import {TreeBehavior, GetTreeByIdDocument} from '../../../../../../../../../_gql
 import {mockInitialState} from '../formBuilderReducer/_fixtures/fixtures';
 import BreadcrumbNavigator from './BreadcrumbNavigator';
 
-jest.mock(
-    './BreadcrumbNavigatorView',
-    () =>
-        function BreadcrumbNavigatorView() {
-            return <div>BreadcrumbNavigatorView</div>;
-        },
-);
+vi.mock('./BreadcrumbNavigatorView', () => ({
+    default: function BreadcrumbNavigatorView() {
+        return <div>BreadcrumbNavigatorView</div>;
+    },
+}));
 
-jest.mock('../formBuilderReducer/hook/useFormBuilderReducer', () => ({
+vi.mock('../formBuilderReducer/hook/useFormBuilderReducer', () => ({
     useFormBuilderReducer: () => ({
         state: {
             ...mockInitialState,
@@ -21,7 +19,7 @@ jest.mock('../formBuilderReducer/hook/useFormBuilderReducer', () => ({
                 value: null,
             },
         },
-        dispatch: jest.fn(),
+        dispatch: vi.fn(),
     }),
 }));
 

@@ -42,7 +42,7 @@
 // setTimeout(res, 200);
 // });
 
-// jest.mock(
+// vi.mock(
 // '../ALCList',
 // () =>
 // function ALCList() {

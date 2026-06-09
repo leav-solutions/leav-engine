@@ -5,47 +5,37 @@ import {EditFormContext} from '../../hooks/useEditFormContext';
 import ContentTab from './ContentTab';
 import {formData} from './formBuilderReducer/_fixtures/fixtures';
 
-jest.mock(
-    './BreadcrumbNavigator',
-    () =>
-        function BreadcrumbNavigator() {
-            return <div>BreadcrumbNavigator</div>;
-        },
-);
+vi.mock('./BreadcrumbNavigator', () => ({
+    default: function BreadcrumbNavigator() {
+        return <div>BreadcrumbNavigator</div>;
+    },
+}));
 
-jest.mock(
-    './DependencySettings',
-    () =>
-        function DependencySettings() {
-            return <div>DependencySettings</div>;
-        },
-);
+vi.mock('./DependencySettings', () => ({
+    default: function DependencySettings() {
+        return <div>DependencySettings</div>;
+    },
+}));
 
-jest.mock(
-    './ElementsReserve',
-    () =>
-        function ElementsReserve() {
-            return <div>ElementsReserve</div>;
-        },
-);
+vi.mock('./ElementsReserve', () => ({
+    default: function ElementsReserve() {
+        return <div>ElementsReserve</div>;
+    },
+}));
 
-jest.mock(
-    './FormLayout',
-    () =>
-        function FormLayout() {
-            return <div>FormLayout</div>;
-        },
-);
+vi.mock('./FormLayout', () => ({
+    default: function FormLayout() {
+        return <div>FormLayout</div>;
+    },
+}));
 
 describe('ContentTab', () => {
     test('Render form content editor', async () => {
         await act(async () => {
             render(
-                <EditFormModalButtonsContext.Provider
-                    value={{buttons: {}, setButton: jest.fn(), removeButton: jest.fn()}}
-                >
+                <EditFormModalButtonsContext.Provider value={{buttons: {}, setButton: vi.fn(), removeButton: vi.fn()}}>
                     <EditFormContext.Provider
-                        value={{form: formData, library: 'test_lib', readonly: false, setForm: jest.fn()}}
+                        value={{form: formData, library: 'test_lib', readonly: false, setForm: vi.fn()}}
                     >
                         <ContentTab />
                     </EditFormContext.Provider>
