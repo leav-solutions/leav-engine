@@ -18,7 +18,7 @@ describe('Custom Message', () => {
                 index={0}
                 key={lang}
                 actionId={0}
-                setBlockCard={jest.fn()}
+                setBlockCard={vi.fn()}
             />,
         );
         const InputCustomMessageElem = screen.getByRole('textbox');

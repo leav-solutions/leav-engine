@@ -87,7 +87,7 @@
 //     },
 // ];
 
-// jest.mock(
+// vi.mock(
 //     './TopPanel',
 //     () =>
 //         function TopPanel() {
@@ -95,7 +95,7 @@
 //         },
 // );
 
-// jest.mock(
+// vi.mock(
 //     './FiltersPanel',
 //     () =>
 //         function FiltersPanel() {
@@ -103,7 +103,7 @@
 //         },
 // );
 
-// jest.mock(
+// vi.mock(
 //     './ListPanel',
 //     () =>
 //         function ListPanel() {
@@ -132,7 +132,7 @@
 //         });
 
 //         test('data state trigger dispatch', async () => {
-//             const mockDispatch = jest.fn(() => undefined);
+//             const mockDispatch = vi.fn(() => undefined);
 //             render(<MainPanel state={state} dispatch={mockDispatch} />, {apolloMocks: dataMock});
 
 //             await waitFor(() => expect(mockDispatch.mock.calls.length).toBe(1));

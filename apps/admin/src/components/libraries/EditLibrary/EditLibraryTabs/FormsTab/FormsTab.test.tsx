@@ -6,7 +6,7 @@
 // import FormsTab from './FormsTab';
 // import {DeleteFormDocument, GetFormsListDocument} from '../../../../../_gqlTypes';
 
-// jest.mock(
+// vi.mock(
 // './FormsList',
 // () =>
 // function FormsList() {
@@ -14,7 +14,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // './EditFormModal',
 // () =>
 // function EditFormModal() {

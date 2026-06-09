@@ -1,21 +1,21 @@
 import {act, renderHook} from '@testing-library/react';
 import {useAutomationFormNavigation} from './useAutomationFormNavigation';
 
-const mockOpenConfirmModal = jest.fn();
-jest.mock('_ui/hooks/useConfirmModal/useConfirmModal', () => ({
+const mockOpenConfirmModal = vi.fn();
+vi.mock('_ui/hooks/useConfirmModal/useConfirmModal', () => ({
     useConfirmModal: () => ({openConfirmModal: mockOpenConfirmModal}),
 }));
 
-const mockUseBlocker = jest.fn();
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+const mockUseBlocker = vi.fn();
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual<object>('react-router-dom')),
     useBlocker: (...args: unknown[]) => mockUseBlocker(...args),
 }));
 
 describe('useAutomationFormNavigation', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
-        mockUseBlocker.mockReturnValue({state: 'unblocked', proceed: jest.fn(), reset: jest.fn()});
+        vi.clearAllMocks();
+        mockUseBlocker.mockReturnValue({state: 'unblocked', proceed: vi.fn(), reset: vi.fn()});
     });
 
     test('the blocker function only blocks when shouldBlockNavigation is true and pathname changes', () => {
@@ -36,8 +36,8 @@ describe('useAutomationFormNavigation', () => {
     });
 
     test('opens the confirmation modal when blocker state is blocked', () => {
-        const proceed = jest.fn();
-        const reset = jest.fn();
+        const proceed = vi.fn();
+        const reset = vi.fn();
         mockUseBlocker.mockReturnValue({state: 'blocked', proceed, reset});
 
         renderHook(() => useAutomationFormNavigation({shouldBlockNavigation: true}));
@@ -58,7 +58,7 @@ describe('useAutomationFormNavigation', () => {
     });
 
     test('does not open the modal when blocker state is unblocked', () => {
-        mockUseBlocker.mockReturnValue({state: 'unblocked', proceed: jest.fn(), reset: jest.fn()});
+        mockUseBlocker.mockReturnValue({state: 'unblocked', proceed: vi.fn(), reset: vi.fn()});
 
         renderHook(() => useAutomationFormNavigation({shouldBlockNavigation: true}));
 

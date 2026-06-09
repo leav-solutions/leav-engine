@@ -7,9 +7,9 @@ import {mockAttrSimple} from '../../../../../../../__mocks__/attributes';
 import StandardValuesList from '.';
 
 describe('StandardValuesList', () => {
-    const onValuesUpdate = jest.fn();
+    const onValuesUpdate = vi.fn();
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const mockAttribute: GET_ATTRIBUTES_VALUES_LIST_attributes_list_StandardAttribute = {

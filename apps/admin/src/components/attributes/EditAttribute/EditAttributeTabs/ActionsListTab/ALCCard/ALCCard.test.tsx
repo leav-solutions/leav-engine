@@ -3,9 +3,9 @@
 // import {TestBackend} from 'react-dnd-test-backend';
 // import ALCCard from './ALCCard';
 
-// jest.mock('../../../../../../hooks/useLang');
+// vi.mock('../../../../../../hooks/useLang');
 
-// jest.mock('react-dnd', () => ({
+// vi.mock('react-dnd', () => ({
 // useDrag: () => {
 // const isDragging = false;
 // const drag = () => true;

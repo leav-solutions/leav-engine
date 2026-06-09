@@ -4,10 +4,10 @@
 // import EmbeddedFieldsForm from '../EmbeddedFieldsForm';
 // import EmbeddedFieldsWrapper from './EmbeddedFieldsWrapper';
 
-// jest.mock('../../../../../../hooks/useLang');
+// vi.mock('../../../../../../hooks/useLang');
 
 // describe('EmbeddedFieldsWrapper', () => {
-// const handleSave = jest.fn();
+// const handleSave = vi.fn();
 // test('should return something', () => {
 // const mockAttributes = {
 // id: 'test',
@@ -20,7 +20,7 @@
 
 // const mockValues = [];
 
-// const mockSetValues = jest.fn();
+// const mockSetValues = vi.fn();
 
 // const comp = mount(
 // <EmbeddedFieldsWrapper
@@ -47,7 +47,7 @@
 
 // const mockValues = [];
 
-// const mockSetValues = jest.fn();
+// const mockSetValues = vi.fn();
 
 // const comp = mount(
 // <EmbeddedFieldsWrapper
@@ -74,7 +74,7 @@
 
 // const mockValues = [];
 
-// const mockSetValues = jest.fn();
+// const mockSetValues = vi.fn();
 
 // const comp = mount(
 // <EmbeddedFieldsWrapper

@@ -4,15 +4,13 @@ import {mockApiKey} from '../../../../__mocks__/common/apiKeys';
 import GeneralApiKeysTab from './GeneralApiKeysTab';
 import {DeleteApiKeyDocument, GetApiKeysDocument} from '../../../../_gqlTypes';
 
-jest.mock('../../../../hooks/useLang');
+vi.mock('../../../../hooks/useLang');
 
-jest.mock(
-    './EditApiKeyModal',
-    () =>
-        function EditApiKeyModal() {
-            return <div>EditApiKeyModal</div>;
-        },
-);
+vi.mock('./EditApiKeyModal', () => ({
+    default: function EditApiKeyModal() {
+        return <div>EditApiKeyModal</div>;
+    },
+}));
 
 describe('ApiKeys', () => {
     const mocks = [

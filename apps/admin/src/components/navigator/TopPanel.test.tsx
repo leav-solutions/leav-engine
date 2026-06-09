@@ -8,7 +8,7 @@
 // const lang = ['fr', 'fr'];
 // describe('<TopPanel />', () => {
 // test('can trigger change root', async () => {
-// const mockDispatch = jest.fn(() => undefined);
+// const mockDispatch = vi.fn(() => undefined);
 // const state = {
 // ...initialState,
 // selectedRoot: 'test',
@@ -33,7 +33,7 @@
 // expect(firstArg.data).toBe(null);
 // });
 // test('can trigger toggle filters', async () => {
-// const mockDispatch = jest.fn(() => undefined);
+// const mockDispatch = vi.fn(() => undefined);
 // const state = {
 // ...initialState,
 // selectedRoot: 'test',

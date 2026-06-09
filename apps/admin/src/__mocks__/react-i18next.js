@@ -33,17 +33,15 @@ const mockI18n = {
     options: {
         fallbackLng: ['en'],
     },
-    changeLanguage: jest.fn(),
+    changeLanguage: vi.fn(),
 };
 
 module.exports = {
     // this mock makes sure any components using the translate HoC receive the t function as a prop
-    useTranslation: () => {
-        return {
-            t: (arg, variables) => `${[arg, ...(!!variables ? Object.values(variables) : [])].join('|')}`,
-            i18n: mockI18n,
-        };
-    },
+    useTranslation: () => ({
+        t: (arg, variables) => `${[arg, ...(!!variables ? Object.values(variables) : [])].join('|')}`,
+        i18n: mockI18n,
+    }),
     Trans: ({children}) => renderNodes(children),
     I18n: ({children}) =>
         children(k => k, {
@@ -59,6 +57,8 @@ module.exports = {
     getDefaults: reactI18next.getDefaults,
     setI18n: reactI18next.setI18n,
     getI18n: reactI18next.getI18n,
+    initReactI18next: {
+        type: '3rdParty',
+        init: () => undefined,
+    },
 };
-
-export default undefined;

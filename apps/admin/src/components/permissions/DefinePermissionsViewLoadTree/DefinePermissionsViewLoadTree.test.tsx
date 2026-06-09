@@ -3,11 +3,11 @@
 // import React from 'react';
 // import DefinePermissionsViewLoadTree from './DefinePermissionsViewLoadTree';
 
-// jest.mock('../../../hooks/useLang');
+// vi.mock('../../../hooks/useLang');
 
 // describe('DefinePermissionsViewLoadTree', () => {
 // test('Snapshot test', async () => {
-// const onClick = jest.fn();
+// const onClick = vi.fn();
 // const selectedNode = null;
 // const comp = render(
 // <MockedProvider>

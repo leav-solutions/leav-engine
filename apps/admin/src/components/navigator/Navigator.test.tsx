@@ -3,14 +3,14 @@
 // import Navigator from '.';
 // import MockedLangContextProvider from '../../__mocks__/MockedLangContextProvider';
 
-// jest.mock(
+// vi.mock(
 // './MainPanel',
 // () =>
 // function MainPanel() {
 // return <>MainPanel MOCKED</>;
 // },
 // );
-// jest.mock(
+// vi.mock(
 // './RootSelector',
 // () =>
 // function RootSelector() {

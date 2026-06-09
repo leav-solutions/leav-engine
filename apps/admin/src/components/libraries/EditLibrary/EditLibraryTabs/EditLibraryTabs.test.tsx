@@ -9,51 +9,47 @@ import {
 } from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import {type Mockify} from '../../../../_types/Mockify';
 
-jest.mock('../../../../hooks/useUserData', () => ({
+vi.mock('../../../../hooks/useUserData', () => ({
     __esModule: true,
-    default: jest.fn(() => ({
+    default: vi.fn(() => ({
         id: 1,
         name: 'Test',
         permissions: {admin_access_forms: true},
     })),
 }));
 
-jest.mock(
-    './InfosTab',
-    () =>
-        function InfosTab() {
-            return <div>InfosTab</div>;
-        },
-);
-jest.mock(
-    './PermissionsTab',
-    () =>
-        function PermissionsTab() {
-            return <div>PermissionsTab</div>;
-        },
-);
-jest.mock(
-    './AttributesTab',
-    () =>
-        function AttributesTab() {
-            return <div>AttributesTab</div>;
-        },
-);
-jest.mock(
-    './FormsTab',
-    () =>
-        function FormsTab() {
-            return <div>FormsTab</div>;
-        },
-);
+vi.mock('./InfosTab', () => ({
+    default: function InfosTab() {
+        return <div>InfosTab</div>;
+    },
+}));
+vi.mock('./PermissionsTab', () => ({
+    default: function PermissionsTab() {
+        return <div>PermissionsTab</div>;
+    },
+}));
+vi.mock('./AttributesTab', () => ({
+    default: function AttributesTab() {
+        return <div>AttributesTab</div>;
+    },
+}));
+vi.mock('./FormsTab', () => ({
+    default: function FormsTab() {
+        return <div>FormsTab</div>;
+    },
+}));
 
-jest.mock(
-    './CustomConfigTab',
-    () =>
-        function CustomConfigTab() {
-            return <div>CustomConfigTab</div>;
-        },
-);
+vi.mock('./CustomConfigTab', () => ({
+    default: function CustomConfigTab() {
+        return <div>CustomConfigTab</div>;
+    },
+}));
+
+vi.mock('../../../../utils/utils', () => ({
+    formatIDString: vi.fn().mockImplementation(s => s),
+    localizedLabel: vi.fn().mockImplementation(l => l.fr),
+}));
+
 describe('EditLibraryForm', () => {
     const attributes: Mockify<GET_LIB_BY_ID_libraries_list_attributes[]> = [
         {
@@ -80,18 +76,7 @@ describe('EditLibraryForm', () => {
         },
     };
 
-    beforeAll(() => {
-        jest.mock('../../../../utils/utils', () => ({
-            formatIDString: jest.fn().mockImplementation(s => s),
-            localizedLabel: jest.fn().mockImplementation(l => l.fr),
-        }));
-    });
-
-    afterAll(() => {
-        jest.unmock('../../../../utils/utils');
-    });
-
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     test('Render tabs for existing lib', async () => {
         render(<EditLibraryTabs library={library as GET_LIB_BY_ID_libraries_list} readOnly={false} />);

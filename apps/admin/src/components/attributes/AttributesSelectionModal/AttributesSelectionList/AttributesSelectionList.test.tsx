@@ -17,7 +17,7 @@ describe('AttributesSelectionList', () => {
             },
         ];
 
-        const toggleSelection = jest.fn();
+        const toggleSelection = vi.fn();
 
         render(<AttributesSelectionList attributes={attributes} selection={[]} toggleSelection={toggleSelection} />);
 

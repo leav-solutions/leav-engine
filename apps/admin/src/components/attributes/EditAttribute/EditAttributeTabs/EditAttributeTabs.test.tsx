@@ -2,67 +2,53 @@ import {render, screen, within} from '../../../../_tests/testUtils';
 import {mockAttrAdv, mockAttrSimple} from '../../../../__mocks__/attributes';
 import EditAttributeTabs from './EditAttributeTabs';
 
-jest.mock('../../../../utils/utils', () => ({
-    localizedLabel: jest.fn().mockImplementation(l => l.fr),
+vi.mock('../../../../utils/utils', () => ({
+    localizedLabel: vi.fn().mockImplementation(l => l.fr),
 }));
 
-jest.mock('../../../../hooks/useLang');
+vi.mock('../../../../hooks/useLang');
 
-jest.mock(
-    './ActionsListTab',
-    () =>
-        function ActionsListTab() {
-            return <div>ActionsListTab</div>;
-        },
-);
+vi.mock('./ActionsListTab', () => ({
+    default: function ActionsListTab() {
+        return <div>ActionsListTab</div>;
+    },
+}));
 
-jest.mock(
-    './EmbeddedFieldsTab',
-    () =>
-        function EmbeddedFieldsTab() {
-            return <div>EmbeddedFieldsTab</div>;
-        },
-);
+vi.mock('./EmbeddedFieldsTab', () => ({
+    default: function EmbeddedFieldsTab() {
+        return <div>EmbeddedFieldsTab</div>;
+    },
+}));
 
-jest.mock(
-    './InfosTab',
-    () =>
-        function InfosTab() {
-            return <div>InfosTab</div>;
-        },
-);
+vi.mock('./InfosTab', () => ({
+    default: function InfosTab() {
+        return <div>InfosTab</div>;
+    },
+}));
 
-jest.mock(
-    './MetadataTab',
-    () =>
-        function MetadataTab() {
-            return <div>MetadataTab</div>;
-        },
-);
+vi.mock('./MetadataTab', () => ({
+    default: function MetadataTab() {
+        return <div>MetadataTab</div>;
+    },
+}));
 
-jest.mock(
-    './PermissionsTab',
-    () =>
-        function PermissionsTab() {
-            return <div>PermissionsTab</div>;
-        },
-);
+vi.mock('./PermissionsTab', () => ({
+    default: function PermissionsTab() {
+        return <div>PermissionsTab</div>;
+    },
+}));
 
-jest.mock(
-    './ValuesListTab',
-    () =>
-        function ValuesListTab() {
-            return <div>ValuesListTab</div>;
-        },
-);
+vi.mock('./ValuesListTab', () => ({
+    default: function ValuesListTab() {
+        return <div>ValuesListTab</div>;
+    },
+}));
 
-jest.mock(
-    './CustomConfigTab',
-    () =>
-        function CustomConfigTab() {
-            return <div>CustomConfigTab</div>;
-        },
-);
+vi.mock('./CustomConfigTab', () => ({
+    default: function CustomConfigTab() {
+        return <div>CustomConfigTab</div>;
+    },
+}));
 
 describe('EditAttributeTabs', () => {
     const mockAttribute = {...mockAttrSimple};

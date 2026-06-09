@@ -7,7 +7,7 @@
 // import ValuesListTab from './ValuesListTab';
 // import {GetAttributesValuesListDocument} from '../../../../../_gqlTypes';
 
-// jest.mock(
+// vi.mock(
 // './ValuesListForm',
 // () =>
 // function ValuesListForm() {

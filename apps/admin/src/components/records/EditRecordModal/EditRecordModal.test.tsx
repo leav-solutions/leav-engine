@@ -4,7 +4,7 @@
 // import {wait} from '../../../utils/testUtils';
 // import EditRecordModal from './EditRecordModal';
 
-// jest.mock(
+// vi.mock(
 // '../EditRecord/EditRecord',
 // () =>
 // function EditRecordComp() {
@@ -13,7 +13,7 @@
 // );
 
 // describe('EditRecordModal', () => {
-// const onClose = jest.fn();
+// const onClose = vi.fn();
 // test('Open and close modal', async () => {
 // const comp = mount(<EditRecordModal open library="test_lib" onClose={onClose} />);
 

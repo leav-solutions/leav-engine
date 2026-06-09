@@ -12,7 +12,7 @@
 // setTimeout(res, 0);
 // });
 
-// jest.mock(
+// vi.mock(
 // './PluginsList',
 // () =>
 // function PluginsList(props) {

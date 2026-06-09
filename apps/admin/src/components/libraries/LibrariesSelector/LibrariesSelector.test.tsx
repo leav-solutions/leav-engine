@@ -3,15 +3,13 @@ import {act, render, screen} from '../../../_tests/testUtils';
 import {AvailableLanguage} from '../../../_gqlTypes';
 import LibrariesSelector from './LibrariesSelector';
 
-jest.mock('../../../hooks/useLang');
+vi.mock('../../../hooks/useLang');
 
-jest.mock(
-    '../LibrariesSelectorField',
-    () =>
-        function LibrariesSelectorField() {
-            return <div>LibrariesSelectorField</div>;
-        },
-);
+vi.mock('../LibrariesSelectorField', () => ({
+    default: function LibrariesSelectorField() {
+        return <div>LibrariesSelectorField</div>;
+    },
+}));
 
 describe('LibrariesSelector', () => {
     test('Snapshot test', async () => {

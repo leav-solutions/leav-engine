@@ -2,13 +2,11 @@ import {act, render, screen} from '../../../../_tests/testUtils';
 import GeneralInfosTab from './GeneralInfosTab';
 import {GetVersionDocument} from '../../../../_gqlTypes';
 
-jest.mock(
-    '../../PluginsExplorer',
-    () =>
-        function PluginsExplorer() {
-            return <div>PluginsExplorer</div>;
-        },
-);
+vi.mock('../../PluginsExplorer', () => ({
+    default: function PluginsExplorer() {
+        return <div>PluginsExplorer</div>;
+    },
+}));
 
 describe('GeneralInfosTab', () => {
     test('Render test', async () => {

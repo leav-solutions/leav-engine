@@ -3,7 +3,7 @@
 // import {mockAttrAdv, mockAttrSimple} from '../../../../../../__mocks__/attributes';
 // import StandardValuesWrapper from './StandardValuesWrapper';
 
-// jest.mock(
+// vi.mock(
 // './EditRecordInput',
 // () =>
 // function EditRecordInput() {
@@ -11,11 +11,11 @@
 // },
 // );
 
-// jest.mock('../../../../../../hooks/useLang');
+// vi.mock('../../../../../../hooks/useLang');
 
 // describe('MultipleValuesWrapper', () => {
-// const onSubmit = jest.fn();
-// const onDelete = jest.fn();
+// const onSubmit = vi.fn();
+// const onDelete = vi.fn();
 
 // test('Render 1 value', async () => {
 // const value = {

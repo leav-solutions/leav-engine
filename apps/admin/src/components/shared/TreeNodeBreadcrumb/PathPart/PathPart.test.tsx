@@ -2,7 +2,7 @@
 // import React from 'react';
 // import PathPart from './PathPart';
 
-// jest.mock(
+// vi.mock(
 // '../../RecordCard',
 // () =>
 // function RecordCard({record}) {
@@ -35,13 +35,13 @@
 // {
 // text: 'Some action',
 // icon: 'trash',
-// action: jest.fn(),
+// action: vi.fn(),
 // displayFilter: () => true,
 // },
 // {
 // text: 'Some action 2',
 // icon: 'trash',
-// action: jest.fn(),
+// action: vi.fn(),
 // displayFilter: () => true,
 // },
 // ];
@@ -57,13 +57,13 @@
 // {
 // text: 'Some action',
 // icon: 'trash',
-// action: jest.fn(),
+// action: vi.fn(),
 // displayFilter: r => r.id !== '1',
 // },
 // {
 // text: 'Some action 2',
 // icon: 'trash',
-// action: jest.fn(),
+// action: vi.fn(),
 // displayFilter: () => true,
 // },
 // ];

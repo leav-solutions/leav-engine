@@ -3,7 +3,7 @@
 // import {type ITreeLinkElement} from '../../../_types/records';
 // import TreeNodeBreadcrumb from './TreeNodeBreadcrumb';
 
-// jest.mock(
+// vi.mock(
 // './PathPart',
 // () =>
 // function PathPart({record}) {

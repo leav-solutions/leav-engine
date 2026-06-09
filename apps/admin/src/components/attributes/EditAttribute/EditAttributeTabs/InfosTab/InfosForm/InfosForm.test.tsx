@@ -10,22 +10,20 @@ import {
 import {mockAttrSimple} from '../../../../../../__mocks__/attributes';
 import InfosForm from './InfosForm';
 
-jest.mock('../../../../../../utils', () => ({
-    formatIDString: jest.fn().mockImplementation(s => s),
-    localizedLabel: jest.fn().mockImplementation(l => l.fr),
-    getSysTranslationQueryLanguage: jest.fn().mockReturnValue(['fr', 'fr']),
-    getFieldError: jest.fn().mockReturnValue(''),
+vi.mock('../../../../../../utils', () => ({
+    formatIDString: vi.fn().mockImplementation(s => s),
+    localizedLabel: vi.fn().mockImplementation(l => l.fr),
+    getSysTranslationQueryLanguage: vi.fn().mockReturnValue(['fr', 'fr']),
+    getFieldError: vi.fn().mockReturnValue(''),
 }));
 
-jest.mock('../../../../../../hooks/useLang');
+vi.mock('../../../../../../hooks/useLang');
 
-jest.mock(
-    '../../../../../versionProfiles/VersionProfilesSelector',
-    () =>
-        function VersionProfilesSelector() {
-            return <div>VersionProfilesSelector</div>;
-        },
-);
+vi.mock('../../../../../versionProfiles/VersionProfilesSelector', () => ({
+    default: function VersionProfilesSelector() {
+        return <div>VersionProfilesSelector</div>;
+    },
+}));
 
 describe('InfosForm', () => {
     const attribute = {
@@ -33,8 +31,8 @@ describe('InfosForm', () => {
         label: {fr: 'Test 1', en: null},
         libraries: [mockLibrary],
     };
-    const onSubmit = jest.fn();
-    const onCheckIdExists = jest.fn().mockReturnValue(false);
+    const onSubmit = vi.fn();
+    const onCheckIdExists = vi.fn().mockReturnValue(false);
 
     const mockLibrariesWithAttributes = {
         request: {
@@ -172,7 +170,7 @@ describe('InfosForm', () => {
     });
 
     test('Validate ID unicity', async () => {
-        const _idNotUnique = jest.fn().mockResolvedValue(false);
+        const _idNotUnique = vi.fn().mockResolvedValue(false);
 
         await act(async () => {
             render(

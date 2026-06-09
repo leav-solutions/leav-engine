@@ -4,7 +4,7 @@
 // import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 // import RecordCard from './RecordCard';
 
-// jest.mock('../../../hooks/useLang');
+// vi.mock('../../../hooks/useLang');
 
 // describe('RecordCard', () => {
 // const mockRecord: RecordIdentity_whoAmI = {

@@ -7,7 +7,7 @@
 // import SelectFormat from './SelectFormat';
 
 // describe('SelectFormat', () => {
-// const mockT: Mockify<TFunction> = jest.fn();
+// const mockT: Mockify<TFunction> = vi.fn();
 
 // const mockFormValues = {
 // originalId: 'test',
@@ -24,9 +24,9 @@
 // <SelectFormat
 // formValues={mockFormValues as IFormValue}
 // hasChild={false}
-// onChange={jest.fn()}
+// onChange={vi.fn()}
 // t={mockT as TFunction}
-// save={jest.fn()}
+// save={vi.fn()}
 // />,
 // );
 

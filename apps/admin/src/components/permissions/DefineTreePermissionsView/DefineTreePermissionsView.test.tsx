@@ -4,7 +4,7 @@
 // import {PermissionTypes} from '../../../_gqlTypes';
 // import DefineTreePermissionsView from './DefineTreePermissionsView';
 
-// jest.mock('../../../hooks/useLang');
+// vi.mock('../../../hooks/useLang');
 
 // describe('DefineTreePermissionsView', () => {
 // test('Snapshot test', async () => {

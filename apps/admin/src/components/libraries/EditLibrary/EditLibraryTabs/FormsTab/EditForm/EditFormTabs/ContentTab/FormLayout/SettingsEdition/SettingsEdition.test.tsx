@@ -9,14 +9,12 @@ import {FieldTypes, FormElementSettingsInputTypes} from '../../_types';
 import SettingsEdition from './SettingsEdition';
 import {GetAttributeByIdDocument} from '../../../../../../../../../../_gqlTypes';
 
-jest.mock(
-    '../../../../../../../../../attributes/AttributeSelector',
-    () =>
-        function AttributeSelector() {
-            return <div>AttributeSelector</div>;
-        },
-);
-jest.mock('react-rte');
+vi.mock('../../../../../../../../../attributes/AttributeSelector', () => ({
+    default: function AttributeSelector() {
+        return <div>AttributeSelector</div>;
+    },
+}));
+vi.mock('react-rte');
 
 const mockState = {
     ...mockInitialState,
@@ -56,7 +54,7 @@ const renderWithAttributesMock = (children: JSX.Element) => {
 
 describe('SettingsEdition', () => {
     test('Text Input', async () => {
-        jest.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
+        vi.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
             state: {
                 ...mockState,
                 elementInSettings: {
@@ -73,7 +71,7 @@ describe('SettingsEdition', () => {
                     settings: {...formElem1.settings, myinput: 'input value'},
                 },
             },
-            dispatch: jest.fn(),
+            dispatch: vi.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);
@@ -84,7 +82,7 @@ describe('SettingsEdition', () => {
     });
 
     test('Select', async () => {
-        jest.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
+        vi.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
             state: {
                 ...mockState,
                 elementInSettings: {
@@ -104,7 +102,7 @@ describe('SettingsEdition', () => {
                     settings: {...formElem1.settings, mySelect: 'option1'},
                 },
             },
-            dispatch: jest.fn(),
+            dispatch: vi.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);
@@ -117,7 +115,7 @@ describe('SettingsEdition', () => {
     });
 
     test('Checkbox', async () => {
-        jest.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
+        vi.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
             state: {
                 ...mockState,
                 elementInSettings: {
@@ -134,7 +132,7 @@ describe('SettingsEdition', () => {
                     settings: {...formElem1.settings, myCheckbox: true},
                 },
             },
-            dispatch: jest.fn(),
+            dispatch: vi.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);
@@ -145,7 +143,7 @@ describe('SettingsEdition', () => {
     });
 
     test('Attribute', async () => {
-        jest.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
+        vi.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
             state: {
                 ...mockState,
                 elementInSettings: {
@@ -162,7 +160,7 @@ describe('SettingsEdition', () => {
                     settings: {...formElem1.settings},
                 },
             },
-            dispatch: jest.fn(),
+            dispatch: vi.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);
@@ -172,7 +170,7 @@ describe('SettingsEdition', () => {
     });
 
     test('RTE', async () => {
-        jest.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
+        vi.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
             state: {
                 ...mockState,
                 elementInSettings: {
@@ -189,7 +187,7 @@ describe('SettingsEdition', () => {
                     settings: {...formElem1.settings, myRTE: '**Content**'},
                 },
             },
-            dispatch: jest.fn(),
+            dispatch: vi.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);
@@ -199,7 +197,7 @@ describe('SettingsEdition', () => {
     });
 
     test('None', async () => {
-        jest.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
+        vi.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
             state: {
                 ...mockState,
                 elementInSettings: {
@@ -216,7 +214,7 @@ describe('SettingsEdition', () => {
                     settings: {...formElem1.settings, myNoDisplaySettings: 'some_value'},
                 },
             },
-            dispatch: jest.fn(),
+            dispatch: vi.fn(),
         });
 
         renderWithAttributesMock(<SettingsEdition />);

@@ -3,13 +3,11 @@ import {AttributeType, GetAttributesDocument} from '../../../_gqlTypes';
 import {mockAttrSimple} from '../../../__mocks__/attributes';
 import AttributeSelector from './AttributeSelector';
 
-jest.mock(
-    './AttributeSelectorField',
-    () =>
-        function AttributeSelectorField() {
-            return <div>AttributeSelectorField</div>;
-        },
-);
+vi.mock('./AttributeSelectorField', () => ({
+    default: function AttributeSelectorField() {
+        return <div>AttributeSelectorField</div>;
+    },
+}));
 
 describe('AttributeSelector', () => {
     test('Loading and success state', async () => {

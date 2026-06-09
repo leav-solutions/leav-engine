@@ -3,17 +3,15 @@ import {render, screen} from '../../../_tests/testUtils';
 import {TreeBehavior, GetTreeByIdDocument} from '../../../_gqlTypes';
 import SelectTreeNodeModal from './SelectTreeNodeModal';
 
-jest.mock(
-    '../../trees/TreeExplorer',
-    () =>
-        function TreeExplorer() {
-            return <div>Tree Explorer</div>;
-        },
-);
+vi.mock('../../trees/TreeExplorer', () => ({
+    default: function TreeExplorer() {
+        return <div>Tree Explorer</div>;
+    },
+}));
 
 describe('SelectTreeNodeModal', () => {
-    const onSelect = jest.fn();
-    const onClose = jest.fn();
+    const onSelect = vi.fn();
+    const onClose = vi.fn();
 
     const mocks = [
         {

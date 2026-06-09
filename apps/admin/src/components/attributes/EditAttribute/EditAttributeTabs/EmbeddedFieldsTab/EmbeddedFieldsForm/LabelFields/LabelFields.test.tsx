@@ -6,8 +6,8 @@
 // import LabelFields from './LabelFields';
 
 // describe('LabelFields', () => {
-// const mockT: Mockify<TFunction> = jest.fn();
-// const handleSave = jest.fn();
+// const mockT: Mockify<TFunction> = vi.fn();
+// const handleSave = vi.fn();
 
 // const mockFormValues: IFormValues = {
 // id: 'test',
@@ -23,8 +23,8 @@
 // const comp = mount(
 // <LabelFields
 // formValues={mockFormValues}
-// setFormValues={jest.fn}
-// onChange={jest.fn}
+// setFormValues={vi.fn}
+// onChange={vi.fn}
 // t={mockT as TFunction}
 // save={handleSave}
 // />,

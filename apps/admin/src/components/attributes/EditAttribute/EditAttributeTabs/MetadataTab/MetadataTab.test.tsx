@@ -8,7 +8,7 @@
 // import MockedProviderWithFragments from '../../../../../__mocks__/MockedProviderWithFragments';
 // import MetadataTab from './MetadataTab';
 
-// jest.mock(
+// vi.mock(
 // './MetadataList',
 // () =>
 // function MetadataList() {

@@ -12,18 +12,18 @@ const NavigateOnMount = ({to}: {to: string}) => {
     return null;
 };
 
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+const mockNavigate = vi.fn();
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual<object>('react-router-dom')),
     useNavigate: () => mockNavigate,
 }));
 
 describe('NavigationMenu', () => {
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     test('Should render menu', async () => {
         await act(async () => {
-            render(<NavigationMenu isOpen={true} onOpenChanged={jest.fn()} />);
+            render(<NavigationMenu isOpen={true} onOpenChanged={vi.fn()} />);
         });
 
         expect(screen.getByText(/libraries/)).toBeInTheDocument();
@@ -33,7 +33,7 @@ describe('NavigationMenu', () => {
 
     test('Should set active menu item when current route matches', async () => {
         await act(async () => {
-            render(<NavigationMenu isOpen={true} onOpenChanged={jest.fn()} />, {
+            render(<NavigationMenu isOpen={true} onOpenChanged={vi.fn()} />, {
                 routerProps: {initialEntries: ['/libraries']},
             });
         });
@@ -44,7 +44,7 @@ describe('NavigationMenu', () => {
 
     test('Should navigate to the item route when clicking on it', async () => {
         await act(async () => {
-            render(<NavigationMenu isOpen={true} onOpenChanged={jest.fn()} />);
+            render(<NavigationMenu isOpen={true} onOpenChanged={vi.fn()} />);
         });
 
         await userEvent.click(screen.getByText(/libraries/));
@@ -54,7 +54,7 @@ describe('NavigationMenu', () => {
 
     test('Should have no active menu item when current route does not match', async () => {
         await act(async () => {
-            render(<NavigationMenu isOpen={true} onOpenChanged={jest.fn()} />, {
+            render(<NavigationMenu isOpen={true} onOpenChanged={vi.fn()} />, {
                 routerProps: {initialEntries: ['/']},
             });
         });
@@ -69,7 +69,7 @@ describe('NavigationMenu', () => {
         await act(async () => {
             render(
                 <>
-                    <NavigationMenu isOpen={true} onOpenChanged={jest.fn()} />
+                    <NavigationMenu isOpen={true} onOpenChanged={vi.fn()} />
                     <NavigateOnMount to="/not-found" />
                 </>,
                 {routerProps: {initialEntries: ['/libraries']}},

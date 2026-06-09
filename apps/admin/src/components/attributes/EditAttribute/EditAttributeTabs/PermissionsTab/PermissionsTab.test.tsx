@@ -15,7 +15,7 @@
 // type TreepermissionsConfInput,
 // } from '../../../../../_gqlTypes';
 
-// jest.mock(
+// vi.mock(
 // './PermissionsContent',
 // () =>
 // function PermissionsContent() {

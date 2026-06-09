@@ -5,16 +5,16 @@
 // import {mockTree} from '../../../../../../__mocks__/trees';
 // import TreeInfosForm from './InfosForm';
 
-// jest.mock('../../../../../../utils', () => ({
-// formatIDString: jest.fn().mockImplementation(s => s),
-// localizedLabel: jest.fn().mockImplementation(l => l.fr),
-// getFieldError: jest.fn().mockReturnValue(''),
+// vi.mock('../../../../../../utils', () => ({
+// formatIDString: vi.fn().mockImplementation(s => s),
+// localizedLabel: vi.fn().mockImplementation(l => l.fr),
+// getFieldError: vi.fn().mockReturnValue(''),
 // }));
-// jest.mock('../../../../../../hooks/useLang');
+// vi.mock('../../../../../../hooks/useLang');
 
 // describe('TreeInfosForm', () => {
-// const onSubmit = jest.fn();
-// const onCheckIdExists = jest.fn().mockReturnValue(false);
+// const onSubmit = vi.fn();
+// const onCheckIdExists = vi.fn().mockReturnValue(false);
 
 // test('Render form for existing tree', async () => {
 // const comp = render(

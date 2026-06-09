@@ -3,8 +3,8 @@
 // import {mockTree} from '../../../../../../../../../../../__mocks__/trees';
 // import BreadcrumbSection from './BreadcrumbSection';
 
-// jest.mock('../../../../../../../../../../../hooks/useLang');
-// jest.mock('../../../formBuilderReducer/hook/useFormBuilderReducer');
+// vi.mock('../../../../../../../../../../../hooks/useLang');
+// vi.mock('../../../formBuilderReducer/hook/useFormBuilderReducer');
 
 // describe('BreadcrumbSection', () => {
 // test('Snapshot test', async () => {

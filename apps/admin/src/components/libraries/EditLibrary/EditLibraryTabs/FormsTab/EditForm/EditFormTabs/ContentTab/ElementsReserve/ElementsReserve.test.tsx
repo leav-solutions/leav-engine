@@ -4,7 +4,7 @@
 // import {TestBackend} from 'react-dnd-test-backend';
 // import ElementsReserve from './ElementsReserve';
 
-// jest.mock(
+// vi.mock(
 // './LayoutElementsList',
 // () =>
 // function LayoutElementsList() {
@@ -12,7 +12,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // './AttributesList',
 // () =>
 // function AttributesList() {

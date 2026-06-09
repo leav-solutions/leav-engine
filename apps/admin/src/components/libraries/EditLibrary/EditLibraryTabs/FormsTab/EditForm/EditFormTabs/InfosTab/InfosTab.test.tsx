@@ -9,7 +9,7 @@
 // import InfosTab from './InfosTab';
 // import {SaveFormDocument} from '../../../../../../../../_gqlTypes';
 
-// jest.mock(
+// vi.mock(
 // './InfosForm',
 // () =>
 // function InfosForm() {
@@ -17,8 +17,8 @@
 // },
 // );
 
-// jest.mock('react-router-dom-v5', () => ({
-// ...jest.requireActual('react-router-dom-v5'),
+// vi.mock('react-router-dom-v5', () => ({
+// ...vi.importActual('react-router-dom-v5'),
 // useLocation: () => ({pathname: '/libraries/edit/products#forms'}),
 // }));
 
@@ -61,7 +61,7 @@
 // const comp = mount(
 // <MockedProviderWithFragments mocks={mocks} addTypename>
 // <EditFormContext.Provider
-// value={{form: mockFormFull, library: 'test_lib', readonly: false, setForm: jest.fn()}}
+// value={{form: mockFormFull, library: 'test_lib', readonly: false, setForm: vi.fn()}}
 // >
 // <InfosTab />
 // </EditFormContext.Provider>

@@ -6,7 +6,7 @@
 // import {mockAttrSimple} from '../../../__mocks__/attributes';
 // import AttributesList from './AttributesList';
 
-// jest.mock('../../../hooks/useLang');
+// vi.mock('../../../hooks/useLang');
 
 // describe('AttributesList', () => {
 // const attributes: GET_ATTRIBUTE_BY_ID_attributes_list[] = [
@@ -42,8 +42,8 @@
 // },
 // ];
 
-// const onRowClick = jest.fn();
-// const onFiltersUpdate = jest.fn();
+// const onRowClick = vi.fn();
+// const onFiltersUpdate = vi.fn();
 // test('Render attributes list with filters', async () => {
 // const comp = shallow(
 // <MockedProvider>
@@ -112,7 +112,7 @@
 // });
 
 // test('Calls callback on filter update', () => {
-// const changeFilter = jest.fn();
+// const changeFilter = vi.fn();
 // const comp = mount(
 // <MockedProvider>
 // <AttributesList

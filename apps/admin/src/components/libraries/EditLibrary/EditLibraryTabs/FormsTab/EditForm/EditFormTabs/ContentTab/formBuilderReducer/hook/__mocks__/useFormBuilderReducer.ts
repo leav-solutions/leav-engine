@@ -15,9 +15,9 @@ const initialState: IFormBuilderState = {
 export const FormBuilderReducerContext = React.createContext<{
     state: IFormBuilderState;
     dispatch: Dispatch<FormBuilderAction>;
-}>({state: mockInitialState, dispatch: () => jest.fn()});
+}>({state: mockInitialState, dispatch: () => vi.fn()});
 
 export const useFormBuilderReducer = () => ({
     state: mockInitialState,
-    dispatch: jest.fn(),
+    dispatch: vi.fn(),
 });

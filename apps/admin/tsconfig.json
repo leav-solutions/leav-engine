@@ -1,10 +1,4 @@
 {
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-        "module": "esnext",
-        "noEmit": true,
-        "outDir": "dist",
-        "jsx": "react-jsx"
-    },
-    "include": ["src", "src/_types/custom.d.ts"]
+    "files": [],
+    "references": [{"path": "./tsconfig.build.json"}, {"path": "./tsconfig.spec.json"}]
 }

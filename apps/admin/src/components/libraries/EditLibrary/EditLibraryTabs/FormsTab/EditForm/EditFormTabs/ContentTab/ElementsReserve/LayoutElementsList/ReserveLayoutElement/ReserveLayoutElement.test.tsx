@@ -6,12 +6,12 @@
 // import {UIElementTypes} from '../../../_types';
 // import ReserveLayoutElement from './ReserveLayoutElement';
 
-// jest.mock('react', () => ({
-// ...jest.requireActual('react'),
-// useLayoutEffect: jest.requireActual('react').useEffect,
+// vi.mock('react', () => ({
+// ...vi.importActual('react'),
+// useLayoutEffect: vi.importActual('react').useEffect,
 // }));
 
-// jest.mock('../../../formBuilderReducer/hook/useFormBuilderReducer');
+// vi.mock('../../../formBuilderReducer/hook/useFormBuilderReducer');
 
 // describe('ReserveLayoutElement', () => {
 // test('Snapshot test', async () => {

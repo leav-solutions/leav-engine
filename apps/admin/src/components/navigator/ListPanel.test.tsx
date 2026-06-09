@@ -47,7 +47,7 @@
 
 // test('pagination and select call dispatch', async () => {
 // let wrapper;
-// const mockDispatch = jest.fn(() => undefined);
+// const mockDispatch = vi.fn(() => undefined);
 // await act(async () => {
 // wrapper = mount(
 // <MockedLangContextProvider>

@@ -10,7 +10,7 @@
 // setTimeout(res, 0);
 // });
 
-// jest.mock(
+// vi.mock(
 // '../../../../navigator/Navigator',
 // () =>
 // function Navigator(props) {
@@ -18,7 +18,7 @@
 // },
 // );
 
-// jest.mock(
+// vi.mock(
 // '../../../../records/EditRecordModal',
 // () =>
 // function EditRecordModal(props) {

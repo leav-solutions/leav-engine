@@ -6,7 +6,7 @@
 // import MockedProviderWithFragments from '../../../__mocks__/MockedProviderWithFragments';
 // import ViewSelector from './ViewSelector';
 
-// jest.mock(
+// vi.mock(
 // './ViewSelectorField',
 // () =>
 // function ViewSelectorField() {

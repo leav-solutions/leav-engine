@@ -4,13 +4,11 @@ import {mockTree} from '../../../__mocks__/trees';
 import Trees from './Trees';
 import {GetTreesDocument} from '../../../_gqlTypes';
 
-jest.mock(
-    '../TreesList',
-    () =>
-        function TreesList() {
-            return <div>TreesList</div>;
-        },
-);
+vi.mock('../TreesList', () => ({
+    default: function TreesList() {
+        return <div>TreesList</div>;
+    },
+}));
 
 describe('Trees', () => {
     test('Snapshot test', async () => {

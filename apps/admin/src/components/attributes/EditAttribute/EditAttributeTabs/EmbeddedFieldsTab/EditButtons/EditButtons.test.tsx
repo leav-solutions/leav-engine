@@ -16,10 +16,10 @@
 // id="test"
 // format={mockFormat}
 // flatItem={mockFlatItem as IFlatItem}
-// expend={jest.fn()}
-// add={jest.fn()}
-// remove={jest.fn()}
-// t={jest.fn()}
+// expend={vi.fn()}
+// add={vi.fn()}
+// remove={vi.fn()}
+// t={vi.fn()}
 // isRoot={false}
 // />,
 // );

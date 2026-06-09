@@ -3,20 +3,20 @@
 // import {mockTree} from '../../../../__mocks__/trees';
 // import TreeExplorerView from './TreeExplorerView';
 
-// jest.mock('@nosferatu500/react-sortable-tree', () => ({
+// vi.mock('@nosferatu500/react-sortable-tree', () => ({
 // SortableTreeWithoutDndContext() {
 // return <div>MOCK TestComponent</div>;
 // },
 // }));
 
-// jest.mock('../../../../hooks/useLang');
+// vi.mock('../../../../hooks/useLang');
 
 // describe('StructureView', () => {
 // test('Render loading if no data', async () => {
-// const onTreeChange = jest.fn();
-// const onVisibilityToggle = jest.fn();
-// const onMoveNode = jest.fn();
-// const onDeleteNode = jest.fn();
+// const onTreeChange = vi.fn();
+// const onVisibilityToggle = vi.fn();
+// const onMoveNode = vi.fn();
+// const onDeleteNode = vi.fn();
 
 // const comp = shallow(
 // <TreeExplorerView
@@ -35,10 +35,10 @@
 // });
 
 // test('Render tree', async () => {
-// const onTreeChange = jest.fn();
-// const onVisibilityToggle = jest.fn();
-// const onMoveNode = jest.fn();
-// const onDeleteNode = jest.fn();
+// const onTreeChange = vi.fn();
+// const onVisibilityToggle = vi.fn();
+// const onMoveNode = vi.fn();
+// const onDeleteNode = vi.fn();
 
 // const comp = shallow(
 // <TreeExplorerView

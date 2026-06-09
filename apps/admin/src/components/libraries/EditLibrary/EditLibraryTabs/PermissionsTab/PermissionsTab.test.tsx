@@ -7,7 +7,7 @@
 // import PermissionsTab from './PermissionsTab';
 // import {PermissionsRelation, SaveLibraryDocument, type TreepermissionsConfInput} from '../../../../../_gqlTypes';
 
-// jest.mock(
+// vi.mock(
 // './PermissionsContent',
 // () =>
 // function PermissionsContent() {

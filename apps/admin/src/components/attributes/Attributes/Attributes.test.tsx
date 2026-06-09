@@ -4,13 +4,11 @@ import {mockAttrSimple} from '../../../__mocks__/attributes';
 import Attributes from './Attributes';
 import {GetAttributesDocument} from '../../../_gqlTypes';
 
-jest.mock(
-    '../AttributesList',
-    () =>
-        function AttributesList() {
-            return <div>AttributesList</div>;
-        },
-);
+vi.mock('../AttributesList', () => ({
+    default: function AttributesList() {
+        return <div>AttributesList</div>;
+    },
+}));
 
 describe('Attributes', () => {
     test('Snapshot test', async () => {

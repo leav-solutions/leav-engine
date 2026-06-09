@@ -3,7 +3,7 @@
 // import {Header} from 'semantic-ui-react';
 // import EmbeddedFieldsDisplay from './EmbeddedFieldsDisplay';
 
-// jest.mock('../../../../../../hooks/useLang');
+// vi.mock('../../../../../../hooks/useLang');
 
 // describe('EmbeddedFieldsDisplay', () => {
 // const mockAttribute = {

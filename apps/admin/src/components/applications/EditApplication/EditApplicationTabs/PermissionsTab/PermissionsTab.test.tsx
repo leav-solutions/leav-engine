@@ -4,13 +4,11 @@ import {act, render, screen} from '../../../../../_tests/testUtils';
 import {mockApplicationDetails} from '../../../../../__mocks__/common/applications';
 import PermissionsTab from './PermissionsTab';
 
-jest.mock(
-    '../../../../permissions/DefinePermByUserGroupView',
-    () =>
-        function DefinePermByUserGroupView() {
-            return <div>DefinePermByUserGroupView</div>;
-        },
-);
+vi.mock('../../../../permissions/DefinePermByUserGroupView', () => ({
+    default: function DefinePermByUserGroupView() {
+        return <div>DefinePermByUserGroupView</div>;
+    },
+}));
 describe('GeneralAdminPermissionsTab', () => {
     test('Render test', async () => {
         await act(async () => {

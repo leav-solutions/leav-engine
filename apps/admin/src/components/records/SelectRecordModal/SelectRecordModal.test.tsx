@@ -7,7 +7,7 @@
 // import {mockLibrary} from '../../../__mocks__/libraries';
 // import SelectRecordModal from './SelectRecordModal';
 
-// jest.mock(
+// vi.mock(
 // '../../navigator',
 // () =>
 // function Navigator() {
@@ -38,8 +38,8 @@
 // },
 // ];
 
-// const onClose = jest.fn();
-// const onSelect = jest.fn();
+// const onClose = vi.fn();
+// const onSelect = vi.fn();
 // test('Loading and success state', async () => {
 // let comp;
 // await act(async () => {

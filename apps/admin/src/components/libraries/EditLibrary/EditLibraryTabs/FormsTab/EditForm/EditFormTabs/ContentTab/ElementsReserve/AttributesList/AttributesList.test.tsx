@@ -7,7 +7,7 @@
 // import MockedProviderWithFragments from '../../../../../../../../../../__mocks__/MockedProviderWithFragments';
 // import AttributesList from './AttributesList';
 
-// jest.mock(
+// vi.mock(
 // './ReserveAttribute',
 // () =>
 // function ReserveAttribute() {
@@ -15,7 +15,7 @@
 // },
 // );
 
-// jest.mock('../../formBuilderReducer/hook/useFormBuilderReducer');
+// vi.mock('../../formBuilderReducer/hook/useFormBuilderReducer');
 
 // describe('AttributesList', () => {
 // test('Snapshot test', async () => {

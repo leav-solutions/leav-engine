@@ -3,7 +3,7 @@
 // import {mockTree} from '../../../../../../../../../../__mocks__/trees';
 // import BreadcrumbNavigatorView from './BreadcrumbNavigatorView';
 
-// jest.mock(
+// vi.mock(
 // './BreadcrumbSection',
 // () =>
 // function BreadcrumbSection() {

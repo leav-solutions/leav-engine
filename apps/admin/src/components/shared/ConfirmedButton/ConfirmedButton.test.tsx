@@ -5,12 +5,12 @@
 
 // describe('ConfirmedButton', () => {
 // const mockEvent: Mockify<React.SyntheticEvent> = {
-// preventDefault: jest.fn(),
-// stopPropagation: jest.fn(),
+// preventDefault: vi.fn(),
+// stopPropagation: vi.fn(),
 // };
 
 // test('Render child', async () => {
-// const action = jest.fn();
+// const action = vi.fn();
 
 // const comp = shallow(
 // <ConfirmedButton action={action} confirmMessage="Test">
@@ -21,7 +21,7 @@
 // });
 
 // test('Open modal when click on button', async () => {
-// const action = jest.fn();
+// const action = vi.fn();
 
 // const comp = mount(
 // <ConfirmedButton action={action} confirmMessage="Test">
@@ -35,7 +35,7 @@
 // });
 
 // test('Call action when validate and close modal', async () => {
-// const action = jest.fn();
+// const action = vi.fn();
 
 // const comp = mount(
 // <ConfirmedButton action={action} confirmMessage="Test">

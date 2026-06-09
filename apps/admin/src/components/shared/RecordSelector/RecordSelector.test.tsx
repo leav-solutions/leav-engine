@@ -4,22 +4,20 @@ import {act, render, screen} from '../../../_tests/testUtils';
 import {mockRecord} from '../../../__mocks__/common/records';
 import RecordSelector from './RecordSelector';
 
-jest.mock(
-    '../../records/SelectRecordModal',
-    () =>
-        function SelectRecordModal() {
-            return <div>SelectRecordModal</div>;
-        },
-);
+vi.mock('../../records/SelectRecordModal', () => ({
+    default: function SelectRecordModal() {
+        return <div>SelectRecordModal</div>;
+    },
+}));
 
-jest.mock('../../../hooks/useLang');
+vi.mock('../../../hooks/useLang');
 
 describe('RecordSelector', () => {
-    afterEach(() => jest.clearAllMocks());
+    afterEach(() => vi.clearAllMocks());
 
     test('Can select a new record', async () => {
         await act(async () => {
-            render(<RecordSelector onChange={jest.fn()} value={null} label="icon" libraries={['my_lib']} />);
+            render(<RecordSelector onChange={vi.fn()} value={null} label="icon" libraries={['my_lib']} />);
         });
 
         const selectBtn = await screen.findByRole('button', {name: /select/});
@@ -32,7 +30,7 @@ describe('RecordSelector', () => {
 
     test('Display and change existing record', async () => {
         await act(async () => {
-            render(<RecordSelector onChange={jest.fn()} value={mockRecord} label="icon" libraries={['my_lib']} />);
+            render(<RecordSelector onChange={vi.fn()} value={mockRecord} label="icon" libraries={['my_lib']} />);
         });
 
         expect(screen.queryByRole('button', {name: /select/})).not.toBeInTheDocument();
@@ -48,7 +46,7 @@ describe('RecordSelector', () => {
     });
 
     test('Delete existing file', async () => {
-        const mockOnChange = jest.fn();
+        const mockOnChange = vi.fn();
         await act(async () => {
             render(<RecordSelector onChange={mockOnChange} value={mockRecord} label="icon" libraries={['my_lib']} />);
         });
@@ -67,7 +65,7 @@ describe('RecordSelector', () => {
     });
 
     test('If value is required, cannot delete', async () => {
-        const mockOnChange = jest.fn();
+        const mockOnChange = vi.fn();
         await act(async () => {
             render(
                 <RecordSelector

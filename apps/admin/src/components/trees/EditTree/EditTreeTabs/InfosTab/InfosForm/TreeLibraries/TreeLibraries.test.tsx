@@ -23,7 +23,7 @@
 // },
 // ];
 
-// const onChange = jest.fn();
+// const onChange = vi.fn();
 
 // test('Render libraries', async () => {
 // const comp = shallow(<TreeLibraries libraries={mockTreeLibraries} onChange={onChange} readonly={false} />);

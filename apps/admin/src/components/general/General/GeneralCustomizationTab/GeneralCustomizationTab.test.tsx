@@ -3,13 +3,11 @@ import {render, screen, waitFor} from '../../../../_tests/testUtils';
 import GeneralCustomizationTab from './GeneralCustomizationTab';
 import {GetGlobalSettingsDocument, GetApplicationsDocument, SaveGlobalSettingsDocument} from '../../../../_gqlTypes';
 
-jest.mock(
-    '../../../shared/FileSelector',
-    () =>
-        function FileSelector() {
-            return <div>FileSelector</div>;
-        },
-);
+vi.mock('../../../shared/FileSelector', () => ({
+    default: function FileSelector() {
+        return <div>FileSelector</div>;
+    },
+}));
 
 describe('GeneralCustomizationTab', () => {
     test('Render name and file selector', async () => {

@@ -8,7 +8,7 @@ import MessagesDisplay from './MessagesDisplay';
 
 describe('MessagesDisplay', () => {
     test('Display list of messages', async () => {
-        jest.spyOn(useMessages, 'default').mockImplementation(() => ({
+        vi.spyOn(useMessages, 'default').mockImplementation(() => ({
             messages: [
                 {
                     id: 'A',
@@ -26,8 +26,8 @@ describe('MessagesDisplay', () => {
                     content: '3',
                 },
             ],
-            addMessage: jest.fn(),
-            removeMessage: jest.fn(),
+            addMessage: vi.fn(),
+            removeMessage: vi.fn(),
         }));
 
         render(<MessagesDisplay />);
@@ -39,8 +39,8 @@ describe('MessagesDisplay', () => {
     });
 
     test('Can delete message manually', async () => {
-        const mockRemoveMessage = jest.fn();
-        jest.spyOn(useMessages, 'default').mockImplementation(() => ({
+        const mockRemoveMessage = vi.fn();
+        vi.spyOn(useMessages, 'default').mockImplementation(() => ({
             messages: [
                 {
                     id: 'A',
@@ -48,7 +48,7 @@ describe('MessagesDisplay', () => {
                     content: '1',
                 },
             ],
-            addMessage: jest.fn(),
+            addMessage: vi.fn(),
             removeMessage: mockRemoveMessage,
         }));
 

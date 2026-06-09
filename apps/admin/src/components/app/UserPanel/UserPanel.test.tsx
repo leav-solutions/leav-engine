@@ -4,22 +4,24 @@ import {AvailableLanguage} from '../../../_gqlTypes';
 import {render, screen} from '../../../_tests/testUtils';
 import UserPanel from './UserPanel';
 
-const mockLogout = jest.fn();
-jest.mock('../../../hooks/useAuth', () => () => ({
-    logout: mockLogout,
+const {mockLogout} = vi.hoisted(() => ({mockLogout: vi.fn()}));
+vi.mock('../../../hooks/useAuth', () => ({
+    default: () => ({
+        logout: mockLogout,
+    }),
 }));
 
 describe('UserPanel', () => {
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     test('Should display some menu items', async () => {
-        render(<UserPanel visible onHide={jest.fn()} />);
+        render(<UserPanel visible onHide={vi.fn()} />);
 
         expect(screen.getAllByRole('menuitem').length).toBeGreaterThanOrEqual(1);
     });
 
     test('On click on logout, log out and redirect to home', async () => {
-        render(<UserPanel visible onHide={jest.fn()} />);
+        render(<UserPanel visible onHide={vi.fn()} />);
 
         const logoutLink = screen.getByRole('menuitem', {name: /logout/});
 
@@ -29,15 +31,15 @@ describe('UserPanel', () => {
     });
 
     test('Can switch language', async () => {
-        const mockUpdateLang = jest.fn();
-        jest.spyOn(useLang, 'default').mockImplementation(() => ({
+        const mockUpdateLang = vi.fn();
+        vi.spyOn(useLang, 'default').mockImplementation(() => ({
             lang: [AvailableLanguage.en],
             availableLangs: [AvailableLanguage.fr, AvailableLanguage.en],
             defaultLang: AvailableLanguage.en,
             setLang: mockUpdateLang,
         }));
 
-        render(<UserPanel visible onHide={jest.fn()} />);
+        render(<UserPanel visible onHide={vi.fn()} />);
 
         expect(screen.getByRole('button', {name: /🇫🇷/})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: /🇬🇧/})).toBeInTheDocument();

@@ -4,9 +4,9 @@
 // import {TestBackend} from 'react-dnd-test-backend';
 // import Container from './Container';
 
-// jest.mock('react', () => ({
-// ...jest.requireActual('react'),
-// useLayoutEffect: jest.requireActual('react').useEffect,
+// vi.mock('react', () => ({
+// ...vi.importActual('react'),
+// useLayoutEffect: vi.importActual('react').useEffect,
 // }));
 
 // describe('Container', () => {

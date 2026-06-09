@@ -23,8 +23,8 @@
 // <EmbeddedFieldsForm
 // attribute={mockAttribute as IEmbeddedFields}
 // formValues={mockValues}
-// setFormValues={jest.fn}
-// save={jest.fn()}
+// setFormValues={vi.fn}
+// save={vi.fn()}
 // />,
 // );
 
@@ -77,8 +77,8 @@
 // <EmbeddedFieldsForm
 // attribute={mockAttribute as IEmbeddedFields}
 // formValues={mockValues}
-// setFormValues={jest.fn}
-// save={jest.fn()}
+// setFormValues={vi.fn}
+// save={vi.fn()}
 // />,
 // );
 
