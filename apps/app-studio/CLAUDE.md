@@ -41,6 +41,13 @@ src/
 
 ## Configuration JSON
 
+> Côté **Administration**, la config est répartie sur deux sources, chacune dans l'onglet **Custom config** :
+>
+> - **JSON de l'application** → définit les `workspaces` (points d'entrée du menu latéral) et référence les bibliothèques.
+> - **JSON de chaque bibliothèque** → définit les `libraryPanels` / `recordPanels`, dans une clé par application (`applications["app-studio"]`, `applications["campaigns-manager"]`…). Une même bibliothèque peut donc avoir des panels différents selon l'application.
+>
+> Si la clé application **n'existe pas** dans le JSON de la bibliothèque, App-Studio applique un **comportement par défaut** : explorateur générique en libraryPanel, formulaire d'édition d'id `"edition"` en recordPanel. La config n'est nécessaire que pour surcharger ce défaut.
+
 ### Structure générale
 
 ```ts
@@ -64,14 +71,59 @@ src/
 }
 ```
 
+### Workspaces
+
+Point d'entrée affiché dans le menu latéral gauche. Deux types :
+
+- **`library`** — ouvre l'explorateur de `libraryId` avec ses `libraryPanels`. Type le plus courant.
+- **`record`** — ouvre directement l'entité `recordId` en `fullpage` avec ses `recordPanels` (raccourci vers un enregistrement précis, ex. le PAC de l'année en cours). `recordId` n'est requis que pour ce type.
+
 ### Types de panneaux (`PanelContent.tsx`)
 
-| Type           | Description            | Props clés                           |
-| -------------- | ---------------------- | ------------------------------------ |
-| `explorer`     | Explorer `@leav/ui`    | `viewId`, `explorerProps`, `actions` |
-| `editionForm`  | Formulaire d'édition   | `formId`                             |
-| `creationForm` | Formulaire de création | `formId`                             |
-| `custom`       | Iframe métier          | `iframeSource`                       |
+| Type           | Description            | Props clés                                                                                 |
+| -------------- | ---------------------- | ------------------------------------------------------------------------------------------ |
+| `explorer`     | Explorer `@leav/ui`    | `libraryId`, `attributeSource`, `viewId`, `explorerProps`, `actions`, `deactivateOnUnlink` |
+| `editionForm`  | Formulaire d'édition   | `formId`                                                                                   |
+| `creationForm` | Formulaire de création | `formId`, `attributeSource`, `isStandalone: true`                                          |
+| `custom`       | Iframe métier          | `iframeSource`                                                                             |
+
+- En **libraryPanel** : un seul panel `explorer` supporté pour le moment ; il liste toutes les entités de la bibliothèque.
+- En **recordPanel** : un `explorer` liste les entités liées via `attributeSource` (attribut de liaison). Plusieurs recordPanels coexistent — l'ordre dans le tableau = l'ordre des onglets.
+- `creationForm` est toujours `isStandalone` (hors onglets) et n'est invoqué que si l'explorateur associé a `"create"` dans ses `defaultPrimaryActions`.
+
+### Paramètres communs à tous les panels
+
+| Paramètre           | Type      | Description                                                                                                                                     |
+| ------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `id`                | string    | Identifiant unique du panel dans le tableau                                                                                                     |
+| `icon`              | string    | Icône FontAwesome de l'onglet                                                                                                                   |
+| `name`              | `{fr,en}` | Libellé de l'onglet                                                                                                                             |
+| `hideInCompactMode` | boolean   | Si `true` : panel masqué en `popup` et `slider` (mode compact). Toujours laisser ≥ 1 recordPanel sans ce flag, sinon rien à afficher en compact |
+| `isStandalone`      | boolean   | Si `true` : panel hors onglets, invoqué directement (cas systématique des `creationForm`)                                                       |
+
+### `explorerProps` (valeurs = défauts appliqués si absent)
+
+| Paramètre               | Type     | Défaut                                    | Description                                                          |
+| ----------------------- | -------- | ----------------------------------------- | -------------------------------------------------------------------- |
+| `showFilters`           | boolean  | `false`                                   | Panneau de filtres                                                   |
+| `showSearch`            | boolean  | `false`                                   | Barre de recherche                                                   |
+| `showSorts`             | boolean  | `false`                                   | Options de tri                                                       |
+| `freezeView`            | boolean  | `false`                                   | Si `true` : l'utilisateur ne peut pas modifier la vue                |
+| `defaultMassActions`    | string[] | `["export","editAttribute","deactivate"]` | Actions de masse sur sélection                                       |
+| `defaultPrimaryActions` | string[] | `["create"]`                              | Actions du bouton « + » (tableau vide pour le désactiver)            |
+| `defaultActionsForItem` | string[] | `["activate","replaceLink","remove"]`     | Actions par ligne (`replaceLink`/`remove` = explorateurs de liaison) |
+
+### Actions sur les lignes
+
+Définissent comment s'ouvre un record. Un seul `onRowClick: true` par explorateur (sinon comportement indéterminé) ; les autres apparaissent en boutons au survol.
+
+| Paramètre    | Valeurs                               | Description                                 |
+| ------------ | ------------------------------------- | ------------------------------------------- |
+| `what`       | `"record"`                            | Cible (toujours `record` actuellement)      |
+| `where`      | `"fullpage"` / `"popup"` / `"slider"` | Mode d'ouverture de l'entité                |
+| `onRowClick` | boolean                               | Si `true` : déclenchée au clic sur la ligne |
+| `icon`       | string                                | Icône du bouton                             |
+| `label`      | `{fr,en}`                             | Libellé du bouton                           |
 
 ### Modes d'affichage des panneaux
 
@@ -80,6 +132,20 @@ src/
 - `slider` → panneau latéral glissant
 - `popup` → modal dialog
 - Flap panels → panneaux latéraux via `flapRecordId/flapLibraryId/flapPanelId`
+
+> 📖 Doc utilisateur/admin (Confluence) : [App-Studio — Workspaces & Panels](https://aristid.atlassian.net/wiki/spaces/XSTREAM/pages/1963884553), [Définir les panels d'une bibliothèque](https://aristid.atlassian.net/wiki/spaces/XSTREAM/pages/1964769283), [Gérer l'affichage en mode compact](https://aristid.atlassian.net/wiki/spaces/XSTREAM/pages/1964670997).
+
+---
+
+## Comportements de bibliothèque et config panels
+
+Le comportement d'une bibliothèque (configuré dans Admin LEAV) influe sur la façon dont on la configure dans app-studio :
+
+- **Standard** — config classique : `libraryPanels` + `recordPanels`, workspace `type: "library"`.
+- **Jointure** — rarement un workspace dédié ; généralement exposée via un panneau `explorer` d'une autre bibliothèque. Ses records portent deux clés étrangères (FK) implicites vers les deux bibliothèques reliées. Modifier une jointure = modifier la relation, pas l'entité elle-même.
+- **Fichier / Dossier** — workspace classique. L'Explorer liste les nœuds de l'arbre à plat (pas de vue arborescente pour le moment).
+
+Les **attributs de type `tree`** référencent un nœud d'un arbre configuré dans Admin. Ils apparaissent dans les filtres de l'Explorer et les formulaires comme une sélection hiérarchique.
 
 ---
 
