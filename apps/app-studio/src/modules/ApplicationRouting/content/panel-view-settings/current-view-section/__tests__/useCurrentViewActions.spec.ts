@@ -16,9 +16,17 @@ jest.mock('../../store-current-view/useCurrentView', () => ({
 }));
 
 const mockOpenConfirmModal = jest.fn();
+const mockDispatchPanelEvent = jest.fn();
 jest.mock('@leav/ui', () => ({
     ...jest.requireActual('@leav/ui'),
     useConfirmModal: () => ({openConfirmModal: mockOpenConfirmModal}),
+    usePanelEventHandlers: () => ({dispatch: mockDispatchPanelEvent}),
+}));
+
+const mockWriteQuery = jest.fn();
+jest.mock('@apollo/client', () => ({
+    ...jest.requireActual('@apollo/client'),
+    useApolloClient: () => ({writeQuery: mockWriteQuery}),
 }));
 
 jest.mock('aristid-ds', () => ({
@@ -114,7 +122,17 @@ describe('useCurrentViewActions', () => {
                     },
                 }),
             );
-            expect(mockDispatch).toHaveBeenCalledWith({type: 'LOAD_VIEW', payload: createdView});
+            expect(mockWriteQuery).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: {viewId: createdView.id},
+                    data: {viewV2: createdView},
+                }),
+            );
+            expect(mockDispatchPanelEvent).toHaveBeenCalledWith({
+                type: 'view-settings-select-view',
+                data: {viewId: createdView.id},
+            });
+            expect(mockDispatch).not.toHaveBeenCalled();
             expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.clone-success`}));
         });
     });

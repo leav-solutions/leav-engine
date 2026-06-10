@@ -20,6 +20,11 @@ jest.mock('../useViewCatalog', () => ({
     useViewCatalog: () => mockCatalog,
 }));
 
+const mockSaveLastUsedView = jest.fn();
+jest.mock('../useLastUsedView', () => ({
+    useLastUsedView: () => ({saveLastUsedView: mockSaveLastUsedView, lastUsedViewId: undefined}),
+}));
+
 let mockCurrentView: {view: {id: string; label?: Record<string, string>} | null; isDirty: boolean};
 jest.mock('../../../store-current-view/useCurrentView', () => ({
     useCurrentView: () => mockCurrentView,
@@ -69,6 +74,14 @@ describe('TabCatalog', () => {
 
             expect(mockDispatch).toHaveBeenCalledWith({type: 'view-settings-select-view', data: {viewId: 'view-2'}});
             expect(screen.queryByText('view_settings.unsaved-changes.title')).not.toBeInTheDocument();
+        });
+
+        it('persists the selected view as last used', async () => {
+            render(<TabCatalog viewId="view-1" libraryId="lib" />);
+
+            await user.click(screen.getByText('Vue B'));
+
+            expect(mockSaveLastUsedView).toHaveBeenCalledWith('view-2');
         });
 
         it('is a no-op when clicking the already-loaded view', async () => {

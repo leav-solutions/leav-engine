@@ -48,7 +48,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
     const {t} = useTranslation();
     const navigate = useNavigate();
 
-    const viewSettingsProps = useViewSettingsProps();
+    const viewSettingsProps = useViewSettingsProps({viewId});
 
     const updateValuesCache = useValuesCacheUpdate();
     const {saveValues} = useExecuteSaveValueBatchMutation();
@@ -128,7 +128,6 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
             <Explorer
                 {...commonExplorerProps}
                 defaultViewSettings={{
-                    viewId,
                     filters: [
                         {
                             id: 'filter_to_linked_records',
@@ -146,6 +145,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                         },
                     ],
                     ...commonExplorerProps.defaultViewSettings,
+                    ...viewSettingsProps.defaultViewSettings,
                 }}
                 entrypoint={{
                     // TODO: One day, this should be type="link" (when link explorer will support pagination, filtering, etc.)

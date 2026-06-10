@@ -5,20 +5,16 @@ import {type AppStudioInternalEvent} from '../../../types';
 import {CurrentViewContext} from './CurrentViewContext';
 import {currentViewReducer, initialCurrentViewState} from './currentViewReducer';
 
-// TODO (LEAVC-809): seed `selectedViewId` from the panel's real currentViewId once views are
-// migrated to viewV2. For now we bootstrap on a hardcoded v2 view; the catalog can switch it.
-const HARDCODED_VIEW_ID = '2345316100';
-
-export const CurrentViewProvider = ({children}: {children: ReactNode}) => {
+export const CurrentViewProvider = ({viewId, children}: {viewId: string; children: ReactNode}) => {
     const [{view, savedView}, dispatch] = useReducer(currentViewReducer, initialCurrentViewState);
 
-    const [selectedViewId, setSelectedViewId] = useState(HARDCODED_VIEW_ID);
+    const [selectedViewId, setSelectedViewId] = useState(viewId);
 
     // The catalog selection (gated by an unsaved-changes confirmation in TabCatalog) switches the
     // loaded view. The handler only calls the stable setter with the event payload, so it is safe
     // despite usePanelEventHandlers registering it once.
     usePanelEventHandlers<AppStudioInternalEvent>({
-        'view-settings-select-view': ({viewId}) => setSelectedViewId(viewId),
+        'view-settings-select-view': data => setSelectedViewId(data.viewId),
     });
 
     const {data} = useGetViewV2Query({variables: {viewId: selectedViewId}});
