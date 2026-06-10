@@ -9,7 +9,7 @@ export const FontAwesomeIconSchema = z.string().regex(FONT_AWESOME_ICON_REGEX).o
 
 export const WhereSchema = z.union([z.literal('popup'), z.literal('slider'), z.literal('fullpage')]);
 
-export const ViewSettingsShortcutsSchema = z.union([
+export const ViewSettingsTabSchema = z.union([
     z.literal('display'),
     z.literal('filters'),
     z.literal('sorts'),
@@ -91,7 +91,7 @@ export const baseExplorerPanelSchema = z.object({
     actions: ItemActionsSchema,
 
     targetLibraryId: LibraryIdSchema.optional(),
-    selectedTab: ViewSettingsShortcutsSchema.optional(),
+    selectedTab: ViewSettingsTabSchema.optional(),
     currentViewId: z.string().optional(),
     isViewSettingsActive: z.boolean().default(false),
 });

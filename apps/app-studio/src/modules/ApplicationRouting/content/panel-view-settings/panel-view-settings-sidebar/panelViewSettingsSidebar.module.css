@@ -1,0 +1,9 @@
+.sidebar {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-s) * 1px);
+    padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-xs) * 1px);
+    background: var(--general-utilities-neutral-light);
+    border-right: 1px solid var(--general-utilities-border);
+}

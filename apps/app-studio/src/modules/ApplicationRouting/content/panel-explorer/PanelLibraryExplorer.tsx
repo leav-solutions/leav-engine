@@ -1,10 +1,11 @@
-import {type FunctionComponent} from 'react';
+import {type FunctionComponent, useEffect} from 'react';
 import {Explorer, useLang} from '@leav/ui';
 import {useNavigate} from 'react-router-dom';
 import {type ItemActions, type ExplorerProps} from '../../types';
 import {mapToCommonExplorerProps} from './mapperToCommonExplorerProps';
 import {mapperToItemActions} from './mapperToItemActions';
 import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
+import {useViewSettingsProps} from './useViewSettingsProps';
 import {explorerContainer} from './panelExplorer.module.css';
 
 interface IPanelLibraryExplorerProps {
@@ -27,6 +28,8 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
     const commonExplorerProps = mapToCommonExplorerProps({explorerProps});
     const itemActions = mapperToItemActions({actions, application, lang, navigate, libraryId});
 
+    const viewSettingsProps = useViewSettingsProps();
+
     return (
         <div className={explorerContainer}>
             <Explorer
@@ -41,6 +44,7 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
                 }}
                 itemActions={itemActions}
                 hideFirstActionLabel
+                {...viewSettingsProps}
             />
         </div>
     );

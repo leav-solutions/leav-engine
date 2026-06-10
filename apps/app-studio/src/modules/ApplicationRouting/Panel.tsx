@@ -1,18 +1,19 @@
-import {useCallback, useEffect, useState, type FunctionComponent} from 'react';
+import {type FunctionComponent, useCallback, useEffect, useState} from 'react';
+import {createPortal} from 'react-dom';
 import {useMatch, useParams, useRoutes} from 'react-router-dom';
 import cn from 'classnames';
+import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
+import {MODAL_EXTRA_RIGHT_PORTAL_ID} from '../../constants';
 import {PanelContent} from './content/PanelContent';
 import {nextLevelRoutes} from './router/routes';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {PanelsTabs} from './header/tabs/PanelsTabs';
 import {PanelHeader} from './header/PanelHeader';
-import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {AbsolutePaths} from './router/paths';
 import {FlapContainer} from './FlapContainer';
-import {panel, panelContent, firstPanel, firstPanelContent, panelHeader} from './panel.module.css';
-import {createPortal} from 'react-dom';
-import {MODAL_EXTRA_RIGHT_PORTAL_ID} from '../../constants';
+import {ViewSettingsContainer} from './ViewSettingsContainer';
+import {firstPanel, firstPanelContent, panel, panelContent, panelHeader} from './panel.module.css';
 
 export const Panel: FunctionComponent = () => {
     const [modalExtraRightElement, setModalExtraRightElement] = useState<HTMLElement>();
@@ -30,13 +31,14 @@ export const Panel: FunctionComponent = () => {
     const hasFlapPanel = flapPanelId !== undefined;
     const isCreationFormPanel = currentPanel.type === 'creationForm';
 
-    const setFlapRef = useCallback(
-        (flapRef: KitSidePanelRef | null) => {
-            if (hasFlapPanel && flapRef) {
-                flapRef.open();
-            }
-        },
-        [hasFlapPanel, match?.pathname],
+    let isViewConfigActive = false;
+    if (currentPanel.type === 'explorer') {
+        isViewConfigActive = currentPanel.isViewSettingsActive;
+    }
+    const viewSettingsContainerComponent = modalExtraRightElement ? (
+        createPortal(<ViewSettingsContainer />, modalExtraRightElement)
+    ) : (
+        <ViewSettingsContainer />
     );
 
     useEffect(() => {
@@ -48,6 +50,14 @@ export const Panel: FunctionComponent = () => {
         }
     }, [hasFlapPanel, isFirstPanel, recordPanelId]);
 
+    const setFlapRef = useCallback(
+        (flapRef: KitSidePanelRef | null) => {
+            if (hasFlapPanel && flapRef) {
+                flapRef.open();
+            }
+        },
+        [hasFlapPanel, match?.pathname],
+    );
     const flapContainerComponent = modalExtraRightElement ? (
         createPortal(<FlapContainer ref={setFlapRef} />, modalExtraRightElement)
     ) : (
@@ -101,6 +111,7 @@ export const Panel: FunctionComponent = () => {
                 </div>
             </section>
             {hasFlapPanel && flapContainerComponent}
+            {isViewConfigActive && viewSettingsContainerComponent}
         </>
     );
 };

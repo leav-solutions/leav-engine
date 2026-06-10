@@ -1,4 +1,6 @@
 import {type Override} from '@leav/utils';
+import type * as z from 'zod/v4';
+import {type ViewSettingsTabSchema} from '_ui/hooks/usePanelMessenger/schema';
 import {
     type AttributePropertiesFragment,
     type PropertyValueFragment,
@@ -74,7 +76,7 @@ export type DefaultViewSettings = Override<
 
 export type SerializedView = DefaultViewSettings;
 
-export type ViewConfigTab = 'display' | 'filters' | 'sorts' | 'catalogue';
+export type ViewSettingsShortcuts = z.infer<typeof ViewSettingsTabSchema>;
 
 export type FiltersChangePayload = {
     filters: UIFilter[];

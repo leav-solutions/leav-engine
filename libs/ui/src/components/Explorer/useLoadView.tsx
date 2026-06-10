@@ -1,17 +1,23 @@
 import {useExplorerAttributesLazyQuery, useMeQuery} from '_ui/_gqlTypes';
-import {useRef} from 'react';
-import {useViewSettingsContext} from './manage-view-settings/store-view-settings/useViewSettingsContext';
+import {type Dispatch, useRef} from 'react';
 import {type IUserView} from './_types';
 import {useEditSettings, ViewSettingsActionTypes} from './manage-view-settings';
 import {mapViewTypeFromExplorerToLegacy, mapViewTypeFromLegacyToExplorer} from './_constants';
-import {type IViewSettingsActionLoadViewPayload} from './manage-view-settings/store-view-settings/viewSettingsReducer';
-import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
-import {FiltersActionTypes} from '_ui/components/Filters/context/filtersReducer';
+import {
+    type IViewSettingsAction,
+    type IViewSettingsActionLoadViewPayload,
+    type IViewSettingsState,
+} from './manage-view-settings/store-view-settings/viewSettingsReducer';
+import {FiltersActionTypes, type UIFiltersAction} from '_ui/components/Filters/context/filtersReducer';
 import {type ValidFilter} from '../Filters/_types';
 
-export const useLoadView = () => {
-    const {view, dispatch} = useViewSettingsContext();
-    const {dispatch: filtersDispatch} = useFiltersContext();
+interface IUseLoadViewArgs {
+    view: IViewSettingsState;
+    viewSettingsDispatch: Dispatch<IViewSettingsAction>;
+    filtersDispatch: Dispatch<UIFiltersAction>;
+}
+
+export const useLoadView = ({view, viewSettingsDispatch, filtersDispatch}: IUseLoadViewArgs) => {
     const {closeSettingsPanel} = useEditSettings();
     const currentView = useRef<IUserView | null>(null);
 
@@ -74,7 +80,7 @@ export const useLoadView = () => {
                 })),
             };
 
-            dispatch({
+            viewSettingsDispatch({
                 type: ViewSettingsActionTypes.LOAD_VIEW,
                 payload: viewSettings,
             });

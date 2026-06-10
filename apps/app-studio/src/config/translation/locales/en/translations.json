@@ -98,6 +98,31 @@
         "delete_link": "Delete this link?",
         "delete_link_description": "You are about to delete this link."
     },
+    "view_settings": {
+        "tab": {
+            "display": "Display",
+            "filters": "Filters",
+            "sorts": "Sorts",
+            "views": "Catalog"
+        },
+        "my-views": "My views",
+        "my-views-empty": "No personal view yet",
+        "shared-views": "Views shared with me",
+        "shared-views-empty": "No shared view yet",
+        "copy-id": "Copy view ID",
+        "copy-id-disabled": "Share the view to be able to copy its ID",
+        "id-copied": "View ID copied",
+        "current-view": {
+            "title": "Current view",
+            "label-placeholder": "Unnamed view",
+            "shared": "Shared",
+            "close": "Close",
+            "save": "Save",
+            "clone": "Duplicate view",
+            "delete": "Delete view"
+        },
+        "pin": "Pin as shortcut"
+    },
     "error": {
         "title": "Error loading data",
         "description": "A technical error has occurred, please reload the page. If the error persists, please contact the Aristid support.",

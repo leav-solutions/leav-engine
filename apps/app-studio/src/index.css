@@ -1,3 +1,8 @@
 #edit-record-modal-header-container-buttons button:not(#edit-record-side-bar-toggle-button) {
     display: none;
 }
+
+/* TODO[DS-485]: remove this workaround once KitSpace exposes a full-width prop (block/fullWidth). */
+.full-width {
+    width: 100%;
+}

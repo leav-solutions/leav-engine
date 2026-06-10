@@ -2,9 +2,12 @@ import {forwardRef, type ReactNode, useImperativeHandle, useMemo} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSnackBarProvider, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
-import {Loading} from '_ui/components/Loading';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {Loading} from '_ui/components/Loading';
 import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {useFiltersReducer} from '_ui/components/Filters/context/useFiltersReducer';
+import {FiltersContext} from '_ui/components/Filters/context/filtersContext';
+import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
 import {
     type DefaultViewSettings,
     type Entrypoint,
@@ -12,18 +15,24 @@ import {
     type IItemAction,
     type IMassActions,
     type IPrimaryAction,
-    type ViewConfigTab,
+    type SerializedView,
+    type ViewSettingsShortcuts,
 } from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
 import {DataView} from './DataView';
 import {ExplorerTitle} from './ExplorerTitle';
 import {ExplorerToolbar} from './ExplorerToolbar';
 import {useEditStatusItemAction} from './actions-item/useEditStatusItemAction';
+import {useReplaceItemAction} from './actions-item/useReplaceItemAction';
 import {usePrimaryActionsButton} from './actions-primary/usePrimaryActions';
 import {useCreatePrimaryAction} from './actions-primary/useCreatePrimaryAction';
 import {useLinkPrimaryAction} from './actions-primary/useLinkPrimaryAction';
 import {useMassActions} from './actions-mass/useMassActions';
 import {useDeactivateMassAction} from './actions-mass/useDeactivateMassAction';
+import {useDeleteLinkValues} from './actions-mass/useDeleteLinkValues';
+import {useExportMassAction} from './actions-mass/useExportMassAction';
+import {useEditAttributeMassAction} from './actions-mass/useEditAttributeMassAction';
+import {useGeneratePreviewsMassAction} from './actions-mass/useGeneratePreviewsMassAction';
 import {
     defaultPageSizeOptions,
     SidePanel,
@@ -31,20 +40,13 @@ import {
     useOpenViewSettings,
     ViewSettingsContext,
 } from './manage-view-settings';
+import {useOpenViewSettingsV2} from './manage-view-settings-v2/useOpenViewSettingsV2';
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {MASS_SELECTION_ALL, SNACKBAR_MASS_ID} from './_constants';
-import {useDeleteLinkValues} from './actions-mass/useDeleteLinkValues';
-import {useReplaceItemAction} from './actions-item/useReplaceItemAction';
-import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
-import {useFiltersReducer} from '_ui/components/Filters/context/useFiltersReducer';
-import {FiltersContext} from '_ui/components/Filters/context/filtersContext';
-import {useExportMassAction} from './actions-mass/useExportMassAction';
-import {useEditAttributeMassAction} from './actions-mass/useEditAttributeMassAction';
 import {useExplorerCountData} from './_queries/useExplorerCountData';
-import {useGeneratePreviewsMassAction} from './actions-mass/useGeneratePreviewsMassAction';
-import {useNotifyFiltersChange} from './useNotifyFiltersChange';
+import {useLoadViewById} from './useLoadViewById';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -107,9 +109,16 @@ export interface IExplorerProps {
             export?: IMassActions['callback'];
             generatePreviews?: IMassActions['callback'];
         };
-        viewConfig?: {
+        viewSettings?: {
             onFiltersChange?: (payload: FiltersChangePayload) => void;
-            onViewConfigTabClick?: (tab: ViewConfigTab) => void;
+            onViewSettingsShortcutClick?: ({
+                settingName,
+                viewId,
+            }: {
+                settingName: ViewSettingsShortcuts;
+                viewId: string;
+            }) => void;
+            closeViewSettings?: () => void;
         };
     };
     showCreateOnNoResultOnly?: boolean;
@@ -131,6 +140,10 @@ export interface IExplorerProps {
     tableBodyHeight?: string;
     creationFormId?: string;
     joinLibraryContext?: JoinLibraryContextFragment;
+
+    // ViewConfig specific props
+    currentView?: SerializedView;
+    loadedViewId?: string | null;
 }
 
 export interface IExplorerRef {
@@ -170,18 +183,20 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             defaultCallbacks,
             defaultViewSettings,
             joinLibraryContext,
+            currentView,
+            loadedViewId,
         },
         ref,
     ) => {
         const {t} = useSharedTranslation();
 
-        const {panelElement: settingsPanelElement} = useEditSettings();
+        const {panelElement: settingsPanelElement} = useEditSettings(); // TODO: should be conditional due to can be manager via app-studio only
 
         const {
             loading: viewSettingsLoading,
             view,
             dispatch: viewSettingsDispatch,
-        } = useViewSettingsReducer(entrypoint, defaultViewSettings, ignoreViewByDefault);
+        } = useViewSettingsReducer(entrypoint, defaultViewSettings, ignoreViewByDefault); // TODO: load all views, why should viewConfigPanel have to do it too? Can they communicate with each other (context)?
 
         const {filtersData, dispatch: filtersDispatch} = useFiltersReducer({
             libraryId: view.libraryId,
@@ -192,11 +207,12 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             skip: viewSettingsLoading,
         });
 
-        useNotifyFiltersChange({
+        useLoadViewById({
+            loadedViewId,
             isLoading: viewSettingsLoading,
-            filters: filtersData.filters,
-            filtersOperator: filtersData.filtersOperator,
-            onFiltersChange: defaultCallbacks?.viewConfig?.onFiltersChange,
+            view,
+            viewSettingsDispatch,
+            filtersDispatch,
         });
 
         const {currentPage, setNewPageSize, setNewPage} = usePagination(viewSettingsDispatch);
@@ -355,6 +371,13 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             hideFirstActionLabel,
         });
 
+        const {viewSettingsShortcutsButtons} = useOpenViewSettingsV2({
+            isEnabled: defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick !== undefined,
+            view: view as any,
+            open: !isMassSelectionAll,
+            closeViewSettings: defaultCallbacks?.viewSettings?.closeViewSettings,
+            onViewSettingsShortcutClick: defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick,
+        });
         const {viewSettingsButton, viewListButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
 
         const {searchInput} = useSearchInput({view, dispatch: viewSettingsDispatch, setNewPage});
@@ -398,9 +421,16 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                 selectAllButton={hideSelectAllAction ? null : selectAllButton}
                                 viewSettingsLoading={viewSettingsLoading}
                             >
-                                {view?.enableConfigureView ? viewListButton : null}
+                                {view?.enableConfigureView &&
+                                defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick === undefined // TODO: can be refactored into a constant
+                                    ? viewListButton
+                                    : null}
                                 {showSearch ? searchInput : null}
-                                {view?.enableConfigureView ? viewSettingsButton : null}
+                                {view?.enableConfigureView &&
+                                defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick === undefined // TODO: can be refactored into a constant
+                                    ? viewSettingsButton
+                                    : null}
+                                {view?.enableConfigureView && viewSettingsShortcutsButtons}
                                 {hidePrimaryActions ? null : primaryButton}
                             </ExplorerToolbar>
                             {loadingData || viewSettingsLoading ? (

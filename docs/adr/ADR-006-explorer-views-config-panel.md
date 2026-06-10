@@ -1,4 +1,4 @@
-# Explorer — View Configuration Panel Architecture
+# Explorer — View Settings Panel Architecture
 
 Date: 01/06/2026
 
@@ -20,96 +20,125 @@ The goal is to introduce a **two-level view model**:
 - **User level** — starting from a shared view, personalizes their own display and can save to a
   **personal view**, an independent clone of the original shared view.
 
-The view configuration panel is rendered as an **overlay** on top of the current Explorer panel
-(not below it, not pushing content). It communicates in real time with the associated Explorer
-panel in both directions.
+The view settings panel (`PanelViewSettings`, wrapped in app-studio by `ViewSettingsContainer`) is
+rendered as an **overlay** (`KitSidePanel`) on top of the current Explorer panel (not below it, not
+pushing content). It communicates in real time with the associated Explorer panel in both
+directions.
 
 ## Decisions
 
-### 1. State via search params, not a dedicated route segment
+### 1. State in the application settings context, not search params or a route segment
 
-The open/closed state and the data needed by the panel (`targetPanelId`, `libraryId`, active tab)
-are carried by the current URL's search params (`vcTargetPanelId`, `vcLibraryId`, `vcTab`).
+The open/closed state and the data needed by the panel (`isViewSettingsActive`, `selectedTab`,
+`currentViewId`, `targetLibraryId`) are stored **on the panel itself** inside the in-memory
+application settings (the parsed JSON config exposed by `useApplicationSettingsContext`). They are
+mutated via `setApplication`, through the `updatePanelViewSettingsInApplication` helper.
 
-**Why:** no impact on existing route matching; closing is trivial (remove the params); only one
-panel open at a time is guaranteed; natural coexistence with the flap (path) and the record panel
-(path). The URL is **not** intended to be shareable for this state — intentional behavior.
+`selectedTab` is typed as `ViewSettingsTab` (`display | filters | sorts | catalog`). The
+whole feature is gated by an Application-level flag `enableViewSettings` (zod-optional boolean):
+app-studio only wires the callbacks and renders the panel when it is `true`. On the Explorer side,
+the shortcut buttons are gated by `view.enableConfigureView`.
 
-Special case: when the Explorer is in slider mode, opening the view config panel must first
-navigate to the fullpage version of the same panel, then set the search params. This logic lives
-in `useViewConfigSearchParams.openViewConfig`, not in the calling component.
+Opening the panel goes through the inter-panel messenger (`usePanelEventHandlers`): a shortcut
+click on the Explorer dispatches an `open-view-settings` event whose handler flips
+`isViewSettingsActive` to `true` on the target panel. Closing (`KitSidePanel.onCloseAfterAnimation`)
+resets these fields to their inactive values (`isViewSettingsActive: false`, the rest `undefined`),
+via `resetViewSettings`.
+
+**Why:** the panel state is intrinsically tied to a panel of the current config, so it lives with
+the rest of the panel state rather than being duplicated in the URL. Only one panel open at a time
+is naturally guaranteed; this state is **not** intended to be shareable via the URL — intentional
+behavior. An earlier design carried this state in URL search params (`vcTargetPanelId`,
+`vcLibraryId`, `vcTab`) with a dedicated `useViewConfigSearchParams` hook; this was dropped in
+favor of the application-settings context.
 
 ### 2. Inter-panel communication via `message-to-panel`, not a shared React context or store
 
-Communication between the Explorer and the view config panel uses the existing
-`message-to-panel` infrastructure in `libs/ui/src/hooks/useIFrameMessenger/`, which works
-uniformly for native React panels and iframes. App-studio acts as the broker.
+Communication between the Explorer and the view settings panel uses the existing
+`message-to-panel` infrastructure in `libs/ui/src/hooks/usePanelMessenger/`, which works
+uniformly for native React panels and iframes. App-studio acts as the broker. The messenger
+registers handlers per event type as a `Set`, so several panels can subscribe to the same event
+type concurrently.
 
 **Why:** when Planning/Cadrage sub-panels (iframes) arrive, the communication protocol will not
 need to change. A shared in-memory store would not work across iframes. An approach of
 "re-fetch the view from the backend" was explicitly rejected: the view may be in an unsaved state,
 so the serialized view must be transmitted directly in memory.
 
-Two message types:
+App-studio-internal event types (`AppStudioInternalEvent`, dispatched via the messenger):
 
-- `view-config-update` (viewConfig → Explorer): sends the current view as JSON on each change
-- `explorer-view-changed` (Explorer → viewConfig): notifies when filters are modified directly
-  from the Explorer toolbar
+- `open-view-settings` (Explorer → view settings panel): a shortcut click opens the panel on the
+  target tab; carries `selectedTab`, `currentViewId`, `currentLibraryId` and `explorerPanelDetails`
+- `view-settings-select-view` (view settings catalog → Explorer): selects a saved view by id,
+  driving the Explorer's `loadedViewId`
+
+Notifying the panel of a filter change from the Explorer toolbar (`onFiltersChange`) is wired as a
+callback but the dispatch is still a TODO.
 
 ### 3. Explorer exposes generic callbacks — it does not know app-studio
 
-The Explorer does not reference app-studio, the messenger, or the view config panel. It exposes
-optional callbacks that app-studio wires up:
+The Explorer does not reference app-studio, the messenger, or the view settings panel. It exposes
+optional callbacks under `defaultCallbacks.viewSettings` that app-studio wires up:
 
-- `defaultCallbacks.viewConfig.onFiltersChange` — notifies the outside world of a filter change
-  from the Explorer toolbar
-- `defaultCallbacks.viewConfig.onViewConfigTabClick` — shortcut to a specific tab of the view
-  config panel
+- `onViewSettingsShortcutClick({settingName, viewId})` — a shortcut click on the Explorer toolbar
+  requesting the view settings panel to open on a given tab (`settingName: ViewSettingsTab`)
+- `onFiltersChange` — notifies the outside world of a filter change from the Explorer toolbar
+- `closeViewSettings` — lets the outside world close the panel
+
+The presence of `onViewSettingsShortcutClick` is what toggles the Explorer between its legacy
+in-place view settings button and the new shortcut buttons (`useOpenViewSettingsV2`).
 
 **Why:** the Explorer must remain usable outside the panel system (e.g. AMP). All new props and
 callbacks added to Explorer **must remain optional** (`?:`).
 
-### 4. `currentView` controlled prop + `APPLY_SERIALIZED_VIEW` reducer action
+### 4. Controlled props to drive the Explorer after mount: `currentView` + `loadedViewId`
 
-When the view config panel sends a `view-config-update` message, app-studio updates a `currentView`
-prop on the Explorer. The Explorer reacts to changes of this prop by dispatching
-`APPLY_SERIALIZED_VIEW` to its internal reducer, replacing the current state without a backend
-round-trip and flagging `viewModified: true`.
+`defaultViewSettings` is read only once at initialization — dynamic updates after mount are
+silently ignored. Two optional controlled props let an external panel drive the Explorer after
+mount, each for a different need:
 
-**Why:** `defaultViewSettings` is read only once at initialization — dynamic updates after mount
-are silently ignored. A dedicated action is needed to apply an externally driven view without
-conflicting with the existing `viewId`-based loading flow.
+- `currentView` (serialized, in-memory view) + the `APPLY_SERIALIZED_VIEW` reducer action: applies
+  an externally driven, possibly unsaved view, replacing the current state **without** a backend
+  round-trip. Foundational for the live view settings editing flow.
+- `loadedViewId` (saved view id) + the `useLoadViewById` hook: drives the Explorer to a **saved**
+  view by id (via `useLoadView`, a backend load). Used by the catalog tab. Semantics: `undefined`
+  = parent does not drive (internal `SavedViews` UI keeps control), `null` = load the default view,
+  `'X'` = load saved view `X`; no-ops while bootstrapping or when already on that view.
+
+**Why:** a dedicated action/prop is needed to apply an externally driven view without conflicting
+with the existing `viewId`-based loading flow read at mount.
 
 ### 5. `targetPanelId` rather than `explorerPanelId`
 
-The `viewConfig` panel schema uses `targetPanelId` (generic) instead of `explorerPanelId`.
+The view settings panel schema uses `targetPanelId` (generic) instead of `explorerPanelId`.
 
-**Why:** when injectable sub-panels (Planning/Cadrage) arrive, the view config panel will need
+**Why:** when injectable sub-panels (Planning/Cadrage) arrive, the view settings panel will need
 to target `custom` (iframe) panels too, not just `explorer` panels. The generic name avoids a
 rename at that point.
 
 ## Consequences
 
-- A `viewConfigPanelSchema` is added to the panel schema union in app-studio; it is **not** a
-  routable panel type and is not rendered inside `PanelContent`.
-- `PanelViewConfig` is rendered in the layout parent (the level that already manages the flap),
-  conditioned on the presence of `vcTargetPanelId` + `vcLibraryId` in the URL.
-- The `APPLY_SERIALIZED_VIEW` action and the `currentView` prop are foundational — nothing else
-  in this EPIC can be built without them.
+- The view settings state lives as extra fields on the existing `explorer` panel schema in
+  app-studio (`isViewSettingsActive`, `selectedTab`, `currentViewId`, `targetLibraryId`); it is
+  **not** a separate routable panel type and is not rendered inside `PanelContent`.
+- `ViewSettingsContainer` (wrapping `PanelViewSettings`) is rendered by `Panel`, conditioned on
+  `currentPanel.isViewSettingsActive` being `true` for an `explorer` panel.
+- The `APPLY_SERIALIZED_VIEW` action and the `currentView` / `loadedViewId` props are foundational
+  — nothing else in this EPIC can be built without them.
+- The whole feature is behind the `enableViewSettings` Application flag; with it off, app-studio
+  wires no callbacks and the Explorer keeps its legacy view settings button.
 - AMP consumers of `@leav/ui` are unaffected: all new Explorer props are optional and AMP can
   ignore them without modification.
-- The `RedirectViewConfigPanelToSlider` guard is removed — its logic moves into
-  `useViewConfigSearchParams.openViewConfig`.
 - Injectable sub-panels (Planning/Cadrage) are explicitly **out of scope** for this version. The
   integration strategy (iframe vs. other) is not yet settled. See open points below.
 
 ## Open points
 
-| Subject                                     | Status                                                          |
-| ------------------------------------------- | --------------------------------------------------------------- |
-| Feature flag activation                     | To introduce at the start of the EPIC, removed at the end       |
-| Admin/user permission check                 | Direct GraphQL call on `libraryId` from `PanelViewConfig`       |
-| View persistence endpoint (GraphQL or REST) | To confirm                                                      |
-| Injectable sub-panels (Planning/Cadrage)    | Out of scope — strategy not yet settled                         |
-| AMP compatibility (not on app-studio)       | Blocking for AMP → app-studio migration — to validate w/ Sam    |
-| Shared view scope                           | Currently global; per-group sharing planned for a later version |
+| Subject                                     | Status                                                                                                 |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Feature flag activation                     | Implemented as `enableViewSettings` (Application schema); to remove at the end of the EPIC             |
+| Admin/user permission check                 | Direct GraphQL call on `libraryId` from `PanelViewSettings` (`getPermissionEditViewOnLibrary.graphql`) |
+| View persistence endpoint (GraphQL or REST) | To confirm                                                                                             |
+| Injectable sub-panels (Planning/Cadrage)    | Out of scope — strategy not yet settled                                                                |
+| AMP compatibility (not on app-studio)       | Blocking for AMP → app-studio migration — to validate w/ Sam                                           |
+| Shared view scope                           | Currently global; per-group sharing planned for a later version                                        |

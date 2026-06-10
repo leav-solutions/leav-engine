@@ -1,5 +1,6 @@
 import {type FunctionComponent} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
 import {
     Explorer,
     ThroughConditionFilter,
@@ -8,18 +9,18 @@ import {
     useLang,
     useValuesCacheUpdate,
 } from '@leav/ui';
-import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
-import {mapToCommonExplorerProps} from './mapperToCommonExplorerProps';
-import {mapperToItemActions} from './mapperToItemActions';
-import {type ItemActions, type ExplorerProps} from '../../types';
-import {AttributeType, RecordFilterCondition} from '../../../../__generated__';
-import {explorerContainer} from './panelExplorer.module.css';
 import {faTrash} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {type IItemData} from '_ui/components/Explorer/_types';
 import {useDeactivateRecordsMutation, useDeleteValueMutation} from '_ui/_gqlTypes';
+import {type IItemData} from '_ui/components/Explorer/_types';
 import {BREAK_TWO_LINES} from '_ui/constants';
-import {useTranslation} from 'react-i18next';
+import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
+import {type ItemActions, type ExplorerProps} from '../../types';
+import {AttributeType, RecordFilterCondition} from '../../../../__generated__';
+import {mapToCommonExplorerProps} from './mapperToCommonExplorerProps';
+import {mapperToItemActions} from './mapperToItemActions';
+import {useViewSettingsProps} from './useViewSettingsProps';
+import {explorerContainer} from './panelExplorer.module.css';
 
 interface IPanelExplorerProps {
     libraryIdSource: string;
@@ -46,6 +47,8 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
     const {lang} = useLang();
     const {t} = useTranslation();
     const navigate = useNavigate();
+
+    const viewSettingsProps = useViewSettingsProps();
 
     const updateValuesCache = useValuesCacheUpdate();
     const {saveValues} = useExecuteSaveValueBatchMutation();
@@ -154,7 +157,9 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
                 defaultActionsForItem={[]}
                 itemActions={itemActions}
                 defaultMassActions={['editAttribute', 'export']}
+                {...viewSettingsProps}
                 defaultCallbacks={{
+                    ...viewSettingsProps.defaultCallbacks,
                     primary: {
                         create: ({recordIdCreated}) =>
                             // TODO: should be deleted when explorer used panels instead of modal form

@@ -1,0 +1,49 @@
+.sectionTitle {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+}
+
+/* Neutralize the heading's default bottom margin so the badge aligns on the text optical center. */
+.sectionTitle .heading {
+    margin-bottom: 0;
+}
+
+.emptyBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--general-utilities-border);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+    background: var(--general-utilities-neutral-light);
+    color: var(--general-colors-neutral-grey-400);
+    text-align: center;
+}
+
+.viewItem {
+    height: 48px;
+}
+
+.isCurrentView {
+    background-color: var(--general-colors-primary-50);
+    border: 1px solid var(--general-colors-primary-400);
+}
+
+.iconBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--general-height-m) * 1px);
+    height: calc(var(--general-height-m) * 1px);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+    background-color: var(--general-colors-primary-50);
+}
+
+.primaryIcon {
+    color: var(--general-colors-primary-300);
+}
+
+.emptyBadge {
+    --components-Badge-colors-background-default: var(--general-utilities-neutral-light);
+    --components-Badge-colors-typography-default: var(--general-utilities-text-primary);
+}

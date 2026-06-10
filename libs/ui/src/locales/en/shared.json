@@ -799,6 +799,12 @@
         "delete_link_one": "Delete this link?",
         "delete_link_other": "Delete these links?",
         "delete_link_description_one": "You are about to delete this link.",
-        "delete_link_description_other": "You are about to delete these links."
+        "delete_link_description_other": "You are about to delete these links.",
+        "viewSettings": {
+            "display": "Display",
+            "filters": "Filters",
+            "sorts": "Sorts",
+            "catalog": "Catalog"
+        }
     }
 }
