@@ -7,6 +7,7 @@ import {localizedTranslation} from '@leav/utils';
 import {useLang} from '_ui/hooks';
 import {ViewActionsButtons} from '../manage-view-settings/save-view/ViewActionsButtons';
 import {useLoadView} from '../useLoadView';
+import {useFiltersContext} from '_ui/components/Filters/useFiltersContext';
 import {type Radio} from 'antd';
 import {useMeQuery} from '_ui/_gqlTypes';
 import {useDeleteView} from '../manage-view-settings/save-view/useDeleteView';
@@ -77,8 +78,9 @@ const StyledCopySpan = styled.span`
 export const SavedViews: FunctionComponent = () => {
     const {t} = useSharedTranslation();
     const {availableLangs} = useLang();
-    const {view} = useViewSettingsContext();
-    const {loadView} = useLoadView();
+    const {view, dispatch: viewSettingsDispatch} = useViewSettingsContext();
+    const {dispatch: filtersDispatch} = useFiltersContext();
+    const {loadView} = useLoadView({view, viewSettingsDispatch, filtersDispatch});
     const {iconDelete, deleteModal} = useDeleteView();
     const {iconEditLabel, editViewModal} = useEditLabelView();
 
@@ -130,7 +132,7 @@ export const SavedViews: FunctionComponent = () => {
                                                 await navigator.clipboard.writeText(viewItem.id || '');
                                                 KitNotification.info({
                                                     message: `Id : ${viewItem?.id}`,
-                                                    description: t('explorer.viewList.copied'),
+                                                    description: String(t('explorer.viewList.copied')),
                                                     duration: INFO_NOTIFICATION_DURATION,
                                                     closable: true,
                                                 });
@@ -169,7 +171,7 @@ export const SavedViews: FunctionComponent = () => {
                                                     await navigator.clipboard.writeText(viewItem.id || '');
                                                     KitNotification.info({
                                                         message: `Id : ${viewItem?.id}`,
-                                                        description: t('explorer.viewList.copied'),
+                                                        description: String(t('explorer.viewList.copied')),
                                                         duration: INFO_NOTIFICATION_DURATION,
                                                         closable: true,
                                                     });

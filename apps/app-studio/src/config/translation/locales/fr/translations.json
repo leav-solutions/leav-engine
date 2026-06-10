@@ -98,6 +98,31 @@
         "delete_link": "Supprimer ce lien ?",
         "delete_link_description": "Vous êtes sur le point de supprimer ce lien."
     },
+    "view_settings": {
+        "tab": {
+            "display": "Affichage",
+            "filters": "Filtres",
+            "sorts": "Tris",
+            "views": "Catalogue"
+        },
+        "my-views": "Mes vues",
+        "my-views-empty": "Aucune vue personnelle",
+        "shared-views": "Vues partagées avec moi",
+        "shared-views-empty": "Aucune vue partagée",
+        "copy-id": "Copier l’identifiant de la vue",
+        "copy-id-disabled": "Partagez la vue pour pouvoir copier son identifiant",
+        "id-copied": "Identifiant de la vue copié",
+        "current-view": {
+            "title": "Vue courante",
+            "label-placeholder": "Vue sans nom",
+            "shared": "Partagée",
+            "close": "Fermer",
+            "save": "Enregistrer",
+            "clone": "Dupliquer la vue",
+            "delete": "Supprimer la vue"
+        },
+        "pin": "Épingler comme raccourci"
+    },
     "error": {
         "title": "Erreur de chargement des données",
         "description": "Une erreur technique est survenue, veuillez recharger la page s'il vous plaît. Si l'erreur persiste, veuillez contacter le support Aristid.",

@@ -31,6 +31,7 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
     const {view} = useViewSettingsContext();
     const {sort} = view;
 
+    // TODO: modify to use app-studio
     const {openSettingsPanel} = useOpenViewSettings({view, isEnabled: true});
     const {filtersProps} = useFilters(!canRemoveFilters);
 

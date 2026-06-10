@@ -33,6 +33,7 @@ logs
 !test-apps/logs
 *.log
 /.gitlab-ci-local/
+tmp/
 
 ### MacOS ###
 *.DS_STORE

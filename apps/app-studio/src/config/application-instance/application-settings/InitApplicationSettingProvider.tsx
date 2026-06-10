@@ -1,12 +1,13 @@
 import {type FunctionComponent, useEffect, useState} from 'react';
 import {type $ZodIssue} from 'zod/v4/core';
 import {useTranslation} from 'react-i18next';
-import {ErrorDisplay, Loading} from '@leav/ui';
+import {ErrorDisplay, Loading, usePanelEventHandlers} from '@leav/ui';
 import {useGetApplicationDataByEndpointQuery} from '../../../__generated__';
-import {type Application} from '../../../modules/ApplicationRouting/types';
+import {type Application, type AppStudioInternalEvent} from '../../../modules/ApplicationRouting/types';
 import {ApplicationSchema} from '../../../modules/ApplicationRouting/schema';
 import {APP_ENDPOINT} from '../../../constants';
 import {ApplicationSettingsContext} from './ApplicationSettingsContext';
+import {updatePanelViewSettingsInApplication} from '../../../modules/ApplicationRouting/utils/updatePanelViewSettingsInApplication';
 
 export const InitApplicationSettingProvider: FunctionComponent = ({children}) => {
     const {t} = useTranslation();
@@ -36,6 +37,19 @@ export const InitApplicationSettingProvider: FunctionComponent = ({children}) =>
             setApplication(result.data);
         }
     }, [currentApp?.appStudioSettings, setApplication, setParsingErrors]);
+
+    usePanelEventHandlers<AppStudioInternalEvent>({
+        'open-view-settings': ({currentLibraryId, currentViewId, explorerPanelDetails, selectedTab}) => {
+            setApplication(prev =>
+                updatePanelViewSettingsInApplication(prev, explorerPanelDetails, {
+                    isViewSettingsActive: true,
+                    selectedTab,
+                    currentViewId,
+                    targetLibraryId: currentLibraryId,
+                }),
+            );
+        },
+    });
 
     if (loading) {
         return <Loading />;

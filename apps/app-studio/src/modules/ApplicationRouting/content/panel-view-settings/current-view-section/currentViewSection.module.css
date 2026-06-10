@@ -1,0 +1,29 @@
+.currentView {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-s) * 1px);
+    padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px)
+        calc(var(--general-spacing-m) * 1px);
+    background: var(--general-utilities-neutral-light);
+}
+
+.header,
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.shared {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+}
+
+.actionButtons {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xxs) * 1px);
+}

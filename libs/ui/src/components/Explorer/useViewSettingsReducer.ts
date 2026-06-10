@@ -23,6 +23,12 @@ import {
 const _areDifferents = <T extends object>(object1: T, object2: T) =>
     Object.keys(object1).some(key => object1[key] !== object2[key]);
 
+const _removeUndefinedValues = (defaultViewSettings: DefaultViewSettings): DefaultViewSettings =>
+    Object.entries(defaultViewSettings).reduce(
+        (acc, [key, value]) => (value !== undefined ? {...acc, [key]: value} : acc),
+        {},
+    );
+
 export const useViewSettingsReducer = (
     entrypoint: Entrypoint,
     defaultViewSettings: DefaultViewSettings = {},
@@ -114,7 +120,7 @@ export const useViewSettingsReducer = (
     const attributesToHydrate = [
         ...new Set(
             [
-                ...(preparedDefaultFilters ?? []),
+                ...(preparedDefaultFilters ?? []), // FIXME: can be set with viewId too?
                 ...(defaultViewSettings.sort ?? []),
                 ...userAttributesToHydrate,
                 ...(defaultViewSettings?.attributesIds?.map(attributeId => ({field: attributeId})) ?? []),
@@ -188,7 +194,7 @@ export const useViewSettingsReducer = (
                 libraryId,
                 ...viewProps,
                 savedViews,
-                ...defaultViewSettings,
+                ..._removeUndefinedValues(defaultViewSettings),
                 attributesIds: defaultAttributesIds.length > 0 ? defaultAttributesIds : userViewAttributesIds,
                 sort: (defaultSorts.length > 0 ? defaultSorts : userViewSorts)
                     .map(s => ({

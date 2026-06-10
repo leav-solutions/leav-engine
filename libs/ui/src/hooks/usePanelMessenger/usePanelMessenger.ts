@@ -52,11 +52,17 @@ export const usePanelMessenger = (options?: IUsePanelMessengerOptions) => {
         };
     };
 
-    const internalEventRegistry = useRef<Record<string, InternalEventHandler>>({});
+    const internalEventRegistry = useRef<Record<string, Set<InternalEventHandler>>>({});
     const addInternalEventHandler: AddInternalEventHandler = (type, handler) => {
-        internalEventRegistry.current[type] = handler;
+        if (!internalEventRegistry.current[type]) {
+            internalEventRegistry.current[type] = new Set();
+        }
+        internalEventRegistry.current[type].add(handler);
         return () => {
-            delete internalEventRegistry.current[type];
+            internalEventRegistry.current[type].delete(handler);
+            if (internalEventRegistry.current[type].size === 0) {
+                delete internalEventRegistry.current[type];
+            }
         };
     };
 
@@ -149,11 +155,13 @@ export const usePanelMessenger = (options?: IUsePanelMessengerOptions) => {
                         dispatch(message, target);
                     }
                     break;
+                case 'change-language':
+                    setLang(message.language);
+                    break;
                 default:
-                    if (message.type === 'change-language') {
-                        setLang(message.language);
-                    } else if (internalEventRegistry.current[message.type]) {
-                        internalEventRegistry.current[message.type]((message as unknown as {data: unknown}).data);
+                    if (internalEventRegistry.current[message.type]) {
+                        const eventData = (message as unknown as {data: unknown}).data;
+                        internalEventRegistry.current[message.type].forEach(handler => handler(eventData));
                     } else if (options?.onMessageReceived) {
                         // Singleton mode: delegate routing to the Provider (IFrameMessengerProvider).
                         // The Provider resolves which iframe sent the message and calls the matching handlers.

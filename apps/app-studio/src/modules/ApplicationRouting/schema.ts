@@ -39,6 +39,7 @@ export const ApplicationSchema = z
                 recordPanels: z.array(PanelSchema), // TODO: refine to have at least one creation and one edition panels (when explorer will use panels instead of modal form)
             }),
         ),
+        enableViewSettings: z.boolean().optional(),
     })
     .check(ctx => {
         checkWorkspaceIdsUniqueness(ctx);

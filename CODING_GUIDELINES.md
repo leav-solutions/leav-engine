@@ -260,10 +260,12 @@ Parent/
 
 - **`aristid-ds` is the target design system.** Always prefer its components over creating a custom styled component from scratch.
 - Use **CSS modules** for any custom styling — it is the new target approach.
+- **Import CSS module classes by destructuring the named exports** (`import {className} from './x.module.css'`). Never import the whole module as a default `styles` object (`import styles from ...` then `styles.className`).
 - `styled-components` exists in legacy code — do not add new ones.
 - Never use `semantic-ui-react` for new components — migration only.
 - Avoid inline styles.
 - Always use design system tokens for colors, spacing, typography, etc. No hardcoded values.
+- For user feedback, use `KitAlert` only. Do not use `KitNotification` — the sole exception is long-running tasks, where `KitNotification` is allowed.
 
 ```tsx
 // Bad — styled-components (legacy)
@@ -272,7 +274,11 @@ const DivStyled = styled.div`
     padding: 8px;
 `;
 
-// Good — CSS module
+// Bad — default import of the whole module
+import styles from './styles.module.css';
+<div className={styles.container} />;
+
+// Good — CSS module, destructured named import
 // styles.module.css
 // .container { color: var(--my-token); }
 import {container} from './styles.module.css';

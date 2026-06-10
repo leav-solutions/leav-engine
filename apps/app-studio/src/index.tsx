@@ -21,17 +21,17 @@ export const Index: FunctionComponent = () => (
                 <InitTheme>
                     <InitNotificationsSubscription>
                         <InitRouting>
-                            <InitApplicationSettingProvider>
-                                <InitDocumentTitle>
-                                    <GuardAccess>
-                                        <InitLayout>
-                                            <PanelMessengerProvider>
+                            <PanelMessengerProvider>
+                                <InitApplicationSettingProvider>
+                                    <InitDocumentTitle>
+                                        <GuardAccess>
+                                            <InitLayout>
                                                 <InitApplicationRouter />
-                                            </PanelMessengerProvider>
-                                        </InitLayout>
-                                    </GuardAccess>
-                                </InitDocumentTitle>
-                            </InitApplicationSettingProvider>
+                                            </InitLayout>
+                                        </GuardAccess>
+                                    </InitDocumentTitle>
+                                </InitApplicationSettingProvider>
+                            </PanelMessengerProvider>
                         </InitRouting>
                     </InitNotificationsSubscription>
                 </InitTheme>

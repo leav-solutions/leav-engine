@@ -1,0 +1,10 @@
+query GetPermissionEditViewOnLibrary($libraryId: ID!) {
+    libraries(filters: {id: [$libraryId]}) {
+        list {
+            id
+            permissions {
+                admin_library
+            }
+        }
+    }
+}

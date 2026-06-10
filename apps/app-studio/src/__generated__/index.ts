@@ -467,18 +467,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -581,8 +569,6 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -1079,8 +1065,6 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -1205,17 +1189,6 @@ export type Logs = {
   total: Scalars['Int']['output'];
 };
 
-export type MoveThematicResultThematic = {
-  id: Scalars['ID']['output'];
-  id_value: Scalars['ID']['output'];
-  originalId: Scalars['ID']['output'];
-};
-
-export type MoveThematicsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  thematics?: Maybe<Array<MoveThematicResultThematic>>;
-};
-
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -1252,15 +1225,11 @@ export type Mutation = {
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
-  initRenewCampaigns: Scalars['String']['output'];
-  moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
-  removeCampaigns: RemoveCampaignsResult;
-  removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1281,7 +1250,6 @@ export type Mutation = {
   treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
   updateAutomationRule: AutomationRule;
-  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   updateViewV2: ViewV2;
   upload: Array<UploadData>;
@@ -1447,21 +1415,6 @@ export type MutationIndexRecordsArgs = {
 };
 
 
-export type MutationInitRenewCampaignsArgs = {
-  campaigns: Array<CampaignToRenew>;
-  fromPacId: Scalars['String']['input'];
-  redirectUrl: Scalars['String']['input'];
-  toPacId: Scalars['String']['input'];
-};
-
-
-export type MutationMoveOrCopyCampaignThematicsArgs = {
-  moveThematic: Scalars['Boolean']['input'];
-  thematics: Array<ThematicToRenew>;
-  toCampaignId: Scalars['String']['input'];
-};
-
-
 export type MutationPostDiscussionCommentArgs = {
   comment?: InputMaybe<DiscussionCommentInput>;
 };
@@ -1480,16 +1433,6 @@ export type MutationPurgeMultipleValuesArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
-};
-
-
-export type MutationRemoveCampaignsArgs = {
-  campaignsIds: Array<Scalars['ID']['input']>;
-};
-
-
-export type MutationRemoveStructureItemsArgs = {
-  structureItemIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1600,11 +1543,6 @@ export type MutationTreeMoveElementArgs = {
 
 export type MutationUpdateAutomationRuleArgs = {
   rule: UpdateAutomationRuleInput;
-};
-
-
-export type MutationUpdateCampaignsDatesArgs = {
-  campaigns: Array<CampaignToUpdateDates>;
 };
 
 
@@ -2282,18 +2220,6 @@ export type RelatedEntity = {
   url: Scalars['String']['output'];
 };
 
-export type RenewCampaignResultThematic = {
-  id: Scalars['ID']['output'];
-  id_value: Scalars['ID']['output'];
-  thematic_id: Scalars['ID']['output'];
-};
-
-export type SaveCampaignsDatesResult = {
-  campaign_id: Scalars['ID']['output'];
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<GenericValue>;
-};
-
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -2532,18 +2458,12 @@ export enum TaskType {
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int']['output'];
-};
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
 };
 
 export type Tree = {
@@ -3155,16 +3075,6 @@ export type ViewsV2List = {
   totalCount: Scalars['Int']['output'];
 };
 
-export type RemoveCampaignsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<Scalars['ID']['output']>;
-};
-
-export type RemoveStructureItemsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<Scalars['ID']['output']>;
-};
-
 export type SaveValueBatchResult = {
   errors?: Maybe<Array<ValueBatchError>>;
   values?: Maybe<Array<GenericValue>>;
@@ -3186,6 +3096,63 @@ export type GetUserIdentityQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetUserIdentityQuery = { me?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } }, user_groups: Array<{ payload?: { record: { whoAmI: { label?: string | null } } } | null }> } | null };
+
+export type GetRecordInformationQueryVariables = Exact<{
+  library: Scalars['ID']['input'];
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+}>;
+
+
+export type GetRecordInformationQuery = { records: { list: Array<{ created_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, modified_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, created_at: Array<{ payload?: any | null }>, modified_at: Array<{ payload?: any | null }>, library: { label?: any | null } }> } };
+
+export type PostDiscussionCommentMutationVariables = Exact<{
+  comment: DiscussionCommentInput;
+}>;
+
+
+export type PostDiscussionCommentMutation = { postDiscussionComment: { id: string } };
+
+export type GetUsersQueryVariables = Exact<{
+  query: Scalars['String']['input'];
+  pagination?: InputMaybe<RecordsPagination>;
+}>;
+
+
+export type GetUsersQuery = { records: { list: Array<{ id: string, label: Array<{ payload?: any | null }> }> } };
+
+export type GetThreadStatusOptionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetThreadStatusOptionsQuery = { treeNodeChildren: { list: Array<{ id: string, record: { label: Array<{ payload?: any | null }> } }> } };
+
+export type GetThreadQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  recordId?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type GetThreadQuery = { records: { list: Array<{ permissions: { edit_record: boolean }, threads: Array<{ payload?: { id: string, label: Array<{ payload?: any | null }>, status: Array<{ payload?: { id: string } | null }>, comments: Array<{ payload?: { id: string, content: Array<{ payload?: any | null }>, author: Array<{ payload?: { id: string, name: Array<{ payload?: any | null }> } | null }>, createdAt: Array<{ raw_payload?: any | null }> } | null }> } | null }> }> } };
+
+export type GetViewQueryVariables = Exact<{
+  viewId: Scalars['String']['input'];
+}>;
+
+
+export type GetViewQuery = { view: { id: string, label: any } };
+
+export type GetPermissionEditViewOnLibraryQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+}>;
+
+
+export type GetPermissionEditViewOnLibraryQuery = { libraries?: { list: Array<{ id: string, permissions?: { admin_library: boolean } | null }> } | null };
+
+export type GetViewListQueryVariables = Exact<{
+  libraryId: Scalars['String']['input'];
+}>;
+
+
+export type GetViewListQuery = { views: { list: Array<{ id: string, label: any, shared: boolean, created_by: { id: string } }> } };
 
 export type GetLibraryNameQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
@@ -3244,42 +3211,6 @@ export type SubscribeToUserTasksSubscriptionVariables = Exact<{
 
 
 export type SubscribeToUserTasksSubscription = { task: { id: string, status: TaskStatus, label: any, created_at: number, startedAt?: number | null, completedAt?: number | null, progress?: { description?: any | null, percent?: number | null } | null, link?: { url: string } | null } };
-
-export type GetRecordInformationQueryVariables = Exact<{
-  library: Scalars['ID']['input'];
-  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
-}>;
-
-
-export type GetRecordInformationQuery = { records: { list: Array<{ created_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, modified_by: Array<{ payload?: { id: string, email: Array<{ values: Array<{ payload?: any | null }> }> } | null }>, created_at: Array<{ payload?: any | null }>, modified_at: Array<{ payload?: any | null }>, library: { label?: any | null } }> } };
-
-export type PostDiscussionCommentMutationVariables = Exact<{
-  comment: DiscussionCommentInput;
-}>;
-
-
-export type PostDiscussionCommentMutation = { postDiscussionComment: { id: string } };
-
-export type GetUsersQueryVariables = Exact<{
-  query: Scalars['String']['input'];
-  pagination?: InputMaybe<RecordsPagination>;
-}>;
-
-
-export type GetUsersQuery = { records: { list: Array<{ id: string, label: Array<{ payload?: any | null }> }> } };
-
-export type GetThreadStatusOptionsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetThreadStatusOptionsQuery = { treeNodeChildren: { list: Array<{ id: string, record: { label: Array<{ payload?: any | null }> } }> } };
-
-export type GetThreadQueryVariables = Exact<{
-  libraryId: Scalars['ID']['input'];
-  recordId?: InputMaybe<Scalars['String']['input']>;
-}>;
-
-
-export type GetThreadQuery = { records: { list: Array<{ permissions: { edit_record: boolean }, threads: Array<{ payload?: { id: string, label: Array<{ payload?: any | null }>, status: Array<{ payload?: { id: string } | null }>, comments: Array<{ payload?: { id: string, content: Array<{ payload?: any | null }>, author: Array<{ payload?: { id: string, name: Array<{ payload?: any | null }> } | null }>, createdAt: Array<{ raw_payload?: any | null }> } | null }> } | null }> }> } };
 
 
 export const GetApplicationDataByEndpointDocument = gql`
@@ -3432,6 +3363,472 @@ export type GetUserIdentityQueryHookResult = ReturnType<typeof useGetUserIdentit
 export type GetUserIdentityLazyQueryHookResult = ReturnType<typeof useGetUserIdentityLazyQuery>;
 export type GetUserIdentitySuspenseQueryHookResult = ReturnType<typeof useGetUserIdentitySuspenseQuery>;
 export type GetUserIdentityQueryResult = Apollo.QueryResult<GetUserIdentityQuery, GetUserIdentityQueryVariables>;
+export const GetRecordInformationDocument = gql`
+    query getRecordInformation($library: ID!, $filters: [RecordFilterInput]) {
+  records(library: $library, filters: $filters) {
+    list {
+      created_by: property(attribute: "created_by") {
+        ... on LinkValue {
+          payload {
+            id
+            email: properties(attributeIds: ["email"]) {
+              values {
+                ... on Value {
+                  payload
+                }
+              }
+            }
+          }
+        }
+      }
+      modified_by: property(attribute: "modified_by") {
+        ... on LinkValue {
+          payload {
+            id
+            email: properties(attributeIds: ["email"]) {
+              values {
+                ... on Value {
+                  payload
+                }
+              }
+            }
+          }
+        }
+      }
+      created_at: property(attribute: "created_at") {
+        ... on Value {
+          payload
+        }
+      }
+      modified_at: property(attribute: "created_at") {
+        ... on Value {
+          payload
+        }
+      }
+      library: library {
+        label
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetRecordInformationQuery__
+ *
+ * To run a query within a React component, call `useGetRecordInformationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetRecordInformationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetRecordInformationQuery({
+ *   variables: {
+ *      library: // value for 'library'
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useGetRecordInformationQuery(baseOptions: Apollo.QueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables> & ({ variables: GetRecordInformationQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetRecordInformationQuery, GetRecordInformationQueryVariables>(GetRecordInformationDocument, options);
+      }
+export function useGetRecordInformationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetRecordInformationQuery, GetRecordInformationQueryVariables>(GetRecordInformationDocument, options);
+        }
+// @ts-ignore
+export function useGetRecordInformationSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables>): Apollo.UseSuspenseQueryResult<GetRecordInformationQuery, GetRecordInformationQueryVariables>;
+export function useGetRecordInformationSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables>): Apollo.UseSuspenseQueryResult<GetRecordInformationQuery | undefined, GetRecordInformationQueryVariables>;
+export function useGetRecordInformationSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetRecordInformationQuery, GetRecordInformationQueryVariables>(GetRecordInformationDocument, options);
+        }
+export type GetRecordInformationQueryHookResult = ReturnType<typeof useGetRecordInformationQuery>;
+export type GetRecordInformationLazyQueryHookResult = ReturnType<typeof useGetRecordInformationLazyQuery>;
+export type GetRecordInformationSuspenseQueryHookResult = ReturnType<typeof useGetRecordInformationSuspenseQuery>;
+export type GetRecordInformationQueryResult = Apollo.QueryResult<GetRecordInformationQuery, GetRecordInformationQueryVariables>;
+export const PostDiscussionCommentDocument = gql`
+    mutation PostDiscussionComment($comment: DiscussionCommentInput!) {
+  postDiscussionComment(comment: $comment) {
+    id
+  }
+}
+    `;
+export type PostDiscussionCommentMutationFn = Apollo.MutationFunction<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>;
+
+/**
+ * __usePostDiscussionCommentMutation__
+ *
+ * To run a mutation, you first call `usePostDiscussionCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePostDiscussionCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [postDiscussionCommentMutation, { data, loading, error }] = usePostDiscussionCommentMutation({
+ *   variables: {
+ *      comment: // value for 'comment'
+ *   },
+ * });
+ */
+export function usePostDiscussionCommentMutation(baseOptions?: Apollo.MutationHookOptions<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>(PostDiscussionCommentDocument, options);
+      }
+export type PostDiscussionCommentMutationHookResult = ReturnType<typeof usePostDiscussionCommentMutation>;
+export type PostDiscussionCommentMutationResult = Apollo.MutationResult<PostDiscussionCommentMutation>;
+export type PostDiscussionCommentMutationOptions = Apollo.BaseMutationOptions<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>;
+export const GetUsersDocument = gql`
+    query GetUsers($query: String!, $pagination: RecordsPagination) {
+  records(
+    library: "users"
+    filters: [{field: "login", condition: NOT_EQUAL, value: ""}, {operator: AND}, {field: "email", condition: NOT_EQUAL, value: ""}, {operator: AND}, {field: "login", condition: CONTAINS, value: $query}]
+    pagination: $pagination
+  ) {
+    list {
+      id
+      label: property(attribute: "login") {
+        ... on Value {
+          payload
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetUsersQuery__
+ *
+ * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUsersQuery({
+ *   variables: {
+ *      query: // value for 'query'
+ *      pagination: // value for 'pagination'
+ *   },
+ * });
+ */
+export function useGetUsersQuery(baseOptions: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables> & ({ variables: GetUsersQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+      }
+export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        }
+// @ts-ignore
+export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>): Apollo.UseSuspenseQueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>): Apollo.UseSuspenseQueryResult<GetUsersQuery | undefined, GetUsersQueryVariables>;
+export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
+        }
+export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
+export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
+export type GetUsersSuspenseQueryHookResult = ReturnType<typeof useGetUsersSuspenseQuery>;
+export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
+export const GetThreadStatusOptionsDocument = gql`
+    query GetThreadStatusOptions {
+  treeNodeChildren(treeId: "discussion_thread_statuses_tree") {
+    list {
+      id
+      record {
+        label: property(attribute: "statuses_label") {
+          ... on Value {
+            payload
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetThreadStatusOptionsQuery__
+ *
+ * To run a query within a React component, call `useGetThreadStatusOptionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetThreadStatusOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetThreadStatusOptionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetThreadStatusOptionsQuery(baseOptions?: Apollo.QueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>(GetThreadStatusOptionsDocument, options);
+      }
+export function useGetThreadStatusOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>(GetThreadStatusOptionsDocument, options);
+        }
+// @ts-ignore
+export function useGetThreadStatusOptionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>): Apollo.UseSuspenseQueryResult<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>;
+export function useGetThreadStatusOptionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>): Apollo.UseSuspenseQueryResult<GetThreadStatusOptionsQuery | undefined, GetThreadStatusOptionsQueryVariables>;
+export function useGetThreadStatusOptionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>(GetThreadStatusOptionsDocument, options);
+        }
+export type GetThreadStatusOptionsQueryHookResult = ReturnType<typeof useGetThreadStatusOptionsQuery>;
+export type GetThreadStatusOptionsLazyQueryHookResult = ReturnType<typeof useGetThreadStatusOptionsLazyQuery>;
+export type GetThreadStatusOptionsSuspenseQueryHookResult = ReturnType<typeof useGetThreadStatusOptionsSuspenseQuery>;
+export type GetThreadStatusOptionsQueryResult = Apollo.QueryResult<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>;
+export const GetThreadDocument = gql`
+    query GetThread($libraryId: ID!, $recordId: String) {
+  records(
+    library: $libraryId
+    filters: [{field: "id", condition: EQUAL, value: $recordId}]
+  ) {
+    list {
+      permissions {
+        edit_record
+      }
+      threads: property(attribute: "discussion_threads") {
+        ... on LinkValue {
+          payload {
+            id
+            label: property(attribute: "label") {
+              ... on Value {
+                payload
+              }
+            }
+            status: property(attribute: "discussion_threads_status") {
+              ... on TreeValue {
+                payload {
+                  id
+                }
+              }
+            }
+            comments: property(attribute: "discussion_threads_comments") {
+              ... on LinkValue {
+                payload {
+                  id
+                  content: property(attribute: "discussion_comments_text") {
+                    ... on Value {
+                      payload
+                    }
+                  }
+                  author: property(attribute: "created_by") {
+                    ... on LinkValue {
+                      payload {
+                        id
+                        name: property(attribute: "login") {
+                          ... on Value {
+                            payload
+                          }
+                        }
+                      }
+                    }
+                  }
+                  createdAt: property(attribute: "created_at") {
+                    ... on Value {
+                      raw_payload
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetThreadQuery__
+ *
+ * To run a query within a React component, call `useGetThreadQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetThreadQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetThreadQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *      recordId: // value for 'recordId'
+ *   },
+ * });
+ */
+export function useGetThreadQuery(baseOptions: Apollo.QueryHookOptions<GetThreadQuery, GetThreadQueryVariables> & ({ variables: GetThreadQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetThreadQuery, GetThreadQueryVariables>(GetThreadDocument, options);
+      }
+export function useGetThreadLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetThreadQuery, GetThreadQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetThreadQuery, GetThreadQueryVariables>(GetThreadDocument, options);
+        }
+// @ts-ignore
+export function useGetThreadSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetThreadQuery, GetThreadQueryVariables>): Apollo.UseSuspenseQueryResult<GetThreadQuery, GetThreadQueryVariables>;
+export function useGetThreadSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetThreadQuery, GetThreadQueryVariables>): Apollo.UseSuspenseQueryResult<GetThreadQuery | undefined, GetThreadQueryVariables>;
+export function useGetThreadSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetThreadQuery, GetThreadQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetThreadQuery, GetThreadQueryVariables>(GetThreadDocument, options);
+        }
+export type GetThreadQueryHookResult = ReturnType<typeof useGetThreadQuery>;
+export type GetThreadLazyQueryHookResult = ReturnType<typeof useGetThreadLazyQuery>;
+export type GetThreadSuspenseQueryHookResult = ReturnType<typeof useGetThreadSuspenseQuery>;
+export type GetThreadQueryResult = Apollo.QueryResult<GetThreadQuery, GetThreadQueryVariables>;
+export const GetViewDocument = gql`
+    query GetView($viewId: String!) {
+  view(viewId: $viewId) {
+    id
+    label
+  }
+}
+    `;
+
+/**
+ * __useGetViewQuery__
+ *
+ * To run a query within a React component, call `useGetViewQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetViewQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetViewQuery({
+ *   variables: {
+ *      viewId: // value for 'viewId'
+ *   },
+ * });
+ */
+export function useGetViewQuery(baseOptions: Apollo.QueryHookOptions<GetViewQuery, GetViewQueryVariables> & ({ variables: GetViewQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetViewQuery, GetViewQueryVariables>(GetViewDocument, options);
+      }
+export function useGetViewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetViewQuery, GetViewQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetViewQuery, GetViewQueryVariables>(GetViewDocument, options);
+        }
+// @ts-ignore
+export function useGetViewSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetViewQuery, GetViewQueryVariables>): Apollo.UseSuspenseQueryResult<GetViewQuery, GetViewQueryVariables>;
+export function useGetViewSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetViewQuery, GetViewQueryVariables>): Apollo.UseSuspenseQueryResult<GetViewQuery | undefined, GetViewQueryVariables>;
+export function useGetViewSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetViewQuery, GetViewQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetViewQuery, GetViewQueryVariables>(GetViewDocument, options);
+        }
+export type GetViewQueryHookResult = ReturnType<typeof useGetViewQuery>;
+export type GetViewLazyQueryHookResult = ReturnType<typeof useGetViewLazyQuery>;
+export type GetViewSuspenseQueryHookResult = ReturnType<typeof useGetViewSuspenseQuery>;
+export type GetViewQueryResult = Apollo.QueryResult<GetViewQuery, GetViewQueryVariables>;
+export const GetPermissionEditViewOnLibraryDocument = gql`
+    query GetPermissionEditViewOnLibrary($libraryId: ID!) {
+  libraries(filters: {id: [$libraryId]}) {
+    list {
+      id
+      permissions {
+        admin_library
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetPermissionEditViewOnLibraryQuery__
+ *
+ * To run a query within a React component, call `useGetPermissionEditViewOnLibraryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPermissionEditViewOnLibraryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPermissionEditViewOnLibraryQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *   },
+ * });
+ */
+export function useGetPermissionEditViewOnLibraryQuery(baseOptions: Apollo.QueryHookOptions<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables> & ({ variables: GetPermissionEditViewOnLibraryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>(GetPermissionEditViewOnLibraryDocument, options);
+      }
+export function useGetPermissionEditViewOnLibraryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>(GetPermissionEditViewOnLibraryDocument, options);
+        }
+// @ts-ignore
+export function useGetPermissionEditViewOnLibrarySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>): Apollo.UseSuspenseQueryResult<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>;
+export function useGetPermissionEditViewOnLibrarySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>): Apollo.UseSuspenseQueryResult<GetPermissionEditViewOnLibraryQuery | undefined, GetPermissionEditViewOnLibraryQueryVariables>;
+export function useGetPermissionEditViewOnLibrarySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>(GetPermissionEditViewOnLibraryDocument, options);
+        }
+export type GetPermissionEditViewOnLibraryQueryHookResult = ReturnType<typeof useGetPermissionEditViewOnLibraryQuery>;
+export type GetPermissionEditViewOnLibraryLazyQueryHookResult = ReturnType<typeof useGetPermissionEditViewOnLibraryLazyQuery>;
+export type GetPermissionEditViewOnLibrarySuspenseQueryHookResult = ReturnType<typeof useGetPermissionEditViewOnLibrarySuspenseQuery>;
+export type GetPermissionEditViewOnLibraryQueryResult = Apollo.QueryResult<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>;
+export const GetViewListDocument = gql`
+    query GetViewList($libraryId: String!) {
+  views(library: $libraryId) {
+    list {
+      id
+      label
+      shared
+      created_by {
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetViewListQuery__
+ *
+ * To run a query within a React component, call `useGetViewListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetViewListQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetViewListQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *   },
+ * });
+ */
+export function useGetViewListQuery(baseOptions: Apollo.QueryHookOptions<GetViewListQuery, GetViewListQueryVariables> & ({ variables: GetViewListQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetViewListQuery, GetViewListQueryVariables>(GetViewListDocument, options);
+      }
+export function useGetViewListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetViewListQuery, GetViewListQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetViewListQuery, GetViewListQueryVariables>(GetViewListDocument, options);
+        }
+// @ts-ignore
+export function useGetViewListSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetViewListQuery, GetViewListQueryVariables>): Apollo.UseSuspenseQueryResult<GetViewListQuery, GetViewListQueryVariables>;
+export function useGetViewListSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetViewListQuery, GetViewListQueryVariables>): Apollo.UseSuspenseQueryResult<GetViewListQuery | undefined, GetViewListQueryVariables>;
+export function useGetViewListSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetViewListQuery, GetViewListQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetViewListQuery, GetViewListQueryVariables>(GetViewListDocument, options);
+        }
+export type GetViewListQueryHookResult = ReturnType<typeof useGetViewListQuery>;
+export type GetViewListLazyQueryHookResult = ReturnType<typeof useGetViewListLazyQuery>;
+export type GetViewListSuspenseQueryHookResult = ReturnType<typeof useGetViewListSuspenseQuery>;
+export type GetViewListQueryResult = Apollo.QueryResult<GetViewListQuery, GetViewListQueryVariables>;
 export const GetLibraryNameDocument = gql`
     query GetLibraryName($libraryId: ID!) {
   libraries(filters: {id: [$libraryId]}) {
@@ -3813,327 +4210,3 @@ export function useSubscribeToUserTasksSubscription(baseOptions?: Apollo.Subscri
       }
 export type SubscribeToUserTasksSubscriptionHookResult = ReturnType<typeof useSubscribeToUserTasksSubscription>;
 export type SubscribeToUserTasksSubscriptionResult = Apollo.SubscriptionResult<SubscribeToUserTasksSubscription>;
-export const GetRecordInformationDocument = gql`
-    query getRecordInformation($library: ID!, $filters: [RecordFilterInput]) {
-  records(library: $library, filters: $filters) {
-    list {
-      created_by: property(attribute: "created_by") {
-        ... on LinkValue {
-          payload {
-            id
-            email: properties(attributeIds: ["email"]) {
-              values {
-                ... on Value {
-                  payload
-                }
-              }
-            }
-          }
-        }
-      }
-      modified_by: property(attribute: "modified_by") {
-        ... on LinkValue {
-          payload {
-            id
-            email: properties(attributeIds: ["email"]) {
-              values {
-                ... on Value {
-                  payload
-                }
-              }
-            }
-          }
-        }
-      }
-      created_at: property(attribute: "created_at") {
-        ... on Value {
-          payload
-        }
-      }
-      modified_at: property(attribute: "created_at") {
-        ... on Value {
-          payload
-        }
-      }
-      library: library {
-        label
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetRecordInformationQuery__
- *
- * To run a query within a React component, call `useGetRecordInformationQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetRecordInformationQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetRecordInformationQuery({
- *   variables: {
- *      library: // value for 'library'
- *      filters: // value for 'filters'
- *   },
- * });
- */
-export function useGetRecordInformationQuery(baseOptions: Apollo.QueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables> & ({ variables: GetRecordInformationQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetRecordInformationQuery, GetRecordInformationQueryVariables>(GetRecordInformationDocument, options);
-      }
-export function useGetRecordInformationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetRecordInformationQuery, GetRecordInformationQueryVariables>(GetRecordInformationDocument, options);
-        }
-// @ts-ignore
-export function useGetRecordInformationSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables>): Apollo.UseSuspenseQueryResult<GetRecordInformationQuery, GetRecordInformationQueryVariables>;
-export function useGetRecordInformationSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables>): Apollo.UseSuspenseQueryResult<GetRecordInformationQuery | undefined, GetRecordInformationQueryVariables>;
-export function useGetRecordInformationSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetRecordInformationQuery, GetRecordInformationQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetRecordInformationQuery, GetRecordInformationQueryVariables>(GetRecordInformationDocument, options);
-        }
-export type GetRecordInformationQueryHookResult = ReturnType<typeof useGetRecordInformationQuery>;
-export type GetRecordInformationLazyQueryHookResult = ReturnType<typeof useGetRecordInformationLazyQuery>;
-export type GetRecordInformationSuspenseQueryHookResult = ReturnType<typeof useGetRecordInformationSuspenseQuery>;
-export type GetRecordInformationQueryResult = Apollo.QueryResult<GetRecordInformationQuery, GetRecordInformationQueryVariables>;
-export const PostDiscussionCommentDocument = gql`
-    mutation PostDiscussionComment($comment: DiscussionCommentInput!) {
-  postDiscussionComment(comment: $comment) {
-    id
-  }
-}
-    `;
-export type PostDiscussionCommentMutationFn = Apollo.MutationFunction<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>;
-
-/**
- * __usePostDiscussionCommentMutation__
- *
- * To run a mutation, you first call `usePostDiscussionCommentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `usePostDiscussionCommentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [postDiscussionCommentMutation, { data, loading, error }] = usePostDiscussionCommentMutation({
- *   variables: {
- *      comment: // value for 'comment'
- *   },
- * });
- */
-export function usePostDiscussionCommentMutation(baseOptions?: Apollo.MutationHookOptions<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>(PostDiscussionCommentDocument, options);
-      }
-export type PostDiscussionCommentMutationHookResult = ReturnType<typeof usePostDiscussionCommentMutation>;
-export type PostDiscussionCommentMutationResult = Apollo.MutationResult<PostDiscussionCommentMutation>;
-export type PostDiscussionCommentMutationOptions = Apollo.BaseMutationOptions<PostDiscussionCommentMutation, PostDiscussionCommentMutationVariables>;
-export const GetUsersDocument = gql`
-    query GetUsers($query: String!, $pagination: RecordsPagination) {
-  records(
-    library: "users"
-    filters: [{field: "login", condition: NOT_EQUAL, value: ""}, {operator: AND}, {field: "email", condition: NOT_EQUAL, value: ""}, {operator: AND}, {field: "login", condition: CONTAINS, value: $query}]
-    pagination: $pagination
-  ) {
-    list {
-      id
-      label: property(attribute: "login") {
-        ... on Value {
-          payload
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetUsersQuery__
- *
- * To run a query within a React component, call `useGetUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUsersQuery({
- *   variables: {
- *      query: // value for 'query'
- *      pagination: // value for 'pagination'
- *   },
- * });
- */
-export function useGetUsersQuery(baseOptions: Apollo.QueryHookOptions<GetUsersQuery, GetUsersQueryVariables> & ({ variables: GetUsersQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
-      }
-export function useGetUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
-        }
-// @ts-ignore
-export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>): Apollo.UseSuspenseQueryResult<GetUsersQuery, GetUsersQueryVariables>;
-export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>): Apollo.UseSuspenseQueryResult<GetUsersQuery | undefined, GetUsersQueryVariables>;
-export function useGetUsersSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetUsersQuery, GetUsersQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetUsersQuery, GetUsersQueryVariables>(GetUsersDocument, options);
-        }
-export type GetUsersQueryHookResult = ReturnType<typeof useGetUsersQuery>;
-export type GetUsersLazyQueryHookResult = ReturnType<typeof useGetUsersLazyQuery>;
-export type GetUsersSuspenseQueryHookResult = ReturnType<typeof useGetUsersSuspenseQuery>;
-export type GetUsersQueryResult = Apollo.QueryResult<GetUsersQuery, GetUsersQueryVariables>;
-export const GetThreadStatusOptionsDocument = gql`
-    query GetThreadStatusOptions {
-  treeNodeChildren(treeId: "discussion_thread_statuses_tree") {
-    list {
-      id
-      record {
-        label: property(attribute: "statuses_label") {
-          ... on Value {
-            payload
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetThreadStatusOptionsQuery__
- *
- * To run a query within a React component, call `useGetThreadStatusOptionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetThreadStatusOptionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetThreadStatusOptionsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetThreadStatusOptionsQuery(baseOptions?: Apollo.QueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>(GetThreadStatusOptionsDocument, options);
-      }
-export function useGetThreadStatusOptionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>(GetThreadStatusOptionsDocument, options);
-        }
-// @ts-ignore
-export function useGetThreadStatusOptionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>): Apollo.UseSuspenseQueryResult<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>;
-export function useGetThreadStatusOptionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>): Apollo.UseSuspenseQueryResult<GetThreadStatusOptionsQuery | undefined, GetThreadStatusOptionsQueryVariables>;
-export function useGetThreadStatusOptionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>(GetThreadStatusOptionsDocument, options);
-        }
-export type GetThreadStatusOptionsQueryHookResult = ReturnType<typeof useGetThreadStatusOptionsQuery>;
-export type GetThreadStatusOptionsLazyQueryHookResult = ReturnType<typeof useGetThreadStatusOptionsLazyQuery>;
-export type GetThreadStatusOptionsSuspenseQueryHookResult = ReturnType<typeof useGetThreadStatusOptionsSuspenseQuery>;
-export type GetThreadStatusOptionsQueryResult = Apollo.QueryResult<GetThreadStatusOptionsQuery, GetThreadStatusOptionsQueryVariables>;
-export const GetThreadDocument = gql`
-    query GetThread($libraryId: ID!, $recordId: String) {
-  records(
-    library: $libraryId
-    filters: [{field: "id", condition: EQUAL, value: $recordId}]
-  ) {
-    list {
-      permissions {
-        edit_record
-      }
-      threads: property(attribute: "discussion_threads") {
-        ... on LinkValue {
-          payload {
-            id
-            label: property(attribute: "label") {
-              ... on Value {
-                payload
-              }
-            }
-            status: property(attribute: "discussion_threads_status") {
-              ... on TreeValue {
-                payload {
-                  id
-                }
-              }
-            }
-            comments: property(attribute: "discussion_threads_comments") {
-              ... on LinkValue {
-                payload {
-                  id
-                  content: property(attribute: "discussion_comments_text") {
-                    ... on Value {
-                      payload
-                    }
-                  }
-                  author: property(attribute: "created_by") {
-                    ... on LinkValue {
-                      payload {
-                        id
-                        name: property(attribute: "login") {
-                          ... on Value {
-                            payload
-                          }
-                        }
-                      }
-                    }
-                  }
-                  createdAt: property(attribute: "created_at") {
-                    ... on Value {
-                      raw_payload
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetThreadQuery__
- *
- * To run a query within a React component, call `useGetThreadQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetThreadQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetThreadQuery({
- *   variables: {
- *      libraryId: // value for 'libraryId'
- *      recordId: // value for 'recordId'
- *   },
- * });
- */
-export function useGetThreadQuery(baseOptions: Apollo.QueryHookOptions<GetThreadQuery, GetThreadQueryVariables> & ({ variables: GetThreadQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetThreadQuery, GetThreadQueryVariables>(GetThreadDocument, options);
-      }
-export function useGetThreadLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetThreadQuery, GetThreadQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetThreadQuery, GetThreadQueryVariables>(GetThreadDocument, options);
-        }
-// @ts-ignore
-export function useGetThreadSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetThreadQuery, GetThreadQueryVariables>): Apollo.UseSuspenseQueryResult<GetThreadQuery, GetThreadQueryVariables>;
-export function useGetThreadSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetThreadQuery, GetThreadQueryVariables>): Apollo.UseSuspenseQueryResult<GetThreadQuery | undefined, GetThreadQueryVariables>;
-export function useGetThreadSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetThreadQuery, GetThreadQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetThreadQuery, GetThreadQueryVariables>(GetThreadDocument, options);
-        }
-export type GetThreadQueryHookResult = ReturnType<typeof useGetThreadQuery>;
-export type GetThreadLazyQueryHookResult = ReturnType<typeof useGetThreadLazyQuery>;
-export type GetThreadSuspenseQueryHookResult = ReturnType<typeof useGetThreadSuspenseQuery>;
-export type GetThreadQueryResult = Apollo.QueryResult<GetThreadQuery, GetThreadQueryVariables>;

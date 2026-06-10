@@ -1,4 +1,5 @@
 import {type FunctionComponent} from 'react';
+import {PanelMessengerProvider} from '@leav/ui';
 import {render, screen} from '_ui/_tests/testUtils';
 import * as GraphQLClient from '../../../../__generated__';
 import {InitApplicationSettingProvider} from '../InitApplicationSettingProvider';
@@ -20,7 +21,11 @@ describe('ApplicationSettingsContext component', () => {
             },
         });
 
-        render(<InitApplicationSettingProvider />);
+        render(
+            <PanelMessengerProvider>
+                <InitApplicationSettingProvider />
+            </PanelMessengerProvider>,
+        );
 
         expect(screen.getByText(/current_app_error/)).toBeVisible();
     });
@@ -75,9 +80,11 @@ describe('ApplicationSettingsContext component', () => {
         };
 
         render(
-            <InitApplicationSettingProvider>
-                <FakeComponent />
-            </InitApplicationSettingProvider>,
+            <PanelMessengerProvider>
+                <InitApplicationSettingProvider>
+                    <FakeComponent />
+                </InitApplicationSettingProvider>
+            </PanelMessengerProvider>,
         );
 
         expect(screen.getByText(validAppStudioSettings.workspaces[0].id)).toBeVisible();
