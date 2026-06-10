@@ -349,8 +349,8 @@ describe('Integration tests about managing view settings feature', () => {
             expect(firstActiveSort).toHaveTextContent(attributesList[0].label.fr);
             expect(firstActiveSort).toBeVisible();
             await userEvent.hover(within(firstActiveSort).getByText('1'));
+            const tooltip = await waitFor(() => screen.getByRole('tooltip'));
             await waitFor(() => {
-                const tooltip = screen.getByRole('tooltip');
                 expect(tooltip).toBeVisible();
                 expect(tooltip).toHaveTextContent(/ascending/);
             });

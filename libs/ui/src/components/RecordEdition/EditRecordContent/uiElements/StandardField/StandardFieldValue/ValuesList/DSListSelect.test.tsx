@@ -6,7 +6,7 @@ import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordRe
 import {AntForm} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';
 import {type RecordFormAttributeStandardAttributeFragment} from '_ui/_gqlTypes';
-import {act} from '@testing-library/react';
+import {act, waitFor} from '@testing-library/react';
 import {
     EditRecordReducerActionsTypes,
     type IEditRecordReducerState,
@@ -303,7 +303,9 @@ describe('<DSListSelect />', () => {
                 const select = screen.getByRole('combobox');
                 await userEvent.click(select);
 
-                expect(screen.getByText('record_edition.search_not_found')).toBeVisible();
+                await waitFor(() => {
+                    expect(screen.getByText('record_edition.search_not_found')).toBeVisible();
+                });
             });
         });
     });
