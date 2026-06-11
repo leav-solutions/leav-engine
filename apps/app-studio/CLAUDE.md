@@ -4,6 +4,11 @@ Shell MFE (Micro-Frontend) configurable par JSON.
 Orchestre l'affichage de panneaux : composants `@leav/ui` (Explorer, formulaires)
 ou iframes pour du métier custom.
 
+> **Instances connues** : `explorer-studio` (exploration générique, remplace `data-studio`)
+> et `campaigns-manager` (métier campagnes) sont deux **paramétrages** de ce même shell —
+> aucun code front dédié, seule leur config diffère. La config vit **en base** et se lit
+> via le **MCP runtime LEAV** (`mcp__leav-runtime__graphql`), pas dans un fichier du repo.
+
 ---
 
 ## Principe
