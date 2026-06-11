@@ -1367,7 +1367,7 @@ describe('Explorer', () => {
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
 
-        expect(screen.getByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
+        expect(await screen.findByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
         expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
 
         await user.click(screen.getByText('global.confirm'));
@@ -1412,7 +1412,7 @@ describe('Explorer', () => {
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
 
-        expect(screen.getByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
+        expect(await screen.findByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
         expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
         await user.click(screen.getByText('global.confirm'));
 
@@ -1465,7 +1465,7 @@ describe('Explorer', () => {
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.activate-item'}));
 
-        expect(screen.getByText('explorer.activate_item_description', {exact: false})).toBeVisible();
+        expect(await screen.findByText('explorer.activate_item_description', {exact: false})).toBeVisible();
         expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
         await user.click(screen.getByText('global.confirm'));
 
@@ -1511,7 +1511,7 @@ describe('Explorer', () => {
         const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'}));
 
-        expect(screen.getByText('explorer.delete_link_one')).toBeVisible();
+        expect(await screen.findByText('explorer.delete_link_one')).toBeVisible();
         await user.click(screen.getByText('global.confirm'));
 
         expect(mockDeleteValueMutation).toHaveBeenCalled();
@@ -1628,9 +1628,10 @@ describe('Explorer', () => {
             expect(within(firstRecordRow).getByRole('button', {name: /Test 1/})).toBeVisible();
             expect(within(firstRecordRow).getByRole('button', {name: /Test 2/})).toBeVisible();
 
+            // if there are more than 3 items, the first two are visible and the following ones are placed in a dropdown (see TableNameCell)
             await waitFor(() => {
-                expect(screen.getByRole('menuitem', {name: /Test 3/})).toBeVisible();
-                expect(screen.getByRole('menuitem', {name: /Test 4/})).toBeVisible();
+                expect(screen.getByRole('menuitem', {name: /Test 3/})).toBeInTheDocument();
+                expect(screen.getByRole('menuitem', {name: /Test 4/})).toBeInTheDocument();
             });
 
             await user.click(screen.getByRole('menuitem', {name: customActions[2].label}));
@@ -1761,9 +1762,11 @@ describe('Explorer', () => {
 
                 const dropdownButton = await screen.findByRole('dropdown-trigger');
                 await user.click(dropdownButton);
-                expect(screen.getByRole('menuitem', {name: 'explorer.create-one'})).toBeVisible();
-                expect(screen.getByRole('menuitem', {name: customPrimaryAction1.label})).toBeVisible();
-                expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
+                await waitFor(() => {
+                    expect(screen.getByRole('menuitem', {name: 'explorer.create-one'})).toBeVisible();
+                    expect(screen.getByRole('menuitem', {name: customPrimaryAction1.label})).toBeVisible();
+                    expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
+                });
             });
 
             test('should not display the primary actions button if library data is empty and entrypoint has allowFreeEntry set to false', () => {
@@ -1989,11 +1992,11 @@ describe('Explorer', () => {
             );
 
             const dropdownButton = await screen.findByRole('dropdown-trigger');
-            expect(dropdownButton).toBeVisible();
+            await waitFor(() => expect(dropdownButton).toBeVisible());
             await user.click(dropdownButton);
 
             const createOneAction = screen.getByRole('menuitem', {name: 'explorer.create-one'});
-            expect(createOneAction).toBeVisible();
+            await waitFor(() => expect(createOneAction).toBeVisible());
             await user.click(createOneAction);
 
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
@@ -2100,8 +2103,8 @@ describe('Explorer', () => {
 
             await user.click(dropdownButton);
 
-            expect(screen.getByRole('menuitem', {name: customPrimaryAction1.label})).toBeVisible();
-            expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible();
+            await waitFor(() => expect(screen.getByRole('menuitem', {name: customPrimaryAction1.label})).toBeVisible());
+            await waitFor(() => expect(screen.getByRole('menuitem', {name: customPrimaryAction2.label})).toBeVisible());
 
             await user.click(screen.getByRole('menuitem', {name: customPrimaryAction1.label}));
             expect(customPrimaryActions[0].callback).toHaveBeenCalled();
@@ -2125,7 +2128,7 @@ describe('Explorer', () => {
 
             const firstActionButton = screen.getByRole('menuitem', {name: customPrimaryAction1.label});
             const secondActionButton = screen.getByRole('menuitem', {name: customPrimaryAction2.label});
-            expect(firstActionButton).toBeVisible();
+            await waitFor(() => expect(firstActionButton).toBeVisible());
             expect(secondActionButton).toBeVisible();
 
             await user.click(firstActionButton);
@@ -2924,9 +2927,11 @@ describe('Explorer', () => {
             // WHEN the user clicks on the select all checkbox
             await user.click(within(toolbar).getByText(/massAction.results\|2/));
             // THEN there is a possibility to de-select all items
-            expect(
-                within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.deselect_all/}),
-            ).toBeVisible();
+            await waitFor(() => {
+                expect(
+                    within(screen.getByRole('menu')).getByRole('menuitem', {name: /toggle_selection.deselect_all/}),
+                ).toBeVisible();
+            });
 
             // WHEN the user clicks on the simple mass test action
             await user.click(within(screen.getByRole('status')).getByRole('button', {name: testMassAction.label}));
@@ -2994,7 +2999,7 @@ describe('Explorer', () => {
             // WHEN the user clicks on the mass deactivate action
             await user.click(within(screen.getByRole('status')).getByRole('button', {name: /massAction.deactivate/}));
             // THEN a confirmation modal is displayed
-            expect(screen.getByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
+            expect(await screen.findByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
             expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
             // WHEN the user confirms the deactivation
             await user.click(screen.getByText('global.confirm'));
@@ -3068,7 +3073,7 @@ describe('Explorer', () => {
             await user.click(within(screen.getByRole('status')).getByRole('button', {name: /massAction.deactivate/}));
 
             // THEN a confirmation modal is displayed
-            expect(screen.getByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
+            expect(await screen.findByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
             expect(screen.getByText('global.are_you_sure', {exact: false})).toBeVisible();
             // WHEN the user confirms the deactivation
             await user.click(screen.getByText(/submit/));
@@ -3553,7 +3558,7 @@ describe('Explorer', () => {
             await user.click(dropdownButton);
 
             const createOneAction = await screen.findByRole('menuitem', {name: 'explorer.create-one'});
-            expect(createOneAction).toBeVisible();
+            await waitFor(() => expect(createOneAction).toBeVisible());
             expect(createOneAction).toHaveAttribute('aria-disabled', 'true');
             expect(createOneAction).toHaveClass('ant-dropdown-menu-item-disabled');
         });

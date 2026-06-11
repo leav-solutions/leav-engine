@@ -51,7 +51,7 @@ describe('CommonFilterItem', () => {
             render(<CommonFilterItem filter={filter} />);
             await userEvent.click(screen.getByRole('button', {name: /numeric/}));
             const inputNumber = screen.getByRole('spinbutton');
-            expect(inputNumber).toBeVisible();
+            await waitFor(() => expect(inputNumber).toBeVisible());
             expect(inputNumber).toHaveValue(filter.value);
         });
 
@@ -112,7 +112,7 @@ describe('CommonFilterItem', () => {
             });
 
             const textInput = screen.getByRole('textbox');
-            expect(textInput).toBeVisible();
+            await waitFor(() => expect(textInput).toBeVisible());
 
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
@@ -181,7 +181,7 @@ describe('CommonFilterItem', () => {
             });
 
             const textInput = screen.getByRole('textbox');
-            expect(textInput).toBeVisible();
+            await waitFor(() => expect(textInput).toBeVisible());
 
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
@@ -243,7 +243,7 @@ describe('CommonFilterItem', () => {
 
             render(<CommonFilterItem filter={filter} />);
             await userEvent.click(screen.getByRole('button', {name: /boolean/}));
-            expect(screen.getByText(/true/)).toBeVisible();
+            await waitFor(() => expect(screen.getByText(/true/)).toBeVisible());
         });
 
         test('should handle active attribute with default value and no reset action', async () => {
@@ -294,7 +294,7 @@ describe('CommonFilterItem', () => {
             render(<CommonFilterItem filter={filter} />);
             await userEvent.click(screen.getByRole('button', {name: /date/}));
             const textInput = screen.getByRole('textbox');
-            expect(textInput).toBeVisible();
+            await waitFor(() => expect(textInput).toBeVisible());
             expect(textInput).toHaveValue(date.formatted);
         });
 
@@ -367,7 +367,7 @@ describe('CommonFilterItem', () => {
 
             render(<CommonFilterItem filter={filter} />);
             await userEvent.click(screen.getByRole('button', {name: /encrypted/}));
-            expect(await screen.findByText(/select-condition/)).toBeVisible();
+            await waitFor(() => expect(screen.getByText(/select-condition/)).toBeVisible());
         });
     });
 
@@ -388,7 +388,7 @@ describe('CommonFilterItem', () => {
 
             render(<CommonFilterItem filter={filter} />);
             await userEvent.click(screen.getByRole('button', {name: /extended/}));
-            expect(await screen.findByText(/select-condition/)).toBeVisible();
+            await waitFor(() => expect(screen.getByText(/select-condition/)).toBeVisible());
         });
     });
 
@@ -409,7 +409,7 @@ describe('CommonFilterItem', () => {
 
             render(<CommonFilterItem filter={filter} />);
             await userEvent.click(screen.getByRole('button', {name: /period/}));
-            expect(await screen.findByText(/select-condition/)).toBeVisible();
+            await waitFor(() => expect(screen.getByText(/select-condition/)).toBeVisible());
         });
     });
 
@@ -436,7 +436,7 @@ describe('CommonFilterItem', () => {
             });
 
             const textInput = screen.getByRole('textbox');
-            expect(textInput).toBeVisible();
+            await waitFor(() => expect(textInput).toBeVisible());
 
             const select = screen.getByRole('combobox');
             await userEvent.click(select);
@@ -517,7 +517,7 @@ describe('CommonFilterItem', () => {
             // WHEN the user select a link attribute
             await userEvent.click(subFieldSelect);
             const linkAttributeOption = screen.getByText(mockLinkedAttribute.label.fr);
-            expect(linkAttributeOption).toBeVisible();
+            await waitFor(() => expect(linkAttributeOption).toBeVisible());
             await userEvent.click(linkAttributeOption);
 
             // THEN the sub condition dropdown should be displayed
@@ -533,7 +533,7 @@ describe('CommonFilterItem', () => {
             const subConditionSelectVirtualList = baseElement
                 .getElementsByClassName('rc-virtual-list')
                 .item(1) as HTMLElement;
-            expect(subConditionSelectVirtualList).toBeVisible();
+            await waitFor(() => expect(subConditionSelectVirtualList).toBeVisible());
             await userEvent.click(within(subConditionSelectVirtualList).getByText('filters.not-contains'));
 
             // THEN the value textbox is displayed
@@ -666,8 +666,10 @@ describe('CommonFilterItem', () => {
             await userEvent.click(screen.getByRole('button', {name: /text/}));
 
             // Options from values list should be visible and toggle-able
-            expect(await screen.findByText('Red')).toBeVisible();
-            expect(screen.getByText('Blue')).toBeVisible();
+            await waitFor(() => {
+                expect(screen.getByText('Red')).toBeVisible();
+                expect(screen.getByText('Blue')).toBeVisible();
+            });
 
             const red = screen.getByText('Red');
             expect(red.closest('[role="button"]')).toHaveAttribute('aria-pressed', 'false');
@@ -727,7 +729,7 @@ describe('CommonFilterItem', () => {
             );
             await userEvent.click(screen.getByRole('button', {name: /link/}));
 
-            expect(await screen.findByText('filters.empty-value')).toBeVisible();
+            await waitFor(() => expect(screen.getByText('filters.empty-value')).toBeVisible());
 
             // Linked values visible and selectable
             const alpha = await screen.findByText('Alpha');
