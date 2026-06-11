@@ -40,6 +40,12 @@ workflow:
 
 .new_lib_installed_changes: &new_lib_installed_changes yarn.lock
 
+# Inject the leav registry token (CI_JOB_TOKEN) into the runner home .yarnrc.yml
+# so it applies to every yarn invocation in the job, whatever the cwd. The
+# committed .yarnrc.yml deliberately omits this token so local devs keep using
+# their own PAT from ~/.yarnrc.yml. Must run after yarn 4 is active.
+.leav_npm_auth: &leav_npm_auth yarn config set --home npmScopes.leav.npmAuthToken "${CI_JOB_TOKEN}"
+
 variables:
   GIT_DEPTH: 1 # clone only the last commit to speed up the pipeline
   NODE_ENV: test
@@ -1042,6 +1048,8 @@ build-npm-leav-types:
 
 build-npm-leav-ui:
   <<: *build_npm
+  before_script:
+    - *leav_npm_auth
   variables:
     PKG: "@leav/ui"
     FOCUS: "@leav/ui"
@@ -1049,6 +1057,8 @@ build-npm-leav-ui:
 
 build-npm-leav-utils:
   <<: *build_npm
+  before_script:
+    - *leav_npm_auth
   variables:
     PKG: "@leav/utils"
     FOCUS: "@leav/utils"
@@ -1056,6 +1066,8 @@ build-npm-leav-utils:
 
 build-npm-leav-e2e-test-utils:
   <<: *build_npm
+  before_script:
+    - *leav_npm_auth
   variables:
     PKG: "@leav/e2e-test-utils"
     FOCUS: "@leav/e2e-test-utils"

@@ -43,6 +43,7 @@ x-mount_point-previews: &mount_point-previews ../previews/:/results
 x-mount_point-exports: &mount_point-exports ../exports:/exports
 x-mount_point-imports: &mount_point-imports ../imports:/imports
 x-mount_point-cache: &mount_point-cache ../cache:/cache
+x-mount_point-home-yarnrc: &mount_point-home-yarnrc ~/.yarnrc.yml:/root/.yarnrc.yml:ro
 # Must be after volume-yarn mount because it overrides .yarn/releases folder
 x-mount_point-yarn_releases: &mount_point-yarn_releases ../.yarn/releases:/app/.yarn/releases
 
@@ -204,6 +205,7 @@ services:
       - *mount_point-exports
       - *mount_point-imports
       - *mount_point-cache
+      - *mount_point-home-yarnrc
       - *volume-yarn
       - *volume-shared-modules
       - *volume-core-modules
