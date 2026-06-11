@@ -1,0 +1,11 @@
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-s) * 1px);
+}
+
+.tiles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}

@@ -1,7 +1,0 @@
-query GetView($viewId: String!) {
-    view(viewId: $viewId) {
-        # TODO: change to viewV2 when data is ready and need to change
-        id
-        label
-    }
-}

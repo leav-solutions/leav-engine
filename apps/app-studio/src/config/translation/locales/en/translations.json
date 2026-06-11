@@ -105,6 +105,22 @@
             "sorts": "Sorts",
             "views": "Catalog"
         },
+        "display": {
+            "mode": {
+                "title": "Display mode",
+                "table": "Table",
+                "list": "List",
+                "mosaic": "Mosaic"
+            },
+            "columns": {
+                "title": "Columns",
+                "search-placeholder": "Search...",
+                "manage-available": "Manage available attributes",
+                "identity": "Information (displayed by default)",
+                "show": "Show",
+                "hide": "Hide"
+            }
+        },
         "my-views": "My views",
         "my-views-empty": "No personal view yet",
         "shared-views": "Views shared with me",

@@ -5,12 +5,13 @@ import {VIEW_SETTINGS_TABS} from '../tabs/_constantes';
 import {sidebar} from './panelViewSettingsSidebar.module.css';
 import {type ViewSettingsTab} from '../../../types';
 
-type PanelViewSettingsSidebarProps = {
+export const PanelViewSettingsSidebar = ({
+    activeTab,
+    onTabChange,
+}: {
     activeTab: ViewSettingsTab;
     onTabChange: (key: ViewSettingsTab) => void;
-};
-
-export const PanelViewSettingsSidebar = ({activeTab, onTabChange}: PanelViewSettingsSidebarProps) => {
+}) => {
     const {t} = useTranslation();
 
     return (
