@@ -158,6 +158,28 @@ The following rules apply to frontend development only, specifically on a React 
 
 - Separate logic from the UI as much as possible. It will make your component easier to read, and the logic will be easier to test and reason about.
 
+## Component declaration
+
+- Declare components as plain arrow functions and type the props inline on the parameter. Do **not** annotate the component with `FunctionComponent` / `FC` — it adds an implicit `children` prop, hides the real signature, and is no longer the recommended React idiom.
+
+```tsx
+// ✅ Good — props typed inline on the parameter
+export const MyComponent = ({children}: {children: ReactNode}) => {
+    /* ... */
+};
+
+export const MyComponent = ({id, title}: IMyComponentProps) => {
+    /* ... */
+};
+
+// ❌ Bad — FunctionComponent / FC annotation
+export const MyComponent: FunctionComponent<IMyComponentProps> = ({id, title}) => {
+    /* ... */
+};
+```
+
+- This applies to new code. Don't bulk-migrate existing `FunctionComponent` components, but convert them opportunistically when you touch the file.
+
 ## Custom Hooks
 
 - Hooks name always start by `use` (e.g. `useLang` )
@@ -187,6 +209,8 @@ const _handleSubmit = () => { /* Handle submit... */ };
 ## Testing
 
 - Use [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) through the wrapper available in `_tests/testUtils.tsx`. It includes automatically all global providers (like Apollo or Redux)
+- Simulate user interactions with `userEvent` (`@testing-library/user-event`), not `fireEvent`. Set up the instance once with `const user = userEvent.setup()` and `await` each interaction (`await user.click(...)`, `await user.type(...)`); the surrounding test must be `async`. `fireEvent` dispatches a single raw DOM event, whereas `userEvent` replays the full sequence a real user triggers (focus, keydown/keyup, etc.), so it catches more bugs.
+- Wrap interactions that trigger React state updates in `await act(async () => {...})` (`act` is re-exported from `_tests/testUtils`) to avoid "not wrapped in act(...)" warnings.
 - Prefer using `getByRole` : it encourages using accessibility best practices (possible roles are available [here](https://www.w3.org/TR/html-aria/#docconformance))
 - Use the [Testing Playground](https://testing-playground.com/) to find the best selector for your use case
 - Use `getByTestId` only on last resort

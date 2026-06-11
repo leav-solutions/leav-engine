@@ -1,32 +1,41 @@
 import {render, screen} from '_ui/_tests/testUtils';
-import * as graphqlClient from '../../../../../../__generated__';
+import {ViewV2Types} from '../../../../../../__generated__';
+import {CurrentViewContext} from '../../store-current-view/CurrentViewContext';
+import {type CurrentView} from '../../store-current-view/_types';
 import {CurrentViewSection} from '../CurrentViewSection';
 
-describe('CurrentViewSection', () => {
-    const spyOnUseGetViewQuery = jest.spyOn(graphqlClient, 'useGetViewQuery');
+type NonNullState = NonNullable<CurrentView>;
 
-    const currentViewId = 'view-1';
-    const currentViewLabel = 'Catalogue produits';
-    beforeEach(() => {
-        spyOnUseGetViewQuery.mockClear();
-    });
-
-    afterAll(() => {
-        jest.restoreAllMocks();
-    });
-
-    it('should display the current view label in the input', () => {
-        spyOnUseGetViewQuery.mockReturnValue({
-            data: {
+const renderWithView = (view: Partial<NonNullState> = {}) =>
+    render(
+        <CurrentViewContext.Provider
+            value={{
                 view: {
-                    id: currentViewId,
-                    label: {fr: currentViewLabel, en: currentViewLabel},
+                    id: 'view-1',
+                    label: null,
+                    shared: false,
+                    display: {type: ViewV2Types.list, attributes: []},
+                    ...view,
                 },
-            },
-        } as any);
+                dispatch: jest.fn(),
+            }}
+        >
+            <CurrentViewSection onViewSettingsClose={jest.fn()} />
+        </CurrentViewContext.Provider>,
+    );
 
-        render(<CurrentViewSection onViewSettingsClose={jest.fn()} currentViewId={currentViewId} />);
+describe('CurrentViewSection', () => {
+    it('should display the current view label in the input', () => {
+        renderWithView({label: {fr: 'Catalogue produits', en: 'Catalogue produits'}});
 
-        expect(screen.getByDisplayValue(currentViewLabel)).toBeVisible();
+        expect(screen.getByDisplayValue('Catalogue produits')).toBeVisible();
+    });
+
+    it('reflects the shared flag on the (disabled) switch', () => {
+        renderWithView({shared: true});
+
+        const sharedSwitch = screen.getByRole('switch');
+        expect(sharedSwitch).toBeChecked();
+        expect(sharedSwitch).toBeDisabled();
     });
 });

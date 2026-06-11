@@ -1,0 +1,17 @@
+query GetViewV2($viewId: ID!) {
+    viewV2(viewId: $viewId) {
+        id
+        label
+        shared
+        display {
+            type
+            attributes {
+                visible
+                attribute {
+                    id
+                    label
+                }
+            }
+        }
+    }
+}

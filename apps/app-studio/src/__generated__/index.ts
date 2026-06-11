@@ -386,9 +386,7 @@ export type AutomationRule = {
 
 export enum AutomationRuleActions {
   condition = 'condition',
-  error = 'error',
-  jexlCalculation = 'jexlCalculation',
-  log = 'log',
+  jexlExpression = 'jexlExpression',
   modifyAttribute = 'modifyAttribute',
   notification = 'notification'
 }
@@ -396,6 +394,7 @@ export enum AutomationRuleActions {
 export enum AutomationRuleEventAction {
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
   VALUE_SAVE = 'VALUE_SAVE'
 }
 
@@ -430,6 +429,7 @@ export type AutomationRulePipelineStepInput = {
 };
 
 export enum AutomationRuleSortableFields {
+  active = 'active',
   id = 'id'
 }
 
@@ -466,6 +466,28 @@ export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
+
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignsFraming = {
+  computed?: Maybe<CampaignsFramingComputed>;
+  id: Scalars['String']['output'];
+};
+
+export type CampaignsFramingComputed = {
+  framing?: Maybe<Scalars['JSONObject']['output']>;
+  results?: Maybe<Scalars['JSONObject']['output']>;
+};
 
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
@@ -569,6 +591,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -1065,6 +1089,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
   TASKS_DELETE = 'TASKS_DELETE',
@@ -1189,6 +1215,17 @@ export type Logs = {
   total: Scalars['Int']['output'];
 };
 
+export type MoveThematicResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+  originalId: Scalars['ID']['output'];
+};
+
+export type MoveThematicsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  thematics?: Maybe<Array<MoveThematicResultThematic>>;
+};
+
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -1225,11 +1262,16 @@ export type Mutation = {
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
+  initRenewCampaigns: Scalars['String']['output'];
+  moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
+  propagateFramingStatus: PropagateFramingStatusResponse;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
+  removeCampaigns: RemoveCampaignsResult;
+  removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1250,6 +1292,7 @@ export type Mutation = {
   treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
   updateAutomationRule: AutomationRule;
+  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   updateViewV2: ViewV2;
   upload: Array<UploadData>;
@@ -1415,8 +1458,32 @@ export type MutationIndexRecordsArgs = {
 };
 
 
+export type MutationInitRenewCampaignsArgs = {
+  campaigns: Array<CampaignToRenew>;
+  fromPacId: Scalars['String']['input'];
+  redirectUrl: Scalars['String']['input'];
+  toPacId: Scalars['String']['input'];
+};
+
+
+export type MutationMoveOrCopyCampaignThematicsArgs = {
+  moveThematic: Scalars['Boolean']['input'];
+  thematics: Array<ThematicToRenew>;
+  toCampaignId: Scalars['String']['input'];
+};
+
+
 export type MutationPostDiscussionCommentArgs = {
   comment?: InputMaybe<DiscussionCommentInput>;
+};
+
+
+export type MutationPropagateFramingStatusArgs = {
+  campaignId: Scalars['String']['input'];
+  categoriesFilter?: InputMaybe<Array<Scalars['String']['input']>>;
+  categoryStatusFilter?: InputMaybe<Array<Scalars['String']['input']>>;
+  structureItemCategoryId?: InputMaybe<Scalars['String']['input']>;
+  structureItemId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1433,6 +1500,16 @@ export type MutationPurgeMultipleValuesArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveCampaignsArgs = {
+  campaignsIds: Array<Scalars['ID']['input']>;
+};
+
+
+export type MutationRemoveStructureItemsArgs = {
+  structureItemIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1543,6 +1620,11 @@ export type MutationTreeMoveElementArgs = {
 
 export type MutationUpdateAutomationRuleArgs = {
   rule: UpdateAutomationRuleInput;
+};
+
+
+export type MutationUpdateCampaignsDatesArgs = {
+  campaigns: Array<CampaignToUpdateDates>;
 };
 
 
@@ -1763,6 +1845,11 @@ export type Progress = {
   percent?: Maybe<Scalars['Int']['output']>;
 };
 
+export type PropagateFramingStatusResponse = {
+  nbNotProcessed: Scalars['Int']['output'];
+  nbSuccess: Scalars['Int']['output'];
+};
+
 export type Query = {
   apiKeys: ApiKeyList;
   applications?: Maybe<ApplicationsList>;
@@ -1774,6 +1861,8 @@ export type Query = {
   doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
   export: Scalars['String']['output'];
   forms?: Maybe<FormsList>;
+  framingCampaigns: Array<CampaignsFraming>;
+  framingReport: Scalars['ID']['output'];
   fullTreeContent?: Maybe<Scalars['FullTreeContent']['output']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
@@ -1855,6 +1944,22 @@ export type QueryFormsArgs = {
   filters: FormFiltersInput;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortForms>;
+};
+
+
+export type QueryFramingCampaignsArgs = {
+  categoriesFilter?: InputMaybe<Array<Scalars['String']['input']>>;
+  categoryStatusFilter?: InputMaybe<Array<Scalars['String']['input']>>;
+  filters?: InputMaybe<Array<RecordFilterInput>>;
+  pacID: Scalars['String']['input'];
+  searchFilter?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryFramingReportArgs = {
+  content?: InputMaybe<ReportFramingContentInput>;
+  pacID: Scalars['String']['input'];
+  timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2220,6 +2325,42 @@ export type RelatedEntity = {
   url: Scalars['String']['output'];
 };
 
+export type RenewCampaignResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+  thematic_id: Scalars['ID']['output'];
+};
+
+export type ReportFramingAttributeFilterItemInput = {
+  attributeId: Scalars['String']['input'];
+  values: Array<ReportFramingAttributeFilterValueItemInput>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type ReportFramingAttributeFilterValueItemInput = {
+  formattedValue?: InputMaybe<Scalars['String']['input']>;
+  rawValue: Scalars['String']['input'];
+};
+
+export type ReportFramingContentInput = {
+  filters?: InputMaybe<ReportFramingFiltersInput>;
+};
+
+export type ReportFramingFiltersInput = {
+  /**  only for excel header filter display  */
+  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
+  campaigns?: InputMaybe<Array<RecordFilterInput>>;
+  categories?: InputMaybe<Array<Scalars['String']['input']>>;
+  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type SaveCampaignsDatesResult = {
+  campaign_id: Scalars['ID']['output'];
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<GenericValue>;
+};
+
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -2454,16 +2595,23 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
 };
 
 export type Tree = {
@@ -3075,6 +3223,16 @@ export type ViewsV2List = {
   totalCount: Scalars['Int']['output'];
 };
 
+export type RemoveCampaignsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
+};
+
+export type RemoveStructureItemsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
+};
+
 export type SaveValueBatchResult = {
   errors?: Maybe<Array<ValueBatchError>>;
   values?: Maybe<Array<GenericValue>>;
@@ -3133,19 +3291,19 @@ export type GetThreadQueryVariables = Exact<{
 
 export type GetThreadQuery = { records: { list: Array<{ permissions: { edit_record: boolean }, threads: Array<{ payload?: { id: string, label: Array<{ payload?: any | null }>, status: Array<{ payload?: { id: string } | null }>, comments: Array<{ payload?: { id: string, content: Array<{ payload?: any | null }>, author: Array<{ payload?: { id: string, name: Array<{ payload?: any | null }> } | null }>, createdAt: Array<{ raw_payload?: any | null }> } | null }> } | null }> }> } };
 
-export type GetViewQueryVariables = Exact<{
-  viewId: Scalars['String']['input'];
-}>;
-
-
-export type GetViewQuery = { view: { id: string, label: any } };
-
 export type GetPermissionEditViewOnLibraryQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
 }>;
 
 
 export type GetPermissionEditViewOnLibraryQuery = { libraries?: { list: Array<{ id: string, permissions?: { admin_library: boolean } | null }> } | null };
+
+export type GetViewV2QueryVariables = Exact<{
+  viewId: Scalars['ID']['input'];
+}>;
+
+
+export type GetViewV2Query = { viewV2: { id: string, label: any, shared: boolean, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> } } };
 
 export type GetViewListQueryVariables = Exact<{
   libraryId: Scalars['String']['input'];
@@ -3687,50 +3845,6 @@ export type GetThreadQueryHookResult = ReturnType<typeof useGetThreadQuery>;
 export type GetThreadLazyQueryHookResult = ReturnType<typeof useGetThreadLazyQuery>;
 export type GetThreadSuspenseQueryHookResult = ReturnType<typeof useGetThreadSuspenseQuery>;
 export type GetThreadQueryResult = Apollo.QueryResult<GetThreadQuery, GetThreadQueryVariables>;
-export const GetViewDocument = gql`
-    query GetView($viewId: String!) {
-  view(viewId: $viewId) {
-    id
-    label
-  }
-}
-    `;
-
-/**
- * __useGetViewQuery__
- *
- * To run a query within a React component, call `useGetViewQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetViewQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetViewQuery({
- *   variables: {
- *      viewId: // value for 'viewId'
- *   },
- * });
- */
-export function useGetViewQuery(baseOptions: Apollo.QueryHookOptions<GetViewQuery, GetViewQueryVariables> & ({ variables: GetViewQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetViewQuery, GetViewQueryVariables>(GetViewDocument, options);
-      }
-export function useGetViewLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetViewQuery, GetViewQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetViewQuery, GetViewQueryVariables>(GetViewDocument, options);
-        }
-// @ts-ignore
-export function useGetViewSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetViewQuery, GetViewQueryVariables>): Apollo.UseSuspenseQueryResult<GetViewQuery, GetViewQueryVariables>;
-export function useGetViewSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetViewQuery, GetViewQueryVariables>): Apollo.UseSuspenseQueryResult<GetViewQuery | undefined, GetViewQueryVariables>;
-export function useGetViewSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetViewQuery, GetViewQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetViewQuery, GetViewQueryVariables>(GetViewDocument, options);
-        }
-export type GetViewQueryHookResult = ReturnType<typeof useGetViewQuery>;
-export type GetViewLazyQueryHookResult = ReturnType<typeof useGetViewLazyQuery>;
-export type GetViewSuspenseQueryHookResult = ReturnType<typeof useGetViewSuspenseQuery>;
-export type GetViewQueryResult = Apollo.QueryResult<GetViewQuery, GetViewQueryVariables>;
 export const GetPermissionEditViewOnLibraryDocument = gql`
     query GetPermissionEditViewOnLibrary($libraryId: ID!) {
   libraries(filters: {id: [$libraryId]}) {
@@ -3779,6 +3893,61 @@ export type GetPermissionEditViewOnLibraryQueryHookResult = ReturnType<typeof us
 export type GetPermissionEditViewOnLibraryLazyQueryHookResult = ReturnType<typeof useGetPermissionEditViewOnLibraryLazyQuery>;
 export type GetPermissionEditViewOnLibrarySuspenseQueryHookResult = ReturnType<typeof useGetPermissionEditViewOnLibrarySuspenseQuery>;
 export type GetPermissionEditViewOnLibraryQueryResult = Apollo.QueryResult<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>;
+export const GetViewV2Document = gql`
+    query GetViewV2($viewId: ID!) {
+  viewV2(viewId: $viewId) {
+    id
+    label
+    shared
+    display {
+      type
+      attributes {
+        visible
+        attribute {
+          id
+          label
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetViewV2Query__
+ *
+ * To run a query within a React component, call `useGetViewV2Query` and pass it any options that fit your needs.
+ * When your component renders, `useGetViewV2Query` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetViewV2Query({
+ *   variables: {
+ *      viewId: // value for 'viewId'
+ *   },
+ * });
+ */
+export function useGetViewV2Query(baseOptions: Apollo.QueryHookOptions<GetViewV2Query, GetViewV2QueryVariables> & ({ variables: GetViewV2QueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetViewV2Query, GetViewV2QueryVariables>(GetViewV2Document, options);
+      }
+export function useGetViewV2LazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetViewV2Query, GetViewV2QueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetViewV2Query, GetViewV2QueryVariables>(GetViewV2Document, options);
+        }
+// @ts-ignore
+export function useGetViewV2SuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetViewV2Query, GetViewV2QueryVariables>): Apollo.UseSuspenseQueryResult<GetViewV2Query, GetViewV2QueryVariables>;
+export function useGetViewV2SuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetViewV2Query, GetViewV2QueryVariables>): Apollo.UseSuspenseQueryResult<GetViewV2Query | undefined, GetViewV2QueryVariables>;
+export function useGetViewV2SuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetViewV2Query, GetViewV2QueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetViewV2Query, GetViewV2QueryVariables>(GetViewV2Document, options);
+        }
+export type GetViewV2QueryHookResult = ReturnType<typeof useGetViewV2Query>;
+export type GetViewV2LazyQueryHookResult = ReturnType<typeof useGetViewV2LazyQuery>;
+export type GetViewV2SuspenseQueryHookResult = ReturnType<typeof useGetViewV2SuspenseQuery>;
+export type GetViewV2QueryResult = Apollo.QueryResult<GetViewV2Query, GetViewV2QueryVariables>;
 export const GetViewListDocument = gql`
     query GetViewList($libraryId: String!) {
   views(library: $libraryId) {

@@ -1,0 +1,53 @@
+.item {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    padding: 0 calc(var(--general-spacing-xs) * 1px);
+    align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+    border-radius: calc(var(--general-spacing-xs) * 1px);
+    text-align: left;
+    color: var(--general-utilities-text-primary);
+}
+
+.item:hover {
+    background: var(--general-utilities-main-light);
+}
+
+.columnTitle {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.handleSlot {
+    width: 20px;
+}
+
+.dragHandle {
+    cursor: grab;
+}
+
+.dragHandle.dragging {
+    cursor: grabbing;
+}
+
+.visibilityButton {
+    border: none;
+    background: transparent;
+    padding: 0;
+    display: flex;
+    color: var(--general-utilities-text-primary);
+}
+
+.visibilityButton:not([disabled]) {
+    cursor: pointer;
+}
+
+.visibleIcon {
+    color: var(--general-utilities-text-blue);
+}
+
+.dragHandle,
+.hiddenIcon {
+    color: var(--general-utilities-disabled);
+}

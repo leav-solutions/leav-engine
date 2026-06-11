@@ -2,15 +2,16 @@ import {type ReactNode, useEffect, useState} from 'react';
 import {useGetPermissionEditViewOnLibraryQuery} from '../../../../__generated__';
 import {DEFAULT_VIEW_SETTINGS_TAB_KEY} from '../../../../constants';
 import {CurrentViewSection} from './current-view-section/CurrentViewSection';
+import {CurrentViewProvider} from './store-current-view/CurrentViewProvider';
 import {PanelViewSettingsSidebar} from './panel-view-settings-sidebar/PanelViewSettingsSidebar';
 import {VIEW_SETTINGS_TABS} from './tabs/_constantes';
 import {type ViewSettingsTab} from '../../types';
 import {TabCatalog} from './tabs/TabCatalog';
-import {TabDisplay} from './tabs/TabDisplay';
+import {TabDisplay} from './tabs/tab-display/TabDisplay';
 import {TabFilters} from './tabs/TabFilters';
 import {TabHeader} from './tabs/TabHeader';
 import {TabSorts} from './tabs/TabSorts';
-import styles from './panelViewSettings.module.css';
+import {root, rightColumn, tabContent} from './panelViewSettings.module.css';
 
 export const PanelViewSettings = ({
     libraryId,
@@ -40,7 +41,7 @@ export const PanelViewSettings = ({
 
     const activeTabMeta = VIEW_SETTINGS_TABS.find(tab => tab.key === activeTab) ?? VIEW_SETTINGS_TABS[0];
 
-    const tabContent: Record<ViewSettingsTab, ReactNode> = {
+    const tabsContent: Record<ViewSettingsTab, ReactNode> = {
         display: <TabDisplay canEditAdminView={canEditAdminView} />,
         filters: <TabFilters canEditAdminView={canEditAdminView} />,
         sorts: <TabSorts canEditAdminView={canEditAdminView} />,
@@ -48,13 +49,15 @@ export const PanelViewSettings = ({
     };
 
     return (
-        <div className={styles.root}>
-            <PanelViewSettingsSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-            <div className={styles.rightColumn}>
-                <CurrentViewSection onViewSettingsClose={onClose} currentViewId={currentViewId} />
-                <TabHeader tab={activeTabMeta} />
-                <div className={styles.tabContent}>{tabContent[activeTab]}</div>
+        <CurrentViewProvider>
+            <div className={root}>
+                <PanelViewSettingsSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+                <div className={rightColumn}>
+                    <CurrentViewSection onViewSettingsClose={onClose} />
+                    <TabHeader tab={activeTabMeta} />
+                    <div className={tabContent}>{tabsContent[activeTab]}</div>
+                </div>
             </div>
-        </div>
+        </CurrentViewProvider>
     );
 };

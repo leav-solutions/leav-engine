@@ -105,6 +105,22 @@
             "sorts": "Tris",
             "views": "Catalogue"
         },
+        "display": {
+            "mode": {
+                "title": "Mode d’affichage",
+                "table": "Tableau",
+                "list": "Liste",
+                "mosaic": "Mosaïc"
+            },
+            "columns": {
+                "title": "Colonnes",
+                "search-placeholder": "Rechercher...",
+                "manage-available": "Gérer les attributs disponibles",
+                "identity": "Information (affiché par défaut)",
+                "show": "Afficher",
+                "hide": "Masquer"
+            }
+        },
         "my-views": "Mes vues",
         "my-views-empty": "Aucune vue personnelle",
         "shared-views": "Vues partagées avec moi",

@@ -5,15 +5,11 @@ import {faThumbtackSlash} from '@fortawesome/free-solid-svg-icons';
 import {tabHeader, title} from './tabHeader.module.css';
 import {type ViewSettingsTabConfig} from './_types';
 
-type TabHeaderProps = {
-    tab: ViewSettingsTabConfig;
-};
-
 /**
  * TODO:
  * - bidirectional shortcut — toggle pin state on the view, dispatch to Explorer/iframe via targetPanelId
  */
-export const TabHeader = ({tab}: TabHeaderProps) => {
+export const TabHeader = ({tab}: {tab: ViewSettingsTabConfig}) => {
     const {t} = useTranslation();
 
     return (

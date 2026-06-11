@@ -4,30 +4,24 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClone, faSave, faTrash, faXmark} from '@fortawesome/free-solid-svg-icons';
 import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {useGetViewQuery} from '../../../../../__generated__';
+import {useCurrentView} from '../store-current-view/useCurrentView';
 import {header, currentView, shared, actions, actionButtons} from './currentViewSection.module.css';
-
-type CurrentViewSectionProps = {
-    onViewSettingsClose: () => void;
-    currentViewId: string;
-};
 
 /**
  * TODO:
  * - plug useEditLabelView to make the label editable when admin (or owner)
- * - bind to view.shared via useShareView; disable when !canEditAdminView
  * - plug useUpdateView / useCreateNewView (clone) / useDeleteView
  */
-export const CurrentViewSection = ({onViewSettingsClose, currentViewId}: CurrentViewSectionProps) => {
+export const CurrentViewSection = ({onViewSettingsClose}: {onViewSettingsClose: () => void}) => {
     const {t} = useTranslation();
     const {lang} = useLang();
+    const {view} = useCurrentView();
 
-    const {data} = useGetViewQuery({
-        variables: {viewId: currentViewId},
-        skip: !currentViewId,
-    });
+    if (!view) {
+        return null;
+    }
 
-    const currentViewLabel = data?.view ? localizedTranslation(data.view.label, lang) : '';
+    const currentViewLabel = localizedTranslation(view.label, lang);
 
     return (
         <section className={currentView}>
@@ -48,13 +42,7 @@ export const CurrentViewSection = ({onViewSettingsClose, currentViewId}: Current
             <KitInput readonly value={currentViewLabel} />
             <div className={actions}>
                 <div className={shared}>
-                    <KitSwitch
-                        checked={
-                            // TODO: retrieve data from back by modifying query
-                            false
-                        }
-                        disabled
-                    />
+                    <KitSwitch checked={view.shared} disabled />
                     <KitTypography.Text>{t('view_settings.current-view.shared')}</KitTypography.Text>
                 </div>
                 <div className={actionButtons}>
