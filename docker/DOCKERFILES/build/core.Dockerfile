@@ -41,7 +41,7 @@ RUN rsync -av \
     --exclude="apps/core/*" \
     --exclude="apps/*/" \
     --exclude="libs/ui/" \
-    --exclude="libs/types/" \
+    --exclude="libs/core-types/" \
     --include="libs/*/" \
     --include="libs/*/dist/" \
     --include="libs/*/src/" \

@@ -39,7 +39,7 @@ It can be configured with the `PLUGINS_PATH` environment variable or the `plugin
 
 ### Create a plugin (WIP)
 
-In your plugins, import [@aristid/leav-types](https://www.npmjs.com/package/@aristid/leav-types)
+In your plugins, import [@leav/core-types](../../libs/core-types)
 
 In your tsconfig.json
 
@@ -47,9 +47,9 @@ In your tsconfig.json
 {
     "compilerOptions": {
         "paths": {
-            "@leav/core/*": ["./node_modules/@aristid/leav-types/apps/core/src/*"],
-            "@leav/utils": ["./node_modules/@aristid/leav-types/libs/utils/src/index"],
-            "@leav/logger": ["./node_modules/@aristid/leav-types/libs/logger/src/index"]
+            "@leav/core/*": ["./node_modules/@leav/core-types/apps/core/src/*"],
+            "@leav/utils": ["./node_modules/@leav/core-types/libs/utils/src/index"],
+            "@leav/logger": ["./node_modules/@leav/core-types/libs/logger/src/index"]
         }
     }
 }

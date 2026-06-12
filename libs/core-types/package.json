@@ -1,7 +1,7 @@
 {
-    "name": "@aristid/leav-types",
+    "name": "@leav/core-types",
     "version": "1.15.0",
-    "description": "Shared Leav types",
+    "description": "Shared Leav core types",
     "scripts": {
         "tscheck": "",
         "test:ci": "",

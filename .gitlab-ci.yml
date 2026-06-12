@@ -986,17 +986,10 @@ build-docker-mcp-runtime:
   if: $DISABLE_BUILD_NPM_JOBS == "true"
   when: never
 
-.login_npm_registry_script: &login_npm_registry_script
-  - |
-    if [ -n "$NPM_TOKEN" ]; then
-      echo "Login to public npm registry with NPM_TOKEN"
-      echo "npmAuthToken: ${NPM_TOKEN}" >> .yarnrc.yml
-    else
-      echo "NPM_TOKEN not defined, skip npm login"
-    fi
-
 .build_npm: &build_npm
   stage: build
+  before_script:
+    - *leav_npm_auth
   script:
     - apk add --no-cache jq
     - |
@@ -1037,19 +1030,15 @@ build-docker-mcp-runtime:
       allow_failure: true # To make job optional in MR pipelines
       when: manual
 
-build-npm-leav-types:
+build-npm-leav-core-types:
   <<: *build_npm
-  before_script:
-    - *login_npm_registry_script
   variables:
-    PKG: "@aristid/leav-types"
+    PKG: "@leav/core-types"
     FOCUS: core
-    PATH_CHANGES: apps/core/**/* # libs/types is a projection of apps/core
+    PATH_CHANGES: apps/core/**/* # libs/core-types is a projection of apps/core
 
 build-npm-leav-ui:
   <<: *build_npm
-  before_script:
-    - *leav_npm_auth
   variables:
     PKG: "@leav/ui"
     FOCUS: "@leav/ui"
@@ -1057,8 +1046,6 @@ build-npm-leav-ui:
 
 build-npm-leav-utils:
   <<: *build_npm
-  before_script:
-    - *leav_npm_auth
   variables:
     PKG: "@leav/utils"
     FOCUS: "@leav/utils"
@@ -1066,8 +1053,6 @@ build-npm-leav-utils:
 
 build-npm-leav-e2e-test-utils:
   <<: *build_npm
-  before_script:
-    - *leav_npm_auth
   variables:
     PKG: "@leav/e2e-test-utils"
     FOCUS: "@leav/e2e-test-utils"
