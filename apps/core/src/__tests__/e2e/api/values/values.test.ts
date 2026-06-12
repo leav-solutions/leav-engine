@@ -11,12 +11,15 @@ import {
     gqlSaveValue,
     gqlSaveValueBis,
     makeGraphQlCall,
+    nonAdminUserSdk,
+    adminUserSdk,
 } from '../e2eUtils';
 import {type ILinkValue} from '../../../../_types/value';
 import {
     IMMUTABLE_CORE_SYSTEM_COMMON_ATTRIBUTE_IDS,
     IMMUTABLE_CORE_SYSTEM_FILES_ATTRIBUTE_IDS,
 } from '../../../../domain/value/helpers/canSaveRecordValue';
+import {UUID_ATTRIBUTE_ID} from '../../../../_constants/attributes';
 
 describe('Values', () => {
     const getRecord = async (libraryId: string, recordId: string) =>
@@ -323,6 +326,46 @@ describe('Values', () => {
                 /is an immutable core system attribute and cannot be edited/,
             );
         }
+    });
+
+    test('Admin user should be able to edit uuid attributes (at least temporary for users migration)', async () => {
+        await adminUserSdk.SaveValue({
+            attributeId: UUID_ATTRIBUTE_ID,
+            libraryId: testLibName,
+            recordId,
+            value: {payload: '3a70335f-36f7-44d1-92b7-af503e7565bf'},
+        });
+
+        const res = await adminUserSdk.GetRecordByIdStandardValuesProperty({
+            libraryId: testLibName,
+            recordId,
+            attributeId: UUID_ATTRIBUTE_ID,
+        });
+        console.log('res :>> ', JSON.stringify(res, null, 2));
+
+        expect(res.records.list[0].property[0].payload).toBe('3a70335f-36f7-44d1-92b7-af503e7565bf');
+    });
+
+    test('Non admin user should not be able to edit uuid attributes', async () => {
+        await expect(
+            nonAdminUserSdk.SaveValue({
+                attributeId: UUID_ATTRIBUTE_ID,
+                libraryId: testLibName,
+                recordId,
+                value: {payload: 'test'},
+            }),
+        ).rejects.toThrow(/PERMISSION_ERROR/);
+    });
+
+    test('Should not be able to edit uuid attributes with invalid value', async () => {
+        await expect(
+            adminUserSdk.SaveValue({
+                attributeId: UUID_ATTRIBUTE_ID,
+                libraryId: testLibName,
+                recordId,
+                value: {payload: 'test'},
+            }),
+        ).rejects.toThrow(/error.INVALID_REGEXP: test/);
     });
 
     test('Save value tree', async () => {
