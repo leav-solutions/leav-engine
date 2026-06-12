@@ -57,7 +57,6 @@ FROM node:24.16.0-alpine3.23 AS runner
 WORKDIR /app
 
 COPY --from=builder /install ./
-COPY docker/scripts/plugins_install.sh ./scripts/plugins_install.sh
 COPY assets/ ./assets
 
 # Dependencies needed to retrieve files metadata with exiftool-vendored pkg
@@ -79,4 +78,4 @@ ENV SKIP_YARN_COREPACK_CHECK=1
 # Useful for e2e playwright tests to run that service in gitlab-ci
 EXPOSE 4001
 
-CMD ["sh", "-c", "/app/scripts/plugins_install.sh && yarn run db:migrate && yarn run start"]
+CMD ["sh", "-c", "yarn run db:migrate && yarn run start"]
