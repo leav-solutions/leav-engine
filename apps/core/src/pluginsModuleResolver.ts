@@ -7,9 +7,9 @@ function resolve(specifier, context, nextResolve) {
     // Custom resolution logic for '@leav/core' imports
     // in plugins tsconfig.json
     // "paths": {
-    //     "@leav/core/*": ["../../node_modules/@aristid/leav-types/apps/core/src/*"],
-    //     "@leav/utils": ["../../node_modules/@aristid/leav-types/libs/utils/src/index"],
-    //     "@leav/logger": ["../../node_modules/@aristid/leav-types/libs/logger/src/index"]
+    //     "@leav/core/*": ["../../node_modules/@leav/core-types/apps/core/src/*"],
+    //     "@leav/utils": ["../../node_modules/@leav/core-types/libs/utils/src/index"],
+    //     "@leav/logger": ["../../node_modules/@leav/core-types/libs/logger/src/index"]
     //     ...and other paths if needed
     // },
 

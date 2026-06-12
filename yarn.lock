@@ -408,19 +408,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aristid/leav-types@workspace:libs/types":
-  version: 0.0.0-use.local
-  resolution: "@aristid/leav-types@workspace:libs/types"
-  dependencies:
-    "@leav/utils": "workspace:libs/utils"
-    "@types/express": "npm:5.0.6"
-    amqplib: "npm:2.0.1"
-    arangojs: "npm:8.8.1"
-    awilix: "npm:12.1.1"
-    i18next: "npm:24.2.3"
-  languageName: unknown
-  linkType: soft
-
 "@asamuzakjp/css-color@npm:^3.2.0":
   version: 3.2.0
   resolution: "@asamuzakjp/css-color@npm:3.2.0"
@@ -4983,6 +4970,19 @@ __metadata:
     prettier: "npm:3.8.3"
     typescript: "npm:5.9.3"
     vitest: "npm:4.1.8"
+  languageName: unknown
+  linkType: soft
+
+"@leav/core-types@workspace:libs/core-types":
+  version: 0.0.0-use.local
+  resolution: "@leav/core-types@workspace:libs/core-types"
+  dependencies:
+    "@leav/utils": "workspace:libs/utils"
+    "@types/express": "npm:5.0.6"
+    amqplib: "npm:2.0.1"
+    arangojs: "npm:8.8.1"
+    awilix: "npm:12.1.1"
+    i18next: "npm:24.2.3"
   languageName: unknown
   linkType: soft
 

@@ -1,6 +1,6 @@
-# libs/types — CLAUDE.md
+# libs/core-types — CLAUDE.md
 
-`@aristid/leav-types` — Types TypeScript de `apps/core` publiés sur npm pour les plugins externes.
+`@leav/core-types` — Types TypeScript de `apps/core` publiés sur npm pour les plugins externes.
 
 ## Ce que c'est
 
@@ -12,7 +12,7 @@ depuis `apps/core`, destinée aux **développeurs de plugins** qui étendent le 
 
 ## Publication CI (GitLab)
 
-Publié automatiquement sur **npm public** (`@aristid/leav-types`) via GitLab CI,
+Publié automatiquement sur **aristid gitlab registry** (`@leav/core-types`) via GitLab CI,
 déclenché par tout changement dans `apps/core/**/*` :
 
 - **`next`** — à chaque push sur `develop`
@@ -20,7 +20,7 @@ déclenché par tout changement dans `apps/core/**/*` :
 
 ```bash
 # Commande de génération (lancée par le CI)
-yarn workspace @aristid/leav-types generate
+yarn workspace @leav/core-types generate
 ```
 
 ## Problème connu : les enums ne sont pas exportés ⚠️
@@ -38,5 +38,5 @@ C'est un chantier à prioriser.
 Toujours régénérer via le CI ou :
 
 ```bash
-yarn workspace @aristid/leav-types generate
+yarn workspace @leav/core-types generate
 ```
