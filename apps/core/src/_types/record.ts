@@ -1,3 +1,4 @@
+import {type UUID_ATTRIBUTE_ID} from '../_constants/attributes';
 import {type IAttributeWithRevLink} from '../infra/attributeTypes/attributeTypesRepo';
 import {type ILibrary} from './library';
 import {type IPreview} from './preview';
@@ -5,6 +6,7 @@ import {type IValue} from './value';
 
 export interface IRecord {
     id?: string;
+    [UUID_ATTRIBUTE_ID]?: string;
     library?: string;
     created_at?: number;
     created_by?: string;

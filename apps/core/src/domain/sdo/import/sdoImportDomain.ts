@@ -1,0 +1,580 @@
+import {type ILogger} from '@leav/logger';
+import _ from 'lodash';
+import {type ISDO, type ISDOMappingAttribute, type ISDOMappingLibrary} from '../../../_types/sdo';
+import {type IRecordDomain} from '../../record/recordDomain';
+import {type ISDOUtils} from '../../../utils/sdo/sdo';
+import {hashSDOAttributeId, type ISDODomain} from '../sdoDomain';
+import {AttributeCondition, type IRecord, Operator} from '../../../_types/record';
+import {type ISaveBatchValueError, type IValueDomain} from '../../value/valueDomain';
+import {type ISDOExportDomain} from '../export/sdoExportDomain';
+import {type IAttributeDomain} from '../../attribute/attributeDomain';
+import {
+    type ILinkValue,
+    type IStandardValue,
+    type ISaveValue,
+    type ITreeValue,
+    type ISaveLinkValue,
+    type ISaveStandardValue,
+    type ISaveTreeValue,
+} from '../../../_types/value';
+import {ErrorTypes, type ErrorFieldDetail} from '../../../_types/errors';
+import {type ICreateRecordValueError} from '../../record/_types';
+import LeavError from '../../../errors/LeavError';
+import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
+import {type ITreeDomain} from '../../tree/treeDomain';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+
+export interface ISDOImportDomainDeps {
+    'core.utils.sdo': ISDOUtils;
+    'core.domain.sdo': ISDODomain;
+    'core.domain.value': IValueDomain;
+    'core.utils.logger': ILogger;
+    'core.domain.sdo.export': ISDOExportDomain;
+    'core.domain.record': IRecordDomain;
+    'core.domain.attribute': IAttributeDomain;
+    'core.domain.tree': ITreeDomain;
+}
+
+export interface ISDOImportDomain {
+    create: (sdo: ISDO, ctx: IQueryInfos) => Promise<void>;
+    update: (sdo: ISDO, ctx: IQueryInfos) => Promise<void>;
+}
+
+// may be added in plugin config to be configurable, for now only for devs.
+// Or may be better to use specific logger with its one level for modules (her importDomain).
+// https://aristid.atlassian.net/browse/LEAVC-221
+const debugSaveValues = true;
+
+export default function ({
+    'core.utils.logger': logger,
+    'core.utils.sdo': sdoUtils,
+    'core.domain.record': recordDomain,
+    'core.domain.value': valueDomain,
+    'core.domain.sdo': sdoDomain,
+    'core.domain.attribute': attributeDomain,
+    'core.domain.tree': treeDomain,
+}: ISDOImportDomainDeps): ISDOImportDomain {
+    const create = async (sdo: ISDO, ctx: IQueryInfos) => {
+        const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(ctx);
+        const leavLibraryId = sdoUtils.getLeavLibraryId(sdoGlobalSettings.mapping, sdo);
+        const libraryUuidAttributeId = sdoUtils.getLibraryUUIDAttributeID(sdoGlobalSettings.mapping, leavLibraryId);
+        const sdoLibrary = sdoUtils.getSDOLibrary(sdoGlobalSettings.mapping, leavLibraryId);
+
+        const recordUuid = sdoUtils.getRecordUUIDFromSDO(sdo);
+        const records = await _findRecords(leavLibraryId, libraryUuidAttributeId, recordUuid, ctx);
+
+        // If we find a record, it's already created, so we skip it
+        if (records.length) {
+            logger.debug(
+                `Record with uuid "${recordUuid}" on library "${leavLibraryId}" already exists, import create skipped`,
+            );
+            return;
+        }
+
+        const hashSDO = sdoUtils.createHash(sdo);
+        const valuesToSave = await _mapRecordValuesFromSDO(sdo, sdoLibrary, ctx);
+        valuesToSave.push({
+            id_value: null,
+            attribute: hashSDOAttributeId,
+            payload: hashSDO,
+        });
+
+        if (debugSaveValues) {
+            logger.debug(`SDO Import create values to save to new ${leavLibraryId} record >> `, {valuesToSave});
+        }
+
+        const res = await recordDomain.createRecord({
+            library: leavLibraryId,
+            values: valuesToSave,
+            verifyRequiredAttributes: true,
+            ctx,
+        });
+
+        if (res.valuesErrors) {
+            throw new LeavError(ErrorTypes.INTERNAL_ERROR, 'Error while creating a record', {
+                fields: res.valuesErrors.reduce(
+                    (acc: ErrorFieldDetail<unknown>, valueError: ICreateRecordValueError) => {
+                        acc[valueError.attribute] = valueError.message;
+                        return acc;
+                    },
+                    {} as ErrorFieldDetail<unknown>,
+                ),
+            });
+        }
+    };
+
+    const update = async (sdo: ISDO, ctx: IQueryInfos) => {
+        const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(ctx);
+        const leavLibraryId = sdoUtils.getLeavLibraryId(sdoGlobalSettings.mapping, sdo);
+        const libraryUuidAttributeId = sdoUtils.getLibraryUUIDAttributeID(sdoGlobalSettings.mapping, leavLibraryId);
+        const sdoLibrary = sdoUtils.getSDOLibrary(sdoGlobalSettings.mapping, leavLibraryId);
+
+        const recordUuid = sdoUtils.getRecordUUIDFromSDO(sdo);
+        const records = await _findRecords(leavLibraryId, libraryUuidAttributeId, recordUuid, ctx);
+
+        if (!records?.length) {
+            throw new Error(
+                `Record with uuid "${recordUuid}" on library "${leavLibraryId}" not found, cannot process import update`,
+            );
+        }
+
+        // FIXME: bug au moment du saveValueBatch après le create record.
+        // Il semble que ça vient de updateRecordLastModif. Pourquoi ?
+
+        const hashSDO = sdoUtils.createHash(sdo);
+        const valuesToSave = await _mapRecordValuesFromSDO(sdo, sdoLibrary, ctx, records[0]);
+        valuesToSave.push({
+            id_value: null,
+            attribute: hashSDOAttributeId,
+            payload: hashSDO,
+        });
+
+        if (debugSaveValues) {
+            logger.debug(`SDO Import update values to save on record ${leavLibraryId}/${records[0].id} >> `, {
+                valuesToSave,
+            });
+        }
+
+        // saveValueBatch
+        const res = await valueDomain.saveValueBatch({
+            library: leavLibraryId,
+            recordId: records[0].id,
+            values: valuesToSave,
+            ctx,
+        });
+
+        if (res.errors) {
+            throw new LeavError(ErrorTypes.INTERNAL_ERROR, 'Error while updating a record', {
+                fields: res.errors.reduce((acc: ErrorFieldDetail<unknown>, valueError: ISaveBatchValueError) => {
+                    acc[valueError.attribute] = valueError.message;
+                    return acc;
+                }, {} as ErrorFieldDetail<unknown>),
+            });
+        }
+    };
+
+    const _findRecords = async (
+        leavLibraryId: string,
+        libraryUuidAttributeId: string,
+        recordUuid: string,
+        ctx: IQueryInfos,
+    ) => {
+        const {list: records} = await recordDomain.find({
+            params: {
+                library: leavLibraryId,
+                filters: [
+                    {
+                        field: libraryUuidAttributeId,
+                        value: recordUuid,
+                        condition: AttributeCondition.EQUAL,
+                    },
+                ],
+                retrieveInactive: true,
+            },
+            ctx,
+        });
+
+        return records;
+    };
+
+    const _getRecordsIdByUUID = async (
+        libraryId: string,
+        recordsUUID: string[],
+        ctx: IQueryInfos,
+    ): Promise<string[]> => {
+        if (recordsUUID.length === 0) {
+            return [];
+        }
+        const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(ctx);
+        const libraryUuidAttributeId = sdoUtils.getLibraryUUIDAttributeID(sdoGlobalSettings.mapping, libraryId);
+        const recordsId = (
+            await recordDomain.find({
+                params: {
+                    library: libraryId,
+                    filters: recordsUUID.reduce((acc, recordUUID, index) => {
+                        if (index > 0) {
+                            acc.push({operator: Operator.OR});
+                        }
+
+                        const filter = {
+                            field: libraryUuidAttributeId,
+                            condition: AttributeCondition.EQUAL,
+                            value: recordUUID,
+                        };
+                        acc.push(filter);
+                        return acc;
+                    }, []),
+                    retrieveInactive: true,
+                },
+                ctx,
+            })
+        ).list.map(({id}) => id);
+
+        if (recordsId.length !== recordsUUID.length) {
+            throw new LeavError(
+                ErrorTypes.INTERNAL_ERROR,
+                `Records with ${_.difference(recordsUUID, recordsId)} UUID for library ${libraryId} not found`,
+            );
+        }
+
+        return recordsId;
+    };
+
+    const _mapRecordValuesFromSDO = async (
+        sdo: ISDO,
+        sdoMappingLibrary: ISDOMappingLibrary,
+        ctx: IQueryInfos,
+        record?: IRecord,
+    ): Promise<ISaveValue[]> => {
+        const valuesToSave: Array<Promise<ISaveValue[]>> = Object.entries(sdoMappingLibrary.sdoAttributes)
+            .filter(([, sdoAttr]) => sdoAttr.leavAttributeId !== '')
+            .filter(([sdoKey]) => {
+                const value = _.get(sdo.content, sdoKey);
+                return value !== undefined && value !== '';
+            })
+            .map(async ([sdoKey, sdoAttr]): Promise<ISaveValue[]> => {
+                const sdoPayload: string | string[] = _cleanValue(_.get(sdo.content, sdoKey));
+
+                const attributeProperties = await attributeDomain.getAttributeProperties({
+                    id: sdoAttr.leavAttributeId,
+                    ctx,
+                });
+
+                // If the value is a reference to another record, we need to use its leav ID instead
+                switch (attributeProperties.type) {
+                    case AttributeTypes.SIMPLE:
+                        return _getSaveValuesForSimpleAttribute(sdoAttr, sdoPayload);
+                    case AttributeTypes.ADVANCED:
+                        return _getSaveValuesForAdvancedAttribute(
+                            sdoKey,
+                            sdoAttr,
+                            sdoPayload,
+                            attributeProperties,
+                            record,
+                            ctx,
+                        );
+                    case AttributeTypes.SIMPLE_LINK:
+                        return _getSaveValuesForSimpleLinkAttribute(
+                            sdoKey,
+                            sdoAttr,
+                            sdoPayload,
+                            attributeProperties,
+                            ctx,
+                        );
+                    case AttributeTypes.ADVANCED_LINK:
+                        return _getSaveValuesForAdvancedLinkAttribute(
+                            sdoKey,
+                            sdoAttr,
+                            sdoPayload,
+                            attributeProperties,
+                            record,
+                            ctx,
+                        );
+                    case AttributeTypes.TREE:
+                        return _getSaveValuesForTreeAttribute(
+                            sdoKey,
+                            sdoAttr,
+                            sdoPayload,
+                            attributeProperties,
+                            record,
+                            ctx,
+                        );
+                    default:
+                        throw new LeavError(
+                            ErrorTypes.INTERNAL_ERROR,
+                            `Unsupported attribute type ${attributeProperties.type} for attribute ${sdoKey}`,
+                        );
+                }
+            });
+        return (await Promise.all(valuesToSave)).flat(1);
+    };
+
+    function _getSaveValuesForSimpleAttribute(
+        sdoAttr: ISDOMappingAttribute,
+        sdoPayload: string | string[],
+    ): ISaveValue[] {
+        if (Array.isArray(sdoPayload)) {
+            throw new LeavError(
+                ErrorTypes.INTERNAL_ERROR,
+                `Simple attribute ${sdoAttr.leavAttributeId} expects a single value`,
+            );
+        }
+        return [
+            {
+                id_value: null,
+                attribute: sdoAttr.leavAttributeId,
+                payload: sdoPayload as ISaveValue['payload'],
+            },
+        ];
+    }
+
+    async function _getSaveValuesForSimpleLinkAttribute(
+        sdoKey: string,
+        sdoAttr: ISDOMappingAttribute,
+        sdoPayload: string | string[],
+        attributeProperties: IAttribute,
+        ctx: IQueryInfos,
+    ): Promise<ISaveLinkValue[]> {
+        if (sdoPayload === null) {
+            return [
+                {
+                    id_value: null,
+                    attribute: sdoAttr.leavAttributeId,
+                    payload: null,
+                },
+            ];
+        }
+        if (typeof sdoPayload !== 'string') {
+            throw new LeavError(ErrorTypes.INTERNAL_ERROR, `Simple link attribute ${sdoKey} expects a string value`);
+        }
+        const [recordId] = await _getRecordsIdByUUID(attributeProperties.linked_library, [sdoPayload as string], ctx);
+        return [
+            {
+                id_value: null,
+                attribute: sdoAttr.leavAttributeId,
+                payload: recordId,
+            },
+        ];
+    }
+
+    async function _getSaveValuesForAdvancedAttribute(
+        sdoKey: string,
+        sdoAttr: ISDOMappingAttribute,
+        sdoPayload: string | string[],
+        attributeProperties: IAttribute,
+        record: IRecord,
+        ctx: IQueryInfos,
+    ): Promise<ISaveStandardValue[]> {
+        if (attributeProperties.multiple_values && !Array.isArray(sdoPayload)) {
+            throw new LeavError(ErrorTypes.INTERNAL_ERROR, `Advanced attribute ${sdoKey} expects an array of values`);
+        }
+        if (!attributeProperties.multiple_values && Array.isArray(sdoPayload)) {
+            throw new LeavError(ErrorTypes.INTERNAL_ERROR, `Advanced attribute ${sdoKey} expects a single value`);
+        }
+        const newValues = Array.isArray(sdoPayload)
+            ? sdoPayload
+            : sdoPayload == null // unset mono value
+              ? []
+              : [sdoPayload];
+
+        if (!attributeProperties.multiple_values && newValues.length === 1) {
+            // We dont need to fetch existing values if we are setting a single value
+            // SaveValuesBatch will automatically replace previous value
+            // Important to do in one operation in case of required attribute
+            return [
+                {
+                    id_value: null,
+                    attribute: sdoAttr.leavAttributeId,
+                    payload: newValues[0],
+                },
+            ];
+        }
+
+        const existingValues: IStandardValue[] = record
+            ? await recordDomain.getRecordFieldValue({
+                  record,
+                  library: record.library,
+                  attributeId: sdoAttr.leavAttributeId,
+                  ctx,
+              })
+            : [];
+
+        const valuesToDelete = existingValues.filter(existingValue => !newValues.includes(existingValue.raw_payload));
+        const valuesToAdd = newValues.filter(
+            newValue => !existingValues.some(existingValue => existingValue.raw_payload === newValue),
+        );
+
+        return [
+            ...valuesToDelete.map(valueToDelete => ({
+                id_value: valueToDelete.id_value,
+                attribute: sdoAttr.leavAttributeId,
+                payload: null, // We set the payload to null to delete the value
+            })),
+            ...valuesToAdd.map(valueToAdd => ({
+                id_value: null,
+                attribute: sdoAttr.leavAttributeId,
+                payload: valueToAdd,
+            })),
+        ];
+    }
+
+    async function _getSaveValuesForAdvancedLinkAttribute(
+        sdoKey: string,
+        sdoAttr: ISDOMappingAttribute,
+        sdoPayload: string | string[],
+        attributeProperties: IAttribute,
+        record: IRecord,
+        ctx: IQueryInfos,
+    ): Promise<ISaveLinkValue[]> {
+        if (attributeProperties.multiple_values && !Array.isArray(sdoPayload)) {
+            throw new LeavError(
+                ErrorTypes.INTERNAL_ERROR,
+                `Advanced link attribute ${sdoKey} expects an array of string values`,
+            );
+        }
+        if (!attributeProperties.multiple_values && Array.isArray(sdoPayload)) {
+            throw new LeavError(
+                ErrorTypes.INTERNAL_ERROR,
+                `Advanced link attribute ${sdoKey} expects a single string value`,
+            );
+        }
+        const recordUuids = Array.isArray(sdoPayload)
+            ? sdoPayload
+            : sdoPayload == null // unset mono value
+              ? []
+              : [sdoPayload];
+        const recordsId = await _getRecordsIdByUUID(attributeProperties.linked_library, recordUuids, ctx);
+
+        if (!attributeProperties.multiple_values && recordsId.length === 1) {
+            // We dont need to fetch existing values if we are setting a single value
+            // SaveValuesBatch will automatically replace previous value
+            // Important to do in one operation in case of required attribute
+            return [
+                {
+                    id_value: null,
+                    attribute: sdoAttr.leavAttributeId,
+                    payload: recordsId[0],
+                },
+            ];
+        }
+
+        const existingValues: ILinkValue[] = record
+            ? await recordDomain.getRecordFieldValue({
+                  record,
+                  library: record.library,
+                  attributeId: sdoAttr.leavAttributeId,
+                  ctx,
+              })
+            : [];
+
+        const valuesToDelete = existingValues.filter(val => !recordsId.includes(val.payload.id));
+        const recordIdsToAdd = recordsId.filter(recordId => !existingValues.some(val => val.payload.id === recordId));
+
+        return [
+            ...valuesToDelete.map(valueToDelete => ({
+                id_value: valueToDelete.id_value,
+                attribute: sdoAttr.leavAttributeId,
+                payload: null, // We set the payload to null to delete the value
+            })),
+            ...recordIdsToAdd.map(recordIdToAdd => ({
+                id_value: null,
+                attribute: sdoAttr.leavAttributeId,
+                payload: recordIdToAdd,
+            })),
+        ];
+    }
+
+    async function _getSaveValuesForTreeAttribute(
+        sdoKey: string,
+        sdoAttr: ISDOMappingAttribute,
+        sdoPayload: string | string[],
+        attributeProperties: IAttribute,
+        record: IRecord,
+        ctx: IQueryInfos,
+    ): Promise<ISaveTreeValue[]> {
+        if (attributeProperties.multiple_values && !Array.isArray(sdoPayload)) {
+            throw new LeavError(
+                ErrorTypes.INTERNAL_ERROR,
+                `Tree attribute ${sdoKey} expects an array of string values`,
+            );
+        }
+        if (!attributeProperties.multiple_values && Array.isArray(sdoPayload)) {
+            throw new LeavError(ErrorTypes.INTERNAL_ERROR, `Tree attribute ${sdoKey} expects a single string value`);
+        }
+        const treeProperties = await treeDomain.getTreeProperties(attributeProperties.linked_tree, ctx);
+        if (Object.keys(treeProperties.libraries).length !== 1) {
+            throw new LeavError(
+                ErrorTypes.INTERNAL_ERROR,
+                `Tree attribute ${sdoKey} expects a single library, found ${Object.keys(treeProperties.libraries).length}`,
+            );
+        }
+        const linkedLibraryId = Object.keys(treeProperties.libraries)[0];
+        const recordUuids = Array.isArray(sdoPayload)
+            ? sdoPayload
+            : sdoPayload == null // unset mono value
+              ? []
+              : [sdoPayload];
+        const recordsId = await _getRecordsIdByUUID(linkedLibraryId, recordUuids, ctx);
+
+        const nodeIds = (
+            await Promise.all(
+                recordsId.map(recordId =>
+                    treeDomain.getNodesByRecord({
+                        treeId: attributeProperties.linked_tree,
+                        record: {
+                            library: linkedLibraryId,
+                            id: recordId,
+                        },
+                        ctx,
+                    }),
+                ),
+            )
+        ).flat(1);
+
+        // One record can be referenced by multiple nodes
+        if (nodeIds.length < recordsId.length) {
+            throw new LeavError(
+                ErrorTypes.INTERNAL_ERROR,
+                `Tree attribute ${sdoKey} expects at least one node, found none for records ${JSON.stringify(recordUuids)}`,
+            );
+        }
+
+        // check recordUuids instead of nodeIds because a record may be mapped to multiple nodes
+        if (!attributeProperties.multiple_values && recordUuids.length === 1) {
+            // We dont need to fetch existing values if we are setting a single value
+            // SaveValuesBatch will automatically replace previous value
+            // Important to do in one operation in case of required attribute
+            return [
+                {
+                    id_value: null,
+                    attribute: sdoAttr.leavAttributeId,
+                    payload: nodeIds[0],
+                },
+            ];
+        }
+
+        const existingValues: ITreeValue[] = record
+            ? ((await recordDomain.getRecordFieldValue({
+                  record,
+                  library: record.library,
+                  attributeId: sdoAttr.leavAttributeId,
+                  ctx,
+              })) as ITreeValue[])
+            : [];
+
+        const valuesToDelete = existingValues.filter(val => !nodeIds.includes(val.payload.id));
+        const nodeIdsToAdd = nodeIds.filter(nodeId => !existingValues.some(val => val.payload.id === nodeId));
+
+        return [
+            ...valuesToDelete.map(valueToDelete => ({
+                id_value: valueToDelete.id_value,
+                attribute: sdoAttr.leavAttributeId,
+                payload: null, // We set the payload to null to delete the value
+            })),
+            ...nodeIdsToAdd.map(recordIdToAdd => ({
+                id_value: null,
+                attribute: sdoAttr.leavAttributeId,
+                payload: recordIdToAdd,
+            })),
+        ];
+    }
+
+    const _cleanValue = (value): string | string[] => {
+        if (value === null) {
+            return null;
+        }
+        switch (typeof value) {
+            case 'object':
+                return Array.isArray(value) ? value.map(v => v.toString()) : JSON.stringify(value);
+            case 'string':
+                return value;
+            default:
+                return String(value);
+        }
+    };
+
+    return {
+        create,
+        update,
+    };
+}
