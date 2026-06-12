@@ -2,15 +2,14 @@ import fs from 'fs/promises';
 import path from 'path';
 import jsonschema from 'jsonschema';
 import _ from 'lodash';
-import {type ILogger} from '@leav/logger';
-import {type IDbPayload} from '@leav/utils';
+import {logger} from '@leav/logger';
+import {type IDbPayload, type EventActionSDO} from '@leav/utils';
 import {
     type SDOAction,
     type ISDO,
     type ISDOMappingLibrary,
     type ISDOMapping,
     type ISDOSettings,
-    type EventActionSDO,
 } from '../../_types/sdo';
 import {type IGlobalSettings} from '../../_types/globalSettings';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
@@ -33,7 +32,6 @@ export interface ISDODomainDeps {
     'core.domain.globalSettings': IGlobalSettingsDomain;
     'core.domain.record': IRecordDomain;
     'core.utils.sdo': ISDOUtils;
-    'core.utils.logger': ILogger;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.value': IValueDomain;
@@ -67,7 +65,6 @@ export interface ISDODomain {
 export const hashSDOAttributeId = 'hash_sdo';
 
 export default function ({
-    'core.utils.logger': logger,
     'core.domain.record': recordDomain,
     'core.utils.sdo': sdoUtils,
     'core.domain.attribute': attributeDomain,
@@ -102,7 +99,7 @@ export default function ({
     const getSDOGlobalSettings = async (ctx: IQueryInfos): Promise<ISDOSettings> => {
         const globalSettings: IGlobalSettings = await globalSettingsDomain.getSettings(ctx);
 
-        const sdoGlobalSettings: ISDOSettings = globalSettings?.settings?.plugins?.sdo;
+        const sdoGlobalSettings: ISDOSettings = globalSettings?.settings?.sdo;
         if (!sdoGlobalSettings?.mapping) {
             throw new ValidationError({}, '[SDO] Custom config SDO unavailable in sdoGlobalSettings');
         }

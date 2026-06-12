@@ -1,4 +1,3 @@
-import {type ILogger} from '@leav/logger';
 import _ from 'lodash';
 import {type ISDO, type ISDOMappingAttribute, type ISDOMappingLibrary} from '../../../_types/sdo';
 import {type IRecordDomain} from '../../record/recordDomain';
@@ -23,12 +22,12 @@ import LeavError from '../../../errors/LeavError';
 import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
 import {type ITreeDomain} from '../../tree/treeDomain';
 import {type IQueryInfos} from '../../../_types/queryInfos';
+import {logger} from '@leav/logger';
 
 export interface ISDOImportDomainDeps {
     'core.utils.sdo': ISDOUtils;
     'core.domain.sdo': ISDODomain;
     'core.domain.value': IValueDomain;
-    'core.utils.logger': ILogger;
     'core.domain.sdo.export': ISDOExportDomain;
     'core.domain.record': IRecordDomain;
     'core.domain.attribute': IAttributeDomain;
@@ -46,7 +45,6 @@ export interface ISDOImportDomain {
 const debugSaveValues = true;
 
 export default function ({
-    'core.utils.logger': logger,
     'core.utils.sdo': sdoUtils,
     'core.domain.record': recordDomain,
     'core.domain.value': valueDomain,

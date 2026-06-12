@@ -7,7 +7,6 @@ import {
     mockAttributeDomain,
     mockEventsManagerDomain,
     mockGlobalSettingsDomain,
-    mockLogger,
     mockRecordDomain,
     mockRecordRepo,
     mockSystemQueryContext,
@@ -21,8 +20,8 @@ import {
     type ISDOMapping,
     type ISDOMappingAttribute,
     sdoPathIdentifierUuid,
-    EventActionSDO,
 } from '../../_types/sdo';
+import {EventActionSDO} from '@leav/utils';
 import {mockSDOUtils} from '../../__tests__/mocks/sdo/domains';
 import {type IGlobalSettings} from '../../_types/globalSettings';
 
@@ -43,7 +42,6 @@ const deps: ToAny<ISDODomainDeps> = {
     'core.utils.sdo': mockSDOUtils,
     'core.domain.attribute': mockAttributeDomain,
     'core.domain.record': mockRecordDomain,
-    'core.utils.logger': mockLogger,
     'core.domain.globalSettings': mockGlobalSettingsDomain,
     'core.domain.eventsManager': mockEventsManagerDomain,
     'core.domain.value': mockValueDomain,
@@ -68,7 +66,7 @@ describe('sdoDomain', () => {
         vi.clearAllMocks();
 
         mockGlobalSettingsDomain.getSettings.mockResolvedValue({
-            settings: {plugins: {sdo: sdoGlobalSettings}},
+            settings: {sdo: sdoGlobalSettings},
         } as unknown as IGlobalSettings);
         mockEventsManagerDomain.sendDatabaseEvent.mockResolvedValue(undefined);
         mockRecordDomain.find.mockResolvedValue({list: []} as IListWithCursor<IRecord>);
@@ -768,7 +766,7 @@ describe('sdoDomain', () => {
     describe('sendLog', () => {
         it('[+] should send sdo log', async () => {
             await sdoDomain(deps).sendLog({
-                action: EventActionSDO.LOG_IMPORT_RECORD,
+                action: EventActionSDO.SDO_LOG_IMPORT_RECORD,
                 record: {
                     id: 'recordId',
                     libraryId: 'libraryId',
@@ -779,7 +777,7 @@ describe('sdoDomain', () => {
 
             expect(mockEventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledWith(
                 {
-                    action: EventActionSDO.LOG_IMPORT_RECORD,
+                    action: EventActionSDO.SDO_LOG_IMPORT_RECORD,
                     topic: {
                         record: {
                             id: 'recordId',
@@ -794,14 +792,14 @@ describe('sdoDomain', () => {
 
         it('[+] should send error log', async () => {
             await sdoDomain(deps).sendLog({
-                action: EventActionSDO.LOG_ERROR,
+                action: EventActionSDO.SDO_LOG_ERROR,
                 error: 'Error message',
                 ctx: mockSystemQueryContext,
             });
 
             expect(mockEventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledWith(
                 {
-                    action: EventActionSDO.LOG_ERROR,
+                    action: EventActionSDO.SDO_LOG_ERROR,
                     topic: {},
                     metadata: {error: 'Error message'},
                 },

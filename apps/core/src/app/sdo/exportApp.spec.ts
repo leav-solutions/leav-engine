@@ -1,13 +1,14 @@
 import {type ToAny} from '../../utils/utils';
 import {type IExportAppDeps, default as exportApp} from './exportApp';
 import {type ConsumeMessage} from 'amqplib';
-import {sdoPathIdentifierUuid, type ISDOSettings, EventActionSDO} from '../../_types/sdo';
+import {sdoPathIdentifierUuid, type ISDOSettings} from '../../_types/sdo';
 import mockRabbitMQService, {setupMockRabbitMQService} from '../../__tests__/mocks/sdo/rabbitMQ';
 import {systemUserId} from '../../_constants/users';
 import {mockDataEvent, mockDataEventMessage, mockSDO} from '../../__tests__/mocks/sdo/data';
 import LeavError from '../../errors/LeavError';
 import {mockExportDomain, mockSdoDomain} from '../../__tests__/mocks/sdo/domains';
-import {mockLogger, mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
+import {mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
+import {EventActionSDO} from '@leav/utils';
 
 const sdoGlobalSettings = {
     timer: 120000,
@@ -23,7 +24,6 @@ const sdoGlobalSettings = {
 } satisfies ISDOSettings;
 
 const depsBase: ToAny<IExportAppDeps> = {
-    'core.utils.logger': mockLogger,
     'core.domain.sdo.export': mockExportDomain,
     'core.domain.sdo': mockSdoDomain,
     'core.infra.sdo.rabbitMQ': mockRabbitMQService,
@@ -95,7 +95,7 @@ describe('exportApp', () => {
                 mockDataEventMessage,
             );
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.LOG_EXPORT_RECORD,
+                action: EventActionSDO.SDO_LOG_EXPORT_RECORD,
                 record: {id: 'recId', libraryId: 'libId'},
                 sdo: mockSDO,
                 ctx: mockSystemQueryContext,
@@ -119,7 +119,7 @@ describe('exportApp', () => {
             );
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.LOG_ERROR,
+                action: EventActionSDO.SDO_LOG_ERROR,
                 error: {
                     message: error.message,
                     stack: error.stack,
@@ -149,7 +149,7 @@ describe('exportApp', () => {
             );
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.LOG_ERROR,
+                action: EventActionSDO.SDO_LOG_ERROR,
                 error: {
                     message: error.message,
                     stack: error.stack,

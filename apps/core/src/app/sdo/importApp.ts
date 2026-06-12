@@ -1,15 +1,15 @@
 import {type ConsumeMessage} from 'amqplib';
-import {type ILogger} from '@leav/logger';
 import {type IRabbitMQ} from '../../infra/sdo/rabbitMQ/rabbitMQ';
 import {type ISDOImportDomain} from '../../domain/sdo/import/sdoImportDomain';
-import {type ISDO, EventActionSDO} from '../../_types/sdo';
+import {type ISDO} from '../../_types/sdo';
 import {type ISDODomain} from '../../domain/sdo/sdoDomain';
+import {EventActionSDO} from '@leav/utils';
 import LeavError from '../../errors/LeavError';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
+import {logger} from '@leav/logger';
 
 export interface IImportAppDeps {
     'core.infra.sdo.rabbitMQ': IRabbitMQ;
-    'core.utils.logger': ILogger;
     'core.domain.sdo': ISDODomain;
     'core.domain.sdo.import': ISDOImportDomain;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
@@ -20,7 +20,6 @@ export interface ISDOImportApp {
 }
 
 export default function ({
-    'core.utils.logger': logger,
     'core.infra.sdo.rabbitMQ': rabbitMQService,
     'core.domain.sdo': sdoDomain,
     'core.domain.sdo.import': sdoImportDomain,
@@ -56,7 +55,7 @@ export default function ({
 
             (await rabbitMQService.getSDOImportChannel()).ack(msg);
             await sdoDomain.sendLog({
-                action: EventActionSDO.LOG_IMPORT_RECORD,
+                action: EventActionSDO.SDO_LOG_IMPORT_RECORD,
                 sdo,
                 ctx: _systemQueryContext,
             });
@@ -67,7 +66,7 @@ export default function ({
             });
             (await rabbitMQService.getSDOImportChannel()).nack(msg, false, false);
             await sdoDomain.sendLog({
-                action: EventActionSDO.LOG_ERROR,
+                action: EventActionSDO.SDO_LOG_ERROR,
                 error:
                     error instanceof LeavError
                         ? {

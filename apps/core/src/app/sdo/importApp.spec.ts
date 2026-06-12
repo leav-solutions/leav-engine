@@ -3,14 +3,13 @@ import {default as importApp, type IImportAppDeps} from './importApp';
 import {type ConsumeMessage} from 'amqplib';
 import mockRabbitMQService, {setupMockRabbitMQService} from '../../__tests__/mocks/sdo/rabbitMQ';
 import {mockImportMessage, mockSDO} from '../../__tests__/mocks/sdo/data';
-import {EventActionSDO} from '../../_types/sdo';
+import {EventActionSDO} from '@leav/utils';
 import ValidationError from '../../errors/ValidationError';
 import {mockImportDomain, mockSdoDomain} from '../../__tests__/mocks/sdo/domains';
-import {mockLogger, mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
+import {mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
 
 const depsBase: ToAny<IImportAppDeps> = {
     'core.infra.sdo.rabbitMQ': mockRabbitMQService,
-    'core.utils.logger': mockLogger,
     'core.domain.sdo': mockSdoDomain,
     'core.domain.sdo.import': mockImportDomain,
     'core.utils.getSystemQueryContext': () => mockSystemQueryContext,
@@ -39,7 +38,7 @@ describe('importApp', () => {
 
             expect((await mockRabbitMQService.getSDOImportChannel()).ack).toHaveBeenCalledWith(importMessage);
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.LOG_IMPORT_RECORD,
+                action: EventActionSDO.SDO_LOG_IMPORT_RECORD,
                 sdo,
                 ctx: mockSystemQueryContext,
             });
@@ -61,7 +60,7 @@ describe('importApp', () => {
 
             expect((await mockRabbitMQService.getSDOImportChannel()).ack).toHaveBeenCalledWith(importMessage);
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.LOG_IMPORT_RECORD,
+                action: EventActionSDO.SDO_LOG_IMPORT_RECORD,
                 sdo,
                 ctx: mockSystemQueryContext,
             });
@@ -83,7 +82,7 @@ describe('importApp', () => {
                 false,
             );
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.LOG_ERROR,
+                action: EventActionSDO.SDO_LOG_ERROR,
                 error: {
                     message: 'Unexpected action',
                     stack: expect.any(String),
@@ -111,7 +110,7 @@ describe('importApp', () => {
 
             expect((await mockRabbitMQService.getSDOImportChannel()).nack).toHaveBeenCalledWith(mockMsg, false, false);
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.LOG_ERROR,
+                action: EventActionSDO.SDO_LOG_ERROR,
                 error: {
                     message: 'Schema validation error',
                     stack: validationError.stack,

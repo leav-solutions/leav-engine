@@ -1,4 +1,4 @@
-import {type ILogger} from '@leav/logger';
+import {logger} from '@leav/logger';
 import {type IDbEvent} from '@leav/utils';
 import {type IBuffer, type IBufferList, type ISDO, type ISDOMapping} from '../../../_types/sdo';
 import {type IConfig} from '../../../_types/config';
@@ -16,7 +16,6 @@ const ACTIONS_MAPPING = {
 
 export interface ISDOExportDomainDeps {
     'core.infra.sdo.rabbitMQ': IRabbitMQ;
-    'core.utils.logger': ILogger;
     config: IConfig;
     'core.utils.sdo': ISDOUtils;
 }
@@ -30,7 +29,6 @@ export interface ISDOExportDomain {
 }
 
 export default function ({
-    'core.utils.logger': logger,
     'core.infra.sdo.rabbitMQ': rabbitMQService,
     'core.utils.sdo': sdoUtils,
     config,

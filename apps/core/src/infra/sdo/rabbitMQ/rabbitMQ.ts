@@ -1,10 +1,9 @@
 import {type IAmqpService} from '@leav/message-broker';
-import {type ILogger} from '@leav/logger';
+import {logger} from '@leav/logger';
 import {type ConfirmChannel} from 'amqplib';
 import {type IConfig} from '../../../_types/config';
 
 export interface IRabbitMQDeps {
-    'core.utils.logger': ILogger;
     'core.infra.amqpService': IAmqpService;
     config: IConfig;
 }
@@ -21,11 +20,7 @@ export interface IRabbitMQ {
  * that the export buffering (deferred acks, up to a couple of minutes) does not block the prefetch
  * window of the other core consumers sharing amqpService.consumer.channel.
  */
-export default function rabbitMQ({
-    'core.utils.logger': logger,
-    'core.infra.amqpService': amqpService,
-    config,
-}: IRabbitMQDeps): IRabbitMQ {
+export default function rabbitMQ({'core.infra.amqpService': amqpService, config}: IRabbitMQDeps): IRabbitMQ {
     let _sdoExportChannel: ConfirmChannel;
     let _sdoImportChannel: ConfirmChannel;
     let _leavDataEventChannel: ConfirmChannel;

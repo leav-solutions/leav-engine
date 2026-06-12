@@ -88,3 +88,9 @@ export interface IPubSubPayload {
     triggerName: string;
     data: any;
 }
+
+export enum EventActionSDO {
+    SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
+    SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
+    SDO_LOG_ERROR = 'SDO_LOG_ERROR',
+}

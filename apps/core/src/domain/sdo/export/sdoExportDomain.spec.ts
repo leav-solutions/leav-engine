@@ -6,10 +6,8 @@ import {mockConfig} from '../../../__tests__/mocks/sdo/config';
 import {mockSDO, mockSDOMapping} from '../../../__tests__/mocks/sdo/data';
 import {mockSDOUtils} from '../../../__tests__/mocks/sdo/domains';
 import {type ISDOMappingLibrary} from '../../../_types/sdo';
-import {mockLogger} from '../../../__tests__/mocks/sdo/core';
 
 const deps: ToAny<ISDOExportDomainDeps> = {
-    'core.utils.logger': mockLogger,
     'core.infra.sdo.rabbitMQ': mockRabbitMQService,
     config: mockConfig,
     'core.utils.sdo': mockSDOUtils,

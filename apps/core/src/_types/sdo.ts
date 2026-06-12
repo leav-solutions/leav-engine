@@ -11,12 +11,6 @@ export interface ISDO {
     };
 }
 
-export enum EventActionSDO {
-    LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
-    LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
-    LOG_ERROR = 'SDO_LOG_ERROR',
-}
-
 export interface IBufferList {
     [libraryId: string]: Map<string, IBuffer>;
 }

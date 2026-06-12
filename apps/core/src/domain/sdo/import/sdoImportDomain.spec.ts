@@ -5,7 +5,6 @@ import sdoUtils from '../../../utils/sdo';
 import {mockExportDomain, mockSdoDomain} from '../../../__tests__/mocks/sdo/domains';
 import {
     mockAttributeDomain,
-    mockLogger,
     mockRecordDomain,
     mockSystemQueryContext,
     mockTreeDomain,
@@ -21,7 +20,6 @@ import {type ISaveBatchValueResult} from '../../value/valueDomain';
 import {type ICreateRecordResult} from '../../record/_types';
 
 const deps: ToAny<ISDOImportDomainDeps> = {
-    'core.utils.logger': mockLogger,
     'core.domain.sdo.export': mockExportDomain,
     'core.domain.record': mockRecordDomain,
     'core.utils.sdo': sdoUtils(),
@@ -77,9 +75,6 @@ describe('importDomain', () => {
 
             await _importDomain.create(mockSDO, mockSystemQueryContext);
             expect(mockRecordDomain.find).toHaveBeenCalledTimes(1);
-            expect(mockLogger.debug).toHaveBeenCalledWith(
-                expect.stringMatching(/Record .* already exists, import create skipped/),
-            );
             expect(mockRecordDomain.find).toHaveBeenNthCalledWith(1, {
                 params: {
                     library: mockSDOMapping[mockSDO.name].leavLibraryId,
