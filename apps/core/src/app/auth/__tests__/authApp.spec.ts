@@ -734,7 +734,13 @@ describe('authApp', () => {
                     tokenExpiration: '15m',
                     refreshTokenExpiration: '2h',
                     cookie: {sameSite: 'lax', secure: false},
-                    oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: true},
+                    oidc: {
+                        enable: true,
+                        idTokenUserClaim: 'email',
+                        idTokenUserUuidClaim: 'sub',
+                        clientId: 'client',
+                        enableAutoProvisioning: true,
+                    },
                 },
                 server: {},
             };
@@ -778,11 +784,12 @@ describe('authApp', () => {
                 args => args[0] === '/auth/oidc/verify/:identifierBase64Url',
             )[1];
 
+            const userUuId = crypto.randomUUID();
             // Mock jwt.decode calls for id_token then access_token
             const decodedAccessToken = {resource_access: {client: {roles: []}}};
             const decodeSpy = vi.spyOn(jwt, 'decode');
             decodeSpy
-                .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe'}) as any)
+                .mockImplementationOnce(() => ({email: 'user@example.com', name: 'john.doe', sub: userUuId}) as any)
                 .mockImplementationOnce(() => decodedAccessToken as any);
 
             const request: any = {
@@ -807,6 +814,7 @@ describe('authApp', () => {
                     {payload: 'user@example.com', attribute: 'email'},
                     {payload: 'john.doe', attribute: 'login'},
                 ],
+                uuid: userUuId,
                 ctx: expect.any(Object),
             });
             expect((mockValueDomain as any).saveValue).not.toHaveBeenCalled();

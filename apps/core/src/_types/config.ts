@@ -195,6 +195,7 @@ export interface IAuth {
               postLogoutRedirectUri: string;
               skipLogoutConfirmationPage?: boolean;
               idTokenUserClaim: string;
+              idTokenUserUuidClaim: string;
               enableAutoProvisioning: boolean;
               retryAuthenticationFlowAfterExpiry: boolean;
               verificationKeysExpiration: string;
