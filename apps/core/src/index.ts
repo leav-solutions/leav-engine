@@ -21,6 +21,7 @@ import {type IUtils} from './utils/utils';
 import {logger} from '@leav/logger';
 import {setupLogger} from './utils/logger/logger';
 import {type ILogsCollectorInterface} from './interface/logsCollector';
+import {type ISDOInterface} from './interface/sdo';
 import {type ICorePluginsApp} from './app/core/pluginsApp';
 
 (async function () {
@@ -89,6 +90,7 @@ import {type ICorePluginsApp} from './app/core/pluginsApp';
     const logsCollector: ILogsCollectorInterface = coreContainer.cradle['core.interface.logsCollector'];
     const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
     const automation: IAutomationInterface = coreContainer.cradle['core.interface.automation'];
+    const sdo: ISDOInterface = coreContainer.cradle['core.interface.sdo'];
     const cli: ICliInterface = coreContainer.cradle['core.interface.cli'];
     const utils: IUtils = coreContainer.cradle['core.utils'];
     const pluginsApp: ICorePluginsApp = coreContainer.cradle['core.app.core.plugins'];
@@ -152,6 +154,9 @@ import {type ICorePluginsApp} from './app/core/pluginsApp';
                 break;
             case CoreMode.AUTOMATION:
                 await automation.init();
+                break;
+            case CoreMode.SDO:
+                await sdo.init();
                 break;
         }
     }

@@ -49,6 +49,23 @@ export interface IConfig {
     bugsnag: IBugsnag;
     matomo: IMatomo;
     automation: IAutomation;
+    sdo: ISdo;
+}
+
+export interface ISdo {
+    amqp: Options.Connect;
+    import: {
+        enable: boolean;
+        prefetch?: number;
+        queue?: string;
+        exchange?: string;
+    };
+    export: {
+        enable: boolean;
+        exchange?: string;
+        type?: string;
+        dataEventsQueue?: string;
+    };
 }
 
 export interface IAutomation {
@@ -72,6 +89,7 @@ export enum CoreMode {
     TASKS_MANAGER_WORKER = 'tasksManager:worker',
     LOGS_COLLECTOR = 'logsCollector',
     AUTOMATION = 'automation',
+    SDO = 'sdo',
 
     /**
      * Default, to do db migration, or import ...
