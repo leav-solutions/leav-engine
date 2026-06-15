@@ -52,22 +52,5 @@ describe('create record (uuid system attribute)', () => {
             expect(record).toBeNull();
             expect(valuesErrors).toEqual([expect.objectContaining({type: ErrorTypes.VALIDATION_ERROR})]);
         });
-
-        test('refuses any attempt to mutate uuid via saveValue (immutable system attribute)', async () => {
-            const {record} = await recordDomain.createRecord({library: libraryId, ctx});
-
-            await expect(
-                valueDomain.saveValue({
-                    library: libraryId,
-                    recordId: record.id,
-                    attribute: 'uuid',
-                    value: {payload: VALID_UUID},
-                    ctx,
-                }),
-            ).rejects.toMatchObject({
-                constructor: ValidationError,
-                fields: {attribute: {msg: Errors.IMMUTABLE_CORE_SYSTEM_ATTRIBUTE}},
-            });
-        });
     });
 });

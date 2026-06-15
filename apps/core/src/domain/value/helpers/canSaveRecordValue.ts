@@ -84,7 +84,6 @@ export const IMMUTABLE_CORE_SYSTEM_FILES_ATTRIBUTE_IDS = [
 ];
 export const IMMUTABLE_CORE_SYSTEM_COMMON_ATTRIBUTE_IDS = [
     'id',
-    'uuid',
     'created_by',
     'created_at',
     'modified_by',
