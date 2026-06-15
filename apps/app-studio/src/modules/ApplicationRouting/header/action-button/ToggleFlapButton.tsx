@@ -7,8 +7,8 @@ import {RelativePaths} from '../../router/paths';
 import {useTranslation} from 'react-i18next';
 import {type FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID, BLANK_PANEL_ID} from '../../../../constants';
 import {REDIRECT_URL_QUERY_PARAM} from '../../content/panel-custom/message-handlers/useNavigateToPanel';
-import {matomo} from '../../../../services/matomo';
-import {matomoEvents} from '../../../../services/matomo/constants/matomoEvents';
+import {matomo} from '../../../../services/analytics';
+import {matomoEvents} from '../../../../services/analytics/constants/matomoEvents';
 
 interface IToggleFlapButtonProps {
     targetFlapPanelId: typeof FLAP_THREAD_PANEL_ID | typeof FLAP_INFO_AND_HISTORY_PANEL_ID;

@@ -13,8 +13,8 @@ import {useTranslation} from 'react-i18next';
 import {type Application} from '../types';
 import {workspacesNavigationMenu} from './workspacesNavigationMenu.module.css';
 import {MIN_WORKSPACES_TO_SHOW_SEARCH} from '../../../constants';
-import {matomo} from '../../../services/matomo';
-import {matomoEvents} from '../../../services/matomo/constants/matomoEvents';
+import {matomo} from '../../../services/analytics';
+import {matomoEvents} from '../../../services/analytics/constants/matomoEvents';
 
 export const WorkspacesNavigationMenu: FunctionComponent = () => {
     const [application] = useApplicationSettingsContext();

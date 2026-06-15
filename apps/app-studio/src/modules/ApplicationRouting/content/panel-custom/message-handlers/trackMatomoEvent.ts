@@ -1,4 +1,4 @@
-import {matomo} from '../../../../../services/matomo';
+import {matomo} from '../../../../../services/analytics';
 
 interface IMatomoTrackPayload {
     type: 'matomo-track';

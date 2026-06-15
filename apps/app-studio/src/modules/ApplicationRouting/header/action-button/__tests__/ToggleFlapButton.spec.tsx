@@ -2,11 +2,11 @@ import {render, screen} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import * as ReactRouter from 'react-router-dom';
 import * as ApplicationSettingsContext from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
-import {matomo} from '../../../../../services/matomo';
+import {matomo} from '../../../../../services/analytics';
 import {type Application} from '../../../types';
 import {ToggleFlapButton} from '../ToggleFlapButton';
 import {FLAP_INFO_AND_HISTORY_PANEL_ID, FLAP_THREAD_PANEL_ID} from '../../../../../constants';
-import {matomoEvents} from '../../../../../services/matomo/constants/matomoEvents';
+import {matomoEvents} from '../../../../../services/analytics/constants/matomoEvents';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -18,8 +18,8 @@ jest.mock('../../../../../config/application-instance/application-settings/useAp
     useApplicationSettingsContext: jest.fn(),
 }));
 
-jest.mock('../../../../../services/matomo', () => ({
-    ...jest.requireActual('../../../../../services/matomo'),
+jest.mock('../../../../../services/analytics', () => ({
+    ...jest.requireActual('../../../../../services/analytics'),
     matomo: {trackNavigationEvent: jest.fn()},
 }));
 

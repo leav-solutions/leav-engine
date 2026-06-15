@@ -10,8 +10,8 @@ import {tabsWrapper, sliderTabsWrapper} from './panelsTabs.module.css';
 import {useGetPanelsAttributeCounts} from './panels-attribute-counts/useGetPanelsAttributeCounts';
 import {type Panel} from '_ui/hooks/usePanelMessenger/types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {matomo} from '../../../../services/matomo';
-import {matomoEvents} from '../../../../services/matomo/constants/matomoEvents';
+import {matomo} from '../../../../services/analytics';
+import {matomoEvents} from '../../../../services/analytics/constants/matomoEvents';
 
 interface IPanelsTabsProps {
     enabled: boolean;
