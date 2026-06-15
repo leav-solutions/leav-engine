@@ -4,9 +4,13 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 import {disableFragmentWarnings} from '@apollo/client';
+import Modal from 'react-modal';
 import React from 'react';
 
 disableFragmentWarnings();
+
+// Suppress react-modal "App element is not defined" warning in jsdom.
+Modal.setAppElement(document.body);
 
 // To prevent warnings
 React.useLayoutEffect = React.useEffect;
