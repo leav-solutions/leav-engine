@@ -20,8 +20,8 @@
     "author": "",
     "license": "LGPL3",
     "devDependencies": {
-        "@types/node": "24.13.1",
-        "prettier": "3.8.3",
+        "@types/node": "24.13.2",
+        "prettier": "3.8.4",
         "tsx": "4.22.4",
         "typescript": "5.9.3",
         "vitest": "4.1.8"
@@ -39,7 +39,7 @@
         "apollo-link-http": "1.5.17",
         "app-root-path": "3.1.0",
         "arangojs": "8.8.1",
-        "graphql": "16.14.1",
+        "graphql": "16.14.2",
         "graphql-tag": "2.12.6",
         "joi": "18.2.1",
         "walk": "2.3.15",
