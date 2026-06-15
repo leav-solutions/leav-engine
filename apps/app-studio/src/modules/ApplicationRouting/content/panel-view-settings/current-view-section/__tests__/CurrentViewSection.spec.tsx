@@ -62,13 +62,6 @@ const renderSection = (opts: {view: CurrentView; savedView?: CurrentView; canEdi
         <Harness view={opts.view} savedView={opts.savedView ?? opts.view} canEditAdminView={opts.canEditAdminView} />,
     );
 
-beforeAll(() => {
-    // ForkViewModal (react-modal) needs an app element to attach to.
-    const root = document.createElement('div');
-    root.id = 'root';
-    document.body.appendChild(root);
-});
-
 beforeEach(() => {
     jest.clearAllMocks();
 });
