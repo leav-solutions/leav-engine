@@ -1,7 +1,7 @@
 import {localizedTranslation} from '@leav/utils';
 import {Checkbox, Divider, Modal, Tree} from 'antd';
 import {KitNotification} from 'aristid-ds';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     type RecordFilterInput,
@@ -38,27 +38,36 @@ function TriggerPreviewsGenerationModal({
 
     const [startPreviewsGeneration, {loading}] = useForcePreviewsGenerationMutation();
 
-    const {error: getLibrariesError, loading: getLibrariesLoading} = useGetLibraryPreviewsSettingsQuery({
+    const {
+        data: getLibrariesData,
+        error: getLibrariesError,
+        loading: getLibrariesLoading,
+    } = useGetLibraryPreviewsSettingsQuery({
         variables: {id: filesLibraryId || libraryId},
-        onCompleted: getLibrariesData => {
-            const previewSettings = getLibrariesData.libraries.list?.[0].previewsSettings || [];
-            const sizes = [];
-
-            const td = previewSettings.map(s => {
-                const children = s.versions.sizes.map(vs => ({title: `${vs.name} (${vs.size}px)`, key: vs.name}));
-                sizes.push(...children.map(c => c.key));
-
-                return {
-                    title: localizedTranslation(s.label, lang),
-                    key: localizedTranslation(s.label, lang),
-                    children,
-                };
-            });
-
-            setTreeData(td);
-            setAllSizes(sizes);
-        },
     });
+
+    useEffect(() => {
+        if (!getLibrariesData) {
+            return;
+        }
+
+        const previewSettings = getLibrariesData.libraries.list?.[0].previewsSettings || [];
+        const sizes = [];
+
+        const td = previewSettings.map(s => {
+            const children = s.versions.sizes.map(vs => ({title: `${vs.name} (${vs.size}px)`, key: vs.name}));
+            sizes.push(...children.map(c => c.key));
+
+            return {
+                title: localizedTranslation(s.label, lang),
+                key: localizedTranslation(s.label, lang),
+                children,
+            };
+        });
+
+        setTreeData(td);
+        setAllSizes(sizes);
+    }, [getLibrariesData, lang]);
 
     const _triggerPreviewsGeneration = async () => {
         try {

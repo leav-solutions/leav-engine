@@ -23,8 +23,6 @@ function EditApplicationInfo({application, onSetSubmitFunction}: IEditApplicatio
     const [checkApplicationExistence] = useCheckApplicationExistenceLazyQuery({
         fetchPolicy: 'no-cache',
         nextFetchPolicy: 'no-cache',
-        variables: {},
-        partialRefetch: false,
     });
 
     const _submitForm = async () => {
