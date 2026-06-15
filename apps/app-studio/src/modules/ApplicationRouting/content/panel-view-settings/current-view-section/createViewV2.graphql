@@ -1,0 +1,5 @@
+mutation CreateViewV2($view: ViewV2CreateInput!) {
+    createViewV2(view: $view) {
+        ...AppStudioViewSettingsView
+    }
+}

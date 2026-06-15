@@ -1,0 +1,5 @@
+mutation UpdateViewV2($view: ViewV2UpdateInput!) {
+    updateViewV2(view: $view) {
+        ...AppStudioViewSettingsView
+    }
+}

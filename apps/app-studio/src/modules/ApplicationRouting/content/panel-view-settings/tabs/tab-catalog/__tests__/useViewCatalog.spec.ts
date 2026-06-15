@@ -1,6 +1,6 @@
 import * as leavUi from '@leav/ui';
 import {renderHook} from '_ui/_tests/testUtils';
-import * as graphqlClient from '../../../../../../__generated__';
+import * as graphqlClient from '../../../../../../../__generated__';
 import {useViewCatalog} from '../useViewCatalog';
 
 describe('useViewCatalog', () => {
@@ -25,7 +25,7 @@ describe('useViewCatalog', () => {
 
     it('should split the view list into the current user views and the shared views', () => {
         spyOnUseGetViewListQuery.mockReturnValue({
-            data: {views: {list: [myView, mySharedView, otherSharedView, otherPrivateView]}},
+            data: {viewsV2: {list: [myView, mySharedView, otherSharedView, otherPrivateView]}},
         } as any);
 
         const {result} = renderHook(() => useViewCatalog(libraryId));

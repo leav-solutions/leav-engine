@@ -128,14 +128,31 @@
         "copy-id": "Copier l’identifiant de la vue",
         "copy-id-disabled": "Partagez la vue pour pouvoir copier son identifiant",
         "id-copied": "Identifiant de la vue copié",
+        "unsaved-changes": {
+            "title": "Modifications non enregistrées",
+            "content": "Vous avez apporté des modifications à la vue actuelle. Voulez-vous les enregistrer avant de changer de vue pour ne pas les perdre ?",
+            "discard": "Ignorer"
+        },
         "current-view": {
             "title": "Vue courante",
-            "label-placeholder": "Vue sans nom",
+            "label-placeholder": "Ajoutez le nom de la vue",
             "shared": "Partagée",
             "close": "Fermer",
             "save": "Enregistrer",
             "clone": "Dupliquer la vue",
-            "delete": "Supprimer la vue"
+            "delete": "Supprimer la vue",
+            "reset": "Réinitialiser",
+            "shared-by": "Partagée par {{name}}",
+            "label-required": "Le nom de la vue est requis",
+            "clone-modal-title": "Dupliquer la vue",
+            "clone-modal-placeholder": "Nom de la nouvelle vue",
+            "unshare-confirm-title": "Ne plus partager la vue",
+            "unshare-confirm-content": "Cette vue ne sera plus accessible aux autres utilisateurs.",
+            "save-success": "Vue enregistrée",
+            "clone-success": "Vue dupliquée",
+            "share-success": "Vue partagée",
+            "unshare-success": "Vue départagée",
+            "action-error": "L’opération sur la vue a échoué."
         },
         "pin": "Épingler comme raccourci"
     },

@@ -6,7 +6,7 @@ import {CurrentViewProvider} from './store-current-view/CurrentViewProvider';
 import {PanelViewSettingsSidebar} from './panel-view-settings-sidebar/PanelViewSettingsSidebar';
 import {VIEW_SETTINGS_TABS} from './tabs/_constantes';
 import {type ViewSettingsTab} from '../../types';
-import {TabCatalog} from './tabs/TabCatalog';
+import {TabCatalog} from './tabs/tab-catalog/TabCatalog';
 import {TabDisplay} from './tabs/tab-display/TabDisplay';
 import {TabFilters} from './tabs/TabFilters';
 import {TabHeader} from './tabs/TabHeader';
@@ -53,7 +53,7 @@ export const PanelViewSettings = ({
             <div className={root}>
                 <PanelViewSettingsSidebar activeTab={activeTab} onTabChange={setActiveTab} />
                 <div className={rightColumn}>
-                    <CurrentViewSection onViewSettingsClose={onClose} />
+                    <CurrentViewSection onViewSettingsClose={onClose} canEditAdminView={canEditAdminView} />
                     <TabHeader tab={activeTabMeta} />
                     <div className={tabContent}>{tabsContent[activeTab]}</div>
                 </div>
