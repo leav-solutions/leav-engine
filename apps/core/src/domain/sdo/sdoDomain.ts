@@ -10,6 +10,8 @@ import {
     type ISDOMappingLibrary,
     type ISDOMapping,
     type ISDOSettings,
+    type ISDOMappingFunctions,
+    type ISDOMappingFunction,
 } from '../../_types/sdo';
 import {type IGlobalSettings} from '../../_types/globalSettings';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
@@ -60,6 +62,7 @@ export interface ISDODomain {
         error?: unknown;
         ctx: IQueryInfos;
     }): Promise<void>;
+    registerSDOExportMappingFunctions: (mappingFunctions: ISDOMappingFunctions) => void;
 }
 
 export const hashSDOAttributeId = 'hash_sdo';
@@ -73,6 +76,8 @@ export default function ({
     'core.domain.value': valueDomain,
     'core.infra.record': recordRepo,
 }: ISDODomainDeps): ISDODomain {
+    const exportMappingFunctions: Map<string, ISDOMappingFunction> = new Map();
+
     const sendLog = async ({action, record, sdo, error, ctx}): Promise<void> => {
         await eventsManager.sendDatabaseEvent(
             {
@@ -151,14 +156,17 @@ export default function ({
             }
         }
 
-        const attributes = await attributeDomain.getAttributes({
-            params: {
-                filters: {
-                    libraries: [leavLibraryId],
-                },
-            },
-            ctx,
-        });
+        const attributes =
+            (
+                await attributeDomain.getAttributes({
+                    params: {
+                        filters: {
+                            libraries: [leavLibraryId],
+                        },
+                    },
+                    ctx,
+                })
+            )?.list || [];
 
         const mapRecordAttributeValue = async (values: IValue[], attributeProperty: IAttribute): Promise<unknown> => {
             switch (attributeProperty.type) {
@@ -205,7 +213,7 @@ export default function ({
             Object.values(sdoMappingLibrary.sdoAttributes)
                 .filter(attr => attr.leavAttributeId !== '')
                 .map(async attr => {
-                    const attributeProperty = attributes?.list?.find(a => a.id === attr.leavAttributeId);
+                    const attributeProperty = attributes.find(a => a.id === attr.leavAttributeId);
                     if (!attributeProperty) {
                         throw new LeavError(
                             ErrorTypes.INTERNAL_ERROR,
@@ -227,7 +235,7 @@ export default function ({
         const action = record.hash_sdo == null ? 'CREATE' : 'UPDATE';
 
         // Create sdo object
-        const sdo = _createSDO(record, action, sdoMappingLibrary, sdoLibraryId);
+        const sdo = await _createSDO(record, action, sdoMappingLibrary, sdoLibraryId, attributes, ctx);
 
         // validate SDO (json schema)
         try {
@@ -258,12 +266,14 @@ export default function ({
         return sdo;
     };
 
-    const _createSDO = (
+    const _createSDO = async (
         record: IRecord,
         action: SDOAction,
         sdoMappingLibrary: ISDOMappingLibrary,
         sdoLibraryId: string,
-    ): ISDO => {
+        attributes: IAttribute[],
+        ctx: IQueryInfos,
+    ): Promise<ISDO> => {
         const sdo: ISDO = {
             dataModelRelease: 'dataModelRelease', // TODO: tmp value
             name: sdoLibraryId,
@@ -272,15 +282,32 @@ export default function ({
             content: {},
         };
 
-        // Mapping functions are kept in the SDO plugin for now and ignored here: every mapped
-        // attribute is exported as a passthrough of its raw value (rebranched later).
-        Object.entries(sdoMappingLibrary.sdoAttributes).forEach(([attributeKey, mappingAttribute]) => {
-            _.set(
-                sdo.content,
-                attributeKey,
-                _cleanValue(record[mappingAttribute.leavAttributeId], mappingAttribute.format),
-            );
-        });
+        await Promise.all(
+            Object.entries(sdoMappingLibrary.sdoAttributes).map(async ([attributeKey, mappingAttribute]) => {
+                const mappingFunction = exportMappingFunctions.get(
+                    mappingAttribute.exportFunction,
+                ) as ISDOMappingFunction;
+                if (mappingAttribute.leavAttributeId && !mappingFunction && mappingAttribute.exportFunction) {
+                    throw new LeavError(
+                        ErrorTypes.INTERNAL_ERROR,
+                        `Unknown mapping function ${mappingAttribute.exportFunction} for attribute ${attributeKey}`,
+                    );
+                }
+
+                if (mappingAttribute.leavAttributeId && mappingFunction) {
+                    const attr = attributes.find(_attr => _attr.id === mappingAttribute.leavAttributeId);
+                    const mappedValue = await mappingFunction(record[mappingAttribute.leavAttributeId], attr, ctx);
+
+                    _.set(sdo.content, attributeKey, _cleanValue(mappedValue, mappingAttribute.format));
+                } else {
+                    _.set(
+                        sdo.content,
+                        attributeKey,
+                        _cleanValue(record[mappingAttribute.leavAttributeId], mappingAttribute.format),
+                    );
+                }
+            }),
+        );
 
         return sdo;
     };
@@ -312,5 +339,15 @@ export default function ({
         getRecordSDO,
         schemaValidation,
         sendLog,
+
+        // TODO maybe create a registerSDOImportMappingFunctions to register mapping functions for import, but we could use the same mapping functions for import and export
+        registerSDOExportMappingFunctions: (mappingFunctions: ISDOMappingFunctions) => {
+            for (const [functionName, mappingFunction] of Object.entries(mappingFunctions)) {
+                exportMappingFunctions.set(functionName, mappingFunction);
+            }
+            logger.debug(
+                `Registered ${Object.keys(mappingFunctions).length} (${Array.from(exportMappingFunctions.keys()).join(', ')}) SDO export mapping functions`,
+            );
+        },
     };
 }
