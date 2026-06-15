@@ -5,6 +5,8 @@ import {type Application} from '../../../types';
 import {PanelsTabs} from '../PanelsTabs';
 import {InitTheme} from '../../../../../config/theme/InitTheme';
 import * as ApplicationSettingsContext from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
+import {matomo} from '../../../../../services/matomo';
+import {matomoEvents} from '../../../../../services/matomo/constants/matomoEvents';
 
 const mockNavigate = jest.fn();
 
@@ -31,6 +33,11 @@ const mockUseGetPanelsAttributeCounts = jest.fn();
 
 jest.mock('../panels-attribute-counts/useGetPanelsAttributeCounts', () => ({
     useGetPanelsAttributeCounts: (...args: any[]) => mockUseGetPanelsAttributeCounts(...args),
+}));
+
+jest.mock('../../../../../services/matomo', () => ({
+    ...jest.requireActual('../../../../../services/matomo'),
+    matomo: {trackNavigationEvent: jest.fn()},
 }));
 
 describe('PanelsTabs', () => {
@@ -315,6 +322,61 @@ describe('PanelsTabs', () => {
             await user.click(panel2Tab);
 
             expect(mockNavigate).toHaveBeenCalledWith(expect.stringContaining('workspace1'));
+        });
+    });
+
+    describe('navigation tracking', () => {
+        it('track a tab clicked event with the tab fullpage information', async () => {
+            spyUseApplicationSettingsContext.mockReturnValue([mockApplication] as any);
+
+            renderWithTheme(<PanelsTabs {...defaultProps} recordId="123" hasFlapPanel={false} where="fullpage" />);
+
+            const panel2Tab = screen.getByText('Panneau 2');
+            await user.click(panel2Tab);
+
+            expect(matomo.trackNavigationEvent).toHaveBeenCalledWith(
+                matomoEvents.actions.tab_clicked_fullpage,
+                'Panneau 2',
+            );
+        });
+
+        it('track a tab clicked event with the tab popup information', async () => {
+            spyUseApplicationSettingsContext.mockReturnValue([mockApplication] as any);
+
+            renderWithTheme(<PanelsTabs {...defaultProps} recordId="123" hasFlapPanel={false} where="popup" />);
+
+            const panel2Tab = screen.getByText('Panneau 2');
+            await user.click(panel2Tab);
+
+            expect(matomo.trackNavigationEvent).toHaveBeenCalledWith(
+                matomoEvents.actions.tab_clicked_popup,
+                'Panneau 2',
+            );
+        });
+
+        it('track a tab clicked event with the tab slider information', async () => {
+            spyUseApplicationSettingsContext.mockReturnValue([mockApplication] as any);
+
+            renderWithTheme(<PanelsTabs {...defaultProps} recordId="123" hasFlapPanel={false} where="slider" />);
+
+            const panel2Tab = screen.getByText('Panneau 2');
+            await user.click(panel2Tab);
+
+            expect(matomo.trackNavigationEvent).toHaveBeenCalledWith(
+                matomoEvents.actions.tab_clicked_slider,
+                'Panneau 2',
+            );
+        });
+
+        it('does not track when a flap panel is open', async () => {
+            spyUseApplicationSettingsContext.mockReturnValue([mockApplication] as any);
+
+            renderWithTheme(<PanelsTabs {...defaultProps} recordId="123" hasFlapPanel where="fullpage" />);
+
+            const panel2Tab = screen.getByText('Panneau 2');
+            await user.click(panel2Tab);
+
+            expect(matomo.trackNavigationEvent).not.toHaveBeenCalled();
         });
     });
 });

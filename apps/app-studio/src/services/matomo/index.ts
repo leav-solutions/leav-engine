@@ -1,3 +1,5 @@
+import {matomoEvents} from './constants/matomoEvents';
+
 declare global {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     interface Window {
@@ -28,5 +30,12 @@ export const matomo = {
             }
         }
         push(['trackEvent', params.category, params.action, params.name, params.value]);
+    },
+
+    trackNavigationEvent(action: string, name: string) {
+        if (!action || !name) {
+            return;
+        }
+        this.trackEvent({category: matomoEvents.categories.navigation, action, name});
     },
 };
