@@ -34,7 +34,7 @@
         "dayjs": "1.11.21",
         "fomantic-ui-less": "2.9.4",
         "formik": "1.5.8",
-        "graphql": "16.14.1",
+        "graphql": "16.14.2",
         "graphql-ws": "5.16.2",
         "hex-rgba": "1.0.2",
         "i18next": "22.5.1",
@@ -69,7 +69,7 @@
         "@testing-library/react": "16.3.2",
         "@testing-library/user-event": "14.6.1",
         "@types/lodash": "4.17.24",
-        "@types/node": "24.13.1",
+        "@types/node": "24.13.2",
         "@types/react": "16.14.70",
         "@types/react-dom": "16.9.25",
         "@types/react-rte": "0.16.3",
@@ -86,7 +86,7 @@
         "typescript": "5.9.3",
         "vite": "7.3.5",
         "vite-plugin-svgr": "4.5.0",
-        "vitest": "4.1.6"
+        "vitest": "4.1.8"
     },
     "browserslist": {
         "production": [
