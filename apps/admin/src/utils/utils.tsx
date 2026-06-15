@@ -3,7 +3,6 @@ import {type FormikErrors, type FormikTouched} from 'formik';
 import {type i18n} from 'i18next';
 import get from 'lodash/get';
 import {type TreeNode} from '@nosferatu500/react-sortable-tree';
-import removeAccents from 'remove-accents';
 import {type GET_APPLICATION_BY_ID_applications_list} from '../_gqlTypes/GET_APPLICATION_BY_ID';
 import {
     type GET_ATTRIBUTE_BY_ID_attributes_list,
@@ -34,7 +33,9 @@ export const getSysTranslationQueryLanguage = (i18next: i18n): AvailableLanguage
 };
 
 export const formatIDString = (s: string): string =>
-    removeAccents(s)
+    s
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .replace(/\W/g, ' ') // Convert any non-word character to space (anything not a letter, a _ or a number)
         .trim() // Trim spaces

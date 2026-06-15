@@ -52,7 +52,6 @@
         "react-redux": "7.2.9",
         "react-router-dom": "6.30.4",
         "react-rte": "0.16.5",
-        "remove-accents": "0.4.2",
         "semantic-ui-react": "2.1.5",
         "sleep-promise": "8.0.1",
         "styled-components": "6.0.8",
