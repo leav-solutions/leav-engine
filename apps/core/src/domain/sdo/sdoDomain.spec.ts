@@ -22,7 +22,7 @@ import {
     sdoPathIdentifierUuid,
     type ISDO,
 } from '../../_types/sdo';
-import {EventActionSDO} from '@leav/utils';
+import {EventAction} from '@leav/utils';
 import {mockSDOUtils} from '../../__tests__/mocks/sdo/domains';
 import {type IGlobalSettings} from '../../_types/globalSettings';
 
@@ -882,7 +882,7 @@ describe('sdoDomain', () => {
     describe('sendLog', () => {
         it('[+] should send sdo log', async () => {
             await sdoDomain(deps).sendLog({
-                action: EventActionSDO.SDO_LOG_IMPORT_RECORD,
+                action: EventAction.SDO_LOG_IMPORT_RECORD,
                 record: {
                     id: 'recordId',
                     libraryId: 'libraryId',
@@ -893,7 +893,7 @@ describe('sdoDomain', () => {
 
             expect(mockEventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledWith(
                 {
-                    action: EventActionSDO.SDO_LOG_IMPORT_RECORD,
+                    action: EventAction.SDO_LOG_IMPORT_RECORD,
                     topic: {
                         record: {
                             id: 'recordId',
@@ -908,14 +908,14 @@ describe('sdoDomain', () => {
 
         it('[+] should send error log', async () => {
             await sdoDomain(deps).sendLog({
-                action: EventActionSDO.SDO_LOG_ERROR,
+                action: EventAction.SDO_LOG_ERROR,
                 error: 'Error message',
                 ctx: mockSystemQueryContext,
             });
 
             expect(mockEventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledWith(
                 {
-                    action: EventActionSDO.SDO_LOG_ERROR,
+                    action: EventAction.SDO_LOG_ERROR,
                     topic: {},
                     metadata: {error: 'Error message'},
                 },

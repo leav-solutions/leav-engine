@@ -8,7 +8,7 @@ import {mockDataEvent, mockDataEventMessage, mockSDO} from '../../__tests__/mock
 import LeavError from '../../errors/LeavError';
 import {mockExportDomain, mockSdoDomain} from '../../__tests__/mocks/sdo/domains';
 import {mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
-import {EventActionSDO} from '@leav/utils';
+import {EventAction} from '@leav/utils';
 
 const sdoGlobalSettings = {
     timer: 120000,
@@ -95,7 +95,7 @@ describe('exportApp', () => {
                 mockDataEventMessage,
             );
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.SDO_LOG_EXPORT_RECORD,
+                action: EventAction.SDO_LOG_EXPORT_RECORD,
                 record: {id: 'recId', libraryId: 'libId'},
                 sdo: mockSDO,
                 ctx: mockSystemQueryContext,
@@ -119,7 +119,7 @@ describe('exportApp', () => {
             );
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.SDO_LOG_ERROR,
+                action: EventAction.SDO_LOG_ERROR,
                 error: {
                     message: error.message,
                     stack: error.stack,
@@ -149,7 +149,7 @@ describe('exportApp', () => {
             );
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.SDO_LOG_ERROR,
+                action: EventAction.SDO_LOG_ERROR,
                 error: {
                     message: error.message,
                     stack: error.stack,

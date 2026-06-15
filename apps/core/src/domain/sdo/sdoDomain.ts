@@ -3,7 +3,7 @@ import path from 'path';
 import jsonschema from 'jsonschema';
 import _ from 'lodash';
 import {logger} from '@leav/logger';
-import {type IDbPayload, type EventActionSDO} from '@leav/utils';
+import {type IDbPayload, type EventAction} from '@leav/utils';
 import {
     type SDOAction,
     type ISDO,
@@ -56,7 +56,7 @@ export interface ISDODomain {
         error,
         ctx,
     }: {
-        action: EventActionSDO;
+        action: EventAction;
         record?: IDbPayload['topic']['record'];
         sdo?: ISDO;
         error?: unknown;

@@ -1,5 +1,5 @@
 import {type ConsumeMessage} from 'amqplib';
-import {type IDbEvent, EventActionSDO} from '@leav/utils';
+import {type IDbEvent, EventAction} from '@leav/utils';
 import {type ISDOExportDomain} from '../../domain/sdo/export/sdoExportDomain';
 import {type IRabbitMQ} from '../../infra/sdo/rabbitMQ/rabbitMQ';
 import {type ISDODomain} from '../../domain/sdo/sdoDomain';
@@ -63,7 +63,7 @@ export default function ({
 
                     await sdoExportDomain.sendSDO(leavLibrary, recordId, sdo);
                     await sdoDomain.sendLog({
-                        action: EventActionSDO.SDO_LOG_EXPORT_RECORD,
+                        action: EventAction.SDO_LOG_EXPORT_RECORD,
                         record: {id: recordId, libraryId: leavLibrary},
                         sdo,
                         ctx: _systemQueryContext,
@@ -80,7 +80,7 @@ export default function ({
 
             (await rabbitMQService.getLeavDataEventChannel()).nack(msg, false, false);
             await sdoDomain.sendLog({
-                action: EventActionSDO.SDO_LOG_ERROR,
+                action: EventAction.SDO_LOG_ERROR,
                 error:
                     error instanceof LeavError
                         ? {

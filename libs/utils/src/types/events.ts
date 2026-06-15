@@ -34,6 +34,9 @@ export enum EventAction {
     PERMISSION_SAVE = 'PERMISSION_SAVE',
     RECORD_DELETE = 'RECORD_DELETE',
     RECORD_SAVE = 'RECORD_SAVE',
+    SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
+    SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
+    SDO_LOG_ERROR = 'SDO_LOG_ERROR',
     TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
     TREE_DELETE = 'TREE_DELETE',
     TREE_DELETE_ELEMENT = 'TREE_DELETE_ELEMENT',
@@ -87,10 +90,4 @@ export interface IPubSubEvent extends IEvent {
 export interface IPubSubPayload {
     triggerName: string;
     data: any;
-}
-
-export enum EventActionSDO {
-    SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
-    SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
-    SDO_LOG_ERROR = 'SDO_LOG_ERROR',
 }
