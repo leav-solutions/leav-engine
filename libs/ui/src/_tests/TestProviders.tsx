@@ -20,7 +20,7 @@ export const TestProviders = ({children, mocks, cacheSettings, routerProps}: Pro
         <MockedLangContextProvider>
             <MockedUserContextProvider>
                 <MockedProvider mocks={mocks} cache={mockCache}>
-                    <MemoryRouter {...routerProps}>
+                    <MemoryRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}} {...routerProps}>
                         <AntApp>
                             <KitApp>{children ?? <></>}</KitApp>
                         </AntApp>
