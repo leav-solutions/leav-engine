@@ -1,0 +1,12 @@
+query GetViewList($libraryId: ID!) {
+    viewsV2(library: $libraryId) {
+        list {
+            id
+            label
+            shared
+            created_by {
+                id
+            }
+        }
+    }
+}

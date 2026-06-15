@@ -1,0 +1,5 @@
+.shared {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+}

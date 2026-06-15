@@ -128,14 +128,31 @@
         "copy-id": "Copy view ID",
         "copy-id-disabled": "Share the view to be able to copy its ID",
         "id-copied": "View ID copied",
+        "unsaved-changes": {
+            "title": "Unsaved changes",
+            "content": "You have made changes to the current view. Do you want to save them before switching views so you don't lose them?",
+            "discard": "Discard"
+        },
         "current-view": {
             "title": "Current view",
-            "label-placeholder": "Unnamed view",
+            "label-placeholder": "Add view name",
             "shared": "Shared",
             "close": "Close",
             "save": "Save",
             "clone": "Duplicate view",
-            "delete": "Delete view"
+            "delete": "Delete view",
+            "reset": "Reset",
+            "shared-by": "Shared by {{name}}",
+            "label-required": "View name is required",
+            "clone-modal-title": "Duplicate view",
+            "clone-modal-placeholder": "New view name",
+            "unshare-confirm-title": "Stop sharing the view",
+            "unshare-confirm-content": "This view will no longer be accessible to other users.",
+            "save-success": "View saved",
+            "clone-success": "View duplicated",
+            "share-success": "View shared",
+            "unshare-success": "View unshared",
+            "action-error": "The view operation failed."
         },
         "pin": "Pin as shortcut"
     },

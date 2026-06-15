@@ -1,7 +1,7 @@
 import {useUser} from '@leav/ui';
-import {type GetViewListQuery, useGetViewListQuery} from '../../../../../__generated__';
+import {type GetViewListQuery, useGetViewListQuery} from '../../../../../../__generated__';
 
-export type View = GetViewListQuery['views']['list'][number];
+export type View = GetViewListQuery['viewsV2']['list'][number];
 
 interface IUseViewCatalogResult {
     myViews: View[];
@@ -21,7 +21,7 @@ export const useViewCatalog = (libraryId: string): IUseViewCatalogResult => {
 
     const {userData} = useUser();
 
-    return (data?.views.list ?? []).reduce<IUseViewCatalogResult>(
+    return (data?.viewsV2.list ?? []).reduce<IUseViewCatalogResult>(
         (acc, view) => {
             if (view.created_by.id === userData?.userId) {
                 acc.myViews.push(view);

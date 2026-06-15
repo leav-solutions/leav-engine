@@ -309,6 +309,18 @@ import {container} from './styles.module.css';
 <div className={container} />;
 ```
 
+## Translations (i18n)
+
+- In **French** translation files, use the typographic apostrophe `’` (U+2019) instead of the straight quote `'` (U+0027).
+
+```json
+// Bad — straight quote
+"label": "Copier l'identifiant de la vue"
+
+// Good — typographic apostrophe
+"label": "Copier l’identifiant de la vue"
+```
+
 # GraphQL
 
 ## Operations

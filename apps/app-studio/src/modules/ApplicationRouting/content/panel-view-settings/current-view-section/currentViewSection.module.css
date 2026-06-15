@@ -16,14 +16,10 @@
     width: 100%;
 }
 
-.shared {
-    display: flex;
-    align-items: center;
-    gap: calc(var(--general-spacing-xs) * 1px);
-}
-
 .actionButtons {
     display: flex;
     align-items: center;
     gap: calc(var(--general-spacing-xxs) * 1px);
+    /* Hug the right edge whether or not the share control is rendered on the left. */
+    margin-left: auto;
 }

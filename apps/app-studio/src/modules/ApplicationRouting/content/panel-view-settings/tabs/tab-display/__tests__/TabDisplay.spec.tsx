@@ -16,14 +16,17 @@ const SEEDED_COLUMNS: CurrentViewColumn[] = [
 
 // Reducer-backed provider so toggling the eye dispatches real actions and re-renders.
 const TabDisplayWithState = ({columns = SEEDED_COLUMNS}: {columns?: CurrentViewColumn[]}) => {
-    const [view, dispatch] = useReducer(currentViewReducer, {
+    const seed = {
         id: 'view-1',
+        library: 'my_lib',
         label: {en: 'Test view'},
         shared: false,
+        created_by: {id: '123', whoAmI: {id: '123', label: 'Me'}},
         display: {type: ViewV2Types.list, attributes: columns},
-    });
+    };
+    const [state, dispatch] = useReducer(currentViewReducer, {view: seed, savedView: seed});
     return (
-        <CurrentViewContext.Provider value={{view, dispatch}}>
+        <CurrentViewContext.Provider value={{...state, dispatch}}>
             <TabDisplay canEditAdminView={false} />
         </CurrentViewContext.Provider>
     );

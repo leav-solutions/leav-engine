@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {useLang, usePanelEventHandlers} from '@leav/ui';
 import {KitAlert, KitBadge, KitItemList, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {type IKitActionButton} from 'aristid-ds/dist/Kit/DataDisplay/types';
@@ -7,7 +8,10 @@ import {faBookmark, faCopy} from '@fortawesome/free-solid-svg-icons';
 import {localizedTranslation} from '@leav/utils';
 import {INFO_NOTIFICATION_DURATION} from '_ui/constants';
 import cn from 'classnames';
-import {type AppStudioInternalEvent} from '../../../types';
+import {type AppStudioInternalEvent} from '../../../../types';
+import {useCurrentView} from '../../store-current-view/useCurrentView';
+import {useCurrentViewActions} from '../../current-view-section/useCurrentViewActions';
+import {UnsavedViewChangesModal} from './UnsavedViewChangesModal';
 import {type View, useViewCatalog} from './useViewCatalog';
 import {
     emptyBadge,
@@ -25,9 +29,52 @@ export const TabCatalog = ({viewId, libraryId}: {viewId: string; libraryId: stri
     const {lang} = useLang();
 
     const {myViews, sharedViews} = useViewCatalog(libraryId);
+    const {view: currentLoadedView, isDirty} = useCurrentView();
+    const {save, saveLoading} = useCurrentViewActions();
 
     // TODO: save the last choice of the user, using user data mutation and query to read last view
     const {dispatch} = usePanelEventHandlers<AppStudioInternalEvent>();
+
+    // The view we're about to switch to, deferred until the unsaved-changes modal is resolved.
+    // The modal is open iff this is non-null (mirrors CurrentViewActions' isForkModalOpen pattern).
+    const [pendingViewId, setPendingViewId] = useState<string | null>(null);
+
+    // Same rule as `canSave` in CurrentViewActions: a view without a label can't be saved.
+    const hasLabel = (currentLoadedView?.label?.[lang[0]] ?? '').trim() !== '';
+
+    const applySelection = (id: string) => dispatch({type: 'view-settings-select-view', data: {viewId: id}});
+
+    const selectView = (id: string) => {
+        // Clicking the already-loaded view is a no-op (avoids a spurious confirmation modal).
+        if (id === currentLoadedView?.id) {
+            return;
+        }
+
+        // Gate the selection at the source: the event also drives the Explorer and the app-settings
+        // highlight, so confirming here keeps every consumer in sync on cancel.
+        if (isDirty) {
+            setPendingViewId(id);
+            return;
+        }
+
+        applySelection(id);
+    };
+
+    const handleDiscard = () => {
+        if (pendingViewId !== null) {
+            applySelection(pendingViewId);
+        }
+        setPendingViewId(null);
+    };
+
+    const handleSave = async () => {
+        const ok = await save();
+        // On failure save() already surfaced the error notif; keep the modal open so edits aren't lost.
+        if (ok && pendingViewId !== null) {
+            applySelection(pendingViewId);
+            setPendingViewId(null);
+        }
+    };
 
     // The view id is only useful once the view is shared, so copying it is disabled until then.
     // The disabled button cannot carry its own tooltip through the DS actions API, so the
@@ -98,12 +145,7 @@ export const TabCatalog = ({viewId, libraryId}: {viewId: string; libraryId: stri
                                         </span>
                                     ),
                                 }}
-                                onClick={() => {
-                                    dispatch({
-                                        type: 'view-settings-select-view',
-                                        data: {viewId: view.id},
-                                    });
-                                }}
+                                onClick={() => selectView(view.id)}
                             />
                         ))}
                     </KitSpace>
@@ -141,17 +183,20 @@ export const TabCatalog = ({viewId, libraryId}: {viewId: string; libraryId: stri
                                         </span>
                                     ),
                                 }}
-                                onClick={() => {
-                                    dispatch({
-                                        type: 'view-settings-select-view',
-                                        data: {viewId: view.id},
-                                    });
-                                }}
+                                onClick={() => selectView(view.id)}
                             />
                         ))}
                     </KitSpace>
                 )}
             </KitSpace>
+            <UnsavedViewChangesModal
+                isOpen={pendingViewId !== null}
+                saveLoading={saveLoading}
+                canSave={hasLabel}
+                onClose={() => setPendingViewId(null)}
+                onDiscard={handleDiscard}
+                onSave={handleSave}
+            />
         </KitSpace>
     );
 };

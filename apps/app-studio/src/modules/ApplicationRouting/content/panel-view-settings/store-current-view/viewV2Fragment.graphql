@@ -1,0 +1,28 @@
+# Scoped to the app-studio view-settings feature ONLY (catalog / current-view management).
+# It exists to avoid duplicating the same selection set across getViewV2 / createViewV2 / updateViewV2.
+# ⚠️ Do NOT reuse this fragment outside this feature (e.g. in @leav/ui when views v2 land there):
+# each consumer should fetch exactly the fields it needs. If another feature needs these fields,
+# define its own fragment rather than importing this one.
+fragment AppStudioViewSettingsView on ViewV2 {
+    id
+    library
+    label
+    shared
+    created_by {
+        id
+        whoAmI {
+            id
+            label
+        }
+    }
+    display {
+        type
+        attributes {
+            visible
+            attribute {
+                id
+                label
+            }
+        }
+    }
+}

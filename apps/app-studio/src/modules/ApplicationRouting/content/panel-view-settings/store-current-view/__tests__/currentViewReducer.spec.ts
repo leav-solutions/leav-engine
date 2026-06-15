@@ -1,5 +1,5 @@
 import {ViewV2Types} from '../../../../../../__generated__';
-import {currentViewReducer, initialCurrentViewState} from '../currentViewReducer';
+import {currentViewReducer, initialCurrentViewState, viewReducer} from '../currentViewReducer';
 import {type CurrentView} from '../_types';
 
 type NonNullState = NonNullable<CurrentView>;
@@ -9,10 +9,12 @@ const makeAttributes = (
 ): NonNullState['display']['attributes'] =>
     defs.map(({id, label, visible}) => ({visible, attribute: {id, label: {en: label}}}));
 
-const makeState = (overrides: Partial<NonNullState> = {}): NonNullState => ({
+const makeView = (overrides: Partial<NonNullState> = {}): NonNullState => ({
     id: 'view-1',
+    library: 'my_lib',
     label: {en: 'My view'},
     shared: false,
+    created_by: {id: '123', whoAmI: {id: '123', label: 'Me'}},
     display: {
         type: ViewV2Types.list,
         attributes: makeAttributes([
@@ -25,49 +27,43 @@ const makeState = (overrides: Partial<NonNullState> = {}): NonNullState => ({
     ...overrides,
 });
 
-const attrIds = (state: NonNullState) => state.display.attributes.map(attr => attr.attribute.id);
-const attrVisible = (state: NonNullState, id: string) =>
-    state.display.attributes.find(attr => attr.attribute.id === id)?.visible;
+const attrIds = (view: NonNullState) => view.display.attributes.map(attr => attr.attribute.id);
+const attrVisible = (view: NonNullState, id: string) =>
+    view.display.attributes.find(attr => attr.attribute.id === id)?.visible;
 
-describe('currentViewReducer', () => {
-    describe('LOAD_VIEW', () => {
-        it('replaces the whole state with the payload', () => {
-            const payload = makeState({id: 'view-2'});
-            expect(currentViewReducer(initialCurrentViewState, {type: 'LOAD_VIEW', payload})).toBe(payload);
-        });
-    });
-
+// The pure, single-view reducer powering the display-only actions shared across tabs.
+describe('viewReducer (display actions)', () => {
     describe('SET_VIEW_TYPE', () => {
         it('updates only the view type and keeps the attributes reference', () => {
-            const state = makeState();
-            const next = currentViewReducer(state, {type: 'SET_VIEW_TYPE', payload: {viewType: ViewV2Types.cards}});
-            expect(next!.display.type).toBe(ViewV2Types.cards);
-            expect(next!.display.attributes).toBe(state.display.attributes);
+            const view = makeView();
+            const next = viewReducer(view, {type: 'SET_VIEW_TYPE', payload: {viewType: ViewV2Types.cards}});
+            expect(next.display.type).toBe(ViewV2Types.cards);
+            expect(next.display.attributes).toBe(view.display.attributes);
         });
     });
 
     describe('TOGGLE_VISIBILITY', () => {
         it('hides a visible column in place (order unchanged)', () => {
-            const next = currentViewReducer(makeState(), {type: 'TOGGLE_VISIBILITY', payload: {id: 'a'}});
-            expect(attrVisible(next!, 'a')).toBe(false);
-            expect(attrIds(next!)).toEqual(['a', 'b', 'c', 'd']);
+            const next = viewReducer(makeView(), {type: 'TOGGLE_VISIBILITY', payload: {id: 'a'}});
+            expect(attrVisible(next, 'a')).toBe(false);
+            expect(attrIds(next)).toEqual(['a', 'b', 'c', 'd']);
         });
 
         it('shows a hidden column and appends it after the last visible column', () => {
             // Toggle 'd' (last column, sitting after the hidden 'c'): it must move up just after the
             // last visible column 'b', proving the repositioning — not merely the flag flip.
-            const next = currentViewReducer(makeState(), {type: 'TOGGLE_VISIBILITY', payload: {id: 'd'}});
-            expect(attrVisible(next!, 'd')).toBe(true);
-            expect(next!.display.attributes.filter(attr => attr.visible).map(attr => attr.attribute.id)).toEqual([
+            const next = viewReducer(makeView(), {type: 'TOGGLE_VISIBILITY', payload: {id: 'd'}});
+            expect(attrVisible(next, 'd')).toBe(true);
+            expect(next.display.attributes.filter(attr => attr.visible).map(attr => attr.attribute.id)).toEqual([
                 'a',
                 'b',
                 'd',
             ]);
-            expect(attrIds(next!)).toEqual(['a', 'b', 'd', 'c']);
+            expect(attrIds(next)).toEqual(['a', 'b', 'd', 'c']);
         });
 
         it('shows a hidden column at the front when no column is visible', () => {
-            const state = makeState({
+            const view = makeView({
                 display: {
                     type: ViewV2Types.list,
                     attributes: makeAttributes([
@@ -76,15 +72,15 @@ describe('currentViewReducer', () => {
                     ]),
                 },
             });
-            const next = currentViewReducer(state, {type: 'TOGGLE_VISIBILITY', payload: {id: 'b'}});
-            expect(attrIds(next!)).toEqual(['b', 'a']);
-            expect(next!.display.attributes[0].visible).toBe(true);
+            const next = viewReducer(view, {type: 'TOGGLE_VISIBILITY', payload: {id: 'b'}});
+            expect(attrIds(next)).toEqual(['b', 'a']);
+            expect(next.display.attributes[0].visible).toBe(true);
         });
     });
 
     describe('MOVE_ATTRIBUTE', () => {
         it('reorders within the visible subset while keeping hidden columns in place', () => {
-            const state = makeState({
+            const view = makeView({
                 display: {
                     type: ViewV2Types.list,
                     attributes: makeAttributes([
@@ -95,18 +91,92 @@ describe('currentViewReducer', () => {
                     ]),
                 },
             });
-            const next = currentViewReducer(state, {type: 'MOVE_ATTRIBUTE', payload: {activeId: 'a', overId: 'b'}});
+            const next = viewReducer(view, {type: 'MOVE_ATTRIBUTE', payload: {activeId: 'a', overId: 'b'}});
             // Visible slots (positions 0 and 2) now hold b then a; hidden columns never moved.
-            expect(attrIds(next!)).toEqual(['b', 'c', 'a', 'd']);
-            expect(next!.display.attributes[1]).toEqual({visible: false, attribute: {id: 'c', label: {en: 'C'}}});
-            expect(next!.display.attributes[3]).toEqual({visible: false, attribute: {id: 'd', label: {en: 'D'}}});
+            expect(attrIds(next)).toEqual(['b', 'c', 'a', 'd']);
+            expect(next.display.attributes[1]).toEqual({visible: false, attribute: {id: 'c', label: {en: 'C'}}});
+            expect(next.display.attributes[3]).toEqual({visible: false, attribute: {id: 'd', label: {en: 'D'}}});
         });
 
-        it('returns the same state when both ids are equal', () => {
-            const state = makeState();
-            expect(currentViewReducer(state, {type: 'MOVE_ATTRIBUTE', payload: {activeId: 'a', overId: 'a'}})).toBe(
-                state,
+        it('returns the same view when both ids are equal', () => {
+            const view = makeView();
+            expect(viewReducer(view, {type: 'MOVE_ATTRIBUTE', payload: {activeId: 'a', overId: 'a'}})).toBe(view);
+        });
+    });
+});
+
+// The top-level reducer tracking the {view, savedView} snapshots.
+describe('currentViewReducer (state wrapper)', () => {
+    describe('LOAD_VIEW', () => {
+        it('seeds both view and savedView with the payload', () => {
+            const payload = makeView({id: 'view-2'});
+            const next = currentViewReducer(initialCurrentViewState, {type: 'LOAD_VIEW', payload});
+            expect(next.view).toBe(payload);
+            expect(next.savedView).toBe(payload);
+        });
+    });
+
+    describe('SET_LABEL', () => {
+        it('updates only the current language, preserves the others and the display, leaves savedView intact', () => {
+            const view = makeView({label: {fr: 'Catalogue', en: 'Catalog'}});
+            const savedView = makeView({label: {fr: 'Catalogue', en: 'Catalog'}});
+            const next = currentViewReducer(
+                {view, savedView},
+                {type: 'SET_LABEL', payload: {lang: 'fr', value: 'Produits'}},
             );
+
+            expect(next.view!.label).toEqual({fr: 'Produits', en: 'Catalog'});
+            expect(next.view!.display).toBe(view.display);
+            expect(next.savedView).toBe(savedView);
+        });
+    });
+
+    describe('SET_SHARED', () => {
+        it('writes shared symmetrically on view AND savedView (so it never reads as dirty)', () => {
+            const next = currentViewReducer(
+                {view: makeView({shared: false}), savedView: makeView({shared: false})},
+                {type: 'SET_SHARED', payload: {shared: true}},
+            );
+            expect(next.view!.shared).toBe(true);
+            expect(next.savedView!.shared).toBe(true);
+        });
+    });
+
+    describe('RESET_VIEW', () => {
+        it('reverts view to savedView', () => {
+            const savedView = makeView({label: {en: 'Saved'}});
+            const view = makeView({label: {en: 'Edited'}});
+            const next = currentViewReducer({view, savedView}, {type: 'RESET_VIEW'});
+            expect(next.view).toBe(savedView);
+            expect(next.savedView).toBe(savedView);
+        });
+    });
+
+    describe('MARK_SAVED', () => {
+        it('promotes the current view as the saved snapshot', () => {
+            const savedView = makeView({label: {en: 'Saved'}});
+            const view = makeView({label: {en: 'Edited'}});
+            const next = currentViewReducer({view, savedView}, {type: 'MARK_SAVED'});
+            expect(next.savedView).toBe(view);
+            expect(next.view).toBe(view);
+        });
+    });
+
+    describe('display actions delegation', () => {
+        it('delegates to viewReducer on view and leaves savedView untouched', () => {
+            const savedView = makeView();
+            const view = makeView();
+            const next = currentViewReducer(
+                {view, savedView},
+                {type: 'SET_VIEW_TYPE', payload: {viewType: ViewV2Types.cards}},
+            );
+            expect(next.view!.display.type).toBe(ViewV2Types.cards);
+            expect(next.savedView).toBe(savedView);
+        });
+
+        it('is a no-op when there is no view loaded', () => {
+            const next = currentViewReducer(initialCurrentViewState, {type: 'TOGGLE_VISIBILITY', payload: {id: 'a'}});
+            expect(next).toEqual(initialCurrentViewState);
         });
     });
 });

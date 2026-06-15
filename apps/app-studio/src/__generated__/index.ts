@@ -3291,6 +3291,20 @@ export type GetThreadQueryVariables = Exact<{
 
 export type GetThreadQuery = { records: { list: Array<{ permissions: { edit_record: boolean }, threads: Array<{ payload?: { id: string, label: Array<{ payload?: any | null }>, status: Array<{ payload?: { id: string } | null }>, comments: Array<{ payload?: { id: string, content: Array<{ payload?: any | null }>, author: Array<{ payload?: { id: string, name: Array<{ payload?: any | null }> } | null }>, createdAt: Array<{ raw_payload?: any | null }> } | null }> } | null }> }> } };
 
+export type CreateViewV2MutationVariables = Exact<{
+  view: ViewV2CreateInput;
+}>;
+
+
+export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> } } };
+
+export type UpdateViewV2MutationVariables = Exact<{
+  view: ViewV2UpdateInput;
+}>;
+
+
+export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> } } };
+
 export type GetPermissionEditViewOnLibraryQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
 }>;
@@ -3303,14 +3317,16 @@ export type GetViewV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewV2Query = { viewV2: { id: string, label: any, shared: boolean, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> } } };
+export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> } } };
+
+export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> } };
 
 export type GetViewListQueryVariables = Exact<{
-  libraryId: Scalars['String']['input'];
+  libraryId: Scalars['ID']['input'];
 }>;
 
 
-export type GetViewListQuery = { views: { list: Array<{ id: string, label: any, shared: boolean, created_by: { id: string } }> } };
+export type GetViewListQuery = { viewsV2: { list: Array<{ id: string, label: any, shared: boolean, created_by: { id: string } }> } };
 
 export type GetLibraryNameQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
@@ -3370,7 +3386,31 @@ export type SubscribeToUserTasksSubscriptionVariables = Exact<{
 
 export type SubscribeToUserTasksSubscription = { task: { id: string, status: TaskStatus, label: any, created_at: number, startedAt?: number | null, completedAt?: number | null, progress?: { description?: any | null, percent?: number | null } | null, link?: { url: string } | null } };
 
-
+export const AppStudioViewSettingsViewFragmentDoc = gql`
+    fragment AppStudioViewSettingsView on ViewV2 {
+  id
+  library
+  label
+  shared
+  created_by {
+    id
+    whoAmI {
+      id
+      label
+    }
+  }
+  display {
+    type
+    attributes {
+      visible
+      attribute {
+        id
+        label
+      }
+    }
+  }
+}
+    `;
 export const GetApplicationDataByEndpointDocument = gql`
     query GetApplicationDataByEndpoint($endpoint: String!) {
   applications(filters: {endpoint: $endpoint}) {
@@ -3845,6 +3885,72 @@ export type GetThreadQueryHookResult = ReturnType<typeof useGetThreadQuery>;
 export type GetThreadLazyQueryHookResult = ReturnType<typeof useGetThreadLazyQuery>;
 export type GetThreadSuspenseQueryHookResult = ReturnType<typeof useGetThreadSuspenseQuery>;
 export type GetThreadQueryResult = Apollo.QueryResult<GetThreadQuery, GetThreadQueryVariables>;
+export const CreateViewV2Document = gql`
+    mutation CreateViewV2($view: ViewV2CreateInput!) {
+  createViewV2(view: $view) {
+    ...AppStudioViewSettingsView
+  }
+}
+    ${AppStudioViewSettingsViewFragmentDoc}`;
+export type CreateViewV2MutationFn = Apollo.MutationFunction<CreateViewV2Mutation, CreateViewV2MutationVariables>;
+
+/**
+ * __useCreateViewV2Mutation__
+ *
+ * To run a mutation, you first call `useCreateViewV2Mutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateViewV2Mutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createViewV2Mutation, { data, loading, error }] = useCreateViewV2Mutation({
+ *   variables: {
+ *      view: // value for 'view'
+ *   },
+ * });
+ */
+export function useCreateViewV2Mutation(baseOptions?: Apollo.MutationHookOptions<CreateViewV2Mutation, CreateViewV2MutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateViewV2Mutation, CreateViewV2MutationVariables>(CreateViewV2Document, options);
+      }
+export type CreateViewV2MutationHookResult = ReturnType<typeof useCreateViewV2Mutation>;
+export type CreateViewV2MutationResult = Apollo.MutationResult<CreateViewV2Mutation>;
+export type CreateViewV2MutationOptions = Apollo.BaseMutationOptions<CreateViewV2Mutation, CreateViewV2MutationVariables>;
+export const UpdateViewV2Document = gql`
+    mutation UpdateViewV2($view: ViewV2UpdateInput!) {
+  updateViewV2(view: $view) {
+    ...AppStudioViewSettingsView
+  }
+}
+    ${AppStudioViewSettingsViewFragmentDoc}`;
+export type UpdateViewV2MutationFn = Apollo.MutationFunction<UpdateViewV2Mutation, UpdateViewV2MutationVariables>;
+
+/**
+ * __useUpdateViewV2Mutation__
+ *
+ * To run a mutation, you first call `useUpdateViewV2Mutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateViewV2Mutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateViewV2Mutation, { data, loading, error }] = useUpdateViewV2Mutation({
+ *   variables: {
+ *      view: // value for 'view'
+ *   },
+ * });
+ */
+export function useUpdateViewV2Mutation(baseOptions?: Apollo.MutationHookOptions<UpdateViewV2Mutation, UpdateViewV2MutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateViewV2Mutation, UpdateViewV2MutationVariables>(UpdateViewV2Document, options);
+      }
+export type UpdateViewV2MutationHookResult = ReturnType<typeof useUpdateViewV2Mutation>;
+export type UpdateViewV2MutationResult = Apollo.MutationResult<UpdateViewV2Mutation>;
+export type UpdateViewV2MutationOptions = Apollo.BaseMutationOptions<UpdateViewV2Mutation, UpdateViewV2MutationVariables>;
 export const GetPermissionEditViewOnLibraryDocument = gql`
     query GetPermissionEditViewOnLibrary($libraryId: ID!) {
   libraries(filters: {id: [$libraryId]}) {
@@ -3896,22 +4002,10 @@ export type GetPermissionEditViewOnLibraryQueryResult = Apollo.QueryResult<GetPe
 export const GetViewV2Document = gql`
     query GetViewV2($viewId: ID!) {
   viewV2(viewId: $viewId) {
-    id
-    label
-    shared
-    display {
-      type
-      attributes {
-        visible
-        attribute {
-          id
-          label
-        }
-      }
-    }
+    ...AppStudioViewSettingsView
   }
 }
-    `;
+    ${AppStudioViewSettingsViewFragmentDoc}`;
 
 /**
  * __useGetViewV2Query__
@@ -3949,8 +4043,8 @@ export type GetViewV2LazyQueryHookResult = ReturnType<typeof useGetViewV2LazyQue
 export type GetViewV2SuspenseQueryHookResult = ReturnType<typeof useGetViewV2SuspenseQuery>;
 export type GetViewV2QueryResult = Apollo.QueryResult<GetViewV2Query, GetViewV2QueryVariables>;
 export const GetViewListDocument = gql`
-    query GetViewList($libraryId: String!) {
-  views(library: $libraryId) {
+    query GetViewList($libraryId: ID!) {
+  viewsV2(library: $libraryId) {
     list {
       id
       label
