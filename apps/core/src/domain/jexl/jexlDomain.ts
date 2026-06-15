@@ -171,6 +171,58 @@ export default function ({
     jexl.addTransform('toNode', _toNode);
     jexl.addFunction('toNode', _toNode);
 
+    const _findRecordsByAttr = async (
+        rootContext: JexlRootContext,
+        libraryId: string,
+        attributePath: string,
+        attributeCondition: AttributeCondition,
+        attributeValue: unknown,
+    ): Promise<JexlRecordContext[]> => {
+        if (rootContext == null || rootContext.__jexlContextType !== JexlContextType.ROOT) {
+            throw new Error('findRecordsByAttr function can only be used on root context');
+        }
+
+        const attributeConditionUppercase = attributeCondition.toUpperCase() as AttributeCondition;
+        if (!Object.values(AttributeCondition).includes(attributeConditionUppercase)) {
+            throw new Error(
+                `Invalid condition "${attributeCondition}" for findRecordsByAttr function. Valid conditions are: ${Object.values(
+                    AttributeCondition,
+                ).join(', ')}`,
+            );
+        }
+
+        const ctx = rootContext.__getJexlQueryCtx();
+
+        try {
+            const records = await recordDomain
+                .find({
+                    params: {
+                        library: libraryId,
+                        filters: [
+                            {
+                                field: attributePath,
+                                condition: attributeConditionUppercase,
+                                value: String(attributeValue),
+                            },
+                        ],
+                    },
+                    ctx,
+                })
+                .then(res => res.list);
+
+            return records.map(record => buildRecordContext(record, ctx));
+        } catch (error) {
+            debug &&
+                logger.debug(
+                    `Error fetching records for findRecordsByAttr function for library ${libraryId} and attribute ${attributePath}: ${error.stack}`,
+                );
+            throw error;
+        }
+    };
+
+    jexl.addTransform('findRecordsByAttr', _findRecordsByAttr);
+    jexl.addFunction('findRecordsByAttr', _findRecordsByAttr);
+
     function addJexlContext<Type extends JexlContextType>(
         jexlContext: Omit<JexlContext, '__jexlContextType' | '__getJexlQueryCtx'>,
         type: Type,

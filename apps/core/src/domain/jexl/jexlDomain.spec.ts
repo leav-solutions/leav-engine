@@ -355,6 +355,132 @@ describe('jexlDomain', () => {
         });
     });
 
+    describe('findRecordsByAttr function', () => {
+        test('should call recordDomain.find with correct params and return record contexts', async () => {
+            const mockRecords = [
+                {id: 'rec1', library: 'lib1'},
+                {id: 'rec2', library: 'lib1'},
+            ];
+            mockRecordDomain.find.mockResolvedValue({list: mockRecords, total: 2});
+
+            const rootCtx = domain.buildRootContext({}, ctx);
+            const result = await domain.eval('findRecordsByAttr($, "lib1", "label", "EQUAL", "foo")', rootCtx);
+            const resultF = await domain.eval('$ | findRecordsByAttr("lib1", "label", "EQUAL", "foo")', rootCtx);
+
+            expect(mockRecordDomain.find).toHaveBeenCalledWith({
+                params: {
+                    library: 'lib1',
+                    filters: [{field: 'label', condition: AttributeCondition.EQUAL, value: 'foo'}],
+                },
+                ctx,
+            });
+            expect(result).toHaveLength(2);
+            expect(result[0]).toMatchObject({
+                __jexlContextType: JexlContextType.RECORD,
+                id: 'rec1',
+                library: 'lib1',
+            });
+            expect(result[1]).toMatchObject({
+                __jexlContextType: JexlContextType.RECORD,
+                id: 'rec2',
+                library: 'lib1',
+            });
+            expect(resultF).toHaveLength(2);
+            expect(resultF[0]).toMatchObject({
+                __jexlContextType: JexlContextType.RECORD,
+                id: 'rec1',
+                library: 'lib1',
+            });
+            expect(resultF[1]).toMatchObject({
+                __jexlContextType: JexlContextType.RECORD,
+                id: 'rec2',
+                library: 'lib1',
+            });
+        });
+
+        test('should uppercase the given condition before calling recordDomain.find', async () => {
+            mockRecordDomain.find.mockResolvedValue({list: [], total: 0});
+
+            const rootCtx = domain.buildRootContext({}, ctx);
+            await domain.eval('findRecordsByAttr($, "lib1", "label", "equal", "foo")', rootCtx);
+
+            expect(mockRecordDomain.find).toHaveBeenCalledWith({
+                params: {
+                    library: 'lib1',
+                    filters: [{field: 'label', condition: AttributeCondition.EQUAL, value: 'foo'}],
+                },
+                ctx,
+            });
+        });
+
+        test('should stringify the attribute value', async () => {
+            mockRecordDomain.find.mockResolvedValue({list: [], total: 0});
+
+            const rootCtx = domain.buildRootContext({}, ctx);
+            await domain.eval('findRecordsByAttr($, "lib1", "count", "EQUAL", 42)', rootCtx);
+
+            expect(mockRecordDomain.find).toHaveBeenCalledWith({
+                params: {
+                    library: 'lib1',
+                    filters: [{field: 'count', condition: AttributeCondition.EQUAL, value: '42'}],
+                },
+                ctx,
+            });
+        });
+
+        test('should return an empty array when recordDomain.find returns no results', async () => {
+            mockRecordDomain.find.mockResolvedValue({list: [], total: 0});
+
+            const rootCtx = domain.buildRootContext({}, ctx);
+            const result = await domain.eval('findRecordsByAttr($, "lib1", "label", "EQUAL", "foo")', rootCtx);
+
+            expect(result).toEqual([]);
+        });
+
+        test('should accept every AttributeCondition enum value as condition', async () => {
+            const rootCtx = domain.buildRootContext({}, ctx);
+
+            for (const condition of Object.values(AttributeCondition)) {
+                mockRecordDomain.find.mockResolvedValue({list: [], total: 0});
+
+                await domain.eval(`findRecordsByAttr($, "lib1", "label", "${condition}", "foo")`, rootCtx);
+
+                expect(mockRecordDomain.find).toHaveBeenCalledWith({
+                    params: {
+                        library: 'lib1',
+                        filters: [{field: 'label', condition, value: 'foo'}],
+                    },
+                    ctx,
+                });
+            }
+        });
+
+        test('should throw when called on a non-ROOT context', async () => {
+            const recordCtx = domain.buildRecordContext(mockRecord, ctx);
+            const evalCtx = {wrongRoot: recordCtx} as any;
+            await expect(
+                domain.eval('findRecordsByAttr(wrongRoot, "lib1", "label", "EQUAL", "foo")', evalCtx),
+            ).rejects.toThrow('findRecordsByAttr function can only be used on root context');
+        });
+
+        test('should throw for an invalid condition', async () => {
+            const rootCtx = domain.buildRootContext({}, ctx);
+            await expect(
+                domain.eval('findRecordsByAttr($, "lib1", "label", "NOT_A_CONDITION", "foo")', rootCtx),
+            ).rejects.toThrow('Invalid condition "NOT_A_CONDITION" for findRecordsByAttr function');
+        });
+
+        test('should propagate errors from recordDomain.find', async () => {
+            const dbError = new Error('DB connection failed');
+            mockRecordDomain.find.mockRejectedValue(dbError);
+
+            const rootCtx = domain.buildRootContext({}, ctx);
+            await expect(domain.eval('findRecordsByAttr($, "lib1", "label", "EQUAL", "foo")', rootCtx)).rejects.toThrow(
+                'DB connection failed',
+            );
+        });
+    });
+
     describe('toNode transform', () => {
         test('should call treeDomain.getNodesByRecord with correct params and return only the first node', async () => {
             const mockNodes = ['node1', 'node2'];
