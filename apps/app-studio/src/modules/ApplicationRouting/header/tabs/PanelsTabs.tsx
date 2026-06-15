@@ -10,6 +10,8 @@ import {tabsWrapper, sliderTabsWrapper} from './panelsTabs.module.css';
 import {useGetPanelsAttributeCounts} from './panels-attribute-counts/useGetPanelsAttributeCounts';
 import {type Panel} from '_ui/hooks/usePanelMessenger/types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {matomo} from '../../../../services/matomo';
+import {matomoEvents} from '../../../../services/matomo/constants/matomoEvents';
 
 interface IPanelsTabsProps {
     enabled: boolean;
@@ -102,6 +104,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
         }
 
         if (isRecordPanel) {
+            matomo.trackNavigationEvent(matomoEvents.actions[`tab_clicked_${where}`], currentTab.label);
             return navigate(
                 // Navigation between record panels should be historized in url
                 generatePath(RelativePaths.changeLastRecordPanel, {

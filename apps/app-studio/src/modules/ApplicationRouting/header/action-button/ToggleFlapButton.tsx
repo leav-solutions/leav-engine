@@ -7,6 +7,8 @@ import {RelativePaths} from '../../router/paths';
 import {useTranslation} from 'react-i18next';
 import {type FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID, BLANK_PANEL_ID} from '../../../../constants';
 import {REDIRECT_URL_QUERY_PARAM} from '../../content/panel-custom/message-handlers/useNavigateToPanel';
+import {matomo} from '../../../../services/matomo';
+import {matomoEvents} from '../../../../services/matomo/constants/matomoEvents';
 
 interface IToggleFlapButtonProps {
     targetFlapPanelId: typeof FLAP_THREAD_PANEL_ID | typeof FLAP_INFO_AND_HISTORY_PANEL_ID;
@@ -33,6 +35,8 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({
     const isTargetFlapAlreadyOpen =
         targetRecordId === flapRecordId && targetLibraryId === flapLibraryId && targetFlapPanelId === flapPanelId;
     const shouldPreventClose = isTargetFlapAlreadyOpen && recordPanelId === BLANK_PANEL_ID;
+    const isToggleFromThreadsToInfoHistoryFlap =
+        (!hasFlapAlreadyOpen && isInfoAndHistoryFlap) || flapPanelId === 'thread';
 
     return (
         <KitTooltip title={buttonTitle}>
@@ -42,6 +46,9 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({
                 icon={<FontAwesomeIcon icon={buttonIcon} />}
                 active={isTargetFlapAlreadyOpen}
                 onClick={() => {
+                    if (isToggleFromThreadsToInfoHistoryFlap) {
+                        matomo.trackNavigationEvent(matomoEvents.actions.history_panel_opened, targetLibraryId);
+                    }
                     if (shouldPreventClose) {
                         return;
                     }

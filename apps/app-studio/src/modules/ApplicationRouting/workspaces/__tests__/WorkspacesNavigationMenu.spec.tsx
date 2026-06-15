@@ -4,9 +4,16 @@ import {type Application} from '../../types';
 import {InitTheme} from '../../../../config/theme/InitTheme';
 import * as ApplicationSettingsContext from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import userEvent from '@testing-library/user-event';
+import {matomo} from '../../../../services/matomo';
+import {matomoEvents} from '../../../../services/matomo/constants/matomoEvents';
 
 jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
     useApplicationSettingsContext: jest.fn(),
+}));
+
+jest.mock('../../../../services/matomo', () => ({
+    ...jest.requireActual('../../../../services/matomo'),
+    matomo: {trackNavigationEvent: jest.fn()},
 }));
 
 const mockApplicationWithRecordsAndLibrariesWorkspaces: Application = {
@@ -331,6 +338,50 @@ describe('WorkspacesNavigationMenu component', () => {
             expect(screen.getAllByRole('listitem')).toHaveLength(1);
             expect(screen.queryByText('workspaces_navigation_menu.shortcuts')).not.toBeInTheDocument();
             expect(screen.getByText('workspaces_navigation_menu.no_results')).toBeInTheDocument();
+        });
+    });
+
+    describe('navigation tracking', () => {
+        it('tracks a Workspace Clicked event with the record workspace title on click', async () => {
+            spyUseApplicationSettingsContext.mockReturnValue([mockApplicationWithRecordsAndLibrariesWorkspaces] as any);
+
+            renderWithTheme(<WorkspacesNavigationMenu />);
+
+            await user.click(screen.getByText('record1'));
+
+            expect(matomo.trackNavigationEvent).toHaveBeenCalledWith(matomoEvents.actions.workspace_clicked, 'record1');
+        });
+
+        it('tracks a Workspace Clicked event with the library workspace title on click', async () => {
+            spyUseApplicationSettingsContext.mockReturnValue([mockApplicationWithRecordsAndLibrariesWorkspaces] as any);
+
+            renderWithTheme(<WorkspacesNavigationMenu />);
+
+            await user.click(screen.getByText('library1'));
+
+            expect(matomo.trackNavigationEvent).toHaveBeenCalledWith(
+                matomoEvents.actions.workspace_clicked,
+                'library1',
+            );
+        });
+
+        it('falls back to the workspace id when the title is missing', async () => {
+            spyUseApplicationSettingsContext.mockReturnValue([
+                {
+                    workspaces: [{id: 'lib-no-title', type: 'library', libraryId: 'test1'}],
+                    libraries: {},
+                },
+            ] as any);
+
+            renderWithTheme(<WorkspacesNavigationMenu />);
+
+            // No title → menu item renders empty text, click it through its list item
+            await user.click(screen.getAllByRole('listitem')[0]);
+
+            expect(matomo.trackNavigationEvent).toHaveBeenCalledWith(
+                matomoEvents.actions.workspace_clicked,
+                'lib-no-title',
+            );
         });
     });
 });

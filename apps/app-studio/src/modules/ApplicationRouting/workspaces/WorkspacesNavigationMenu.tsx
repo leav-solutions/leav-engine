@@ -13,6 +13,8 @@ import {useTranslation} from 'react-i18next';
 import {type Application} from '../types';
 import {workspacesNavigationMenu} from './workspacesNavigationMenu.module.css';
 import {MIN_WORKSPACES_TO_SHOW_SEARCH} from '../../../constants';
+import {matomo} from '../../../services/matomo';
+import {matomoEvents} from '../../../services/matomo/constants/matomoEvents';
 
 export const WorkspacesNavigationMenu: FunctionComponent = () => {
     const [application] = useApplicationSettingsContext();
@@ -52,6 +54,10 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
                         tooltip: recordWorkspaceTitle,
                         icon: <KitAvatar size="s" label={recordWorkspaceTitle} shape="square" />,
                         onClick: () => {
+                            matomo.trackNavigationEvent(
+                                matomoEvents.actions.workspace_clicked,
+                                recordWorkspaceTitle || recordWorkspace.id,
+                            );
                             navigate(generatePath(UnreachablePaths.workspace, {workspaceId: recordWorkspace.id}));
                         },
                     };
@@ -69,13 +75,18 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
                     // More info: https://docs.fontawesome.com/web/use-with/react/add-icons#workaround
                     // @ts-expect-error: Type 'string' is not assignable to type 'IconProp'
                     const icon: IconProp = `fa-solid ${libraryWorkspace.icon ? libraryWorkspace.icon : 'fa-star-of-life'}`;
+                    const libraryWorkspaceTitle = localizedTranslation(libraryWorkspace.title, lang);
 
                     return {
                         key: libraryWorkspace.id,
                         type: 'default',
-                        title: localizedTranslation(libraryWorkspace.title, lang),
+                        title: libraryWorkspaceTitle,
                         icon: <FontAwesomeIcon icon={icon} />,
                         onClick: () => {
+                            matomo.trackNavigationEvent(
+                                matomoEvents.actions.workspace_clicked,
+                                libraryWorkspaceTitle || libraryWorkspace.id,
+                            );
                             navigate(generatePath(UnreachablePaths.workspace, {workspaceId: libraryWorkspace.id}));
                         },
                     };
