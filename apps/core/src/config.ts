@@ -336,46 +336,22 @@ export const validateConfig = (conf: IConfig) => {
         sdo: Joi.object().keys({
             amqp: Joi.object().keys({
                 protocol: Joi.string().required(),
-                hostname: Joi.string().required(),
-                username: Joi.string().required(),
-                password: Joi.string().required(),
+                hostname: Joi.string(),
+                username: Joi.string(),
+                password: Joi.string(),
                 port: Joi.string().required(),
             }),
             import: Joi.object().keys({
                 enable: Joi.boolean().required(),
-                prefetch: Joi.alternatives().conditional('enable', {
-                    is: true,
-                    then: Joi.number().required(),
-                    otherwise: Joi.number().required().allow('', null),
-                }),
-                queue: Joi.alternatives().conditional('enable', {
-                    is: true,
-                    then: Joi.string().required(),
-                    otherwise: Joi.string().required().allow('', null),
-                }),
-                exchange: Joi.alternatives().conditional('enable', {
-                    is: true,
-                    then: Joi.string().required(),
-                    otherwise: Joi.string().required().allow('', null),
-                }),
+                prefetch: Joi.number().required(),
+                queue: Joi.string(),
+                exchange: Joi.string(),
             }),
             export: Joi.object().keys({
                 enable: Joi.boolean().required(),
-                dataEventsQueue: Joi.alternatives().conditional('enable', {
-                    is: true,
-                    then: Joi.string().required(),
-                    otherwise: Joi.string().required().allow('', null),
-                }),
-                exchange: Joi.alternatives().conditional('enable', {
-                    is: true,
-                    then: Joi.string().required(),
-                    otherwise: Joi.string().required().allow('', null),
-                }),
-                type: Joi.alternatives().conditional('enable', {
-                    is: true,
-                    then: Joi.string().required(),
-                    otherwise: Joi.string().required().allow('', null),
-                }),
+                dataEventsQueue: Joi.string().required(),
+                exchange: Joi.string(),
+                type: Joi.string().required(),
             }),
         }),
     });
