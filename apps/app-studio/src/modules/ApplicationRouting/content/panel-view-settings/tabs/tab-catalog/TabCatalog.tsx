@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useCallback, useState} from 'react';
 import {useLang, usePanelEventHandlers} from '@leav/ui';
 import {KitAlert, KitBadge, KitItemList, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {type IKitActionButton} from 'aristid-ds/dist/Kit/DataDisplay/types';
@@ -13,6 +13,7 @@ import {useCurrentView} from '../../store-current-view/useCurrentView';
 import {useCurrentViewActions} from '../../current-view-section/useCurrentViewActions';
 import {UnsavedViewChangesModal} from './UnsavedViewChangesModal';
 import {type View, useViewCatalog} from './useViewCatalog';
+import {useLastUsedView} from './useLastUsedView';
 import {
     emptyBadge,
     emptyBox,
@@ -24,7 +25,7 @@ import {
     viewItem,
 } from './tabCatalog.module.css';
 
-export const TabCatalog = ({viewId, libraryId}: {viewId: string; libraryId: string}) => {
+export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => {
     const {t} = useTranslation();
     const {lang} = useLang();
 
@@ -32,8 +33,8 @@ export const TabCatalog = ({viewId, libraryId}: {viewId: string; libraryId: stri
     const {view: currentLoadedView, isDirty} = useCurrentView();
     const {save, saveLoading} = useCurrentViewActions();
 
-    // TODO: save the last choice of the user, using user data mutation and query to read last view
     const {dispatch} = usePanelEventHandlers<AppStudioInternalEvent>();
+    const {saveLastUsedView} = useLastUsedView();
 
     // The view we're about to switch to, deferred until the unsaved-changes modal is resolved.
     // The modal is open iff this is non-null (mirrors CurrentViewActions' isForkModalOpen pattern).
@@ -42,7 +43,10 @@ export const TabCatalog = ({viewId, libraryId}: {viewId: string; libraryId: stri
     // Same rule as `canSave` in CurrentViewActions: a view without a label can't be saved.
     const hasLabel = (currentLoadedView?.label?.[lang[0]] ?? '').trim() !== '';
 
-    const applySelection = (id: string) => dispatch({type: 'view-settings-select-view', data: {viewId: id}});
+    const applySelection = (id: string) => {
+        saveLastUsedView(id);
+        dispatch({type: 'view-settings-select-view', data: {viewId: id}});
+    };
 
     const selectView = (id: string) => {
         // Clicking the already-loaded view is a no-op (avoids a spurious confirmation modal).
@@ -102,6 +106,10 @@ export const TabCatalog = ({viewId, libraryId}: {viewId: string; libraryId: stri
     const getDisabledCopyTitle = (view: View): string | undefined =>
         view.shared ? undefined : String(t('view_settings.copy-id-disabled'));
 
+    if (currentLoadedView === null) {
+        return null;
+    }
+
     return (
         <KitSpace direction="vertical" size="l" className="full-width">
             <KitSpace direction="vertical" size="m" className="full-width">
@@ -125,7 +133,7 @@ export const TabCatalog = ({viewId, libraryId}: {viewId: string; libraryId: stri
                             // TODO: add modified tag when view is modified
                             <KitItemList
                                 key={view.id}
-                                className={cn(viewItem, {[isCurrentView]: view.id === viewId})}
+                                className={cn(viewItem, {[isCurrentView]: view.id === currentLoadedView.id})}
                                 actions={getViewActions(view)}
                                 title={getDisabledCopyTitle(view)}
                                 idCardProps={{
@@ -172,7 +180,7 @@ export const TabCatalog = ({viewId, libraryId}: {viewId: string; libraryId: stri
                             // TODO: add modified tag when view is modified
                             <KitItemList
                                 key={view.id}
-                                className={cn(viewItem, {[isCurrentView]: view.id === viewId})}
+                                className={cn(viewItem, {[isCurrentView]: view.id === currentLoadedView.id})}
                                 actions={getViewActions(view)}
                                 title={getDisabledCopyTitle(view)}
                                 idCardProps={{

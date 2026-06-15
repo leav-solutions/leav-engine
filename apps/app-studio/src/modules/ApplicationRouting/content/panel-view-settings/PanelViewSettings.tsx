@@ -49,7 +49,7 @@ export const PanelViewSettings = ({
     };
 
     return (
-        <CurrentViewProvider>
+        <CurrentViewProvider viewId={currentViewId}>
             <div className={root}>
                 <PanelViewSettingsSidebar activeTab={activeTab} onTabChange={setActiveTab} />
                 <div className={rightColumn}>

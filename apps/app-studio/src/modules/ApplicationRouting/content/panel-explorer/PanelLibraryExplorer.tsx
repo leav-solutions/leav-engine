@@ -1,4 +1,4 @@
-import {type FunctionComponent, useEffect} from 'react';
+import {type FunctionComponent} from 'react';
 import {Explorer, useLang} from '@leav/ui';
 import {useNavigate} from 'react-router-dom';
 import {type ItemActions, type ExplorerProps} from '../../types';
@@ -28,15 +28,15 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
     const commonExplorerProps = mapToCommonExplorerProps({explorerProps});
     const itemActions = mapperToItemActions({actions, application, lang, navigate, libraryId});
 
-    const viewSettingsProps = useViewSettingsProps();
+    const viewSettingsProps = useViewSettingsProps({viewId});
 
     return (
         <div className={explorerContainer}>
             <Explorer
                 {...commonExplorerProps}
                 defaultViewSettings={{
-                    viewId,
                     ...commonExplorerProps.defaultViewSettings,
+                    ...viewSettingsProps.defaultViewSettings,
                 }}
                 entrypoint={{
                     type: 'library',

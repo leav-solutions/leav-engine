@@ -1,11 +1,18 @@
 import {useTranslation} from 'react-i18next';
 import {KitAlert} from 'aristid-ds';
-import {useLang, useConfirmModal} from '@leav/ui';
+import {useApolloClient} from '@apollo/client';
+import {useLang, useConfirmModal, usePanelEventHandlers} from '@leav/ui';
 import {ERROR_NOTIFICATION_DURATION, SUCCESS_NOTIFICATION_DURATION} from '_ui/constants';
-import {GetViewListDocument, useCreateViewV2Mutation, useUpdateViewV2Mutation} from '../../../../../__generated__';
+import {
+    GetViewListDocument,
+    GetViewV2Document,
+    useCreateViewV2Mutation,
+    useUpdateViewV2Mutation,
+} from '../../../../../__generated__';
 import {IDENTITY_COLUMN_ID} from '../tabs/tab-display/_constants';
 import {type CurrentView} from '../store-current-view/_types';
 import {useCurrentView} from '../store-current-view/useCurrentView';
+import {type AppStudioInternalEvent} from '../../../types';
 
 type ViewDisplay = NonNullable<CurrentView>['display'];
 
@@ -21,6 +28,8 @@ export const useCurrentViewActions = () => {
     const {lang} = useLang();
     const {view, setShared, dispatch} = useCurrentView();
     const {openConfirmModal} = useConfirmModal();
+    const client = useApolloClient();
+    const {dispatch: dispatchPanelEvent} = usePanelEventHandlers<AppStudioInternalEvent>();
 
     const [updateView, {loading: saveLoading}] = useUpdateViewV2Mutation();
     const [shareView, {loading: shareLoading}] = useUpdateViewV2Mutation();
@@ -90,7 +99,12 @@ export const useCurrentViewActions = () => {
             });
 
             if (data?.createViewV2) {
-                dispatch({type: 'LOAD_VIEW', payload: data.createViewV2});
+                client.writeQuery({
+                    query: GetViewV2Document,
+                    variables: {viewId: data.createViewV2.id},
+                    data: {viewV2: data.createViewV2},
+                });
+                dispatchPanelEvent({type: 'view-settings-select-view', data: {viewId: data.createViewV2.id}});
                 notifySuccess(t('view_settings.current-view.clone-success'));
             }
         } catch {
