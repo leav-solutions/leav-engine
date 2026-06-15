@@ -37,6 +37,7 @@ RUN rsync -av \
     --include="apps/$APP/src/" \
     --include="apps/$APP/profile/" \
     --include="apps/$APP/config/" \
+    --include="apps/$APP/guides/" \
     --include="apps/$APP/package.json" \
     --include="apps/$APP/" \
     --exclude="apps/$APP/*" \
