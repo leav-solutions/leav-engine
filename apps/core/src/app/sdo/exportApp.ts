@@ -7,6 +7,8 @@ import {systemUserId} from '../../_constants/users';
 import LeavError from '../../errors/LeavError';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 import {logger} from '@leav/logger';
+import {type IExtensionPoints} from '../../_types/extensionPoints';
+import {type ISDOMappingFunctions} from '../../_types/sdo';
 
 export interface IExportAppDeps {
     'core.domain.sdo.export': ISDOExportDomain;
@@ -17,6 +19,7 @@ export interface IExportAppDeps {
 
 export interface IExportApp {
     onDataEvent: (msg: ConsumeMessage) => Promise<void>;
+    extensionPoints?: IExtensionPoints;
 }
 
 export default function ({
@@ -99,5 +102,10 @@ export default function ({
 
     return {
         onDataEvent,
+        extensionPoints: {
+            registerSDOExportMapping: (mappingFunctions: ISDOMappingFunctions) => {
+                sdoDomain.registerSDOExportMappingFunctions(mappingFunctions);
+            },
+        },
     };
 }

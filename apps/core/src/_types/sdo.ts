@@ -1,3 +1,6 @@
+import {type IAttribute} from './attribute';
+import {type IQueryInfos} from './queryInfos';
+
 export type SDOAction = 'CREATE' | 'UPDATE';
 
 export interface ISDO {
@@ -33,6 +36,7 @@ export interface ISDOMappingAttribute {
     leavAttributeId: string;
     valueRequired: boolean;
     format: SDOMappingAttributeFormat;
+    exportFunction?: string; // name of the function to use for export
 }
 
 export interface ISDOMappingLibrary {
@@ -51,3 +55,7 @@ export interface ISDOSettings {
     timer?: number;
     mapping: ISDOMapping;
 }
+
+export type ISDOMappingFunction = (value: unknown, attributeProps: IAttribute, ctx: IQueryInfos) => Promise<unknown>;
+
+export type ISDOMappingFunctions<Keys extends string = string> = Record<Keys, ISDOMappingFunction>;

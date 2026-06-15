@@ -1,7 +1,7 @@
 import {type ToAny} from '../../utils/utils';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import jsonschema, {type ValidatorResult} from 'jsonschema';
-import sdoDomain, {hashSDOAttributeId, type ISDODomainDeps} from './sdoDomain';
+import sdoDomain, {hashSDOAttributeId, type ISDODomain, type ISDODomainDeps} from './sdoDomain';
 import {mockSDO, mockSDOMapping, sdoGlobalSettings} from '../../__tests__/mocks/sdo/data';
 import {
     mockAttributeDomain,
@@ -20,6 +20,7 @@ import {
     type ISDOMapping,
     type ISDOMappingAttribute,
     sdoPathIdentifierUuid,
+    type ISDO,
 } from '../../_types/sdo';
 import {EventActionSDO} from '@leav/utils';
 import {mockSDOUtils} from '../../__tests__/mocks/sdo/domains';
@@ -62,6 +63,7 @@ const mockSDORecordAttributes: IList<IAttribute> = {
 } as IList<IAttribute>;
 
 describe('sdoDomain', () => {
+    let _sdoDomain: ISDODomain;
     beforeEach(() => {
         vi.clearAllMocks();
 
@@ -73,9 +75,8 @@ describe('sdoDomain', () => {
         mockSDOUtils.tmpRecordIdToUuid.mockImplementation((recordId: string) => recordId);
         mockSDOUtils.getLibraryUUIDAttributeID.mockReturnValue('uuid');
         mockRecordRepo.getRecord.mockImplementation(async ({recordId}) => ({uuid: recordId}));
+        _sdoDomain = sdoDomain(deps);
     });
-
-    const _sdoDomain = sdoDomain(deps);
 
     describe('schemaValidation', () => {
         it('[-] should throw an error when missing field', async () => {
@@ -710,6 +711,121 @@ describe('sdoDomain', () => {
                     advancedLinkMapping: ['98', '99'],
                     treeMapping: ['1000', '1001'],
                 },
+            });
+        });
+
+        it('[+] Should map attribute with export mappingFunction', async () => {
+            mockSDOUtils.createHash.mockReturnValue('new-hash');
+            jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
+            mockRecordDomain.find.mockResolvedValueOnce({
+                list: [{id: 'entity', attribute: 'attribute value'}],
+            } as unknown as IListWithCursor<IRecord>);
+            mockRecordDomain.getRecordFieldValue
+                .mockResolvedValueOnce([
+                    {
+                        payload: 'uuid-payload',
+                    },
+                ])
+                .mockResolvedValueOnce([
+                    {
+                        payload: {record: {id: '1000'}},
+                    } as ITreeValue,
+                ]);
+
+            _sdoDomain.registerSDOExportMappingFunctions({
+                statusTree: vi.fn().mockResolvedValueOnce({
+                    id: 1000,
+                    value: 'A valider',
+                }),
+            });
+
+            mockAttributeDomain.getAttributes.mockResolvedValueOnce({
+                list: [uuidAttribute, {id: 'treeAttribute', type: AttributeTypes.TREE, linked_tree: 'my_status_tree'}],
+            } as IList<IAttribute>);
+
+            const simpleLinkSchemaMapping: ISDOMapping = {
+                [mockSDO.name]: {
+                    ...mockSDOMapping[mockSDO.name],
+                    sdoAttributes: {
+                        [sdoPathIdentifierUuid]: {
+                            leavAttributeId: 'uuid',
+                            valueRequired: true,
+                            format: 'string' as SDOMappingAttributeFormat,
+                        },
+                        treeMapping: {
+                            leavAttributeId: 'treeAttribute',
+                            valueRequired: true,
+                            format: 'object',
+                            exportFunction: 'statusTree',
+                        },
+                    },
+                },
+            };
+
+            const sdo = await _sdoDomain.getRecordSDO(
+                mockSDOMapping[mockSDO.name].leavLibraryId,
+                'entity',
+                simpleLinkSchemaMapping,
+                mockSystemQueryContext,
+            );
+
+            expect(sdo).toMatchObject({
+                name: mockSDO.name,
+                action: 'CREATE',
+                content: {
+                    treeMapping: {
+                        id: 1000,
+                        value: 'A valider',
+                    },
+                },
+            });
+        });
+
+        it('[+] Should not throw error when attribute undefined and function defined', async () => {
+            mockSDOUtils.createHash.mockReturnValue('new-hash');
+            jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
+            mockRecordDomain.find.mockResolvedValueOnce({
+                list: [{id: 'entity', attribute: 'attribute value'}],
+            } as unknown as IListWithCursor<IRecord>);
+
+            mockRecordDomain.getRecordFieldValue
+                .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
+                .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
+                .mockResolvedValueOnce(mockLinkAttributeRecordFieldValues)
+                .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
+                .mockResolvedValueOnce(mockLinkAttributeRecordFieldValues);
+            mockAttributeDomain.getAttributes.mockResolvedValueOnce(mockSDORecordAttributes);
+
+            const sdoUnknownSchemaMapping: ISDOMapping = {
+                [mockSDO.name]: {
+                    ...mockSDOMapping[mockSDO.name],
+                    sdoAttributes: {
+                        ...mockSDOMapping[mockSDO.name].sdoAttributes,
+                        treeMapping: {
+                            leavAttributeId: '',
+                            valueRequired: true,
+                            format: 'number' as SDOMappingAttributeFormat,
+                            exportFunction: 'statusTree',
+                        },
+                    },
+                },
+            };
+            const sdo = await _sdoDomain.getRecordSDO(
+                mockSDOMapping[mockSDO.name].leavLibraryId,
+                'entity',
+                sdoUnknownSchemaMapping,
+                mockSystemQueryContext,
+            );
+            expect(sdo).toBeDefined();
+            expect((sdo as ISDO).content).toEqual({
+                identifier: {
+                    uuid: 'raw_payload',
+                },
+                simple: 'raw_payload',
+                simple_link: 'id',
+                advanced: ['raw_payload'],
+                advanced_link: ['id'],
+                treeMapping: null,
             });
         });
 
