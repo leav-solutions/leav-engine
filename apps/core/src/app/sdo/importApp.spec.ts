@@ -3,7 +3,7 @@ import {default as importApp, type IImportAppDeps} from './importApp';
 import {type ConsumeMessage} from 'amqplib';
 import mockRabbitMQService, {setupMockRabbitMQService} from '../../__tests__/mocks/sdo/rabbitMQ';
 import {mockImportMessage, mockSDO} from '../../__tests__/mocks/sdo/data';
-import {EventActionSDO} from '@leav/utils';
+import {EventAction} from '@leav/utils';
 import ValidationError from '../../errors/ValidationError';
 import {mockImportDomain, mockSdoDomain} from '../../__tests__/mocks/sdo/domains';
 import {mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
@@ -38,7 +38,7 @@ describe('importApp', () => {
 
             expect((await mockRabbitMQService.getSDOImportChannel()).ack).toHaveBeenCalledWith(importMessage);
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.SDO_LOG_IMPORT_RECORD,
+                action: EventAction.SDO_LOG_IMPORT_RECORD,
                 sdo,
                 ctx: mockSystemQueryContext,
             });
@@ -60,7 +60,7 @@ describe('importApp', () => {
 
             expect((await mockRabbitMQService.getSDOImportChannel()).ack).toHaveBeenCalledWith(importMessage);
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.SDO_LOG_IMPORT_RECORD,
+                action: EventAction.SDO_LOG_IMPORT_RECORD,
                 sdo,
                 ctx: mockSystemQueryContext,
             });
@@ -82,7 +82,7 @@ describe('importApp', () => {
                 false,
             );
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.SDO_LOG_ERROR,
+                action: EventAction.SDO_LOG_ERROR,
                 error: {
                     message: 'Unexpected action',
                     stack: expect.any(String),
@@ -110,7 +110,7 @@ describe('importApp', () => {
 
             expect((await mockRabbitMQService.getSDOImportChannel()).nack).toHaveBeenCalledWith(mockMsg, false, false);
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventActionSDO.SDO_LOG_ERROR,
+                action: EventAction.SDO_LOG_ERROR,
                 error: {
                     message: 'Schema validation error',
                     stack: validationError.stack,

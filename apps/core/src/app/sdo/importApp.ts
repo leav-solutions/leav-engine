@@ -3,7 +3,7 @@ import {type IRabbitMQ} from '../../infra/sdo/rabbitMQ/rabbitMQ';
 import {type ISDOImportDomain} from '../../domain/sdo/import/sdoImportDomain';
 import {type ISDO} from '../../_types/sdo';
 import {type ISDODomain} from '../../domain/sdo/sdoDomain';
-import {EventActionSDO} from '@leav/utils';
+import {EventAction} from '@leav/utils';
 import LeavError from '../../errors/LeavError';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 import {logger} from '@leav/logger';
@@ -55,7 +55,7 @@ export default function ({
 
             (await rabbitMQService.getSDOImportChannel()).ack(msg);
             await sdoDomain.sendLog({
-                action: EventActionSDO.SDO_LOG_IMPORT_RECORD,
+                action: EventAction.SDO_LOG_IMPORT_RECORD,
                 sdo,
                 ctx: _systemQueryContext,
             });
@@ -66,7 +66,7 @@ export default function ({
             });
             (await rabbitMQService.getSDOImportChannel()).nack(msg, false, false);
             await sdoDomain.sendLog({
-                action: EventActionSDO.SDO_LOG_ERROR,
+                action: EventAction.SDO_LOG_ERROR,
                 error:
                     error instanceof LeavError
                         ? {
