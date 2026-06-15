@@ -19,17 +19,30 @@ If the user didn't name it explicitly, ask. Never guess from context — the cos
 
 ### 2. Create the worktree
 
-Use a transient `/tmp` path; the worktree is throwaway:
+Group worktrees in a `<repo-name>.worktrees/` sibling directory — same parent as the project root, so the CLAUDE.md hierarchy and parent-level tooling are preserved, and the parent directory stays uncluttered:
 
 ```bash
-git worktree add /tmp/<short-name> <target-branch>
+# Derive repo name and build the path
+REPO_ROOT=$(git rev-parse --show-toplevel)
+REPO_NAME=$(basename "$REPO_ROOT")
+git worktree add "${REPO_ROOT}/../${REPO_NAME}.worktrees/<short-name>" <target-branch>
 ```
+
+The `<short-name>` should be derived from the target branch (e.g. `fix-auth` from `fix/auth`). Always resolve the absolute path from `git rev-parse --show-toplevel` to avoid ambiguity.
 
 If the target branch only exists on the remote, fetch first (`git fetch origin <target-branch>`).
 
-### 3. Install dependencies if a pre-commit hook needs them
+### 3. Copy CLAUDE.local.md and install dependencies
 
-Many JS projects have husky hooks that fail with `.husky/_/husky.sh: No such file or directory` if `node_modules` isn't installed in the worktree. Detect the package manager from the lockfile and run the install:
+**Copy `CLAUDE.local.md`** from the main working tree into the worktree root so personal instructions (API keys, preferences, conventions) are available:
+
+```bash
+cp <main-root>/CLAUDE.local.md <worktree-root>/CLAUDE.local.md
+```
+
+Skip silently if the file doesn't exist in the main working tree.
+
+**Install dependencies** if a pre-commit hook needs them. Many JS projects have husky hooks that fail with `.husky/_/husky.sh: No such file or directory` if `node_modules` isn't installed in the worktree. Detect the package manager from the lockfile and run the install:
 
 | Lockfile            | Command                     |
 | ------------------- | --------------------------- |
@@ -79,12 +92,14 @@ git push origin <target-branch>                       # if new commit, fast-forw
 ### 7. Cleanup
 
 ```bash
-git worktree remove /tmp/<short-name>
+REPO_ROOT=$(git rev-parse --show-toplevel)
+REPO_NAME=$(basename "$REPO_ROOT")
+git worktree remove "${REPO_ROOT}/../${REPO_NAME}.worktrees/<short-name>"
 git worktree list                     # confirm the worktree is gone
 git status                            # confirm the main working tree is unchanged
 ```
 
-If `git worktree remove` refuses because of untracked files (e.g., `node_modules` from step 3), that's expected; use `git worktree remove --force /tmp/<short-name>` since the worktree is throwaway.
+If `git worktree remove` refuses because of untracked files (e.g., `node_modules` from step 3), that's expected; use `--force` since the worktree is throwaway.
 
 ## Invariants
 
