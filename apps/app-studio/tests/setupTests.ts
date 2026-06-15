@@ -10,7 +10,13 @@ import React from 'react';
 disableFragmentWarnings();
 
 // Suppress react-modal "App element is not defined" warning in jsdom.
-Modal.setAppElement(document.body);
+// Must use a dedicated element, NOT document.body: react-modal sets aria-hidden on the app
+// element when a modal opens, and if that element is body, the modal portal (also in body)
+// becomes inaccessible to ARIA queries in tests.
+const modalAppRoot = document.createElement('div');
+modalAppRoot.id = 'root';
+document.body.appendChild(modalAppRoot);
+Modal.setAppElement(modalAppRoot);
 
 // To prevent warnings
 React.useLayoutEffect = React.useEffect;
