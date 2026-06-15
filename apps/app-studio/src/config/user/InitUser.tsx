@@ -1,7 +1,7 @@
 import {useGetUserIdentityQuery} from '../../__generated__';
 import {type IUserContext, UserContext} from '@leav/ui';
 import {type FunctionComponent, useEffect, useMemo} from 'react';
-import {matomo} from '../../services/matomo';
+import {matomo} from '../../services/analytics';
 
 export const InitUser: FunctionComponent = ({children}) => {
     const {data: userData, error, loading} = useGetUserIdentityQuery();

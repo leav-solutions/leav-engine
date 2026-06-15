@@ -5,8 +5,8 @@ import {type Application} from '../../../types';
 import {PanelsTabs} from '../PanelsTabs';
 import {InitTheme} from '../../../../../config/theme/InitTheme';
 import * as ApplicationSettingsContext from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
-import {matomo} from '../../../../../services/matomo';
-import {matomoEvents} from '../../../../../services/matomo/constants/matomoEvents';
+import {matomo} from '../../../../../services/analytics';
+import {matomoEvents} from '../../../../../services/analytics/constants/matomoEvents';
 
 const mockNavigate = jest.fn();
 
@@ -35,8 +35,8 @@ jest.mock('../panels-attribute-counts/useGetPanelsAttributeCounts', () => ({
     useGetPanelsAttributeCounts: (...args: any[]) => mockUseGetPanelsAttributeCounts(...args),
 }));
 
-jest.mock('../../../../../services/matomo', () => ({
-    ...jest.requireActual('../../../../../services/matomo'),
+jest.mock('../../../../../services/analytics', () => ({
+    ...jest.requireActual('../../../../../services/analytics'),
     matomo: {trackNavigationEvent: jest.fn()},
 }));
 

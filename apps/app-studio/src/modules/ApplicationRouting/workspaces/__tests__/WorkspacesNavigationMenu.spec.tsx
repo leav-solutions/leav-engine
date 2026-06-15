@@ -4,15 +4,15 @@ import {type Application} from '../../types';
 import {InitTheme} from '../../../../config/theme/InitTheme';
 import * as ApplicationSettingsContext from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import userEvent from '@testing-library/user-event';
-import {matomo} from '../../../../services/matomo';
-import {matomoEvents} from '../../../../services/matomo/constants/matomoEvents';
+import {matomo} from '../../../../services/analytics';
+import {matomoEvents} from '../../../../services/analytics/constants/matomoEvents';
 
 jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
     useApplicationSettingsContext: jest.fn(),
 }));
 
-jest.mock('../../../../services/matomo', () => ({
-    ...jest.requireActual('../../../../services/matomo'),
+jest.mock('../../../../services/analytics', () => ({
+    ...jest.requireActual('../../../../services/analytics'),
     matomo: {trackNavigationEvent: jest.fn()},
 }));
 
