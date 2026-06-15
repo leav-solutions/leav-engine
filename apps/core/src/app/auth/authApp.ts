@@ -294,6 +294,7 @@ export default function ({
                             if (!config.auth.oidc.enableAutoProvisioning) {
                                 throw new AuthenticationError('Invalid user');
                             }
+                            const userIdIfAny = decodedToken[config.auth.oidc.idTokenUserUuidClaim];
                             // If no user found in DB, auto provision the user
                             const {record: createdUser} = await recordDomain.createRecord({
                                 library: 'users',
@@ -301,9 +302,12 @@ export default function ({
                                     {payload: email, attribute: 'email'},
                                     {payload: decodedToken.name, attribute: 'login'}, // used to display the username in the UI instead of record id
                                 ],
+                                uuid: userIdIfAny,
                                 ctx: systemCtx,
                             });
-                            logger.info(`User ${email} created during auto provisioning step`);
+                            logger.info(
+                                `User email=${email} uuid=${userIdIfAny} created during auto provisioning step`,
+                            );
                             user = createdUser;
                             // if the user has role admin, put it in the admin group (id = 1)
                             if (

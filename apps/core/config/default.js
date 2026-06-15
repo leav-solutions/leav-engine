@@ -84,6 +84,7 @@ module.exports = {
             postLogoutRedirectUri: process.env.OIDC_POST_LOGOUT_REDIRECT_URI || 'http://localhost:4001',
             skipLogoutConfirmationPage: envToBool(process.env.OIDC_SKIP_LOGOUT_CONFIRMATION_PAGE, false),
             idTokenUserClaim: process.env.ID_TOKEN_USER_CLAIM || 'email',
+            idTokenUserUuidClaim: process.env.ID_TOKEN_USER_UUID_CLAIM || 'sub',
             enableAutoProvisioning: envToBool(process.env.OIDC_ENABLE_AUTO_PROVISIONING, false),
             retryAuthenticationFlowAfterExpiry: envToBool(
                 process.env.OIDC_RETRY_AUTHENTICATION_FLOW_AFTER_EXPIRY,

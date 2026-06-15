@@ -133,6 +133,7 @@ export const validateConfig = (conf: IConfig) => {
                 }),
                 skipLogoutConfirmationPage: Joi.boolean(),
                 idTokenUserClaim: Joi.string().required(),
+                idTokenUserUuidClaim: Joi.string().required(),
                 enableAutoProvisioning: Joi.alternatives().conditional('enable', {
                     is: true,
                     then: Joi.boolean().required(),
