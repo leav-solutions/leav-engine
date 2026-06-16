@@ -31,6 +31,7 @@ interface IDBPayloadDataMap {
     [EventAction.VALUE_DELETE]: IValue;
     [EventAction.ATTRIBUTE_SAVE]: IAttribute;
     [EventAction.ATTRIBUTE_DELETE]: IAttribute;
+    [EventAction.RECORD_INIT]: IRecord;
     [EventAction.RECORD_SAVE]: IRecord;
     [EventAction.RECORD_DELETE]: IRecord;
     [EventAction.API_KEY_SAVE]: IApiKey;

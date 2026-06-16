@@ -1,5 +1,6 @@
+import {EventAction} from '@leav/utils';
 import {SystemLibraries} from '../../../../../_constants/systemLibraries';
-import {type AutomationRuleEventTopic, SyncAutomationRuleEventAction} from '../../../../../_types/automation';
+import {type AutomationRuleEventTopic} from '../../../../../_types/automation';
 import {type IQueryInfos} from '../../../../../_types/queryInfos';
 import {adminUserId, systemUserId} from '../../../../../_constants/users';
 import {ActionExecutionResultStatus, type IAutomationAction} from '../../../../../domain/automation/actions/_types';
@@ -18,7 +19,7 @@ describe('notificationAction', () => {
     const baseState: IAutomationPipelineExecutionState = {
         trigger: {
             synchronous: false,
-            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+            eventAction: EventAction.RECORD_INIT,
             eventTopic: {} as any,
         },
         results: {},

@@ -8,9 +8,10 @@ import {type ISDOUtils} from '../../../utils/sdo/sdo';
 const TWO_MIN = 120000;
 
 const ACTIONS_MAPPING = {
-    RECORD_SAVE: 'CREATE',
+    RECORD_INIT: 'CREATE',
     VALUE_SAVE: 'UPDATE',
     VALUE_DELETE: 'UPDATE',
+    RECORD_SAVE: 'UPDATE',
     RECORD_DELETE: 'UPDATE',
 };
 
@@ -43,7 +44,7 @@ export default function ({
         logger.debug('[SDO] Processing data...');
 
         const record = dataEvent.payload.topic.record;
-        // use record.libraryId because RECORD_SAVE events does not have dataEvent.payload.topic.library
+        // use record.libraryId because RECORD_INIT events does not have dataEvent.payload.topic.library
         const leavLibraryId = record.libraryId;
 
         // 1. If library is not set yet

@@ -67,9 +67,9 @@ export default function ({
 
         // await is necessary during importData(), otherwise it will generate a memory leak due to number of events incoming
         // important to send for indexation manager
-        await eventsManager.sendDatabaseEvent<EventAction.RECORD_SAVE>(
+        await eventsManager.sendDatabaseEvent<EventAction.RECORD_INIT>(
             {
-                action: EventAction.RECORD_SAVE,
+                action: EventAction.RECORD_INIT,
                 topic: {
                     library: newRecord.library,
                     record: {
@@ -84,7 +84,7 @@ export default function ({
 
         await automationDomain.triggerRules({
             event: {
-                action: SyncAutomationRuleEventAction.RECORD_INIT,
+                action: EventAction.RECORD_INIT,
                 topic: {
                     library,
                     record: {

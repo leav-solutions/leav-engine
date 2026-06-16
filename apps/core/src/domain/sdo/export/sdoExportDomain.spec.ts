@@ -32,7 +32,7 @@ describe('sdoExportDomain', () => {
     const getValidEvent = (overrides = {}): IDbEvent =>
         ({
             payload: {
-                action: 'RECORD_SAVE',
+                action: 'RECORD_INIT',
                 topic: {
                     attribute: 'id',
                     library: 'campaigns',
@@ -155,7 +155,7 @@ describe('sdoExportDomain', () => {
         it('[-] Should throw when libraryId is not defined', async () => {
             const undefinedLibraryEvent = {
                 payload: {
-                    action: 'RECORD_SAVE',
+                    action: 'RECORD_INIT',
                     topic: {
                         attribute: 'attribute',
                     },
@@ -228,7 +228,7 @@ describe('sdoExportDomain', () => {
         it('[+] Should return true when everything is set and in SDO config for CREATE action', async () => {
             const goodEvent = {
                 payload: {
-                    action: 'RECORD_SAVE',
+                    action: 'RECORD_INIT',
                     topic: {
                         record: {
                             libraryId: 'campaigns',

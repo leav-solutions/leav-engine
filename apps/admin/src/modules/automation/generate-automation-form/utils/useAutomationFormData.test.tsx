@@ -15,7 +15,7 @@ const mockSchema: RJSFSchema = {
             properties: {
                 eventAction: {
                     type: 'string',
-                    enum: [AutomationRuleEventAction.RECORD_INIT, AutomationRuleEventAction.RECORD_SAVE],
+                    enum: [AutomationRuleEventAction.RECORD_INIT, AutomationRuleEventAction.VALUE_SAVE],
                 },
             },
             allOf: [
@@ -25,17 +25,17 @@ const mockSchema: RJSFSchema = {
                         required: ['eventAction'],
                     },
                     then: {
-                        properties: {synchronous: {type: 'boolean', default: true, readOnly: true}},
+                        properties: {synchronous: {type: 'boolean', default: false, readOnly: false}},
                         required: ['synchronous'],
                     },
                 },
                 {
                     if: {
-                        properties: {eventAction: {const: AutomationRuleEventAction.RECORD_SAVE}},
+                        properties: {eventAction: {const: AutomationRuleEventAction.VALUE_SAVE}},
                         required: ['eventAction'],
                     },
                     then: {
-                        properties: {synchronous: {type: 'boolean', default: false, readOnly: true}},
+                        properties: {synchronous: {type: 'boolean', default: false, readOnly: false}},
                         required: ['synchronous'],
                     },
                 },
@@ -49,7 +49,7 @@ const mockInitialValues: AutomationFormValues = {
     label: 'My automation',
     description: 'A description',
     active: true,
-    trigger: {eventAction: AutomationRuleEventAction.RECORD_INIT, synchronous: true},
+    trigger: {eventAction: AutomationRuleEventAction.VALUE_SAVE, synchronous: true},
 };
 
 const mockOnSubmit = vi.fn<(values: AutomationFormValues) => Promise<boolean>>().mockResolvedValue(true);
@@ -152,7 +152,7 @@ describe('useAutomationFormData', () => {
                     formData: {
                         ...mockInitialValues,
                         trigger: {
-                            eventAction: AutomationRuleEventAction.RECORD_SAVE,
+                            eventAction: AutomationRuleEventAction.VALUE_SAVE,
                             synchronous: true,
                             eventTopic: {library: 'products'},
                         },
@@ -161,9 +161,11 @@ describe('useAutomationFormData', () => {
             });
 
             expect(result.current.formData?.trigger).toEqual({
-                eventAction: AutomationRuleEventAction.RECORD_SAVE,
-                eventTopic: {},
-                synchronous: false, // RECORD_SAVE default from schema
+                eventAction: AutomationRuleEventAction.VALUE_SAVE,
+                eventTopic: {
+                    library: 'products',
+                },
+                synchronous: true, // VALUE_SAVE default from schema
             });
         });
 

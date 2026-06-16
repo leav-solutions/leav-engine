@@ -38,9 +38,8 @@ export enum AutomationRuleJsonSchemaFormType {
     EDITION = 'edition',
 }
 
-export enum SyncAutomationRuleEventAction {
-    RECORD_INIT = 'RECORD_INIT',
-}
+// For any event that are not async too, maybe none. Should we remove that ?
+export enum SyncAutomationRuleEventAction {}
 
 export type AutomationRuleEventAction = EventAction | SyncAutomationRuleEventAction;
 export type AutomationRuleEventTopic = IDbPayload['topic'];

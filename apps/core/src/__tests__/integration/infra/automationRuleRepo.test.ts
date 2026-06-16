@@ -1,6 +1,7 @@
+import {EventAction} from '@leav/utils';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {AUTOMATION_RULES_COLLECTION_NAME, type IAutomationRuleRepo} from '../../../infra/automation/automationRuleRepo';
-import {type AutomationRuleEventTopic, SyncAutomationRuleEventAction} from '../../../_types/automation';
+import {type AutomationRuleEventTopic} from '../../../_types/automation';
 import {clearAllCollectionDocuments, getAutomationRuleRepo} from './integrationTestRepoUtils';
 
 describe('automationRuleRepo', () => {
@@ -26,7 +27,7 @@ describe('automationRuleRepo', () => {
                     active: false,
                     trigger: {
                         synchronous: false,
-                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                        eventAction: EventAction.RECORD_INIT,
                     },
                     pipeline: {
                         steps: [],
@@ -63,7 +64,7 @@ describe('automationRuleRepo', () => {
                         active: false,
                         trigger: {
                             synchronous: false,
-                            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                            eventAction: EventAction.RECORD_INIT,
                         },
                         pipeline: {
                             steps: [],
@@ -120,7 +121,7 @@ describe('automationRuleRepo', () => {
                     active: true,
                     trigger: {
                         synchronous: false,
-                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                        eventAction: EventAction.RECORD_INIT,
                     },
                     pipeline: {steps: []},
                 },
@@ -132,7 +133,7 @@ describe('automationRuleRepo', () => {
                     active: false,
                     trigger: {
                         synchronous: false,
-                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                        eventAction: EventAction.RECORD_INIT,
                     },
                     pipeline: {steps: []},
                 },
@@ -148,7 +149,7 @@ describe('automationRuleRepo', () => {
                         id: createdActive.id,
                         trigger: {
                             synchronous: false,
-                            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                            eventAction: EventAction.RECORD_INIT,
                         },
                     },
                 ]),
@@ -163,7 +164,7 @@ describe('automationRuleRepo', () => {
                     active: true,
                     trigger: {
                         synchronous: false,
-                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                        eventAction: EventAction.RECORD_INIT,
                         eventTopic: {library: 'products'},
                     },
                     pipeline: {steps: [{type: 'log', params: {message: 'leaky', level: 'info'}}]},
@@ -180,7 +181,7 @@ describe('automationRuleRepo', () => {
                         id: created.id,
                         trigger: {
                             synchronous: false,
-                            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                            eventAction: EventAction.RECORD_INIT,
                             eventTopic: {library: 'products'},
                         },
                     },
@@ -195,7 +196,7 @@ describe('automationRuleRepo', () => {
                     active: true,
                     trigger: {
                         synchronous: true,
-                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                        eventAction: EventAction.RECORD_INIT,
                         eventTopic: {library: 'products', attribute: 'color'},
                     },
                     pipeline: {steps: []},
@@ -207,7 +208,7 @@ describe('automationRuleRepo', () => {
 
             expect(entry.trigger).toEqual({
                 synchronous: true,
-                eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                eventAction: EventAction.RECORD_INIT,
                 eventTopic: {library: 'products', attribute: 'color'},
             });
         });
@@ -222,7 +223,7 @@ describe('automationRuleRepo', () => {
             automationRuleRepo.createAutomationRule(
                 {
                     label,
-                    trigger: {synchronous: false, eventAction: SyncAutomationRuleEventAction.RECORD_INIT, eventTopic},
+                    trigger: {synchronous: false, eventAction: EventAction.RECORD_INIT, eventTopic},
                     pipeline: {steps: []},
                     active: false,
                 },
@@ -330,7 +331,7 @@ describe('automationRuleRepo', () => {
                 {
                     filters: {
                         trigger: {
-                            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                            eventAction: EventAction.RECORD_INIT,
                         },
                     },
                     partialMatchOnEventTopic: true,

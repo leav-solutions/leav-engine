@@ -34,14 +34,9 @@ export default function ({
 }: IAutomationTriggersRegistryDeps): IAutomationTriggersRegistry {
     const triggers: AutomationTriggerRegistration[] = [
         {
-            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+            eventAction: EventAction.RECORD_INIT,
             topicSchema: z.object({library: topics.librarySchema}).strict(),
-            synchronicity: AutomationTriggerDefSynchronicity.SYNC,
-        },
-        {
-            eventAction: EventAction.RECORD_SAVE,
-            topicSchema: z.object({library: topics.librarySchema}).strict(),
-            synchronicity: AutomationTriggerDefSynchronicity.ASYNC,
+            synchronicity: AutomationTriggerDefSynchronicity.BOTH,
         },
         {
             eventAction: EventAction.VALUE_SAVE,

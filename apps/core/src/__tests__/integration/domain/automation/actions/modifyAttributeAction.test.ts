@@ -1,4 +1,4 @@
-import {SyncAutomationRuleEventAction} from '../../../../../_types/automation';
+import {EventAction} from '@leav/utils';
 import {type IQueryInfos} from '../../../../../_types/queryInfos';
 import {systemUserId} from '../../../../../_constants/users';
 import {ActionExecutionResultStatus, type IAutomationAction} from '../../../../../domain/automation/actions/_types';
@@ -124,7 +124,7 @@ describe('modifyAttributeAction', () => {
     ): IAutomationPipelineExecutionState => ({
         trigger: {
             synchronous: true,
-            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+            eventAction: EventAction.RECORD_INIT,
             eventTopic: {record: {id: recordId, libraryId}} as any,
         },
         results: {},
@@ -146,7 +146,7 @@ describe('modifyAttributeAction', () => {
                     ],
                     trigger: {
                         synchronous: true,
-                        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                        eventAction: EventAction.RECORD_INIT,
                         eventTopic: {library} as any,
                     },
                 },
@@ -158,7 +158,7 @@ describe('modifyAttributeAction', () => {
                 action.validateStep?.(
                     {
                         ...makeValidateParams(libSource, STANDARD_MONO_ATTR),
-                        trigger: {synchronous: true, eventAction: SyncAutomationRuleEventAction.RECORD_INIT},
+                        trigger: {synchronous: true, eventAction: EventAction.RECORD_INIT},
                     },
                     ctx,
                 ),
@@ -174,7 +174,7 @@ describe('modifyAttributeAction', () => {
                         ...makeValidateParams(libSource, STANDARD_MONO_ATTR),
                         trigger: {
                             synchronous: true,
-                            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                            eventAction: EventAction.RECORD_INIT,
                             eventTopic: {} as any,
                         },
                     },
@@ -229,7 +229,7 @@ describe('modifyAttributeAction', () => {
                             ],
                             trigger: {
                                 synchronous: true,
-                                eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                                eventAction: EventAction.RECORD_INIT,
                                 eventTopic: {library: libSource} as any,
                             },
                         },
@@ -246,7 +246,7 @@ describe('modifyAttributeAction', () => {
             const state: IAutomationPipelineExecutionState = {
                 trigger: {
                     synchronous: true,
-                    eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                    eventAction: EventAction.RECORD_INIT,
                     eventTopic: {} as any,
                 },
                 results: {},

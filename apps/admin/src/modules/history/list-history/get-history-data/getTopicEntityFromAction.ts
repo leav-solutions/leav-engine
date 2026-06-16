@@ -72,6 +72,7 @@ export const getTopicEntityFromAction = (
                 label: localizedTranslation(topic?.application?.label, lang),
             };
 
+        case LogAction.RECORD_INIT:
         case LogAction.RECORD_SAVE:
         case LogAction.RECORD_DELETE:
         case LogAction.VALUE_SAVE:
