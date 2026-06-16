@@ -103,7 +103,7 @@ export default function ({
     return {
         onDataEvent,
         extensionPoints: {
-            registerSDOExportMapping: (mappingFunctions: ISDOMappingFunctions) => {
+            registerSDOExportMappingFunctions: (mappingFunctions: ISDOMappingFunctions) => {
                 sdoDomain.registerSDOExportMappingFunctions(mappingFunctions);
             },
         },

@@ -103,6 +103,7 @@ export enum CoreMode {
      *   CoreMode.TASKS_MANAGER_MASTER,
      *   CoreMode.TASKS_MANAGER_WORKER,
      *   CoreMode.AUTOMATION,
+     *   CoreMode.SDO
      * ]
      */
     E2E_PLAYWRIGHT = 'e2ePlaywright',
@@ -114,6 +115,7 @@ export const CORE_MODES_E2E_PLAYWRIGHT = [
     CoreMode.TASKS_MANAGER_MASTER,
     CoreMode.TASKS_MANAGER_WORKER,
     CoreMode.AUTOMATION,
+    CoreMode.SDO,
     // no CoreMode.LOGS_COLLECTOR yet because not needed in e2e tests, need elasticsearch
     // no CoreMode.FILES_MANAGER yet because not needed in e2e tests
 ];
