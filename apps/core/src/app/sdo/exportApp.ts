@@ -43,9 +43,14 @@ export default function ({
                 return;
             }
 
-            logger.debug('Export: data event selected', {data});
-
+            // If feature flag is specified in global settings, we override the SDO default config
             const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(_systemQueryContext);
+            if (sdoGlobalSettings.exportEnable === false) {
+                (await rabbitMQService.getLeavDataEventChannel()).ack(msg);
+                return;
+            }
+
+            logger.debug('Export: data event selected', {data});
 
             if (await sdoExportDomain.isSDODataEvent(data, sdoGlobalSettings.mapping)) {
                 await sdoExportDomain.process(data, sdoGlobalSettings.timer, async (leavLibrary, recordId) => {
