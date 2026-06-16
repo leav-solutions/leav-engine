@@ -39,6 +39,23 @@ jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
     useGetRecordValuesQuery: () => useGetRecordValuesQueryMock(),
 }));
 
+jest.mock('_ui/components/RecordHistory/hooks/useFetchRecordHistory', () => ({
+    useFetchRecordHistory: () => ({
+        loading: false,
+        inError: false,
+        logs: [],
+        total: 0,
+        hasMore: false,
+        fetchMore: jest.fn(),
+    }),
+}));
+
+jest.spyOn(gqlTypes, 'useGetRecordIdCardQuery').mockReturnValue({
+    data: undefined,
+    loading: false,
+    refetch: jest.fn(),
+} as unknown as gqlTypes.GetRecordIdCardQueryResult);
+
 const mocks = [
     {
         request: {

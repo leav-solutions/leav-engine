@@ -13,6 +13,17 @@ jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
     useGetRecordValuesQuery: () => useGetRecordValuesQueryMock(),
 }));
 
+jest.mock('_ui/components/RecordHistory/hooks/useFetchRecordHistory', () => ({
+    useFetchRecordHistory: () => ({
+        loading: false,
+        inError: false,
+        logs: [],
+        total: 0,
+        hasMore: false,
+        fetchMore: jest.fn(),
+    }),
+}));
+
 describe('RecordSummary', () => {
     beforeEach(() => {
         user = userEvent.setup();

@@ -8,6 +8,13 @@ import {render, screen} from '../../../_tests/testUtils';
 import {EditRecord} from './EditRecord';
 import {Form} from 'antd';
 import {getLibraryByIdQuery} from '_ui/_queries/libraries/getLibraryByIdQuery';
+import * as gqlTypes from '_ui/_gqlTypes';
+
+jest.spyOn(gqlTypes, 'useGetRecordIdCardQuery').mockReturnValue({
+    data: undefined,
+    loading: false,
+    refetch: jest.fn(),
+} as unknown as gqlTypes.GetRecordIdCardQueryResult);
 
 const editRecordContentFn = jest.fn();
 jest.mock(

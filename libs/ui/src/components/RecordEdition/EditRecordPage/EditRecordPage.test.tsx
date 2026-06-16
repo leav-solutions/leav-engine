@@ -2,7 +2,7 @@ import userEvent from '@testing-library/user-event';
 import {screen, render, waitFor, act} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {EditRecordPage} from './EditRecordPage';
-import {Form} from 'antd';
+import {Form, Input} from 'antd';
 import * as gqlTypes from '_ui/_gqlTypes';
 
 let user!: ReturnType<typeof userEvent.setup>;
@@ -15,7 +15,7 @@ jest.mock('../EditRecord', () => ({
         return (
             <Form form={antdForm} id={formElementId} fields={fields} onFinish={() => onCreate(mockRecord)}>
                 <Form.Item name="jeanjau">
-                    <input />
+                    <Input />
                 </Form.Item>
                 <button onClick={() => onCreate(mockRecord)}>simulate_create_record</button>
             </Form>
@@ -83,6 +83,7 @@ describe('EditRecordPage', () => {
                 />,
             );
 
+            await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
             expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
@@ -99,6 +100,7 @@ describe('EditRecordPage', () => {
                 />,
             );
 
+            await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
             expect(screen.getByTestId('edit-record-modal-header-container-buttons')).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
             expect(screen.queryByRole('button', {name: /create$/})).not.toBeInTheDocument();
@@ -109,6 +111,7 @@ describe('EditRecordPage', () => {
             const mockOnClose = jest.fn();
             render(<EditRecordPage library="test_lib" onClose={mockOnClose} record={null} />);
 
+            await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
             await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
             expect(mockOnClose).toHaveBeenCalledTimes(1);
         });

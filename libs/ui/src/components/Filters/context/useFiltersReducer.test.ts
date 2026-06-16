@@ -374,7 +374,9 @@ describe('useFiltersReducer', () => {
                 loading: false,
             });
             (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
-                data: {attributes: {list: [mockAttributeData]}},
+                data: {
+                    attributes: {list: [mockAttributeData, {...mockAttributeData, id: 'attr2', label: 'Attribute 2'}]},
+                },
                 loading: false,
             });
 

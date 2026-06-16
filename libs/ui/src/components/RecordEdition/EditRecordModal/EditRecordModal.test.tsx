@@ -2,7 +2,7 @@ import userEvent from '@testing-library/user-event';
 import {screen, render, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {EditRecordModal} from './EditRecordModal';
-import {Form} from 'antd';
+import {Form, Input} from 'antd';
 import ReactModal from 'react-modal';
 import * as gqlTypes from '_ui/_gqlTypes';
 
@@ -16,7 +16,7 @@ jest.mock('../EditRecord', () => ({
         return (
             <Form form={antdForm} id={formElementId} fields={fields} onFinish={() => onCreate(mockRecord)}>
                 <Form.Item name="leonbloum">
-                    <input />
+                    <Input />
                 </Form.Item>
                 <button onClick={() => onCreate(mockRecord)}>simulate_create_record</button>
             </Form>
@@ -91,6 +91,7 @@ describe('EditRecordModal', () => {
                 />,
             );
 
+            await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
             expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /create$/})).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /create_and_edit/})).toBeInTheDocument();
@@ -107,6 +108,7 @@ describe('EditRecordModal', () => {
                 />,
             );
 
+            await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
             expect(screen.getByRole('button', {name: /cancel/})).toBeInTheDocument();
             expect(screen.queryByRole('button', {name: /create$/})).not.toBeInTheDocument();
             expect(screen.getByRole('button', {name: /create_and_edit/})).toBeInTheDocument();
@@ -116,6 +118,7 @@ describe('EditRecordModal', () => {
             const mockOnClose = jest.fn();
             render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={null} />);
 
+            await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
             await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
             expect(mockOnClose).toHaveBeenCalledTimes(1);
         });
@@ -124,6 +127,7 @@ describe('EditRecordModal', () => {
             const mockOnClose = jest.fn();
             render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={null} />);
 
+            await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
             await userEvent.click(screen.getByRole('button', {name: 'global.cancel'}));
             expect(mockOnClose).toHaveBeenCalledTimes(1);
             expect(mockUsePurgeRecordMutation).toHaveBeenCalled();
@@ -151,7 +155,7 @@ describe('EditRecordModal', () => {
         test('Should call createRecord if modal is opened', async () => {
             render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={null} />);
 
-            expect(mockUseCreateRecordMutation).toHaveBeenCalled();
+            await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
         });
 
         test('Should not call createRecord if modal is not opened', async () => {
