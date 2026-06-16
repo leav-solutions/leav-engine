@@ -1,11 +1,16 @@
-import {BASE_ATTRIBUTES} from '../../_constants/attributes';
-import {FilesAttributes} from '../../_types/filesManager';
-import {LibraryBehavior, USERS_LIBRARY} from '../../_types/library';
+import {SystemLibraries} from '../../_constants/systemLibraries';
+import {BASE_ATTRIBUTES, FilesAttributes, UsersAttributes} from '../../_constants/systemAttributes';
+import {LibraryBehavior} from '../../_types/library';
 import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from './getPreviewsAttributes';
 
 export default (behavior: LibraryBehavior, libraryId: string): string[] => {
     const libraryCommonAttributes = {
-        [USERS_LIBRARY]: ['user_groups', 'password', 'login', 'email'],
+        [SystemLibraries.USERS]: [
+            UsersAttributes.USER_GROUPS,
+            UsersAttributes.PASSWORD,
+            UsersAttributes.LOGIN,
+            UsersAttributes.EMAIL,
+        ],
     };
 
     const commonAttributes = [

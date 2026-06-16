@@ -6,6 +6,7 @@ import ValidationError from '../../../errors/ValidationError';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../../_types/attribute';
 import {Errors} from '../../../_types/errors';
 import {AttributeCondition, type IRecordFilterLight} from '../../../_types/record';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 interface IDeps {
     'core.domain.attribute': IAttributeDomain;
@@ -41,7 +42,7 @@ const getAttributesFromField = async (params: {
 
     const _getLabelOrIdAttribute = async (library: string): Promise<string> => {
         if (visitedLibraries.includes(library)) {
-            return 'id';
+            return CommonAttributes.ID;
         }
 
         visitedLibraries.push(library);
@@ -53,7 +54,7 @@ const getAttributesFromField = async (params: {
 
         return linkedLibraryProps.list.length && linkedLibraryProps.list[0].recordIdentityConf?.label
             ? linkedLibraryProps.list[0].recordIdentityConf?.label
-            : 'id'; // label is not configured, search on ID
+            : CommonAttributes.ID; // label is not configured, search on ID
     };
 
     const fields = field.split('.');

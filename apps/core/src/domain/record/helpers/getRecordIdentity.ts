@@ -17,6 +17,7 @@ import {type ITreeValue, type IValue, type IValuesOptions} from '../../../_types
 import {type IUtils} from '../../../utils/utils';
 import type * as Config from '../../../_types/config';
 import {type GetRecordFieldValueHelper} from '../../value/helpers/getRecordFieldValue';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 export type GetRecordIdentityHelper = (record: IRecord, ctx: IQueryInfos) => Promise<IRecordIdentity>;
 
@@ -181,7 +182,9 @@ export default function ({
             const libraryIconRecord = await findRecordsHelper({
                 params: {
                     library: libraryIcon.libraryId,
-                    filters: [{condition: AttributeCondition.EQUAL, field: 'id', value: libraryIcon.recordId}],
+                    filters: [
+                        {condition: AttributeCondition.EQUAL, field: CommonAttributes.ID, value: libraryIcon.recordId},
+                    ],
                 },
                 ctx,
             });

@@ -1,3 +1,4 @@
+import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {LibraryPermissionsActions, PermissionTypes} from '../../../_types/permissions';
 import globalPermissions, {type IGlobalPermissionDeps} from './globalPermission';
@@ -25,19 +26,19 @@ describe('globalPermissionsHelper', () => {
                     {
                         record: {
                             id: 1,
-                            library: 'users_groups',
+                            library: SystemLibraries.USERS_GROUPS,
                         },
                     },
                     {
                         record: {
                             id: 2,
-                            library: 'users_groups',
+                            library: SystemLibraries.USERS_GROUPS,
                         },
                     },
                     {
                         record: {
                             id: 3,
-                            library: 'users_groups',
+                            library: SystemLibraries.USERS_GROUPS,
                         },
                     },
                 ],
@@ -77,19 +78,19 @@ describe('globalPermissionsHelper', () => {
                     {
                         record: {
                             id: 1,
-                            library: 'users_groups',
+                            library: SystemLibraries.USERS_GROUPS,
                         },
                     },
                     {
                         record: {
                             id: 2,
-                            library: 'users_groups',
+                            library: SystemLibraries.USERS_GROUPS,
                         },
                     },
                     {
                         record: {
                             id: 3,
-                            library: 'users_groups',
+                            library: SystemLibraries.USERS_GROUPS,
                         },
                     },
                 ],

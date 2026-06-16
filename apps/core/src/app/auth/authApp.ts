@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
+import {UsersAttributes} from '../../_constants/systemAttributes';
 import {type IApiKeyDomain} from '../../domain/apiKey/apiKeyDomain';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {type IUserDomain} from '../../domain/user/userDomain';
@@ -11,14 +13,12 @@ import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type ITreeValue} from '../../_types/value';
 import AuthenticationError from '../../errors/AuthenticationError';
-import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
 import {
     ACCESS_TOKEN_COOKIE_NAME,
     type AuthPostOidcLoginCallback,
     type ITokenUserData,
     REFRESH_TOKEN_COOKIE_NAME,
 } from '../../_types/auth';
-import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {type IRequestWithContext} from '../../_types/express';
 import {type ILogger} from '@leav/logger';
@@ -95,7 +95,7 @@ export default function ({
         const groups = await valueDomain.getValues({
             library: 'users',
             recordId: userId,
-            attribute: 'user_groups',
+            attribute: UsersAttributes.USER_GROUPS,
             ctx,
         });
 
@@ -238,7 +238,7 @@ export default function ({
                 Query: {
                     async me(parent, args, ctx: IQueryInfos, info): Promise<IRecord> {
                         return recordRepo.getRecord({
-                            libraryId: USERS_LIBRARY,
+                            libraryId: SystemLibraries.USERS,
                             recordId: ctx.userId,
                             ctx,
                         });
@@ -283,7 +283,9 @@ export default function ({
                         const userRecords = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}],
+                                filters: [
+                                    {field: UsersAttributes.EMAIL, condition: AttributeCondition.EQUAL, value: email},
+                                ],
                             },
                             ctx: systemCtx,
                         });
@@ -299,8 +301,8 @@ export default function ({
                             const {record: createdUser} = await recordDomain.createRecord({
                                 library: 'users',
                                 values: [
-                                    {payload: email, attribute: 'email'},
-                                    {payload: decodedToken.name, attribute: 'login'}, // used to display the username in the UI instead of record id
+                                    {payload: email, attribute: UsersAttributes.EMAIL},
+                                    {payload: decodedToken.name, attribute: UsersAttributes.LOGIN}, // used to display the username in the UI instead of record id
                                 ],
                                 uuid: userIdIfAny,
                                 ctx: systemCtx,
@@ -318,7 +320,7 @@ export default function ({
                                 await valueDomain.saveValue({
                                     library: 'users',
                                     recordId: user.id,
-                                    attribute: 'user_groups',
+                                    attribute: UsersAttributes.USER_GROUPS,
                                     value: {payload: adminsGroupId},
                                     ctx: systemCtx,
                                 });
@@ -398,7 +400,9 @@ export default function ({
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'login', condition: AttributeCondition.EQUAL, value: login}],
+                                filters: [
+                                    {field: UsersAttributes.LOGIN, condition: AttributeCondition.EQUAL, value: login},
+                                ],
                             },
                             ctx: systemCtx,
                         });
@@ -480,7 +484,9 @@ export default function ({
                         const users = await recordDomain.find({
                             params: {
                                 library: 'users',
-                                filters: [{field: 'email', condition: AttributeCondition.EQUAL, value: email}],
+                                filters: [
+                                    {field: UsersAttributes.EMAIL, condition: AttributeCondition.EQUAL, value: email},
+                                ],
                             },
                             ctx: systemCtx,
                         });
@@ -553,7 +559,7 @@ export default function ({
                             await valueDomain.saveValue({
                                 library: 'users',
                                 recordId: payload.userId,
-                                attribute: 'password',
+                                attribute: UsersAttributes.PASSWORD,
                                 value: {payload: newPassword},
                                 ctx: systemCtx,
                             });
@@ -640,9 +646,9 @@ export default function ({
 
                 const getUserGroups = async (uid: string): Promise<string[]> => {
                     const userGroups = (await valueDomain.getValues({
-                        library: USERS_LIBRARY,
+                        library: SystemLibraries.USERS,
                         recordId: uid,
-                        attribute: USERS_GROUP_ATTRIBUTE_NAME,
+                        attribute: UsersAttributes.USER_GROUPS,
                         ctx: systemCtx,
                     })) as ITreeValue[];
                     return userGroups.map(g => g.payload?.id);

@@ -1,3 +1,4 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
 import {type IApplicationDomain} from '../../domain/application/applicationDomain';
 import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
 import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
@@ -9,7 +10,6 @@ import {type IVersionProfileDomain} from '../../domain/versionProfile/versionPro
 import {type ILogFilters, type ILogPagination, type ILogResponse, type ILogSort, type Log} from '../../_types/log';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IAppModule} from '../../_types/shared';
-import {USERS_LIBRARY} from '../../_types/library';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {EventAction} from '@leav/utils';
@@ -20,6 +20,7 @@ import {type i18n} from 'i18next';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {AttributeTypes} from '../../_types/attribute';
 import {type IConfig} from '../../_types/config';
+import {CommonAttributes} from '../../_constants/systemAttributes';
 
 export type ICoreLogApp = IAppModule & IGraphqlAppModule;
 
@@ -214,12 +215,12 @@ export default function ({
                                     params: {
                                         filters: [
                                             {
-                                                field: 'id',
+                                                field: CommonAttributes.ID,
                                                 value: log.userId,
                                                 condition: AttributeCondition.EQUAL,
                                             },
                                         ],
-                                        library: USERS_LIBRARY,
+                                        library: SystemLibraries.USERS,
                                         retrieveInactive: true,
                                     },
                                     ctx,
@@ -309,7 +310,7 @@ export default function ({
                                     params: {
                                         filters: [
                                             {
-                                                field: 'id',
+                                                field: CommonAttributes.ID,
                                                 value: topic.record.id,
                                                 condition: AttributeCondition.EQUAL,
                                             },

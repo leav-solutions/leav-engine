@@ -1,3 +1,4 @@
+import {UsersAttributes} from '../../../_constants/systemAttributes';
 import {type IAttributeForRepo, type IAttributeRepo} from '../../attribute/attributeRepo';
 import {type IMigration} from '../../../_types/migration';
 import {type IQueryInfos} from '../../../_types/queryInfos';
@@ -11,7 +12,7 @@ export default function ({'core.infra.attribute': attributeRepo = null}: IDeps):
         const attributeFromDb = await attributeRepo.getAttributes({
             params: {
                 filters: {
-                    id: 'password',
+                    id: UsersAttributes.PASSWORD,
                 },
                 strictFilters: true,
                 withCount: false,

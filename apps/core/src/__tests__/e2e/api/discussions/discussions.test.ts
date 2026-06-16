@@ -1,12 +1,7 @@
+import {DiscussionCommentsAttributes, DiscussionThreadsAttributes} from '../../../../_constants/systemAttributes';
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
 import {type Client as GraphqlWsClient} from 'graphql-ws';
 import {AttributeCondition} from '../../../../_types/record';
-import {
-    DISCUSSION_COMMENT_CONTENT_ATTRIBUTE_ID,
-    DISCUSSION_COMMENT_THREAD_ATTRIBUTE_ID,
-    DISCUSSION_COMMENTS_LIBRARY_ID,
-    DISCUSSION_THREAD_COMMENTS_ATTRIBUTE_ID,
-    DISCUSSION_THREADS_LIBRARY_ID,
-} from '../../../../_constants/discussions';
 import {adminUserId} from '../../../../_constants/users';
 import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
@@ -82,7 +77,7 @@ describe('Discussion', () => {
     describe('One thread exists', () => {
         let threadId: string;
         beforeAll(async () => {
-            threadId = await gqlCreateRecord(DISCUSSION_THREADS_LIBRARY_ID);
+            threadId = await gqlCreateRecord(SystemLibraries.DISCUSSION_THREADS);
 
             deleteMailpitMessagesBySearch('mentioned in a comment');
         });
@@ -145,12 +140,12 @@ describe('Discussion', () => {
             const resComment = await makeGraphQlCall(`
                 {
                     records(
-                        library: "${DISCUSSION_COMMENTS_LIBRARY_ID}",
+                        library: "${SystemLibraries.DISCUSSION_COMMENTS}",
                         filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${resPostComment.data.data.postDiscussionComment.id}"}]
                     ) {
                         list {
                             id
-                            content: property(attribute: "${DISCUSSION_COMMENT_CONTENT_ATTRIBUTE_ID}") {
+                            content: property(attribute: "${DiscussionCommentsAttributes.CONTENT}") {
                                 ... on Value {
                                     payload
                                 }
@@ -162,7 +157,7 @@ describe('Discussion', () => {
                                     }
                                 }
                             }
-                            thread: property(attribute: "${DISCUSSION_COMMENT_THREAD_ATTRIBUTE_ID}") {
+                            thread: property(attribute: "${DiscussionCommentsAttributes.THREAD}") {
                                 ... on LinkValue {
                                     payload {
                                         id
@@ -183,12 +178,12 @@ describe('Discussion', () => {
             const resThread = await makeGraphQlCall(`
                 {
                     records(
-                        library: "${DISCUSSION_THREADS_LIBRARY_ID}",
+                        library: "${SystemLibraries.DISCUSSION_THREADS}",
                         filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${threadId}"}]
                     ) {
                         list {
                             id
-                            comments: property(attribute: "${DISCUSSION_THREAD_COMMENTS_ATTRIBUTE_ID}") {
+                            comments: property(attribute: "${DiscussionThreadsAttributes.COMMENTS}") {
                                 ... on LinkValue {
                                     payload {
                                         id

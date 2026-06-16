@@ -13,6 +13,7 @@ import {type IQueryInfos} from '../../../_types/queryInfos';
 import {AttributeCondition, type IRecord} from '../../../_types/record';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {getMetadataRecordLabel} from './manageEventMetadata';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 export interface IFormatLogValueHelper {
     formatAsString(
@@ -115,7 +116,7 @@ export default function ({
                     library: rawData.payload.library,
                     filters: [
                         {
-                            field: 'id',
+                            field: CommonAttributes.ID,
                             condition: AttributeCondition.EQUAL,
                             value: rawData.payload.id,
                         },

@@ -1,67 +1,83 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {CommonAttributes, FilesAttributes, UsersAttributes} from '../../../../_constants/systemAttributes';
 import {LibraryBehavior} from '../../../../_types/library';
 import {type MigrationLibraryToCreate} from '../../helpers/libraryUtils';
 
 const commonLibraryData: Partial<MigrationLibraryToCreate> = {
     system: true,
     recordIdentityConf: {
-        label: 'label',
+        label: CommonAttributes.LABEL,
     },
     behavior: LibraryBehavior.STANDARD,
-    attributes: ['id', 'created_by', 'created_at', 'modified_by', 'modified_at', 'active', 'label'],
+    attributes: [
+        CommonAttributes.ID,
+        CommonAttributes.CREATED_BY,
+        CommonAttributes.CREATED_AT,
+        CommonAttributes.MODIFIED_BY,
+        CommonAttributes.MODIFIED_AT,
+        CommonAttributes.ACTIVE,
+        CommonAttributes.LABEL,
+    ],
 };
 export const systemLibraries: MigrationLibraryToCreate[] = [
     {
         ...commonLibraryData,
-        _key: 'users',
+        _key: SystemLibraries.USERS,
         label: {fr: 'Utilisateurs', en: 'Users'},
-        fullTextAttributes: ['login', 'email', 'label'],
+        fullTextAttributes: [UsersAttributes.LOGIN, UsersAttributes.EMAIL, CommonAttributes.LABEL],
         recordIdentityConf: {
-            label: 'login',
+            label: UsersAttributes.LOGIN,
         },
-        attributes: [...commonLibraryData.attributes, 'login', 'email', 'password', 'user_groups'],
+        attributes: [
+            ...commonLibraryData.attributes,
+            UsersAttributes.LOGIN,
+            UsersAttributes.EMAIL,
+            UsersAttributes.PASSWORD,
+            UsersAttributes.USER_GROUPS,
+        ],
     },
     {
         ...(commonLibraryData as MigrationLibraryToCreate),
-        _key: 'users_groups',
-        fullTextAttributes: ['label'],
+        _key: SystemLibraries.USERS_GROUPS,
+        fullTextAttributes: [CommonAttributes.LABEL],
         label: {fr: "Groupes d'utilisateurs", en: 'Users groups'},
     },
     {
         ...(commonLibraryData as MigrationLibraryToCreate),
-        _key: 'files',
+        _key: SystemLibraries.FILES,
         behavior: LibraryBehavior.FILES,
         label: {fr: 'Fichiers', en: 'Files'},
         recordIdentityConf: {
-            label: 'file_name',
+            label: FilesAttributes.FILE_NAME,
         },
-        fullTextAttributes: ['file_name'],
+        fullTextAttributes: [FilesAttributes.FILE_NAME],
         attributes: [
             ...commonLibraryData.attributes,
-            'root_key',
-            'hash',
-            'file_path',
-            'file_name',
-            'inode',
+            FilesAttributes.ROOT_KEY,
+            FilesAttributes.HASH,
+            FilesAttributes.FILE_PATH,
+            FilesAttributes.FILE_NAME,
+            FilesAttributes.INODE,
             'previews',
             'previews_status',
         ],
     },
     {
         ...(commonLibraryData as MigrationLibraryToCreate),
-        _key: 'files_directories',
+        _key: SystemLibraries.FILES_DIRECTORIES,
         behavior: LibraryBehavior.DIRECTORIES,
         label: {fr: 'Dossiers', en: 'Directories'},
         recordIdentityConf: {
-            label: 'file_name',
+            label: FilesAttributes.FILE_NAME,
         },
-        fullTextAttributes: ['file_name'],
+        fullTextAttributes: [FilesAttributes.FILE_NAME],
         attributes: [
             ...commonLibraryData.attributes,
-            'root_key',
-            'hash',
-            'file_path',
-            'file_name',
-            'inode',
+            FilesAttributes.ROOT_KEY,
+            FilesAttributes.HASH,
+            FilesAttributes.FILE_PATH,
+            FilesAttributes.FILE_NAME,
+            FilesAttributes.INODE,
             'previews',
             'previews_status',
         ],

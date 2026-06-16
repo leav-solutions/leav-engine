@@ -1,3 +1,5 @@
+import {CommonAttributes} from '../../../../_constants/systemAttributes';
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
 import {type IMigration} from '../../../../_types/migration';
 import {type IDbService} from '../../dbService';
 import {type ILibraryRepo} from '../../../library/libraryRepo';
@@ -13,9 +15,7 @@ import {commentAttributes, commentLibrary} from './comments';
 import {threadLibrary, threadsAttributes} from './threads';
 import {statusesAttributes, statusesLibrary, threadStatusTree} from './statuses';
 import {aql} from 'arangojs';
-import {COMMENTS_LIBRARY_ID, THREADS_LIBRARY_ID} from '../../migrationConstants/threads';
 import {AttributeTypes} from '../../../../_types/attribute';
-import {DISCUSSION_THREADS_ATTRIBUTE_ID} from '../../../../_constants/attributes';
 
 interface IDeps {
     'core.infra.db.dbService': IDbService;
@@ -41,10 +41,10 @@ export default function ({
             // Création d'un lien vers threads sur toutes les libs
             const sharedThreadAttribute = {
                 ...commonAttributeData,
-                id: DISCUSSION_THREADS_ATTRIBUTE_ID,
+                id: CommonAttributes.DISCUSSION_THREADS,
                 type: AttributeTypes.ADVANCED_LINK,
                 multiple_values: true,
-                linked_library: THREADS_LIBRARY_ID,
+                linked_library: SystemLibraries.DISCUSSION_THREADS,
                 label: {fr: 'Fils de discussion associés', en: 'Related discussion threads'},
             };
             await createAttributes([sharedThreadAttribute], attributeRepo, ctx);
@@ -52,8 +52,8 @@ export default function ({
             const librariesKeys: string[] = await dbService.execute({
                 query: aql`
                     FOR library IN core_libraries
-                        FILTER library._key != ${THREADS_LIBRARY_ID}
-                        FILTER library._key != ${COMMENTS_LIBRARY_ID}
+                        FILTER library._key != ${SystemLibraries.DISCUSSION_THREADS}
+                        FILTER library._key != ${SystemLibraries.DISCUSSION_COMMENTS}
                         RETURN library._key
                 `,
                 ctx,

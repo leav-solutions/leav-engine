@@ -1,3 +1,4 @@
+import {CommonAttributes} from '../../_constants/systemAttributes';
 import {ErrorTypes, EventAction, localizedTranslation} from '@leav/utils';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type IValueDomain} from '../value/valueDomain';
@@ -31,8 +32,6 @@ import {type CreateRecordHelper} from './helpers/createRecord';
 import {type ILogger} from '@leav/logger';
 import {type FindRecordsHelper} from './helpers/findRecords';
 import {type GetRecordIdentityHelper} from './helpers/getRecordIdentity';
-
-export const ATTRIBUTE_ACTIVE = 'active';
 
 export interface IDuplicateRecordRules {
     attributesToDuplicate?: Array<{
@@ -241,7 +240,7 @@ export default function ({
             await valueDomain.saveValue({
                 library,
                 recordId,
-                attribute: ATTRIBUTE_ACTIVE,
+                attribute: CommonAttributes.ACTIVE,
                 value: {payload: true},
                 ctx,
             });
@@ -396,7 +395,7 @@ export default function ({
             const savedValues = await valueDomain.saveValue({
                 library: record.library,
                 recordId: record.id,
-                attribute: ATTRIBUTE_ACTIVE,
+                attribute: CommonAttributes.ACTIVE,
                 value: {payload: false},
                 ctx,
             });
@@ -407,7 +406,7 @@ export default function ({
             const savedValues = await valueDomain.saveValue({
                 library: record.library,
                 recordId: record.id,
-                attribute: ATTRIBUTE_ACTIVE,
+                attribute: CommonAttributes.ACTIVE,
                 value: {payload: true},
                 ctx,
             });
@@ -488,7 +487,7 @@ export default function ({
             const inactiveRecords = await findRecordsHelper({
                 params: {
                     library: libraryId,
-                    filters: [{field: ATTRIBUTE_ACTIVE, condition: AttributeCondition.EQUAL, value: 'false'}],
+                    filters: [{field: CommonAttributes.ACTIVE, condition: AttributeCondition.EQUAL, value: 'false'}],
                 },
                 ctx,
             });

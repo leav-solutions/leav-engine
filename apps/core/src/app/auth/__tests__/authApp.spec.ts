@@ -28,6 +28,7 @@ import {mockCtx, mockSystemQueryContext} from '../../../__tests__/mocks/shared';
 import {type ISessionRepo} from '../../../infra/session/sessionRepo';
 import {type IUserDomain} from '../../../domain/user/userDomain';
 import AuthenticationError from '../../../errors/AuthenticationError';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 const depsBase: ToAny<IAuthAppDeps> = {
     'core.domain.value': vi.fn(),
@@ -59,12 +60,12 @@ describe('authApp', () => {
                 find: global.__mockPromise({
                     cursor: {},
                     totalCount: 1,
-                    list: [{id: 'id'}],
+                    list: [{id: CommonAttributes.ID}],
                 }),
             };
 
             const mockSessionRepo: Mockify<ISessionRepo> = {
-                getData: global.__mockPromise(['id']),
+                getData: global.__mockPromise([CommonAttributes.ID]),
                 storeData: global.__mockPromise(),
                 deleteData: global.__mockPromise(),
             };
@@ -74,7 +75,7 @@ describe('authApp', () => {
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                getValues: global.__mockPromise([{payload: {id: 'id'}}]),
+                getValues: global.__mockPromise([{payload: {id: CommonAttributes.ID}}]),
             };
 
             const mockConfig: DeepPartial<IConfig> = {
@@ -435,18 +436,18 @@ describe('authApp', () => {
                 find: global.__mockPromise({
                     cursor: {},
                     totalCount: 1,
-                    list: [{id: 'id'}],
+                    list: [{id: CommonAttributes.ID}],
                 }),
             };
 
             const mockSessionRepo: Mockify<ISessionRepo> = {
-                getData: global.__mockPromise(['id']),
+                getData: global.__mockPromise([CommonAttributes.ID]),
                 storeData: global.__mockPromise(),
                 deleteData: global.__mockPromise(),
             };
 
             const mockValueDomain: Mockify<IValueDomain> = {
-                getValues: global.__mockPromise([{payload: {id: 'id'}}]),
+                getValues: global.__mockPromise([{payload: {id: CommonAttributes.ID}}]),
             };
 
             const mockConfig: DeepPartial<IConfig> = {

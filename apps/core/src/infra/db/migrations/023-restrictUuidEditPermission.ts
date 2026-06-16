@@ -1,7 +1,7 @@
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 import {type IMigration} from '../../../_types/migration';
 import {type IPermissionRepo} from '../../permission/permissionRepo';
 import {AttributePermissionsActions, PermissionTypes} from '../../../_types/permissions';
-import {UUID_ATTRIBUTE_ID} from '../../../_constants/attributes';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {type IAttributeRepo} from '../../attribute/attributeRepo';
@@ -22,7 +22,7 @@ export default function ({
             await permissionRepo.savePermission({
                 permData: {
                     type: PermissionTypes.ATTRIBUTE,
-                    applyTo: UUID_ATTRIBUTE_ID,
+                    applyTo: CommonAttributes.UUID,
                     actions: {
                         [AttributePermissionsActions.EDIT_VALUE]: false,
                     },
@@ -35,7 +35,7 @@ export default function ({
             // Add save value regex uuid validation
             await attributeRepo.updateAttribute({
                 attrData: {
-                    id: UUID_ATTRIBUTE_ID,
+                    id: CommonAttributes.UUID,
                     type: AttributeTypes.SIMPLE,
                     format: AttributeFormats.TEXT,
                     system: true,

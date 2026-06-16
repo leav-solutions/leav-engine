@@ -1,3 +1,4 @@
+import {FilesAttributes} from '../../_constants/systemAttributes';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IRecord} from '../../_types/record';
 import {aql, join} from 'arangojs/aql';
@@ -6,7 +7,6 @@ import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 import {join as joinPath} from 'path';
 import {type ILogger} from '@leav/logger';
-import {FilesAttributes} from '../../_types/filesManager';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;

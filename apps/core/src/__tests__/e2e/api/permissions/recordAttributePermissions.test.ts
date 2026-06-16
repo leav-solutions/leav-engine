@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {
     adminUserSdk,
@@ -94,14 +96,17 @@ describe('RecordAttributePermissions', () => {
 
         beforeAll(async () => {
             // Create 2 users groups
-            userGroupId1 = await gqlCreateRecord('users_groups');
-            userGroupId2 = await gqlCreateRecord('users_groups');
+            userGroupId1 = await gqlCreateRecord(SystemLibraries.USERS_GROUPS);
+            userGroupId2 = await gqlCreateRecord(SystemLibraries.USERS_GROUPS);
 
             // Add users groups to tree
-            nodeGroup1 = await gqlAddElemToTree('users_groups', {id: userGroupId1, library: 'users_groups'});
+            nodeGroup1 = await gqlAddElemToTree(SystemTrees.USERS_GROUPS, {
+                id: userGroupId1,
+                library: SystemLibraries.USERS_GROUPS,
+            });
             nodeGroup2 = await gqlAddElemToTree(
-                'users_groups',
-                {id: userGroupId2, library: 'users_groups'},
+                SystemTrees.USERS_GROUPS,
+                {id: userGroupId2, library: SystemLibraries.USERS_GROUPS},
                 nodeGroup1,
             );
 

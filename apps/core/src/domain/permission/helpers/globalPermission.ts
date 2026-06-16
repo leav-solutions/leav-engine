@@ -1,3 +1,4 @@
+import {SystemTrees} from '../../../_constants/systemTrees';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type PermissionsActions, type PermissionTypes} from '../../../_types/permissions';
 import {type IDefaultPermissionHelper} from './defaultPermission';
@@ -44,7 +45,7 @@ export default function ({
                 ? await Promise.all(
                       ctx.groupsId.map(async groupId =>
                           elementAncestorsHelper.getCachedElementAncestors({
-                              treeId: 'users_groups',
+                              treeId: SystemTrees.USERS_GROUPS,
                               nodeId: groupId,
                               ctx,
                           }),
@@ -73,7 +74,7 @@ export default function ({
         ): Promise<boolean> {
             // Get perm for user group's parent
             const groupAncestors = await elementAncestorsHelper.getCachedElementAncestors({
-                treeId: 'users_groups',
+                treeId: SystemTrees.USERS_GROUPS,
                 nodeId: userGroupNodeId,
                 ctx,
             });

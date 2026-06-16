@@ -1,3 +1,4 @@
+import {SystemLibraries} from '../../../../../_constants/systemLibraries';
 import {type AutomationRuleEventTopic, SyncAutomationRuleEventAction} from '../../../../../_types/automation';
 import {type IQueryInfos} from '../../../../../_types/queryInfos';
 import {adminUserId, systemUserId} from '../../../../../_constants/users';
@@ -6,7 +7,6 @@ import {type NotificationActionParams} from '../../../../../domain/automation/ac
 import {type INotificationDomain} from '../../../../../domain/notification/notificationDomain';
 import {getCoreDep} from '../../../integrationTestUtils';
 import {type IAutomationPipelineExecutionState} from '../../../../../domain/automation/pipeline/_types';
-import {USERS_LIBRARY} from '../../../../../_types/library';
 import {type IRecord} from '../../../../../_types/record';
 
 describe('notificationAction', () => {
@@ -43,7 +43,7 @@ describe('notificationAction', () => {
             const result = await notificationAction.execute(
                 {
                     title: 'Test',
-                    recipients: `[getRecord($, "${USERS_LIBRARY}", "${systemUserId}"), getRecord($, "${USERS_LIBRARY}", "${adminUserId}")]`,
+                    recipients: `[getRecord($, "${SystemLibraries.USERS}", "${systemUserId}"), getRecord($, "${SystemLibraries.USERS}", "${adminUserId}")]`,
                     message: '"hello"',
                 },
                 baseState,
@@ -73,7 +73,7 @@ describe('notificationAction', () => {
         it('exposes pipeline results in the recipients expression', async () => {
             const state: IAutomationPipelineExecutionState = {
                 ...baseState,
-                results: {targetUser: {id: systemUserId, library: USERS_LIBRARY} as IRecord},
+                results: {targetUser: {id: systemUserId, library: SystemLibraries.USERS} as IRecord},
             };
 
             const result = await notificationAction.execute(
@@ -97,7 +97,7 @@ describe('notificationAction', () => {
             await notificationAction.execute(
                 {
                     title: 'Test',
-                    recipients: `getRecord($, "${USERS_LIBRARY}", "${systemUserId}")`,
+                    recipients: `getRecord($, "${SystemLibraries.USERS}", "${systemUserId}")`,
                     message: '$.results.greeting + " !"',
                 },
                 state,
@@ -112,7 +112,7 @@ describe('notificationAction', () => {
             await notificationAction.execute(
                 {
                     title: 'Alert',
-                    recipients: `getRecord($, "${USERS_LIBRARY}", "${systemUserId}")`,
+                    recipients: `getRecord($, "${SystemLibraries.USERS}", "${systemUserId}")`,
                     message: '"Hello " + "World"',
                 },
                 baseState,
@@ -155,7 +155,7 @@ describe('notificationAction', () => {
             await notificationAction.execute(
                 {
                     title: 'Test',
-                    recipients: `getRecord($, "${USERS_LIBRARY}", "${systemUserId}")`,
+                    recipients: `getRecord($, "${SystemLibraries.USERS}", "${systemUserId}")`,
                     message: '"Record: " + $.currentRecord.id',
                 },
                 stateWithRecord,

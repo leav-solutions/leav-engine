@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../_constants/systemTrees';
 import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
 import {IValueRepo} from '../../../infra/value/valueRepo';
@@ -46,7 +48,7 @@ describe('TreeBasedPermissionDomain', () => {
             user_groups: {
                 id: 'user_groups',
                 type: 'tree',
-                linked_tree: 'users_groups',
+                linked_tree: SystemTrees.USERS_GROUPS,
             },
         };
         const mockAttrDomain: Mockify<IAttributeDomain> = {
@@ -105,19 +107,19 @@ describe('TreeBasedPermissionDomain', () => {
                     {
                         record: {
                             id: 1,
-                            library: 'users_groups',
+                            library: SystemLibraries.USERS_GROUPS,
                         },
                     },
                     {
                         record: {
                             id: 2,
-                            library: 'users_groups',
+                            library: SystemLibraries.USERS_GROUPS,
                         },
                     },
                     {
                         record: {
                             id: 3,
-                            library: 'users_groups',
+                            library: SystemLibraries.USERS_GROUPS,
                         },
                     },
                 ],
@@ -143,7 +145,7 @@ describe('TreeBasedPermissionDomain', () => {
             user_groups: {
                 id: 'user_groups',
                 type: 'tree',
-                linked_tree: 'users_groups',
+                linked_tree: SystemTrees.USERS_GROUPS,
             },
         };
         const mockAttrMultipleDomain: Mockify<IAttributeDomain> = {
@@ -174,7 +176,7 @@ describe('TreeBasedPermissionDomain', () => {
                 value: {
                     record: {
                         id: 1,
-                        library: 'users_groups',
+                        library: SystemLibraries.USERS_GROUPS,
                     },
                 },
             },

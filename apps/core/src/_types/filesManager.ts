@@ -1,3 +1,4 @@
+import {type FilesAttributes} from '../_constants/systemAttributes';
 import {type IEmbeddedAttribute} from './attribute';
 
 export enum FileEvents {
@@ -6,29 +7,6 @@ export enum FileEvents {
     UPDATE = 'UPDATE',
     MOVE = 'MOVE',
 }
-
-export enum FilesAttributes {
-    ROOT_KEY = 'root_key',
-    FILE_PATH = 'file_path',
-    FILE_NAME = 'file_name',
-    INODE = 'inode',
-    ACTIVE = 'active',
-    HASH = 'hash',
-    FILE_SIZE = 'file_size',
-    MIME_TYPE1 = 'mime_type1',
-    MIME_TYPE2 = 'mime_type2',
-    HAS_CLIPPING_PATH = 'has_clipping_path',
-    COLOR_SPACE = 'color_space',
-    COLOR_PROFILE = 'color_profile',
-    WIDTH = 'width',
-    HEIGHT = 'height',
-    PRINT_WIDTH = 'print_width',
-    PRINT_HEIGHT = 'print_height',
-    RESOLUTION = 'resolution',
-}
-
-export const PREVIEWS_ATTRIBUTE_SUFFIX = 'previews';
-export const PREVIEWS_STATUS_ATTRIBUTE_SUFFIX = 'previews_status';
 
 export interface IFileEventData {
     event: FileEvents;

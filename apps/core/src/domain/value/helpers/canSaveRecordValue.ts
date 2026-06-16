@@ -1,3 +1,5 @@
+import {CommonAttributes, FilesAttributes} from '../../../_constants/systemAttributes';
+import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {type IAttributeDependentValuesPermissionDomain} from '../../permission/attributeDependentValuesPermissionDomain';
 import {type IRecordAttributePermissionDomain} from '../../permission/recordAttributePermissionDomain';
 import {type IRecordPermissionDomain} from '../../permission/recordPermissionDomain';
@@ -11,6 +13,7 @@ import {
     RecordAttributePermissionsActions,
     RecordPermissionsActions,
 } from '../../../_types/permissions';
+import {getPreviewsAttributeName, getPreviewsStatusAttributeName} from '../../../utils/helpers/getPreviewsAttributes';
 import doesValueExist from './doesValueExist';
 
 interface ICanSaveRecordValueRes {
@@ -73,21 +76,21 @@ const _canSaveMetadata = async (
 };
 
 export const IMMUTABLE_CORE_SYSTEM_FILES_ATTRIBUTE_IDS = [
-    'root_key',
-    'hash',
-    'file_path',
-    'file_name',
-    'inode',
-    'files_previews',
-    'files_previews_status',
-    'file_size',
+    FilesAttributes.ROOT_KEY,
+    FilesAttributes.HASH,
+    FilesAttributes.FILE_PATH,
+    FilesAttributes.FILE_NAME,
+    FilesAttributes.INODE,
+    getPreviewsAttributeName(SystemLibraries.FILES),
+    getPreviewsStatusAttributeName(SystemLibraries.FILES),
+    FilesAttributes.FILE_SIZE,
 ];
 export const IMMUTABLE_CORE_SYSTEM_COMMON_ATTRIBUTE_IDS = [
-    'id',
-    'created_by',
-    'created_at',
-    'modified_by',
-    'modified_at',
+    CommonAttributes.ID,
+    CommonAttributes.CREATED_BY,
+    CommonAttributes.CREATED_AT,
+    CommonAttributes.MODIFIED_BY,
+    CommonAttributes.MODIFIED_AT,
 ];
 export const IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS = [
     ...IMMUTABLE_CORE_SYSTEM_COMMON_ATTRIBUTE_IDS,

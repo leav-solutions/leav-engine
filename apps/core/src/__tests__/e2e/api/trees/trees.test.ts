@@ -1,3 +1,4 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
 import {AttributeTypes} from '../../../../_types/attribute';
 import {
     adminUserSdk,
@@ -19,7 +20,7 @@ describe('Trees', () => {
 
     describe('Tree operations', () => {
         beforeAll(async () => {
-            await gqlSaveTree(testTreeName2, 'Test tree 2', ['users_groups']);
+            await gqlSaveTree(testTreeName2, 'Test tree 2', [SystemLibraries.USERS_GROUPS]);
 
             await makeGraphQlCall(
                 `mutation {
@@ -131,8 +132,8 @@ describe('Trees', () => {
 
             expect(res.status).toBe(200);
             expect(res.data.data.trees.list.length).toBe(2);
-            expect(res.data.data.trees.list[0].libraries[0].library.id).toBe('users_groups');
-            expect(res.data.data.trees.list[1].libraries[0].library.id).toBe('users_groups');
+            expect(res.data.data.trees.list[0].libraries[0].library.id).toBe(SystemLibraries.USERS_GROUPS);
+            expect(res.data.data.trees.list[1].libraries[0].library.id).toBe(SystemLibraries.USERS_GROUPS);
             expect(res.data.errors).toBeUndefined();
         });
 

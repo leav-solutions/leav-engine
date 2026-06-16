@@ -1,3 +1,4 @@
+import {SystemTrees} from '../../../_constants/systemTrees';
 import {type ILibraryPermissionDomain} from '../../permission/libraryPermissionDomain';
 import {type IRecordRepo} from '../../../infra/record/recordRepo';
 import {LibraryPermissionsActions} from '../../../_types/permissions';
@@ -18,7 +19,7 @@ import {type IAttributeWithRevLink} from '../../../infra/attributeTypes/attribut
 import {AttributeFormats, type IAttribute} from '../../../_types/attribute';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
-import {type IPermissionRepo, USERS_GROUP_TREE_NAME} from '../../../infra/permission/permissionRepo';
+import {type IPermissionRepo} from '../../../infra/permission/permissionRepo';
 import getAccessPermissionFilters from './getAccessPermissionFilters';
 import {type IListWithCursor} from '../../../_types/list';
 import {type IValidateHelper} from '../../helpers/validate';
@@ -344,7 +345,7 @@ export default function ({
             const groupsWithAncestorsId = [];
             for (const groupId of groupsId) {
                 const ancestors = await elementAncestorsHelper.getCachedElementAncestors({
-                    treeId: USERS_GROUP_TREE_NAME,
+                    treeId: SystemTrees.USERS_GROUPS,
                     nodeId: groupId,
                     ctx,
                 });

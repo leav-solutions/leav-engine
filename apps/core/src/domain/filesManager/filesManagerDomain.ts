@@ -1,3 +1,4 @@
+import {CommonAttributes, FilesAttributes} from '../../_constants/systemAttributes';
 import {type IAmqpService} from '@leav/message-broker';
 import {isFileAllowed, PreviewPriority} from '@leav/utils';
 import increment from 'add-filename-increment';
@@ -28,7 +29,7 @@ import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {TriggerNames} from '../../_types/eventsManager';
-import {FileEvents, FilesAttributes, type IFileEventData, type IFileMetadata} from '../../_types/filesManager';
+import {FileEvents, type IFileEventData, type IFileMetadata} from '../../_types/filesManager';
 import {type ILibrary, LibraryBehavior} from '../../_types/library';
 import {LibraryPermissionsActions} from '../../_types/permissions';
 import {AttributeCondition, type IRecord, type IRecordFilterLight, Operator} from '../../_types/record';
@@ -508,7 +509,7 @@ export default function ({
                     ? filters
                     : recordIds.reduce((allFilters, recordId, index) => {
                           allFilters.push({
-                              field: 'id',
+                              field: CommonAttributes.ID,
                               value: recordId,
                               condition: AttributeCondition.EQUAL,
                           });
@@ -633,7 +634,7 @@ export default function ({
             const fileRecords = await recordDomain.find({
                 params: {
                     library: libraryId,
-                    filters: [{field: 'id', value: fileId, condition: AttributeCondition.EQUAL}],
+                    filters: [{field: CommonAttributes.ID, value: fileId, condition: AttributeCondition.EQUAL}],
                 },
                 ctx,
             });
@@ -658,9 +659,7 @@ export default function ({
             }
 
             // Return original path
-            const fullPath = `${rootPath}${fileRecord[FilesAttributes.FILE_PATH]}/${
-                fileRecord[FilesAttributes.FILE_NAME]
-            }`;
+            const fullPath = `${rootPath}${fileRecord[FilesAttributes.FILE_PATH]}/${fileRecord[FilesAttributes.FILE_NAME]}`;
 
             // Clean double slashes, just to be sure
             return fullPath.replace('//', '/');

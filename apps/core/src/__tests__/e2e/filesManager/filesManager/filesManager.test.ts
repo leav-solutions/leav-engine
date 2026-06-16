@@ -1,6 +1,6 @@
+import {FilesAttributes} from '../../../../_constants/systemAttributes';
 import * as fs from 'fs';
 import {join} from 'path';
-import {FilesAttributes} from '../../../../_types/filesManager';
 import {Operator} from '../../../../_types/record';
 import {makeGraphQlCall} from '../../api/e2eUtils';
 

@@ -39,6 +39,7 @@ import {type IAuthApp} from '../auth/authApp';
 import {type IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
 import {type IServerRouteAppModule} from '../../interface/server';
 import {type IConfig} from '../../_types/config';
+import {CommonAttributes} from '../../_constants/systemAttributes';
 
 export type IApplicationApp = IGraphqlAppModule & IServerRouteAppModule;
 
@@ -293,7 +294,7 @@ export default function ({
                                     library: appData.icon.libraryId,
                                     filters: [
                                         {
-                                            field: 'id',
+                                            field: CommonAttributes.ID,
                                             value: appData.icon.recordId,
                                             condition: AttributeCondition.EQUAL,
                                         },

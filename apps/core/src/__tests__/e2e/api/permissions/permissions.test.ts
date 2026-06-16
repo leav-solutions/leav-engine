@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
 import {AttributeTypes} from '../../../../_types/attribute';
 import {
     adminUserSdk,
@@ -389,22 +391,31 @@ describe('Permissions', () => {
             userGroupId6 = resCreateGroups.data.data.r6.record.id;
 
             // Add users groups to tree
-            nodeUserGroupId1 = await gqlAddElemToTree('users_groups', {library: 'users_groups', id: userGroupId1});
+            nodeUserGroupId1 = await gqlAddElemToTree(SystemTrees.USERS_GROUPS, {
+                library: SystemLibraries.USERS_GROUPS,
+                id: userGroupId1,
+            });
             nodeUserGroupId2 = await gqlAddElemToTree(
-                'users_groups',
-                {library: 'users_groups', id: userGroupId2},
+                SystemTrees.USERS_GROUPS,
+                {library: SystemLibraries.USERS_GROUPS, id: userGroupId2},
                 nodeUserGroupId1,
             );
-            nodeUserGroupId3 = await gqlAddElemToTree('users_groups', {library: 'users_groups', id: userGroupId3});
+            nodeUserGroupId3 = await gqlAddElemToTree(SystemTrees.USERS_GROUPS, {
+                library: SystemLibraries.USERS_GROUPS,
+                id: userGroupId3,
+            });
             nodeUserGroupId4 = await gqlAddElemToTree(
-                'users_groups',
-                {library: 'users_groups', id: userGroupId4},
+                SystemTrees.USERS_GROUPS,
+                {library: SystemLibraries.USERS_GROUPS, id: userGroupId4},
                 nodeUserGroupId3,
             );
-            nodeUserGroupId5 = await gqlAddElemToTree('users_groups', {library: 'users_groups', id: userGroupId5});
+            nodeUserGroupId5 = await gqlAddElemToTree(SystemTrees.USERS_GROUPS, {
+                library: SystemLibraries.USERS_GROUPS,
+                id: userGroupId5,
+            });
             nodeUserGroupId6 = await gqlAddElemToTree(
-                'users_groups',
-                {library: 'users_groups', id: userGroupId6},
+                SystemTrees.USERS_GROUPS,
+                {library: SystemLibraries.USERS_GROUPS, id: userGroupId6},
                 nodeUserGroupId5,
             );
 
@@ -625,12 +636,12 @@ describe('Permissions', () => {
         let nodeUserGroup: string;
 
         beforeAll(async () => {
-            userGroupId = await gqlCreateRecord('users_groups');
+            userGroupId = await gqlCreateRecord(SystemLibraries.USERS_GROUPS);
 
             // Add users groups to tree
-            nodeUserGroup = await gqlAddElemToTree('users_groups', {
+            nodeUserGroup = await gqlAddElemToTree(SystemTrees.USERS_GROUPS, {
                 id: userGroupId,
-                library: 'users_groups',
+                library: SystemLibraries.USERS_GROUPS,
             });
         });
 

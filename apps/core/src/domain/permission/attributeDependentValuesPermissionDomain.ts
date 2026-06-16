@@ -1,3 +1,4 @@
+import {SystemTrees} from '../../_constants/systemTrees';
 import {logger} from '@leav/logger';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IAttributeWithRevLink} from '../../infra/attributeTypes/attributeTypesRepo';
@@ -89,7 +90,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
                 ? await Promise.all(
                       ctx.groupsId.map(async groupId =>
                           elementAncestorsHelper.getCachedElementAncestors({
-                              treeId: 'users_groups',
+                              treeId: SystemTrees.USERS_GROUPS,
                               nodeId: groupId,
                               ctx,
                           }),
@@ -139,7 +140,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
 
             // Get perm for user group's parent
             const groupAncestors = await elementAncestorsHelper.getCachedElementAncestors({
-                treeId: 'users_groups',
+                treeId: SystemTrees.USERS_GROUPS,
                 nodeId: userGroupId,
                 ctx,
             });
@@ -241,7 +242,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
                 ? await Promise.all(
                       ctx.groupsId.map(async groupId =>
                           elementAncestorsHelper.getCachedElementAncestors({
-                              treeId: 'users_groups',
+                              treeId: SystemTrees.USERS_GROUPS,
                               nodeId: groupId,
                               ctx,
                           }),

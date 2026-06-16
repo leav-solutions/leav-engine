@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
 import {AttributeTypes} from '../../../../_types/attribute';
 import {
     adminUserSdk,
@@ -48,10 +50,10 @@ describe('Records permissions', () => {
         });
 
         // Add a group under non admin group
-        const subNonAdminsGroupRecordId = await gqlCreateRecord('users_groups');
+        const subNonAdminsGroupRecordId = await gqlCreateRecord(SystemLibraries.USERS_GROUPS);
         subNonAdminGroupId = await gqlAddElemToTree(
-            'users_groups',
-            {id: subNonAdminsGroupRecordId, library: 'users_groups'},
+            SystemTrees.USERS_GROUPS,
+            {id: subNonAdminsGroupRecordId, library: SystemLibraries.USERS_GROUPS},
             e2eNonAdminGroupId(),
         );
 

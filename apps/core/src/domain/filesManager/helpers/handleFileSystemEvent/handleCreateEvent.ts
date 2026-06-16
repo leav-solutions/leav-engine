@@ -1,5 +1,6 @@
+import {FilesAttributes} from '../../../../_constants/systemAttributes';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
-import {FilesAttributes, type IFileEventData, type IFileMetadata} from '../../../../_types/filesManager';
+import {type IFileEventData, type IFileMetadata} from '../../../../_types/filesManager';
 import {systemPreviewsSettings} from '../../_constants';
 import {extractFileMetadata} from '../extractFileMetadata';
 import {

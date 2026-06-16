@@ -1,3 +1,4 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
 import {type IValueRepo} from '../../infra/value/valueRepo';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {RecordPermissionsActions} from '../../_types/permissions';
@@ -78,7 +79,7 @@ describe('recordPermissionDomain', () => {
                             payload: {
                                 record: {
                                     id: 1,
-                                    library: 'users_groups',
+                                    library: SystemLibraries.USERS_GROUPS,
                                 },
                             },
                         };

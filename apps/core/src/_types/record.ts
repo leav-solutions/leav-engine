@@ -1,18 +1,18 @@
-import {type UUID_ATTRIBUTE_ID} from '../_constants/attributes';
+import {type CommonAttributes} from '../_constants/systemAttributes';
 import {type IAttributeWithRevLink} from '../infra/attributeTypes/attributeTypesRepo';
 import {type ILibrary} from './library';
 import {type IPreview} from './preview';
 import {type IValue} from './value';
 
 export interface IRecord {
-    id?: string;
-    [UUID_ATTRIBUTE_ID]?: string;
+    [CommonAttributes.ID]?: string;
+    [CommonAttributes.UUID]?: string;
     library?: string;
-    created_at?: number;
-    created_by?: string;
-    modified_at?: number;
-    modified_by?: string;
-    active?: boolean;
+    [CommonAttributes.CREATED_AT]?: number;
+    [CommonAttributes.CREATED_BY]?: string;
+    [CommonAttributes.MODIFIED_AT]?: number;
+    [CommonAttributes.MODIFIED_BY]?: string;
+    [CommonAttributes.ACTIVE]?: boolean;
     [CORE_IN_CREATION_BY]?: string;
     [attributeName: string]: any;
 }

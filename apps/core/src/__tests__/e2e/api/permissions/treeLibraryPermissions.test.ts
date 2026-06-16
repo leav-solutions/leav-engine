@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
 import {adminUserSdk, e2eNonAdminGroupId, e2eNonAdminUser, gqlAddElemToTree, makeGraphQlCall} from '../e2eUtils';
 
 describe('TreeLibraryPermissions', () => {
@@ -131,16 +133,22 @@ describe('TreeLibraryPermissions', () => {
             userGroupId4 = resCreateGroups.data.data.r4.record.id;
 
             // Add users groups to tree
-            nodeUserGroup1 = await gqlAddElemToTree('users_groups', {id: userGroupId1, library: 'users_groups'});
+            nodeUserGroup1 = await gqlAddElemToTree(SystemTrees.USERS_GROUPS, {
+                id: userGroupId1,
+                library: SystemLibraries.USERS_GROUPS,
+            });
             nodeUserGroup2 = await gqlAddElemToTree(
-                'users_groups',
-                {id: userGroupId2, library: 'users_groups'},
+                SystemTrees.USERS_GROUPS,
+                {id: userGroupId2, library: SystemLibraries.USERS_GROUPS},
                 nodeUserGroup1,
             );
-            nodeUserGroup3 = await gqlAddElemToTree('users_groups', {id: userGroupId3, library: 'users_groups'});
+            nodeUserGroup3 = await gqlAddElemToTree(SystemTrees.USERS_GROUPS, {
+                id: userGroupId3,
+                library: SystemLibraries.USERS_GROUPS,
+            });
             nodeUserGroup4 = await gqlAddElemToTree(
-                'users_groups',
-                {id: userGroupId4, library: 'users_groups'},
+                SystemTrees.USERS_GROUPS,
+                {id: userGroupId4, library: SystemLibraries.USERS_GROUPS},
                 nodeUserGroup3,
             );
 

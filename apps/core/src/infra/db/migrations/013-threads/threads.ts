@@ -1,11 +1,7 @@
+import {BASE_ATTRIBUTES, CommonAttributes, DiscussionThreadsAttributes} from '../../../../_constants/systemAttributes';
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
 import {commonAttributeData, type MigrationLibraryToCreate} from '../../helpers/libraryUtils';
-import {
-    COMMENTS_LIBRARY_ID,
-    THREAD_COMMENTS_ATTRIBUTE_ID,
-    THREAD_STATUS_ATTRIBUTE_ID,
-    THREAD_STATUSES_TREE_ID,
-    THREADS_LIBRARY_ID,
-} from '../../migrationConstants/threads';
 import {AttributeTypes} from '../../../../_types/attribute';
 import {type IAttributeForRepo} from '../../../attribute/attributeRepo';
 import {LibraryBehavior} from '../../../../_types/library';
@@ -13,37 +9,32 @@ import {LibraryBehavior} from '../../../../_types/library';
 export const threadsAttributes: IAttributeForRepo[] = [
     {
         ...commonAttributeData,
-        id: THREAD_STATUS_ATTRIBUTE_ID,
+        id: DiscussionThreadsAttributes.STATUS,
         type: AttributeTypes.TREE,
-        linked_tree: THREAD_STATUSES_TREE_ID,
+        linked_tree: SystemTrees.DISCUSSION_THREAD_STATUSES,
         label: {fr: 'Statut', en: 'Status'},
     },
     {
         ...commonAttributeData,
-        id: THREAD_COMMENTS_ATTRIBUTE_ID,
+        id: DiscussionThreadsAttributes.COMMENTS,
         type: AttributeTypes.ADVANCED_LINK,
-        linked_library: COMMENTS_LIBRARY_ID,
+        linked_library: SystemLibraries.DISCUSSION_COMMENTS,
         multiple_values: true,
         label: {fr: 'Commentaires', en: 'Comments'},
     },
 ];
 
 export const threadLibrary: MigrationLibraryToCreate = {
-    _key: THREADS_LIBRARY_ID,
+    _key: SystemLibraries.DISCUSSION_THREADS,
     label: {fr: 'Fils de discussion', en: 'Discussion threads'},
     system: true,
     behavior: LibraryBehavior.STANDARD,
-    recordIdentityConf: {label: 'label'},
+    recordIdentityConf: {label: CommonAttributes.LABEL},
     attributes: [
-        'id',
-        'created_by',
-        'created_at',
-        'modified_by',
-        'modified_at',
-        'active',
-        'label',
-        THREAD_STATUS_ATTRIBUTE_ID,
-        THREAD_COMMENTS_ATTRIBUTE_ID,
+        ...BASE_ATTRIBUTES,
+        CommonAttributes.LABEL,
+        DiscussionThreadsAttributes.STATUS,
+        DiscussionThreadsAttributes.COMMENTS,
     ],
-    fullTextAttributes: ['label'],
+    fullTextAttributes: [CommonAttributes.LABEL],
 };

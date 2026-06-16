@@ -1,4 +1,5 @@
-import {FilesAttributes, type IFileMetadata} from '../../_types/filesManager';
+import {FilesAttributes} from '../../_constants/systemAttributes';
+import {type IFileMetadata} from '../../_types/filesManager';
 
 export const mockFileMetadataRaw = {
     MIMEType: 'image/jpeg',

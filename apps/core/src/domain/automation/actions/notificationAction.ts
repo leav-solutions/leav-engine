@@ -1,3 +1,4 @@
+import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {z} from 'zod';
 import {type IAutomationAction, AutomationRuleActions, ActionExecutionResultStatus} from './_types';
 import {type ZodMetaUISchema} from '../../../_types/jsonSchemaForm';
@@ -5,7 +6,6 @@ import {type INotificationDomain} from '../../notification/notificationDomain';
 import {NotificationChannels} from '../../../_types/notification';
 import {type IJexlAutomation} from '../jexl/jexlAutomation';
 import {type IRecord} from '../../../_types/record';
-import {USERS_LIBRARY} from '../../../_types/library';
 import ValidationError from '../../../errors/ValidationError';
 
 const notificationActionParamsSchema = z.object({
@@ -60,7 +60,7 @@ export default function ({
     'core.domain.notification': notification,
 }: INotificationActionDeps): IAutomationAction<NotificationActionParams> {
     function _checkIsUserRecord(record: IRecord): boolean {
-        return typeof record.id === 'string' && record.library === USERS_LIBRARY;
+        return typeof record.id === 'string' && record.library === SystemLibraries.USERS;
     }
 
     function _extractRecordIds(records: IRecord[], library: string): string[] {
@@ -108,7 +108,7 @@ export default function ({
                 );
             }
 
-            const userIds = _extractRecordIds(recipientsRecords, USERS_LIBRARY);
+            const userIds = _extractRecordIds(recipientsRecords, SystemLibraries.USERS);
 
             if (userIds.length) {
                 await notification.createNotification(

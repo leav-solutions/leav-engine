@@ -71,6 +71,3 @@ export enum LibraryBehavior {
     FILES = 'files',
     JOIN = 'join',
 }
-
-export const USERS_LIBRARY = 'users';
-export const USERS_GROUPS_LIBRARY = 'users_groups';

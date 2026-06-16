@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../../_constants/systemTrees';
 import {ActionsListEvents} from '../../../../../_types/actionsList';
 import {AttributeTypes} from '../../../../../_types/attribute';
 import {adminUserSdk, gqlCreateRecord, gqlSaveAttribute, gqlSaveValue, makeGraphQlCall} from '../../e2eUtils';
@@ -107,7 +109,7 @@ describe('inheritanceCalculationAction', () => {
                 id: treeAttributeId,
                 type: AttributeTypes.TREE,
                 label: 'TREE',
-                linkedTree: 'users_groups',
+                linkedTree: SystemTrees.USERS_GROUPS,
                 actionsList: {
                     [ActionsListEvents.GET_VALUE]: [
                         {
@@ -144,7 +146,7 @@ describe('inheritanceCalculationAction', () => {
                 id: sourceTreeAttributeId,
                 type: AttributeTypes.TREE,
                 label: 'SOURCE TREE',
-                linkedTree: 'users_groups',
+                linkedTree: SystemTrees.USERS_GROUPS,
             }),
         ]);
 
@@ -310,7 +312,9 @@ describe('inheritanceCalculationAction', () => {
         expect(res.status).toBe(200);
         expect(res.data.data.records.list[0][treeAttributeId][0].payload.id).toBe('2');
         expect(res.data.data.records.list[0][treeAttributeId][0].payload.record.id).toBe('2');
-        expect(res.data.data.records.list[0][treeAttributeId][0].payload.record.library.id).toBe('users_groups');
+        expect(res.data.data.records.list[0][treeAttributeId][0].payload.record.library.id).toBe(
+            SystemLibraries.USERS_GROUPS,
+        );
     });
 
     test('If no record to inherit from, return no value', async () => {

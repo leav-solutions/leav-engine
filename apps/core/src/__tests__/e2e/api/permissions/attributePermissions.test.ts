@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {e2eNonAdminGroupId, e2eNonAdminUser, gqlAddElemToTree, gqlSaveAttribute, makeGraphQlCall} from '../e2eUtils';
 
@@ -107,10 +109,13 @@ describe('AttributePermissions', () => {
             userGroupId2 = resCreateGroups.data.data.r2.record.id;
 
             // Add users groups to tree
-            nodeUserGroup1 = await gqlAddElemToTree('users_groups', {id: userGroupId1, library: 'users_groups'});
+            nodeUserGroup1 = await gqlAddElemToTree(SystemTrees.USERS_GROUPS, {
+                id: userGroupId1,
+                library: SystemLibraries.USERS_GROUPS,
+            });
             nodeUserGroup2 = await gqlAddElemToTree(
-                'users_groups',
-                {id: userGroupId2, library: 'users_groups'},
+                SystemTrees.USERS_GROUPS,
+                {id: userGroupId2, library: SystemLibraries.USERS_GROUPS},
                 nodeUserGroup1,
             );
 
