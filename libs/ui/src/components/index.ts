@@ -12,6 +12,7 @@ export * from './ErrorBoundary';
 export * from './ErrorDisplay';
 export * from './ErrorMessage';
 export * from './Explorer';
+export * from './ExplorerV2'; //TODO: To remove later once ViewV2 is fully integrated and ExplorerV2 is renamed to Explorer
 export * from './FieldsGroup';
 export * from './Filters';
 export * from './FloatingMenu';

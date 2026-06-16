@@ -1,0 +1,19 @@
+query ValuesOccurrencesForDependency(
+    $libraryId: ID!
+    $dependencyAttributeId: ID!
+    $recordFilters: [RecordFilterInput]!
+) {
+    listDistinctValues(library: $libraryId, attribute: $dependencyAttributeId, recordFilters: $recordFilters) {
+        ... on TreeDistinctValues {
+            treeNode: value {
+                id
+                record {
+                    id
+                    whoAmI {
+                        label
+                    }
+                }
+            }
+        }
+    }
+}

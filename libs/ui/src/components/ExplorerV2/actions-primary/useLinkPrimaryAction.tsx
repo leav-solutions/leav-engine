@@ -1,0 +1,74 @@
+import {useState} from 'react';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
+import {type FeatureHook, type IPrimaryAction} from '../_types';
+import {LinkModal} from '../link-item/LinkModal';
+import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {faPlus} from '@fortawesome/free-solid-svg-icons';
+
+/**
+ * Hook used to get the action for `<DataView />` component.
+ *
+ * When items are linked, the view is refreshed
+ *
+ * It returns also two parts : one for the call action button - one for displaying the modal required by the action.
+ *
+ * @param isEnabled - whether the action is present
+ * @param isVisible - wether the button should be visible or not
+ * @param maxItemsLeft - the number of items that can be added
+ * @param onLink - callback to let outside world know about linking feedback
+ */
+export const useLinkPrimaryAction = ({
+    isEnabled,
+    isVisible,
+    maxItemsLeft,
+    linkId,
+    canAddLinkValue,
+    joinLibraryContext,
+    isMultivalue,
+    onLink,
+    columnsToDisplay,
+}: FeatureHook<{
+    linkId?: string;
+    maxItemsLeft: number | null;
+    canAddLinkValue: boolean;
+    joinLibraryContext?: JoinLibraryContextFragment;
+    isMultivalue: boolean;
+    onLink?: (saveValuesResult: ISubmitMultipleResult) => void;
+    columnsToDisplay: string[];
+}>) => {
+    const {t} = useSharedTranslation();
+
+    const [isLinkModalVisible, setIsLinkModalVisible] = useState(false);
+
+    const disableAddItemAction = maxItemsLeft === 0 || !canAddLinkValue;
+
+    const replacementMode = linkId && !isMultivalue;
+
+    const _linkPrimaryAction: IPrimaryAction = {
+        callback: () => {
+            setIsLinkModalVisible(true);
+        },
+        icon: <FontAwesomeIcon icon={faPlus} />,
+        disabled: disableAddItemAction,
+        label: replacementMode ? t('record_edition.replace-by-existing-item') : t('explorer.add-existing-item'),
+    };
+
+    return {
+        linkPrimaryAction: isEnabled && isVisible ? _linkPrimaryAction : null,
+        linkModal: isLinkModalVisible ? (
+            <LinkModal
+                open
+                onLink={onLink}
+                joinLibraryContext={joinLibraryContext}
+                isMultivalue={isMultivalue}
+                linkId={replacementMode ? linkId : undefined}
+                onClose={() => {
+                    setIsLinkModalVisible(false);
+                }}
+                columnsToDisplay={columnsToDisplay}
+            />
+        ) : null,
+    };
+};
