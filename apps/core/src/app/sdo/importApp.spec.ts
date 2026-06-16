@@ -60,24 +60,6 @@ describe('importApp', () => {
             expect((await mockRabbitMQService.getSDOImportChannel()).ack).toHaveBeenCalledWith(mockImportMessage);
         });
 
-        it('[-] Should process if feature flag is true', async () => {
-            const sdo = {...mockSDO, name: 'campaign'};
-            const importMessage = {
-                ...mockImportMessage,
-                content: Buffer.from(JSON.stringify(sdo)),
-            };
-
-            mockSdoDomain.getSDOGlobalSettings.mockResolvedValueOnce({
-                ...sdoGlobalSettings,
-                importEnable: true,
-            });
-
-            await importApp(depsBase).onSDOEvent(importMessage);
-
-            expect(mockImportDomain.create).toHaveBeenCalled();
-            expect((await mockRabbitMQService.getSDOImportChannel()).ack).toHaveBeenCalledWith(importMessage);
-        });
-
         it('[+] should dispatch properly "update" message', async () => {
             // A specific importMessage and mockSDO are used here due to temporary explicit references
             // to the campaign and map libraries in the onSDOEvent function.

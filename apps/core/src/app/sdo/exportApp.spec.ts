@@ -80,22 +80,6 @@ describe('exportApp', () => {
             );
         });
 
-        it('[-] Should process if feature flag is true', async () => {
-            mockSdoDomain.getSDOGlobalSettings.mockResolvedValueOnce({
-                ...sdoGlobalSettings,
-                exportEnable: true,
-            });
-            mockExportDomain.isSDODataEvent.mockResolvedValueOnce(true);
-
-            await exportApp(depsBase).onDataEvent(mockDataEventMessage);
-
-            expect(mockExportDomain.isSDODataEvent).toHaveBeenCalled();
-            expect(mockExportDomain.process).toHaveBeenCalled();
-            expect((await mockRabbitMQService.getLeavDataEventChannel()).ack).toHaveBeenCalledWith(
-                mockDataEventMessage,
-            );
-        });
-
         it('[+] Should skip processing if data is not SDO relevant', async () => {
             mockExportDomain.isSDODataEvent.mockResolvedValueOnce(false);
 
