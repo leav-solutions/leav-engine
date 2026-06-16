@@ -138,7 +138,11 @@ function ImportModal({onClose, library, open, availableLibraries, resultExtraBut
             message.error(error.message);
         }
 
-        return (data?.attributes?.list ?? []).filter(attribute => !attribute.readonly || attribute.id === 'id');
+        return (data?.attributes?.list ?? []).filter(
+            // Allow to change id and uuid attributes even if they are readonly,
+            // quick fix for now, we should have a better way to handle this in the future
+            attribute => !attribute.readonly || attribute.id === 'id' || attribute.id === 'uuid',
+        );
     };
 
     const _getStepContent = (): JSX.Element => {
