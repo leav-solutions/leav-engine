@@ -7,6 +7,7 @@ import {EventAction} from '@leav/utils';
 import LeavError from '../../errors/LeavError';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 import {logger} from '@leav/logger';
+import {type IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
 
 export interface IImportAppDeps {
     'core.infra.sdo.rabbitMQ': IRabbitMQ;
@@ -32,8 +33,9 @@ export default function ({
         try {
             // Validate message format
             sdo = JSON.parse(msg.content.toString());
+            const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(_systemQueryContext);
 
-            if (sdo.name !== 'campaign' && sdo.name !== 'map') {
+            if (sdoGlobalSettings.importEnable === false || (sdo.name !== 'campaign' && sdo.name !== 'map')) {
                 (await rabbitMQService.getSDOImportChannel()).ack(msg);
                 return;
             }

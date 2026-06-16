@@ -34,7 +34,7 @@ describe('exportApp', () => {
     beforeEach(() => {
         vi.resetAllMocks();
         setupMockRabbitMQService();
-        mockSdoDomain.getSDOGlobalSettings.mockResolvedValueOnce(sdoGlobalSettings);
+        mockSdoDomain.getSDOGlobalSettings.mockResolvedValue(sdoGlobalSettings);
     });
 
     describe('onDataEvent()', () => {
@@ -44,8 +44,10 @@ describe('exportApp', () => {
 
             await exportApp(depsBase).onDataEvent(mockDataEventMessage);
 
-            expect((await mockRabbitMQService.getLeavDataEventChannel()).ack).toHaveBeenCalledWith(
+            expect((await mockRabbitMQService.getLeavDataEventChannel()).nack).toHaveBeenCalledWith(
                 mockDataEventMessage,
+                false,
+                false,
             );
         });
 
@@ -61,6 +63,37 @@ describe('exportApp', () => {
             expect(mockExportDomain.isSDODataEvent).not.toHaveBeenCalled();
             expect(mockExportDomain.process).not.toHaveBeenCalled();
             expect((await mockRabbitMQService.getLeavDataEventChannel()).ack).toHaveBeenCalledWith(msg);
+        });
+
+        it('[-] Should skip processing if feature flag is false', async () => {
+            mockSdoDomain.getSDOGlobalSettings.mockResolvedValueOnce({
+                ...sdoGlobalSettings,
+                exportEnable: false,
+            });
+
+            await exportApp(depsBase).onDataEvent(mockDataEventMessage);
+
+            expect(mockExportDomain.isSDODataEvent).not.toHaveBeenCalled();
+            expect(mockExportDomain.process).not.toHaveBeenCalled();
+            expect((await mockRabbitMQService.getLeavDataEventChannel()).ack).toHaveBeenCalledWith(
+                mockDataEventMessage,
+            );
+        });
+
+        it('[-] Should process if feature flag is true', async () => {
+            mockSdoDomain.getSDOGlobalSettings.mockResolvedValueOnce({
+                ...sdoGlobalSettings,
+                exportEnable: true,
+            });
+            mockExportDomain.isSDODataEvent.mockResolvedValueOnce(true);
+
+            await exportApp(depsBase).onDataEvent(mockDataEventMessage);
+
+            expect(mockExportDomain.isSDODataEvent).toHaveBeenCalled();
+            expect(mockExportDomain.process).toHaveBeenCalled();
+            expect((await mockRabbitMQService.getLeavDataEventChannel()).ack).toHaveBeenCalledWith(
+                mockDataEventMessage,
+            );
         });
 
         it('[+] Should skip processing if data is not SDO relevant', async () => {

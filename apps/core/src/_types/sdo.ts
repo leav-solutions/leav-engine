@@ -52,6 +52,8 @@ export interface ISDOMapping {
 }
 
 export interface ISDOSettings {
+    importEnable?: boolean;
+    exportEnable?: boolean;
     timer?: number;
     mapping: ISDOMapping;
 }
