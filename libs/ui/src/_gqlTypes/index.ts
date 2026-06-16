@@ -215,9 +215,7 @@ export enum AttributesSortableFields {
 
 export enum AutomationRuleActions {
   condition = 'condition',
-  error = 'error',
-  jexlCalculation = 'jexlCalculation',
-  log = 'log',
+  jexlExpression = 'jexlExpression',
   modifyAttribute = 'modifyAttribute',
   notification = 'notification'
 }
@@ -225,6 +223,7 @@ export enum AutomationRuleActions {
 export enum AutomationRuleEventAction {
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
   VALUE_SAVE = 'VALUE_SAVE'
 }
 
@@ -244,6 +243,7 @@ export type AutomationRulePipelineStepInput = {
 };
 
 export enum AutomationRuleSortableFields {
+  active = 'active',
   id = 'id'
 }
 
@@ -264,17 +264,6 @@ export type AutomationRulesSortInput = {
   field: AutomationRuleSortableFields;
   order?: InputMaybe<SortOrder>;
 };
-
-export enum AutomationTriggerDefSynchronicity {
-  ASYNC = 'ASYNC',
-  BOTH = 'BOTH',
-  SYNC = 'SYNC'
-}
-
-export enum AutomationTriggerDefTopics {
-  ATTRIBUTE = 'ATTRIBUTE',
-  LIBRARY = 'LIBRARY'
-}
 
 export enum AvailableLanguage {
   en = 'en',
@@ -1176,19 +1165,36 @@ export enum ViewTypes {
 }
 
 export type ViewV2CreateInput = {
-  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
-  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   display: ViewV2DisplayInput;
-  filters?: InputMaybe<Array<RecordFilterInput>>;
+  filters?: InputMaybe<Array<ViewV2FilterInput>>;
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
   shared: Scalars['Boolean']['input'];
-  sort?: InputMaybe<Array<RecordSortInput>>;
+  sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
 
+export type ViewV2DisplayAttributeInput = {
+  attributeId: Scalars['ID']['input'];
+  visible: Scalars['Boolean']['input'];
+};
+
 export type ViewV2DisplayInput = {
+  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
+  attributes?: InputMaybe<Array<ViewV2DisplayAttributeInput>>;
   type: ViewV2Types;
+};
+
+export type ViewV2FilterInput = {
+  attributes: Array<Scalars['ID']['input']>;
+  condition: RecordFilterCondition;
+  pinned: Scalars['Boolean']['input'];
+  values: Array<InputMaybe<Scalars['String']['input']>>;
+};
+
+export type ViewV2SortInput = {
+  attributes: Array<Scalars['ID']['input']>;
+  order: SortOrder;
 };
 
 export enum ViewV2Types {
@@ -1198,16 +1204,14 @@ export enum ViewV2Types {
 }
 
 export type ViewV2UpdateInput = {
-  /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
-  attributes?: InputMaybe<Array<Scalars['ID']['input']>>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   display?: InputMaybe<ViewV2DisplayInput>;
-  filters?: InputMaybe<Array<RecordFilterInput>>;
+  filters?: InputMaybe<Array<ViewV2FilterInput>>;
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
-  sort?: InputMaybe<Array<RecordSortInput>>;
+  sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
 
@@ -2161,6 +2165,11 @@ export type ValuesOccurrencesForDependencyQueryVariables = Exact<{
 
 
 export type ValuesOccurrencesForDependencyQuery = { listDistinctValues?: Array<{ treeNode?: { id: string, record: { id: string, whoAmI: { label?: string | null } } } | null }> | null };
+
+export type GlobalSettingsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GlobalSettingsQuery = { globalSettings: { settings?: any | null } };
 
 export type TreeFiltersDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID']['input'];
@@ -6501,6 +6510,48 @@ export type ValuesOccurrencesForDependencyQueryHookResult = ReturnType<typeof us
 export type ValuesOccurrencesForDependencyLazyQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencyLazyQuery>;
 export type ValuesOccurrencesForDependencySuspenseQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencySuspenseQuery>;
 export type ValuesOccurrencesForDependencyQueryResult = Apollo.QueryResult<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>;
+export const GlobalSettingsDocument = gql`
+    query GlobalSettings {
+  globalSettings {
+    settings
+  }
+}
+    `;
+
+/**
+ * __useGlobalSettingsQuery__
+ *
+ * To run a query within a React component, call `useGlobalSettingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGlobalSettingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGlobalSettingsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGlobalSettingsQuery(baseOptions?: Apollo.QueryHookOptions<GlobalSettingsQuery, GlobalSettingsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GlobalSettingsQuery, GlobalSettingsQueryVariables>(GlobalSettingsDocument, options);
+      }
+export function useGlobalSettingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GlobalSettingsQuery, GlobalSettingsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GlobalSettingsQuery, GlobalSettingsQueryVariables>(GlobalSettingsDocument, options);
+        }
+// @ts-ignore
+export function useGlobalSettingsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GlobalSettingsQuery, GlobalSettingsQueryVariables>): Apollo.UseSuspenseQueryResult<GlobalSettingsQuery, GlobalSettingsQueryVariables>;
+export function useGlobalSettingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GlobalSettingsQuery, GlobalSettingsQueryVariables>): Apollo.UseSuspenseQueryResult<GlobalSettingsQuery | undefined, GlobalSettingsQueryVariables>;
+export function useGlobalSettingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GlobalSettingsQuery, GlobalSettingsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GlobalSettingsQuery, GlobalSettingsQueryVariables>(GlobalSettingsDocument, options);
+        }
+export type GlobalSettingsQueryHookResult = ReturnType<typeof useGlobalSettingsQuery>;
+export type GlobalSettingsLazyQueryHookResult = ReturnType<typeof useGlobalSettingsLazyQuery>;
+export type GlobalSettingsSuspenseQueryHookResult = ReturnType<typeof useGlobalSettingsSuspenseQuery>;
+export type GlobalSettingsQueryResult = Apollo.QueryResult<GlobalSettingsQuery, GlobalSettingsQueryVariables>;
 export const TreeFiltersDataQueryDocument = gql`
     query TreeFiltersDataQuery($treeId: ID!, $startAt: ID, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
   treeContent(
