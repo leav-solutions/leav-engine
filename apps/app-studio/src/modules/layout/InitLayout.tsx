@@ -1,5 +1,5 @@
 import {type FunctionComponent, useRef} from 'react';
-import {Explorer} from '@leav/ui';
+import {Explorer, ExplorerV2} from '@leav/ui';
 import {RootLayout} from './RootLayout';
 
 export const InitLayout: FunctionComponent = ({children}) => {
@@ -8,7 +8,9 @@ export const InitLayout: FunctionComponent = ({children}) => {
     return (
         <RootLayout ref={explorerContainerRef}>
             <Explorer.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
-                {children}
+                <ExplorerV2.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
+                    {children}
+                </ExplorerV2.EditSettingsContextProvider>
             </Explorer.EditSettingsContextProvider>
         </RootLayout>
     );
