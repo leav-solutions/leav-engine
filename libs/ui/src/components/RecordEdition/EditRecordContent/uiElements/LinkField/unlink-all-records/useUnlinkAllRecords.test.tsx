@@ -20,7 +20,7 @@ jest.mock('aristid-ds', () => ({
             setFields: mockSetFields,
         })),
     },
-    KitButton: ({children, onClick, ...props}: any) => (
+    KitButton: ({children, onClick, danger, ...props}: any) => (
         <button onClick={onClick} {...props}>
             {children}
         </button>

@@ -1,5 +1,6 @@
 import userEvent from '@testing-library/user-event';
-import {LibraryBehavior, TreeBehavior, UploadDocument, UploadUpdateDocument} from '_ui/_gqlTypes';
+import {LibraryBehavior, TreeBehavior, UploadUpdateDocument} from '_ui/_gqlTypes';
+import * as gqlTypes from '_ui/_gqlTypes';
 import {doesFileExistAsChild} from '_ui/_queries/records/doesFileExistAsChild';
 import {getTreeLibraries} from '_ui/_queries/trees/getTreeLibraries';
 import {fireEvent, render, screen, waitFor} from '_ui/_tests/testUtils';
@@ -103,6 +104,19 @@ describe('UploadFiles', () => {
         (mockFile as any).uid = 'uid';
         (mockFile as any).replace = false;
 
+        const uploadResult = {
+            data: {
+                upload: [{uid: 'uid', record: {__typename: 'RecordLib', id: '1', whoAmI: mockRecord}}],
+            },
+        };
+        jest.spyOn(gqlTypes, 'useUploadMutation').mockImplementation(options => {
+            const runUploadMock = jest.fn().mockImplementation(async () => {
+                options?.onCompleted?.(uploadResult.data);
+                return uploadResult;
+            });
+            return [runUploadMock, {loading: false} as any] as any;
+        });
+
         const mocks = [
             ...commonMocks,
             {
@@ -117,31 +131,6 @@ describe('UploadFiles', () => {
                 result: {
                     data: {
                         doesFileExistAsChild: true,
-                    },
-                },
-            },
-            {
-                request: {
-                    query: UploadDocument,
-                    variables: {
-                        library: 'files',
-                        nodeId: 'files_tree',
-                        files: [
-                            {
-                                data: mockFile,
-                                uid: 'uid',
-                                size: 12,
-                                replace: false,
-                            },
-                        ],
-                    },
-                },
-                result: {
-                    data: {
-                        upload: {
-                            uid: 'uid',
-                            record: {__typename: 'RecordLib', id: '1', whoAmI: mockRecord},
-                        },
                     },
                 },
             },

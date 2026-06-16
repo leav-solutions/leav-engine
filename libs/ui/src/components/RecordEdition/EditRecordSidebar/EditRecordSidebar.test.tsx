@@ -18,6 +18,17 @@ jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
     }),
 }));
 
+jest.mock('_ui/components/RecordHistory/hooks/useFetchRecordHistory', () => ({
+    useFetchRecordHistory: () => ({
+        loading: false,
+        inError: false,
+        logs: [],
+        total: 0,
+        hasMore: false,
+        fetchMore: jest.fn(),
+    }),
+}));
+
 jest.mock(
     '_ui/components/RecordEdition/EditRecordContent/uiElements/StandardField',
     () =>
