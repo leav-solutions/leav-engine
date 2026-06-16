@@ -1,4 +1,4 @@
-import {AttributeFormat} from '_ui/_gqlTypes';
+import {AttributeFormat, useGlobalSettingsQuery} from '_ui/_gqlTypes';
 import {type FunctionComponent, type MutableRefObject, type RefObject} from 'react';
 import {BooleanAttributeDropDown} from './BooleanAttributeDropdown';
 import {ColorAttributeDropDown} from './ColorAttributeDropDown';
@@ -21,6 +21,7 @@ import {
     type UIFilter,
 } from '../../_types';
 import {SmartFilterAttributeDropdown} from './smart-filter/SmartFilterAttributeDropdown';
+import {KitLoader} from 'aristid-ds';
 
 export const FilterDropdownContent: FunctionComponent<{
     filter: UIFilter;
@@ -37,6 +38,12 @@ export const FilterDropdownContent: FunctionComponent<{
     toggleHiddenRef,
     onPermissionConfiguredChange,
 }) => {
+    const {data: settings, loading} = useGlobalSettingsQuery({
+        variables: {},
+    });
+
+    const enableEnhancedDateDropDown = settings?.globalSettings?.settings?.featureToggles?.enableDateFilterV2;
+
     if (isUIFilterValueList(filter)) {
         return <FilterValueListDropDown filter={filter} onFilterChange={onFilterChange} />;
     }
@@ -55,7 +62,13 @@ export const FilterDropdownContent: FunctionComponent<{
             [AttributeFormat.text]: <TextAttributeDropDown {...commonDropDownProps} />,
             [AttributeFormat.rich_text]: <TextAttributeDropDown {...commonDropDownProps} />,
             [AttributeFormat.numeric]: <NumericAttributeDropDown {...commonDropDownProps} />,
-            [AttributeFormat.date]: <DateAttributeDropDown {...commonDropDownProps} />,
+            [AttributeFormat.date]: loading ? (
+                <KitLoader />
+            ) : enableEnhancedDateDropDown ? (
+                <DateAttributeDropDown {...commonDropDownProps} /> // TODO replace with new date dropdown
+            ) : (
+                <DateAttributeDropDown {...commonDropDownProps} />
+            ),
             [AttributeFormat.boolean]: <BooleanAttributeDropDown {...commonDropDownProps} />,
             [AttributeFormat.encrypted]: <EncryptedAttributeDropDown {...commonDropDownProps} />,
             [AttributeFormat.extended]: <ExtendedAttributeDropDown {...commonDropDownProps} />,
