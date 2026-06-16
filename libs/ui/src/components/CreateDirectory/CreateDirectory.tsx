@@ -1,5 +1,5 @@
 import {App, Button, Input, Modal, type StepProps, Steps, theme} from 'antd';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type ITreeNodeWithRecord} from '_ui/types/trees';
 import {
@@ -44,18 +44,25 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
         return isFileExists.data.doesFileExistAsChild;
     };
 
-    useGetTreeLibrariesQuery({
+    const {data: getTreeLibrariesData} = useGetTreeLibrariesQuery({
         variables: {
             library: libraryId,
         },
-        onCompleted: getTreeLibrariesData => {
-            const linkedTree = getTreeLibrariesData.trees.list.filter(
-                tree => tree.system && tree.behavior === TreeBehavior.files,
-            )[0];
-
-            setTreeId(linkedTree.id);
-        },
     });
+
+    useEffect(() => {
+        if (!getTreeLibrariesData) {
+            return;
+        }
+
+        const linkedTree = getTreeLibrariesData.trees.list.filter(
+            tree => tree.system && tree.behavior === TreeBehavior.files,
+        )[0];
+
+        if (linkedTree) {
+            setTreeId(linkedTree.id);
+        }
+    }, [getTreeLibrariesData]);
 
     const [runCreateDirectory, {loading}] = useCreateDirectoryMutation({
         fetchPolicy: 'no-cache',

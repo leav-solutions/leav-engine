@@ -15,7 +15,7 @@ import {
     Upload,
     type UploadFile,
 } from 'antd';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useUser} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type ITreeNodeWithRecord} from '_ui/types/trees';
@@ -75,20 +75,29 @@ function UploadFiles({
         },
     });
 
-    useGetDirectoryDataQuery({
+    const {data: directoryData} = useGetDirectoryDataQuery({
         skip: !directoriesLibraryId || !selectedNode?.recordId,
-        onCompleted: data => {
-            const dirData = data.records.list[0];
-            setSelectedDir({
-                path: dirData.file_path.values[0].value,
-                name: dirData.file_name.values[0].value,
-            });
-        },
         variables: {
             library: directoriesLibraryId,
             directoryId: selectedNode?.recordId,
         },
     });
+
+    useEffect(() => {
+        if (!directoryData) {
+            return;
+        }
+
+        const dirData = directoryData.records.list[0];
+        if (!dirData) {
+            return;
+        }
+
+        setSelectedDir({
+            path: dirData.file_path.values[0].value,
+            name: dirData.file_name.values[0].value,
+        });
+    }, [directoryData]);
 
     const props = {
         name: 'files',
@@ -156,24 +165,33 @@ function UploadFiles({
         setFiles(filesToCheck);
     };
 
-    useGetTreeLibrariesQuery({
+    const {data: getTreeLibrariesData} = useGetTreeLibrariesQuery({
         variables: {
             library: libraryId,
         },
-        onCompleted: getTreeLibrariesData => {
-            const linkedTree = getTreeLibrariesData.trees.list.filter(
-                tree => tree.system && tree.behavior === TreeBehavior.files,
-            )[0];
-
-            setFilesTreeId(linkedTree.id);
-
-            const directoriesLibrary = linkedTree.libraries.filter(
-                l => l.library.behavior === LibraryBehavior.directories,
-            )[0]?.library.id;
-
-            setdirectoriesLibraryId(directoriesLibrary);
-        },
     });
+
+    useEffect(() => {
+        if (!getTreeLibrariesData) {
+            return;
+        }
+
+        const linkedTree = getTreeLibrariesData.trees.list.filter(
+            tree => tree.system && tree.behavior === TreeBehavior.files,
+        )[0];
+
+        if (!linkedTree) {
+            return;
+        }
+
+        setFilesTreeId(linkedTree.id);
+
+        const directoriesLibrary = linkedTree.libraries.filter(
+            l => l.library.behavior === LibraryBehavior.directories,
+        )[0]?.library.id;
+
+        setdirectoriesLibraryId(directoriesLibrary);
+    }, [getTreeLibrariesData]);
 
     // Sub to update files upload progress
     useUploadUpdateSubscription({
