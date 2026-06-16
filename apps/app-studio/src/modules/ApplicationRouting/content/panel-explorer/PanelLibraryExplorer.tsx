@@ -1,5 +1,5 @@
 import {type FunctionComponent} from 'react';
-import {Explorer, useLang} from '@leav/ui';
+import {Explorer, ExplorerV2, useLang} from '@leav/ui';
 import {useNavigate} from 'react-router-dom';
 import {type ItemActions, type ExplorerProps} from '../../types';
 import {mapToCommonExplorerProps} from './mapperToCommonExplorerProps';
@@ -30,9 +30,12 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
 
     const viewSettingsProps = useViewSettingsProps({viewId});
 
+    // TODO: Should be deleted when ViewV2 will be fully integrated and ExplorerV2 will be renamed to Explorer
+    const ExplorerComponent = application.enableViewSettings ? ExplorerV2 : Explorer;
+
     return (
         <div className={explorerContainer}>
-            <Explorer
+            <ExplorerComponent
                 {...commonExplorerProps}
                 defaultViewSettings={{
                     ...commonExplorerProps.defaultViewSettings,

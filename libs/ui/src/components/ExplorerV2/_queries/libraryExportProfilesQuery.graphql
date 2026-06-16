@@ -1,0 +1,20 @@
+query libraryExportProfiles($libraryId: [ID!]) {
+    libraries(filters: {id: $libraryId}) {
+        list {
+            id
+            exportProfiles {
+                defaultProfile
+                profiles {
+                    label
+                    columns {
+                        columnLabel
+                        attribute
+                    }
+                    error {
+                        message
+                    }
+                }
+            }
+        }
+    }
+}

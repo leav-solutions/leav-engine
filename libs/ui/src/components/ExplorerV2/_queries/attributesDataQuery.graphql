@@ -1,0 +1,90 @@
+fragment LinkAttributeDetails on LinkAttribute {
+    label
+    type
+    linked_library {
+        id
+        label
+    }
+    valuesList: values_list {
+        allowFreeEntry
+        enable
+        linkedValues: values {
+            id
+            whoAmI {
+                id
+                label
+                library {
+                    id
+                }
+            }
+        }
+    }
+    smart_filter {
+        enable
+        through {
+            id
+        }
+    }
+}
+
+fragment TreeAttributeDetails on TreeAttribute {
+    id
+    label
+    linked_tree {
+        id
+        label
+    }
+}
+
+fragment StandardAttributeDetails on StandardAttribute {
+    id
+    type
+    embedded_fields {
+        id
+        format
+        label
+    }
+    valuesList: values_list {
+        ... on StandardStringValuesListConf {
+            enable
+            allowFreeEntry
+            allowListUpdate
+            values
+        }
+    }
+    smart_filter {
+        enable
+    }
+}
+
+query ExplorerAttributes($ids: [ID!]) {
+    attributes(filters: {ids: $ids}) {
+        list {
+            id
+            type
+            format
+            label
+            permissions {
+                access_attribute
+            }
+            ...StandardAttributeDetails
+            ...LinkAttributeDetails
+            ...TreeAttributeDetails
+        }
+    }
+}
+
+query ExplorerLinkAttribute($id: ID!) {
+    attributes(filters: {ids: [$id]}) {
+        list {
+            id
+            multiple_values
+            permissions {
+                access_attribute
+                edit_value
+            }
+            ...LinkAttributeDetails
+            ...TreeAttributeDetails
+        }
+    }
+}

@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {
     Explorer,
+    ExplorerV2,
     ThroughConditionFilter,
     useConfirmModal,
     useExecuteSaveValueBatchMutation,
@@ -123,9 +124,12 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
         },
     });
 
+    // TODO: Should be deleted when ViewV2 will be fully integrated and ExplorerV2 will be renamed to Explorer
+    const ExplorerComponent = application.enableViewSettings ? ExplorerV2 : Explorer;
+
     return (
         <div className={explorerContainer}>
-            <Explorer
+            <ExplorerComponent
                 {...commonExplorerProps}
                 defaultViewSettings={{
                     filters: [
