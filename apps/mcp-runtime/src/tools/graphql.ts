@@ -62,6 +62,10 @@ export const createGraphqlHandler =
 
         const data = await response.json();
 
+        // Remove extensions from the response to avoid leaking internal info
+        // and reduce the size of the response. The agent doesn't need this info.
+        delete data.extensions;
+
         // MCP tool handlers must return { content: ContentBlock[] }.
         // 'text' as const is required: without it TypeScript widens the type to string,
         // which is incompatible with the SDK's discriminated union.
