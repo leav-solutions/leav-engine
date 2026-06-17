@@ -3,6 +3,7 @@ import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types'
 import {useApplicationSettingsContext} from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {RelativePaths} from '../../../router/paths';
 import {type Application} from '../../../types';
+import {registerPanelCloseCallback} from '../../../utils/panelCloseCallbacks';
 
 export const REDIRECT_URL_QUERY_PARAM = 'redirectUrl';
 export const INIIAL_VALUES_QUERY_PARAMS = 'formInitialValues';
@@ -38,12 +39,17 @@ export const useNavigateToPanel = (): {
             flapLibraryId,
             flapPanelId,
             queryParams,
+            onClose,
         }) => {
             const recordPanelId = getWithFallback(panelId, {libraryId, application});
 
             if (recordId === undefined || recordPanelId === undefined) {
                 // TODO: manage panels without recordId
                 return;
+            }
+
+            if (onClose) {
+                registerPanelCloseCallback({recordId, where, recordPanelId}, onClose);
             }
 
             const shouldOpenFlap =
