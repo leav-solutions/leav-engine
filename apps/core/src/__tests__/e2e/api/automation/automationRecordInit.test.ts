@@ -11,6 +11,7 @@ import {adminUserSdk, e2eGuestUser, e2eNonAdminUser} from '../e2eUtils';
 import {type NotificationActionParams} from '../../../../domain/automation/actions/notificationAction';
 import {type ConditionActionParams} from '../../../../domain/automation/actions/conditionAction';
 import {FAKE_PLUGIN_AUTOMATION_ACTION_TYPE} from '../_fixtures/fakeplugin/domain/fakeAutomationAction';
+import {GUEST_USER_EMAIL, NON_ADMIN_USER_EMAIL} from '../constants';
 
 describe('Automation RECORD_INIT', () => {
     const testLibraryId = 'automation_record_init_test_library';
@@ -365,6 +366,41 @@ describe('Automation RECORD_INIT', () => {
                         expect.objectContaining({payload: expect.objectContaining({id: e2eNonAdminUser().userId})}),
                     ]),
                 );
+            });
+
+            describe('when using findRecordsByAttr in jexl calculation', () => {
+                beforeAll(async () => {
+                    await updateRecordInitRule(ruleId, [
+                        {
+                            type: AutomationRuleActions.jexlExpression,
+                            params: {
+                                expression: `[findRecordsByAttr($, "users", "email", "EQUAL", "${GUEST_USER_EMAIL}") | first, findRecordsByAttr($, "users", "email", "CONTAINS", "${NON_ADMIN_USER_EMAIL}") | first]`,
+                            },
+                        },
+                        {
+                            type: AutomationRuleActions.modifyAttribute,
+                            params: {
+                                attributePath: testLibraryUsersAttrId,
+                                mode: 'add',
+                            },
+                        },
+                    ]);
+                });
+
+                test('should set value from previous step result (jexl calculation with findRecordsByAttr)', async () => {
+                    const res = await adminUserSdk.GetRecordByIdLinkValuesProperty({
+                        attributeId: testLibraryUsersAttrId,
+                        libraryId: testLibraryId,
+                        recordId,
+                    });
+
+                    expect(res.records.list[0].property).toEqual(
+                        expect.arrayContaining([
+                            expect.objectContaining({payload: expect.objectContaining({id: e2eGuestUser().userId})}),
+                            expect.objectContaining({payload: expect.objectContaining({id: e2eNonAdminUser().userId})}),
+                        ]),
+                    );
+                });
             });
         });
 
