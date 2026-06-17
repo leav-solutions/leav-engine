@@ -9,7 +9,7 @@ import {NotificationsList} from './notifications/NotificationsList';
 export const ActivityCenter = () => {
     const {t} = useTranslation();
 
-    const tabsItems: IKitTabItem[] = [
+    const tabItems: IKitTabItem[] = [
         {
             key: 'notifications',
             label: t('activity_center.notifications_title'),
@@ -22,5 +22,5 @@ export const ActivityCenter = () => {
         },
     ];
 
-    return <KitTabs className={activityCenterTabs} defaultKey="tasks" items={tabsItems} />;
+    return <KitTabs className={activityCenterTabs} defaultKey="tasks" items={tabItems} />;
 };

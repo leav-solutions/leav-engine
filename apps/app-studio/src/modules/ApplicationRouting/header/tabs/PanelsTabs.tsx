@@ -134,7 +134,7 @@ export const PanelsTabs: FunctionComponent<IPanelsTabsProps> = ({
                     }
                     items={tabItems}
                     variant="pill"
-                    size="xsmall"
+                    size="small"
                     onChange={onChangeTab}
                     activeKey={currentPanelId}
                 />

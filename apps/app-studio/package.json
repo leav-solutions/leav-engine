@@ -25,7 +25,7 @@
         "@dnd-kit/utilities": "3.2.2",
         "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
-        "aristid-ds": "15.3.1-2d7a4f8",
+        "aristid-ds": "16.1.0-2e36215",
         "classnames": "2.5.1",
         "dayjs": "1.11.21",
         "graphql": "16.14.2",
