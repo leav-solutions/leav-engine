@@ -57,10 +57,23 @@ import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
  * amortized by subsequent hits.
  */
 
-export const INDEX_RULES_CACHE_KEY = 'automation:rules:index';
-export const RULES_CACHE_KEYS_PATTERN = 'automation:rules:*';
+const RULES_CACHE_KEY_PREFIX = 'automation:rules';
 
-export const ruleCacheKey = (id: string): string => `automation:rules:${id}`;
+/**
+ * Builds the Redis keys for a given prefix. The prefix is configurable so
+ * integration tests can isolate their cache from the production keys (and from
+ * each other), mirroring the `collectionName` param of `automationRuleRepo`.
+ * Without isolation, any concurrent code path that triggers `getRulesToTrigger`
+ * (e.g. a `createRecord` emitting `RECORD_INIT` in a sibling test file running
+ * in another vitest worker) clobbers the shared, Redis-backed index key.
+ */
+export const buildRulesCacheKeys = (keyPrefix: string = RULES_CACHE_KEY_PREFIX) => ({
+    indexKey: `${keyPrefix}:index`,
+    keysPattern: `${keyPrefix}:*`,
+    ruleKey: (id: string): string => `${keyPrefix}:${id}`,
+});
+
+export const ruleCacheKey = (id: string): string => buildRulesCacheKeys().ruleKey(id);
 
 export interface IAutomationRulesCache {
     getRulesToTrigger(
@@ -77,25 +90,34 @@ export interface IAutomationRulesCacheDeps {
     config: IConfig;
 }
 
-export default function ({
-    'core.infra.cache.cacheService': cachesService,
-    'core.infra.automation.rule': automationRuleRepo,
-    config,
-}: IAutomationRulesCacheDeps): IAutomationRulesCache {
+export interface IAutomationRulesCacheParams {
+    keyPrefix?: string; // useful for integration tests to avoid Redis key conflicts between test files
+}
+
+export default function (
+    {
+        'core.infra.cache.cacheService': cachesService,
+        'core.infra.automation.rule': automationRuleRepo,
+        config,
+    }: IAutomationRulesCacheDeps,
+    params?: IAutomationRulesCacheParams,
+): IAutomationRulesCache {
     if (config.automation.cache.enable === false) {
         return automationCacheDisabled({automationRuleRepo});
     }
 
+    const {indexKey, keysPattern, ruleKey} = buildRulesCacheKeys(params?.keyPrefix);
+
     const _loadIndex = (ctx: IQueryInfos): Promise<AutomationRuleIndexEntry[]> =>
         cachesService.memoize<AutomationRuleIndexEntry[]>({
-            key: INDEX_RULES_CACHE_KEY,
+            key: indexKey,
             func: () => automationRuleRepo.getActiveAutomationRulesForCache(ctx),
             ctx,
         });
 
     const _loadRuleById = (id: string, ctx: IQueryInfos): Promise<IAutomationRule | null> =>
         cachesService.memoize<IAutomationRule | null>({
-            key: ruleCacheKey(id),
+            key: ruleKey(id),
             func: async () => {
                 const res = await automationRuleRepo.getAutomationRules({filters: {id}}, ctx);
                 return res.list[0] ?? null;
@@ -151,7 +173,7 @@ export default function ({
             return rules.filter((r): r is IAutomationRule => r !== null);
         },
         invalidate: async ruleId => {
-            const keys = ruleId ? [INDEX_RULES_CACHE_KEY, ruleCacheKey(ruleId)] : [RULES_CACHE_KEYS_PATTERN];
+            const keys = ruleId ? [indexKey, ruleKey(ruleId)] : [keysPattern];
             await cachesService.getCache(ECacheType.RAM).deleteData(keys);
         },
     };

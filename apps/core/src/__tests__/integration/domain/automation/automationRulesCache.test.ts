@@ -4,8 +4,7 @@ import {type ICreateAutomationRule} from '../../../../_types/automation';
 import {type IConfig} from '../../../../_types/config';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
 import automationRulesCacheFactory, {
-    INDEX_RULES_CACHE_KEY,
-    ruleCacheKey,
+    buildRulesCacheKeys,
     type IAutomationRulesCache,
 } from '../../../../domain/automation/automationRulesCache';
 import automationRuleRepoFactory, {
@@ -20,6 +19,17 @@ import {type IDbUtils} from '../../../../infra/db/dbUtils';
 
 // avoid conflict with apps/core/src/__tests__/integration/infra/automationRuleRepo.test.ts
 const automationRuleCacheCollectionName = `cache_${AUTOMATION_RULES_COLLECTION_NAME}`;
+
+// Isolate this file's Redis keys from the production keys used concurrently by
+// other test files (e.g. `createRecord` emits RECORD_INIT, an async trigger, so
+// any sibling test running in another vitest worker would clobber the shared
+// `automation:rules:*` keys). Mirrors `automationRuleCacheCollectionName`.
+const cacheKeyPrefix = `cache_test:${AUTOMATION_RULES_COLLECTION_NAME}`;
+const {
+    indexKey: INDEX_RULES_CACHE_KEY,
+    keysPattern: RULES_CACHE_KEYS_PATTERN,
+    ruleKey: ruleCacheKey,
+} = buildRulesCacheKeys(cacheKeyPrefix);
 
 describe('automationRulesCache', () => {
     let rulesCacheEnabled: IAutomationRulesCache;
@@ -58,21 +68,27 @@ describe('automationRulesCache', () => {
         );
         await dbService.createCollection(automationRuleCacheCollectionName);
 
-        rulesCacheEnabled = automationRulesCacheFactory({
-            'core.infra.cache.cacheService': cachesService,
-            'core.infra.automation.rule': automationRuleRepo,
-            config: {automation: {cache: {enable: true}}} as IConfig,
-        });
-        rulesCacheDisabled = automationRulesCacheFactory({
-            'core.infra.cache.cacheService': cachesService,
-            'core.infra.automation.rule': automationRuleRepo,
-            config: {automation: {cache: {enable: false}}} as IConfig,
-        });
+        rulesCacheEnabled = automationRulesCacheFactory(
+            {
+                'core.infra.cache.cacheService': cachesService,
+                'core.infra.automation.rule': automationRuleRepo,
+                config: {automation: {cache: {enable: true}}} as IConfig,
+            },
+            {keyPrefix: cacheKeyPrefix},
+        );
+        rulesCacheDisabled = automationRulesCacheFactory(
+            {
+                'core.infra.cache.cacheService': cachesService,
+                'core.infra.automation.rule': automationRuleRepo,
+                config: {automation: {cache: {enable: false}}} as IConfig,
+            },
+            {keyPrefix: cacheKeyPrefix},
+        );
     });
 
     afterEach(async () => {
         await clearAllCollectionDocuments(automationRuleCacheCollectionName);
-        await ramCache.deleteAll('automation:rules:*');
+        await ramCache.deleteAll(RULES_CACHE_KEYS_PATTERN);
     });
 
     describe.each([
