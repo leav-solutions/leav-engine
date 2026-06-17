@@ -112,10 +112,29 @@ describe('MessageHandlers', () => {
         it('Should expose method navigateToPanel which open given panel', async () => {
             const data: any = {someField: 'someValue'};
 
-            const {navigateToPanel} = getExposedMethods({current: null}, dispatchMock);
+            const {navigateToPanel} = getExposedMethods({current: {}}, dispatchMock);
             navigateToPanel(data);
 
-            expect(dispatchMock).toHaveBeenCalledWith({type: 'navigate-to-panel', data});
+            expect(dispatchMock).toHaveBeenCalledWith({
+                type: 'navigate-to-panel',
+                data,
+                id: expect.any(String),
+                overrides: [],
+            });
+        });
+
+        it('Should store the onClose callback passed to navigateToPanel and send it as an override', async () => {
+            const onClose = jest.fn();
+            const data: any = {someField: 'someValue', onClose};
+            const callbacksStore = {current: {}};
+
+            const {navigateToPanel} = getExposedMethods(callbacksStore, dispatchMock);
+            navigateToPanel(data);
+
+            const dispatched = dispatchMock.mock.calls[0][0];
+            expect(dispatched.type).toBe('navigate-to-panel');
+            expect(dispatched.overrides).toEqual(['onClose']);
+            expect(callbacksStore.current[dispatched.id].onClose).toBe(onClose);
         });
 
         it('Should expose method navigateToIframe which open given iframe panel', async () => {
@@ -127,7 +146,7 @@ describe('MessageHandlers', () => {
             expect(dispatchMock).toHaveBeenCalledWith({type: 'navigate-to-iframe', data});
         });
 
-        it('Should expose method closePanel which which close previous opened panel', async () => {
+        it('Should expose method closePanel which close previous opened panel', async () => {
             const data: any = {someField: 'someValue'};
 
             const {closePanel} = getExposedMethods({current: null}, dispatchMock);

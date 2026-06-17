@@ -128,7 +128,15 @@ export const initClientHandlers: (
             getCallback(message.path, callbacksList)?.(...(message.data as never[]));
             break;
         case 'navigate-to-panel':
-            options?.handlers?.onNavigateToPanel?.(message.data);
+            options?.handlers?.onNavigateToPanel?.(
+                setCallbacks(
+                    message.id,
+                    message.__frameId,
+                    message.data,
+                    callCb,
+                    message.overrides,
+                ) as NavigateToPanelMessage['data'],
+            );
             break;
         case 'close-panel':
             options?.handlers?.onClosePanel?.(message.data);
@@ -218,7 +226,9 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
         dispatch?.({type: 'message', data, id});
     },
     navigateToPanel: (data: NavigateToPanelMessage['data']) => {
-        dispatch?.({type: 'navigate-to-panel', data});
+        const id = Date.now().toString();
+        const {data: nextData, overrides} = storeCallbacks(data, id, callbacksStore);
+        dispatch?.({type: 'navigate-to-panel', data: nextData as NavigateToPanelMessage['data'], id, overrides});
     },
     closePanel: (data: ClosePanelMessage['data']) => {
         dispatch?.({type: 'close-panel', data});

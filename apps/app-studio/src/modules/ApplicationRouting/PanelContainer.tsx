@@ -23,6 +23,7 @@ import {
 import {WORKSPACE_PANEL_CONTAINER_ID, MODAL_EXTRA_RIGHT_PORTAL_ID} from '../../constants';
 import {createPortal} from 'react-dom';
 import {retrievePreviousPanelURLParams} from './utils/retrievePreviousPanelURLParams';
+import {consumePanelCloseCallback} from './utils/panelCloseCallbacks';
 
 const MODAL_FULLSCREEN_INDEX = 998;
 
@@ -69,6 +70,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
     }, [isPanelInSlider, isPreviousPanelFirstLevel, previousRecordPanelId]);
 
     const closeContainer = () => {
+        consumePanelCloseCallback({recordId, where, recordPanelId})?.();
         const closingPath = hasFlapPanel
             ? RelativePaths.closeCurrentPanel + '/' + RelativePaths.closeFlapPanel
             : RelativePaths.closeCurrentPanel;

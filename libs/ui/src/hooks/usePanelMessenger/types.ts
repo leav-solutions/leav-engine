@@ -100,6 +100,8 @@ type FlapPanelId = z.infer<typeof FlapPanelIdSchema>;
 
 export type NavigateToPanelMessage = IMessageBase & {
     type: 'navigate-to-panel';
+    id: string;
+    overrides?: string[];
     data: {
         where: Where;
         libraryId: LibraryId;
@@ -112,6 +114,8 @@ export type NavigateToPanelMessage = IMessageBase & {
             redirectUrl?: string;
             formInitialValues?: Record<string, Array<AnyPrimitive | IRecordIdentity | ITreeNodeWithRecord>>;
         };
+        // Called by the host when the panel opened by this navigation is closed by the user (not on successful submit)
+        onClose?: () => void;
     };
 };
 
