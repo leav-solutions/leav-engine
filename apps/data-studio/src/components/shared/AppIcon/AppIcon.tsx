@@ -1,5 +1,3 @@
-// Copyright LEAV Solutions 2017
-
 import {GLOBAL_BASE_URL} from '../../../constants';
 
 type PossibleSizes = 'tiny' | 'small' | 'medium' | 'big' | 'huge';

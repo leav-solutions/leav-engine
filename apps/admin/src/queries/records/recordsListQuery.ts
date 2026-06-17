@@ -1,5 +1,3 @@
-// Copyright LEAV Solutions 2017
-
 import {gql} from '@apollo/client';
 
 export interface IGetRecordsListQueryElement {

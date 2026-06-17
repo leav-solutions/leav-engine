@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-
 import {type IField} from '_ui/types/search';
 import {
     type IGetRecordsFromLibraryQuery,
@@ -10,7 +7,6 @@ import {
 import {mockLibrarySimple} from '../common/library';
 import {mockPreviews} from '../common/record';
 
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export const mockGetRecordsFromLibraryQueryElement: IGetRecordsFromLibraryQueryElement = {
     _id: 'id',
     id: 'id',
