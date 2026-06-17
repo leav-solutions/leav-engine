@@ -1,8 +1,5 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
 import {AttributeFormat, AttributeType} from './_gqlTypes';
 
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 export enum PreviewSize {
     TINY = 'tiny',
     SMALL = 'small',

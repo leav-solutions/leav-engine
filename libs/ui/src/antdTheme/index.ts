@@ -2,7 +2,6 @@ import {type ThemeConfig} from 'antd/lib/config-provider/context';
 
 export * from './types';
 
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 const baseTextColor = '#000000';
 export const themeVars = {
     primaryColor: 'var(--general-colors-primary-400)',

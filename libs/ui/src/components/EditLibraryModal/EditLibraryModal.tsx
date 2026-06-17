@@ -16,7 +16,6 @@ import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import EditLibrary from './EditLibrary/EditLibrary';
 
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 interface IEditLibraryModalProps {
     libraryId?: string;
     open: boolean;

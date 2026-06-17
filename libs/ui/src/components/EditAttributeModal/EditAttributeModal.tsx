@@ -1,6 +1,3 @@
-// Copyright LEAV Solutions 2017
-// This file is released under LGPL V3
-
 import {gql, useApolloClient} from '@apollo/client';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Modal, type ModalProps, Popconfirm} from 'antd';
@@ -19,7 +16,6 @@ import {ErrorDisplay} from '../ErrorDisplay';
 import {Loading} from '../Loading';
 import EditAttribute from './EditAttribute/EditAttribute';
 
-// License text available at https://www.gnu.org/licenses/lgpl-3.0.txt
 interface IEditAttributeModalModalProps {
     attributeId?: string;
     open: boolean;
