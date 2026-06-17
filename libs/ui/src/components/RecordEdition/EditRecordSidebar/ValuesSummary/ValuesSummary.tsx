@@ -70,95 +70,94 @@ export const ValuesSummary: FunctionComponent<IValuesSummaryProps> = ({
     const stripedGlobalValues = globalValues.map(stringifyValue);
     const stripedCalculatedValues = calculatedValues.map(stringifyValue);
 
+    const tabItems = [
+        {
+            key: 'version_values',
+            label: t('record_summary.values_version'),
+            tabContent: (
+                <InformationsWrapper>
+                    <KitTree
+                        defaultExpandAll
+                        selectedKeys={
+                            calculatedValues.length > 0 && globalValues.length === 0
+                                ? [calculatedValueKey]
+                                : [globalValueKey]
+                        }
+                        treeData={[
+                            {
+                                key: calculatedValueKey,
+                                title: (
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
+                                        <span>
+                                            <FontAwesomeIcon icon={faSquareRootAlt} />{' '}
+                                            {t('record_summary.calculated_value')}
+                                        </span>
+                                        <KitBadge count={stripedCalculatedValues.length} color="primary" />
+                                    </div>
+                                ),
+                                children:
+                                    stripedCalculatedValues.length > 0
+                                        ? stripedCalculatedValues.map((calculatedValue, index) => ({
+                                              key: `${calculatedValueKey}-${index}`,
+                                              title: calculatedValue,
+                                          }))
+                                        : [
+                                              {
+                                                  key: `${calculatedValueKey}-${0}`,
+                                                  title: <i>{t('record_summary.no_value')}</i>,
+                                              },
+                                          ],
+                            },
+                            {
+                                key: globalValueKey,
+                                title: (
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                        }}
+                                    >
+                                        <span>
+                                            <FontAwesomeIcon icon={faLayerGroup} /> {t('record_summary.global')}
+                                        </span>
+                                        <KitBadge count={stripedGlobalValues.length} color="primary" />
+                                    </div>
+                                ),
+                                children:
+                                    stripedGlobalValues.length > 0
+                                        ? stripedGlobalValues.map((value, index) => ({
+                                              key: `${globalValueKey}-${index}`,
+                                              title: value,
+                                          }))
+                                        : [
+                                              {
+                                                  key: `${globalValueKey}-${0}`,
+                                                  title: <i>{t('record_summary.no_value')}</i>,
+                                              },
+                                          ],
+                            },
+                        ]}
+                    />
+                </InformationsWrapper>
+            ),
+        },
+        {
+            key: 'history',
+            label: t('record_summary.history'),
+            tabContent: <RecordHistory record={record} attributeId={attributeId} />,
+        },
+    ];
+
     return (
         <StyledDivContentWrapper>
-            <KitTabs
-                items={[
-                    {
-                        key: 'version_values',
-                        label: t('record_summary.values_version'),
-                        tabContent: (
-                            <InformationsWrapper>
-                                <KitTree
-                                    defaultExpandAll
-                                    selectedKeys={
-                                        calculatedValues.length > 0 && globalValues.length === 0
-                                            ? [calculatedValueKey]
-                                            : [globalValueKey]
-                                    }
-                                    treeData={[
-                                        {
-                                            key: calculatedValueKey,
-                                            title: (
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'space-between',
-                                                    }}
-                                                >
-                                                    <span>
-                                                        <FontAwesomeIcon icon={faSquareRootAlt} />{' '}
-                                                        {t('record_summary.calculated_value')}
-                                                    </span>
-                                                    <KitBadge count={stripedCalculatedValues.length} color="primary" />
-                                                </div>
-                                            ),
-                                            children:
-                                                stripedCalculatedValues.length > 0
-                                                    ? stripedCalculatedValues.map((calculatedValue, index) => ({
-                                                          key: `${calculatedValueKey}-${index}`,
-                                                          title: calculatedValue,
-                                                      }))
-                                                    : [
-                                                          {
-                                                              key: `${calculatedValueKey}-${0}`,
-                                                              title: <i>{t('record_summary.no_value')}</i>,
-                                                          },
-                                                      ],
-                                        },
-                                        {
-                                            key: globalValueKey,
-                                            title: (
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'space-between',
-                                                    }}
-                                                >
-                                                    <span>
-                                                        <FontAwesomeIcon icon={faLayerGroup} />{' '}
-                                                        {t('record_summary.global')}
-                                                    </span>
-                                                    <KitBadge count={stripedGlobalValues.length} color="primary" />
-                                                </div>
-                                            ),
-                                            children:
-                                                stripedGlobalValues.length > 0
-                                                    ? stripedGlobalValues.map((value, index) => ({
-                                                          key: `${globalValueKey}-${index}`,
-                                                          title: value,
-                                                      }))
-                                                    : [
-                                                          {
-                                                              key: `${globalValueKey}-${0}`,
-                                                              title: <i>{t('record_summary.no_value')}</i>,
-                                                          },
-                                                      ],
-                                        },
-                                    ]}
-                                />
-                            </InformationsWrapper>
-                        ),
-                    },
-                    {
-                        key: 'history',
-                        label: t('record_summary.history'),
-                        tabContent: <RecordHistory record={record} attributeId={attributeId} />,
-                    },
-                ]}
-            />
+            <KitTabs items={tabItems} />
         </StyledDivContentWrapper>
     );
 };

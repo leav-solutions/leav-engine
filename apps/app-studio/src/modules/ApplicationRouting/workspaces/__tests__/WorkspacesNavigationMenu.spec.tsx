@@ -115,6 +115,9 @@ describe('WorkspacesNavigationMenu component', () => {
     const renderWithTheme: typeof render = component => render(<InitTheme>{component}</InitTheme>);
     const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
 
+    // KitSideMenu renders workspace items as <button data-role="menuitem"> (groups/separators excluded)
+    const getMenuItems = () => document.querySelectorAll<HTMLElement>('[data-role="menuitem"]');
+
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
@@ -128,7 +131,7 @@ describe('WorkspacesNavigationMenu component', () => {
         renderWithTheme(<WorkspacesNavigationMenu />);
 
         expect(screen.getByRole('navigation')).toBeInTheDocument();
-        expect(screen.getAllByRole('listitem')).toHaveLength(6); // 2 records + 2 libraries + 1 shortcuts + 1 separator
+        expect(getMenuItems()).toHaveLength(4); // 2 records + 2 libraries (shortcuts group + separator excluded)
         expect(screen.getByText('workspaces_navigation_menu.shortcuts')).toBeInTheDocument();
         expect(screen.getByText('record1')).toBeInTheDocument();
         expect(screen.getByText('record2')).toBeInTheDocument();
@@ -155,7 +158,7 @@ describe('WorkspacesNavigationMenu component', () => {
 
         renderWithTheme(<WorkspacesNavigationMenu />);
 
-        const workspaceItem = screen.getByRole('listitem');
+        const workspaceItem = getMenuItems()[0];
         const svgIcon = workspaceItem.querySelector('svg');
         expect(svgIcon).toHaveClass('fa-star-of-life');
     });
@@ -190,11 +193,11 @@ describe('WorkspacesNavigationMenu component', () => {
 
         renderWithTheme(<WorkspacesNavigationMenu />);
 
-        const houseWorkspaceItem = screen.getAllByRole('listitem')[0];
+        const houseWorkspaceItem = getMenuItems()[0];
         const houseSvgIcon = houseWorkspaceItem.querySelector('svg');
         expect(houseSvgIcon).toHaveClass('fa-house');
 
-        const userWorkspaceItem = screen.getAllByRole('listitem')[1];
+        const userWorkspaceItem = getMenuItems()[1];
         const userSvgIcon = userWorkspaceItem.querySelector('svg');
         expect(userSvgIcon).toHaveClass('fa-user');
     });
@@ -221,7 +224,7 @@ describe('WorkspacesNavigationMenu component', () => {
                 await user.type(searchInput, 'record');
             });
 
-            expect(screen.getAllByRole('listitem')).toHaveLength(11); // 10 records + 1 shortcuts
+            expect(getMenuItems()).toHaveLength(10); // 10 records (shortcuts group excluded)
             expect(screen.getByText('workspaces_navigation_menu.shortcuts')).toBeInTheDocument();
             expect(screen.getByText('record1')).toBeInTheDocument();
             expect(screen.getByText('record2')).toBeInTheDocument();
@@ -250,7 +253,7 @@ describe('WorkspacesNavigationMenu component', () => {
                 await user.type(searchInput, 'library');
             });
 
-            expect(screen.getAllByRole('listitem')).toHaveLength(2); // 2 libraries without separator
+            expect(getMenuItems()).toHaveLength(2); // 2 libraries without separator
             expect(screen.getByText('library1')).toBeInTheDocument();
             expect(screen.getByText('library2')).toBeInTheDocument();
             expect(screen.queryByText('workspaces_navigation_menu.shortcuts')).not.toBeInTheDocument();
@@ -280,7 +283,7 @@ describe('WorkspacesNavigationMenu component', () => {
                 await user.type(searchInput, 'record');
             });
 
-            expect(screen.getAllByRole('listitem')).toHaveLength(13); // 10 records + 1 library + 1 shortcuts + 1 separator
+            expect(getMenuItems()).toHaveLength(11); // 10 records + 1 library (shortcuts group + separator excluded)
             expect(screen.getByText('workspaces_navigation_menu.shortcuts')).toBeInTheDocument();
             expect(screen.getByText('record1')).toBeInTheDocument();
             expect(screen.getByText('record2')).toBeInTheDocument();
@@ -335,7 +338,7 @@ describe('WorkspacesNavigationMenu component', () => {
                 await user.type(searchInput, 'record30');
             });
 
-            expect(screen.getAllByRole('listitem')).toHaveLength(1);
+            expect(getMenuItems()).toHaveLength(0); // no-results renders as a group, not a menu item
             expect(screen.queryByText('workspaces_navigation_menu.shortcuts')).not.toBeInTheDocument();
             expect(screen.getByText('workspaces_navigation_menu.no_results')).toBeInTheDocument();
         });
@@ -375,8 +378,8 @@ describe('WorkspacesNavigationMenu component', () => {
 
             renderWithTheme(<WorkspacesNavigationMenu />);
 
-            // No title → menu item renders empty text, click it through its list item
-            await user.click(screen.getAllByRole('listitem')[0]);
+            // No title → menu item renders empty text, click it through its menu item button
+            await user.click(getMenuItems()[0]);
 
             expect(matomo.trackNavigationEvent).toHaveBeenCalledWith(
                 matomoEvents.actions.workspace_clicked,

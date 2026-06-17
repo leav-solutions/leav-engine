@@ -1,6 +1,6 @@
 import {useGetRecordValuesQuery} from '../../../../hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import {type IRecordIdentityWhoAmI} from '../../../../types/records';
-import {KitAlert, KitButton, KitDivider, KitEmpty, KitError, KitSkeleton, KitTabs, KitTypography} from 'aristid-ds';
+import {KitAlert, KitButton, KitDivider, KitEmpty, KitSkeleton, KitTypography} from 'aristid-ds';
 import {RecordInformations} from './RecordInformations/RecordInformations';
 import {type FunctionComponent} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';

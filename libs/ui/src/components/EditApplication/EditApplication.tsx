@@ -46,7 +46,7 @@ function EditApplication({
         return appInfoComp;
     }
 
-    const tabs: ComponentProps<typeof KitTabs>['items'] = [
+    const tabItems: ComponentProps<typeof KitTabs>['items'] = [
         {
             key: 'info',
             label: t('applications.info'),
@@ -55,7 +55,7 @@ function EditApplication({
         ...additionalTabs,
     ];
 
-    return <KitTabs items={tabs} defaultKey={activeTab} />;
+    return <KitTabs items={tabItems} defaultKey={activeTab} />;
 }
 
 export default EditApplication;
