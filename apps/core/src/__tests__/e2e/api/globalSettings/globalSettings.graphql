@@ -1,4 +1,4 @@
-mutation SaveSDOGlobalSettings($settings: GlobalSettingsInput!) {
+mutation SaveGlobalSettings($settings: GlobalSettingsInput!) {
     saveGlobalSettings(settings: $settings) {
         settings
     }

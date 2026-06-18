@@ -269,18 +269,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -360,8 +348,6 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -474,17 +460,6 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
-}
-
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -586,8 +561,6 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -971,19 +944,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
-};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1329,6 +1295,13 @@ export type PostDiscussionCommentMutationVariables = Exact<{
 
 
 export type PostDiscussionCommentMutation = { postDiscussionComment: { id: string } };
+
+export type SaveGlobalSettingsMutationVariables = Exact<{
+  settings: GlobalSettingsInput;
+}>;
+
+
+export type SaveGlobalSettingsMutation = { saveGlobalSettings: { settings?: any | null } };
 
 export type GetRecordsLinkValuesPropertyQueryVariables = Exact<{
   library: Scalars['ID']['input'];
@@ -1702,6 +1675,13 @@ export const PostDiscussionCommentDocument = gql`
   }
 }
     `;
+export const SaveGlobalSettingsDocument = gql`
+    mutation SaveGlobalSettings($settings: GlobalSettingsInput!) {
+  saveGlobalSettings(settings: $settings) {
+    settings
+  }
+}
+    `;
 export const GetRecordsLinkValuesPropertyDocument = gql`
     query GetRecordsLinkValuesProperty($library: ID!, $filters: [RecordFilterInput], $retrieveInactive: Boolean, $attribute: ID!) {
   records(
@@ -2050,20 +2030,6 @@ export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, str
 
 const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType, _variables) => action();
 
-export type SaveSDOGlobalSettingsMutationVariables = Exact<{
-  settings: GlobalSettingsInput;
-}>;
-
-export type SaveSDOGlobalSettingsMutation = { saveGlobalSettings: { settings?: any | null } };
-
-export const SaveSDOGlobalSettingsDocument = gql`
-    mutation SaveSDOGlobalSettings($settings: GlobalSettingsInput!) {
-  saveGlobalSettings(settings: $settings) {
-    settings
-  }
-}
-    `;
-
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
     SaveApiKey(variables: SaveApiKeyMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveApiKeyMutation> {
@@ -2101,6 +2067,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     PostDiscussionComment(variables?: PostDiscussionCommentMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<PostDiscussionCommentMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<PostDiscussionCommentMutation>({ document: PostDiscussionCommentDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'PostDiscussionComment', 'mutation', variables);
+    },
+    SaveGlobalSettings(variables: SaveGlobalSettingsMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveGlobalSettingsMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SaveGlobalSettingsMutation>({ document: SaveGlobalSettingsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveGlobalSettings', 'mutation', variables);
     },
     GetRecordsLinkValuesProperty(variables: GetRecordsLinkValuesPropertyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordsLinkValuesPropertyQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecordsLinkValuesPropertyQuery>({ document: GetRecordsLinkValuesPropertyDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordsLinkValuesProperty', 'query', variables);
@@ -2164,9 +2133,6 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     DeleteViewV2(variables: DeleteViewV2MutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteViewV2Mutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteViewV2Mutation>({ document: DeleteViewV2Document, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteViewV2', 'mutation', variables);
-    },
-    SaveSDOGlobalSettings(variables: SaveSDOGlobalSettingsMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveSDOGlobalSettingsMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<SaveSDOGlobalSettingsMutation>({ document: SaveSDOGlobalSettingsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveSDOGlobalSettings', 'mutation', variables);
     }
   };
 }

@@ -1,7 +1,6 @@
 import {type ISDOSettings} from '../../../../_types/sdo';
 
 export const SDO_LIBRARY_ID = 'test_sdo';
-
 export const SDO_EXPORT_TIMER = 500;
 
 export const sdoGlobalSettings: ISDOSettings = {

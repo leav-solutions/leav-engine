@@ -35,7 +35,7 @@ describe('SDO Export', () => {
             },
         });
 
-        await adminUserSdk.SaveSDOGlobalSettings({
+        await adminUserSdk.SaveGlobalSettings({
             settings: {
                 settings: {
                     sdo: sdoGlobalSettings,
@@ -61,7 +61,7 @@ describe('SDO Export', () => {
 
     const waitForSdo = (recordId: string, timeoutMs = SDO_EXPORT_TIMER * 10): Promise<ISDO> =>
         rabbitmqClient.waitForMessage<ISDO>(
-            'test_get_export_event_queue',
+            TEST_GET_EXPORT_MSG_QUEUE,
             m => m.name === SDO_LIBRARY_ID && String((m.content as any).system?.systemId) === recordId,
             timeoutMs,
         );
