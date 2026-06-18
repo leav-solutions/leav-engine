@@ -54,11 +54,11 @@ For decisions taken mid-EPIC, a table of subjects still to settle.
 
 ## Decisions log
 
-| #   | Title                                                                                     | Status   |
-| --- | ----------------------------------------------------------------------------------------- | -------- |
-| 001 | [Drag and drop library](ADR-001-dnd.md)                                                   | Accepted |
-| 002 | [E2E forms test](ADR-002-tests-e2e-forms.md)                                              | Accepted |
-| 003 | [Documentation](ADR-003-documentation.md)                                                 | Accepted |
-| 004 | [Plugins real-time computed data architecture](ADR-004-plugins-realtime-computed-data.md) | Accepted |
-| 005 | [GraphQL plugin types in generated files](ADR-005-graphql-plugins-types.md)               | Accepted |
-| 006 | [Explorer view configuration panel architecture](ADR-006-explorer-views-config-panel.md)  | Accepted |
+| #   | Title                                                                                      | Status   |
+| --- | ------------------------------------------------------------------------------------------ | -------- |
+| 001 | [Drag and drop library](ADR-001-dnd.md)                                                    | Accepted |
+| 002 | [E2E forms test](ADR-002-tests-e2e-forms.md)                                               | Accepted |
+| 003 | [Documentation](ADR-003-documentation.md)                                                  | Accepted |
+| 004 | [Plugins real-time computed data architecture](ADR-004-plugins-realtime-computed-data.md)  | Accepted |
+| 005 | [GraphQL plugin types in generated files](ADR-005-graphql-plugins-types.md)                | Accepted |
+| 006 | [Explorer view configuration panel architecture](ADR-006-explorer-views-settings-volet.md) | Accepted |

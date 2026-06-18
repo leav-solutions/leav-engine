@@ -6,7 +6,7 @@ Repose sur `window.postMessage` avec une enveloppe marquée `__fromIframeMesseng
 
 Le détail (types de messages, mécanisme de callbacks cross-frame, encodage) se lit
 dans le code de ce dossier. Pour les décisions d'architecture côté view config panel,
-voir `docs/adr/ADR-006-explorer-views-config-panel.md`.
+voir `docs/adr/ADR-006-explorer-views-settings-volet.md`.
 
 ## Fichiers clés
 

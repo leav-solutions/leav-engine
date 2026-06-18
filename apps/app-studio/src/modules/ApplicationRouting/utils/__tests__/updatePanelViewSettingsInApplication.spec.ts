@@ -1,5 +1,9 @@
 import {type Application} from '../../types';
-import {type PanelViewSettings, updatePanelViewSettingsInApplication} from '../updatePanelViewSettingsInApplication';
+import {
+    type PanelViewSettings,
+    resetPanelViewSettingsInApplication,
+    updatePanelViewSettingsInApplication,
+} from '../updatePanelViewSettingsInApplication';
 
 describe('updatePanelViewSettingsInApplication', () => {
     const baseApplication: Application = {
@@ -79,5 +83,48 @@ describe('updatePanelViewSettingsInApplication', () => {
         );
 
         expect(JSON.stringify(baseApplication)).toBe(originalSnapshot);
+    });
+});
+
+describe('resetPanelViewSettingsInApplication', () => {
+    const activeApplication: Application = {
+        workspaces: [
+            {
+                id: '1',
+                type: 'library',
+                libraryId: 'home',
+            },
+        ],
+        libraries: {
+            home: {
+                libraryPanels: [
+                    {
+                        id: 'panel1',
+                        type: 'explorer',
+                        actions: [],
+                        isViewSettingsActive: true,
+                        selectedTab: 'filters',
+                        currentViewId: 'view1',
+                        targetLibraryId: 'home',
+                    },
+                ],
+                recordPanels: [],
+            },
+        },
+    };
+
+    it('should reset the view settings of the targeted panel to their closed state', () => {
+        const newApplication = resetPanelViewSettingsInApplication(activeApplication, {
+            libraryId: 'home',
+            panelType: 'libraryPanels',
+            panelId: 'panel1',
+        });
+
+        expect(newApplication.libraries.home.libraryPanels[0]).toMatchObject({
+            isViewSettingsActive: false,
+            selectedTab: undefined,
+            currentViewId: undefined,
+            targetLibraryId: undefined,
+        });
     });
 });
