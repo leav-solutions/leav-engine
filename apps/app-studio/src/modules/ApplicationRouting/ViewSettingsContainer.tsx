@@ -4,7 +4,10 @@ import {usePanelEventHandlers} from '@leav/ui';
 import {PanelViewSettings} from './content/panel-view-settings/PanelViewSettings';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
-import {updatePanelViewSettingsInApplication} from './utils/updatePanelViewSettingsInApplication';
+import {
+    resetPanelViewSettingsInApplication,
+    updatePanelViewSettingsInApplication,
+} from './utils/updatePanelViewSettingsInApplication';
 import {type AppStudioInternalEvent} from './types';
 
 export const ViewSettingsContainer = () => {
@@ -39,21 +42,13 @@ export const ViewSettingsContainer = () => {
 
     const resetViewSettings = () => {
         setApplication(prev =>
-            updatePanelViewSettingsInApplication(
-                prev,
-                {libraryId, panelType, panelId: currentPanel.id},
-                {
-                    isViewSettingsActive: false,
-                    selectedTab: undefined,
-                    currentViewId: undefined,
-                    targetLibraryId: undefined,
-                },
-            ),
+            resetPanelViewSettingsInApplication(prev, {libraryId, panelType, panelId: currentPanel.id}),
         );
     };
 
     return (
         <KitSidePanel
+            floating
             closable={false}
             closeOnEsc
             initialOpen={true}

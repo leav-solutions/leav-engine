@@ -108,21 +108,46 @@ mount, each for a different need:
 **Why:** a dedicated action/prop is needed to apply an externally driven view without conflicting
 with the existing `viewId`-based loading flow read at mount.
 
-### 5. `targetPanelId` rather than `explorerPanelId`
+### 5. View settings state carried by the `explorer` panel, targeted via `explorerPanelDetails`
 
-The view settings panel schema uses `targetPanelId` (generic) instead of `explorerPanelId`.
+There is no separate "view settings panel" schema. The state lives as extra fields directly on
+`baseExplorerPanelSchema` (`isViewSettingsActive`, `selectedTab`, `currentViewId`,
+`targetLibraryId`). Inter-panel addressing is done with an `explorerPanelDetails`
+(`{libraryId, panelType, panelId}`) payload carried by the `open-view-settings` event.
 
-**Why:** when injectable sub-panels (Planning/Cadrage) arrive, the view settings panel will need
-to target `custom` (iframe) panels too, not just `explorer` panels. The generic name avoids a
-rename at that point.
+**Why:** an earlier design made the volet a distinct panel addressed by a generic `targetPanelId`,
+anticipating that injectable sub-panels (Planning/Cadrage) would let the volet target `custom`
+(iframe) panels too. That was dropped: folding the state onto the `explorer` panel is simpler and
+matches the current scope, where the volet only ever drives an explorer. The naming is therefore
+explorer-specific on purpose. Extending the volet to `custom` panels would require revisiting this
+choice — see open points (injectable sub-panels are out of scope for this version).
+
+> The `targetPanelId` field still present in the schema (`ItemActionsSchema`) is unrelated: it
+> addresses the record panel opened by a row-click action.
 
 ## Consequences
 
 - The view settings state lives as extra fields on the existing `explorer` panel schema in
   app-studio (`isViewSettingsActive`, `selectedTab`, `currentViewId`, `targetLibraryId`); it is
   **not** a separate routable panel type and is not rendered inside `PanelContent`.
-- `ViewSettingsContainer` (wrapping `PanelViewSettings`) is rendered by `Panel`, conditioned on
-  `currentPanel.isViewSettingsActive` being `true` for an `explorer` panel.
+- `ViewSettingsContainer` (wrapping `PanelViewSettings`) is rendered by `Panel` when the resolved
+  `explorer` panel has `isViewSettingsActive === true` **and** the panel is in the foreground
+  (`!hasChildPanel && !isPanelInSlider`). Opening a child panel (a record in a `popup`, `slider` or
+  `fullpage` — a deeper route match) **closes the volet for good**: `Panel` resets that panel's
+  view-settings state in the application context, rather than only hiding it. This keeps the volet
+  strictly scoped to the foreground explorer — no stale volet showing another library, no zombie
+  state reappearing when the child closes; re-opening is explicit. A `flap` is not a child panel and
+  is handled asymmetrically: opening the volet while a flap is **already** open keeps both (the volet
+  floats on top of the flap), but opening a flap **while the volet is open** closes the volet (same
+  reset). The asymmetry — driven by the flap _opening_ transition, not its presence — avoids a UI
+  shift in the flap-then-volet direction. This reset logic lives in the `useViewSettingsAutoClose`
+  hook, which uses `useLayoutEffect` (not `useEffect`): the reset runs after DOM mutations but
+  before the browser paints, so when a flap opens over an active volet the volet is removed from the
+  shared `extraRight` portal before the two can flash on the same frame.
+- Positioning: the volet is a **floating** `KitSidePanel` (hover overlay) — it never shifts the panel
+  content. When the explorer is hosted in a `popup`/`fullpage` modal it is portaled into the modal's
+  `extraRight` zone so it overlays within the modal; at the first navigation level it renders inline.
+  When a `flap` is also open, both are shown and the volet floats on top of the (docked) flap.
 - The `APPLY_SERIALIZED_VIEW` action and the `currentView` / `loadedViewId` props are foundational
   — nothing else in this EPIC can be built without them.
 - The whole feature is behind the `enableViewSettings` Application flag; with it off, app-studio
