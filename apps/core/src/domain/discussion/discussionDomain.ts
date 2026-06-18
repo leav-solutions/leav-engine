@@ -1,3 +1,9 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
+import {
+    CommonAttributes,
+    DiscussionCommentsAttributes,
+    DiscussionThreadsAttributes,
+} from '../../_constants/systemAttributes';
 import {logger} from '@leav/logger';
 import {
     type IDiscussionComment,
@@ -11,14 +17,6 @@ import {type IValueDomain} from '../value/valueDomain';
 import {type IUserDomain} from '../user/userDomain';
 import {type i18n} from 'i18next';
 import {type IConfig} from '../../_types/config';
-import {
-    DISCUSSION_COMMENT_CONTENT_ATTRIBUTE_ID,
-    DISCUSSION_COMMENT_THREAD_ATTRIBUTE_ID,
-    DISCUSSION_COMMENTS_LIBRARY_ID,
-    DISCUSSION_THREAD_COMMENTS_ATTRIBUTE_ID,
-    DISCUSSION_THREADS_LIBRARY_ID,
-} from '../../_constants/discussions';
-import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, Operator, type IRecord} from '../../_types/record';
 import {type IPubSubRecordNewCommentData, TriggerNames} from '../../_types/eventsManager';
 import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
@@ -53,14 +51,14 @@ export default function ({
         if (userMentions?.length > 0) {
             const mentionedUsers = await recordDomain.find({
                 params: {
-                    library: USERS_LIBRARY,
+                    library: SystemLibraries.USERS,
                     filters: userMentions.reduce((acc, userId, index) => {
                         if (index > 0) {
                             acc.push({operator: Operator.OR});
                         }
 
                         const filter = {
-                            field: 'id',
+                            field: CommonAttributes.ID,
                             condition: AttributeCondition.EQUAL,
                             value: userId,
                         };
@@ -80,10 +78,10 @@ export default function ({
     const checkThreadRecordExists = async (threadId: string, ctx: IQueryInfos): Promise<IRecord> => {
         const resThreads = await recordDomain.find({
             params: {
-                library: DISCUSSION_THREADS_LIBRARY_ID,
+                library: SystemLibraries.DISCUSSION_THREADS,
                 filters: [
                     {
-                        field: 'id',
+                        field: CommonAttributes.ID,
                         condition: AttributeCondition.EQUAL,
                         value: threadId,
                     },
@@ -108,7 +106,7 @@ export default function ({
                 library: targetRecord.libraryId,
                 filters: [
                     {
-                        field: 'id',
+                        field: CommonAttributes.ID,
                         condition: AttributeCondition.EQUAL,
                         value: targetRecord.id,
                     },
@@ -147,15 +145,15 @@ export default function ({
             // TODO check permission on target record / thread later
 
             const result = await recordDomain.createRecord({
-                library: DISCUSSION_COMMENTS_LIBRARY_ID,
+                library: SystemLibraries.DISCUSSION_COMMENTS,
                 values: [
                     {
-                        attribute: DISCUSSION_COMMENT_CONTENT_ATTRIBUTE_ID,
+                        attribute: DiscussionCommentsAttributes.CONTENT,
                         payload: params.message,
                         id_value: null,
                     },
                     {
-                        attribute: DISCUSSION_COMMENT_THREAD_ATTRIBUTE_ID,
+                        attribute: DiscussionCommentsAttributes.THREAD,
                         payload: params.threadId,
                         id_value: null,
                     },
@@ -168,11 +166,11 @@ export default function ({
                 throw new Error('Error creating discussion comment', {cause: result.valuesErrors});
             }
 
-            // Instead of create double link, this one should have be a simple reverse link of COMMENT_THREAD_ATTRIBUTE_ID
+            // Instead of create double link, this one should have be a simple reverse link of DiscussionCommentsAttributes.THREAD
             await valueDomain.saveValue({
-                library: DISCUSSION_THREADS_LIBRARY_ID,
+                library: SystemLibraries.DISCUSSION_THREADS,
                 recordId: params.threadId,
-                attribute: DISCUSSION_THREAD_COMMENTS_ATTRIBUTE_ID,
+                attribute: DiscussionThreadsAttributes.COMMENTS,
                 value: {
                     payload: result.record.id,
                 },
@@ -185,7 +183,7 @@ export default function ({
                     data: {
                         recordNewComment: {
                             record: {id: targetRecord.id, library: targetRecord.library},
-                            comment: {id: result.record.id, library: DISCUSSION_COMMENTS_LIBRARY_ID},
+                            comment: {id: result.record.id, library: SystemLibraries.DISCUSSION_COMMENTS},
                         },
                     } satisfies IPubSubRecordNewCommentData,
                 },

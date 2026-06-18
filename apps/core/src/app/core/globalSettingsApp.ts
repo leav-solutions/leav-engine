@@ -16,6 +16,7 @@ import {APP_DEFAULT_NAME, DEFAULT_APPLICATION} from '../../_constants/globalSett
 import {AttributeCondition} from '../../_types/record';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IServerRouteAppModule} from '../../interface/server';
+import {CommonAttributes} from '../../_constants/systemAttributes';
 
 export type ICoreApp = IAppModule & IGraphqlAppModule & IServerRouteAppModule;
 
@@ -50,7 +51,7 @@ export default function ({
                 library: settings[field].library,
                 filters: [
                     {
-                        field: 'id',
+                        field: CommonAttributes.ID,
                         value: settings[field].recordId,
                         condition: AttributeCondition.EQUAL,
                     },
@@ -202,7 +203,7 @@ export default function ({
                                     library: settings.icon.library,
                                     filters: [
                                         {
-                                            field: 'id',
+                                            field: CommonAttributes.ID,
                                             value: settings.icon.recordId,
                                             condition: AttributeCondition.EQUAL,
                                         },
@@ -259,7 +260,7 @@ export default function ({
                                     library: settings.favicon.library,
                                     filters: [
                                         {
-                                            field: 'id',
+                                            field: CommonAttributes.ID,
                                             value: settings.favicon.recordId,
                                             condition: AttributeCondition.EQUAL,
                                         },

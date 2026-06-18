@@ -22,6 +22,8 @@ import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type ISaveValueBulkTask} from '../../domain/value/tasks/saveValueBulk';
 import {type IPurgeMultipleValuesTask} from '../../domain/value/tasks/purgeMultipleValues';
 import {type ITreeNode} from '../../_types/tree';
+import {CommonAttributes} from '../../_constants/systemAttributes';
+import {SystemLibraries} from '../../_constants/systemLibraries';
 
 export type ICoreValueApp = IGraphqlAppModule;
 
@@ -72,8 +74,8 @@ export default function ({
     const _getUser = async (userId: string, ctx: IQueryInfos): Promise<IRecord> => {
         const res = await recordDomain.find({
             params: {
-                library: 'users',
-                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: userId}],
+                library: SystemLibraries.USERS,
+                filters: [{field: CommonAttributes.ID, condition: AttributeCondition.EQUAL, value: userId}],
             },
             ctx,
         });

@@ -1,8 +1,9 @@
+import {StatusesAttributes} from '../../../_constants/systemAttributes';
+import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {type IMigration} from '../../../_types/migration';
 import {type IAttributeForRepo, type IAttributeRepo} from '../../attribute/attributeRepo';
 import {type ILibraryRepo} from '../../library/libraryRepo';
 import {commonAttributeData, createAttributes, linkLibraryAttributes} from '../helpers/libraryUtils';
-import {STATUSES_ICON_ID_ATTRIBUTE_ID, STATUSES_LIBRARY_ID} from '../migrationConstants/statuses';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 
 interface IDeps {
@@ -12,7 +13,7 @@ interface IDeps {
 
 const statusIconAttribute: IAttributeForRepo = {
     ...commonAttributeData,
-    id: STATUSES_ICON_ID_ATTRIBUTE_ID,
+    id: StatusesAttributes.ICON_ID,
     type: AttributeTypes.SIMPLE,
     format: AttributeFormats.TEXT,
     label: {fr: 'Icône du statut', en: 'Status icon'},
@@ -26,7 +27,13 @@ export default function ({
     return {
         async run(ctx) {
             await createAttributes([statusIconAttribute], attributeRepo, ctx);
-            await linkLibraryAttributes(attributeRepo, libraryRepo, STATUSES_LIBRARY_ID, [statusIconAttribute], ctx);
+            await linkLibraryAttributes(
+                attributeRepo,
+                libraryRepo,
+                SystemLibraries.STATUSES,
+                [statusIconAttribute],
+                ctx,
+            );
         },
     };
 }

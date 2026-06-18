@@ -1,3 +1,6 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
+import {CommonAttributes, UsersAttributes} from '../../../../_constants/systemAttributes';
 import {aql} from 'arangojs';
 import * as bcrypt from 'bcryptjs';
 import {type i18n} from 'i18next';
@@ -108,7 +111,7 @@ export default function ({
             },
         ];
 
-        const usersCollec = dbService.db.collection('users');
+        const usersCollec = dbService.db.collection(SystemLibraries.USERS);
         const valuesLinkCollec = dbService.db.collection('core_edge_values_links');
 
         for (const user of users) {
@@ -133,7 +136,7 @@ export default function ({
             }
 
             // Add user to group
-            const groupNodeId = `${getNodesCollectionName('users_groups')}/${group}`;
+            const groupNodeId = `${getNodesCollectionName(SystemTrees.USERS_GROUPS)}/${group}`;
             const userDbId = `users/${user._key}`;
             const linkFromDb = await dbService.execute({
                 query: aql`
@@ -150,7 +153,7 @@ export default function ({
                         INSERT {
                             _from: ${userDbId},
                             _to: ${groupNodeId},
-                            attribute: 'user_groups',
+                            attribute: ${UsersAttributes.USER_GROUPS},
                             created_at: ${creationMetadata.created_at},
                             modified_at: ${creationMetadata.modified_at},
                             created_by: ${creationMetadata.created_by},
@@ -176,8 +179,8 @@ export default function ({
             },
         ];
 
-        const usersGroupsLibCollec = dbService.db.collection('users_groups');
-        const usersGroupsNodeCollec = dbService.db.collection(getNodesCollectionName('users_groups'));
+        const usersGroupsLibCollec = dbService.db.collection(SystemLibraries.USERS_GROUPS);
+        const usersGroupsNodeCollec = dbService.db.collection(getNodesCollectionName(SystemTrees.USERS_GROUPS));
         for (const group of groups) {
             const groupFromDb = await dbService.execute({
                 query: aql`
@@ -225,7 +228,7 @@ export default function ({
                     query: aql`
                             INSERT {
                                 _key: ${groupRecord._key},
-                                libraryId: 'users_groups',
+                                libraryId: ${SystemLibraries.USERS_GROUPS},
                                 recordId: ${groupRecord._key},
                             } IN ${usersGroupsNodeCollec}
                             RETURN NEW
@@ -239,7 +242,7 @@ export default function ({
             }
 
             // Insert node in tree
-            const usersGroupsEdgeCollec = dbService.db.collection(getEdgesCollectionName('users_groups'));
+            const usersGroupsEdgeCollec = dbService.db.collection(getEdgesCollectionName(SystemTrees.USERS_GROUPS));
             const edgeFromDb = await dbService.execute({
                 query: aql`
                     FOR edge IN ${usersGroupsEdgeCollec}
@@ -352,12 +355,12 @@ export default function ({
                 created_at: now,
                 modified_at: now,
                 shared: true,
-                library: 'files',
+                library: SystemLibraries.FILES,
                 attributes: [],
                 filters: [],
                 sort: [
                     {
-                        field: 'id',
+                        field: CommonAttributes.ID,
                         order: SortOrder.ASC,
                     },
                 ],
@@ -376,7 +379,7 @@ export default function ({
             const libsCollec = dbService.db.collection(LIB_COLLECTION_NAME);
             await dbService.execute({
                 query: aql`
-                        UPDATE ${{_key: 'files'}}
+                        UPDATE ${{_key: SystemLibraries.FILES}}
                             WITH ${{defaultView: viewId}}
                             IN ${libsCollec}
                         RETURN NEW`,

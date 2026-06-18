@@ -1,3 +1,10 @@
+import {
+    CommonAttributes,
+    STATUS_TYPES_DEFAULT_VALUES,
+    StatusesAttributes,
+    StatusTypesAttributes,
+} from '../../../_constants/systemAttributes';
+import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {aql} from 'arangojs';
 import dayjs from 'dayjs';
 import {type IMigration} from '../../../_types/migration';
@@ -14,15 +21,6 @@ import {
     linkLibraryAttributes,
     type MigrationLibraryToCreate,
 } from '../helpers/libraryUtils';
-import {
-    STATUS_TYPES_COLOR_ATTRIBUTE_ID,
-    STATUS_TYPES_DEFAULT_VALUES,
-    STATUS_TYPES_ICON_ATTRIBUTE_ID,
-    STATUS_TYPES_LABEL_ATTRIBUTE_ID,
-    STATUS_TYPES_LIBRARY_ID,
-    STATUS_TYPES_VALUE_ATTRIBUTE_ID,
-} from '../migrationConstants/statusTypes';
-import {STATUSES_LIBRARY_ID, STATUSES_STATUS_TYPE_ATTRIBUTE_ID} from '../migrationConstants/statuses';
 
 interface IDeps {
     'core.infra.db.dbService': IDbService;
@@ -33,7 +31,7 @@ interface IDeps {
 const statusTypesAttributes: IAttributeForRepo[] = [
     {
         ...commonAttributeData,
-        id: STATUS_TYPES_LABEL_ATTRIBUTE_ID,
+        id: StatusTypesAttributes.LABEL,
         type: AttributeTypes.ADVANCED,
         format: AttributeFormats.TEXT,
         label: {fr: 'Libellé', en: 'Label'},
@@ -41,7 +39,7 @@ const statusTypesAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: STATUS_TYPES_COLOR_ATTRIBUTE_ID,
+        id: StatusTypesAttributes.COLOR,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.COLOR,
         label: {fr: 'Couleur', en: 'Color'},
@@ -49,7 +47,7 @@ const statusTypesAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: STATUS_TYPES_ICON_ATTRIBUTE_ID,
+        id: StatusTypesAttributes.ICON,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Icône', en: 'Icon'},
@@ -57,7 +55,7 @@ const statusTypesAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: STATUS_TYPES_VALUE_ATTRIBUTE_ID,
+        id: StatusTypesAttributes.VALUE,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Valeur', en: 'Value'},
@@ -69,24 +67,24 @@ const statusTypesAttributes: IAttributeForRepo[] = [
 ];
 
 const statusTypesLibrary: MigrationLibraryToCreate = {
-    _key: STATUS_TYPES_LIBRARY_ID,
+    _key: SystemLibraries.STATUS_TYPES,
     label: {fr: 'Types de statut', en: 'Status types'},
     behavior: LibraryBehavior.STANDARD,
     attributes: [
-        'id',
-        'created_by',
-        'created_at',
-        'modified_by',
-        'modified_at',
-        'active',
-        STATUS_TYPES_LABEL_ATTRIBUTE_ID,
-        STATUS_TYPES_COLOR_ATTRIBUTE_ID,
-        STATUS_TYPES_ICON_ATTRIBUTE_ID,
-        STATUS_TYPES_VALUE_ATTRIBUTE_ID,
+        CommonAttributes.ID,
+        CommonAttributes.CREATED_BY,
+        CommonAttributes.CREATED_AT,
+        CommonAttributes.MODIFIED_BY,
+        CommonAttributes.MODIFIED_AT,
+        CommonAttributes.ACTIVE,
+        StatusTypesAttributes.LABEL,
+        StatusTypesAttributes.COLOR,
+        StatusTypesAttributes.ICON,
+        StatusTypesAttributes.VALUE,
     ],
     system: true,
-    recordIdentityConf: {label: STATUS_TYPES_LABEL_ATTRIBUTE_ID, color: STATUS_TYPES_COLOR_ATTRIBUTE_ID},
-    fullTextAttributes: [STATUS_TYPES_LABEL_ATTRIBUTE_ID, STATUS_TYPES_VALUE_ATTRIBUTE_ID],
+    recordIdentityConf: {label: StatusTypesAttributes.LABEL, color: StatusTypesAttributes.COLOR},
+    fullTextAttributes: [StatusTypesAttributes.LABEL, StatusTypesAttributes.VALUE],
 };
 
 export default function ({
@@ -97,7 +95,7 @@ export default function ({
     const now = dayjs().unix();
 
     const _createStatusTypeRecord = async (value: string, ctx: IQueryInfos) => {
-        const statusTypesCollection = dbService.db.collection(STATUS_TYPES_LIBRARY_ID);
+        const statusTypesCollection = dbService.db.collection(SystemLibraries.STATUS_TYPES);
         const valuesCollection = dbService.db.collection('core_values');
         const valuesLinksCollection = dbService.db.collection('core_edge_values_links');
 
@@ -110,7 +108,7 @@ export default function ({
                     modified_at: now,
                     created_by: ctx.userId,
                     modified_by: ctx.userId,
-                    [STATUS_TYPES_VALUE_ATTRIBUTE_ID]: value,
+                    [StatusTypesAttributes.VALUE]: value,
                 }}
                 IN ${statusTypesCollection}
                 RETURN NEW
@@ -132,7 +130,7 @@ export default function ({
                 INSERT ${{
                     _from: record._id,
                     _to: labelValue._id,
-                    attribute: STATUS_TYPES_LABEL_ATTRIBUTE_ID,
+                    attribute: StatusTypesAttributes.LABEL,
                     created_at: now,
                     modified_at: now,
                     created_by: ctx.userId,
@@ -158,9 +156,9 @@ export default function ({
 
             const statusesStatusTypeAttribute: IAttributeForRepo = {
                 ...commonAttributeData,
-                id: STATUSES_STATUS_TYPE_ATTRIBUTE_ID,
+                id: StatusesAttributes.STATUS_TYPE,
                 type: AttributeTypes.SIMPLE_LINK,
-                linked_library: STATUS_TYPES_LIBRARY_ID,
+                linked_library: SystemLibraries.STATUS_TYPES,
                 label: {fr: 'Type de statut', en: 'Status type'},
                 values_list: {enable: true, values: statusTypeRecordIds, allowFreeEntry: false, allowListUpdate: false},
             };
@@ -169,7 +167,7 @@ export default function ({
             await linkLibraryAttributes(
                 attributeRepo,
                 libraryRepo,
-                STATUSES_LIBRARY_ID,
+                SystemLibraries.STATUSES,
                 [statusesStatusTypeAttribute],
                 ctx,
             );

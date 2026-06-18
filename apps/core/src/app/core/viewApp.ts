@@ -1,10 +1,10 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {type IViewDomain} from '../../domain/view/viewDomain';
 import {type IUtils} from '../../utils/utils';
 import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {USERS_LIBRARY} from '../../_types/library';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {
     type IView,
@@ -16,6 +16,7 @@ import {
 } from '../../_types/views';
 import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
+import {CommonAttributes} from '../../_constants/systemAttributes';
 
 interface IDeps {
     'core.domain.record': IRecordDomain;
@@ -159,9 +160,13 @@ export default function ({
                         created_by: async (view: ViewFromGraphQL, _, ctx): Promise<IRecord | null> => {
                             const record = await recordDomain.find({
                                 params: {
-                                    library: USERS_LIBRARY,
+                                    library: SystemLibraries.USERS,
                                     filters: [
-                                        {field: 'id', value: view.created_by, condition: AttributeCondition.EQUAL},
+                                        {
+                                            field: CommonAttributes.ID,
+                                            value: view.created_by,
+                                            condition: AttributeCondition.EQUAL,
+                                        },
                                     ],
                                 },
                                 ctx,

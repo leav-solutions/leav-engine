@@ -1,8 +1,8 @@
+import {DiscussionCommentsAttributes} from '../../../_constants/systemAttributes';
 import {logger} from '@leav/logger';
 import {type IMigration} from '../../../_types/migration';
 import {AttributeFormats} from '../../../_types/attribute';
 import {type IAttributeRepo} from '../../attribute/attributeRepo';
-import {COMMENT_CONTENT_ATTRIBUTE_ID} from '../migrationConstants/threads';
 
 interface IDeps {
     'core.infra.attribute': IAttributeRepo;
@@ -14,7 +14,7 @@ export default function ({'core.infra.attribute': attributeRepo}: IDeps): IMigra
             const attr = await attributeRepo.getAttributes({
                 params: {
                     filters: {
-                        id: COMMENT_CONTENT_ATTRIBUTE_ID,
+                        id: DiscussionCommentsAttributes.CONTENT,
                     },
                 },
                 ctx,

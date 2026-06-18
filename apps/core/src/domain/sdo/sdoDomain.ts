@@ -1,3 +1,4 @@
+import {CommonAttributes} from '../../_constants/systemAttributes';
 import fs from 'fs/promises';
 import path from 'path';
 import jsonschema from 'jsonschema';
@@ -27,7 +28,6 @@ import {type IValueDomain} from '../value/valueDomain';
 import LeavError from '../../errors/LeavError';
 import {ErrorTypes} from '../../_types/errors';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {UUID_ATTRIBUTE_ID} from '../../_constants/attributes';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
 
 export interface ISDODomainDeps {
@@ -119,7 +119,7 @@ export default function ({
                 recordId,
                 ctx,
             })
-        )?.[UUID_ATTRIBUTE_ID] ?? null;
+        )?.[CommonAttributes.UUID] ?? null;
 
     const getRecordSDO = async (
         leavLibraryId: string,
@@ -130,7 +130,7 @@ export default function ({
         // Find record in database
         const recordFilter = [
             {
-                field: 'id',
+                field: CommonAttributes.ID,
                 value: recordId,
                 condition: AttributeCondition.EQUAL,
             },

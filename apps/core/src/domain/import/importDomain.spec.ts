@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
+import {SystemTrees} from '../../_constants/systemTrees';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type UpdateTaskProgress} from '../helpers/updateTaskProgress';
@@ -309,7 +311,7 @@ describe('importDomain', () => {
                         ],
                     },
                     {
-                        library: 'users_groups',
+                        library: SystemLibraries.USERS_GROUPS,
                         matches: [],
                         mode: ImportMode.UPSERT,
                         data: [
@@ -358,7 +360,7 @@ describe('importDomain', () => {
                             JSON.stringify({
                                 recordIds: ['1'],
                                 element: {
-                                    library: 'users_groups',
+                                    library: SystemLibraries.USERS_GROUPS,
                                     recordIds: ['1'],
                                     data: [],
                                 },
@@ -545,8 +547,8 @@ describe('importDomain', () => {
                 elements: [],
                 trees: [
                     {
-                        library: 'users_groups',
-                        treeId: 'users_groups',
+                        library: SystemLibraries.USERS_GROUPS,
+                        treeId: SystemTrees.USERS_GROUPS,
                         matches: [
                             {
                                 attribute: 'simple',
@@ -615,7 +617,7 @@ describe('importDomain', () => {
 
         test('test import elements - version data', async () => {
             const element = {
-                library: 'users_groups',
+                library: SystemLibraries.USERS_GROUPS,
                 matches: [],
                 mode: ImportMode.UPSERT,
                 data: [
@@ -702,7 +704,7 @@ describe('importDomain', () => {
                     Promise.resolve([
                         // cache data object with version
                         JSON.stringify({
-                            library: 'users_groups',
+                            library: SystemLibraries.USERS_GROUPS,
                             recordIds: ['1'],
                             element,
                         }),

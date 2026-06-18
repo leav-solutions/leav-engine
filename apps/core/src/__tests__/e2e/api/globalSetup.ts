@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../_constants/systemTrees';
 import {amqpService} from '@leav/message-broker';
 import {logger} from '@leav/logger';
 import {appRootPath} from '@leav/app-root-path';
@@ -20,12 +22,12 @@ import {type ISessionRepo} from '../../../infra/session/sessionRepo';
 import {type ITasksManagerInterface} from '../../../interface/tasksManager';
 import {type IAutomationInterface} from '../../../interface/automation';
 import {type IRecordDomain} from '../../../domain/record/recordDomain';
-import {USERS_GROUPS_LIBRARY, USERS_LIBRARY} from '../../../_types/library';
 import {type GetSystemQueryContext} from '../../../utils/helpers/getSystemQueryContext';
 import {type ITreeDomain} from '../../../domain/tree/treeDomain';
 import {GUEST_USER_EMAIL, NON_ADMIN_USER_EMAIL} from './constants';
 import {type ICorePluginsApp} from '../../../app/core/pluginsApp';
 import {type TestProject} from 'vitest/node';
+import {CommonAttributes, UsersAttributes} from '../../../_constants/systemAttributes';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
@@ -111,11 +113,11 @@ const _createUsersAndGroups = async (coreContainer: AwilixContainer, project: Te
 
     logger.verbose('Creating guest and non-admin users...');
     const guestUserRecord = await recordDomain.createRecord({
-        library: USERS_LIBRARY,
+        library: SystemLibraries.USERS,
         ctx: systemCtx,
         values: [
             {
-                attribute: 'email',
+                attribute: UsersAttributes.EMAIL,
                 payload: GUEST_USER_EMAIL,
             },
         ],
@@ -127,21 +129,21 @@ const _createUsersAndGroups = async (coreContainer: AwilixContainer, project: Te
     });
 
     const nonAdminGroupRecord = await recordDomain.createRecord({
-        library: USERS_GROUPS_LIBRARY,
+        library: SystemLibraries.USERS_GROUPS,
         ctx: systemCtx,
         values: [
             {
-                attribute: 'label',
+                attribute: CommonAttributes.LABEL,
                 payload: 'non-admin',
             },
         ],
     });
 
     const nonAdminGroupNode = await treeDomain.addElement({
-        treeId: 'users_groups',
+        treeId: SystemTrees.USERS_GROUPS,
         element: {
             id: nonAdminGroupRecord.record.id,
-            library: USERS_GROUPS_LIBRARY,
+            library: SystemLibraries.USERS_GROUPS,
         },
         parent: null,
         ctx: systemCtx,
@@ -150,15 +152,15 @@ const _createUsersAndGroups = async (coreContainer: AwilixContainer, project: Te
     project.provide('nonAdminGroupId', nonAdminGroupNode.id);
 
     const nonAdminUserRecord = await recordDomain.createRecord({
-        library: USERS_LIBRARY,
+        library: SystemLibraries.USERS,
         ctx: systemCtx,
         values: [
             {
-                attribute: 'email',
+                attribute: UsersAttributes.EMAIL,
                 payload: NON_ADMIN_USER_EMAIL,
             },
             {
-                attribute: 'user_groups',
+                attribute: UsersAttributes.USER_GROUPS,
                 payload: nonAdminGroupNode.id,
             },
         ],

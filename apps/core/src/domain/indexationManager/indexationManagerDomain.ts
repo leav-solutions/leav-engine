@@ -24,6 +24,7 @@ import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryCont
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
+import {CommonAttributes} from '../../_constants/systemAttributes';
 
 interface IIndexDatabaseParams {
     findRecordParams: IFindRecordParams | IFindRecordParams[];
@@ -233,7 +234,11 @@ export default function ({
                         findRecordParams: {
                             library: payload.topic.record.libraryId,
                             filters: [
-                                {field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id},
+                                {
+                                    field: CommonAttributes.ID,
+                                    condition: AttributeCondition.EQUAL,
+                                    value: payload.topic.record.id,
+                                },
                             ],
                             retrieveInactive: true,
                         },
@@ -284,7 +289,11 @@ export default function ({
                             findRecordParams: {
                                 library: payload.topic.library,
                                 filters: [
-                                    {field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id},
+                                    {
+                                        field: CommonAttributes.ID,
+                                        condition: AttributeCondition.EQUAL,
+                                        value: payload.topic.record.id,
+                                    },
                                 ],
                                 retrieveInactive: true,
                             },
@@ -310,7 +319,11 @@ export default function ({
                         findRecordParams: {
                             library: payload.topic.library,
                             filters: [
-                                {field: 'id', condition: AttributeCondition.EQUAL, value: payload.topic.record.id},
+                                {
+                                    field: CommonAttributes.ID,
+                                    condition: AttributeCondition.EQUAL,
+                                    value: payload.topic.record.id,
+                                },
                             ],
                             retrieveInactive: true,
                         },

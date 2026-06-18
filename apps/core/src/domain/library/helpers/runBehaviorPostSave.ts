@@ -1,3 +1,4 @@
+import {FilesAttributes} from '../../../_constants/systemAttributes';
 import {type i18n} from 'i18next';
 import {type IAttributeForRepo, type IAttributeRepo} from '../../../infra/attribute/attributeRepo';
 import {type ILibraryRepo} from '../../../infra/library/libraryRepo';
@@ -7,7 +8,6 @@ import {type IConfig} from '../../../_types/config';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import getLibraryDefaultAttributes from '../../../utils/helpers/getLibraryDefaultAttributes';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
-import {FilesAttributes} from '../../../_types/filesManager';
 import {type ILibrary, LibraryBehavior} from '../../../_types/library';
 import {TreeBehavior} from '../../../_types/tree';
 

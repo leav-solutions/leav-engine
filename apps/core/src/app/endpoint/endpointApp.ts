@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
+import {UsersAttributes} from '../../_constants/systemAttributes';
 import {type Express, type RequestHandler} from 'express';
 import {type IAppModule} from '../../_types/shared';
 import {type ExpressAppMethod, type PluginRegisterRoute} from '../../_types/endpoint';
@@ -6,9 +8,7 @@ import {type InitQueryContextFunc} from '../helpers/initQueryContext';
 import {type ValidateRequestTokenFunc} from '../helpers/validateRequestToken';
 import {type IConfig} from '../../_types/config';
 import {type IValueDomain} from '../../domain/value/valueDomain';
-import {USERS_LIBRARY} from '../../_types/library';
 import {type ITreeValue} from '../../_types/value';
-import {USERS_GROUP_ATTRIBUTE_NAME} from '../../infra/permission/permissionRepo';
 import {type IServerRouteAppModule} from '../../interface/server';
 
 type IEndpointApp = IAppModule & IServerRouteAppModule;
@@ -56,9 +56,9 @@ export default function ({
 
                             // Fetch user groups
                             const userGroups = (await valueDomain.getValues({
-                                library: USERS_LIBRARY,
+                                library: SystemLibraries.USERS,
                                 recordId: req.ctx.userId,
-                                attribute: USERS_GROUP_ATTRIBUTE_NAME,
+                                attribute: UsersAttributes.USER_GROUPS,
                                 ctx: req.ctx,
                             })) as ITreeValue[];
                             const groupsId = userGroups.map(g => g.payload?.id);

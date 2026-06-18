@@ -96,6 +96,7 @@ function calculateAverage(numbers: number[]): number {
 - Internal (= not exported) functions are prefixed by `_`
 - Folder name: plural if several modules inside
 - Database fields can use snake_case
+- **`apps/core`** : ne pas écrire en dur l'id d'une library/attribut/arbre **système** (`'users'`, `'login'`, `'discussion_threads'`…). Utiliser les enums de `apps/core/src/_constants/` (`SystemLibraries`, `SystemTrees`, `CommonAttributes`, `UsersAttributes`, `FilesAttributes`, `DiscussionThreadsAttributes`…). Voir [apps/core/CLAUDE.md](apps/core/CLAUDE.md#constantes-des-entités-système-libraries-attributs-arbres).
 
 ### TypeScript
 

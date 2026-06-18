@@ -1,14 +1,11 @@
+import {BASE_ATTRIBUTES, CommonAttributes, StatusesAttributes} from '../../../../_constants/systemAttributes';
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
 import {
     commonAttributeData,
     type MigrationLibraryToCreate,
     type MigrationTreeToCreate,
 } from '../../helpers/libraryUtils';
-import {THREAD_STATUSES_TREE_ID} from '../../migrationConstants/threads';
-import {
-    STATUSES_COLOR_ATTRIBUTE_ID,
-    STATUSES_LABEL_ATTRIBUTE_ID,
-    STATUSES_LIBRARY_ID,
-} from '../../migrationConstants/statuses';
 import {TreeBehavior} from '../../../../_types/tree';
 import {LibraryBehavior} from '../../../../_types/library';
 import {type IAttributeForRepo} from '../../../attribute/attributeRepo';
@@ -17,14 +14,14 @@ import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 export const statusesAttributes: IAttributeForRepo[] = [
     {
         ...commonAttributeData,
-        id: STATUSES_LABEL_ATTRIBUTE_ID,
+        id: StatusesAttributes.LABEL,
         type: AttributeTypes.ADVANCED,
         format: AttributeFormats.TEXT,
         label: {fr: 'Libellé', en: 'Label'},
     },
     {
         ...commonAttributeData,
-        id: STATUSES_COLOR_ATTRIBUTE_ID,
+        id: StatusesAttributes.COLOR,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.COLOR,
         label: {fr: 'Couleur', en: 'Color'},
@@ -32,34 +29,24 @@ export const statusesAttributes: IAttributeForRepo[] = [
 ];
 
 export const statusesLibrary: MigrationLibraryToCreate = {
-    _key: STATUSES_LIBRARY_ID,
+    _key: SystemLibraries.STATUSES,
     label: {fr: 'Statuts', en: 'Statuses'},
     behavior: LibraryBehavior.STANDARD,
-    attributes: [
-        'id',
-        'created_by',
-        'created_at',
-        'modified_by',
-        'modified_at',
-        'active',
-        'label',
-        STATUSES_LABEL_ATTRIBUTE_ID,
-        STATUSES_COLOR_ATTRIBUTE_ID,
-    ],
+    attributes: [...BASE_ATTRIBUTES, CommonAttributes.LABEL, StatusesAttributes.LABEL, StatusesAttributes.COLOR],
     system: true,
-    recordIdentityConf: {label: STATUSES_LABEL_ATTRIBUTE_ID, color: STATUSES_COLOR_ATTRIBUTE_ID},
-    fullTextAttributes: [STATUSES_LABEL_ATTRIBUTE_ID],
+    recordIdentityConf: {label: StatusesAttributes.LABEL, color: StatusesAttributes.COLOR},
+    fullTextAttributes: [StatusesAttributes.LABEL],
 };
 
 export const threadStatusTree: MigrationTreeToCreate = {
     system: true,
     behavior: TreeBehavior.STANDARD,
-    _key: THREAD_STATUSES_TREE_ID,
+    _key: SystemTrees.DISCUSSION_THREAD_STATUSES,
     label: {fr: 'Arbre des statuts de fils de discussion', en: 'Discussion thread statuses tree'},
     libraries: {
-        [STATUSES_LIBRARY_ID]: {
+        [SystemLibraries.STATUSES]: {
             allowedAtRoot: true,
-            allowedChildren: [STATUSES_LIBRARY_ID],
+            allowedChildren: [SystemLibraries.STATUSES],
             allowMultiplePositions: true,
         },
     },

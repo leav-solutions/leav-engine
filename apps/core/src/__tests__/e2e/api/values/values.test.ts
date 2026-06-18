@@ -1,3 +1,4 @@
+import {CommonAttributes} from '../../../../_constants/systemAttributes';
 import {AttributeCondition} from '../../../../_types/record';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {ActionsListEvents} from '../../../../_types/actionsList';
@@ -19,7 +20,6 @@ import {
     IMMUTABLE_CORE_SYSTEM_COMMON_ATTRIBUTE_IDS,
     IMMUTABLE_CORE_SYSTEM_FILES_ATTRIBUTE_IDS,
 } from '../../../../domain/value/helpers/canSaveRecordValue';
-import {UUID_ATTRIBUTE_ID} from '../../../../_constants/attributes';
 
 describe('Values', () => {
     const getRecord = async (libraryId: string, recordId: string) =>
@@ -330,7 +330,7 @@ describe('Values', () => {
 
     test('Admin user should be able to edit uuid attributes (at least temporary for users migration)', async () => {
         await adminUserSdk.SaveValue({
-            attributeId: UUID_ATTRIBUTE_ID,
+            attributeId: CommonAttributes.UUID,
             libraryId: testLibName,
             recordId,
             value: {payload: '3a70335f-36f7-44d1-92b7-af503e7565bf'},
@@ -339,7 +339,7 @@ describe('Values', () => {
         const res = await adminUserSdk.GetRecordByIdStandardValuesProperty({
             libraryId: testLibName,
             recordId,
-            attributeId: UUID_ATTRIBUTE_ID,
+            attributeId: CommonAttributes.UUID,
         });
         console.log('res :>> ', JSON.stringify(res, null, 2));
 
@@ -349,7 +349,7 @@ describe('Values', () => {
     test('Non admin user should not be able to edit uuid attributes', async () => {
         await expect(
             nonAdminUserSdk.SaveValue({
-                attributeId: UUID_ATTRIBUTE_ID,
+                attributeId: CommonAttributes.UUID,
                 libraryId: testLibName,
                 recordId,
                 value: {payload: 'test'},
@@ -360,7 +360,7 @@ describe('Values', () => {
     test('Should not be able to edit uuid attributes with invalid value', async () => {
         await expect(
             adminUserSdk.SaveValue({
-                attributeId: UUID_ATTRIBUTE_ID,
+                attributeId: CommonAttributes.UUID,
                 libraryId: testLibName,
                 recordId,
                 value: {payload: 'test'},

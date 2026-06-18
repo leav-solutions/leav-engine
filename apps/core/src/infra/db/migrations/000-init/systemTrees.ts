@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
 import {type ITree, TreeBehavior} from '../../../../_types/tree';
 
 export type MigrationTreeToCreate = ITree & {_key: string};
@@ -9,28 +11,28 @@ const commonTreeData: Partial<ITree> = {
 export const systemTrees: MigrationTreeToCreate[] = [
     {
         ...commonTreeData,
-        _key: 'users_groups',
+        _key: SystemTrees.USERS_GROUPS,
         label: {fr: "Groupes d'utilisateurs", en: 'Users groups'},
         libraries: {
-            users_groups: {
+            [SystemLibraries.USERS_GROUPS]: {
                 allowedAtRoot: true,
-                allowedChildren: ['users_groups'],
+                allowedChildren: [SystemLibraries.USERS_GROUPS],
                 allowMultiplePositions: false,
             },
         },
     },
     {
         ...commonTreeData,
-        _key: 'files_tree',
+        _key: SystemTrees.FILES,
         behavior: TreeBehavior.FILES,
         label: {fr: 'Fichiers', en: 'Files'},
         libraries: {
-            files: {
+            [SystemLibraries.FILES]: {
                 allowedAtRoot: true,
                 allowedChildren: [],
                 allowMultiplePositions: false,
             },
-            files_directories: {
+            [SystemLibraries.FILES_DIRECTORIES]: {
                 allowedAtRoot: true,
                 allowedChildren: ['__all__'],
                 allowMultiplePositions: false,

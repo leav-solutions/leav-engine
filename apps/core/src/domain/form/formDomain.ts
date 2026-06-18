@@ -1,3 +1,4 @@
+import {BASE_ATTRIBUTES} from '../../_constants/systemAttributes';
 import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes} from '@leav/utils';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IValidateHelper} from '../helpers/validate';
@@ -37,7 +38,6 @@ import {
 } from '../../_types/permissions';
 import {getElementValues} from './helpers/getElementValues';
 import {mustIncludeElement} from './helpers/mustIncludeElement';
-import {BASE_ATTRIBUTES} from '../../_constants/attributes';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 
 export interface IFormDomain {

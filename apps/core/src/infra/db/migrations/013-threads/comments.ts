@@ -1,11 +1,11 @@
-import {commonAttributeData, type MigrationLibraryToCreate} from '../../helpers/libraryUtils';
 import {
-    COMMENT_CONTENT_ATTRIBUTE_ID,
-    COMMENT_THREAD_ATTRIBUTE_ID,
-    COMMENTS_LIBRARY_ID,
-    THREAD_COMMENTS_ATTRIBUTE_ID,
-    THREADS_LIBRARY_ID,
-} from '../../migrationConstants/threads';
+    BASE_ATTRIBUTES,
+    CommonAttributes,
+    DiscussionCommentsAttributes,
+    DiscussionThreadsAttributes,
+} from '../../../../_constants/systemAttributes';
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {commonAttributeData, type MigrationLibraryToCreate} from '../../helpers/libraryUtils';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {type IAttributeForRepo} from '../../../attribute/attributeRepo';
 import {LibraryBehavior} from '../../../../_types/library';
@@ -13,37 +13,32 @@ import {LibraryBehavior} from '../../../../_types/library';
 export const commentAttributes: IAttributeForRepo[] = [
     {
         ...commonAttributeData,
-        id: COMMENT_CONTENT_ATTRIBUTE_ID,
+        id: DiscussionCommentsAttributes.CONTENT,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Contenu', en: 'Body'},
     },
     {
         ...commonAttributeData,
-        id: COMMENT_THREAD_ATTRIBUTE_ID,
+        id: DiscussionCommentsAttributes.THREAD,
         type: AttributeTypes.SIMPLE_LINK,
-        linked_library: THREADS_LIBRARY_ID,
-        reverse_link: THREAD_COMMENTS_ATTRIBUTE_ID,
+        linked_library: SystemLibraries.DISCUSSION_THREADS,
+        reverse_link: DiscussionThreadsAttributes.COMMENTS,
         label: {fr: 'Fil de discussion associé', en: 'Related discussion thread'},
     },
 ];
 
 export const commentLibrary: MigrationLibraryToCreate = {
-    _key: COMMENTS_LIBRARY_ID,
+    _key: SystemLibraries.DISCUSSION_COMMENTS,
     label: {fr: 'Commentaires', en: 'Comments'},
     system: true,
     behavior: LibraryBehavior.STANDARD,
-    recordIdentityConf: {label: 'label'},
+    recordIdentityConf: {label: CommonAttributes.LABEL},
     attributes: [
-        'id',
-        'created_by',
-        'created_at',
-        'modified_by',
-        'modified_at',
-        'active',
-        'label',
-        COMMENT_CONTENT_ATTRIBUTE_ID,
-        COMMENT_THREAD_ATTRIBUTE_ID,
+        ...BASE_ATTRIBUTES,
+        CommonAttributes.LABEL,
+        DiscussionCommentsAttributes.CONTENT,
+        DiscussionCommentsAttributes.THREAD,
     ],
-    fullTextAttributes: ['label'],
+    fullTextAttributes: [CommonAttributes.LABEL],
 };

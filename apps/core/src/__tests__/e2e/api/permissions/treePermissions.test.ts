@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
 import {
     e2eNonAdminGroupId,
     e2eNonAdminUser,
@@ -104,14 +106,17 @@ describe('TreePermissions', () => {
         let nodeUserGroup2: string;
 
         beforeAll(async () => {
-            userGroupId1 = await gqlCreateRecord('users_groups');
-            userGroupId2 = await gqlCreateRecord('users_groups');
+            userGroupId1 = await gqlCreateRecord(SystemLibraries.USERS_GROUPS);
+            userGroupId2 = await gqlCreateRecord(SystemLibraries.USERS_GROUPS);
 
             // Add users groups to tree
-            nodeUserGroup1 = await gqlAddElemToTree('users_groups', {id: userGroupId1, library: 'users_groups'});
+            nodeUserGroup1 = await gqlAddElemToTree(SystemTrees.USERS_GROUPS, {
+                id: userGroupId1,
+                library: SystemLibraries.USERS_GROUPS,
+            });
             nodeUserGroup2 = await gqlAddElemToTree(
-                'users_groups',
-                {id: userGroupId2, library: 'users_groups'},
+                SystemTrees.USERS_GROUPS,
+                {id: userGroupId2, library: SystemLibraries.USERS_GROUPS},
                 nodeUserGroup1,
             );
 

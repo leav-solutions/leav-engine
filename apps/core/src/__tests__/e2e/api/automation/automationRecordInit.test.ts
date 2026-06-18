@@ -1,3 +1,4 @@
+import {SystemTrees} from '../../../../_constants/systemTrees';
 import {adminsGroupId} from '../../../../_constants/users';
 import {
     AutomationRuleEventAction,
@@ -53,7 +54,7 @@ describe('Automation RECORD_INIT', () => {
                 id: testLibraryGroupsAttrId,
                 label: {en: 'Library groups'},
                 type: AttributeType.tree,
-                linked_tree: 'users_groups', // avoid complexe setup for now
+                linked_tree: SystemTrees.USERS_GROUPS, // avoid complexe setup for now
                 multiple_values: true,
             },
         });

@@ -1,7 +1,8 @@
+import {FilesAttributes} from '../../../_constants/systemAttributes';
 import {exiftool, type Tags} from 'exiftool-vendored';
 import path from 'node:path';
 import {type IConfig} from '../../../_types/config';
-import {FilesAttributes, type IFileMetadata} from '../../../_types/filesManager';
+import {type IFileMetadata} from '../../../_types/filesManager';
 import {getRootPathByKey} from './getRootPathByKey';
 
 interface IAllTags extends Tags {

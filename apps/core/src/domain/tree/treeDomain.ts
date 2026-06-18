@@ -1,3 +1,4 @@
+import {SystemTrees} from '../../_constants/systemTrees';
 import {EventAction} from '@leav/utils';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type GetCoreEntityByIdFunc} from '../helpers/getCoreEntityById';
@@ -41,6 +42,7 @@ import {type IElementAncestorsHelper} from './helpers/elementAncestors';
 import {type IGetDefaultElementHelper} from './helpers/getDefaultElement';
 import {type HandleRemovedLibrariesFunc} from './helpers/handleRemovedLibraries';
 import {type ITreeDataValidationHelper} from './helpers/treeDataValidation';
+import {CommonAttributes} from '../../_constants/systemAttributes';
 
 export interface ITreeDomain {
     isNodePresent(params: {treeId: string; nodeId: string; ctx: IQueryInfos}): Promise<boolean>;
@@ -193,7 +195,7 @@ export default function ({
         const record = await recordDomain.find({
             params: {
                 library: element.library,
-                filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: `${element.id}`}],
+                filters: [{field: CommonAttributes.ID, condition: AttributeCondition.EQUAL, value: `${element.id}`}],
                 retrieveInactive: true,
             },
             ctx,
@@ -270,7 +272,7 @@ export default function ({
     };
 
     const _cleanPermissionsCacheRelatedToTree = async (treeId: string, ctx: IQueryInfos): Promise<void> => {
-        if (treeId === 'users_groups') {
+        if (treeId === SystemTrees.USERS_GROUPS) {
             return cacheService.getCache(ECacheType.RAM).deleteData([`${PERMISSIONS_CACHE_HEADER}:*`]);
         }
 

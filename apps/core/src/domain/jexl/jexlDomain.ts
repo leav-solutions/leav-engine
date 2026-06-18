@@ -20,6 +20,7 @@ import {
 } from './types';
 import {Errors} from '../../_types/errors';
 import ValidationError from '../../errors/ValidationError';
+import {CommonAttributes} from '../../_constants/systemAttributes';
 
 interface IDeps {
     'core.domain.value': IValueDomain;
@@ -101,7 +102,7 @@ export default function ({
                 .find({
                     params: {
                         library: libraryId,
-                        filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: recordId}],
+                        filters: [{field: CommonAttributes.ID, condition: AttributeCondition.EQUAL, value: recordId}],
                         pagination: {limit: 1, offset: 0},
                     },
                     ctx,

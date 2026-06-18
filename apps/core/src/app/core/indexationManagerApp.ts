@@ -1,6 +1,7 @@
 import {type IIndexationManagerDomain} from '../../domain/indexationManager/indexationManagerDomain';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {AttributeCondition, Operator} from '../../_types/record';
+import {CommonAttributes} from '../../_constants/systemAttributes';
 
 export interface IIndexationManagerApp {
     init(): Promise<void>;
@@ -17,7 +18,7 @@ export default function ({'core.domain.indexationManager': indexationManager}: I
         indexDatabase: async (ctx: IQueryInfos, libraryId: string, records?: string[]) => {
             // if records are undefined we re-index all library's records
             const filters = (records ?? []).reduce((acc, id, _, array) => {
-                acc.push({field: 'id', condition: AttributeCondition.EQUAL, value: id});
+                acc.push({field: CommonAttributes.ID, condition: AttributeCondition.EQUAL, value: id});
                 const isNotLastElement = array.length > 1;
                 if (isNotLastElement) {
                     acc.push({operator: Operator.OR});

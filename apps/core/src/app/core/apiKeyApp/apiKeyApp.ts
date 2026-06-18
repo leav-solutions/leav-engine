@@ -1,12 +1,13 @@
+import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {type IApiKeyDomain} from '../../../domain/apiKey/apiKeyDomain';
 import {type IRecordDomain} from '../../../domain/record/recordDomain';
 import {type IApiKey} from '../../../_types/apiKey';
 import {type IAppGraphQLSchema} from '../../../_types/graphql';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {USERS_LIBRARY} from '../../../_types/library';
 import {AttributeCondition, type IRecord} from '../../../_types/record';
 import {type IApiKeysArgs, type IDeleteApiKeyArgs, type ISaveApiKeyArgs} from './_types';
 import {type IGraphqlAppModule} from '../../graphql/graphqlApp';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 export type ICoreVersionProfileApp = IGraphqlAppModule;
 
@@ -102,8 +103,14 @@ export default function ({
                         async user(apiKey: IApiKey, _, ctx: IQueryInfos): Promise<IRecord> {
                             const result = await recordDomain.find({
                                 params: {
-                                    library: USERS_LIBRARY,
-                                    filters: [{field: 'id', condition: AttributeCondition.EQUAL, value: apiKey.userId}],
+                                    library: SystemLibraries.USERS,
+                                    filters: [
+                                        {
+                                            field: CommonAttributes.ID,
+                                            condition: AttributeCondition.EQUAL,
+                                            value: apiKey.userId,
+                                        },
+                                    ],
                                 },
                                 ctx,
                             });
@@ -113,9 +120,13 @@ export default function ({
                         async createdBy(apiKey: IApiKey, _, ctx: IQueryInfos): Promise<IRecord> {
                             const result = await recordDomain.find({
                                 params: {
-                                    library: USERS_LIBRARY,
+                                    library: SystemLibraries.USERS,
                                     filters: [
-                                        {field: 'id', condition: AttributeCondition.EQUAL, value: apiKey.createdBy},
+                                        {
+                                            field: CommonAttributes.ID,
+                                            condition: AttributeCondition.EQUAL,
+                                            value: apiKey.createdBy,
+                                        },
                                     ],
                                 },
                                 ctx,
@@ -126,9 +137,13 @@ export default function ({
                         async modifiedBy(apiKey: IApiKey, _, ctx: IQueryInfos): Promise<IRecord> {
                             const result = await recordDomain.find({
                                 params: {
-                                    library: USERS_LIBRARY,
+                                    library: SystemLibraries.USERS,
                                     filters: [
-                                        {field: 'id', condition: AttributeCondition.EQUAL, value: apiKey.modifiedBy},
+                                        {
+                                            field: CommonAttributes.ID,
+                                            condition: AttributeCondition.EQUAL,
+                                            value: apiKey.modifiedBy,
+                                        },
                                     ],
                                 },
                                 ctx,

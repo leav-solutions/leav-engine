@@ -1,3 +1,6 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
+import {CommonAttributes, FilesAttributes, UsersAttributes} from '../../../../_constants/systemAttributes';
 import {type IAttributeForRepo} from '../../../attribute/attributeRepo';
 import {ActionsListEvents} from '../../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
@@ -17,7 +20,7 @@ const previewStatusSubFields = [
 export const systemAttributes: IAttributeForRepo[] = [
     {
         ...commonAttributeData,
-        id: 'id',
+        id: CommonAttributes.ID,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Identifiant', en: 'Identifier'},
@@ -25,8 +28,40 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'created_by',
-        linked_library: 'users',
+        id: CommonAttributes.UUID,
+        type: AttributeTypes.SIMPLE,
+        format: AttributeFormats.TEXT,
+        label: {fr: 'UUID', en: 'UUID'},
+        description: {
+            fr: 'Identifiant universel cross-application',
+            en: 'Cross-application universal identifier',
+        },
+        readonly: true,
+        actions_list: {
+            ...commonAttributeData.actions_list,
+            [ActionsListEvents.SAVE_VALUE]: [
+                {
+                    id: 'validateFormat',
+                    name: 'Validate Format',
+                    is_system: true,
+                },
+                {
+                    id: 'validateRegex',
+                    name: 'Validate Regex',
+                    params: [
+                        {
+                            name: 'regex',
+                            value: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
+        ...commonAttributeData,
+        id: CommonAttributes.CREATED_BY,
+        linked_library: SystemLibraries.USERS,
         type: AttributeTypes.SIMPLE_LINK,
         label: {fr: 'Créé par', en: 'Created by'},
         readonly: true,
@@ -37,7 +72,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'created_at',
+        id: CommonAttributes.CREATED_AT,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.DATE,
         label: {fr: 'Date de création', en: 'Creation date'},
@@ -73,8 +108,8 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'modified_by',
-        linked_library: 'users',
+        id: CommonAttributes.MODIFIED_BY,
+        linked_library: SystemLibraries.USERS,
         type: AttributeTypes.SIMPLE_LINK,
         label: {fr: 'Modifié par', en: 'Modified by'},
         readonly: true,
@@ -85,7 +120,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'modified_at',
+        id: CommonAttributes.MODIFIED_AT,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.DATE,
         label: {fr: 'Date de modification', en: 'Modification date'},
@@ -123,7 +158,7 @@ export const systemAttributes: IAttributeForRepo[] = [
         ...commonAttributeData,
         system: false,
         required: false,
-        id: 'label',
+        id: CommonAttributes.LABEL,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Libellé', en: 'Label'},
@@ -131,7 +166,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     /** Users attributes */
     {
         ...commonAttributeData,
-        id: 'login',
+        id: UsersAttributes.LOGIN,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Login', en: 'Login'},
@@ -139,7 +174,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'email',
+        id: UsersAttributes.EMAIL,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Email', en: 'Email'},
@@ -163,7 +198,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'password',
+        id: UsersAttributes.PASSWORD,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.ENCRYPTED,
         label: {fr: 'Mot de passe', en: 'Password'},
@@ -205,13 +240,13 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'user_groups',
+        id: UsersAttributes.USER_GROUPS,
         type: AttributeTypes.TREE,
         label: {
             fr: "Groupes de l'utilisateur",
             en: 'User groups',
         },
-        linked_tree: 'users_groups',
+        linked_tree: SystemTrees.USERS_GROUPS,
         multiple_values: true,
         actions_list: {
             ...commonAttributeData.actions_list,
@@ -221,7 +256,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     /** Files attributes */
     {
         ...commonAttributeData,
-        id: 'root_key',
+        id: FilesAttributes.ROOT_KEY,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Clé racine', en: 'Root key'},
@@ -229,7 +264,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'hash',
+        id: FilesAttributes.HASH,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Hash', en: 'Hash'},
@@ -237,7 +272,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'file_path',
+        id: FilesAttributes.FILE_PATH,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Chemin du fichier', en: 'File path'},
@@ -245,7 +280,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'file_name',
+        id: FilesAttributes.FILE_NAME,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.TEXT,
         label: {fr: 'Nom du fichier', en: 'File name'},
@@ -253,7 +288,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'inode',
+        id: FilesAttributes.INODE,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.NUMERIC,
         label: {fr: 'Inode', en: 'Inode'},
@@ -394,7 +429,7 @@ export const systemAttributes: IAttributeForRepo[] = [
     },
     {
         ...commonAttributeData,
-        id: 'active',
+        id: CommonAttributes.ACTIVE,
         type: AttributeTypes.SIMPLE,
         format: AttributeFormats.BOOLEAN,
         label: {fr: 'Actif', en: 'Active'},

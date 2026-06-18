@@ -1,5 +1,5 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
 import {MASKED_VALUE} from '../../../../_constants/values';
-import {USERS_LIBRARY} from '../../../../_types/library';
 import {makeGraphQlCall} from '../e2eUtils';
 
 describe('Mask users password', () => {
@@ -9,7 +9,7 @@ describe('Mask users password', () => {
     beforeAll(async () => {
         await makeGraphQlCall(
             `mutation {
-            createRecord(library: "${USERS_LIBRARY}", data: {
+            createRecord(library: "${SystemLibraries.USERS}", data: {
                 values: [{
                         attribute: "email",
                         payload: "${userEmail}"
@@ -31,7 +31,7 @@ describe('Mask users password', () => {
         await makeGraphQlCall(
             `mutation {
             deactivateRecords(
-                libraryId: "${USERS_LIBRARY}",
+                libraryId: "${SystemLibraries.USERS}",
                 filters: [
                     {field: "email", condition: EQUAL, value: "${userEmail}"}
                 ]
@@ -45,7 +45,7 @@ describe('Mask users password', () => {
     test('get user password should mask payload/raw_payload value', async () => {
         const res = await makeGraphQlCall(
             `{
-            records(library: "${USERS_LIBRARY}", filters: [{field: "email", condition: EQUAL, value: "${userEmail}"}]) {
+            records(library: "${SystemLibraries.USERS}", filters: [{field: "email", condition: EQUAL, value: "${userEmail}"}]) {
                 list {
                 id
                 properties(attributeIds: ["email", "password"]) {

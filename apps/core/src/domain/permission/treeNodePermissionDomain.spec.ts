@@ -1,3 +1,4 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type ITreeRepo} from '../../infra/tree/treeRepo';
 import {type IValueRepo} from '../../infra/value/valueRepo';
@@ -112,7 +113,7 @@ describe('treeNodePermissionDomain', () => {
                                 id: '12346',
                                 record: {
                                     id: 1,
-                                    library: 'users_groups',
+                                    library: SystemLibraries.USERS_GROUPS,
                                 },
                             },
                         };

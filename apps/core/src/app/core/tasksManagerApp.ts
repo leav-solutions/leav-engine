@@ -1,3 +1,4 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
 import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {withFilter} from 'graphql-subscriptions';
@@ -10,7 +11,6 @@ import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IRecord, AttributeCondition} from '../../_types/record';
 import {type ITasksManagerDomain} from '../../domain/tasksManager/tasksManagerDomain';
 import {type IPubSubTaskData, TriggerNames} from '../../_types/eventsManager';
-import {USERS_LIBRARY} from '../../_types/library';
 import {type ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IAdminPermissionDomain} from '../../domain/permission/adminPermissionDomain';
@@ -18,6 +18,7 @@ import {AdminPermissionsActions} from '../../_types/permissions';
 import {type IExtensionPoints} from '../../_types/extensionPoints';
 import {type ICronTasksManagerDomain} from '../../domain/tasksManager/cronTasksManagerDomain';
 import {type RegisterCronTask} from '../../_types/cronTask';
+import {CommonAttributes} from '../../_constants/systemAttributes';
 
 export interface ITasksManagerApp extends IGraphqlAppModule {
     initMaster(): Promise<NodeJS.Timeout>;
@@ -56,8 +57,8 @@ export default function ({
     const _getUser = async (userId: string, ctx: IQueryInfos): Promise<IRecord> => {
         const record = await recordDomain.find({
             params: {
-                library: USERS_LIBRARY,
-                filters: [{field: 'id', value: userId, condition: AttributeCondition.EQUAL}],
+                library: SystemLibraries.USERS,
+                filters: [{field: CommonAttributes.ID, value: userId, condition: AttributeCondition.EQUAL}],
             },
             ctx,
         });

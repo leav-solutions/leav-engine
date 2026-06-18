@@ -106,6 +106,51 @@ record lié, ou nœud d'arbre), le `id_value`, la `version`, et les `metadata`.
 
 ---
 
+## Constantes des entités système (libraries, attributs, arbres)
+
+LEAV est à schéma dynamique : les applications créent leurs propres libraries/attributs/arbres à
+l'exécution. Mais le core en crée **un socle d'office au démarrage** (via les migrations) : `users`,
+`users_groups`, `files`, `files_directories`, `statuses`, `status_types`, `discussion_threads`,
+`discussion_comments`, leurs attributs et leurs arbres.
+
+**Règle : ne jamais écrire en dur l'identifiant d'une library/attribut/arbre système.** Utiliser les
+enums centralisés dans [`src/_constants/`](src/_constants/) :
+
+| Fichier                                                     | Enum / const                                                                                                                                                                                    | Usage                                      |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| [`systemLibraries.ts`](src/_constants/systemLibraries.ts)   | `SystemLibraries`                                                                                                                                                                               | ids des libraries système                  |
+| [`systemTrees.ts`](src/_constants/systemTrees.ts)           | `SystemTrees`                                                                                                                                                                                   | ids des arbres système                     |
+| [`systemAttributes.ts`](src/_constants/systemAttributes.ts) | `CommonAttributes`, `UsersAttributes`, `UsersGroupsAttributes`, `FilesAttributes`, `StatusesAttributes`, `StatusTypesAttributes`, `DiscussionThreadsAttributes`, `DiscussionCommentsAttributes` | ids des attributs, **un enum par library** |
+| [`systemRecords.ts`](src/_constants/systemRecords.ts)       | `adminUserId`, `systemUserId`, `adminsGroupId`, `filesAdminsGroupId`                                                                                                                            | ids de records bien connus                 |
+| `systemAttributes.ts`                                       | `BASE_ATTRIBUTES`, `PREVIEWS_ATTRIBUTE_SUFFIX`, `PREVIEWS_STATUS_ATTRIBUTE_SUFFIX`, `STATUS_TYPES_DEFAULT_VALUES`                                                                               | agrégats/données dérivés                   |
+
+### Conventions
+
+- **Ce sont des enums string** : `SystemLibraries.USERS` vaut `'users'`. Un membre d'enum string est
+  assignable à `string`, donc on l'utilise **comme valeur** sans cast là où une `string` est attendue
+  (args GraphQL, AQL, filtres…).
+- **Ne jamais typer un champ id en enum.** `IRecord.library`, `IValue.attribute`, les args GraphQL…
+  restent `string` (une app tierce peut référencer ses propres ids). Les enums sont une commodité de
+  référence aux entités système du core, pas une contrainte de type.
+- **Un enum d'attributs par library système** (même vide, ex. `UsersGroupsAttributes`) pour garder la
+  structure homogène et prête à accueillir de futurs attributs.
+- **Dans un template `aql\`\``** : injecter la valeur via `${SystemLibraries.X}` (bind param), jamais en
+  référence nue (qui serait interprétée comme une expression AQL). En JS pur, la référence nue suffit.
+- **Attention aux faux positifs** : un littéral `'files'`/`'id'`/`'login'` n'est pas toujours une entité
+  système (nom de champ d'erreur, endpoint d'app `login`, id de record générique…). Ne remplacer que les
+  références qui désignent réellement la library/attribut/arbre système.
+- Exception connue : les attributs de base `'previews'` / `'previews_status'` restent en littéraux (pas
+  d'enum dédié ; valeur identique aux suffixes `PREVIEWS_*_ATTRIBUTE_SUFFIX`).
+- Les noms préfixés des attributs preview par library se construisent avec
+  `getPreviewsAttributeName(libraryId)` / `getPreviewsStatusAttributeName(libraryId)`
+  ([`src/utils/helpers/getPreviewsAttributes.ts`](src/utils/helpers/getPreviewsAttributes.ts)).
+
+> ⚠️ Ces constantes font de fait partie de la **surface d'API consommée par les plugins** (xstream
+> importe `@leav/core/_constants/...`). Tout renommage/déplacement est un changement cassant à
+> propager côté plugins.
+
+---
+
 ## Permissions
 
 Modèle à trois niveaux : Admin → Library → Record.

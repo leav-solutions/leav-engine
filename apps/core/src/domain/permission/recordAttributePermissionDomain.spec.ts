@@ -1,3 +1,4 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
 import {type IValueRepo} from '../../infra/value/valueRepo';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {PermissionsRelations, RecordAttributePermissionsActions} from '../../_types/permissions';
@@ -74,7 +75,7 @@ describe('AttributePermissionDomain', () => {
                             payload: {
                                 record: {
                                     id: 1,
-                                    library: 'users_groups',
+                                    library: SystemLibraries.USERS_GROUPS,
                                 },
                             },
                         };

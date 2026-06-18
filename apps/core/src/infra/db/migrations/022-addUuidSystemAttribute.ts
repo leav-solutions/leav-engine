@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../../_constants/systemLibraries';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 import {aql} from 'arangojs/aql';
 import {type IAttributeRepo} from '../../attribute/attributeRepo';
 import {type ILibraryRepo, LIB_COLLECTION_NAME} from '../../library/libraryRepo';
@@ -5,8 +7,6 @@ import {type IMigration} from '../../../_types/migration';
 import {ActionsListEvents} from '../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {type IDbService} from '../dbService';
-import {UUID_ATTRIBUTE_ID} from '../../../_constants/attributes';
-import {USERS_LIBRARY} from '../../../_types/library';
 
 interface IDeps {
     'core.infra.attribute'?: IAttributeRepo;
@@ -22,7 +22,7 @@ export default function ({
     return {
         async run(ctx) {
             const uuidAttribute = {
-                id: UUID_ATTRIBUTE_ID,
+                id: CommonAttributes.UUID,
                 type: AttributeTypes.SIMPLE,
                 format: AttributeFormats.TEXT,
                 system: true,
@@ -50,7 +50,7 @@ export default function ({
 
             // 1. Create or update the uuid attribute
             const existingAttribute = await attributeRepo.getAttributes({
-                params: {filters: {id: UUID_ATTRIBUTE_ID}},
+                params: {filters: {id: CommonAttributes.UUID}},
                 ctx,
             });
 
@@ -68,11 +68,11 @@ export default function ({
             });
 
             // 3. For each library: link the uuid attribute, backfill records, ensure index.
-            // USERS_LIBRARY is linked but its existing records are not backfilled.
+            // SystemLibrary.USERS is linked but its existing records are not backfilled.
             for (const libId of libIds) {
                 await libraryRepo.saveLibraryAttributes({
                     libId,
-                    attributes: [UUID_ATTRIBUTE_ID],
+                    attributes: [CommonAttributes.UUID],
                     insertOnly: true,
                     ctx,
                 });
@@ -83,7 +83,7 @@ export default function ({
 
                 const collection = dbService.db.collection(libId);
 
-                if (libId !== USERS_LIBRARY) {
+                if (libId !== SystemLibraries.USERS) {
                     // Backfill uuid for all records missing it. UUID() is an AQL built-in (UUID v4).
                     await dbService.execute({
                         query: aql`

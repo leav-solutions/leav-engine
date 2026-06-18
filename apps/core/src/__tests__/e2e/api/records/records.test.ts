@@ -1,3 +1,4 @@
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {AttributeCondition, Operator, TreeCondition} from '../../../../_types/record';
 import {
@@ -12,7 +13,6 @@ import {
     makeGraphQlCall,
 } from '../e2eUtils';
 import {adminUserId} from '../../../../_constants/users';
-import {usersLibraryId} from '../../../../_constants/libraries';
 import {AttributePermissionsActions} from '../../../../_types/permissions';
 import {FormElementTypes} from '../../../../_types/forms';
 
@@ -566,7 +566,7 @@ describe('Records', () => {
         test('Get record with properties', async () => {
             const result = await makeGraphQlCall(`{
                 records(
-                    library: "${usersLibraryId}",
+                    library: "${SystemLibraries.USERS}",
                     filters: [{field: "id", condition: ${AttributeCondition.EQUAL}, value: "${adminUserId}"}]
                 ) {
                     list {

@@ -1,3 +1,4 @@
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 import {EventAction} from '@leav/utils';
 import {randomUUID} from 'crypto';
 import {type IEventsManagerDomain} from '../../eventsManager/eventsManagerDomain';
@@ -10,7 +11,6 @@ import {CORE_IN_CREATION_BY, type IRecord} from '../../../_types/record';
 import PermissionError from '../../../errors/PermissionError';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
-import {UUID_ATTRIBUTE_ID} from '../../../_constants/attributes';
 import {isValidUuid} from '../../../utils/helpers/validateUuid';
 import {type ICreateRecordValueError} from '../_types';
 import {type IAutomationDomain} from '../../automation/automationDomain';
@@ -40,16 +40,16 @@ export default function ({
 }: IDeps): CreateRecordHelper {
     return async ({library, active, ctx, uuid}) => {
         if (uuid !== undefined && !isValidUuid(uuid)) {
-            throw new ValidationError<{uuid: string}>({[UUID_ATTRIBUTE_ID]: Errors.INVALID_UUID_FORMAT});
+            throw new ValidationError<{uuid: string}>({[CommonAttributes.UUID]: Errors.INVALID_UUID_FORMAT});
         }
 
         const recordData = {
-            [UUID_ATTRIBUTE_ID]: uuid ?? randomUUID(),
-            created_at: dayjs().unix(),
-            created_by: String(ctx.userId),
-            modified_at: dayjs().unix(),
-            modified_by: String(ctx.userId),
-            active,
+            [CommonAttributes.UUID]: uuid ?? randomUUID(),
+            [CommonAttributes.CREATED_AT]: dayjs().unix(),
+            [CommonAttributes.CREATED_BY]: String(ctx.userId),
+            [CommonAttributes.MODIFIED_AT]: dayjs().unix(),
+            [CommonAttributes.MODIFIED_BY]: String(ctx.userId),
+            [CommonAttributes.ACTIVE]: active,
             ...(!active && {[CORE_IN_CREATION_BY]: String(ctx.userId)}),
         };
 

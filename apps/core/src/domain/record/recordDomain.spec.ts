@@ -1,3 +1,4 @@
+import {CommonAttributes} from '../../_constants/systemAttributes';
 import {Errors, ErrorTypes} from '../../_types/errors';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
@@ -17,7 +18,7 @@ import {mockRecord} from '../../__tests__/mocks/record';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import {type IAutomationDomain} from '../automation/automationDomain';
-import recordDomain, {ATTRIBUTE_ACTIVE, type IRecordDomainDeps} from './recordDomain';
+import recordDomain, {type IRecordDomainDeps} from './recordDomain';
 import {createRecord as createRecordHelper} from './helpers';
 import {type IFormRepo} from '../../infra/form/formRepo';
 import mockLogger from '../../__tests__/mockers/logger';
@@ -607,7 +608,7 @@ describe('RecordDomain', () => {
 
             expect(mockValueDomain.saveValue).toBeCalled();
             expect(typeof mockValueDomain.saveValue.mock.calls[0][0]).toBe('object');
-            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(ATTRIBUTE_ACTIVE);
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(CommonAttributes.ACTIVE);
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(false);
             expect(recordAfter.active).toBe(false);
         });
@@ -633,7 +634,7 @@ describe('RecordDomain', () => {
 
             expect(mockValueDomain.saveValue).toBeCalled();
             expect(typeof mockValueDomain.saveValue.mock.calls[0][0]).toBe('object');
-            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(ATTRIBUTE_ACTIVE);
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(CommonAttributes.ACTIVE);
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(true);
 
             expect(recordAfter.active).toBe(true);
@@ -659,7 +660,7 @@ describe('RecordDomain', () => {
             const recordAfter = await recDomain.deactivateRecord(record, {userId: '1'});
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(ATTRIBUTE_ACTIVE);
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(CommonAttributes.ACTIVE);
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(false);
             expect(recordAfter.active).toBe(false);
         });
@@ -684,7 +685,7 @@ describe('RecordDomain', () => {
             const recordAfter = await recDomain.activateRecord(record, {userId: '1'});
 
             expect(mockValueDomain.saveValue).toBeCalled();
-            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(ATTRIBUTE_ACTIVE);
+            expect(mockValueDomain.saveValue.mock.calls[0][0].attribute).toBe(CommonAttributes.ACTIVE);
             expect(mockValueDomain.saveValue.mock.calls[0][0].value.payload).toBe(true);
             expect(recordAfter.active).toBe(true);
         });

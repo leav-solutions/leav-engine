@@ -1,3 +1,5 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
+import {UsersAttributes} from '../../_constants/systemAttributes';
 import * as bcrypt from 'bcryptjs';
 import ValidationError from '../../errors/ValidationError';
 import {type IGlobalSettingsDomain} from '../globalSettings/globalSettingsDomain';
@@ -17,7 +19,6 @@ import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {type IStandardValue} from '../../_types/value';
 import {type IValueDomain} from '../value/valueDomain';
-import {USERS_LIBRARY} from '../../_types/library';
 
 interface ISaveUserDataParams {
     key: string;
@@ -73,9 +74,9 @@ export default function ({
 }: IUserDomainDeps): IUserDomain {
     const getUserEmail = async (userId: string, ctx: IQueryInfos): Promise<string | null> => {
         const values = await valueDomain.getValues({
-            library: USERS_LIBRARY,
+            library: SystemLibraries.USERS,
             recordId: userId,
-            attribute: 'email',
+            attribute: UsersAttributes.EMAIL,
             ctx,
         });
         if (!values?.[0].payload) {
@@ -88,7 +89,7 @@ export default function ({
         async getUserIdentity(userId: string, ctx: IQueryInfos): Promise<IUserIdentity> {
             const recordIdentity = await recordDomain.getRecordIdentity(
                 {
-                    library: USERS_LIBRARY,
+                    library: SystemLibraries.USERS,
                     id: userId,
                 },
                 ctx,
@@ -175,9 +176,9 @@ export default function ({
         },
         async verifyPassword(userId, password, ctx): Promise<boolean> {
             const userPwd: IStandardValue[] = await valueDomain.getValues({
-                library: USERS_LIBRARY,
+                library: SystemLibraries.USERS,
                 recordId: userId,
-                attribute: 'password',
+                attribute: UsersAttributes.PASSWORD,
                 ctx,
                 options: {skipActions: true},
             });
