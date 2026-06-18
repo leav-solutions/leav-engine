@@ -87,4 +87,15 @@ module.exports = {
             events: 'test_automation_events',
         },
     },
+    sdo: {
+        import: {
+            enable: false,
+        },
+        export: {
+            enable: true,
+            exchange: 'test_sdo_export_exchange',
+            dataEventsQueue: 'test_sdo_data_events_queue',
+            type: 'fanout',
+        },
+    },
 };

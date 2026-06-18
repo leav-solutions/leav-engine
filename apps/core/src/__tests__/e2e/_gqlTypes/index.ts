@@ -2050,6 +2050,20 @@ export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, str
 
 const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationType, _variables) => action();
 
+export type SaveSDOGlobalSettingsMutationVariables = Exact<{
+  settings: GlobalSettingsInput;
+}>;
+
+export type SaveSDOGlobalSettingsMutation = { saveGlobalSettings: { settings?: any | null } };
+
+export const SaveSDOGlobalSettingsDocument = gql`
+    mutation SaveSDOGlobalSettings($settings: GlobalSettingsInput!) {
+  saveGlobalSettings(settings: $settings) {
+    settings
+  }
+}
+    `;
+
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
     SaveApiKey(variables: SaveApiKeyMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveApiKeyMutation> {
@@ -2150,6 +2164,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     DeleteViewV2(variables: DeleteViewV2MutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteViewV2Mutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteViewV2Mutation>({ document: DeleteViewV2Document, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteViewV2', 'mutation', variables);
+    },
+    SaveSDOGlobalSettings(variables: SaveSDOGlobalSettingsMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveSDOGlobalSettingsMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SaveSDOGlobalSettingsMutation>({ document: SaveSDOGlobalSettingsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveSDOGlobalSettings', 'mutation', variables);
     }
   };
 }
