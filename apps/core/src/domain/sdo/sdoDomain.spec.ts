@@ -869,9 +869,13 @@ describe('sdoDomain', () => {
     });
 
     describe('getSDOGlobalSettings', () => {
-        it('[-] should throw an error when global settings not available', async () => {
+        it('[-] should return a default global settings not available', async () => {
             mockGlobalSettingsDomain.getSettings.mockResolvedValueOnce({settings: {}} as IGlobalSettings);
-            await expect(_sdoDomain.getSDOGlobalSettings(mockSystemQueryContext)).rejects.toThrow();
+            expect(await _sdoDomain.getSDOGlobalSettings(mockSystemQueryContext)).toStrictEqual({
+                importEnable: false,
+                exportEnable: false,
+                mapping: {},
+            });
         });
 
         it('[+] should return sdoGlobalSettings when found', async () => {

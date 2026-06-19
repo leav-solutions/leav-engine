@@ -1,0 +1,5 @@
+mutation SaveGlobalSettings($settings: GlobalSettingsInput!) {
+    saveGlobalSettings(settings: $settings) {
+        settings
+    }
+}
