@@ -1,5 +1,4 @@
 import {EventAction} from '@leav/utils';
-import {SyncAutomationRuleEventAction} from '../../../_types/automation';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IJexlDomain} from '../../jexl/jexlDomain';
 import {type IAutomationPipelineExecutionState} from '../pipeline/_types';
@@ -28,7 +27,7 @@ const buildExecutionState = (
 ): IAutomationPipelineExecutionState => ({
     trigger: {
         synchronous: true,
-        eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+        eventAction: EventAction.RECORD_INIT,
     },
     results: {},
     startDateMs: 0,
@@ -43,7 +42,7 @@ describe('jexlAutomation.buildAutomationContext', () => {
         it('omits currentRecord when eventTopic is an empty object', () => {
             const {automation, jexlDomain} = buildJexlAutomation();
             const state = buildExecutionState({
-                trigger: {synchronous: false, eventAction: EventAction.RECORD_SAVE, eventTopic: {}},
+                trigger: {synchronous: false, eventAction: EventAction.RECORD_INIT, eventTopic: {}},
             });
 
             const context = automation.buildAutomationContext(state, mockCtx);
@@ -75,7 +74,7 @@ describe('jexlAutomation.buildAutomationContext', () => {
             const state = buildExecutionState({
                 trigger: {
                     synchronous: true,
-                    eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                    eventAction: EventAction.RECORD_INIT,
                     eventTopic: {library: 'products', record: {id: '42', libraryId: 'products'}},
                 },
             });
@@ -92,7 +91,7 @@ describe('jexlAutomation.buildAutomationContext', () => {
             const state = buildExecutionState({
                 trigger: {
                     synchronous: true,
-                    eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                    eventAction: EventAction.RECORD_INIT,
                     eventTopic: {record: {id: '42', libraryId: 'products'}},
                 },
             });
@@ -107,7 +106,7 @@ describe('jexlAutomation.buildAutomationContext', () => {
             const state = buildExecutionState({
                 trigger: {
                     synchronous: true,
-                    eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                    eventAction: EventAction.RECORD_INIT,
                     eventTopic: {record: {id: '42', libraryId: 'products', otherAttr: 'value'} as any},
                 },
             });

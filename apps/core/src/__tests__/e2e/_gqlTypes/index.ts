@@ -222,7 +222,7 @@ export enum AutomationRuleActions {
 
 export enum AutomationRuleEventAction {
   RECORD_INIT = 'RECORD_INIT',
-  RECORD_SAVE = 'RECORD_SAVE',
+  VALUE_DELETE = 'VALUE_DELETE',
   VALUE_SAVE = 'VALUE_SAVE'
 }
 
@@ -363,7 +363,11 @@ export enum EventAction {
   PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
   PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
+  SDO_LOG_ERROR = 'SDO_LOG_ERROR',
+  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
+  SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -470,6 +474,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -574,7 +589,11 @@ export enum LogAction {
   PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
   PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
+  SDO_LOG_ERROR = 'SDO_LOG_ERROR',
+  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
+  SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -865,30 +884,6 @@ export type RecordsPagination = {
   cursor?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
   offset?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type ReportFramingAttributeFilterItemInput = {
-  attributeId: Scalars['String']['input'];
-  values: Array<ReportFramingAttributeFilterValueItemInput>;
-  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type ReportFramingAttributeFilterValueItemInput = {
-  formattedValue?: InputMaybe<Scalars['String']['input']>;
-  rawValue: Scalars['String']['input'];
-};
-
-export type ReportFramingContentInput = {
-  filters?: InputMaybe<ReportFramingFiltersInput>;
-};
-
-export type ReportFramingFiltersInput = {
-  /**  only for excel header filter display  */
-  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
-  campaigns?: InputMaybe<Array<RecordFilterInput>>;
-  categories?: InputMaybe<Array<Scalars['String']['input']>>;
-  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
-  search?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type SaveValueBulkMappingInput = {

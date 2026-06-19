@@ -106,7 +106,7 @@ describe('getTopicEntityFromAction', () => {
         expect(result).toEqual({id: 'export.csv'});
     });
 
-    describe('RECORD_SAVE / VALUE_SAVE', () => {
+    describe('RECORD_SAVE / RECORD_INIT / VALUE_SAVE', () => {
         test('Should use whoAmI.label when record has whoAmI', () => {
             const result = getTopicEntityFromAction(
                 LogAction.RECORD_SAVE,

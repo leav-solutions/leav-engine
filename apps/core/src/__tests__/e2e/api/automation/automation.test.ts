@@ -140,8 +140,8 @@ describe('Automation', () => {
                         label: 'Test rule',
                         active: false,
                         trigger: {
-                            synchronous: false,
-                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.VALUE_DELETE,
                             eventTopic: {
                                 library: 'users',
                             },
@@ -149,7 +149,7 @@ describe('Automation', () => {
                         pipeline: {steps: []},
                     },
                 }),
-            ).rejects.toThrow('Trigger for event action RECORD_INIT is only available for synchronous execution');
+            ).rejects.toThrow('Trigger for event action VALUE_DELETE is only available for asynchronous execution');
         });
 
         test('cannot create a rule with wrong event topic, library not exists', async () => {
@@ -326,15 +326,15 @@ describe('Automation', () => {
                     rule: {
                         id: ruleToUpdate.id,
                         trigger: {
-                            synchronous: false,
-                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.VALUE_DELETE,
                             eventTopic: {
                                 library: 'users',
                             },
                         },
                     },
                 }),
-            ).rejects.toThrow('Trigger for event action RECORD_INIT is only available for synchronous execution');
+            ).rejects.toThrow('Trigger for event action VALUE_DELETE is only available for asynchronous execution');
         });
 
         test('cannot update a rule with wrong event topic, library not exists', async () => {

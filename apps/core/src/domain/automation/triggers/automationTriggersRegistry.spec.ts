@@ -1,6 +1,5 @@
 import {z} from 'zod';
-import {type EventAction} from '@leav/utils';
-import {SyncAutomationRuleEventAction} from '../../../_types/automation';
+import {EventAction} from '@leav/utils';
 import {AutomationTriggerDefSynchronicity} from './_types';
 import ValidationError from '../../../errors/ValidationError';
 import {Errors} from '../../../_types/errors';
@@ -36,9 +35,9 @@ describe('automationTriggersRegistry', () => {
     describe('getTrigger', () => {
         it('returns the trigger for a known event action', () => {
             const registry = createRegistry();
-            const trigger = registry.getTrigger(SyncAutomationRuleEventAction.RECORD_INIT);
+            const trigger = registry.getTrigger(EventAction.RECORD_INIT);
 
-            expect(trigger.eventAction).toBe(SyncAutomationRuleEventAction.RECORD_INIT);
+            expect(trigger.eventAction).toBe(EventAction.RECORD_INIT);
         });
 
         it('throws a ValidationError for an unknown event action', () => {

@@ -1,11 +1,10 @@
 import {EventAction} from '@leav/utils';
 import {systemUserId} from '../../../../_constants/users';
-import {type ICreateAutomationRule, SyncAutomationRuleEventAction} from '../../../../_types/automation';
+import {type ICreateAutomationRule} from '../../../../_types/automation';
 import {type IConfig} from '../../../../_types/config';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
 import automationRulesCacheFactory, {
-    INDEX_RULES_CACHE_KEY,
-    ruleCacheKey,
+    buildRulesCacheKeys,
     type IAutomationRulesCache,
 } from '../../../../domain/automation/automationRulesCache';
 import automationRuleRepoFactory, {
@@ -20,6 +19,17 @@ import {type IDbUtils} from '../../../../infra/db/dbUtils';
 
 // avoid conflict with apps/core/src/__tests__/integration/infra/automationRuleRepo.test.ts
 const automationRuleCacheCollectionName = `cache_${AUTOMATION_RULES_COLLECTION_NAME}`;
+
+// Isolate this file's Redis keys from the production keys used concurrently by
+// other test files (e.g. `createRecord` emits RECORD_INIT, an async trigger, so
+// any sibling test running in another vitest worker would clobber the shared
+// `automation:rules:*` keys). Mirrors `automationRuleCacheCollectionName`.
+const cacheKeyPrefix = `cache_test:${AUTOMATION_RULES_COLLECTION_NAME}`;
+const {
+    indexKey: INDEX_RULES_CACHE_KEY,
+    keysPattern: RULES_CACHE_KEYS_PATTERN,
+    ruleKey: ruleCacheKey,
+} = buildRulesCacheKeys(cacheKeyPrefix);
 
 describe('automationRulesCache', () => {
     let rulesCacheEnabled: IAutomationRulesCache;
@@ -39,7 +49,7 @@ describe('automationRulesCache', () => {
                 active: true,
                 trigger: {
                     synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
+                    eventAction: EventAction.VALUE_DELETE,
                 },
                 pipeline: {steps: []},
                 ...overrides,
@@ -58,21 +68,27 @@ describe('automationRulesCache', () => {
         );
         await dbService.createCollection(automationRuleCacheCollectionName);
 
-        rulesCacheEnabled = automationRulesCacheFactory({
-            'core.infra.cache.cacheService': cachesService,
-            'core.infra.automation.rule': automationRuleRepo,
-            config: {automation: {cache: {enable: true}}} as IConfig,
-        });
-        rulesCacheDisabled = automationRulesCacheFactory({
-            'core.infra.cache.cacheService': cachesService,
-            'core.infra.automation.rule': automationRuleRepo,
-            config: {automation: {cache: {enable: false}}} as IConfig,
-        });
+        rulesCacheEnabled = automationRulesCacheFactory(
+            {
+                'core.infra.cache.cacheService': cachesService,
+                'core.infra.automation.rule': automationRuleRepo,
+                config: {automation: {cache: {enable: true}}} as IConfig,
+            },
+            {keyPrefix: cacheKeyPrefix},
+        );
+        rulesCacheDisabled = automationRulesCacheFactory(
+            {
+                'core.infra.cache.cacheService': cachesService,
+                'core.infra.automation.rule': automationRuleRepo,
+                config: {automation: {cache: {enable: false}}} as IConfig,
+            },
+            {keyPrefix: cacheKeyPrefix},
+        );
     });
 
     afterEach(async () => {
         await clearAllCollectionDocuments(automationRuleCacheCollectionName);
-        await ramCache.deleteAll('automation:rules:*');
+        await ramCache.deleteAll(RULES_CACHE_KEYS_PATTERN);
     });
 
     describe.each([
@@ -91,14 +107,14 @@ describe('automationRulesCache', () => {
                     key: 'asyncNoTopic',
                     overrides: {
                         label: 'async-no-topic',
-                        trigger: {synchronous: false, eventAction: EventAction.RECORD_SAVE},
+                        trigger: {synchronous: false, eventAction: EventAction.VALUE_DELETE},
                     },
                 },
                 {
                     key: 'asyncEmptyTopic',
                     overrides: {
                         label: 'async-empty-topic',
-                        trigger: {synchronous: false, eventAction: EventAction.RECORD_SAVE, eventTopic: {}},
+                        trigger: {synchronous: false, eventAction: EventAction.VALUE_DELETE, eventTopic: {}},
                     },
                 },
                 {
@@ -107,7 +123,7 @@ describe('automationRulesCache', () => {
                         label: 'async-lib-products',
                         trigger: {
                             synchronous: false,
-                            eventAction: EventAction.RECORD_SAVE,
+                            eventAction: EventAction.VALUE_DELETE,
                             eventTopic: {library: 'products'},
                         },
                     },
@@ -118,7 +134,7 @@ describe('automationRulesCache', () => {
                         label: 'async-lib-orders',
                         trigger: {
                             synchronous: false,
-                            eventAction: EventAction.RECORD_SAVE,
+                            eventAction: EventAction.VALUE_DELETE,
                             eventTopic: {library: 'orders'},
                         },
                     },
@@ -148,7 +164,7 @@ describe('automationRulesCache', () => {
                         active: false,
                         trigger: {
                             synchronous: false,
-                            eventAction: EventAction.RECORD_SAVE,
+                            eventAction: EventAction.VALUE_DELETE,
                             eventTopic: {library: 'products'},
                         },
                     },
@@ -157,7 +173,7 @@ describe('automationRulesCache', () => {
                     key: 'syncNoTopic',
                     overrides: {
                         label: 'sync-no-topic',
-                        trigger: {synchronous: true, eventAction: EventAction.RECORD_SAVE},
+                        trigger: {synchronous: true, eventAction: EventAction.VALUE_DELETE},
                     },
                 },
                 {
@@ -166,7 +182,7 @@ describe('automationRulesCache', () => {
                         label: 'sync-record-ref',
                         trigger: {
                             synchronous: true,
-                            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                            eventAction: EventAction.RECORD_INIT,
                             eventTopic: {record: recordRef42},
                         },
                     },
@@ -184,7 +200,7 @@ describe('automationRulesCache', () => {
 
         it('matches all async no-topic / empty-topic rules on action+sync, ignoring topic-constrained rules with unrelated topic', async () => {
             const matched = await getCache().getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'lib'}},
+                {action: EventAction.VALUE_DELETE, topic: {library: 'lib'}},
                 false,
                 buildCtx(),
             );
@@ -195,7 +211,7 @@ describe('automationRulesCache', () => {
         it('matches when a primitive topic field equals the event value', async () => {
             const matched = await getCache().getRulesToTrigger(
                 {
-                    action: EventAction.RECORD_SAVE,
+                    action: EventAction.VALUE_DELETE,
                     topic: {library: 'products', record: {id: '1', libraryId: 'products'}},
                 },
                 false,
@@ -207,7 +223,7 @@ describe('automationRulesCache', () => {
 
         it('does not match topic-constrained rules when no rule topic field equals any event value', async () => {
             const matched = await getCache().getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'nonexistent'}},
+                {action: EventAction.VALUE_DELETE, topic: {library: 'nonexistent'}},
                 false,
                 buildCtx(),
             );
@@ -229,7 +245,7 @@ describe('automationRulesCache', () => {
         it('matches a nested record object via deep equality', async () => {
             const matched = await getCache().getRulesToTrigger(
                 {
-                    action: SyncAutomationRuleEventAction.RECORD_INIT,
+                    action: EventAction.RECORD_INIT,
                     topic: {library: 'products', record: {...recordRef42}},
                 },
                 true,
@@ -241,12 +257,12 @@ describe('automationRulesCache', () => {
 
         it('skips rules with mismatched synchronous flag', async () => {
             const matched = await getCache().getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                {action: EventAction.VALUE_DELETE, topic: {library: 'products'}},
                 true,
                 buildCtx(),
             );
 
-            // syncNoTopic is the only sync rule with action RECORD_SAVE.
+            // syncNoTopic is the only sync rule with action VALUE_DELETE.
             expect(matchedKeys(matched)).toEqual(['syncNoTopic']);
         });
 
@@ -262,7 +278,7 @@ describe('automationRulesCache', () => {
 
         it('excludes inactive rules even when action and topic match', async () => {
             const matched = await getCache().getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                {action: EventAction.VALUE_DELETE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
             );
@@ -273,14 +289,14 @@ describe('automationRulesCache', () => {
 
         it('routes rules to the correct synchronous channel', async () => {
             const matchedSync = await getCache().getRulesToTrigger(
-                {action: SyncAutomationRuleEventAction.RECORD_INIT, topic: {library: 'products', record: recordRef42}},
+                {action: EventAction.RECORD_INIT, topic: {library: 'products', record: recordRef42}},
                 true,
                 buildCtx(),
             );
             expect(matchedKeys(matchedSync)).toEqual(['syncRecordRef']);
 
             const matchedAsync = await getCache().getRulesToTrigger(
-                {action: SyncAutomationRuleEventAction.RECORD_INIT, topic: {library: 'products', record: recordRef42}},
+                {action: EventAction.RECORD_INIT, topic: {library: 'products', record: recordRef42}},
                 false,
                 buildCtx(),
             );
@@ -294,7 +310,7 @@ describe('automationRulesCache', () => {
                 label: 'rule-cached',
                 trigger: {
                     synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
+                    eventAction: EventAction.VALUE_DELETE,
                     eventTopic: {library: 'products'},
                 },
                 pipeline: {steps: [{type: 'log', params: {message: 'hi', level: 'info'}}]},
@@ -302,7 +318,7 @@ describe('automationRulesCache', () => {
 
             const matched = await rulesCacheEnabled.getRulesToTrigger(
                 {
-                    action: EventAction.RECORD_SAVE,
+                    action: EventAction.VALUE_DELETE,
                     topic: {library: 'products', record: {id: '1', libraryId: 'products'}},
                 },
                 false,
@@ -332,7 +348,7 @@ describe('automationRulesCache', () => {
                 label: 'rule-A',
                 trigger: {
                     synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
+                    eventAction: EventAction.VALUE_DELETE,
                     eventTopic: {library: 'products'},
                 },
             });
@@ -340,13 +356,13 @@ describe('automationRulesCache', () => {
                 label: 'rule-B',
                 trigger: {
                     synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
+                    eventAction: EventAction.VALUE_DELETE,
                     eventTopic: {library: 'products'},
                 },
             });
 
             await rulesCacheEnabled.getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                {action: EventAction.VALUE_DELETE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
             );
@@ -377,7 +393,7 @@ describe('automationRulesCache', () => {
                 label: 'rule-ghost',
                 trigger: {
                     synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
+                    eventAction: EventAction.VALUE_DELETE,
                     eventTopic: {library: 'products'},
                 },
             });
@@ -385,13 +401,13 @@ describe('automationRulesCache', () => {
                 label: 'rule-survivor',
                 trigger: {
                     synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
+                    eventAction: EventAction.VALUE_DELETE,
                     eventTopic: {library: 'products'},
                 },
             });
 
             await rulesCacheEnabled.getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                {action: EventAction.VALUE_DELETE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
             );
@@ -400,7 +416,7 @@ describe('automationRulesCache', () => {
             await ramCache.deleteData([ruleCacheKey(ruleA.id)]);
 
             const matched = await rulesCacheEnabled.getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                {action: EventAction.VALUE_DELETE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
             );
@@ -413,13 +429,13 @@ describe('automationRulesCache', () => {
                 label: 'rule-A',
                 trigger: {
                     synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
+                    eventAction: EventAction.VALUE_DELETE,
                     eventTopic: {library: 'products'},
                 },
             });
 
             const firstCall = await rulesCacheEnabled.getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                {action: EventAction.VALUE_DELETE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
             );
@@ -429,13 +445,13 @@ describe('automationRulesCache', () => {
                 label: 'rule-B',
                 trigger: {
                     synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
+                    eventAction: EventAction.VALUE_DELETE,
                     eventTopic: {library: 'products'},
                 },
             });
 
             const secondCall = await rulesCacheEnabled.getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                {action: EventAction.VALUE_DELETE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
             );
@@ -447,13 +463,13 @@ describe('automationRulesCache', () => {
             const ruleA = await makeRule({
                 trigger: {
                     synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
+                    eventAction: EventAction.VALUE_DELETE,
                     eventTopic: {library: 'products'},
                 },
             });
 
             await rulesCacheEnabled.getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                {action: EventAction.VALUE_DELETE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
             );
@@ -461,7 +477,7 @@ describe('automationRulesCache', () => {
             const ruleB = await makeRule({
                 trigger: {
                     synchronous: false,
-                    eventAction: EventAction.RECORD_SAVE,
+                    eventAction: EventAction.VALUE_DELETE,
                     eventTopic: {library: 'products'},
                 },
             });
@@ -472,7 +488,7 @@ describe('automationRulesCache', () => {
             expect(rawAfterInvalidate).toBeNull();
 
             const afterInvalidate = await rulesCacheEnabled.getRulesToTrigger(
-                {action: EventAction.RECORD_SAVE, topic: {library: 'products'}},
+                {action: EventAction.VALUE_DELETE, topic: {library: 'products'}},
                 false,
                 buildCtx(),
             );

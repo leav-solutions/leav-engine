@@ -1,7 +1,7 @@
 import {EventAction} from '@leav/utils';
 import {z} from 'zod';
 import {type Mock} from 'vitest';
-import {SyncAutomationRuleEventAction, type AutomationRuleTrigger} from '../../../_types/automation';
+import {type AutomationRuleTrigger} from '../../../_types/automation';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import automationPipelineDomain from './pipeline';
 import {ActionExecutionResultStatus, type IActionExecutionResult, type IAutomationAction} from '../actions/_types';
@@ -56,7 +56,7 @@ describe('automation pipeline', () => {
     describe('execute', () => {
         const mockTrigger: AutomationRuleTrigger = {
             synchronous: false,
-            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+            eventAction: EventAction.RECORD_INIT,
         };
         const mockCtx = {userId: '1'} as IQueryInfos;
 
@@ -267,7 +267,7 @@ describe('automation pipeline', () => {
         const mockCtx = {userId: '1'} as IQueryInfos;
         const mockTrigger: AutomationRuleTrigger = {
             synchronous: false,
-            eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+            eventAction: EventAction.RECORD_INIT,
         };
         const createPipelineToValidate = (steps: AutomationRulePipelineStep[]): AutomationPipelineValidation => ({
             trigger: mockTrigger,

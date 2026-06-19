@@ -32,8 +32,9 @@ export enum EventAction {
     LIBRARY_SAVE = 'LIBRARY_SAVE',
     TASKS_DELETE = 'TASKS_DELETE',
     PERMISSION_SAVE = 'PERMISSION_SAVE',
-    RECORD_DELETE = 'RECORD_DELETE',
-    RECORD_SAVE = 'RECORD_SAVE',
+    RECORD_DELETE = 'RECORD_DELETE', // when a record is purged (for now)
+    RECORD_SAVE = 'RECORD_SAVE', // when a record is updated (rare, only for some fileManager events !)
+    RECORD_INIT = 'RECORD_INIT', // when a record is created, still not active
     SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
     SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
     SDO_LOG_ERROR = 'SDO_LOG_ERROR',

@@ -229,7 +229,8 @@ export default function ({
 
             const payload = event.payload;
             switch (event.payload.action) {
-                case EventAction.RECORD_SAVE: {
+                case EventAction.RECORD_SAVE:
+                case EventAction.RECORD_INIT: {
                     await _indexDatabase({
                         findRecordParams: {
                             library: payload.topic.record.libraryId,

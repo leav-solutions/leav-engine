@@ -1,4 +1,4 @@
-import {SyncAutomationRuleEventAction} from '../../../../_types/automation';
+import {EventAction} from '@leav/utils';
 import {
     type AutomationRulePipelineStep,
     type AutomationPipelineExecution,
@@ -22,7 +22,7 @@ describe('automation pipeline', () => {
             ruleId: 'testRuleId',
             steps: actions,
             trigger: {
-                eventAction: SyncAutomationRuleEventAction.RECORD_INIT,
+                eventAction: EventAction.RECORD_INIT,
                 synchronous: false,
             },
         });
