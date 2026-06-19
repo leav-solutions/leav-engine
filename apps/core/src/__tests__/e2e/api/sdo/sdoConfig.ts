@@ -9,7 +9,7 @@ export const sdoGlobalSettings: ISDOSettings = {
         [SDO_LIBRARY_ID]: {
             leavLibraryId: SDO_LIBRARY_ID,
             sdoAttributes: {
-                'system.systemId': {leavAttributeId: 'id', valueRequired: true, format: 'number'},
+                'system.systemId': {leavAttributeId: 'id', valueRequired: true, format: 'string'},
                 'system.systemActive': {leavAttributeId: 'active', valueRequired: false, format: 'boolean'},
                 'system.systemCreationDate': {
                     leavAttributeId: 'created_at',

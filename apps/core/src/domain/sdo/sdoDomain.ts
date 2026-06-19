@@ -106,7 +106,7 @@ export default function ({
 
         const sdoGlobalSettings: ISDOSettings = globalSettings?.settings?.sdo;
         if (!sdoGlobalSettings?.mapping) {
-            throw new ValidationError({}, '[SDO] Custom config SDO unavailable in sdoGlobalSettings');
+            return {importEnable: false, exportEnable: false, mapping: {}};
         }
 
         return sdoGlobalSettings;

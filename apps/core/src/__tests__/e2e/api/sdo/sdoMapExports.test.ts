@@ -79,7 +79,7 @@ describe('SDO Export', () => {
             action: 'CREATE',
             content: {
                 system: {
-                    systemId: Number.parseInt(recordId, 10),
+                    systemId: recordId,
                     systemActive: true,
                     systemCreationDate: expect.any(Number),
                     systemLastModifiedDate: expect.any(Number),
