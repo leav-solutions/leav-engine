@@ -13,19 +13,19 @@
             "required": ["systemId"],
             "properties": {
                 "systemId": {
-                    "type": ["number", "null"]
+                    "type": ["string", "null"]
                 },
                 "systemActive": {
                     "type": ["boolean", "null"]
                 },
                 "systemCreator": {
-                    "type": ["number", "null"]
+                    "type": ["string", "null"]
                 },
                 "systemCreationDate": {
                     "type": ["number", "null"]
                 },
                 "systemLastModificator": {
-                    "type": ["number", "null"]
+                    "type": ["string", "null"]
                 },
                 "systemLastModifiedDate": {
                     "type": ["number", "null"]

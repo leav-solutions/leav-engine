@@ -90,7 +90,7 @@ describe('sdoDomain', () => {
 
         it('[+] should NOT throw an error when validate', async () => {
             // Core validates against the generic schema (system + info required)
-            await expect(_sdoDomain.schemaValidation({system: {systemId: 1}, info: {}})).resolves.not.toThrow();
+            await expect(_sdoDomain.schemaValidation({system: {systemId: '1'}, info: {}})).resolves.not.toThrow();
             expect(jsonschemaSpy).toHaveBeenCalled();
         });
     });
