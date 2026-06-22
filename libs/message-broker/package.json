@@ -22,7 +22,7 @@
     "license": "LGPL3",
     "devDependencies": {
         "typescript": "5.9.3",
-        "vitest": "4.1.8"
+        "vitest": "4.1.9"
     },
     "dependencies": {
         "@leav/logger": "workspace:libs/logger",

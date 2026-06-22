@@ -24,11 +24,11 @@
     "dependencies": {
         "@hono/node-server": "1.19.14",
         "@leav/logger": "workspace:libs/logger",
-        "hono": "4.12.25",
+        "hono": "4.12.26",
         "prom-client": "15.1.3"
     },
     "devDependencies": {
         "typescript": "5.9.3",
-        "vitest": "4.1.8"
+        "vitest": "4.1.9"
     }
 }
