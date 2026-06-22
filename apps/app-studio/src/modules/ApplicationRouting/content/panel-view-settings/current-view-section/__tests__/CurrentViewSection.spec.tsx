@@ -24,7 +24,7 @@ jest.mock('../useCurrentViewActions', () => ({
     }),
 }));
 
-const CURRENT_VIEW_TRANSLATION_PREFIX = 'view_settings.current-view';
+const CURRENT_VIEW_TRANSLATION_PREFIX = 'view_settings.current_view';
 
 const makeView = (overrides: Partial<NonNullView> = {}): NonNullView => ({
     id: 'view-1',
@@ -43,23 +43,35 @@ const onClose = jest.fn();
 const Harness = ({
     view,
     savedView,
+    isEmptyView = false,
     canEditAdminView = false,
 }: {
     view: CurrentView;
     savedView: CurrentView;
+    isEmptyView?: boolean;
     canEditAdminView?: boolean;
 }) => {
     const [state, dispatch] = useReducer(currentViewReducer, {view, savedView});
     return (
-        <CurrentViewContext.Provider value={{...state, dispatch}}>
+        <CurrentViewContext.Provider value={{...state, isEmptyView, dispatch}}>
             <CurrentViewSection onViewSettingsClose={onClose} canEditAdminView={canEditAdminView} />
         </CurrentViewContext.Provider>
     );
 };
 
-const renderSection = (opts: {view: CurrentView; savedView?: CurrentView; canEditAdminView?: boolean}) =>
+const renderSection = (opts: {
+    view: CurrentView;
+    savedView?: CurrentView;
+    isEmptyView?: boolean;
+    canEditAdminView?: boolean;
+}) =>
     render(
-        <Harness view={opts.view} savedView={opts.savedView ?? opts.view} canEditAdminView={opts.canEditAdminView} />,
+        <Harness
+            view={opts.view}
+            savedView={opts.savedView ?? opts.view}
+            isEmptyView={opts.isEmptyView}
+            canEditAdminView={opts.canEditAdminView}
+        />,
     );
 
 beforeEach(() => {
@@ -72,6 +84,33 @@ describe('CurrentViewSection', () => {
     it('renders nothing when no view is loaded', () => {
         renderSection({view: null, savedView: null});
         expect(screen.queryByText(`${CURRENT_VIEW_TRANSLATION_PREFIX}.title`)).not.toBeInTheDocument();
+    });
+
+    describe('empty (default) view state', () => {
+        it('renders the header with a read-only "default view" label and the close button', async () => {
+            renderSection({view: null, savedView: null, isEmptyView: true});
+
+            expect(screen.getByText(`${CURRENT_VIEW_TRANSLATION_PREFIX}.title`)).toBeInTheDocument();
+
+            const input = screen.getByRole('textbox');
+            expect(input).toHaveValue(`${CURRENT_VIEW_TRANSLATION_PREFIX}.default_view_label`);
+            expect(input).toBeDisabled();
+
+            await act(async () => {
+                await user.click(screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.close`}));
+            });
+            expect(onClose).toHaveBeenCalledTimes(1);
+        });
+
+        it('exposes no CRUD action (save/clone/reset/delete)', () => {
+            renderSection({view: null, savedView: null, isEmptyView: true});
+
+            for (const action of ['save', 'clone', 'reset', 'delete']) {
+                expect(
+                    screen.queryByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.${action}`}),
+                ).not.toBeInTheDocument();
+            }
+        });
     });
 
     it('renders the title and closes via the close button', async () => {
@@ -104,7 +143,7 @@ describe('CurrentViewSection', () => {
             await act(async () => {
                 await user.clear(screen.getByRole('textbox'));
             });
-            expect(screen.getByText(`${CURRENT_VIEW_TRANSLATION_PREFIX}.label-required`)).toBeInTheDocument();
+            expect(screen.getByText(`${CURRENT_VIEW_TRANSLATION_PREFIX}.label_required`)).toBeInTheDocument();
         });
 
         it('is read-only for a non-owner', () => {
@@ -216,7 +255,7 @@ describe('CurrentViewSection', () => {
         it('shows "shared by" (with the creator display name) and no switch for a non-owner', () => {
             renderSection({view: makeView({created_by: nonOwner}), canEditAdminView: true});
             // libs/ui test i18n renders interpolated keys as `key|value` ⇒ asserts the name is passed.
-            expect(screen.getByText(/current-view\.shared-by\|Alice/)).toBeInTheDocument();
+            expect(screen.getByText(/current_view\.shared_by\|Alice/)).toBeInTheDocument();
             expect(screen.queryByRole('switch')).not.toBeInTheDocument();
         });
     });

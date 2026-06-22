@@ -30,5 +30,11 @@ export const retrievePanelDetails = ({
         ])
         .find(([panel]) => panel.id === (recordPanelId ?? panelId)) ?? [null, null, null];
 
-    return {currentPanel, libraryId, panelType};
+    // The library whose VIEWS the explorer shows. For a record-panel link explorer this is the linked
+    // library carried on the panel (`panel.libraryId`), NOT the owner library under which the panel is
+    // configured (`libraryId`, e.g. the parent record's library). For a library panel both coincide.
+    const displayedLibraryId =
+        currentPanel?.type === 'explorer' && 'attributeSource' in currentPanel ? currentPanel.libraryId : libraryId;
+
+    return {currentPanel, libraryId, panelType, displayedLibraryId};
 };

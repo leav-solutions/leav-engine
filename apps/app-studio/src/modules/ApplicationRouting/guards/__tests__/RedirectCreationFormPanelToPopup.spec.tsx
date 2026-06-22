@@ -102,6 +102,7 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
                 formId: 'edition',
             },
             libraryId: 'campaigns',
+            displayedLibraryId: 'campaigns',
             panelType: 'recordPanels',
         });
 
@@ -138,6 +139,7 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
                 attributeSource: 'campaigns_id_pac',
             },
             libraryId: 'campaigns',
+            displayedLibraryId: 'campaigns',
             panelType: 'recordPanels',
         });
 
@@ -205,6 +207,7 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
                 attributeSource: 'campaigns_id_pac',
             },
             libraryId: 'campaigns',
+            displayedLibraryId: 'campaigns',
             panelType: 'recordPanels',
         });
 
@@ -243,6 +246,7 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
                 attributeSource: 'campaigns_id_pac',
             },
             libraryId: 'campaigns',
+            displayedLibraryId: 'campaigns',
             panelType: 'recordPanels',
         });
 

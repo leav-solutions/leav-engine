@@ -5,7 +5,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
 import {type IMassActions, type MassSelection} from '../_types';
 import {MASS_SELECTION_ALL} from '../_constants';
-import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
+import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings-v2';
 import {prepareFiltersForRequest} from '_ui/components/Filters';
 import {type IUIFiltersState} from '_ui/components/Filters/context/filtersReducer';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';

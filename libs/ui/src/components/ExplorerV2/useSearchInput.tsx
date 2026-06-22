@@ -3,11 +3,7 @@ import {KitSearchInput} from 'aristid-ds';
 import {type ComponentProps, type Dispatch, type DOMAttributes, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
-import {
-    type IViewSettingsAction,
-    type IViewSettingsState,
-    ViewSettingsActionTypes,
-} from './manage-view-settings/store-view-settings/viewSettingsReducer';
+import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from './manage-view-settings-v2';
 import {MASS_SELECTION_ALL} from './_constants';
 import {type SetNewPage} from './_types';
 import styled from 'styled-components';

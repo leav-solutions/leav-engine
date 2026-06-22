@@ -1,4 +1,6 @@
 import {useMemo, useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {KitEmpty} from 'aristid-ds';
 import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {ColumnsSettings} from './ColumnsSettings';
@@ -17,8 +19,9 @@ export const TabDisplay = ({
     // iteration (LEAVC-809). The flag is kept on the props to preserve the interface.
     canEditAdminView: boolean;
 }) => {
-    const {visibleColumns, invisibleColumns, toggleVisibility, moveAttribute} = useCurrentView();
+    const {visibleColumns, invisibleColumns, isEmptyView, toggleVisibility, moveAttribute} = useCurrentView();
     const {lang} = useLang();
+    const {t} = useTranslation();
 
     // Search is a transient UI filter on the column lists, NOT part of the current view.
     const [search, setSearch] = useState('');
@@ -38,6 +41,16 @@ export const TabDisplay = ({
         () => invisibleColumns.filter(matchesSearch),
         [invisibleColumns, matchesSearch],
     );
+
+    // TODO: Might not be necessary for admin user
+    // Default (empty) state: no view to configure, so the display config is shown read-only/empty.
+    if (isEmptyView) {
+        return (
+            <div className={tab}>
+                <KitEmpty description={String(t('view_settings.empty_view'))} />
+            </div>
+        );
+    }
 
     return (
         <div className={tab}>

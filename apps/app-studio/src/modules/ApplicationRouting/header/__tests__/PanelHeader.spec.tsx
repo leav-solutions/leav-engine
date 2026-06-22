@@ -48,6 +48,7 @@ describe('PanelHeader', () => {
         spyUseParams.mockReturnValue({recordId: '1234567890'});
         spyRetrievePanelDetails.mockReturnValue({
             libraryId: 'test',
+            displayedLibraryId: 'test',
             panelType: 'recordPanels',
             currentPanel: {
                 id: 'panel1',
@@ -74,6 +75,7 @@ describe('PanelHeader', () => {
     it('should display RecordIdCard component when panel is type record and recordId is providing by parent', async () => {
         spyRetrievePanelDetails.mockReturnValue({
             libraryId: 'test',
+            displayedLibraryId: 'test',
             panelType: 'recordPanels',
             currentPanel: {
                 id: 'panel1',
@@ -100,6 +102,7 @@ describe('PanelHeader', () => {
     it('should display LibraryIdCard component when panel is type library', async () => {
         spyRetrievePanelDetails.mockReturnValue({
             libraryId: 'test',
+            displayedLibraryId: 'test',
             panelType: 'libraryPanels',
             currentPanel: {
                 id: '1',
@@ -136,6 +139,7 @@ describe('PanelHeader', () => {
             });
             spyRetrievePanelDetails.mockReturnValue({
                 libraryId: 'test',
+                displayedLibraryId: 'test',
                 panelType: 'recordPanels',
                 currentPanel: {
                     id: 'panel123',
@@ -159,6 +163,7 @@ describe('PanelHeader', () => {
             });
             spyRetrievePanelDetails.mockReturnValue({
                 libraryId: 'test',
+                displayedLibraryId: 'test',
                 panelType: 'recordPanels',
                 currentPanel: {
                     id: 'panel123',
@@ -182,6 +187,7 @@ describe('PanelHeader', () => {
             });
             spyRetrievePanelDetails.mockReturnValue({
                 libraryId: 'test',
+                displayedLibraryId: 'test',
                 panelType: 'recordPanels',
                 currentPanel: {
                     id: 'panel123',
@@ -204,6 +210,7 @@ describe('PanelHeader', () => {
             });
             spyRetrievePanelDetails.mockReturnValue({
                 libraryId: 'test',
+                displayedLibraryId: 'test',
                 panelType: 'recordPanels',
                 currentPanel: {
                     id: 'panel123',
@@ -227,6 +234,7 @@ describe('PanelHeader', () => {
             });
             spyRetrievePanelDetails.mockReturnValue({
                 libraryId: 'test',
+                displayedLibraryId: 'test',
                 panelType: 'recordPanels',
                 currentPanel: {
                     id: 'panel123',
@@ -252,6 +260,7 @@ describe('PanelHeader', () => {
             });
             spyRetrievePanelDetails.mockReturnValue({
                 libraryId: 'test',
+                displayedLibraryId: 'test',
                 panelType: 'recordPanels',
                 currentPanel: {
                     id: 'panel123',
@@ -272,6 +281,7 @@ describe('PanelHeader', () => {
         it('should not display ToggleFlapButton components for library panels', async () => {
             spyRetrievePanelDetails.mockReturnValue({
                 libraryId: 'test',
+                displayedLibraryId: 'test',
                 panelType: 'libraryPanels',
                 currentPanel: {
                     id: '1',
@@ -301,6 +311,7 @@ describe('PanelHeader', () => {
             });
             spyRetrievePanelDetails.mockReturnValue({
                 libraryId: 'campaigns',
+                displayedLibraryId: 'campaigns',
                 panelType: 'recordPanels',
                 currentPanel: {
                     id: 'creation_panel',

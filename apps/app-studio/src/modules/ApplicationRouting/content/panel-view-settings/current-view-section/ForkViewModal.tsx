@@ -36,7 +36,7 @@ export const ForkViewModal = ({
     return (
         <KitModal
             appElement={document.getElementById('root')}
-            title={String(t('view_settings.current-view.clone-modal-title'))}
+            title={String(t('view_settings.current_view.clone_modal_title'))}
             showCloseIcon={false}
             isOpen={isOpen}
             close={handleClose}
@@ -51,7 +51,7 @@ export const ForkViewModal = ({
                         disabled={!isValid}
                         onClick={handleSubmit}
                     >
-                        {t('view_settings.current-view.save')}
+                        {t('view_settings.current_view.save')}
                     </KitButton>
                 </>
             }
@@ -59,9 +59,14 @@ export const ForkViewModal = ({
             <KitInput
                 autoFocus
                 value={name}
-                placeholder={String(t('view_settings.current-view.clone-modal-placeholder'))}
+                placeholder={String(t('view_settings.current_view.clone_modal_placeholder'))}
                 onChange={event => setName(event.target.value)}
-                onPressEnter={handleSubmit}
+                onPressEnter={event => {
+                    // Prevent the Enter key's default action from re-activating the trigger button:
+                    // react-modal synchronously returns focus to it on close, and Enter would otherwise re-open the modal.
+                    event.preventDefault();
+                    handleSubmit();
+                }}
             />
         </KitModal>
     );

@@ -22,7 +22,7 @@ describe('retrievePanelDetails', () => {
     };
 
     it('should provide null values on unknown panelId', async () => {
-        const {currentPanel, libraryId, panelType} = retrievePanelDetails({
+        const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({
             application: emptyApplication,
             panelId: 'unknown',
         });
@@ -30,6 +30,7 @@ describe('retrievePanelDetails', () => {
         expect(currentPanel).toBeNull();
         expect(libraryId).toBeNull();
         expect(panelType).toBeNull();
+        expect(displayedLibraryId).toBeNull();
     });
 
     it('should locate the panel by its id (libraryPanels)', async () => {
@@ -52,19 +53,55 @@ describe('retrievePanelDetails', () => {
             },
         };
 
-        const {currentPanel, libraryId, panelType} = retrievePanelDetails({
+        const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({
             application: baseApplication,
             panelId,
         });
 
         expect(panelType).toBe('libraryPanels');
         expect(libraryId).toBe('home');
+        // A library explorer shows its owner library, so both coincide.
+        expect(displayedLibraryId).toBe('home');
         expect(currentPanel).toEqual({
             id: panelId,
             type: 'explorer',
             isViewSettingsActive: false,
             actions: [],
         });
+    });
+
+    it('should resolve displayedLibraryId to the LINKED library for a record-panel link explorer', () => {
+        const recordPanelId = 'linked-campaigns';
+        const baseApplication: Application = {
+            ...emptyApplication,
+            libraries: {
+                ...emptyApplication.libraries,
+                home: {
+                    ...emptyApplication.libraries.home,
+                    recordPanels: [
+                        {
+                            id: recordPanelId,
+                            type: 'explorer',
+                            isViewSettingsActive: false,
+                            actions: [],
+                            attributeSource: 'home_linked_campaigns',
+                            libraryId: 'campaigns',
+                        },
+                    ],
+                },
+            },
+        };
+
+        const {libraryId, panelType, displayedLibraryId} = retrievePanelDetails({
+            application: baseApplication,
+            recordPanelId,
+        });
+
+        expect(panelType).toBe('recordPanels');
+        // The panel is configured under its OWNER library (the parent record's library)...
+        expect(libraryId).toBe('home');
+        // ...but the explorer DISPLAYS the linked library — which is what the view settings target.
+        expect(displayedLibraryId).toBe('campaigns');
     });
 
     it('should locate the panel by its id (recordPanels)', async () => {

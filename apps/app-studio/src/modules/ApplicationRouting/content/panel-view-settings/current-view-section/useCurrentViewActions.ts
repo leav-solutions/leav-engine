@@ -37,7 +37,7 @@ export const useCurrentViewActions = () => {
 
     const notifyError = () =>
         KitAlert.error({
-            message: t('view_settings.current-view.action-error'),
+            message: t('view_settings.current_view.action_error'),
             duration: ERROR_NOTIFICATION_DURATION,
             closable: true,
             showIcon: true,
@@ -62,7 +62,7 @@ export const useCurrentViewActions = () => {
             if (data?.updateViewV2) {
                 // Echo the server state so isDirty drops back to false.
                 dispatch({type: 'LOAD_VIEW', payload: data.updateViewV2});
-                notifySuccess(t('view_settings.current-view.save-success'));
+                notifySuccess(t('view_settings.current_view.save_success'));
                 return true;
             }
 
@@ -105,7 +105,7 @@ export const useCurrentViewActions = () => {
                     data: {viewV2: data.createViewV2},
                 });
                 dispatchPanelEvent({type: 'view-settings-select-view', data: {viewId: data.createViewV2.id}});
-                notifySuccess(t('view_settings.current-view.clone-success'));
+                notifySuccess(t('view_settings.current_view.clone_success'));
             }
         } catch {
             notifyError();
@@ -125,7 +125,7 @@ export const useCurrentViewActions = () => {
 
             setShared(shared);
             notifySuccess(
-                t(shared ? 'view_settings.current-view.share-success' : 'view_settings.current-view.unshare-success'),
+                t(shared ? 'view_settings.current_view.share_success' : 'view_settings.current_view.unshare_success'),
             );
         } catch {
             notifyError();
@@ -138,8 +138,8 @@ export const useCurrentViewActions = () => {
         }
 
         openConfirmModal({
-            title: t('view_settings.current-view.unshare-confirm-title'),
-            content: t('view_settings.current-view.unshare-confirm-content'),
+            title: t('view_settings.current_view.unshare_confirm_title'),
+            content: t('view_settings.current_view.unshare_confirm_content'),
             dangerConfirm: true,
             onOk: () => applyShared(false),
         });

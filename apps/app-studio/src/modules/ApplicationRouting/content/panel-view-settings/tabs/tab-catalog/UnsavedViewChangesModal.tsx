@@ -23,13 +23,13 @@ export const UnsavedViewChangesModal = ({
     return (
         <KitModal
             appElement={document.getElementById('root')}
-            title={String(t('view_settings.unsaved-changes.title'))}
+            title={String(t('view_settings.unsaved_changes.title'))}
             isOpen={isOpen}
             close={onClose}
             footer={
                 <>
                     <KitButton type="secondary" danger onClick={onDiscard}>
-                        {t('view_settings.unsaved-changes.discard')}
+                        {t('view_settings.unsaved_changes.discard')}
                     </KitButton>
                     <KitButton
                         type="primary"
@@ -38,13 +38,13 @@ export const UnsavedViewChangesModal = ({
                         loading={saveLoading}
                         onClick={onSave}
                     >
-                        {t('view_settings.current-view.save')}
+                        {t('view_settings.current_view.save')}
                     </KitButton>
                 </>
             }
             showCloseIcon
         >
-            {t('view_settings.unsaved-changes.content')}
+            {t('view_settings.unsaved_changes.content')}
         </KitModal>
     );
 };

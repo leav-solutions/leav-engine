@@ -1,5 +1,5 @@
 import {type Dispatch, useState} from 'react';
-import {type IViewSettingsAction, ViewSettingsActionTypes} from './manage-view-settings';
+import {type IViewSettingsAction, ViewSettingsActionTypes} from './manage-view-settings-v2';
 import {type SetNewPage} from './_types';
 
 export const usePagination = (dispatch: Dispatch<IViewSettingsAction>) => {

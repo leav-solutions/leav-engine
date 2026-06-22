@@ -8,7 +8,7 @@ export const SharedByLabel = ({createdByLabel}: {createdByLabel: string}) => {
     return (
         <div className={sharedBy}>
             <KitTypography.Text>
-                {t('view_settings.current-view.shared-by', {name: createdByLabel ?? ''})}
+                {t('view_settings.current_view.shared_by', {name: createdByLabel ?? ''})}
             </KitTypography.Text>
         </div>
     );

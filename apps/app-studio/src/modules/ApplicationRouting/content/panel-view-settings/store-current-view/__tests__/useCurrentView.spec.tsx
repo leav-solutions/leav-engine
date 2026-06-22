@@ -23,9 +23,14 @@ const makeView = (overrides: Partial<NonNullView> = {}): NonNullView => ({
     ...overrides,
 });
 
-const renderUseCurrentView = (value: {view: CurrentView; savedView: CurrentView; dispatch: jest.Mock}) => {
+const renderUseCurrentView = (value: {
+    view: CurrentView;
+    savedView: CurrentView;
+    dispatch: jest.Mock;
+    isEmptyView?: boolean;
+}) => {
     const wrapper = ({children}: {children: ReactNode}) => (
-        <CurrentViewContext.Provider value={value}>{children}</CurrentViewContext.Provider>
+        <CurrentViewContext.Provider value={{isEmptyView: false, ...value}}>{children}</CurrentViewContext.Provider>
     );
     return renderHook(() => useCurrentView(), {wrapper});
 };
@@ -71,6 +76,24 @@ describe('useCurrentView', () => {
                 dispatch: jest.fn(),
             });
             expect(result.current.isDirty).toBe(false);
+        });
+    });
+
+    describe('isEmptyView', () => {
+        it('forwards the context flag', () => {
+            const {result} = renderUseCurrentView({
+                view: null,
+                savedView: null,
+                dispatch: jest.fn(),
+                isEmptyView: true,
+            });
+            expect(result.current.isEmptyView).toBe(true);
+        });
+
+        it('defaults to false when a view is loaded', () => {
+            const view = makeView();
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn()});
+            expect(result.current.isEmptyView).toBe(false);
         });
     });
 

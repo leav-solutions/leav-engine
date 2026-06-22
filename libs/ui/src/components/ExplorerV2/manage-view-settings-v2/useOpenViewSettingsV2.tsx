@@ -1,12 +1,10 @@
 import {type ComponentProps, type ReactElement, useEffect, useState} from 'react';
 import {type FeatureHook, type ViewSettingsShortcuts} from '../_types';
-import {type IViewSettingsState} from '_ui/components/Explorer/manage-view-settings';
+import {type IViewSettingsState} from './store-view-settings/viewSettingsReducer';
 import {KitButton, KitTooltip} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowDownWideShort, faBookmark, faFilter, faList} from '@fortawesome/free-solid-svg-icons';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-
-type IViewSettingsStateV2 = IViewSettingsState & {shortcuts: ViewSettingsShortcuts[]};
 
 export const useOpenViewSettingsV2 = ({
     view,
@@ -15,7 +13,7 @@ export const useOpenViewSettingsV2 = ({
     onViewSettingsShortcutClick,
     isEnabled = true,
 }: FeatureHook<{
-    view: IViewSettingsStateV2;
+    view: IViewSettingsState;
     open: boolean;
     closeViewSettings?: () => void;
     onViewSettingsShortcutClick?: ({settingName, viewId}: {settingName: ViewSettingsShortcuts; viewId: string}) => void;

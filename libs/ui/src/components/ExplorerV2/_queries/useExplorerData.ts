@@ -5,7 +5,7 @@ import {
     type Entrypoint,
     type IEntrypointLink,
     type IExplorerData,
-    type DefaultViewSettings,
+    type SerializedView,
     type IEntrypointLibrary,
 } from '../_types';
 import {
@@ -140,7 +140,7 @@ export const useExplorerData = ({
     }>;
     pagination: null | {limit: number; offset: number};
     filters: UIFilter[];
-    filtersOperator: DefaultViewSettings['filtersOperator'];
+    filtersOperator: SerializedView['filtersOperator'];
     skip: boolean;
 }) => {
     const {lang: availableLangs} = useLang();

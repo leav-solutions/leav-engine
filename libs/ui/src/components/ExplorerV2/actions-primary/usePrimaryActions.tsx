@@ -1,6 +1,6 @@
 import {KitButton, KitDropDown} from 'aristid-ds';
 import {type IPrimaryAction} from '../_types';
-import {type IViewSettingsState} from '../manage-view-settings';
+import {type IViewSettingsState} from '../manage-view-settings-v2';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlus} from '@fortawesome/free-solid-svg-icons';

@@ -25,12 +25,12 @@ import {
     viewItem,
 } from './tabCatalog.module.css';
 
-export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => {
+export const TabCatalog = ({libraryId}: {libraryId: string}) => {
     const {t} = useTranslation();
     const {lang} = useLang();
 
     const {myViews, sharedViews} = useViewCatalog(libraryId);
-    const {view: currentLoadedView, isDirty} = useCurrentView();
+    const {view: currentLoadedView, isDirty, isEmptyView} = useCurrentView();
     const {save, saveLoading} = useCurrentViewActions();
 
     const {dispatch} = usePanelEventHandlers<AppStudioInternalEvent>();
@@ -86,7 +86,7 @@ export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => 
     const getViewActions = (view: View): IKitActionButton[] => [
         {
             key: 'copy-id',
-            label: String(t('view_settings.copy-id')),
+            label: String(t('view_settings.copy_id')),
             icon: <FontAwesomeIcon icon={faCopy} />,
             disabled: !view.shared,
             onClick: async e => {
@@ -94,7 +94,7 @@ export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => 
                 await navigator.clipboard.writeText(view.id);
                 KitAlert.info({
                     message: localizedTranslation(view.label, lang),
-                    description: String(t('view_settings.id-copied')),
+                    description: String(t('view_settings.id_copied')),
                     duration: INFO_NOTIFICATION_DURATION,
                     closable: true,
                 });
@@ -104,9 +104,10 @@ export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => 
 
     // Native title fallback so the disabled copy button still explains why it is disabled.
     const getDisabledCopyTitle = (view: View): string | undefined =>
-        view.shared ? undefined : String(t('view_settings.copy-id-disabled'));
+        view.shared ? undefined : String(t('view_settings.copy_id_disabled'));
 
-    if (currentLoadedView === null) {
+    // Render in the default (empty) state too, so a view can be selected when none is loaded yet.
+    if (!currentLoadedView && !isEmptyView) {
         return null;
     }
 
@@ -115,7 +116,7 @@ export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => 
             <KitSpace direction="vertical" size="m" className="full-width">
                 <div className={sectionTitle}>
                     <KitTypography.Title level="h4" className={heading}>
-                        {t('view_settings.my-views')}
+                        {t('view_settings.my_views')}
                     </KitTypography.Title>
                     {myViews.length > 0 ? (
                         <KitBadge count={myViews.length} color="primary" secondaryColorInvert />
@@ -125,7 +126,7 @@ export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => 
                 </div>
                 {myViews.length === 0 ? (
                     <KitTypography.Text className={cn(emptyBox, viewItem)}>
-                        {t('view_settings.my-views-empty')}
+                        {t('view_settings.my_views_empty')}
                     </KitTypography.Text>
                 ) : (
                     <KitSpace direction="vertical" size="xs" className="full-width">
@@ -133,7 +134,7 @@ export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => 
                             // TODO: add modified tag when view is modified
                             <KitItemList
                                 key={view.id}
-                                className={cn(viewItem, {[isCurrentView]: view.id === currentLoadedView.id})}
+                                className={cn(viewItem, {[isCurrentView]: view.id === currentLoadedView?.id})}
                                 actions={getViewActions(view)}
                                 title={getDisabledCopyTitle(view)}
                                 idCardProps={{
@@ -142,7 +143,7 @@ export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => 
                                             {localizedTranslation(view.label, lang)}
                                             {view.shared && (
                                                 <KitTag type="success" size="small">
-                                                    {t('view_settings.current-view.shared')}
+                                                    {t('view_settings.current_view.shared')}
                                                 </KitTag>
                                             )}
                                         </KitSpace>
@@ -162,7 +163,7 @@ export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => 
             <KitSpace direction="vertical" size="m" className="full-width">
                 <div className={sectionTitle}>
                     <KitTypography.Title level="h4" className={heading}>
-                        {t('view_settings.shared-views')}
+                        {t('view_settings.shared_views')}
                     </KitTypography.Title>
                     {sharedViews.length > 0 ? (
                         <KitBadge count={sharedViews.length} color="primary" secondaryColorInvert />
@@ -172,7 +173,7 @@ export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => 
                 </div>
                 {sharedViews.length === 0 ? (
                     <KitTypography.Text className={cn(emptyBox, viewItem)}>
-                        {t('view_settings.shared-views-empty')}
+                        {t('view_settings.shared_views_empty')}
                     </KitTypography.Text>
                 ) : (
                     <KitSpace direction="vertical" size="xs" className="full-width">
@@ -180,7 +181,7 @@ export const TabCatalog = ({libraryId}: {viewId: string; libraryId: string}) => 
                             // TODO: add modified tag when view is modified
                             <KitItemList
                                 key={view.id}
-                                className={cn(viewItem, {[isCurrentView]: view.id === currentLoadedView.id})}
+                                className={cn(viewItem, {[isCurrentView]: view.id === currentLoadedView?.id})}
                                 actions={getViewActions(view)}
                                 title={getDisabledCopyTitle(view)}
                                 idCardProps={{

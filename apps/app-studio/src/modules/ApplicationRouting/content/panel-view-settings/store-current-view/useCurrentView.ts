@@ -9,7 +9,7 @@ const displayFingerprint = (view: CurrentView) =>
     view ? JSON.stringify({label: view.label, display: view.display}) : null;
 
 export const useCurrentView = () => {
-    const {view, savedView, dispatch} = useContext(CurrentViewContext);
+    const {view, savedView, isEmptyView, dispatch} = useContext(CurrentViewContext);
     const {lang} = useLang();
     const {userData} = useUser();
 
@@ -65,6 +65,7 @@ export const useCurrentView = () => {
     return {
         view,
         savedView,
+        isEmptyView,
         dispatch,
         isOwner,
         isDirty,

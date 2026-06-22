@@ -34,7 +34,7 @@ jest.mock('aristid-ds', () => ({
     KitAlert: {success: jest.fn(), error: jest.fn(), info: jest.fn()},
 }));
 
-const T = 'view_settings.current-view';
+const T = 'view_settings.current_view';
 
 const echoView = {id: 'view-1', label: {fr: 'V'}};
 const createdView = {id: 'view-2', label: {fr: 'Ma copie'}};
@@ -84,7 +84,7 @@ describe('useCurrentViewActions', () => {
                 }),
             );
             expect(mockDispatch).toHaveBeenCalledWith({type: 'LOAD_VIEW', payload: echoView});
-            expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.save-success`}));
+            expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.save_success`}));
         });
 
         it('notifies error and does not echo on failure', async () => {
@@ -95,7 +95,7 @@ describe('useCurrentViewActions', () => {
                 await result.current.save();
             });
 
-            expect(KitAlert.error).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.action-error`}));
+            expect(KitAlert.error).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.action_error`}));
             expect(mockDispatch).not.toHaveBeenCalled();
         });
     });
@@ -133,7 +133,7 @@ describe('useCurrentViewActions', () => {
                 data: {viewId: createdView.id},
             });
             expect(mockDispatch).not.toHaveBeenCalled();
-            expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.clone-success`}));
+            expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.clone_success`}));
         });
     });
 
@@ -150,7 +150,7 @@ describe('useCurrentViewActions', () => {
                 expect.objectContaining({variables: {view: {id: 'view-1', shared: true}}}),
             );
             expect(mockSetShared).toHaveBeenCalledWith(true);
-            expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.share-success`}));
+            expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.share_success`}));
         });
 
         it('asks for confirmation before unsharing and only mutates on confirm', async () => {
@@ -173,7 +173,7 @@ describe('useCurrentViewActions', () => {
                 expect.objectContaining({variables: {view: {id: 'view-1', shared: false}}}),
             );
             expect(mockSetShared).toHaveBeenCalledWith(false);
-            expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.unshare-success`}));
+            expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.unshare_success`}));
         });
     });
 });

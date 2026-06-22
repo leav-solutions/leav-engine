@@ -3,7 +3,7 @@ import {KitAlert, KitNotification} from 'aristid-ds';
 import {useExportLazyQuery, type RecordFilterInput} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type FeatureHook, type IMassActions} from '../_types';
-import {type IViewSettingsAction, type IViewSettingsState} from '../manage-view-settings';
+import {type IViewSettingsAction, type IViewSettingsState} from '../manage-view-settings-v2';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION} from '_ui/constants';
 import {ExportProfileSelectionModal} from './export/ExportProfileSelectionModal';

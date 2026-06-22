@@ -2,7 +2,6 @@ import {type ReactNode, useEffect, useState} from 'react';
 import {useGetPermissionEditViewOnLibraryQuery} from '../../../../__generated__';
 import {DEFAULT_VIEW_SETTINGS_TAB_KEY} from '../../../../constants';
 import {CurrentViewSection} from './current-view-section/CurrentViewSection';
-import {CurrentViewProvider} from './store-current-view/CurrentViewProvider';
 import {PanelViewSettingsSidebar} from './panel-view-settings-sidebar/PanelViewSettingsSidebar';
 import {VIEW_SETTINGS_TABS} from './tabs/_constantes';
 import {type ViewSettingsTab} from '../../types';
@@ -16,12 +15,10 @@ import {root, rightColumn, tabContent} from './panelViewSettings.module.css';
 export const PanelViewSettings = ({
     libraryId,
     currentTab,
-    currentViewId,
     onClose,
 }: {
     libraryId: string;
     currentTab?: ViewSettingsTab;
-    currentViewId: string;
     onClose: () => void;
 }) => {
     const {data} = useGetPermissionEditViewOnLibraryQuery({
@@ -45,19 +42,17 @@ export const PanelViewSettings = ({
         display: <TabDisplay canEditAdminView={canEditAdminView} />,
         filters: <TabFilters canEditAdminView={canEditAdminView} />,
         sorts: <TabSorts canEditAdminView={canEditAdminView} />,
-        catalog: <TabCatalog viewId={currentViewId} libraryId={libraryId} />,
+        catalog: <TabCatalog libraryId={libraryId} />,
     };
 
     return (
-        <CurrentViewProvider viewId={currentViewId}>
-            <div className={root}>
-                <PanelViewSettingsSidebar activeTab={activeTab} onTabChange={setActiveTab} />
-                <div className={rightColumn}>
-                    <CurrentViewSection onViewSettingsClose={onClose} canEditAdminView={canEditAdminView} />
-                    <TabHeader tab={activeTabMeta} />
-                    <div className={tabContent}>{tabsContent[activeTab]}</div>
-                </div>
+        <div className={root}>
+            <PanelViewSettingsSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+            <div className={rightColumn}>
+                <CurrentViewSection onViewSettingsClose={onClose} canEditAdminView={canEditAdminView} />
+                <TabHeader tab={activeTabMeta} />
+                <div className={tabContent}>{tabsContent[activeTab]}</div>
             </div>
-        </CurrentViewProvider>
+        </div>
     );
 };

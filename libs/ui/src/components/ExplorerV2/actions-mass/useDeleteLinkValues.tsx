@@ -1,6 +1,6 @@
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {type FeatureHook, type IEntrypointLink, type IMassActions} from '../_types';
-import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
+import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings-v2';
 import {type Dispatch, type Key, useMemo} from 'react';
 import {useExplorerData} from '../_queries/useExplorerData';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
