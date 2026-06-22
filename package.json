@@ -85,7 +85,7 @@
     "engines": {
         "node": ">=24.0.0"
     },
-    "packageManager": "yarn@4.16.0",
+    "packageManager": "yarn@4.17.0",
     "stableVersion": "0.0.0",
     "config": {
         "commitizen": {
