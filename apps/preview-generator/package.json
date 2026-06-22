@@ -24,7 +24,7 @@
         "prettier": "3.8.4",
         "tsx": "4.22.4",
         "typescript": "5.9.3",
-        "vitest": "4.1.8"
+        "vitest": "4.1.9"
     },
     "dependencies": {
         "@leav/app-root-path": "workspace:libs/app-root-path",
