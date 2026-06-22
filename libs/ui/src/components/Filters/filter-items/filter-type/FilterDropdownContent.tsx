@@ -22,6 +22,7 @@ import {
 } from '../../_types';
 import {SmartFilterAttributeDropdown} from './smart-filter/SmartFilterAttributeDropdown';
 import {KitLoader} from 'aristid-ds';
+import {LegacyDateAttributeDropDown} from './LegacyDateAttributeDropDown';
 
 export const FilterDropdownContent: FunctionComponent<{
     filter: UIFilter;
@@ -65,9 +66,9 @@ export const FilterDropdownContent: FunctionComponent<{
             [AttributeFormat.date]: loading ? (
                 <KitLoader />
             ) : enableEnhancedDateDropDown ? (
-                <DateAttributeDropDown {...commonDropDownProps} /> // TODO replace with new date dropdown
-            ) : (
                 <DateAttributeDropDown {...commonDropDownProps} />
+            ) : (
+                <LegacyDateAttributeDropDown {...commonDropDownProps} /> // Remove when removing the feature toggle
             ),
             [AttributeFormat.boolean]: <BooleanAttributeDropDown {...commonDropDownProps} />,
             [AttributeFormat.encrypted]: <EncryptedAttributeDropDown {...commonDropDownProps} />,

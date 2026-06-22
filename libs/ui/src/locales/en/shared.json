@@ -805,6 +805,11 @@
             "filters": "Filters",
             "sorts": "Sorts",
             "catalog": "Catalog"
+        },
+        "date_presets": {
+            "today": "Today",
+            "some_day": "Some day",
+            "undefined": "Undefined"
         }
     }
 }
