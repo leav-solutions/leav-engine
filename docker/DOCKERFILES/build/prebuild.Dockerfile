@@ -1,4 +1,4 @@
-FROM node:24.16.0-alpine3.24
+FROM node:24.17.0-alpine3.24
 
 RUN echo "------------------------ START PREBUILD ---------------------------"
 

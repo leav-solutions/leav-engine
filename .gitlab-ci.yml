@@ -1,5 +1,5 @@
 default:
-  image: node:24.16.0-alpine3.24
+  image: node:24.17.0-alpine3.24
   interruptible: true
   tags:
     - docker-dev
