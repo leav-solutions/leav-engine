@@ -805,6 +805,11 @@
             "filters": "Filtres",
             "sorts": "Tris",
             "catalog": "Catalogue"
+        },
+        "date_presets": {
+            "today": "Aujourd’hui",
+            "some_day": "Un jour",
+            "undefined": "Non définie"
         }
     }
 }

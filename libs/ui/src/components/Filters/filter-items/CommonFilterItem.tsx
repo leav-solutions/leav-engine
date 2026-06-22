@@ -15,12 +15,22 @@ import {
 } from '../_types';
 import {ACTIVE_ATTRIBUTE_ID} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {AttributeConditionFilter} from '_ui/types';
+import dayjs from 'dayjs';
 
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
 `;
+
 const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
     if (filter.condition && nullValueConditions.includes(filter.condition as RecordFilterCondition)) {
+        if (filter.attribute.format === AttributeFormat.date) {
+            if (filter.condition === AttributeConditionFilter.TODAY) {
+                return [dayjs().format('YYYY-MM-DD')];
+            } else if (filter.condition === AttributeConditionFilter.IS_EMPTY) {
+                return [t('explorer.date_presets.undefined')];
+            }
+        }
         const conditionOption = getAttributeConditionOptions(t).find(option => option.value === filter.condition);
         return [conditionOption?.label ?? ''];
     }
