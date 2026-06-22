@@ -20,6 +20,13 @@ processors:
   memory_limiter:
     limit_mib: 256
     check_interval: 1s
+
+  # Inject Kubernetes attributes into metrics and traces, to have same queries in dashboards and traces.
+  attributes/inject_k8s_attributes:
+    actions:
+      - key: k8s_namespace_name
+        value: xs-local
+        action: insert
 ##################################################################################################
 #                                      EXPORTERS                                                 #
 ##################################################################################################
@@ -36,5 +43,5 @@ service:
   pipelines:
     metrics:
       receivers: [otlp]
-      processors: [memory_limiter, batch]
+      processors: [memory_limiter, attributes/inject_k8s_attributes, batch]
       exporters: [prometheusremotewrite, debug]
