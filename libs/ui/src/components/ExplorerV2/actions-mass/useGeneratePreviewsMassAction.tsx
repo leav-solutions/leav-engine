@@ -7,7 +7,7 @@ import {
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type FeatureHook, type IMassActions} from '../_types';
-import {type IViewSettingsState} from '../manage-view-settings';
+import {type IViewSettingsState} from '../manage-view-settings-v2';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faImage} from '@fortawesome/free-solid-svg-icons';

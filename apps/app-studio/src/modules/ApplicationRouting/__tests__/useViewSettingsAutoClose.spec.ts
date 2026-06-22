@@ -46,6 +46,7 @@ describe('useViewSettingsAutoClose', () => {
         spyRetrievePanelDetails.mockReturnValue({
             currentPanel: explorerWithActiveVolet,
             libraryId: 'lib',
+            displayedLibraryId: 'lib',
             panelType: 'recordPanels',
         });
     });
@@ -66,6 +67,7 @@ describe('useViewSettingsAutoClose', () => {
         spyRetrievePanelDetails.mockReturnValue({
             currentPanel: {...explorerWithActiveVolet, isViewSettingsActive: false},
             libraryId: 'lib',
+            displayedLibraryId: 'lib',
             panelType: 'recordPanels',
         });
 
@@ -89,6 +91,7 @@ describe('useViewSettingsAutoClose', () => {
         spyRetrievePanelDetails.mockReturnValue({
             currentPanel: {...explorerWithActiveVolet, isViewSettingsActive: false},
             libraryId: 'lib',
+            displayedLibraryId: 'lib',
             panelType: 'recordPanels',
         });
         const {rerender} = renderHook(() => useViewSettingsAutoClose(false));
@@ -96,6 +99,7 @@ describe('useViewSettingsAutoClose', () => {
         spyRetrievePanelDetails.mockReturnValue({
             currentPanel: explorerWithActiveVolet,
             libraryId: 'lib',
+            displayedLibraryId: 'lib',
             panelType: 'recordPanels',
         });
         rerender();

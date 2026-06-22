@@ -10,14 +10,12 @@ import {explorerContainer} from './panelExplorer.module.css';
 
 interface IPanelLibraryExplorerProps {
     libraryId: string;
-    viewId: string | undefined;
     explorerProps: ExplorerProps | undefined;
     actions: ItemActions;
 }
 
 export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps> = ({
     libraryId,
-    viewId,
     explorerProps,
     actions,
 }) => {
@@ -28,26 +26,37 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
     const commonExplorerProps = mapToCommonExplorerProps({explorerProps});
     const itemActions = mapperToItemActions({actions, application, lang, navigate, libraryId});
 
-    const viewSettingsProps = useViewSettingsProps({viewId});
+    const viewSettingsProps = useViewSettingsProps();
 
-    // TODO: Should be deleted when ViewV2 will be fully integrated and ExplorerV2 will be renamed to Explorer
-    const ExplorerComponent = application.enableViewSettings ? ExplorerV2 : Explorer;
+    const entrypoint = {type: 'library', libraryId} as const;
+
+    // TODO: Should be deleted when ViewV2 will be fully integrated and ExplorerV2 will be renamed to Explorer.
+    if (application.enableViewSettings) {
+        // ExplorerV2 no longer accepts `defaultViewSettings`; it is driven by the controlled `currentView` prop.
+        const {defaultViewSettings: _legacyViewSettings, ...commonExplorerPropsV2} = commonExplorerProps;
+
+        return (
+            <div className={explorerContainer}>
+                <ExplorerV2
+                    {...commonExplorerPropsV2}
+                    entrypoint={entrypoint}
+                    itemActions={itemActions}
+                    hideFirstActionLabel
+                    currentView={viewSettingsProps.currentView}
+                    defaultCallbacks={viewSettingsProps.defaultCallbacks}
+                />
+            </div>
+        );
+    }
 
     return (
         <div className={explorerContainer}>
-            <ExplorerComponent
+            <Explorer
                 {...commonExplorerProps}
-                defaultViewSettings={{
-                    ...commonExplorerProps.defaultViewSettings,
-                    ...viewSettingsProps.defaultViewSettings,
-                }}
-                entrypoint={{
-                    type: 'library',
-                    libraryId,
-                }}
+                defaultViewSettings={commonExplorerProps.defaultViewSettings}
+                entrypoint={entrypoint}
                 itemActions={itemActions}
                 hideFirstActionLabel
-                {...viewSettingsProps}
             />
         </div>
     );

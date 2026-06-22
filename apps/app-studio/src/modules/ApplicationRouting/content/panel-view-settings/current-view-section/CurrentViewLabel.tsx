@@ -6,10 +6,14 @@ import {useCurrentView} from '../store-current-view/useCurrentView';
 export const CurrentViewLabel = () => {
     const {t} = useTranslation();
     const {lang} = useLang();
-    const {view, isOwner, setLabel} = useCurrentView();
+    const {view, isOwner, isEmptyView, setLabel} = useCurrentView();
 
-    if (!view) {
+    if (!view && !isEmptyView) {
         return null;
+    }
+
+    if (isEmptyView) {
+        return <KitInput readonly value={String(t('view_settings.current_view.default_view_label'))} />;
     }
 
     const value = view.label?.[lang[0]] ?? '';
@@ -24,8 +28,8 @@ export const CurrentViewLabel = () => {
         <KitInput
             value={value}
             status={isLabelEmpty ? 'error' : undefined}
-            helper={isLabelEmpty ? String(t('view_settings.current-view.label-required')) : undefined}
-            placeholder={String(t('view_settings.current-view.label-placeholder'))}
+            helper={isLabelEmpty ? String(t('view_settings.current_view.label_required')) : undefined}
+            placeholder={String(t('view_settings.current_view.label_placeholder'))}
             onChange={event => setLabel(event.target.value)}
         />
     );

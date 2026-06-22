@@ -2,7 +2,7 @@ import {act, renderHook} from '_ui/_tests/testUtils';
 import * as useExecuteSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {type IEntrypointLibrary} from '../_types';
 import {useAddLinkMassAction} from './useAddLinkMassAction';
-import {viewSettingsInitialState} from '../manage-view-settings';
+import {viewSettingsInitialState} from '../manage-view-settings-v2';
 
 const libraryEntrypoint: IEntrypointLibrary = {
     type: 'library',

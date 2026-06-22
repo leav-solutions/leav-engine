@@ -110,6 +110,7 @@ describe('RedirectToFirstRecordPanelAllowedInCompactMode component guard', () =>
                 hideInCompactMode: false,
             },
             libraryId: 'map',
+            displayedLibraryId: 'map',
             panelType: 'recordPanels',
         });
 
@@ -141,6 +142,7 @@ describe('RedirectToFirstRecordPanelAllowedInCompactMode component guard', () =>
                 hideInCompactMode: true,
             },
             libraryId: 'map',
+            displayedLibraryId: 'map',
             panelType: 'recordPanels',
         });
 
@@ -173,6 +175,7 @@ describe('RedirectToFirstRecordPanelAllowedInCompactMode component guard', () =>
                 hideInCompactMode: true,
             },
             libraryId: 'map',
+            displayedLibraryId: 'map',
             panelType: 'recordPanels',
         });
 
@@ -236,6 +239,7 @@ describe('RedirectToFirstRecordPanelAllowedInCompactMode component guard', () =>
                 hideInCompactMode: true,
             },
             libraryId: null,
+            displayedLibraryId: null,
             panelType: 'recordPanels',
         });
 
@@ -288,6 +292,7 @@ describe('RedirectToFirstRecordPanelAllowedInCompactMode component guard', () =>
                 hideInCompactMode: true,
             },
             libraryId: 'map',
+            displayedLibraryId: 'map',
             panelType: 'recordPanels',
         });
 

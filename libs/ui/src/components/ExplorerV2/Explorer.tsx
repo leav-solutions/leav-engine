@@ -1,5 +1,4 @@
 import {forwardRef, type ReactNode, useImperativeHandle, useMemo} from 'react';
-import {createPortal} from 'react-dom';
 import {KitEmpty, KitSnackBarProvider, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
@@ -7,9 +6,8 @@ import {Loading} from '_ui/components/Loading';
 import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {useFiltersReducer} from '_ui/components/Filters/context/useFiltersReducer';
 import {FiltersContext} from '_ui/components/Filters/context/filtersContext';
-import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
+import {type JoinLibraryContextFragment, ViewV2Types} from '_ui/_gqlTypes';
 import {
-    type DefaultViewSettings,
     type Entrypoint,
     type FiltersChangePayload,
     type IItemAction,
@@ -35,18 +33,16 @@ import {useEditAttributeMassAction} from './actions-mass/useEditAttributeMassAct
 import {useGeneratePreviewsMassAction} from './actions-mass/useGeneratePreviewsMassAction';
 import {
     defaultPageSizeOptions,
-    SidePanel,
-    useEditSettings,
-    useOpenViewSettings,
+    type IViewSettingsState,
+    useOpenViewSettingsV2,
     ViewSettingsContext,
-} from './manage-view-settings';
-import {useOpenViewSettingsV2} from './manage-view-settings-v2/useOpenViewSettingsV2';
+} from './manage-view-settings-v2';
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
+import {useNotifyFiltersChange} from './useNotifyFiltersChange';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {MASS_SELECTION_ALL, SNACKBAR_MASS_ID} from './_constants';
 import {useExplorerCountData} from './_queries/useExplorerCountData';
-import {useLoadViewById} from './useLoadViewById';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -86,7 +82,6 @@ export interface IExplorerProps {
     defaultActionsForItem?: Array<'replaceLink' | 'remove' | 'activate'>;
     defaultPrimaryActions?: Array<'create'>;
     defaultMassActions?: Array<'deactivate' | 'export' | 'editAttribute' | 'generatePreviews'>;
-    defaultViewSettings?: DefaultViewSettings;
     defaultCallbacks?: {
         item?: {
             edit?: IItemAction['callback'];
@@ -140,10 +135,12 @@ export interface IExplorerProps {
     tableBodyHeight?: string;
     creationFormId?: string;
     joinLibraryContext?: JoinLibraryContextFragment;
-
-    // ViewConfig specific props
+    /**
+     * Controlled view (display config + filters, including masked `hidden:true` pre-filters).
+     * app-studio is the source of truth and feeds this prop. ExplorerV2 reads it and never
+     * fetches a viewV2 itself; data queries stay skipped until it is received.
+     */
     currentView?: SerializedView;
-    loadedViewId?: string | null;
 }
 
 export interface IExplorerRef {
@@ -180,43 +177,65 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             hideTableHeader = false,
             useSmallHeaderSize = false,
             tableBodyHeight,
-            ignoreViewByDefault = false,
             defaultActionsForItem = ['replaceLink', 'remove', 'activate'],
             defaultPrimaryActions = ['create'],
             defaultMassActions = ['deactivate', 'editAttribute', 'export', 'generatePreviews'],
             defaultCallbacks,
-            defaultViewSettings,
             joinLibraryContext,
             currentView,
-            loadedViewId,
         },
         ref,
     ) => {
         const {t} = useSharedTranslation();
 
-        const {panelElement: settingsPanelElement} = useEditSettings(); // TODO: should be conditional due to can be manager via app-studio only
-
         const {
             loading: viewSettingsLoading,
-            view,
+            view: ephemeralView,
             dispatch: viewSettingsDispatch,
-        } = useViewSettingsReducer(entrypoint, defaultViewSettings, ignoreViewByDefault); // TODO: load all views, why should viewConfigPanel have to do it too? Can they communicate with each other (context)?
+        } = useViewSettingsReducer(entrypoint);
+
+        /**
+         * The display config (viewType/attributesIds/sort/viewId) is owned by the controlled
+         * `currentView` prop and merged on top of the ephemeral state (mass selection, page size,
+         * fulltext search) + the async-resolved `libraryId`/`entrypoint`.
+         */
+        const view: IViewSettingsState = useMemo(
+            () => ({
+                ...ephemeralView,
+                viewId: currentView?.viewId ?? null,
+                viewLabels: currentView?.viewLabels ?? {},
+                viewType: currentView?.viewType ?? ViewV2Types.list,
+                attributesIds: currentView?.attributesIds ?? [],
+                sort: currentView?.sort ?? [],
+            }),
+            [ephemeralView, currentView],
+        );
+
+        /**
+         * Masked pre-filters (`hidden:true`, e.g. the link pre-filter) injected by app-studio. They
+         * are applied to requests but excluded from the filters UI.
+         */
+        const hiddenFilters = useMemo(
+            () => (currentView?.filters ?? []).filter(filter => filter.hidden),
+            [currentView],
+        );
+
+        const isViewReady = currentView !== undefined && !viewSettingsLoading;
 
         const {filtersData, dispatch: filtersDispatch} = useFiltersReducer({
             libraryId: view.libraryId,
             viewId: view.viewId ?? undefined,
-            filters: defaultViewSettings?.filters ?? undefined,
-            filtersOperator: defaultViewSettings?.filtersOperator ?? undefined,
-            ignoreViewByDefault,
-            skip: viewSettingsLoading,
+            filters: currentView?.filters ?? undefined,
+            filtersOperator: currentView?.filtersOperator ?? undefined,
+            ignoreViewByDefault: true,
+            skip: !isViewReady,
         });
 
-        useLoadViewById({
-            loadedViewId,
-            isLoading: viewSettingsLoading,
-            view,
-            viewSettingsDispatch,
-            filtersDispatch,
+        useNotifyFiltersChange({
+            isLoading: !isViewReady,
+            filters: filtersData.filters.filter(filter => !filter.hidden),
+            filtersOperator: filtersData.filtersOperator,
+            onFiltersChange: defaultCallbacks?.viewSettings?.onFiltersChange,
         });
 
         const {currentPage, setNewPageSize, setNewPage} = usePagination(viewSettingsDispatch);
@@ -236,7 +255,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             sorts: view.sort,
             filters: filtersData.filters,
             filtersOperator: filtersData.filtersOperator,
-            skip: viewSettingsLoading,
+            skip: !isViewReady,
         }); // TODO: refresh when go back on page
         const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
         const isLink = entrypoint.type === 'link';
@@ -264,9 +283,9 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         const {countData: totalCountLibrary, refetchCount} = useExplorerCountData({
             entrypoint,
             libraryId: view.libraryId,
-            defaultFilters: defaultViewSettings?.filters ?? [],
+            defaultFilters: hiddenFilters,
             filters: filtersData.filters,
-            skip: viewSettingsLoading,
+            skip: !isViewReady,
         });
 
         const hasNoResults = data === null || data.totalCount === 0;
@@ -375,14 +394,20 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             hideFirstActionLabel,
         });
 
+        /**
+         * The view settings panel lives in app-studio (ADR-006): the shortcuts are enabled only
+         * when the host provides `onViewSettingsShortcutClick`. The same flag controls whether
+         * the toolbar exposes filter removal (`canRemoveFilters`).
+         */
+        const canManageViewSettings = defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick !== undefined;
+
         const {viewSettingsShortcutsButtons} = useOpenViewSettingsV2({
-            isEnabled: defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick !== undefined,
-            view: view as any,
+            isEnabled: canManageViewSettings,
+            view,
             open: !isMassSelectionAll,
             closeViewSettings: defaultCallbacks?.viewSettings?.closeViewSettings,
             onViewSettingsShortcutClick: defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick,
         });
-        const {viewSettingsButton, viewListButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
 
         const {searchInput} = useSearchInput({view, dispatch: viewSettingsDispatch, setNewPage});
 
@@ -421,20 +446,12 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                                 showSorts={showSorts}
                                 isMassSelectionAll={isMassSelectionAll}
                                 headless={hideTableHeader}
-                                canRemoveFilters={view?.enableConfigureView ?? false}
+                                canRemoveFilters={canManageViewSettings}
                                 selectAllButton={hideSelectAllAction ? null : selectAllButton}
                                 viewSettingsLoading={viewSettingsLoading}
                             >
-                                {view?.enableConfigureView &&
-                                defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick === undefined // TODO: can be refactored into a constant
-                                    ? viewListButton
-                                    : null}
                                 {showSearch ? searchInput : null}
-                                {view?.enableConfigureView &&
-                                defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick === undefined // TODO: can be refactored into a constant
-                                    ? viewSettingsButton
-                                    : null}
-                                {view?.enableConfigureView && viewSettingsShortcutsButtons}
+                                {viewSettingsShortcutsButtons}
                                 {hidePrimaryActions ? null : primaryButton}
                             </ExplorerToolbar>
                             {loadingData || viewSettingsLoading ? (
@@ -483,7 +500,6 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                                 />
                             )}
                         </ExplorerPageDivStyled>
-                        {settingsPanelElement && createPortal(<SidePanel />, settingsPanelElement?.() ?? document.body)}
                         {replaceItemModal}
                         {createModal}
                         {linkModal}

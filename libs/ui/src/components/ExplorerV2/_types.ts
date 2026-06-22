@@ -6,12 +6,12 @@ import {
     type PropertyValueFragment,
     type RecordFilterInput,
     type RecordIdentityFragment,
+    type SortOrder,
 } from '_ui/_gqlTypes';
 import {type Key, type ReactElement} from 'react';
-import {type IViewSettingsState} from './manage-view-settings';
-import {type IView} from '_ui/types';
+import {type ViewType} from './manage-view-settings-v2';
 import {type MASS_SELECTION_ALL} from './_constants';
-import {type UIFilter, type ValidFilter} from '../Filters/_types';
+import {type UIFilter} from '../Filters/_types';
 
 export type MassSelection = Key[] | typeof MASS_SELECTION_ALL;
 
@@ -66,15 +66,23 @@ export interface IMassActions {
 
 export type FeatureHook<T = {}> = {isEnabled: boolean; isVisible?: boolean} & T;
 
-export type DefaultViewSettings = Override<
-    Partial<IViewSettingsState>,
-    {
-        filtersOperator?: 'AND' | 'OR';
-        filters?: UIFilter[];
-    }
->;
-
-export type SerializedView = DefaultViewSettings;
+/**
+ * Single view contract between panel-view-settings (source of truth) and ExplorerV2 (pure consumer).
+ *
+ * panel-view-settings fetches the viewV2, converts it (see `viewV2ToSerializedView`) and feeds the result
+ * to the controlled `currentView` prop. It carries the **display** config (`viewType`,
+ * `attributesIds`, `sort`) **and** the `filters` — both the user filters and the masked
+ * (`hidden: true`) pre-filters (e.g. the link pre-filter).
+ */
+export type SerializedView = {
+    viewId?: string | null;
+    viewLabels?: Record<string, string>;
+    viewType?: ViewType;
+    attributesIds?: string[];
+    sort?: Array<{field: string; order: SortOrder}>;
+    filters?: UIFilter[];
+    filtersOperator?: 'AND' | 'OR';
+};
 
 export type ViewSettingsShortcuts = z.infer<typeof ViewSettingsTabSchema>;
 
@@ -110,13 +118,6 @@ export interface IEntrypointLink {
 }
 
 export type Entrypoint = IEntrypointTree | IEntrypointLibrary | IEntrypointLink;
-
-export interface IUserView extends Pick<IView, 'shared' | 'display' | 'sort' | 'attributes'> {
-    label: Record<string, string>;
-    id: IView['id'] | null;
-    filters: ValidFilter[];
-    ownerId: string | null;
-}
 
 export interface IDataViewOnAction {
     id: string | null;

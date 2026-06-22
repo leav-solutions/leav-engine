@@ -27,7 +27,6 @@ interface IPanelExplorerProps {
     libraryIdSource: string;
     attributeSource: string;
     deactivateOnUnlink: boolean;
-    viewId: string | undefined;
     explorerProps: ExplorerProps | undefined;
     actions: ItemActions;
     recordId: string | null;
@@ -37,7 +36,6 @@ interface IPanelExplorerProps {
 export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
     libraryIdSource,
     attributeSource,
-    viewId,
     explorerProps,
     actions,
     recordId,
@@ -49,7 +47,7 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
     const {t} = useTranslation();
     const navigate = useNavigate();
 
-    const viewSettingsProps = useViewSettingsProps({viewId});
+    const viewSettingsProps = useViewSettingsProps();
 
     const updateValuesCache = useValuesCacheUpdate();
     const {saveValues} = useExecuteSaveValueBatchMutation();
@@ -124,65 +122,89 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
         },
     });
 
-    // TODO: Should be deleted when ViewV2 will be fully integrated and ExplorerV2 will be renamed to Explorer
-    const ExplorerComponent = application.enableViewSettings ? ExplorerV2 : Explorer;
+    // The link pre-filter restricts the explorer to records linked to the parent record. It is
+    // `hidden`: applied to the requests but never shown in the filters UI.
+    const linkPreFilter = {
+        id: 'filter_to_linked_records',
+        hidden: true,
+        field: attributeSource,
+        subField: 'id',
+        attribute: {
+            id: attributeSource,
+            type: AttributeType.simple_link, // because it can be only mono-valued
+            label: 'SHOULD BE HIDDEN',
+        },
+        condition: ThroughConditionFilter.THROUGH,
+        subCondition: RecordFilterCondition.EQUAL,
+        value: recordId,
+    };
+
+    const entrypoint = {
+        // TODO: One day, this should be type="link" (when link explorer will support pagination, filtering, etc.)
+        // So we will no longer need to have a callback on create or custom item and mass actions
+        type: 'library',
+        libraryId: libraryIdSource,
+    } as const;
+
+    // TODO: should be deleted when explorer used panels instead of modal form
+    const onCreate = ({recordIdCreated}: {recordIdCreated: string}) =>
+        saveValues(
+            {
+                id: recordIdCreated,
+                library: {
+                    id: libraryIdSource,
+                },
+            },
+            [
+                {
+                    attribute: attributeSource,
+                    idValue: null,
+                    value: recordId,
+                },
+            ],
+        );
+
+    // TODO: Should be deleted when ViewV2 will be fully integrated and ExplorerV2 will be renamed to Explorer.
+    if (application.enableViewSettings) {
+        const {defaultViewSettings: _legacyViewSettings, ...commonExplorerPropsV2} = commonExplorerProps;
+        return (
+            <div className={explorerContainer}>
+                <ExplorerV2
+                    {...commonExplorerPropsV2}
+                    entrypoint={entrypoint}
+                    hideFirstActionLabel
+                    defaultActionsForItem={[]}
+                    itemActions={itemActions}
+                    defaultMassActions={['editAttribute', 'export']}
+                    currentView={{
+                        // ExplorerV2 is driven by the controlled `currentView`; the link pre-filter is injected into its filters.
+                        ...viewSettingsProps.currentView,
+                        filters: [linkPreFilter, ...(viewSettingsProps.currentView?.filters ?? [])],
+                    }}
+                    defaultCallbacks={{
+                        ...viewSettingsProps.defaultCallbacks,
+                        primary: {create: onCreate},
+                    }}
+                />
+            </div>
+        );
+    }
 
     return (
         <div className={explorerContainer}>
-            <ExplorerComponent
+            <Explorer
                 {...commonExplorerProps}
                 defaultViewSettings={{
-                    filters: [
-                        {
-                            id: 'filter_to_linked_records',
-                            hidden: true,
-                            field: attributeSource,
-                            subField: 'id',
-                            attribute: {
-                                id: attributeSource,
-                                type: AttributeType.simple_link, // because it can be only mono-valued
-                                label: 'SHOULD BE HIDDEN',
-                            },
-                            condition: ThroughConditionFilter.THROUGH,
-                            subCondition: RecordFilterCondition.EQUAL,
-                            value: recordId,
-                        },
-                    ],
+                    filters: [linkPreFilter],
                     ...commonExplorerProps.defaultViewSettings,
-                    ...viewSettingsProps.defaultViewSettings,
                 }}
-                entrypoint={{
-                    // TODO: One day, this should be type="link" (when link explorer will support pagination, filtering, etc.)
-                    // So we will no longer need to have a callback on create or custom item and mass actions
-                    type: 'library',
-                    libraryId: libraryIdSource,
-                }}
+                entrypoint={entrypoint}
                 hideFirstActionLabel
                 defaultActionsForItem={[]}
                 itemActions={itemActions}
                 defaultMassActions={['editAttribute', 'export']}
-                {...viewSettingsProps}
                 defaultCallbacks={{
-                    ...viewSettingsProps.defaultCallbacks,
-                    primary: {
-                        create: ({recordIdCreated}) =>
-                            // TODO: should be deleted when explorer used panels instead of modal form
-                            saveValues(
-                                {
-                                    id: recordIdCreated,
-                                    library: {
-                                        id: libraryIdSource,
-                                    },
-                                },
-                                [
-                                    {
-                                        attribute: attributeSource,
-                                        idValue: null,
-                                        value: recordId,
-                                    },
-                                ],
-                            ),
-                    },
+                    primary: {create: onCreate},
                 }}
             />
         </div>

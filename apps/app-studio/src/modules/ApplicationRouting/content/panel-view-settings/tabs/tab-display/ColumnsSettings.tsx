@@ -65,18 +65,18 @@ export const ColumnsSettings = ({
                 <KitTypography.Text weight="bold" size="fontSize5">
                     {t('view_settings.display.columns.title')}
                 </KitTypography.Text>
-                <KitTooltip title={String(t('view_settings.display.columns.manage-available'))}>
+                <KitTooltip title={String(t('view_settings.display.columns.manage_available'))}>
                     <KitButton
                         type="secondary"
                         size="m"
                         disabled
-                        aria-label={String(t('view_settings.display.columns.manage-available'))}
+                        aria-label={String(t('view_settings.display.columns.manage_available'))}
                         icon={<FontAwesomeIcon icon={faGear} />}
                     />
                 </KitTooltip>
             </header>
             <KitInput
-                placeholder={String(t('view_settings.display.columns.search-placeholder'))}
+                placeholder={String(t('view_settings.display.columns.search_placeholder'))}
                 value={search}
                 onChange={handleSearchChange}
                 prefix={<FontAwesomeIcon icon={faMagnifyingGlass} />}

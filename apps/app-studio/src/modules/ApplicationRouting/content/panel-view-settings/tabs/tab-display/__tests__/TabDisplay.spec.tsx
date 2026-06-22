@@ -15,7 +15,13 @@ const SEEDED_COLUMNS: CurrentViewColumn[] = [
 ];
 
 // Reducer-backed provider so toggling the eye dispatches real actions and re-renders.
-const TabDisplayWithState = ({columns = SEEDED_COLUMNS}: {columns?: CurrentViewColumn[]}) => {
+const TabDisplayWithState = ({
+    columns = SEEDED_COLUMNS,
+    isEmptyView = false,
+}: {
+    columns?: CurrentViewColumn[];
+    isEmptyView?: boolean;
+}) => {
     const seed = {
         id: 'view-1',
         library: 'my_lib',
@@ -26,7 +32,7 @@ const TabDisplayWithState = ({columns = SEEDED_COLUMNS}: {columns?: CurrentViewC
     };
     const [state, dispatch] = useReducer(currentViewReducer, {view: seed, savedView: seed});
     return (
-        <CurrentViewContext.Provider value={{...state, dispatch}}>
+        <CurrentViewContext.Provider value={{...state, isEmptyView, dispatch}}>
             <TabDisplay canEditAdminView={false} />
         </CurrentViewContext.Provider>
     );
@@ -46,6 +52,14 @@ describe('TabDisplay', () => {
         within(item)
             .getAllByRole('button')
             .find(button => button.tagName === 'BUTTON') as HTMLElement;
+
+    it('renders an empty-state message and no column lists in the empty (default) view state', () => {
+        render(<TabDisplayWithState isEmptyView />);
+
+        expect(screen.getByText('view_settings.empty_view')).toBeInTheDocument();
+        expect(screen.queryAllByRole('list')).toHaveLength(0);
+        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+    });
 
     it('renders three display modes: one selected, the two others disabled', () => {
         render(<TabDisplayWithState />);

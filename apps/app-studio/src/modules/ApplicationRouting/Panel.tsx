@@ -14,6 +14,7 @@ import {PanelHeader} from './header/PanelHeader';
 import {AbsolutePaths} from './router/paths';
 import {FlapContainer} from './FlapContainer';
 import {ViewSettingsContainer} from './ViewSettingsContainer';
+import {CurrentViewStoreProvider} from './content/panel-view-settings/store-current-view/CurrentViewStoreProvider';
 import {firstPanel, firstPanelContent, panel, panelContent, panelHeader} from './panel.module.css';
 
 export const Panel: FunctionComponent = () => {
@@ -21,7 +22,11 @@ export const Panel: FunctionComponent = () => {
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
         useParams();
-    const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId, panelId});
+    const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({
+        application,
+        recordPanelId,
+        panelId,
+    });
     const NextLevelRoutes = useRoutes(nextLevelRoutes);
     const match = useMatch(AbsolutePaths.recordPanel);
 
@@ -80,7 +85,7 @@ export const Panel: FunctionComponent = () => {
         return flapContainerComponent;
     }
 
-    return (
+    const content = (
         <>
             <section
                 className={cn(panel, {
@@ -126,4 +131,22 @@ export const Panel: FunctionComponent = () => {
             {isViewSettingsVoletActive && isViewSettingsVisible && viewSettingsContainerComponent}
         </>
     );
+
+    // The current-view store lives here — above the conditionally-rendered volet — so unsaved view
+    // edits survive the volet closing/reopening. Keyed by panel id: switching panels remounts it
+    // (fresh edit session), toggling the volet does not. Only explorer panels with view settings
+    // enabled need it; nested explorers (record panels) get their own store via context shadowing.
+    if (currentPanel.type === 'explorer' && application.enableViewSettings) {
+        return (
+            <CurrentViewStoreProvider
+                key={currentPanel.id}
+                viewId={currentPanel.viewId}
+                displayedLibraryId={displayedLibraryId}
+            >
+                {content}
+            </CurrentViewStoreProvider>
+        );
+    }
+
+    return content;
 };

@@ -19,9 +19,9 @@ export const CurrentViewSection = ({
     canEditAdminView: boolean;
 }) => {
     const {t} = useTranslation();
-    const {view} = useCurrentView();
+    const {view, isEmptyView} = useCurrentView();
 
-    if (!view) {
+    if (!view && !isEmptyView) {
         return null;
     }
 
@@ -29,13 +29,13 @@ export const CurrentViewSection = ({
         <section className={currentView}>
             <header className={header}>
                 <KitTypography.Text weight="bold" size="fontSize5">
-                    {t('view_settings.current-view.title')}
+                    {t('view_settings.current_view.title')}
                 </KitTypography.Text>
-                <KitTooltip title={String(t('view_settings.current-view.close'))}>
+                <KitTooltip title={String(t('view_settings.current_view.close'))}>
                     <KitButton
                         type="secondary"
                         size="m"
-                        aria-label={String(t('view_settings.current-view.close'))}
+                        aria-label={String(t('view_settings.current_view.close'))}
                         icon={<FontAwesomeIcon icon={faXmark} />}
                         onClick={onViewSettingsClose}
                     />

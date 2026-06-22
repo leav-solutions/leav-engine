@@ -312,6 +312,16 @@ import {container} from './styles.module.css';
 
 ## Translations (i18n)
 
+- Translation **keys** are written in `snake_case`, not `kebab-case`.
+
+```json
+// Bad — kebab-case key
+"manage-available": "Manage available attributes"
+
+// Good — snake_case key
+"manage_available": "Manage available attributes"
+```
+
 - In **French** translation files, use the typographic apostrophe `’` (U+2019) instead of the straight quote `'` (U+0027).
 
 ```json

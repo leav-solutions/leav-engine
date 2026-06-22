@@ -9,7 +9,7 @@ import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION} from '_ui/constants';
 import {useLang} from '_ui/hooks';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {type FeatureHook} from '../_types';
-import {type IViewSettingsState} from '../manage-view-settings';
+import {type IViewSettingsState} from '../manage-view-settings-v2';
 import {EditTreeAttributeValuesMapping} from './edit-attribute/EditTreeAttributeValuesMapping';
 import {EditAttributeMassActionModal} from './edit-attribute/EditAttributeMassActionModal';
 import {useMassEditableAttributes} from './edit-attribute/useMassEditableAttributes';

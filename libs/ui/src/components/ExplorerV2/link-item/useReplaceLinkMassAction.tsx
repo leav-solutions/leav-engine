@@ -2,7 +2,7 @@ import {type ExplorerSelectionIdsQuery} from '_ui/_gqlTypes';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {type IEntrypointLink} from '../_types';
-import {type IViewSettingsState} from '../manage-view-settings';
+import {type IViewSettingsState} from '../manage-view-settings-v2';
 
 /**
  * Hook used to replace link

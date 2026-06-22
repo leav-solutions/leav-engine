@@ -4,7 +4,7 @@ import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecor
 import {SelectRecordForLinkModal} from '_ui/components/SelectRecordForLinkModal';
 import {type IEntrypointLink} from '../_types';
 import {useAddLinkMassAction} from './useAddLinkMassAction';
-import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
+import {useViewSettingsContext} from '../manage-view-settings-v2';
 import {useReplaceLinkMassAction} from './useReplaceLinkMassAction';
 import {LINK_RECORDS_MODAL_CLASSNAME} from '../_constants';
 import {SelectTreeNodeModal} from '_ui/components';

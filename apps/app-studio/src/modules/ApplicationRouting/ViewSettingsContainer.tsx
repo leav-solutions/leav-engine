@@ -59,7 +59,6 @@ export const ViewSettingsContainer = () => {
             <PanelViewSettings
                 libraryId={currentPanel.targetLibraryId}
                 currentTab={currentPanel.selectedTab}
-                currentViewId={currentPanel.currentViewId}
                 onClose={resetViewSettings}
             />
         </KitSidePanel>

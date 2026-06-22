@@ -10,7 +10,7 @@ import {
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useValuesCacheUpdate} from '_ui/hooks/useValuesCacheUpdate';
 import {type FeatureHook, type Entrypoint, type IEntrypointLink, type IItemAction, type IItemData} from '../_types';
-import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
+import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings-v2';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {BREAK_TWO_LINES, ERROR_NOTIFICATION_DURATION, SUCCESS_NOTIFICATION_DURATION} from '_ui/constants';
 import {type FetchResult} from '@apollo/client';

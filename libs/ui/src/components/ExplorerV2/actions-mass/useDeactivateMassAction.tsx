@@ -4,7 +4,7 @@ import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
 import {type FeatureHook, type IMassActions} from '../_types';
-import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
+import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings-v2';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {type useExplorerData} from '../_queries/useExplorerData';
 import {SUCCESS_ALERT_DURATION, BREAK_TWO_LINES} from '_ui/constants';

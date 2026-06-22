@@ -45,7 +45,6 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, reco
                     libraryIdSource={panel.libraryId}
                     attributeSource={panel.attributeSource}
                     deactivateOnUnlink={panel.deactivateOnUnlink}
-                    viewId={panel.viewId}
                     explorerProps={panel.explorerProps}
                     actions={panel.actions}
                     recordId={recordId}
@@ -54,12 +53,7 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, reco
             );
         }
         return (
-            <PanelLibraryExplorer
-                libraryId={libraryId}
-                viewId={panel.viewId}
-                explorerProps={panel.explorerProps}
-                actions={panel.actions}
-            />
+            <PanelLibraryExplorer libraryId={libraryId} explorerProps={panel.explorerProps} actions={panel.actions} />
         );
     }
 

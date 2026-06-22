@@ -1,9 +1,7 @@
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {SortOrder} from '_ui/_gqlTypes';
-import {useViewSettingsContext} from './manage-view-settings/store-view-settings/useViewSettingsContext';
-import {useAttributeDetailsData} from './manage-view-settings/_shared/useAttributeDetailsData';
-import {useOpenViewSettings} from './manage-view-settings';
-import {type ComponentProps, type FunctionComponent, type ReactNode} from 'react';
+import {useAttributeDetailsData, useViewSettingsContext} from './manage-view-settings-v2';
+import {type FunctionComponent, type ReactNode} from 'react';
 import {KitDivider, KitFilter} from 'aristid-ds';
 import styled from 'styled-components';
 import {CommonFilterItem} from '_ui/components/Filters/filter-items/CommonFilterItem';
@@ -32,11 +30,10 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
     const {sort} = view;
 
     // TODO: modify to use app-studio
-    const {openSettingsPanel} = useOpenViewSettings({view, isEnabled: true});
+    // const {openSettingsPanel} = useOpenViewSettings({view, isEnabled: true});
     const {filtersProps} = useFilters(!canRemoveFilters);
 
     const {attributeDetailsById} = useAttributeDetailsData(view.libraryId);
-    // const visibleFilters = filters.filter(filterItem => !filterItem.hidden);
 
     if (((filtersProps.length === 0 && sort.length === 0) || (!showFilters && !showSorts)) && !selectAllButton) {
         return null;
@@ -52,9 +49,8 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
                       (order === SortOrder.asc ? t('explorer.sort-ascending') : t('explorer.sort-descending')),
               );
 
-    const _handleClickOnSort: ComponentProps<typeof FilterStyled>['onClick'] = () =>
-        isMassSelectionAll ? undefined : openSettingsPanel('sort-items');
-
+    // const _handleClickOnSort: ComponentProps<typeof FilterStyled>['onClick'] = () =>
+    //     isMassSelectionAll ? undefined : openSettingsPanel('sort-items');
     if (!Object.keys(attributeDetailsById).length) {
         return <></>;
     }
@@ -87,7 +83,7 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
                                 label={t('explorer.sort-items')}
                                 values={sortValues}
                                 disabled={isMassSelectionAll}
-                                onClick={_handleClickOnSort}
+                                // onClick={_handleClickOnSort}
                             />
                         </li>
                     )}

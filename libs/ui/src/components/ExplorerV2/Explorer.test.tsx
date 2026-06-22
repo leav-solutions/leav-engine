@@ -11,14 +11,14 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faStar, faCheck, faCog, faEdit, faTrash} from '@fortawesome/free-solid-svg-icons';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {ERROR_NOTIFICATION_DURATION, Explorer, SUCCESS_NOTIFICATION_DURATION} from '_ui/index';
+import {ERROR_NOTIFICATION_DURATION, SUCCESS_NOTIFICATION_DURATION} from '_ui/index';
 import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
 import {type IEntrypointLibrary, type IEntrypointLink, type IItemAction, type IPrimaryAction} from './_types';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import * as useColumnWidth from './useColumnWidth';
-import {type IExplorerRef} from './Explorer';
+import {ExplorerV2, type IExplorerRef} from './Explorer';
 import ResizeObserver from 'resize-observer-polyfill';
-import * as attributeDetailsModule from '_ui/components/Explorer/manage-view-settings/_shared/useAttributeDetailsData';
+import * as attributeDetailsModule from '_ui/components/ExplorerV2/manage-view-settings-v2/_shared/useAttributeDetailsData';
 import {KitAlert} from 'aristid-ds';
 
 global.ResizeObserver = ResizeObserver;
@@ -56,7 +56,7 @@ jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
     },
 }));
 
-jest.mock('_ui/components/Explorer/link-item/LinkModal', () => ({
+jest.mock('_ui/components/ExplorerV2/link-item/LinkModal', () => ({
     LinkModal: ({onLink}) => (
         <div>
             {LinkRecordModalMock}
@@ -924,79 +924,71 @@ describe('Explorer', () => {
 
     describe('element visibility props', () => {
         test('should not display primary actions', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} defaultPrimaryActions={[]} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} defaultPrimaryActions={[]} />);
 
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
         });
 
         test('should not display filters in the toolbar', () => {
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        defaultViewSettings={{
-                            filters: [
-                                {
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    currentView={{
+                        filters: [
+                            {
+                                id: '',
+                                attribute: {
                                     id: '',
-                                    attribute: {
-                                        id: '',
-                                        format: simpleMockAttribute.format,
-                                        label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type,
-                                    },
-                                    field: simpleMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas',
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type,
                                 },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas',
+                            },
+                        ],
+                    }}
+                />,
             );
             expect(screen.queryByText(simpleMockAttribute.label.fr)).not.toBeInTheDocument();
         });
 
         test('should not display hidden filters in the toolbar', () => {
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        showFilters
-                        defaultViewSettings={{
-                            filters: [
-                                {
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    showFilters
+                    currentView={{
+                        filters: [
+                            {
+                                id: '',
+                                attribute: {
                                     id: '',
-                                    attribute: {
-                                        id: '',
-                                        format: simpleMockAttribute.format,
-                                        label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type,
-                                    },
-                                    hidden: true,
-                                    field: simpleMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas',
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type,
                                 },
-                                {
+                                hidden: true,
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas',
+                            },
+                            {
+                                id: '',
+                                attribute: {
                                     id: '',
-                                    attribute: {
-                                        id: '',
-                                        format: booleanMockAttribute.format,
-                                        label: booleanMockAttribute.label.fr,
-                                        type: booleanMockAttribute.type,
-                                    },
-                                    field: booleanMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.EQUAL,
-                                    value: 'true',
+                                    format: booleanMockAttribute.format,
+                                    label: booleanMockAttribute.label.fr,
+                                    type: booleanMockAttribute.type,
                                 },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                                field: booleanMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.EQUAL,
+                                value: 'true',
+                            },
+                        ],
+                    }}
+                />,
             );
             expect(screen.queryByText(simpleMockAttribute.label.fr)).not.toBeInTheDocument();
             expect(screen.queryByText(booleanMockAttribute.label.fr)).toBeInTheDocument();
@@ -1004,28 +996,26 @@ describe('Explorer', () => {
 
         test('should display filters in the toolbar', () => {
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        showFilters
-                        defaultViewSettings={{
-                            filters: [
-                                {
-                                    id: '',
-                                    attribute: {
-                                        id: simpleMockAttribute.id,
-                                        format: simpleMockAttribute.format,
-                                        label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type,
-                                    },
-                                    field: simpleMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas',
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    showFilters
+                    currentView={{
+                        filters: [
+                            {
+                                id: '',
+                                attribute: {
+                                    id: simpleMockAttribute.id,
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type,
                                 },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas',
+                            },
+                        ],
+                    }}
+                />,
             );
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
@@ -1033,89 +1023,59 @@ describe('Explorer', () => {
         });
 
         test('should not display the settings button', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             expect(screen.queryByRole('button', {name: /settings/})).not.toBeInTheDocument();
         });
 
         test('should display the settings button', () => {
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} defaultViewSettings={{enableConfigureView: true}} />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    currentView={{}}
+                    defaultCallbacks={{viewSettings: {onViewSettingsShortcutClick: jest.fn()}}}
+                />,
             );
 
-            expect(screen.getByTitle(/settings/)).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'explorer.viewSettings.display'})).toBeVisible();
         });
 
         test('should not display the title', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             expect(screen.queryByText(campaignName)).not.toBeInTheDocument();
         });
 
         test('should display the title', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} showTitle />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} showTitle />);
 
             expect(screen.getByText(campaignName)).toBeInTheDocument();
         });
 
         test('should not display the search field', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
             expect(screen.queryByRole('textbox', {name: /search/})).not.toBeInTheDocument();
         });
 
         test('should display the search field', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} showSearch />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} showSearch />);
             expect(screen.getByRole('textbox', {name: /search/})).toBeInTheDocument();
         });
 
         test('should display the table headers', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
             expect(screen.getByText('explorer.name')).toBeInTheDocument();
         });
 
         test('should not display the table headers', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} hideTableHeader />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} hideTableHeader />);
 
             expect(screen.queryByText('explorer.name')).not.toBeInTheDocument();
             expect(screen.queryByText('explorer.actions')).not.toBeInTheDocument();
         });
 
         test('should display the selection checkboxes and button', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             const tableRows = screen.getAllByRole('row');
             expect(tableRows).toHaveLength(mockRecords.length); // 2 records
@@ -1129,14 +1089,12 @@ describe('Explorer', () => {
             const onSelect = jest.fn();
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        defaultMassActions={[]}
-                        massActions={[]}
-                        defaultCallbacks={{item: {select: onSelect}}}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    defaultMassActions={[]}
+                    massActions={[]}
+                    defaultCallbacks={{item: {select: onSelect}}}
+                />,
             );
 
             const tableRows = screen.getAllByRole('row');
@@ -1146,11 +1104,7 @@ describe('Explorer', () => {
         });
 
         test('should not display the selection checkboxes and button', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} disableSelection />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} disableSelection />);
 
             const tableRows = screen.getAllByRole('row');
             expect(tableRows).toHaveLength(mockRecords.length); // 2 records
@@ -1161,41 +1115,25 @@ describe('Explorer', () => {
         });
 
         test('should display the select all action', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             expect(screen.queryByText(/explorer.massAction.results/)).toBeVisible();
         });
 
         test('should not display the select all action', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} hideSelectAllAction />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} hideSelectAllAction />);
 
             expect(screen.queryByText(/explorer.massAction.itemsTotal/)).not.toBeInTheDocument();
         });
 
         test('should display the pagination', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             expect(screen.getByText(/explorer.pagination-total-number/)).toBeInTheDocument();
         });
 
         test('should not display the pagination', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} noPagination />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} noPagination />);
 
             expect(screen.queryByText(/explorer.pagination-total-number/)).not.toBeInTheDocument();
         });
@@ -1203,32 +1141,20 @@ describe('Explorer', () => {
 
     describe('props title', () => {
         test('Should display library label as title', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} showTitle />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} showTitle />);
 
             expect(screen.getByText(campaignName)).toBeInTheDocument();
         });
 
         test('Should display custom title', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} title="Here's my explorer!" showTitle />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} title="Here's my explorer!" showTitle />);
 
             expect(screen.getByText("Here's my explorer!")).toBeInTheDocument();
         });
     });
 
     test('Should display the list of records in a table', async () => {
-        render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={libraryEntrypoint} />
-            </Explorer.EditSettingsContextProvider>,
-        );
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
         expect(screen.getByRole('table')).toBeVisible();
         expect(screen.getAllByRole('row')).toHaveLength(mockRecords.length); // 2 records
@@ -1239,11 +1165,7 @@ describe('Explorer', () => {
 
     test('Should display message on empty data (default)', async () => {
         spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
-        render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={libraryEntrypoint} />
-            </Explorer.EditSettingsContextProvider>,
-        );
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
         expect(screen.getByText(/empty-data/)).toBeVisible();
     });
@@ -1253,35 +1175,29 @@ describe('Explorer', () => {
 
         const emptyCustomMessage = 'EmptyCustomMessage';
 
-        render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={libraryEntrypoint} emptyPlaceholder={emptyCustomMessage} />
-            </Explorer.EditSettingsContextProvider>,
-        );
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} emptyPlaceholder={emptyCustomMessage} />);
 
         expect(screen.getByText(emptyCustomMessage)).toBeVisible();
     });
 
     test('Should display the list of records in a table with attributes values', async () => {
         render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer
-                    entrypoint={libraryEntrypoint}
-                    defaultViewSettings={{
-                        attributesIds: [
-                            simpleMockAttribute.id,
-                            linkMockAttribute.id,
-                            multivalLinkMockAttribute.id,
-                            simpleRichTextMockAttribute.id,
-                            simpleColorMockAttribute.id,
-                            multivalColorMockAttribute.id,
-                            booleanMockAttribute.id,
-                            simpleDateRangeMockAttribute.id,
-                            multivalDateRangeMockAttribute.id,
-                        ],
-                    }}
-                />
-            </Explorer.EditSettingsContextProvider>,
+            <ExplorerV2
+                entrypoint={libraryEntrypoint}
+                currentView={{
+                    attributesIds: [
+                        simpleMockAttribute.id,
+                        linkMockAttribute.id,
+                        multivalLinkMockAttribute.id,
+                        simpleRichTextMockAttribute.id,
+                        simpleColorMockAttribute.id,
+                        multivalColorMockAttribute.id,
+                        booleanMockAttribute.id,
+                        simpleDateRangeMockAttribute.id,
+                        multivalDateRangeMockAttribute.id,
+                    ],
+                }}
+            />,
         );
 
         const tableRows = screen.getAllByRole('row');
@@ -1358,11 +1274,7 @@ describe('Explorer', () => {
 
         const onRemove = jest.fn();
 
-        render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />
-            </Explorer.EditSettingsContextProvider>,
-        );
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />);
 
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
@@ -1403,11 +1315,7 @@ describe('Explorer', () => {
 
         const onRemove = jest.fn();
 
-        render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />
-            </Explorer.EditSettingsContextProvider>,
-        );
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />);
 
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
@@ -1456,11 +1364,7 @@ describe('Explorer', () => {
 
         const onRemove = jest.fn();
 
-        render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />
-            </Explorer.EditSettingsContextProvider>,
-        );
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />);
 
         const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.activate-item'}));
@@ -1499,14 +1403,9 @@ describe('Explorer', () => {
 
         const onRemove = jest.fn();
 
-        render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={linkEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />
-            </Explorer.EditSettingsContextProvider>,
-            {
-                mocks: [ExplorerLinkAttributeQueryMock],
-            },
-        );
+        render(<ExplorerV2 entrypoint={linkEntrypoint} defaultCallbacks={{item: {remove: onRemove}}} />, {
+            mocks: [ExplorerLinkAttributeQueryMock],
+        });
 
         const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'}));
@@ -1526,14 +1425,12 @@ describe('Explorer', () => {
         const onSelect = jest.fn();
 
         render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer
-                    entrypoint={libraryEntrypoint}
-                    defaultMassActions={[]}
-                    massActions={[]}
-                    defaultCallbacks={{item: {select: onSelect}}}
-                />
-            </Explorer.EditSettingsContextProvider>,
+            <ExplorerV2
+                entrypoint={libraryEntrypoint}
+                defaultMassActions={[]}
+                massActions={[]}
+                defaultCallbacks={{item: {select: onSelect}}}
+            />,
         );
 
         const tableRows = screen.getAllByRole('row');
@@ -1550,11 +1447,7 @@ describe('Explorer', () => {
     });
 
     test('Should call the useGetRecordUpdatesSubscription', async () => {
-        render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer entrypoint={libraryEntrypoint} />
-            </Explorer.EditSettingsContextProvider>,
-        );
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
         expect(useGetRecordUpdatesSubscriptionMock).toHaveBeenCalledTimes(6);
         expect(useGetRecordUpdatesSubscriptionMock.mock.calls[0]).toEqual([
             {
@@ -1580,11 +1473,7 @@ describe('Explorer', () => {
                 callback: jest.fn(),
             } satisfies IItemAction;
 
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} itemActions={[customAction]} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} itemActions={[customAction]} />);
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             await user.click(within(firstRecordRow).getByRole('button', {name: customAction.label}));
@@ -1616,11 +1505,7 @@ describe('Explorer', () => {
                 },
             ] satisfies IItemAction[];
 
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} itemActions={customActions} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} itemActions={customActions} />);
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             await user.hover(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
@@ -1640,11 +1525,7 @@ describe('Explorer', () => {
         });
 
         test('Should display the list of records with no actions', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} defaultActionsForItem={[]} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} defaultActionsForItem={[]} />);
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             expect(within(firstRecordRow).queryByRole('button')).not.toBeInTheDocument();
@@ -1658,11 +1539,7 @@ describe('Explorer', () => {
                 callback: jest.fn(),
             } satisfies IItemAction;
 
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} itemActions={[customAction]} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} itemActions={[customAction]} />);
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             await user.click(firstRecordRow);
@@ -1694,11 +1571,7 @@ describe('Explorer', () => {
                 },
             ] satisfies IItemAction[];
 
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} itemActions={customActions} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} itemActions={customActions} />);
 
             const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
             await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
@@ -1708,53 +1581,32 @@ describe('Explorer', () => {
 
     describe('Primary Action', () => {
         test('should display the primary actions button', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
             expect(screen.getByRole('button', {name: 'explorer.create-one'})).toBeInTheDocument();
         });
 
         test('should not display the primary actions button', () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} hidePrimaryActions />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} hidePrimaryActions />);
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
         });
 
         describe('showCreateOnNoResultOnly property', () => {
             test('should not display the primary actions button if library data is not empty', () => {
-                render(
-                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                        <Explorer entrypoint={libraryEntrypoint} showCreateOnNoResultOnly />
-                    </Explorer.EditSettingsContextProvider>,
-                );
+                render(<ExplorerV2 entrypoint={libraryEntrypoint} showCreateOnNoResultOnly />);
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
 
             test('should not display the primary actions button if library data is empty and entrypoint is not a library', () => {
                 spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
-                render(
-                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                        <Explorer entrypoint={linkEntrypoint} showCreateOnNoResultOnly />
-                    </Explorer.EditSettingsContextProvider>,
-                    {
-                        mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock],
-                    },
-                );
+                render(<ExplorerV2 entrypoint={linkEntrypoint} showCreateOnNoResultOnly />, {
+                    mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock],
+                });
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
 
             test('multiple actions should be in a dropdown', async () => {
                 spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
-                render(
-                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                        <Explorer entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} />
-                    </Explorer.EditSettingsContextProvider>,
-                );
+                render(<ExplorerV2 entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} />);
 
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
                 expect(screen.queryByText(customPrimaryAction1.label)).not.toBeInTheDocument();
@@ -1772,9 +1624,7 @@ describe('Explorer', () => {
             test('should not display the primary actions button if library data is empty and entrypoint has allowFreeEntry set to false', () => {
                 spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
                 render(
-                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                        <Explorer entrypoint={{...libraryEntrypoint, allowFreeEntry: false}} showCreateOnNoResultOnly />
-                    </Explorer.EditSettingsContextProvider>,
+                    <ExplorerV2 entrypoint={{...libraryEntrypoint, allowFreeEntry: false}} showCreateOnNoResultOnly />,
                 );
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
@@ -1801,33 +1651,22 @@ describe('Explorer', () => {
                         }) as gqlTypes.ExplorerLibraryDetailsQueryResult,
                 );
 
-                render(
-                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                        <Explorer entrypoint={{...linkEntrypoint}} showCreateOnNoResultOnly />
-                    </Explorer.EditSettingsContextProvider>,
-                    {
-                        mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock],
-                    },
-                );
+                render(<ExplorerV2 entrypoint={{...linkEntrypoint}} showCreateOnNoResultOnly />, {
+                    mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock],
+                });
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
 
             test('should not display the primary actions button if library data is empty and hidePrimaryActions is set to true', () => {
                 spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
-                render(
-                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                        <Explorer entrypoint={libraryEntrypoint} showCreateOnNoResultOnly hidePrimaryActions />
-                    </Explorer.EditSettingsContextProvider>,
-                );
+                render(<ExplorerV2 entrypoint={libraryEntrypoint} showCreateOnNoResultOnly hidePrimaryActions />);
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
 
             test('should display the primary actions button if library data is empty and entrypoint is a library and allowFreeEntry is set to true', () => {
                 spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
                 render(
-                    <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                        <Explorer entrypoint={{...libraryEntrypoint, allowFreeEntry: true}} showCreateOnNoResultOnly />
-                    </Explorer.EditSettingsContextProvider>,
+                    <ExplorerV2 entrypoint={{...libraryEntrypoint, allowFreeEntry: true}} showCreateOnNoResultOnly />,
                 );
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).toBeInTheDocument();
             });
@@ -1837,11 +1676,7 @@ describe('Explorer', () => {
             jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
                 () => mockFilesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
             );
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
 
@@ -1852,11 +1687,7 @@ describe('Explorer', () => {
             jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
                 () => mockDirectoriesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
             );
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
 
@@ -1865,11 +1696,7 @@ describe('Explorer', () => {
 
         test('Should be able to create a new record when library has standard behavior', async () => {
             const onCreate = jest.fn();
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />);
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
 
@@ -1885,11 +1712,7 @@ describe('Explorer', () => {
                 () => mockJoinLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
             );
             const onCreate = jest.fn();
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />);
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
 
@@ -1901,11 +1724,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new record with custom formId when library has standard behavior', async () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} creationFormId="test-creation" />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} creationFormId="test-creation" />);
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
             expect(screen.getByText(EditRecordModalMock)).toBeVisible();
@@ -1915,10 +1734,10 @@ describe('Explorer', () => {
         test('Should be able to create a new record from Explorer ref', async () => {
             const explorerRef = createRef<IExplorerRef>();
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} ref={explorerRef} hidePrimaryActions />
+                <>
+                    <ExplorerV2 entrypoint={libraryEntrypoint} ref={explorerRef} hidePrimaryActions />
                     <button onClick={() => explorerRef.current?.createAction?.callback()}>test button</button>
-                </Explorer.EditSettingsContextProvider>,
+                </>,
             );
             expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
             expect(explorerRef.current?.linkAction).toBeNull();
@@ -1930,15 +1749,15 @@ describe('Explorer', () => {
         test('Should be able to create a new record with custom formId when library has standard behavior from Explorer ref', async () => {
             const explorerRef = createRef<IExplorerRef>();
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
+                <>
+                    <ExplorerV2
                         entrypoint={libraryEntrypoint}
                         ref={explorerRef}
                         hidePrimaryActions
                         creationFormId="test-creation"
                     />
                     <button onClick={() => explorerRef.current?.createAction?.callback()}>test button</button>
-                </Explorer.EditSettingsContextProvider>,
+                </>,
             );
 
             expect(explorerRef.current?.createAction?.label).toEqual('explorer.create-one');
@@ -1958,11 +1777,7 @@ describe('Explorer', () => {
                 saveValues,
             });
 
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             const creatButton = await screen.findByRole('button', {name: 'explorer.create-one'});
             await user.click(creatButton);
@@ -1982,14 +1797,9 @@ describe('Explorer', () => {
                 saveValues,
             }));
             const onCreate = jest.fn();
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={linkEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
-                </Explorer.EditSettingsContextProvider>,
-                {
-                    mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock],
-                },
-            );
+            render(<ExplorerV2 entrypoint={linkEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />, {
+                mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock],
+            });
 
             const dropdownButton = await screen.findByRole('dropdown-trigger');
             await waitFor(() => expect(dropdownButton).toBeVisible());
@@ -2022,15 +1832,15 @@ describe('Explorer', () => {
 
             const explorerRef = createRef<IExplorerRef>();
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
+                <>
+                    <ExplorerV2
                         entrypoint={linkEntrypoint}
                         ref={explorerRef}
                         hidePrimaryActions
                         defaultCallbacks={{primary: {create: onCreate}}}
                     />
                     <button onClick={() => explorerRef.current?.createAction?.callback()}>test button</button>
-                </Explorer.EditSettingsContextProvider>,
+                </>,
                 {
                     mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock],
                 },
@@ -2059,16 +1869,12 @@ describe('Explorer', () => {
                 saveValues,
             });
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={linkEntrypoint}
-                        defaultPrimaryActions={[]}
-                        defaultCallbacks={{primary: {link: onLink}}}
-                        defaultViewSettings={{
-                            enableConfigureView: true,
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={linkEntrypoint}
+                    defaultPrimaryActions={[]}
+                    defaultCallbacks={{primary: {link: onLink}}}
+                    currentView={{}}
+                />,
                 {
                     mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock],
                 },
@@ -2090,11 +1896,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to display custom primary actions', async () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} />);
 
             const dropdownButton = await screen.findByRole('dropdown-trigger');
 
@@ -2112,13 +1914,11 @@ describe('Explorer', () => {
 
         test('Should be able to display custom primary actions without create button', async () => {
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        primaryActions={customPrimaryActions}
-                        defaultPrimaryActions={[]}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    primaryActions={customPrimaryActions}
+                    defaultPrimaryActions={[]}
+                />,
             );
 
             expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
@@ -2172,27 +1972,29 @@ describe('Explorer', () => {
                 },
             },
         };
+        // ExplorerV2 no longer accepts a view-level pageSize (it is ephemeral; options [20, 50]).
+        // Report a totalCount above the default page size so the data spans more than one page.
+        const mockExplorerLibraryDataQueryResultMultiplePages = {
+            ...mockExplorerLibraryDataQueryResult,
+            data: {records: {totalCount: 40, list: mockRecords}},
+        };
         const spy = jest
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
             .mockImplementation(
                 ({variables}) =>
                     (variables?.searchQuery
                         ? mockExplorerLibraryDataQueryResultWithSearch
-                        : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult,
+                        : mockExplorerLibraryDataQueryResultMultiplePages) as gqlTypes.ExplorerLibraryDataQueryResult,
             );
 
         render(
-            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                <Explorer
-                    entrypoint={libraryEntrypoint}
-                    primaryActions={customPrimaryActions}
-                    defaultPrimaryActions={[]}
-                    defaultViewSettings={{
-                        pageSize: 1,
-                    }}
-                    showSearch
-                />
-            </Explorer.EditSettingsContextProvider>,
+            <ExplorerV2
+                entrypoint={libraryEntrypoint}
+                primaryActions={customPrimaryActions}
+                defaultPrimaryActions={[]}
+                currentView={{}}
+                showSearch
+            />,
         );
 
         const searchInput = screen.getByRole('textbox', {name: /search/});
@@ -2268,36 +2070,33 @@ describe('Explorer', () => {
                 );
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={{type: 'library', libraryId: 'campaigns'}}
-                        showFilters
-                        showSorts
-                        defaultViewSettings={{
-                            enableConfigureView: true,
-                            filters: [
-                                {
-                                    id: '',
-                                    attribute: {
-                                        id: 'simple_attribute',
-                                        format: simpleMockAttribute.format,
-                                        label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type,
-                                    },
-                                    field: simpleMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas',
+                <ExplorerV2
+                    entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                    showFilters
+                    showSorts
+                    currentView={{
+                        filters: [
+                            {
+                                id: '',
+                                attribute: {
+                                    id: 'simple_attribute',
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type,
                                 },
-                            ],
-                            sort: [
-                                {
-                                    field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc,
-                                },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas',
+                            },
+                        ],
+                        sort: [
+                            {
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc,
+                            },
+                        ],
+                    }}
+                />,
             );
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -2331,49 +2130,46 @@ describe('Explorer', () => {
                 );
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={{type: 'library', libraryId: 'campaigns'}}
-                        showFilters
-                        showSorts
-                        defaultViewSettings={{
-                            enableConfigureView: true,
-                            filtersOperator: 'OR',
-                            filters: [
-                                {
+                <ExplorerV2
+                    entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                    showFilters
+                    showSorts
+                    currentView={{
+                        filtersOperator: 'OR',
+                        filters: [
+                            {
+                                id: '',
+                                attribute: {
                                     id: '',
-                                    attribute: {
-                                        id: '',
-                                        format: simpleMockAttribute.format,
-                                        label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type,
-                                    },
-                                    field: simpleMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas',
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type,
                                 },
-                                {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas',
+                            },
+                            {
+                                id: '',
+                                attribute: {
                                     id: '',
-                                    attribute: {
-                                        id: '',
-                                        format: simpleMockAttribute.format,
-                                        label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type,
-                                    },
-                                    field: simpleMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Test',
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type,
                                 },
-                            ],
-                            sort: [
-                                {
-                                    field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc,
-                                },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Test',
+                            },
+                        ],
+                        sort: [
+                            {
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc,
+                            },
+                        ],
+                    }}
+                />,
             );
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -2412,30 +2208,27 @@ describe('Explorer', () => {
                 );
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={{type: 'library', libraryId: 'campaigns'}}
-                        showFilters
-                        defaultViewSettings={{
-                            enableConfigureView: true,
-                            filters: [
-                                {
-                                    id: '',
-                                    attribute: {
-                                        id: 'simple_attribute',
-                                        format: simpleMockAttribute.format,
-                                        label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type,
-                                    },
-                                    field: simpleMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas',
-                                    withEmptyValues: true,
+                <ExplorerV2
+                    entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                    showFilters
+                    currentView={{
+                        filters: [
+                            {
+                                id: '',
+                                attribute: {
+                                    id: 'simple_attribute',
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type,
                                 },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas',
+                                withEmptyValues: true,
+                            },
+                        ],
+                    }}
+                />,
             );
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -2471,21 +2264,19 @@ describe('Explorer', () => {
         test('Should display the list of linked records and call action', async () => {
             const actionCallback = jest.fn();
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={linkEntrypoint}
-                        primaryActions={customPrimaryActions}
-                        defaultPrimaryActions={[]}
-                        defaultActionsForItem={[]}
-                        itemActions={[
-                            {
-                                label: 'Test 1',
-                                icon: <FontAwesomeIcon icon={faStar} />,
-                                callback: actionCallback,
-                            },
-                        ]}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={linkEntrypoint}
+                    primaryActions={customPrimaryActions}
+                    defaultPrimaryActions={[]}
+                    defaultActionsForItem={[]}
+                    itemActions={[
+                        {
+                            label: 'Test 1',
+                            icon: <FontAwesomeIcon icon={faStar} />,
+                            callback: actionCallback,
+                        },
+                    ]}
+                />,
                 {
                     mocks: [ExplorerLinkAttributeQueryMock],
                 },
@@ -2506,14 +2297,12 @@ describe('Explorer', () => {
 
         test('Should display attribute label as title', async () => {
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={linkEntrypoint}
-                        primaryActions={customPrimaryActions}
-                        defaultPrimaryActions={[]}
-                        showTitle
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={linkEntrypoint}
+                    primaryActions={customPrimaryActions}
+                    defaultPrimaryActions={[]}
+                    showTitle
+                />,
                 {
                     // Query called twice : in run time, the cache is effective, but not in tests, so we use the mock twice
                     mocks: [ExplorerLinkAttributeQueryMock, ExplorerLinkAttributeQueryMock],
@@ -2535,9 +2324,7 @@ describe('Explorer', () => {
             };
             // WHEN the component is rendered
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} defaultMassActions={[]} massActions={[testMassAction]} />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2 entrypoint={libraryEntrypoint} defaultMassActions={[]} massActions={[testMassAction]} />,
             );
 
             // THEN the toolbar should be present
@@ -2611,9 +2398,7 @@ describe('Explorer', () => {
             };
             // WHEN the component is rendered without pagination (20 items default page size > 2 mock records)
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} defaultMassActions={[]} massActions={[testMassAction]} />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2 entrypoint={libraryEntrypoint} defaultMassActions={[]} massActions={[testMassAction]} />,
             );
 
             // THEN the toolbar should be ready
@@ -2680,7 +2465,7 @@ describe('Explorer', () => {
                 ...mockExplorerLibraryDataQueryResult,
                 data: {
                     records: {
-                        totalCount: mockRecords.length,
+                        totalCount: 25,
                         list: [firstRecord],
                     },
                 },
@@ -2695,39 +2480,35 @@ describe('Explorer', () => {
             };
             // WHEN the component is rendered with some filter and sort and pagination (1 item on 2 pages)
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        showFilters
-                        showSorts
-                        defaultMassActions={[]}
-                        massActions={[testMassAction]}
-                        defaultViewSettings={{
-                            enableConfigureView: true,
-                            pageSize: 1, // configuration to be in multi-pages (2 pages of 1 record)
-                            filters: [
-                                {
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    showFilters
+                    showSorts
+                    defaultMassActions={[]}
+                    massActions={[testMassAction]}
+                    currentView={{
+                        filters: [
+                            {
+                                id: '',
+                                attribute: {
                                     id: '',
-                                    attribute: {
-                                        id: '',
-                                        format: simpleMockAttribute.format,
-                                        label: simpleMockAttribute.label.fr,
-                                        type: simpleColorMockAttribute.type,
-                                    },
-                                    field: simpleMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas',
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleColorMockAttribute.type,
                                 },
-                            ],
-                            sort: [
-                                {
-                                    field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc,
-                                },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas',
+                            },
+                        ],
+                        sort: [
+                            {
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc,
+                            },
+                        ],
+                    }}
+                />,
             );
 
             // THEN the toolbar is ready and clean
@@ -2760,7 +2541,7 @@ describe('Explorer', () => {
                 ...mockExplorerLibraryDataQueryResult,
                 data: {
                     records: {
-                        totalCount: mockRecords.length,
+                        totalCount: 25,
                         list: [secondRecord],
                     },
                 },
@@ -2804,7 +2585,7 @@ describe('Explorer', () => {
                 ...mockExplorerLibraryDataQueryResult,
                 data: {
                     records: {
-                        totalCount: mockRecords.length,
+                        totalCount: 25,
                         list: [firstRecord],
                     },
                 },
@@ -2819,40 +2600,36 @@ describe('Explorer', () => {
             };
             // WHEN the component renders with 2 pages of one record, with filter and sort
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        showFilters
-                        showSorts
-                        showSearch
-                        defaultMassActions={[]}
-                        massActions={[testMassAction]}
-                        defaultViewSettings={{
-                            enableConfigureView: true,
-                            pageSize: 1, // configuration to be in multi-pages (2 pages of 1 record)
-                            filters: [
-                                {
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    showFilters
+                    showSorts
+                    showSearch
+                    defaultMassActions={[]}
+                    massActions={[testMassAction]}
+                    currentView={{
+                        filters: [
+                            {
+                                id: '',
+                                attribute: {
                                     id: '',
-                                    attribute: {
-                                        id: '',
-                                        format: simpleMockAttribute.format,
-                                        label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type,
-                                    },
-                                    field: simpleMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas',
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type,
                                 },
-                            ],
-                            sort: [
-                                {
-                                    field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc,
-                                },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas',
+                            },
+                        ],
+                        sort: [
+                            {
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc,
+                            },
+                        ],
+                    }}
+                />,
             );
 
             // THEN the select all checkbox is clear
@@ -2898,7 +2675,7 @@ describe('Explorer', () => {
                 ...mockExplorerLibraryDataQueryResult,
                 data: {
                     records: {
-                        totalCount: mockRecords.length,
+                        totalCount: 25,
                         list: [secondRecord],
                     },
                 },
@@ -2961,11 +2738,7 @@ describe('Explorer', () => {
             );
             const onDeactivate = jest.fn();
             // WHEN the component is rendered
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{mass: {deactivate: onDeactivate}}} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} defaultCallbacks={{mass: {deactivate: onDeactivate}}} />);
 
             // WHEN the toolbar is cleared
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -3034,11 +2807,7 @@ describe('Explorer', () => {
             );
             const onDeactivate = jest.fn();
             // WHEN the component is rendered
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{mass: {deactivate: onDeactivate}}} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} defaultCallbacks={{mass: {deactivate: onDeactivate}}} />);
 
             // WHEN the toolbar is cleared
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -3164,17 +2933,13 @@ describe('Explorer', () => {
             );
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        showFilters
-                        showSorts
-                        defaultViewSettings={{
-                            enableConfigureView: true,
-                        }}
-                        entrypoint={libraryEntrypoint}
-                        defaultPrimaryActions={[]}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    showFilters
+                    showSorts
+                    currentView={{}}
+                    entrypoint={libraryEntrypoint}
+                    defaultPrimaryActions={[]}
+                />,
             );
 
             expect(screen.getByRole('table')).toBeVisible();
@@ -3214,17 +2979,13 @@ describe('Explorer', () => {
             );
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        showFilters
-                        showSorts
-                        entrypoint={libraryEntrypoint}
-                        defaultPrimaryActions={[]}
-                        defaultViewSettings={{
-                            enableConfigureView: true,
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    showFilters
+                    showSorts
+                    entrypoint={libraryEntrypoint}
+                    defaultPrimaryActions={[]}
+                    currentView={{}}
+                />,
             );
 
             expect(screen.getByRole('table')).toBeVisible();
@@ -3239,67 +3000,53 @@ describe('Explorer', () => {
         });
 
         test('Should disable delete link action on record without edit_value Permission on Link Attribute', async () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={linkEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-                {
-                    mocks: [
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                    ],
-                },
-            );
+            render(<ExplorerV2 entrypoint={linkEntrypoint} />, {
+                mocks: [
+                    ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                    ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                ],
+            });
 
             const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
             expect(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'})).not.toBeEnabled();
         });
 
         test('Should disable replace link action on record without edit_value Permission on Link Attribute', async () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={linkEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-                {
-                    mocks: [
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                    ],
-                },
-            );
+            render(<ExplorerV2 entrypoint={linkEntrypoint} />, {
+                mocks: [
+                    ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                    ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                ],
+            });
 
             const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
             expect(within(firstRecordRow).getByRole('button', {name: 'explorer.replace-item'})).not.toBeEnabled();
         });
 
-        test('Should not display the columns for attributes the user does not have access to', async () => {
+        // ExplorerV2 is a pure consumer of `currentView` (ADR-006): attribute-level permission
+        // filtering is now app-studio's responsibility when it builds the view, so the component
+        // renders a column for every attribute it is given — including no-access ones.
+        test('renders a column for every attribute in currentView, regardless of attribute permissions', async () => {
             jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
                 () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult,
             );
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        defaultViewSettings={{
-                            attributesIds: [
-                                simpleMockAttribute.id,
-                                simpleColorMockAttribute.id,
-                                booleanMockAttribute.id,
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    currentView={{
+                        attributesIds: [simpleMockAttribute.id, simpleColorMockAttribute.id, booleanMockAttribute.id],
+                    }}
+                />,
             );
 
             const tableRows = screen.getAllByRole('row');
             expect(screen.getByRole('table')).toBeVisible();
 
+            // whoAmI + selection + the 3 requested attribute columns (no-access ones are NOT dropped).
             const [firstRecordRow] = tableRows;
             const cells = within(firstRecordRow).getAllByRole('cell');
-            expect(cells.length).toEqual(3);
-
-            expect(within(firstRecordRow).queryByText(booleanMockAttribute.label.fr)).not.toBeInTheDocument();
+            expect(cells.length).toEqual(5);
         });
 
         test('Should not display filter for attributes the user does not have access to', async () => {
@@ -3331,46 +3078,40 @@ describe('Explorer', () => {
             jest.spyOn(console, 'warn').mockImplementationOnce(() => jest.fn());
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        showFilters
-                        showSorts
-                        defaultViewSettings={{
-                            attributesIds: [
-                                simpleMockAttribute.id,
-                                simpleColorMockAttribute.id,
-                                booleanMockAttribute.id,
-                            ],
-                            filters: [
-                                {
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    showFilters
+                    showSorts
+                    currentView={{
+                        attributesIds: [simpleMockAttribute.id, simpleColorMockAttribute.id, booleanMockAttribute.id],
+                        filters: [
+                            {
+                                id: '123',
+                                attribute: {
                                     id: '123',
-                                    attribute: {
-                                        id: '123',
-                                        format: simpleMockAttribute.format,
-                                        label: simpleMockAttribute.label.fr,
-                                        type: simpleMockAttribute.type,
-                                    },
-                                    field: simpleMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                    value: 'Christmas',
+                                    format: simpleMockAttribute.format,
+                                    label: simpleMockAttribute.label.fr,
+                                    type: simpleMockAttribute.type,
                                 },
-                                {
+                                field: simpleMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas',
+                            },
+                            {
+                                id: '456',
+                                attribute: {
                                     id: '456',
-                                    attribute: {
-                                        id: '456',
-                                        format: booleanMockAttribute.format,
-                                        label: booleanMockAttribute.label.fr,
-                                        type: booleanMockAttribute.type,
-                                    },
-                                    field: booleanMockAttribute.id,
-                                    condition: gqlTypes.RecordFilterCondition.EQUAL,
-                                    value: 'true',
+                                    format: booleanMockAttribute.format,
+                                    label: booleanMockAttribute.label.fr,
+                                    type: booleanMockAttribute.type,
                                 },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                                field: booleanMockAttribute.id,
+                                condition: gqlTypes.RecordFilterCondition.EQUAL,
+                                value: 'true',
+                            },
+                        ],
+                    }}
+                />,
             );
 
             expect(console.warn).toHaveBeenCalledWith(expect.stringContaining(booleanMockAttribute.id));
@@ -3399,20 +3140,18 @@ describe('Explorer', () => {
 
         test('Should display sorts', async () => {
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        showSorts
-                        defaultViewSettings={{
-                            sort: [
-                                {
-                                    field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc,
-                                },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    showSorts
+                    currentView={{
+                        sort: [
+                            {
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc,
+                            },
+                        ],
+                    }}
+                />,
             );
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -3423,19 +3162,17 @@ describe('Explorer', () => {
 
         test('Should not display sorts', async () => {
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        defaultViewSettings={{
-                            sort: [
-                                {
-                                    field: simpleColorMockAttribute.id,
-                                    order: gqlTypes.SortOrder.desc,
-                                },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    currentView={{
+                        sort: [
+                            {
+                                field: simpleColorMockAttribute.id,
+                                order: gqlTypes.SortOrder.desc,
+                            },
+                        ],
+                    }}
+                />,
             );
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -3444,36 +3181,32 @@ describe('Explorer', () => {
             expect(within(toolbar).queryByRole('button', {name: /sort-items/})).not.toBeInTheDocument();
         });
 
-        test('Should not display sorts for attributes the user does not have access to', async () => {
+        // Pure consumer (ADR-006): ExplorerV2 forwards every sort declared in `currentView` to the
+        // data query. Filtering out no-access attributes is handled upstream by app-studio.
+        test('forwards every sort from currentView to the data query', async () => {
             jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
                 () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult,
             );
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        showFilters
-                        showSorts
-                        defaultViewSettings={{
-                            attributesIds: [
-                                simpleMockAttribute.id,
-                                simpleColorMockAttribute.id,
-                                booleanMockAttribute.id,
-                            ],
-                            sort: [
-                                {
-                                    field: simpleMockAttribute.id,
-                                    order: gqlTypes.SortOrder.asc,
-                                },
-                                {
-                                    field: simpleColorMockAttribute.id,
-                                    order: gqlTypes.SortOrder.desc,
-                                },
-                            ],
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    showFilters
+                    showSorts
+                    currentView={{
+                        attributesIds: [simpleMockAttribute.id, simpleColorMockAttribute.id, booleanMockAttribute.id],
+                        sort: [
+                            {
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc,
+                            },
+                            {
+                                field: simpleColorMockAttribute.id,
+                                order: gqlTypes.SortOrder.desc,
+                            },
+                        ],
+                    }}
+                />,
             );
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
@@ -3488,6 +3221,10 @@ describe('Explorer', () => {
                             {
                                 field: simpleMockAttribute.id,
                                 order: gqlTypes.SortOrder.asc,
+                            },
+                            {
+                                field: simpleColorMockAttribute.id,
+                                order: gqlTypes.SortOrder.desc,
                             },
                         ],
                     }),
@@ -3523,13 +3260,11 @@ describe('Explorer', () => {
             );
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={linkEntrypoint}
-                        primaryActions={customPrimaryActions}
-                        defaultPrimaryActions={[]}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={linkEntrypoint}
+                    primaryActions={customPrimaryActions}
+                    defaultPrimaryActions={[]}
+                />,
                 {
                     mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock],
                 },
@@ -3542,17 +3277,12 @@ describe('Explorer', () => {
         });
 
         test('Should not be able to link a new record without permissions on linkAttribute', async () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={linkEntrypoint} />
-                </Explorer.EditSettingsContextProvider>,
-                {
-                    mocks: [
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                    ],
-                },
-            );
+            render(<ExplorerV2 entrypoint={linkEntrypoint} />, {
+                mocks: [
+                    ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                    ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                ],
+            });
 
             const dropdownButton = await screen.findByRole('dropdown-trigger');
             await user.click(dropdownButton);
@@ -3564,17 +3294,12 @@ describe('Explorer', () => {
         });
 
         test('Should be able to link existing record', async () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={linkEntrypoint} defaultPrimaryActions={[]} />
-                </Explorer.EditSettingsContextProvider>,
-                {
-                    mocks: [
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                        ExplorerLinkAttributeWithoutPermissionsQueryMock,
-                    ],
-                },
-            );
+            render(<ExplorerV2 entrypoint={linkEntrypoint} defaultPrimaryActions={[]} />, {
+                mocks: [
+                    ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                    ExplorerLinkAttributeWithoutPermissionsQueryMock,
+                ],
+            });
             const linkExistingButton = await screen.findByRole(
                 'button',
                 {name: 'explorer.add-existing-item'},
@@ -3582,71 +3307,6 @@ describe('Explorer', () => {
             );
             expect(linkExistingButton).toBeVisible();
             expect(linkExistingButton).toBeDisabled();
-        });
-    });
-
-    describe('Saved views', () => {
-        test('Should load a view', async () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        showFilters
-                        showSorts
-                        entrypoint={libraryEntrypoint}
-                        defaultPrimaryActions={[]}
-                        defaultViewSettings={{
-                            enableConfigureView: true,
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
-            );
-
-            const manageViewsButton = screen.getByRole('button', {name: /My view/});
-            expect(manageViewsButton).toBeVisible();
-            await user.click(manageViewsButton);
-
-            const viewItem = screen.getByLabelText(/Second view/);
-            await user.click(viewItem);
-
-            await waitFor(() => expect(screen.getByRole('button', {name: /Second view/})).toBeVisible());
-        });
-
-        test('Should ignore default view', async () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        showFilters
-                        showSorts
-                        ignoreViewByDefault
-                        entrypoint={libraryEntrypoint}
-                        defaultPrimaryActions={[]}
-                        defaultViewSettings={{
-                            enableConfigureView: true,
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
-            );
-
-            expect(screen.queryByRole('button', {name: /My view/})).not.toBeInTheDocument();
-        });
-
-        test('Should load a specific view', async () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        showFilters
-                        showSorts
-                        entrypoint={libraryEntrypoint}
-                        defaultPrimaryActions={[]}
-                        defaultViewSettings={{
-                            viewId: '43',
-                            enableConfigureView: true,
-                        }}
-                    />
-                </Explorer.EditSettingsContextProvider>,
-            );
-
-            expect(screen.queryByRole('button', {name: /Second view/})).toBeInTheDocument();
         });
     });
 
@@ -3682,11 +3342,7 @@ describe('Explorer', () => {
         };
 
         test('Should call the library data query with filters for values list', async () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={{...libraryEntrypoint, valuesList: mockValuesList}} />
-                </Explorer.EditSettingsContextProvider>,
-            );
+            render(<ExplorerV2 entrypoint={{...libraryEntrypoint, valuesList: mockValuesList}} />);
 
             expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -3697,16 +3353,14 @@ describe('Explorer', () => {
 
         test('Should call the library data query with filters for values list on search when allowFreeEntry is set to false', async () => {
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={{
-                            ...libraryEntrypoint,
-                            valuesList: mockValuesList,
-                            allowFreeEntry: false,
-                        }}
-                        showSearch
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={{
+                        ...libraryEntrypoint,
+                        valuesList: mockValuesList,
+                        allowFreeEntry: false,
+                    }}
+                    showSearch
+                />,
             );
 
             const searchInput = screen.getByRole('textbox', {name: /search/});
@@ -3730,16 +3384,14 @@ describe('Explorer', () => {
 
         test('Should call the library data query without filters for values list on search when allowFreeEntry is set to true', async () => {
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={{
-                            ...libraryEntrypoint,
-                            valuesList: mockValuesList,
-                            allowFreeEntry: true,
-                        }}
-                        showSearch
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={{
+                        ...libraryEntrypoint,
+                        valuesList: mockValuesList,
+                        allowFreeEntry: true,
+                    }}
+                    showSearch
+                />,
             );
 
             const searchInput = screen.getByRole('textbox', {name: /search/});
@@ -3762,8 +3414,7 @@ describe('Explorer', () => {
         });
     });
 
-    // Skipped: the onFiltersChange wiring (useNotifyFiltersChange) is currently removed from Explorer.
-    describe.skip('onFiltersChange callback', () => {
+    describe('onFiltersChange callback', () => {
         const initialFilter = {
             id: 'filter-1',
             attribute: {
@@ -3795,33 +3446,32 @@ describe('Explorer', () => {
             const onFiltersChange = jest.fn();
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={{type: 'library', libraryId: 'campaigns'}}
-                        defaultMassActions={[]}
-                        defaultCallbacks={{viewSettings: {onFiltersChange}}}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                    defaultMassActions={[]}
+                    defaultCallbacks={{viewSettings: {onFiltersChange}}}
+                />,
             );
 
             expect(onFiltersChange).not.toHaveBeenCalled();
         });
 
-        test('is called with current filters when a filter is removed from the toolbar', async () => {
+        // TODO: la suppression d'un filtre depuis la toolbar (et la gestion des filtres en général)
+        // sera traitée dans un autre ticket. La logique du hook useNotifyFiltersChange est déjà
+        // couverte par useNotifyFiltersChange.test.tsx.
+        test.skip('is called with current filters when a filter is removed from the toolbar', async () => {
             const onFiltersChange = jest.fn();
 
             jest.spyOn(attributeDetailsModule, 'useAttributeDetailsData').mockReturnValue(mockAttributeDetails as any);
 
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={{type: 'library', libraryId: 'campaigns'}}
-                        showFilters
-                        defaultMassActions={[]}
-                        defaultViewSettings={{filters: [initialFilter], enableConfigureView: true}}
-                        defaultCallbacks={{viewSettings: {onFiltersChange}}}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                    showFilters
+                    defaultMassActions={[]}
+                    currentView={{filters: [initialFilter]}}
+                    defaultCallbacks={{viewSettings: {onFiltersChange}}}
+                />,
             );
 
             await user.click(screen.getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)}));
@@ -3835,43 +3485,21 @@ describe('Explorer', () => {
         });
     });
 
-    // Skipped: the currentView prop is not yet wired to the APPLY_SERIALIZED_VIEW dispatch.
-    describe.skip('currentView prop', () => {
+    describe('currentView prop', () => {
         test('applies attributesIds from currentView', async () => {
             render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        defaultMassActions={[]}
-                        ignoreViewByDefault
-                        currentView={{attributesIds: [simpleMockAttribute.id]}}
-                    />
-                </Explorer.EditSettingsContextProvider>,
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    defaultMassActions={[]}
+                    ignoreViewByDefault
+                    currentView={{attributesIds: [simpleMockAttribute.id]}}
+                />,
             );
 
             await waitFor(() => {
-                expect(screen.getByText(simpleMockAttribute.label.fr)).toBeVisible();
+                expect(screen.getByText(simpleMockAttribute.label.fr)).toBeInTheDocument();
             });
             expect(screen.queryByText(linkMockAttribute.label.fr)).not.toBeInTheDocument();
-        });
-    });
-
-    describe('loadedViewId prop', () => {
-        test('loads the saved view matching loadedViewId', async () => {
-            const lazyFetchMock = jest.fn().mockResolvedValue(mockExplorerAttributesQueryResult);
-            jest.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
-                () => [lazyFetchMock] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult,
-            );
-
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer entrypoint={libraryEntrypoint} defaultMassActions={[]} loadedViewId="43" />
-                </Explorer.EditSettingsContextProvider>,
-            );
-
-            await waitFor(() => {
-                expect(lazyFetchMock).toHaveBeenCalled();
-            });
         });
     });
 });

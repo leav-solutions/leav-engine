@@ -1,13 +1,20 @@
 import {useParams} from 'react-router-dom';
 import {useGetUserDataQuery, useSaveUserDataMutation} from '_ui/_gqlTypes';
 import {APP_ENDPOINT} from '../../../../../../constants';
+import {useApplicationSettingsContext} from '../../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
+import {retrievePanelDetails} from '../../../../utils/retrievePanelDetails';
 
 const LAST_USED_VIEW_KEY_PREFIX = 'last_used_view';
 
 export const useLastUsedView = () => {
+    const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
     const currentPanelId = recordPanelId ?? panelId;
-    const userDataKey = `${LAST_USED_VIEW_KEY_PREFIX}_${APP_ENDPOINT}_${currentPanelId}`;
+    // Scope the memory by the DISPLAYED library too: the same panel id can host explorers of different
+    // libraries (a record-panel link explorer is keyed by recordPanelId but shows a linked library), so
+    // keying by panel alone could resurface a view id belonging to another library.
+    const {displayedLibraryId} = retrievePanelDetails({application, recordPanelId, panelId});
+    const userDataKey = `${LAST_USED_VIEW_KEY_PREFIX}_${APP_ENDPOINT}_${displayedLibraryId}_${currentPanelId}`;
 
     const [saveUserDataMutation] = useSaveUserDataMutation();
 

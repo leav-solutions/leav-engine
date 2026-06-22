@@ -25,7 +25,11 @@ jest.mock('../useLastUsedView', () => ({
     useLastUsedView: () => ({saveLastUsedView: mockSaveLastUsedView, lastUsedViewId: undefined}),
 }));
 
-let mockCurrentView: {view: {id: string; label?: Record<string, string>} | null; isDirty: boolean};
+let mockCurrentView: {
+    view: {id: string; label?: Record<string, string>} | null;
+    isDirty: boolean;
+    isEmptyView?: boolean;
+};
 jest.mock('../../../store-current-view/useCurrentView', () => ({
     useCurrentView: () => mockCurrentView,
 }));
@@ -46,10 +50,10 @@ describe('TabCatalog', () => {
 
     describe('rendering', () => {
         it('renders the two sections with their views', () => {
-            render(<TabCatalog viewId="view-1" libraryId="lib" />);
+            render(<TabCatalog libraryId="lib" />);
 
-            expect(screen.getByText('view_settings.my-views')).toBeInTheDocument();
-            expect(screen.getByText('view_settings.shared-views')).toBeInTheDocument();
+            expect(screen.getByText('view_settings.my_views')).toBeInTheDocument();
+            expect(screen.getByText('view_settings.shared_views')).toBeInTheDocument();
             expect(screen.getByText('Vue A')).toBeInTheDocument();
             expect(screen.getByText('Vue B')).toBeInTheDocument();
             expect(screen.getByText('Vue C')).toBeInTheDocument();
@@ -57,27 +61,48 @@ describe('TabCatalog', () => {
 
         it('shows the empty states when a section has no view', () => {
             mockCatalog = {myViews: [], sharedViews: []};
-            render(<TabCatalog viewId="view-1" libraryId="lib" />);
+            render(<TabCatalog libraryId="lib" />);
 
-            expect(screen.getByText('view_settings.my-views-empty')).toBeInTheDocument();
-            expect(screen.getByText('view_settings.shared-views-empty')).toBeInTheDocument();
+            expect(screen.getByText('view_settings.my_views_empty')).toBeInTheDocument();
+            expect(screen.getByText('view_settings.shared_views_empty')).toBeInTheDocument();
+        });
+
+        it('still renders the catalog in the empty (default) view state', () => {
+            // No view loaded: the catalog must stay reachable so a view can be selected.
+            mockCurrentView = {view: null, isDirty: false, isEmptyView: true};
+            render(<TabCatalog libraryId="lib" />);
+
+            expect(screen.getByText('view_settings.my_views')).toBeInTheDocument();
+            expect(screen.getByText('Vue A')).toBeInTheDocument();
         });
     });
 
     describe('selection', () => {
         it('dispatches view-settings-select-view when clicking another view (not dirty)', async () => {
-            render(<TabCatalog viewId="view-1" libraryId="lib" />);
+            render(<TabCatalog libraryId="lib" />);
 
             await act(async () => {
                 await user.click(screen.getByText('Vue B'));
             });
 
             expect(mockDispatch).toHaveBeenCalledWith({type: 'view-settings-select-view', data: {viewId: 'view-2'}});
-            expect(screen.queryByText('view_settings.unsaved-changes.title')).not.toBeInTheDocument();
+            expect(screen.queryByText('view_settings.unsaved_changes.title')).not.toBeInTheDocument();
+        });
+
+        it('dispatches select-view from the empty (default) view state', async () => {
+            mockCurrentView = {view: null, isDirty: false, isEmptyView: true};
+            render(<TabCatalog libraryId="lib" />);
+
+            await act(async () => {
+                await user.click(screen.getByText('Vue A'));
+            });
+
+            expect(mockDispatch).toHaveBeenCalledWith({type: 'view-settings-select-view', data: {viewId: 'view-1'}});
+            expect(screen.queryByText('view_settings.unsaved_changes.title')).not.toBeInTheDocument();
         });
 
         it('persists the selected view as last used', async () => {
-            render(<TabCatalog viewId="view-1" libraryId="lib" />);
+            render(<TabCatalog libraryId="lib" />);
 
             await user.click(screen.getByText('Vue B'));
 
@@ -86,37 +111,37 @@ describe('TabCatalog', () => {
 
         it('is a no-op when clicking the already-loaded view', async () => {
             // currentLoadedView.id === 'view-1' === clicked id ⇒ no dispatch, no modal.
-            render(<TabCatalog viewId="view-1" libraryId="lib" />);
+            render(<TabCatalog libraryId="lib" />);
 
             await act(async () => {
                 await user.click(screen.getByText('Vue A'));
             });
 
             expect(mockDispatch).not.toHaveBeenCalled();
-            expect(screen.queryByText('view_settings.unsaved-changes.title')).not.toBeInTheDocument();
+            expect(screen.queryByText('view_settings.unsaved_changes.title')).not.toBeInTheDocument();
         });
 
         it('opens the unsaved-changes modal instead of dispatching when there are unsaved changes', async () => {
             mockCurrentView = {view: {id: 'view-1', label: {fr: 'Vue A'}}, isDirty: true};
-            render(<TabCatalog viewId="view-1" libraryId="lib" />);
+            render(<TabCatalog libraryId="lib" />);
 
             await act(async () => {
                 await user.click(screen.getByText('Vue B'));
             });
 
-            expect(screen.getByText('view_settings.unsaved-changes.title')).toBeInTheDocument();
+            expect(screen.getByText('view_settings.unsaved_changes.title')).toBeInTheDocument();
             expect(mockDispatch).not.toHaveBeenCalled();
         });
 
         it('discards changes and dispatches when clicking Discard', async () => {
             mockCurrentView = {view: {id: 'view-1', label: {fr: 'Vue A'}}, isDirty: true};
-            render(<TabCatalog viewId="view-1" libraryId="lib" />);
+            render(<TabCatalog libraryId="lib" />);
 
             await act(async () => {
                 await user.click(screen.getByText('Vue B'));
             });
             await act(async () => {
-                await user.click(screen.getByText('view_settings.unsaved-changes.discard'));
+                await user.click(screen.getByText('view_settings.unsaved_changes.discard'));
             });
 
             expect(mockSave).not.toHaveBeenCalled();
@@ -125,13 +150,13 @@ describe('TabCatalog', () => {
 
         it('saves then dispatches when clicking Save and save succeeds', async () => {
             mockCurrentView = {view: {id: 'view-1', label: {fr: 'Vue A'}}, isDirty: true};
-            render(<TabCatalog viewId="view-1" libraryId="lib" />);
+            render(<TabCatalog libraryId="lib" />);
 
             await act(async () => {
                 await user.click(screen.getByText('Vue B'));
             });
             await act(async () => {
-                await user.click(screen.getByText('view_settings.current-view.save'));
+                await user.click(screen.getByText('view_settings.current_view.save'));
             });
 
             expect(mockSave).toHaveBeenCalledTimes(1);
@@ -141,18 +166,18 @@ describe('TabCatalog', () => {
         it('keeps the modal open and does not dispatch when save fails', async () => {
             mockSave = jest.fn().mockResolvedValue(false);
             mockCurrentView = {view: {id: 'view-1', label: {fr: 'Vue A'}}, isDirty: true};
-            render(<TabCatalog viewId="view-1" libraryId="lib" />);
+            render(<TabCatalog libraryId="lib" />);
 
             await act(async () => {
                 await user.click(screen.getByText('Vue B'));
             });
             await act(async () => {
-                await user.click(screen.getByText('view_settings.current-view.save'));
+                await user.click(screen.getByText('view_settings.current_view.save'));
             });
 
             expect(mockSave).toHaveBeenCalledTimes(1);
             expect(mockDispatch).not.toHaveBeenCalled();
-            expect(screen.getByText('view_settings.unsaved-changes.title')).toBeInTheDocument();
+            expect(screen.getByText('view_settings.unsaved_changes.title')).toBeInTheDocument();
         });
     });
 });

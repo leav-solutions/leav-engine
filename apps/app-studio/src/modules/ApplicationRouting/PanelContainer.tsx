@@ -1,7 +1,7 @@
 import {type FunctionComponent, useCallback, useEffect, useRef, useState} from 'react';
 import {useMatch, useNavigate, useParams} from 'react-router-dom';
 import cn from 'classnames';
-import {Explorer, ExplorerV2, SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
+import {Explorer, SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
 import {KitModal, KitSidePanel} from 'aristid-ds';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
@@ -140,9 +140,7 @@ export const PanelContainer: FunctionComponent = ({children}) => {
             >
                 <div className={popupContent} ref={explorerContainerRef}>
                     <Explorer.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
-                        <ExplorerV2.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
-                            {children}
-                        </ExplorerV2.EditSettingsContextProvider>
+                        {children}
                     </Explorer.EditSettingsContextProvider>
                 </div>
             </KitModal>

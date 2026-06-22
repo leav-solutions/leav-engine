@@ -16,7 +16,7 @@ export const ShareControl = ({
     return (
         <div className={sharedClassname}>
             <KitSwitch checked={shared} disabled={disabled} onChange={onToggleShared} />
-            <KitTypography.Text>{t('view_settings.current-view.shared')}</KitTypography.Text>
+            <KitTypography.Text>{t('view_settings.current_view.shared')}</KitTypography.Text>
         </div>
     );
 };

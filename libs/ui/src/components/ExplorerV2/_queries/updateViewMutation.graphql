@@ -1,5 +1,0 @@
-mutation UpdateView($view: ViewInputPartial!) {
-    updateView(view: $view) {
-        ...ViewDetails
-    }
-}

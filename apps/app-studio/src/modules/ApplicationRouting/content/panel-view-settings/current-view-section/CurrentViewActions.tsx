@@ -14,11 +14,13 @@ import {actions, actionButtons} from './currentViewSection.module.css';
 export const CurrentViewActions = ({canEditAdminView}: {canEditAdminView: boolean}) => {
     const {t} = useTranslation();
     const {lang} = useLang();
-    const {view, isOwner, isDirty, resetView} = useCurrentView();
+    const {view, isOwner, isDirty, isEmptyView, resetView} = useCurrentView();
     const {save, saveLoading, fork, forkLoading, toggleShared, shareLoading} = useCurrentViewActions();
     const [isForkModalOpen, setIsForkModalOpen] = useState(false);
 
-    if (!view) {
+    //TODO: That might change in the future, depending on whether the user is admin or not.
+    // No CRUD action in the default (empty) state: there is no view to act on.
+    if (!view || isEmptyView) {
         return null;
     }
 
@@ -35,47 +37,47 @@ export const CurrentViewActions = ({canEditAdminView}: {canEditAdminView: boolea
             )}
             <div className={actionButtons}>
                 {isOwner && (
-                    <KitTooltip title={String(t('view_settings.current-view.save'))}>
+                    <KitTooltip title={String(t('view_settings.current_view.save'))}>
                         <KitButton
                             type="secondary"
                             size="m"
                             disabled={!canSave}
                             loading={saveLoading}
-                            aria-label={String(t('view_settings.current-view.save'))}
+                            aria-label={String(t('view_settings.current_view.save'))}
                             icon={<FontAwesomeIcon icon={faSave} />}
                             onClick={save}
                         />
                     </KitTooltip>
                 )}
-                <KitTooltip title={String(t('view_settings.current-view.clone'))}>
+                <KitTooltip title={String(t('view_settings.current_view.clone'))}>
                     <KitButton
                         type="secondary"
                         size="m"
                         loading={forkLoading}
-                        aria-label={String(t('view_settings.current-view.clone'))}
+                        aria-label={String(t('view_settings.current_view.clone'))}
                         icon={<FontAwesomeIcon icon={faClone} />}
                         onClick={() => setIsForkModalOpen(true)}
                     />
                 </KitTooltip>
-                <KitTooltip title={String(t('view_settings.current-view.reset'))}>
+                <KitTooltip title={String(t('view_settings.current_view.reset'))}>
                     <KitButton
                         type="secondary"
                         size="m"
                         disabled={!isDirty}
-                        aria-label={String(t('view_settings.current-view.reset'))}
+                        aria-label={String(t('view_settings.current_view.reset'))}
                         icon={<FontAwesomeIcon icon={faRotateLeft} />}
                         onClick={resetView}
                     />
                 </KitTooltip>
                 {/* TODO: Implement deletion functionality in LEAVC-934 */}
                 {isOwner && (
-                    <KitTooltip title={String(t('view_settings.current-view.delete'))}>
+                    <KitTooltip title={String(t('view_settings.current_view.delete'))}>
                         <KitButton
                             type="secondary"
                             size="m"
                             disabled
                             danger
-                            aria-label={String(t('view_settings.current-view.delete'))}
+                            aria-label={String(t('view_settings.current_view.delete'))}
                             icon={<FontAwesomeIcon icon={faTrash} />}
                         />
                     </KitTooltip>
