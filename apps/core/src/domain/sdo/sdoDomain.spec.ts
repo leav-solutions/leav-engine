@@ -81,7 +81,7 @@ describe('sdoDomain', () => {
     describe('schemaValidation', () => {
         it('[-] should throw an error when missing field', async () => {
             const mockSDOMissingField = {
-                identifier: {uuid: '1'},
+                system: {systemId: '1'},
             };
 
             await expect(_sdoDomain.schemaValidation(mockSDOMissingField)).rejects.toThrow();
@@ -241,8 +241,8 @@ describe('sdoDomain', () => {
                 date: expect.any(Number),
                 action: 'CREATE',
                 content: {
-                    identifier: {
-                        uuid: 'raw_payload',
+                    system: {
+                        systemId: 'raw_payload',
                     },
                     simple: 'raw_payload',
                     simple_link: 'id',
@@ -303,8 +303,8 @@ describe('sdoDomain', () => {
                 name: mockSDO.name,
                 action: 'UPDATE',
                 content: {
-                    identifier: {
-                        uuid: 'raw_payload',
+                    system: {
+                        systemId: 'raw_payload',
                     },
                     simple: 'raw_payload',
                     simple_link: 'id',
@@ -369,7 +369,7 @@ describe('sdoDomain', () => {
                 });
                 expect(await _sdoDomain.getRecordSDO(libId, 'entity', mapping, mockSystemQueryContext)).toMatchObject({
                     content: {
-                        identifier: {uuid: 'test-uuid'},
+                        system: {systemId: 'test-uuid'},
                         [attributeId]: expectedValue,
                     },
                 });
@@ -702,8 +702,8 @@ describe('sdoDomain', () => {
                 name: mockSDO.name,
                 action: 'CREATE',
                 content: {
-                    identifier: {
-                        uuid: 'test-uuid',
+                    system: {
+                        systemId: 'test-uuid',
                     },
                     simpleMapping: true,
                     advancedMapping: ['red', 'blue'],
@@ -818,8 +818,8 @@ describe('sdoDomain', () => {
             );
             expect(sdo).toBeDefined();
             expect((sdo as ISDO).content).toEqual({
-                identifier: {
-                    uuid: 'raw_payload',
+                system: {
+                    systemId: 'raw_payload',
                 },
                 simple: 'raw_payload',
                 simple_link: 'id',

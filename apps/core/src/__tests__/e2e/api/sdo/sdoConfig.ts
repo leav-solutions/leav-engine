@@ -9,7 +9,7 @@ export const sdoGlobalSettings: ISDOSettings = {
         [SDO_LIBRARY_ID]: {
             leavLibraryId: SDO_LIBRARY_ID,
             sdoAttributes: {
-                'system.systemId': {leavAttributeId: 'id', valueRequired: true, format: 'string'},
+                'system.systemId': {leavAttributeId: 'uuid', valueRequired: true, format: 'string'},
                 'system.systemActive': {leavAttributeId: 'active', valueRequired: false, format: 'boolean'},
                 'system.systemCreationDate': {
                     leavAttributeId: 'created_at',
@@ -22,7 +22,6 @@ export const sdoGlobalSettings: ISDOSettings = {
                     format: 'number',
                 },
                 'system.systemSdoHash': {leavAttributeId: 'hash_sdo', valueRequired: false, format: 'string'},
-                'identifier.uuid': {leavAttributeId: 'uuid', valueRequired: true, format: 'string'},
                 // info object is required by generic.json schema; leavAttributeId '' maps to null (no fetch)
                 'info._': {leavAttributeId: '', valueRequired: false, format: 'string'},
             },

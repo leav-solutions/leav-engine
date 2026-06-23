@@ -59,18 +59,18 @@ describe('SDO Export', () => {
         await rabbitmqClient.purgeQueue(TEST_GET_EXPORT_MSG_QUEUE);
     });
 
-    const waitForSdo = (recordId: string, timeoutMs = SDO_EXPORT_TIMER * 10): Promise<ISDO> =>
+    const waitForSdo = (recordUUID: string, timeoutMs = SDO_EXPORT_TIMER * 10): Promise<ISDO> =>
         rabbitmqClient.waitForMessage<ISDO>(
             TEST_GET_EXPORT_MSG_QUEUE,
-            m => m.name === SDO_LIBRARY_ID && String((m.content as any).system?.systemId) === recordId,
+            m => m.name === SDO_LIBRARY_ID && String((m.content as any).system?.systemId) === recordUUID,
             timeoutMs,
         );
 
     test('create a record triggers a CREATE export message', async () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_LIBRARY_ID});
-        const recordId = createRecord.record!.id;
+        const recordUUID = createRecord.record!.uuid;
 
-        const msg = await waitForSdo(recordId);
+        const msg = await waitForSdo(recordUUID);
 
         expect(msg).toMatchObject({
             name: SDO_LIBRARY_ID,
@@ -79,14 +79,11 @@ describe('SDO Export', () => {
             action: 'CREATE',
             content: {
                 system: {
-                    systemId: recordId,
+                    systemId: recordUUID,
                     systemActive: true,
                     systemCreationDate: expect.any(Number),
                     systemLastModifiedDate: expect.any(Number),
                     systemSdoHash: null,
-                },
-                identifier: {
-                    uuid: expect.any(String),
                 },
             },
         });
@@ -99,7 +96,6 @@ describe('SDO Export', () => {
 
     //     // Wait for the CREATE message before soft-deleting
     //     const msgCreate = await waitForSdo(recordId);
-
     //     expect(msgCreate.action).toBe('CREATE');
     //     expect((msgCreate.content as any).system?.systemActive).toBe(true);
 

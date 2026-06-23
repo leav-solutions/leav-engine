@@ -89,7 +89,9 @@ module.exports = {
     },
     sdo: {
         import: {
-            enable: false,
+            enable: true,
+            queue: 'test_sdo_import_queue',
+            exchange: 'test_sdo_import_exchange',
         },
         export: {
             enable: true,

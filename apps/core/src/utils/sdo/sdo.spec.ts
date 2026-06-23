@@ -7,9 +7,9 @@ describe('sdo (utils)', () => {
     describe('createHash', () => {
         const sdoContent = {
             system: {
-                systemId: 95,
+                systemId: '95',
                 systemActive: false,
-                systemCreator: 12,
+                systemCreator: '12',
                 systemCreationDate: 1717675756,
             },
             info: {
@@ -29,7 +29,7 @@ describe('sdo (utils)', () => {
             content: sdoContent,
         };
         it('[+] should create a hash from SDO content, idempotent depending on content only', () => {
-            expect(_sdoUtils.createHash(sdoForHash)).toBe('184405ce82f80b66021053d01aadd693');
+            expect(_sdoUtils.createHash(sdoForHash)).toBe('65c5971a3f057caf5d3f06e86ee64258');
             expect(_sdoUtils.createHash(sdoForHash)).toBe(_sdoUtils.createHash(sdoForHash));
             expect(_sdoUtils.createHash(sdoForHash)).toBe(
                 _sdoUtils.createHash({
@@ -46,7 +46,7 @@ describe('sdo (utils)', () => {
                         ...sdoContent,
                         system: {
                             ...sdoContent.system,
-                            systemId: 96, // systemId change content
+                            systemId: '96', // systemId change content
                         },
                     },
                 }),
@@ -63,8 +63,8 @@ describe('sdo (utils)', () => {
                             // same values !
                             systemCreationDate: 1717675756,
                             systemActive: false,
-                            systemCreator: 12,
-                            systemId: 95,
+                            systemCreator: '12',
+                            systemId: '95',
                         },
                     },
                 }),

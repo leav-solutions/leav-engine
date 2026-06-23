@@ -35,7 +35,7 @@ export default function ({
             sdo = JSON.parse(msg.content.toString());
             const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(_systemQueryContext);
 
-            if (sdoGlobalSettings.importEnable === false || (sdo.name !== 'campaign' && sdo.name !== 'map')) {
+            if (sdoGlobalSettings.importEnable === false) {
                 (await rabbitMQService.getSDOImportChannel()).ack(msg);
                 return;
             }

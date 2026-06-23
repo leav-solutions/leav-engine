@@ -26,6 +26,12 @@ export class RabbitMqClient {
         return this.channel;
     }
 
+    public async publishToExchange<T = unknown>(exchange: string, payload: T): Promise<void> {
+        const channel = this.getChannel();
+        await channel.assertExchange(exchange, 'fanout', {durable: true});
+        channel.publish(exchange, '', Buffer.from(JSON.stringify(payload)));
+    }
+
     public async assertExchangeAndBindQueue(queue: string, exchange: string, type = 'fanout'): Promise<void> {
         const channel = this.getChannel();
         await channel.assertExchange(exchange, type, {durable: true});

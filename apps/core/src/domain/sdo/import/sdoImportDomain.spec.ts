@@ -31,6 +31,7 @@ const deps: ToAny<ISDOImportDomainDeps> = {
 
 const treeIdForLink = 'treeId';
 const libIdForLink = 'libId';
+
 const _mockSDOMapping: ISDOMapping = {
     ['test']: {
         leavLibraryId: 'leavLibraryId',
@@ -55,6 +56,7 @@ const _mockSDOMapping: ISDOMapping = {
         },
     },
 } satisfies ISDOMapping;
+
 const uuidNameLibTest = _mockSDOMapping.test.sdoAttributes[sdoPathIdentifierUuid].leavAttributeId;
 const uuidNameLibIdForLink = _mockSDOMapping[libIdForLink].sdoAttributes[sdoPathIdentifierUuid].leavAttributeId;
 
@@ -82,7 +84,7 @@ describe('importDomain', () => {
                         {
                             condition: 'EQUAL',
                             field: uuidNameLibTest,
-                            value: mockSDO.content.identifier.uuid,
+                            value: mockSDO.content.system.systemId,
                         },
                     ],
                     retrieveInactive: true,
@@ -156,7 +158,7 @@ describe('importDomain', () => {
                         {
                             condition: 'EQUAL',
                             field: uuidNameLibTest,
-                            value: mockSDO.content.identifier.uuid,
+                            value: mockSDO.content.system.systemId,
                         },
                     ],
                     retrieveInactive: true,
@@ -225,7 +227,7 @@ describe('importDomain', () => {
                                 {
                                     id_value: null,
                                     attribute: attributeName,
-                                    payload: 'false',
+                                    payload: false,
                                 },
                             ]),
                         }),
@@ -422,7 +424,7 @@ describe('importDomain', () => {
                                 {
                                     id_value: null,
                                     attribute: attributeName,
-                                    payload: 'false',
+                                    payload: false,
                                 },
                             ]),
                         }),
@@ -442,7 +444,7 @@ describe('importDomain', () => {
                                 {
                                     id_value: null,
                                     attribute: attributeName,
-                                    payload: 'true',
+                                    payload: true,
                                 },
                             ]),
                         }),
@@ -1385,8 +1387,8 @@ describe('importDomain', () => {
         return {
             ...mockSDO,
             content: {
-                identifier: {
-                    uuid: '1',
+                system: {
+                    systemId: '1',
                 },
                 ...content,
             },

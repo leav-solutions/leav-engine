@@ -1358,7 +1358,7 @@ export type CreateRecordMutationVariables = Exact<{
 }>;
 
 
-export type CreateRecordMutation = { createRecord: { valuesErrors?: Array<{ attribute: string, input?: string | null, message: string, type: string }> | null, record?: { id: string } | null } };
+export type CreateRecordMutation = { createRecord: { valuesErrors?: Array<{ attribute: string, input?: string | null, message: string, type: string }> | null, record?: { id: string, uuid: string } | null } };
 
 export type DeleteRecordMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']['input']>;
@@ -1374,6 +1374,15 @@ export type PurgeInactiveRecordsMutationVariables = Exact<{
 
 
 export type PurgeInactiveRecordsMutation = { purgeInactiveRecords: Array<{ id: string }> };
+
+export type GetRecordByUuidQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  recordUUID: Scalars['String']['input'];
+  retrieveInactive?: InputMaybe<Scalars['Boolean']['input']>;
+}>;
+
+
+export type GetRecordByUuidQuery = { records: { list: Array<{ id: string, uuid: string, active: boolean }> } };
 
 export type SaveTreeMutationVariables = Exact<{
   tree: TreeInput;
@@ -1779,6 +1788,7 @@ export const CreateRecordDocument = gql`
     }
     record {
       id
+      uuid
     }
   }
 }
@@ -1794,6 +1804,21 @@ export const PurgeInactiveRecordsDocument = gql`
     mutation PurgeInactiveRecords($libraryId: String!) {
   purgeInactiveRecords(libraryId: $libraryId) {
     id
+  }
+}
+    `;
+export const GetRecordByUuidDocument = gql`
+    query GetRecordByUUID($libraryId: ID!, $recordUUID: String!, $retrieveInactive: Boolean) {
+  records(
+    library: $libraryId
+    filters: [{field: "uuid", condition: EQUAL, value: $recordUUID}]
+    retrieveInactive: $retrieveInactive
+  ) {
+    list {
+      id
+      uuid
+      active
+    }
   }
 }
     `;
@@ -2104,6 +2129,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     PurgeInactiveRecords(variables: PurgeInactiveRecordsMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<PurgeInactiveRecordsMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<PurgeInactiveRecordsMutation>({ document: PurgeInactiveRecordsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'PurgeInactiveRecords', 'mutation', variables);
+    },
+    GetRecordByUUID(variables: GetRecordByUuidQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordByUuidQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecordByUuidQuery>({ document: GetRecordByUuidDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordByUUID', 'query', variables);
     },
     SaveTree(variables: SaveTreeMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveTreeMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<SaveTreeMutation>({ document: SaveTreeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveTree', 'mutation', variables);

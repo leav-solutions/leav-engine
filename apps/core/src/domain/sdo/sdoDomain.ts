@@ -279,7 +279,7 @@ export default function ({
             name: sdoLibraryId,
             date: Date.now(),
             action,
-            content: {},
+            content: {system: {systemId: ''}},
         };
 
         await Promise.all(

@@ -34,12 +34,8 @@
         },
         "identifier": {
             "type": "object",
-            "required": ["uuid"],
-            "properties": {
-                "uuid": {
-                    "type": ["string"]
-                }
-            }
+            "required": [],
+            "properties": {}
         }
     }
 }

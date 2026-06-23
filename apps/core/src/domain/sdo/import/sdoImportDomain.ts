@@ -23,6 +23,7 @@ import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
 import {type ITreeDomain} from '../../tree/treeDomain';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {logger} from '@leav/logger';
+import {IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS} from '../../value/helpers/canSaveRecordValue';
 
 export interface ISDOImportDomainDeps {
     'core.utils.sdo': ISDOUtils;
@@ -69,13 +70,15 @@ export default function ({
             return;
         }
 
-        const hashSDO = sdoUtils.createHash(sdo);
-        const valuesToSave = await _mapRecordValuesFromSDO(sdo, sdoLibrary, ctx);
-        valuesToSave.push({
-            id_value: null,
-            attribute: hashSDOAttributeId,
-            payload: hashSDO,
-        });
+        let valuesToSave = await _mapRecordValuesFromSDO(sdo, sdoLibrary, ctx);
+
+        const isActive = valuesToSave.find(value => value.attribute === 'active')?.payload as boolean | undefined;
+
+        // filter out immutable core system attributes to avoid create record failure
+        // maybe it is better to ignore a specific group of attributes on sdo mapping later.
+        valuesToSave = valuesToSave.filter(
+            value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute) && value.attribute !== 'active', // FIXME: active
+        );
 
         if (debugSaveValues) {
             logger.debug(`SDO Import create values to save to new ${leavLibraryId} record >> `, {valuesToSave});
@@ -85,6 +88,7 @@ export default function ({
             library: leavLibraryId,
             values: valuesToSave,
             verifyRequiredAttributes: true,
+            skipActivate: !isActive,
             ctx,
         });
 
@@ -116,16 +120,9 @@ export default function ({
             );
         }
 
-        // FIXME: bug au moment du saveValueBatch après le create record.
-        // Il semble que ça vient de updateRecordLastModif. Pourquoi ?
-
-        const hashSDO = sdoUtils.createHash(sdo);
-        const valuesToSave = await _mapRecordValuesFromSDO(sdo, sdoLibrary, ctx, records[0]);
-        valuesToSave.push({
-            id_value: null,
-            attribute: hashSDOAttributeId,
-            payload: hashSDO,
-        });
+        const valuesToSave = (await _mapRecordValuesFromSDO(sdo, sdoLibrary, ctx, records[0])).filter(
+            value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute),
+        );
 
         if (debugSaveValues) {
             logger.debug(`SDO Import update values to save on record ${leavLibraryId}/${records[0].id} >> `, {
@@ -231,7 +228,7 @@ export default function ({
                 return value !== undefined && value !== '';
             })
             .map(async ([sdoKey, sdoAttr]): Promise<ISaveValue[]> => {
-                const sdoPayload: string | string[] = _cleanValue(_.get(sdo.content, sdoKey));
+                const sdoPayload = _cleanValue(_.get(sdo.content, sdoKey));
 
                 const attributeProperties = await attributeDomain.getAttributeProperties({
                     id: sdoAttr.leavAttributeId,
@@ -255,7 +252,7 @@ export default function ({
                         return _getSaveValuesForSimpleLinkAttribute(
                             sdoKey,
                             sdoAttr,
-                            sdoPayload,
+                            sdoPayload as string,
                             attributeProperties,
                             ctx,
                         );
@@ -263,7 +260,7 @@ export default function ({
                         return _getSaveValuesForAdvancedLinkAttribute(
                             sdoKey,
                             sdoAttr,
-                            sdoPayload,
+                            sdoPayload as string | string[],
                             attributeProperties,
                             record,
                             ctx,
@@ -272,7 +269,7 @@ export default function ({
                         return _getSaveValuesForTreeAttribute(
                             sdoKey,
                             sdoAttr,
-                            sdoPayload,
+                            sdoPayload as string | string[],
                             attributeProperties,
                             record,
                             ctx,
@@ -287,10 +284,7 @@ export default function ({
         return (await Promise.all(valuesToSave)).flat(1);
     };
 
-    function _getSaveValuesForSimpleAttribute(
-        sdoAttr: ISDOMappingAttribute,
-        sdoPayload: string | string[],
-    ): ISaveValue[] {
+    function _getSaveValuesForSimpleAttribute(sdoAttr: ISDOMappingAttribute, sdoPayload: unknown): ISaveValue[] {
         if (Array.isArray(sdoPayload)) {
             throw new LeavError(
                 ErrorTypes.INTERNAL_ERROR,
@@ -338,7 +332,7 @@ export default function ({
     async function _getSaveValuesForAdvancedAttribute(
         sdoKey: string,
         sdoAttr: ISDOMappingAttribute,
-        sdoPayload: string | string[],
+        sdoPayload: unknown,
         attributeProperties: IAttribute,
         record: IRecord,
         ctx: IQueryInfos,
@@ -557,7 +551,7 @@ export default function ({
         ];
     }
 
-    const _cleanValue = (value): string | string[] => {
+    const _cleanValue = (value): unknown => {
         if (value === null) {
             return null;
         }
@@ -565,6 +559,8 @@ export default function ({
             case 'object':
                 return Array.isArray(value) ? value.map(v => v.toString()) : JSON.stringify(value);
             case 'string':
+                return value;
+            case 'boolean':
                 return value;
             default:
                 return String(value);
