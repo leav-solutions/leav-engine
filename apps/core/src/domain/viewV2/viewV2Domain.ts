@@ -14,6 +14,7 @@ import {
     type IViewV2FilterOptions,
     type IViewV2UpdateInput,
     type IViewV2ValuesVersion,
+    ViewV2Shortcut,
 } from '../../_types/viewsV2';
 import {viewV2UpdateFieldsSchema, viewV2UserFieldsSchema} from './viewV2ZodSchema';
 
@@ -100,6 +101,7 @@ export default function ({
                     shared: input.shared,
                     filters: input.filters ?? [],
                     sorts: input.sorts ?? [],
+                    shortcuts: input.shortcuts ?? [ViewV2Shortcut.DISPLAY],
                     valuesVersions: input.valuesVersions,
                     created_by: ctx.userId,
                     created_at: now,

@@ -41,6 +41,7 @@ query GetViewsV2($library: ID!) {
                 }
                 order
             }
+            shortcuts
         }
     }
 }

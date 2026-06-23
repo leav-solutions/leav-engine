@@ -1155,6 +1155,7 @@ export type ViewV2CreateInput = {
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
   shared: Scalars['Boolean']['input'];
+  shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
@@ -1177,6 +1178,13 @@ export type ViewV2FilterInput = {
   values: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
+export enum ViewV2Shortcut {
+  catalog = 'catalog',
+  display = 'display',
+  filters = 'filters',
+  sorts = 'sorts'
+}
+
 export type ViewV2SortInput = {
   attributes: Array<Scalars['ID']['input']>;
   order: SortOrder;
@@ -1196,6 +1204,7 @@ export type ViewV2UpdateInput = {
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
+  shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
@@ -1464,7 +1473,7 @@ export type GetViewsV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, created_by: { whoAmI: { id: string } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, attributes: Array<{ id: string }> }>, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string }> }> }> } };
+export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, shortcuts: Array<ViewV2Shortcut>, created_by: { whoAmI: { id: string } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, attributes: Array<{ id: string }> }>, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string }> }> }> } };
 
 export type GetViewV2QueryVariables = Exact<{
   viewId: Scalars['ID']['input'];
@@ -1996,6 +2005,7 @@ export const GetViewsV2Document = gql`
         }
         order
       }
+      shortcuts
     }
   }
 }

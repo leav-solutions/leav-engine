@@ -6,7 +6,7 @@ import viewV2Domain, {type IViewV2DomainDeps} from './viewV2Domain';
 import {type ToAny} from '../../utils/utils';
 import {SortOrder} from '../../_types/list';
 import {AttributeCondition} from '../../_types/record';
-import {type IViewV2, type IViewV2CreateInput, ViewV2Types} from '../../_types/viewsV2';
+import {type IViewV2, type IViewV2CreateInput, ViewV2Shortcut, ViewV2Types} from '../../_types/viewsV2';
 
 const depsBase: ToAny<IViewV2DomainDeps> = {
     'core.domain.helpers.validate': vi.fn(),
@@ -38,6 +38,7 @@ describe('viewV2Domain', () => {
             },
         ],
         sorts: [{attributes: ['id'], order: SortOrder.ASC}],
+        shortcuts: [ViewV2Shortcut.DISPLAY, ViewV2Shortcut.FILTERS],
     };
 
     const mockViewV2: IViewV2 = {
@@ -94,7 +95,7 @@ describe('viewV2Domain', () => {
             expect(newView).toMatchObject(mockViewV2);
         });
 
-        test('Should set default optional list fields to [] when omitted', async () => {
+        test('Should apply default values to optional fields when omitted', async () => {
             const domain = viewV2Domain({
                 ...depsBase,
                 'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
@@ -109,6 +110,7 @@ describe('viewV2Domain', () => {
                     shared: false,
                     filters: [],
                     sorts: [],
+                    shortcuts: undefined,
                 },
                 mockCtx,
             );
@@ -116,6 +118,30 @@ describe('viewV2Domain', () => {
             const passedToRepo = mockViewV2Repo.createViewV2.mock.calls[0][0];
             expect(passedToRepo.filters).toEqual([]);
             expect(passedToRepo.sorts).toEqual([]);
+            expect(passedToRepo.shortcuts).toEqual([ViewV2Shortcut.DISPLAY]);
+        });
+
+        test('Should persist the provided shortcuts list', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
+            });
+
+            await domain.createViewV2(
+                {
+                    ...mockViewV2CreateInput,
+                    shortcuts: [ViewV2Shortcut.DISPLAY, ViewV2Shortcut.SORTS, ViewV2Shortcut.CATALOG],
+                },
+                mockCtx,
+            );
+
+            const passedToRepo = mockViewV2Repo.createViewV2.mock.calls[0][0];
+            expect(passedToRepo.shortcuts).toEqual([
+                ViewV2Shortcut.DISPLAY,
+                ViewV2Shortcut.SORTS,
+                ViewV2Shortcut.CATALOG,
+            ]);
         });
 
         test('Should throw if library is unknown', async () => {
