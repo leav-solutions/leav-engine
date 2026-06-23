@@ -4,11 +4,6 @@
     gap: calc(var(--general-spacing-xs) * 1px);
 }
 
-/* Neutralize the heading's default bottom margin so the badge aligns on the text optical center. */
-.sectionTitle .heading {
-    margin-bottom: 0;
-}
-
 .emptyBox {
     display: flex;
     align-items: center;

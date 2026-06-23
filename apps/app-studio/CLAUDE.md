@@ -154,6 +154,27 @@ Les **attributs de type `tree`** référencent un nœud d'un arbre configuré da
 
 ---
 
+## Vues V2 — ExplorerV2 + volet de configuration
+
+Système de configuration de vues (épic LEAVC-762), derrière le **feature flag** `application.enableViewSettings` (`ApplicationRouting/schema.ts`). Quand il est actif, les panneaux `explorer` utilisent **`ExplorerV2`** (`@leav/ui`) au lieu de l'`Explorer` v1.
+
+- **app-studio est la source de vérité de la vue.** `CurrentViewStoreProvider`
+  (`content/panel-view-settings/store-current-view/`) est monté **au-dessus du volet** dans
+  `ApplicationRouting/Panel.tsx` → l'état de vue survit à la fermeture/réouverture du volet.
+- Le volet (`content/panel-view-settings/`) édite la vue ; `panel-explorer/useViewSettingsProps.ts`
+  convertit cet état en `SerializedView` et le passe à `ExplorerV2` via la prop **contrôlée**
+  `currentView`. ExplorerV2 ne charge jamais de vue lui-même.
+- `PanelLibraryExplorer.tsx` / `PanelAttributeExplorer.tsx` **basculent** entre `Explorer` v1 et
+  `ExplorerV2` selon le flag (TODO : suppression de v1 une fois la migration terminée).
+- Communication inter-panneaux via `usePanelEventHandlers` (`@leav/ui`) : événements
+  `open-view-settings` et `view-settings-select-view` (types dans `ApplicationRouting/types.ts`).
+
+> 📖 Détails (architecture d'état, onglets, distinction admin/utilisateur, tris) :
+> [`panel-view-settings/CLAUDE.md`](src/modules/ApplicationRouting/content/panel-view-settings/CLAUDE.md).
+> Décisions d'architecture : **ADR-006** (`docs/adr/ADR-006-explorer-views-settings-volet.md`).
+
+---
+
 ## Communication avec les iframes (MFE)
 
 Les panneaux `custom` (iframes) communiquent via `useIFrameMessengerClient` (`@leav/ui` — `libs/ui/src/hooks/useIFrameMessengerClient/`). Ce hook est destiné aux apps tierces intégrées via iframe ; il n'est pas utilisé dans ce repo.

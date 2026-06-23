@@ -25,4 +25,11 @@ fragment AppStudioViewSettingsView on ViewV2 {
             }
         }
     }
+    sorts {
+        attributes {
+            id
+            label
+        }
+        order
+    }
 }

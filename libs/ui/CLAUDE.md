@@ -40,11 +40,22 @@ grep -rh --include="*.ts" --include="*.tsx" "from '@leav/ui'" \   # cherche les 
 
 ## Deux composants centraux
 
-### Explorer (`src/components/Explorer/`)
+### Explorer (`src/components/Explorer/`) — voir [`Explorer/CLAUDE.md`](src/components/Explorer/CLAUDE.md)
 
 Tableau interactif de records d'une Library : filtres, tri, vues sauvegardées,
 actions primaires, actions par ligne, actions en masse.
-**C'est la structure de référence** — modulaire, récente, à suivre pour tout nouveau développement.
+**Architecture modulaire de référence** (organisation par feature, un dossier ≈ une feature) —
+à suivre pour la structure de tout nouveau composant.
+
+> ⚠️ Pour le **développement de vues**, cibler **ExplorerV2** (ci-dessous), pas ce composant.
+> Explorer (v1) est **legacy** et sera remplacé.
+
+### ExplorerV2 (`src/components/ExplorerV2/`) — voir [`ExplorerV2/CLAUDE.md`](src/components/ExplorerV2/CLAUDE.md)
+
+Fork **contrôlé** de l'Explorer, futur remplaçant (sera renommé `Explorer` une fois ViewV2
+intégré et `data-studio` supprimé — TODO dans `index.ts`). Ne possède aucune config de vue ni
+volet : la vue lui est fournie en prop `currentView` par app-studio (source de vérité, cf.
+ADR-006). C'est la cible de tout nouveau développement lié aux vues.
 
 ### RecordEdition (`src/components/RecordEdition/`)
 
@@ -94,6 +105,10 @@ src/
 ---
 
 ## Explorer — structure de référence
+
+> Détails v1 vs ExplorerV2, état contrôlé/non contrôlé, props et câblage avec app-studio :
+> [`Explorer/CLAUDE.md`](src/components/Explorer/CLAUDE.md) et
+> [`ExplorerV2/CLAUDE.md`](src/components/ExplorerV2/CLAUDE.md).
 
 | Sous-dossier                   | Rôle                                                                       |
 | ------------------------------ | -------------------------------------------------------------------------- |

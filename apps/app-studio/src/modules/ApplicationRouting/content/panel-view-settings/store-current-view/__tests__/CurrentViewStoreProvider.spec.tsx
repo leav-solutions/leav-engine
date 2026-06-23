@@ -37,6 +37,7 @@ const makeView = (overrides: Partial<NonNullView> = {}): NonNullView => ({
             {visible: true, attribute: {id: 'attribute_3', label: {fr: 'Attribut 3'}}},
         ],
     },
+    sorts: [],
     ...overrides,
 });
 

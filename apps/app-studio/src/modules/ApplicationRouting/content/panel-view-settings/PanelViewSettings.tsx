@@ -9,7 +9,7 @@ import {TabCatalog} from './tabs/tab-catalog/TabCatalog';
 import {TabDisplay} from './tabs/tab-display/TabDisplay';
 import {TabFilters} from './tabs/TabFilters';
 import {TabHeader} from './tabs/TabHeader';
-import {TabSorts} from './tabs/TabSorts';
+import {TabSorts} from './tabs/tab-sorts/TabSorts';
 import {root, rightColumn, tabContent} from './panelViewSettings.module.css';
 
 export const PanelViewSettings = ({

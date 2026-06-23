@@ -1,9 +1,16 @@
 import {type ReactNode} from 'react';
 import {renderHook} from '@testing-library/react';
-import {ViewV2Types} from '../../../../../../__generated__';
+import {SortOrder, ViewV2Types} from '../../../../../../__generated__';
 import {CurrentViewContext} from '../CurrentViewContext';
 import {type CurrentView} from '../_types';
 import {useCurrentView} from '../useCurrentView';
+
+type NonNullSort = NonNullable<CurrentView>['sorts'][number];
+
+const makeSort = (attributePath: string[], order: SortOrder = SortOrder.asc): NonNullSort => ({
+    attributes: attributePath.map(id => ({id, label: {en: id.toUpperCase()}})),
+    order,
+});
 
 // Deterministic lang/user without spinning up the providers: the current user is '123'.
 jest.mock('@leav/ui', () => ({
@@ -20,6 +27,7 @@ const makeView = (overrides: Partial<NonNullView> = {}): NonNullView => ({
     shared: false,
     created_by: {id: '123', whoAmI: {id: '123', label: 'Moi'}},
     display: {type: ViewV2Types.list, attributes: []},
+    sorts: [],
     ...overrides,
 });
 
@@ -64,6 +72,15 @@ describe('useCurrentView', () => {
             const {result} = renderUseCurrentView({
                 view: makeView({label: {fr: 'Édité'}}),
                 savedView: makeView({label: {fr: 'V'}}),
+                dispatch: jest.fn(),
+            });
+            expect(result.current.isDirty).toBe(true);
+        });
+
+        it('is true when the sorts diverged', () => {
+            const {result} = renderUseCurrentView({
+                view: makeView({sorts: [makeSort(['date'], SortOrder.desc)]}),
+                savedView: makeView({sorts: [makeSort(['date'], SortOrder.asc)]}),
                 dispatch: jest.fn(),
             });
             expect(result.current.isDirty).toBe(true);
@@ -123,6 +140,26 @@ describe('useCurrentView', () => {
 
             result.current.moveAttribute('a', 'b');
             expect(dispatch).toHaveBeenCalledWith({type: 'MOVE_ATTRIBUTE', payload: {activeId: 'a', overId: 'b'}});
+
+            result.current.moveSort('a', 'b');
+            expect(dispatch).toHaveBeenCalledWith({type: 'MOVE_SORT', payload: {activeId: 'a', overId: 'b'}});
+
+            result.current.setSortOrder('date', SortOrder.desc);
+            expect(dispatch).toHaveBeenCalledWith({
+                type: 'SET_SORT_ORDER',
+                payload: {id: 'date', order: SortOrder.desc},
+            });
+        });
+    });
+
+    describe('sorts', () => {
+        it('derives the dnd id, order, attribute ids and label of each sort', () => {
+            const view = makeView({sorts: [makeSort(['author', 'name'], SortOrder.desc)]});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn()});
+
+            expect(result.current.sorts).toEqual([
+                {id: 'author/name', order: SortOrder.desc, ids: ['author', 'name'], label: 'NAME'},
+            ]);
         });
     });
 });

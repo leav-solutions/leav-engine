@@ -1,5 +1,5 @@
 import {arrayMove} from '@dnd-kit/sortable';
-import {type CurrentViewAction, type CurrentView, type ICurrentViewState} from './_types';
+import {type CurrentViewAction, type CurrentView, type ICurrentViewState, getSortId} from './_types';
 
 export const initialCurrentViewState: ICurrentViewState = {view: null, savedView: null};
 
@@ -62,6 +62,33 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
             const attributes = view.display.attributes.map(attr => (attr.visible ? reordered[cursor++] : attr));
 
             return {...view, display: {...view.display, attributes}};
+        }
+        case 'MOVE_SORT': {
+            const {activeId, overId} = action.payload;
+
+            if (activeId === overId) {
+                return view;
+            }
+
+            // The sorts array order IS the order in which sorts are applied in the explorer.
+            const from = view.sorts.findIndex(sort => getSortId(sort) === activeId);
+            const to = view.sorts.findIndex(sort => getSortId(sort) === overId);
+
+            if (from === -1 || to === -1 || from === to) {
+                return view;
+            }
+
+            return {...view, sorts: arrayMove(view.sorts, from, to)};
+        }
+        case 'SET_SORT_ORDER': {
+            const {id, order} = action.payload;
+            const index = view.sorts.findIndex(sort => getSortId(sort) === id);
+
+            if (index === -1 || view.sorts[index].order === order) {
+                return view;
+            }
+
+            return {...view, sorts: view.sorts.toSpliced(index, 1, {...view.sorts[index], order})};
         }
         default:
             return view;

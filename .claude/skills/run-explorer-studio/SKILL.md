@@ -70,13 +70,31 @@ or expired session — re-run (the driver re-logs in automatically).
 
 ### Options
 
-| Flag      | Purpose                                                     |
-| --------- | ----------------------------------------------------------- |
-| `--url`   | Target URL (required).                                      |
-| `--click` | Exact aria-label of a toolbar button to click before shot.  |
-| `--clip`  | `x,y,w,h` to crop to one panel for legible detail.          |
-| `--out`   | Screenshot path (default `tmp/leav-shot.png`).              |
-| `--wait`  | SPA hydrate wait in ms (default 6000; bump for slow loads). |
+| Flag              | Purpose                                                                                                                                                                                                           |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--url`           | Target URL (required).                                                                                                                                                                                            |
+| `--click`         | Exact aria-label of a toolbar button to click before shot.                                                                                                                                                        |
+| `--clip`          | `x,y,w,h` to crop to one panel for legible detail.                                                                                                                                                                |
+| `--out`           | Screenshot path (default `tmp/leav-shot.png`).                                                                                                                                                                    |
+| `--wait`          | SPA hydrate wait in ms (default 6000; bump for slow loads).                                                                                                                                                       |
+| `--inspect`       | CSS selector — dump computed layout styles (display/flex/min-max-width/overflow/text…) + bounding box for up to 10 matches. For debugging layout/overflow where a screenshot shows the symptom but not the cause. |
+| `--inspect-chain` | With `--inspect`, also walk each match's ancestors up to `<body>` — finds which box fails to constrain width.                                                                                                     |
+
+### Debugging a layout/overflow bug
+
+When a screenshot shows clipping/overflow but not _why_, dump the computed box model
+instead of guessing. Example — find why a sort chip overflows its panel:
+
+```bash
+node .claude/skills/run-explorer-studio/drive.mjs \
+  --url "http://core.leav.localhost/app/app-studio/maps-management/map-list" \
+  --click "Tris" --inspect "button._kit-filter_w4vo0_1" --inspect-chain \
+  --out tmp/leav-shot.png
+```
+
+The `--inspect-chain` output reveals intermediate wrappers a component library inserts
+(e.g. Ant's `span.ant-dropdown-trigger`) that are the real flex item to constrain —
+not the element you put your class on.
 
 ## Auth
 
