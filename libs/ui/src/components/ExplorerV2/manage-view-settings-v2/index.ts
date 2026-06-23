@@ -6,6 +6,7 @@ export {
     viewSettingsInitialState,
     defaultPageSizeOptions,
     DefaultViewId,
+    DEFAULT_VIEW_SHORTCUTS,
 } from './store-view-settings/viewSettingsInitialState';
 
 export {useAttributeDetailsData} from './_shared/useAttributeDetailsData';

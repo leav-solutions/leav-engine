@@ -1,6 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import {act, render, screen} from '_ui/_tests/testUtils';
-import {ViewV2Types} from '../../../../../../__generated__';
+import {ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
 import {type CurrentView} from '../_types';
 import {useCurrentView} from '../useCurrentView';
 import {CurrentViewStoreProvider} from '../CurrentViewStoreProvider';
@@ -38,6 +38,7 @@ const makeView = (overrides: Partial<NonNullView> = {}): NonNullView => ({
         ],
     },
     sorts: [],
+    shortcuts: [ViewV2Shortcut.display],
     ...overrides,
 });
 

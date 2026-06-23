@@ -1,4 +1,8 @@
+import {type IconDefinition} from '@fortawesome/fontawesome-svg-core';
+import {faArrowDownWideShort, faBookmark, faFilter, faTable} from '@fortawesome/free-solid-svg-icons';
+import type * as z from 'zod/v4';
 import {AttributeFormat, AttributeType} from './_gqlTypes';
+import {type ViewSettingsTabSchema} from './hooks/usePanelMessenger/schema';
 
 export enum PreviewSize {
     TINY = 'tiny',
@@ -49,6 +53,18 @@ declare global {
 export const defaultPaginationPageSize = 20;
 
 export const GLOBAL_BASE_URL = window.__global_base_url__ || '';
+
+/**
+ * Canonical, order-sensitive list of the view-settings tabs/shortcuts, shared between
+ * app-studio's settings panel (sidebar tab order) and ExplorerV2's shortcut buttons
+ * (canonical button order). Each consumer adds its own label (the i18n namespaces differ).
+ */
+export const VIEW_SETTINGS_TABS = [
+    {key: 'catalog', icon: faBookmark},
+    {key: 'display', icon: faTable},
+    {key: 'filters', icon: faFilter},
+    {key: 'sorts', icon: faArrowDownWideShort},
+] as const satisfies ReadonlyArray<{key: z.infer<typeof ViewSettingsTabSchema>; icon: IconDefinition}>;
 
 export const PREFIX_USER_VIEWS_ORDER_KEY = 'user_views_order_';
 export const PREFIX_SHARED_VIEWS_ORDER_KEY = 'shared_views_order_';

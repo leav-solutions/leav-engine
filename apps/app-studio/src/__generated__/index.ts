@@ -405,7 +405,6 @@ export enum AutomationRuleActions {
 
 export enum AutomationRuleEventAction {
   RECORD_INIT = 'RECORD_INIT',
-  RECORD_SAVE = 'RECORD_SAVE',
   VALUE_DELETE = 'VALUE_DELETE',
   VALUE_SAVE = 'VALUE_SAVE'
 }
@@ -647,6 +646,7 @@ export enum EventAction {
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
   RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
   SDO_LOG_ERROR = 'SDO_LOG_ERROR',
   SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
@@ -1165,6 +1165,7 @@ export enum LogAction {
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
   RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
   SDO_LOG_ERROR = 'SDO_LOG_ERROR',
   SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
@@ -3257,6 +3258,7 @@ export type ViewV2 = {
   library: Scalars['ID']['output'];
   modified_at: Scalars['Int']['output'];
   shared: Scalars['Boolean']['output'];
+  shortcuts: Array<ViewV2Shortcut>;
   sorts: Array<ViewV2Sort>;
   valuesVersions?: Maybe<Array<ViewV2ValuesVersion>>;
 };
@@ -3267,6 +3269,7 @@ export type ViewV2CreateInput = {
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
   shared: Scalars['Boolean']['input'];
+  shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
@@ -3306,6 +3309,13 @@ export type ViewV2FilterInput = {
   values: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
+export enum ViewV2Shortcut {
+  catalog = 'catalog',
+  display = 'display',
+  filters = 'filters',
+  sorts = 'sorts'
+}
+
 export type ViewV2Sort = {
   attributes: Array<Attribute>;
   order: SortOrder;
@@ -3330,6 +3340,7 @@ export type ViewV2UpdateInput = {
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
+  shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
@@ -3437,14 +3448,14 @@ export type CreateViewV2MutationVariables = Exact<{
 }>;
 
 
-export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type UpdateViewV2MutationVariables = Exact<{
   view: ViewV2UpdateInput;
 }>;
 
 
-export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type GetPermissionEditViewOnLibraryQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
@@ -3458,9 +3469,9 @@ export type GetViewV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> } };
 
-export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> };
+export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> };
 
 export type GetViewListQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
@@ -3557,6 +3568,7 @@ export const AppStudioViewSettingsViewFragmentDoc = gql`
     }
     order
   }
+  shortcuts
 }
     `;
 export const GetApplicationDataByEndpointDocument = gql`

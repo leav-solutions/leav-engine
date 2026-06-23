@@ -1,4 +1,4 @@
-import {type GetViewV2Query, type SortOrder} from '../../../../../__generated__';
+import {type GetViewV2Query, type SortOrder, type ViewV2Shortcut} from '../../../../../__generated__';
 
 export type CurrentView = GetViewV2Query['viewV2'] | null;
 
@@ -34,5 +34,6 @@ export type CurrentViewAction =
     | {type: 'MOVE_ATTRIBUTE'; payload: {activeId: string; overId: string}}
     | {type: 'MOVE_SORT'; payload: {activeId: string; overId: string}}
     | {type: 'SET_SORT_ORDER'; payload: {id: string; order: SortOrder}}
+    | {type: 'TOGGLE_SHORTCUT'; payload: {shortcut: ViewV2Shortcut}}
     | {type: 'MARK_SAVED'}
     | {type: 'RESET_VIEW'};

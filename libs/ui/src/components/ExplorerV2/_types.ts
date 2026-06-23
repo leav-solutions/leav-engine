@@ -82,6 +82,7 @@ export type SerializedView = {
     sort?: Array<{field: string; order: SortOrder}>;
     filters?: UIFilter[];
     filtersOperator?: 'AND' | 'OR';
+    shortcuts?: ViewSettingsShortcuts[];
 };
 
 export type ViewSettingsShortcuts = z.infer<typeof ViewSettingsTabSchema>;

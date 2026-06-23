@@ -1,4 +1,4 @@
-import {SortOrder, ViewV2Types, type GetViewV2Query} from '../../../../../../__generated__';
+import {SortOrder, ViewV2Shortcut, ViewV2Types, type GetViewV2Query} from '../../../../../../__generated__';
 import {IDENTITY_COLUMN_ID} from '../../tabs/tab-display/_constants';
 import {viewV2ToSerializedView} from '../viewV2ToSerializedView';
 
@@ -12,6 +12,7 @@ const makeView = (overrides: Partial<ViewV2> = {}): ViewV2 => ({
     created_by: {id: '123', whoAmI: {id: '123', label: 'Moi'}},
     display: {type: ViewV2Types.list, attributes: []},
     sorts: [],
+    shortcuts: [ViewV2Shortcut.display],
     ...overrides,
 });
 
@@ -80,5 +81,13 @@ describe('viewV2ToSerializedView', () => {
         const result = viewV2ToSerializedView(makeView());
 
         expect(result.filters).toEqual([]);
+    });
+
+    it('maps the view shortcuts', () => {
+        const result = viewV2ToSerializedView(
+            makeView({shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.sorts, ViewV2Shortcut.catalog]}),
+        );
+
+        expect(result.shortcuts).toEqual([ViewV2Shortcut.display, ViewV2Shortcut.sorts, ViewV2Shortcut.catalog]);
     });
 });

@@ -3835,27 +3835,6 @@ describe('Explorer', () => {
         });
     });
 
-    // Skipped: the currentView prop is not yet wired to the APPLY_SERIALIZED_VIEW dispatch.
-    describe.skip('currentView prop', () => {
-        test('applies attributesIds from currentView', async () => {
-            render(
-                <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
-                    <Explorer
-                        entrypoint={libraryEntrypoint}
-                        defaultMassActions={[]}
-                        ignoreViewByDefault
-                        currentView={{attributesIds: [simpleMockAttribute.id]}}
-                    />
-                </Explorer.EditSettingsContextProvider>,
-            );
-
-            await waitFor(() => {
-                expect(screen.getByText(simpleMockAttribute.label.fr)).toBeVisible();
-            });
-            expect(screen.queryByText(linkMockAttribute.label.fr)).not.toBeInTheDocument();
-        });
-    });
-
     describe('loadedViewId prop', () => {
         test('loads the saved view matching loadedViewId', async () => {
             const lazyFetchMock = jest.fn().mockResolvedValue(mockExplorerAttributesQueryResult);

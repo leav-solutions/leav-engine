@@ -156,7 +156,8 @@
             "unshare_success": "Vue départagée",
             "action_error": "L’opération sur la vue a échoué."
         },
-        "pin": "Épingler comme raccourci"
+        "pin": "Épingler comme raccourci",
+        "unpin": "Désépingler le raccourci"
     },
     "error": {
         "title": "Erreur de chargement des données",

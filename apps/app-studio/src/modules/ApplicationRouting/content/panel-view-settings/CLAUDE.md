@@ -71,7 +71,11 @@ Convertit la `ViewV2` GraphQL en `SerializedView` (contrat consommé par la prop
   attribut du chemin uniquement.
 - `filters` : **vide ici** (user filters = ticket à venir). Les pré-filtres masqués `hidden:true`
   ne sont **pas** ajoutés ici — ils sont injectés par l'appelant dans `currentView.filters`.
-- Fragment `viewV2Fragment.graphql` récupère désormais `sorts { attributes {id label} order }`.
+- **`shortcuts`** : onglets du volet exposés en boutons-raccourcis (`display | filters | sorts |
+catalog`), recopiés tels quels avec fallback `['display']` (LEAVC-892). L'ordre d'affichage est
+  imposé côté ExplorerV2 (ordre canonique), pas par cette liste.
+- Fragment `viewV2Fragment.graphql` récupère désormais `sorts { attributes {id label} order }` et
+  `shortcuts`.
 
 **Câblage** : `panel-explorer/useViewSettingsProps.ts` lit le store et fournit `currentView` +
 les callbacks `viewSettings` à `ExplorerV2` (monté dans `PanelLibraryExplorer.tsx`).

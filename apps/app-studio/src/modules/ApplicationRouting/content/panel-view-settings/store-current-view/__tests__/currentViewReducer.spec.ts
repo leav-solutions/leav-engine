@@ -1,4 +1,4 @@
-import {SortOrder, ViewV2Types} from '../../../../../../__generated__';
+import {SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
 import {currentViewReducer, initialCurrentViewState, viewReducer} from '../currentViewReducer';
 import {type CurrentView} from '../_types';
 
@@ -37,6 +37,7 @@ const makeView = (overrides: Partial<NonNullState> = {}): NonNullState => ({
         ]),
     },
     sorts: [],
+    shortcuts: [ViewV2Shortcut.display],
     ...overrides,
 });
 
@@ -154,6 +155,26 @@ describe('viewReducer (display actions)', () => {
             });
             expect(next.sorts[1].order).toBe(SortOrder.desc);
             expect(next.sorts[0].order).toBe(SortOrder.asc);
+        });
+    });
+
+    describe('TOGGLE_SHORTCUT', () => {
+        it('pins a shortcut that is not pinned yet', () => {
+            const view = makeView({shortcuts: [ViewV2Shortcut.display]});
+            const next = viewReducer(view, {type: 'TOGGLE_SHORTCUT', payload: {shortcut: ViewV2Shortcut.filters}});
+            expect(next.shortcuts).toEqual([ViewV2Shortcut.display, ViewV2Shortcut.filters]);
+        });
+
+        it('unpins a shortcut that is already pinned', () => {
+            const view = makeView({shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.sorts]});
+            const next = viewReducer(view, {type: 'TOGGLE_SHORTCUT', payload: {shortcut: ViewV2Shortcut.sorts}});
+            expect(next.shortcuts).toEqual([ViewV2Shortcut.display]);
+        });
+
+        it('never toggles the always-pinned display shortcut off', () => {
+            const view = makeView({shortcuts: [ViewV2Shortcut.display]});
+            const next = viewReducer(view, {type: 'TOGGLE_SHORTCUT', payload: {shortcut: ViewV2Shortcut.display}});
+            expect(next.shortcuts).toEqual([ViewV2Shortcut.display]);
         });
     });
 });

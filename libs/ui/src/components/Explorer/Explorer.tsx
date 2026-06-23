@@ -15,7 +15,6 @@ import {
     type IItemAction,
     type IMassActions,
     type IPrimaryAction,
-    type SerializedView,
     type ViewSettingsShortcuts,
 } from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
@@ -40,7 +39,6 @@ import {
     useOpenViewSettings,
     ViewSettingsContext,
 } from './manage-view-settings';
-import {useOpenViewSettingsV2} from './manage-view-settings-v2/useOpenViewSettingsV2';
 import {useSearchInput} from './useSearchInput';
 import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
@@ -142,7 +140,6 @@ export interface IExplorerProps {
     joinLibraryContext?: JoinLibraryContextFragment;
 
     // ViewConfig specific props
-    currentView?: SerializedView;
     loadedViewId?: string | null;
 }
 
@@ -183,7 +180,6 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             defaultCallbacks,
             defaultViewSettings,
             joinLibraryContext,
-            currentView,
             loadedViewId,
         },
         ref,
@@ -371,13 +367,6 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             hideFirstActionLabel,
         });
 
-        const {viewSettingsShortcutsButtons} = useOpenViewSettingsV2({
-            isEnabled: defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick !== undefined,
-            view: view as any,
-            open: !isMassSelectionAll,
-            closeViewSettings: defaultCallbacks?.viewSettings?.closeViewSettings,
-            onViewSettingsShortcutClick: defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick,
-        });
         const {viewSettingsButton, viewListButton} = useOpenViewSettings({view, isEnabled: !isMassSelectionAll});
 
         const {searchInput} = useSearchInput({view, dispatch: viewSettingsDispatch, setNewPage});
@@ -430,7 +419,6 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
                                 defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick === undefined // TODO: can be refactored into a constant
                                     ? viewSettingsButton
                                     : null}
-                                {view?.enableConfigureView && viewSettingsShortcutsButtons}
                                 {hidePrimaryActions ? null : primaryButton}
                             </ExplorerToolbar>
                             {loadingData || viewSettingsLoading ? (

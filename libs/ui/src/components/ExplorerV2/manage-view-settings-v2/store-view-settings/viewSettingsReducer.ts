@@ -1,5 +1,5 @@
 import {type SortOrder, type ViewV2Types} from '_ui/_gqlTypes';
-import {type Entrypoint, type MassSelection} from '../../_types';
+import {type Entrypoint, type MassSelection, type ViewSettingsShortcuts} from '../../_types';
 
 /**
  * ViewV2 display types (`cards` | `list` | `timeline`) are the only view types ExplorerV2 knows about.
@@ -20,7 +20,7 @@ export const ViewSettingsActionTypes = {
  *
  * The reducer only owns the **ephemeral** fields (`fulltextSearch`, `pageSize`, `massSelection`)
  * plus the async-resolved `libraryId`/`entrypoint`. The **display** fields
- * (`viewId`, `viewLabels`, `viewType`, `attributesIds`, `sort`) come from the controlled
+ * (`viewId`, `viewLabels`, `viewType`, `attributesIds`, `sort`, `shortcuts`) come from the controlled
  * `currentView` prop and are merged on top in `Explorer.tsx` — they are kept in this type so the
  * existing consumers (actions, search, pagination…) keep reading `view.<field>` unchanged.
  */
@@ -36,6 +36,7 @@ export interface IViewSettingsState {
         field: string;
         order: SortOrder;
     }>;
+    shortcuts: ViewSettingsShortcuts[];
     pageSize: number;
     massSelection: MassSelection;
 }
