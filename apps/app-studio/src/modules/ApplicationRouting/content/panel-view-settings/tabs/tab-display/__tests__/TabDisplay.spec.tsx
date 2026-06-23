@@ -29,6 +29,7 @@ const TabDisplayWithState = ({
         shared: false,
         created_by: {id: '123', whoAmI: {id: '123', label: 'Me'}},
         display: {type: ViewV2Types.list, attributes: columns},
+        sorts: [],
     };
     const [state, dispatch] = useReducer(currentViewReducer, {view: seed, savedView: seed});
     return (

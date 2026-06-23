@@ -467,28 +467,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignsFraming = {
-  computed?: Maybe<CampaignsFramingComputed>;
-  id: Scalars['String']['output'];
-};
-
-export type CampaignsFramingComputed = {
-  framing?: Maybe<Scalars['JSONObject']['output']>;
-  results?: Maybe<Scalars['JSONObject']['output']>;
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -591,10 +569,11 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
+  SDO_LOG_ERROR = 'SDO_LOG_ERROR',
+  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
+  SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -1089,10 +1068,11 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_SAVE = 'RECORD_SAVE',
+  SDO_LOG_ERROR = 'SDO_LOG_ERROR',
+  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
+  SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -1215,17 +1195,6 @@ export type Logs = {
   total: Scalars['Int']['output'];
 };
 
-export type MoveThematicResultThematic = {
-  id: Scalars['ID']['output'];
-  id_value: Scalars['ID']['output'];
-  originalId: Scalars['ID']['output'];
-};
-
-export type MoveThematicsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  thematics?: Maybe<Array<MoveThematicResultThematic>>;
-};
-
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -1262,16 +1231,11 @@ export type Mutation = {
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
-  initRenewCampaigns: Scalars['String']['output'];
-  moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
-  propagateFramingStatus: PropagateFramingStatusResponse;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
-  removeCampaigns: RemoveCampaignsResult;
-  removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1292,7 +1256,6 @@ export type Mutation = {
   treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
   updateAutomationRule: AutomationRule;
-  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   updateViewV2: ViewV2;
   upload: Array<UploadData>;
@@ -1458,32 +1421,8 @@ export type MutationIndexRecordsArgs = {
 };
 
 
-export type MutationInitRenewCampaignsArgs = {
-  campaigns: Array<CampaignToRenew>;
-  fromPacId: Scalars['String']['input'];
-  redirectUrl: Scalars['String']['input'];
-  toPacId: Scalars['String']['input'];
-};
-
-
-export type MutationMoveOrCopyCampaignThematicsArgs = {
-  moveThematic: Scalars['Boolean']['input'];
-  thematics: Array<ThematicToRenew>;
-  toCampaignId: Scalars['String']['input'];
-};
-
-
 export type MutationPostDiscussionCommentArgs = {
   comment?: InputMaybe<DiscussionCommentInput>;
-};
-
-
-export type MutationPropagateFramingStatusArgs = {
-  campaignId: Scalars['String']['input'];
-  categoriesFilter?: InputMaybe<Array<Scalars['String']['input']>>;
-  categoryStatusFilter?: InputMaybe<Array<Scalars['String']['input']>>;
-  structureItemCategoryId?: InputMaybe<Scalars['String']['input']>;
-  structureItemId?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -1500,16 +1439,6 @@ export type MutationPurgeMultipleValuesArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
-};
-
-
-export type MutationRemoveCampaignsArgs = {
-  campaignsIds: Array<Scalars['ID']['input']>;
-};
-
-
-export type MutationRemoveStructureItemsArgs = {
-  structureItemIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1620,11 +1549,6 @@ export type MutationTreeMoveElementArgs = {
 
 export type MutationUpdateAutomationRuleArgs = {
   rule: UpdateAutomationRuleInput;
-};
-
-
-export type MutationUpdateCampaignsDatesArgs = {
-  campaigns: Array<CampaignToUpdateDates>;
 };
 
 
@@ -1845,11 +1769,6 @@ export type Progress = {
   percent?: Maybe<Scalars['Int']['output']>;
 };
 
-export type PropagateFramingStatusResponse = {
-  nbNotProcessed: Scalars['Int']['output'];
-  nbSuccess: Scalars['Int']['output'];
-};
-
 export type Query = {
   apiKeys: ApiKeyList;
   applications?: Maybe<ApplicationsList>;
@@ -1861,8 +1780,6 @@ export type Query = {
   doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
   export: Scalars['String']['output'];
   forms?: Maybe<FormsList>;
-  framingCampaigns: Array<CampaignsFraming>;
-  framingReport: Scalars['ID']['output'];
   fullTreeContent?: Maybe<Scalars['FullTreeContent']['output']>;
   getRecordByNodeId: Record;
   globalSettings: GlobalSettings;
@@ -1944,22 +1861,6 @@ export type QueryFormsArgs = {
   filters: FormFiltersInput;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<SortForms>;
-};
-
-
-export type QueryFramingCampaignsArgs = {
-  categoriesFilter?: InputMaybe<Array<Scalars['String']['input']>>;
-  categoryStatusFilter?: InputMaybe<Array<Scalars['String']['input']>>;
-  filters?: InputMaybe<Array<RecordFilterInput>>;
-  pacID: Scalars['String']['input'];
-  searchFilter?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryFramingReportArgs = {
-  content?: InputMaybe<ReportFramingContentInput>;
-  pacID: Scalars['String']['input'];
-  timeZone?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -2325,42 +2226,6 @@ export type RelatedEntity = {
   url: Scalars['String']['output'];
 };
 
-export type RenewCampaignResultThematic = {
-  id: Scalars['ID']['output'];
-  id_value: Scalars['ID']['output'];
-  thematic_id: Scalars['ID']['output'];
-};
-
-export type ReportFramingAttributeFilterItemInput = {
-  attributeId: Scalars['String']['input'];
-  values: Array<ReportFramingAttributeFilterValueItemInput>;
-  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type ReportFramingAttributeFilterValueItemInput = {
-  formattedValue?: InputMaybe<Scalars['String']['input']>;
-  rawValue: Scalars['String']['input'];
-};
-
-export type ReportFramingContentInput = {
-  filters?: InputMaybe<ReportFramingFiltersInput>;
-};
-
-export type ReportFramingFiltersInput = {
-  /**  only for excel header filter display  */
-  attributes?: InputMaybe<Array<ReportFramingAttributeFilterItemInput>>;
-  campaigns?: InputMaybe<Array<RecordFilterInput>>;
-  categories?: InputMaybe<Array<Scalars['String']['input']>>;
-  categoryStatus?: InputMaybe<Array<Scalars['String']['input']>>;
-  search?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type SaveCampaignsDatesResult = {
-  campaign_id: Scalars['ID']['output'];
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<GenericValue>;
-};
-
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -2595,23 +2460,16 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int']['output'];
-};
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
 };
 
 export type Tree = {
@@ -3223,16 +3081,6 @@ export type ViewsV2List = {
   totalCount: Scalars['Int']['output'];
 };
 
-export type RemoveCampaignsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<Scalars['ID']['output']>;
-};
-
-export type RemoveStructureItemsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<Scalars['ID']['output']>;
-};
-
 export type SaveValueBatchResult = {
   errors?: Maybe<Array<ValueBatchError>>;
   values?: Maybe<Array<GenericValue>>;
@@ -3296,14 +3144,14 @@ export type CreateViewV2MutationVariables = Exact<{
 }>;
 
 
-export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> } } };
+export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type UpdateViewV2MutationVariables = Exact<{
   view: ViewV2UpdateInput;
 }>;
 
 
-export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> } } };
+export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type GetPermissionEditViewOnLibraryQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
@@ -3317,9 +3165,9 @@ export type GetViewV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> } } };
+export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> } };
 
-export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> } };
+export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> };
 
 export type GetViewListQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
@@ -3408,6 +3256,13 @@ export const AppStudioViewSettingsViewFragmentDoc = gql`
         label
       }
     }
+  }
+  sorts {
+    attributes {
+      id
+      label
+    }
+    order
   }
 }
     `;

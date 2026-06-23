@@ -10,7 +10,8 @@
 //     [--click "Catalogue"] \
 //     [--clip "1095,60,505,760"] \
 //     [--out /tmp/leav-shot.png] \
-//     [--wait 6000]
+//     [--wait 6000] \
+//     [--inspect ".kit-filter-label"] [--inspect-chain]
 //
 // Auth: logs in with admin/admin via the LEAV `login` app when redirected,
 // then reuses the session stored in /tmp/leav-state.json on subsequent runs.
@@ -33,6 +34,8 @@ const clickAria = getArg('click');
 const clipRaw = getArg('clip'); // "x,y,w,h"
 const outPath = getArg('out', 'tmp/leav-shot.png');
 const hydrateWaitMs = Number(getArg('wait', '6000'));
+const inspectSelector = getArg('inspect'); // CSS selector to dump computed layout styles for
+const inspectChain = process.argv.includes('--inspect-chain'); // also walk ancestors up to <body>
 
 if (!targetUrl) {
     console.error('Missing --url');
@@ -76,6 +79,65 @@ try {
     if (clickAria) {
         await page.getByRole('button', {name: clickAria, exact: true}).first().click();
         await page.waitForTimeout(2_500);
+    }
+
+    // Dump computed layout styles for elements matching --inspect. Use this to debug layout/overflow
+    // issues where a screenshot shows the symptom but not the cause (e.g. an unconstrained flex
+    // wrapper). With --inspect-chain, also walk each match's ancestors up to <body> so you can find
+    // which box actually fails to constrain its width.
+    if (inspectSelector) {
+        const report = await page.evaluate(
+            ({selector, withChain}) => {
+                const LAYOUT_PROPS = [
+                    'display',
+                    'flex',
+                    'minWidth',
+                    'maxWidth',
+                    'width',
+                    'overflow',
+                    'whiteSpace',
+                    'textOverflow',
+                    'textAlign',
+                    'justifyContent',
+                    'position',
+                ];
+                const describe = el => {
+                    const cs = getComputedStyle(el);
+                    const rect = el.getBoundingClientRect();
+                    const styles = {};
+                    LAYOUT_PROPS.forEach(prop => {
+                        styles[prop] = cs[prop];
+                    });
+                    return {
+                        tag: el.tagName.toLowerCase(),
+                        class: String(el.getAttribute('class') || ''),
+                        rect: {
+                            x: Math.round(rect.x),
+                            y: Math.round(rect.y),
+                            w: Math.round(rect.width),
+                            h: Math.round(rect.height),
+                        },
+                        styles,
+                    };
+                };
+                const ancestors = el => {
+                    const chain = [];
+                    let current = el.parentElement;
+                    while (current && current.tagName !== 'BODY') {
+                        chain.push(describe(current));
+                        current = current.parentElement;
+                    }
+                    return chain;
+                };
+                return [...document.querySelectorAll(selector)].slice(0, 10).map(el => ({
+                    ...describe(el),
+                    ...(withChain ? {ancestors: ancestors(el)} : {}),
+                }));
+            },
+            {selector: inspectSelector, withChain: inspectChain},
+        );
+        console.log('INSPECT:', inspectSelector, `(${report.length} match${report.length === 1 ? '' : 'es'})`);
+        console.log(JSON.stringify(report, null, 2));
     }
 
     const screenshotOptions = {path: outPath};

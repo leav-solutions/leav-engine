@@ -1,12 +1,12 @@
 import {useCallback, useContext, useMemo} from 'react';
 import {useLang, useUser} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {type ViewV2Types} from '../../../../../__generated__';
+import {type SortOrder, type ViewV2Types} from '../../../../../__generated__';
 import {CurrentViewContext} from './CurrentViewContext';
-import {type CurrentView} from './_types';
+import {type CurrentView, getSortId} from './_types';
 
 const displayFingerprint = (view: CurrentView) =>
-    view ? JSON.stringify({label: view.label, display: view.display}) : null;
+    view ? JSON.stringify({label: view.label, display: view.display, sorts: view.sorts}) : null;
 
 export const useCurrentView = () => {
     const {view, savedView, isEmptyView, dispatch} = useContext(CurrentViewContext);
@@ -25,6 +25,16 @@ export const useCurrentView = () => {
 
     const moveAttribute = useCallback(
         (activeId: string, overId: string) => dispatch({type: 'MOVE_ATTRIBUTE', payload: {activeId, overId}}),
+        [dispatch],
+    );
+
+    const moveSort = useCallback(
+        (activeId: string, overId: string) => dispatch({type: 'MOVE_SORT', payload: {activeId, overId}}),
+        [dispatch],
+    );
+
+    const setSortOrder = useCallback(
+        (id: string, order: SortOrder) => dispatch({type: 'SET_SORT_ORDER', payload: {id, order}}),
         [dispatch],
     );
 
@@ -62,6 +72,18 @@ export const useCurrentView = () => {
             });
     }, [view, lang]);
 
+    const sorts = useMemo(
+        () =>
+            view?.sorts.map(sort => ({
+                id: getSortId(sort),
+                order: sort.order,
+                ids: sort.attributes.map(attribute => attribute.id),
+                // Link-attribute descent is not supported yet, so a sort targets a single attribute.
+                label: localizedTranslation(sort.attributes.at(-1)?.label ?? {}, lang),
+            })) ?? [],
+        [view, lang],
+    );
+
     return {
         view,
         savedView,
@@ -72,11 +94,14 @@ export const useCurrentView = () => {
         setViewType,
         toggleVisibility,
         moveAttribute,
+        moveSort,
+        setSortOrder,
         setLabel,
         setShared,
         resetView,
         markSaved,
         visibleColumns,
         invisibleColumns,
+        sorts,
     };
 };

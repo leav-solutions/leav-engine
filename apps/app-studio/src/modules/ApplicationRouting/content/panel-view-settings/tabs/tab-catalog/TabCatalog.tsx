@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react';
+import {useState} from 'react';
 import {useLang, usePanelEventHandlers} from '@leav/ui';
 import {KitAlert, KitBadge, KitItemList, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {type IKitActionButton} from 'aristid-ds/dist/Kit/DataDisplay/types';
@@ -17,7 +17,6 @@ import {useLastUsedView} from './useLastUsedView';
 import {
     emptyBadge,
     emptyBox,
-    heading,
     iconBox,
     isCurrentView,
     primaryIcon,
@@ -114,16 +113,16 @@ export const TabCatalog = ({libraryId}: {libraryId: string}) => {
     return (
         <KitSpace direction="vertical" size="l" className="full-width">
             <KitSpace direction="vertical" size="m" className="full-width">
-                <div className={sectionTitle}>
-                    <KitTypography.Title level="h4" className={heading}>
+                <header className={sectionTitle}>
+                    <KitTypography.Text weight="bold" size="fontSize5">
                         {t('view_settings.my_views')}
-                    </KitTypography.Title>
+                    </KitTypography.Text>
                     {myViews.length > 0 ? (
                         <KitBadge count={myViews.length} color="primary" secondaryColorInvert />
                     ) : (
                         <KitBadge count={0} showZero className={emptyBadge} />
                     )}
-                </div>
+                </header>
                 {myViews.length === 0 ? (
                     <KitTypography.Text className={cn(emptyBox, viewItem)}>
                         {t('view_settings.my_views_empty')}
@@ -161,16 +160,16 @@ export const TabCatalog = ({libraryId}: {libraryId: string}) => {
                 )}
             </KitSpace>
             <KitSpace direction="vertical" size="m" className="full-width">
-                <div className={sectionTitle}>
-                    <KitTypography.Title level="h4" className={heading}>
+                <header className={sectionTitle}>
+                    <KitTypography.Text weight="bold" size="fontSize5">
                         {t('view_settings.shared_views')}
-                    </KitTypography.Title>
+                    </KitTypography.Text>
                     {sharedViews.length > 0 ? (
                         <KitBadge count={sharedViews.length} color="primary" secondaryColorInvert />
                     ) : (
                         <KitBadge count={0} showZero className={emptyBadge} />
                     )}
-                </div>
+                </header>
                 {sharedViews.length === 0 ? (
                     <KitTypography.Text className={cn(emptyBox, viewItem)}>
                         {t('view_settings.shared_views_empty')}

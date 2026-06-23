@@ -29,6 +29,7 @@
 
 .dragHandle.dragging {
     cursor: grabbing;
+    color: var(--general-utilities-text-primary);
 }
 
 .visibilityButton {

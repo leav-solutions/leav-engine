@@ -1,4 +1,4 @@
-import {ViewV2Types} from '../../../../../../__generated__';
+import {SortOrder, ViewV2Types} from '../../../../../../__generated__';
 import {currentViewReducer, initialCurrentViewState, viewReducer} from '../currentViewReducer';
 import {type CurrentView} from '../_types';
 
@@ -8,6 +8,18 @@ const makeAttributes = (
     defs: Array<{id: string; label: string; visible: boolean}>,
 ): NonNullState['display']['attributes'] =>
     defs.map(({id, label, visible}) => ({visible, attribute: {id, label: {en: label}}}));
+
+const makeSorts = (ids: string[]): NonNullState['sorts'] =>
+    ids.map(id => ({attributes: [{id, label: {en: id.toUpperCase()}}], order: SortOrder.asc}));
+
+// A sort whose path descends through several attributes (link-attribute descent). Its DnD id is the
+// joined attribute ids (e.g. 'author/name'), per getSortId.
+const makeCompositeSort = (attributePath: string[]): NonNullState['sorts'][number] => ({
+    attributes: attributePath.map(id => ({id, label: {en: id.toUpperCase()}})),
+    order: SortOrder.asc,
+});
+
+const sortIds = (view: NonNullState) => view.sorts.map(sort => sort.attributes.map(attr => attr.id).join('/'));
 
 const makeView = (overrides: Partial<NonNullState> = {}): NonNullState => ({
     id: 'view-1',
@@ -24,6 +36,7 @@ const makeView = (overrides: Partial<NonNullState> = {}): NonNullState => ({
             {id: 'd', label: 'D', visible: false},
         ]),
     },
+    sorts: [],
     ...overrides,
 });
 
@@ -101,6 +114,46 @@ describe('viewReducer (display actions)', () => {
         it('returns the same view when both ids are equal', () => {
             const view = makeView();
             expect(viewReducer(view, {type: 'MOVE_ATTRIBUTE', payload: {activeId: 'a', overId: 'a'}})).toBe(view);
+        });
+    });
+
+    describe('MOVE_SORT', () => {
+        it('reorders the sorts array (array order = order in which sorts are applied)', () => {
+            const view = makeView({sorts: makeSorts(['a', 'b', 'c'])});
+            const next = viewReducer(view, {type: 'MOVE_SORT', payload: {activeId: 'a', overId: 'c'}});
+            expect(sortIds(next)).toEqual(['b', 'c', 'a']);
+        });
+
+        it('identifies sorts by their composite attribute path (link-attribute descent)', () => {
+            const view = makeView({
+                sorts: [makeCompositeSort(['author', 'name']), makeSorts(['date'])[0]],
+            });
+            const next = viewReducer(view, {
+                type: 'MOVE_SORT',
+                payload: {activeId: 'author/name', overId: 'date'},
+            });
+            expect(sortIds(next)).toEqual(['date', 'author/name']);
+        });
+    });
+
+    describe('SET_SORT_ORDER', () => {
+        it('updates the order of the targeted sort and keeps the others untouched', () => {
+            const view = makeView({sorts: makeSorts(['a', 'b'])});
+            const next = viewReducer(view, {type: 'SET_SORT_ORDER', payload: {id: 'a', order: SortOrder.desc}});
+            expect(next.sorts[0].order).toBe(SortOrder.desc);
+            expect(next.sorts[1].order).toBe(SortOrder.asc);
+        });
+
+        it('targets a sort identified by its composite attribute path', () => {
+            const view = makeView({
+                sorts: [makeSorts(['date'])[0], makeCompositeSort(['author', 'name'])],
+            });
+            const next = viewReducer(view, {
+                type: 'SET_SORT_ORDER',
+                payload: {id: 'author/name', order: SortOrder.desc},
+            });
+            expect(next.sorts[1].order).toBe(SortOrder.desc);
+            expect(next.sorts[0].order).toBe(SortOrder.asc);
         });
     });
 });

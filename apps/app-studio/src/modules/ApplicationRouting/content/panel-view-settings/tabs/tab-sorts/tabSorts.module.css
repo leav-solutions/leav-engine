@@ -1,0 +1,49 @@
+.tab {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-l) * 1px);
+    height: 100%;
+    min-height: 0;
+}
+
+.list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    color: var(--general-utilities-text-primary);
+    overflow-y: auto;
+}
+
+/*
+ * KitFilter is capped at max-width: 200px and its label is max-width: min-content by design.
+ * The sort chip must instead fill the row, so we lift those caps. The doubled selector
+ * (.sortFilter.sortFilter) raises specificity above the DS root rule without relying on stylesheet
+ * order or !important.
+ */
+.sortFilter.sortFilter {
+    display: flex;
+    min-width: 0;
+    max-width: none;
+}
+
+/*
+ * Both the label and the value (asc/desc) are capped at max-width: min-content by the DS, which
+ * truncates them even when the row has room. Let the label take the remaining space (ellipsis as a
+ * last resort) and let the value size to its content so it is never truncated.
+ */
+.sortFilter :global(.kit-filter-label) {
+    /* min-width: 0 lets the flex item shrink below its content width so the ellipsis kicks in
+       instead of pushing the chip past the panel (which caused horizontal scroll). */
+    min-width: 0;
+    max-width: none;
+    /* The DS centers the chip text; left-align so short labels read naturally in the list. */
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.sortFilter :global(.kit-filter-value) {
+    flex: 0 0 auto;
+    max-width: none;
+}
