@@ -809,7 +809,8 @@
         "date_presets": {
             "today": "Today",
             "some_day": "Some day",
-            "undefined": "Undefined"
+            "undefined": "Undefined",
+            "between_dates": "Between dates"
         }
     }
 }

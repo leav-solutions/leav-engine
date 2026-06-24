@@ -1,4 +1,4 @@
-import {type ComponentProps, type FunctionComponent, ReactNode, useRef} from 'react';
+import {type ComponentProps, type FunctionComponent, useRef} from 'react';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import {KitAvatar, KitDatePicker, KitTypography} from 'aristid-ds';
@@ -49,6 +49,7 @@ const DatePickerOptionsContainerStyledDiv = styled.div`
 
         li {
             display: flex;
+            justify-content: space-between;
             gap: calc(var(--general-spacing-xs) * 1px);
             border-radius: calc(var(--general-spacing-xs) * 1px);
             padding: calc(var(--general-spacing-xs) * 1px);
@@ -66,12 +67,6 @@ const DatePickerOptionsContainerStyledDiv = styled.div`
         }
     }
 `;
-
-const valueByCondition = {
-    [AttributeConditionFilter.TODAY]: null,
-    [AttributeConditionFilter.IS_EMPTY]: null,
-    [AttributeConditionFilter.EQUAL]: null,
-};
 
 const PresetItem: FunctionComponent<{
     filter: IFilterChildrenDropDownProps['filter'];
@@ -104,7 +99,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
         onFilterChange({
             ...filter,
             condition: presetCondition,
-            value: valueByCondition[presetCondition],
+            value: null,
         });
     };
 
@@ -163,6 +158,12 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
                         condition={AttributeConditionFilter.EQUAL}
                         onClick={onClickPreset(AttributeConditionFilter.EQUAL)}
                         title={t('explorer.date_presets.some_day')}
+                    />
+                    <PresetItem
+                        filter={filter}
+                        condition={AttributeConditionFilter.BETWEEN}
+                        onClick={onClickPreset(AttributeConditionFilter.BETWEEN)}
+                        title={t('explorer.date_presets.between_dates')}
                     />
                     <PresetItem
                         filter={filter}
