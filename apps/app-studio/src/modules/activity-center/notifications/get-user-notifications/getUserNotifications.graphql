@@ -9,6 +9,12 @@ query getUserNotifications {
             attachments {
                 label
                 url
+                trackingEvent {
+                    category
+                    action
+                    name
+                    value
+                }
             }
             relatedEntities {
                 label

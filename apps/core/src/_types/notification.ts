@@ -25,6 +25,11 @@ export interface INotificationContent {
     attachments?: Array<{
         url: string;
         label: string;
+        /**
+         * Optional analytics event to emit when this attachment is opened (e.g. report downloaded).
+         * The host app forwards it to its tracker on click.
+         */
+        trackingEvent?: INotificationTrackingEvent;
     }>;
 }
 
@@ -39,6 +44,12 @@ export interface INotificationMetadata {
      * For email, will be added as a custom header (X-Task-Id)
      */
     taskId?: string;
+
+    /**
+     * Generic analytics events to emit when this notification is consumed.
+     * The host app forwards them to its tracker.
+     */
+    trackingEvents?: INotificationTrackingEvent[];
 }
 
 export interface ICreateNotification {
@@ -64,6 +75,13 @@ export interface ICreateNotification {
      * Channels to send the notification to (if not set, all channels will be used)
      */
     channels?: NotificationChannels[];
+}
+
+export interface INotificationTrackingEvent {
+    category: string;
+    action: string;
+    name?: string;
+    value?: number;
 }
 
 export enum NotificationChannels {

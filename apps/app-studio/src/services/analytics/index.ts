@@ -1,3 +1,4 @@
+import {type NotificationTrackingEvent} from '../../__generated__';
 import {matomoEvents} from './constants/matomoEvents';
 
 declare global {
@@ -38,4 +39,15 @@ export const matomo = {
         }
         this.trackEvent({category: matomoEvents.categories.navigation, action, name});
     },
+};
+
+export const trackNotificationEvents = (events: NotificationTrackingEvent[]) => {
+    events.forEach(event =>
+        matomo.trackEvent({
+            category: event.category,
+            action: event.action,
+            name: event.name ?? undefined,
+            value: event.value ?? undefined,
+        }),
+    );
 };

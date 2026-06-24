@@ -13,6 +13,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {type ReactNode} from 'react';
 import {type TFunction} from 'i18next';
+import {trackNotificationEvents} from '../../../services/analytics';
+import {NOTIFICATION_CENTER_TRACKING_SOURCE} from '_ui/constants';
 
 interface INotificationDisplayData {
     notificationType: IKitNotification['type'];
@@ -90,7 +92,14 @@ const _buildNotificationDownloadButtons = (notification: Notification, t: TFunct
                 key={attachment.url}
                 type="secondary"
                 size="m"
-                onClick={() => window.open(attachment.url, '_blank')}
+                onClick={() => {
+                    if (attachment.trackingEvent) {
+                        trackNotificationEvents([
+                            {...attachment.trackingEvent, name: NOTIFICATION_CENTER_TRACKING_SOURCE},
+                        ]);
+                    }
+                    window.open(attachment.url, '_blank');
+                }}
                 icon={<FontAwesomeIcon icon={faDownload} />}
             >
                 {t('global.download')}

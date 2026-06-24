@@ -12,6 +12,8 @@ import {GuardAccess} from './config/application-instance/guard-access/GuardAcces
 import {InitLayout} from './modules/layout/InitLayout';
 import {InitApplicationRouter} from './modules/ApplicationRouting/InitApplicationRouter';
 import {BugsnagErrorBoundary} from './BugsnagErrorBoundary';
+import {trackNotificationEvents} from './services/analytics';
+
 import './index.css';
 
 export const Index: FunctionComponent = () => (
@@ -19,7 +21,7 @@ export const Index: FunctionComponent = () => (
         <InitTranslation>
             <InitUser>
                 <InitTheme>
-                    <InitNotificationsSubscription>
+                    <InitNotificationsSubscription onTrackingEvents={trackNotificationEvents}>
                         <InitRouting>
                             <PanelMessengerProvider>
                                 <InitApplicationSettingProvider>
