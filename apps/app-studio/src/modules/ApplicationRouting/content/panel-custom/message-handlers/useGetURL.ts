@@ -13,8 +13,8 @@ import {generatePath} from 'react-router-dom';
 export const useGetURL = (): {
     getURL: IUsePanelMessengerOptions['handlers']['onGetUrl'];
 } => ({
-    getURL: ({onGetUrl, flapParams, panelParams}) => {
-        let url = typeof window !== 'undefined' ? window.location.href : '';
+    getURL: ({onGetUrl, flapParams, panelParams, initialUrl}) => {
+        let url = initialUrl || (typeof window !== 'undefined' ? window.location.href : '');
 
         if (!flapParams && !panelParams) {
             onGetUrl(url);

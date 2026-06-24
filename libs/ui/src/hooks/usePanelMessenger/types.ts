@@ -176,6 +176,7 @@ export type GetUrlMessage = IMessageBase & {
             where: Where;
             recordPanelId: PanelId;
         };
+        initialUrl?: string;
     };
     overrides?: string[];
 };
