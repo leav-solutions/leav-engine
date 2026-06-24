@@ -161,6 +161,18 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
                     />
                     <PresetItem
                         filter={filter}
+                        condition={AttributeConditionFilter.LESS_THAN}
+                        onClick={onClickPreset(AttributeConditionFilter.LESS_THAN)}
+                        title={t('filters.before')}
+                    />
+                    <PresetItem
+                        filter={filter}
+                        condition={AttributeConditionFilter.GREATER_THAN}
+                        onClick={onClickPreset(AttributeConditionFilter.GREATER_THAN)}
+                        title={t('filters.after')}
+                    />
+                    <PresetItem
+                        filter={filter}
                         condition={AttributeConditionFilter.BETWEEN}
                         onClick={onClickPreset(AttributeConditionFilter.BETWEEN)}
                         title={t('explorer.date_presets.between_dates')}
