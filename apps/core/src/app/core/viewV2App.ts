@@ -15,6 +15,7 @@ import {
     type IViewV2Sort,
     type IViewV2UpdateInputFromGraphQL,
     type IViewV2ValuesVersionForGraphql,
+    ViewV2Shortcut,
     ViewV2Types,
 } from '../../_types/viewsV2';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
@@ -44,6 +45,10 @@ export default function ({
                 typeDefs: `
                     enum ViewV2Types {
                         ${Object.values(ViewV2Types).join(' ')}
+                    }
+
+                    enum ViewV2Shortcut {
+                        ${Object.values(ViewV2Shortcut).join(' ')}
                     }
 
                     type ViewV2DisplayAttribute {
@@ -111,6 +116,7 @@ export default function ({
                         label: SystemTranslation!,
                         filters: [ViewV2Filter!]!,
                         sorts: [ViewV2Sort!]!,
+                        shortcuts: [ViewV2Shortcut!]!,
                         display: ViewV2Display!,
                         valuesVersions: [ViewV2ValuesVersion!],
                     }
@@ -122,6 +128,7 @@ export default function ({
                         label: SystemTranslation!,
                         filters: [ViewV2FilterInput!],
                         sorts: [ViewV2SortInput!],
+                        shortcuts: [ViewV2Shortcut!],
                         valuesVersions: [ViewV2ValuesVersionInput!],
                     }
 
@@ -134,6 +141,7 @@ export default function ({
                         description: SystemTranslationOptional,
                         filters: [ViewV2FilterInput!],
                         sorts: [ViewV2SortInput!],
+                        shortcuts: [ViewV2Shortcut!],
                         valuesVersions: [ViewV2ValuesVersionInput!],
                     }
 

@@ -156,7 +156,8 @@
             "unshare_success": "View unshared",
             "action_error": "The view operation failed."
         },
-        "pin": "Pin as shortcut"
+        "pin": "Pin as shortcut",
+        "unpin": "Unpin shortcut"
     },
     "error": {
         "title": "Error loading data",

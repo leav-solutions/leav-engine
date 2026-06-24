@@ -32,6 +32,7 @@ import {useExportMassAction} from './actions-mass/useExportMassAction';
 import {useEditAttributeMassAction} from './actions-mass/useEditAttributeMassAction';
 import {useGeneratePreviewsMassAction} from './actions-mass/useGeneratePreviewsMassAction';
 import {
+    DEFAULT_VIEW_SHORTCUTS,
     defaultPageSizeOptions,
     type IViewSettingsState,
     useOpenViewSettingsV2,
@@ -207,6 +208,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                 viewType: currentView?.viewType ?? ViewV2Types.list,
                 attributesIds: currentView?.attributesIds ?? [],
                 sort: currentView?.sort ?? [],
+                shortcuts: currentView?.shortcuts ?? DEFAULT_VIEW_SHORTCUTS,
             }),
             [ephemeralView, currentView],
         );

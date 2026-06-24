@@ -1,7 +1,7 @@
 import {z} from 'zod';
 import {SortOrder} from '../../_types/list';
 import {AttributeCondition, TreeCondition} from '../../_types/record';
-import {ViewV2Types} from '../../_types/viewsV2';
+import {ViewV2Shortcut, ViewV2Types} from '../../_types/viewsV2';
 
 // May be latter check attribute and library exist same as in domain/automation/triggers/automationTriggersTopics.ts
 
@@ -38,6 +38,7 @@ export const viewV2UserFieldsSchema = z.object({
     shared: z.boolean(),
     filters: z.array(viewV2FilterSchema),
     sorts: z.array(viewV2SortSchema),
+    shortcuts: z.array(z.enum(ViewV2Shortcut)).optional(),
     valuesVersions: viewV2ValuesVersionSchema.optional().nullable(),
 });
 

@@ -1,7 +1,7 @@
 import {KitAlert} from 'aristid-ds';
 import {act, renderHook} from '_ui/_tests/testUtils';
 import * as generated from '../../../../../../__generated__';
-import {ViewV2Types} from '../../../../../../__generated__';
+import {ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
 import {useCurrentViewActions} from '../useCurrentViewActions';
 
 const mockUpdate = jest.fn();
@@ -53,6 +53,7 @@ beforeEach(() => {
                 {visible: false, attribute: {id: 'b'}},
             ],
         },
+        shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters],
     };
     mockUpdate.mockResolvedValue({data: {updateViewV2: echoView}});
     mockCreate.mockResolvedValue({data: {createViewV2: createdView}});
@@ -79,7 +80,14 @@ describe('useCurrentViewActions', () => {
 
             expect(mockUpdate).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    variables: {view: {id: 'view-1', label: {fr: 'V', en: 'V-en'}, display: mappedDisplay}},
+                    variables: {
+                        view: {
+                            id: 'view-1',
+                            label: {fr: 'V', en: 'V-en'},
+                            display: mappedDisplay,
+                            shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters],
+                        },
+                    },
                     refetchQueries: [{query: generated.GetViewListDocument, variables: {libraryId: 'lib'}}],
                 }),
             );
@@ -118,6 +126,7 @@ describe('useCurrentViewActions', () => {
                             display: mappedDisplay,
                             filters: [],
                             sorts: [],
+                            shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters],
                         },
                     },
                 }),

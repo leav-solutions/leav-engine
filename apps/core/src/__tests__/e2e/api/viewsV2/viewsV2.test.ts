@@ -1,4 +1,4 @@
-import {RecordFilterCondition, SortOrder, ViewV2Types} from '../../_gqlTypes';
+import {RecordFilterCondition, SortOrder, ViewV2Shortcut, ViewV2Types} from '../../_gqlTypes';
 import {adminUserSdk, guestUserSdk} from '../e2eUtils';
 
 describe('ViewsV2', () => {
@@ -68,6 +68,29 @@ describe('ViewsV2', () => {
                     attributes: [expect.objectContaining({id: 'created_at'})],
                     order: SortOrder.asc,
                 },
+            ]);
+            expect(createdView.shortcuts).toEqual([ViewV2Shortcut.display]);
+        });
+
+        test('Create viewV2 with an explicit shortcuts list', async () => {
+            const {createViewV2} = await adminUserSdk.CreateViewV2({
+                view: {
+                    library: testLibName,
+                    display: {type: ViewV2Types.list, attributes: [{attributeId: 'id', visible: true}]},
+                    shared: true,
+                    label: {en: 'test_view_with_shortcuts'},
+                    filters: [],
+                    sorts: [],
+                    shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters, ViewV2Shortcut.catalog],
+                },
+            });
+
+            const {viewsV2} = await adminUserSdk.GetViewsV2({library: testLibName});
+            const createdView = viewsV2.list.find(view => view.id === createViewV2.id);
+            expect(createdView?.shortcuts).toEqual([
+                ViewV2Shortcut.display,
+                ViewV2Shortcut.filters,
+                ViewV2Shortcut.catalog,
             ]);
         });
 

@@ -1,4 +1,5 @@
 import {arrayMove} from '@dnd-kit/sortable';
+import {ViewV2Shortcut} from '../../../../../__generated__';
 import {type CurrentViewAction, type CurrentView, type ICurrentViewState, getSortId} from './_types';
 
 export const initialCurrentViewState: ICurrentViewState = {view: null, savedView: null};
@@ -89,6 +90,22 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
             }
 
             return {...view, sorts: view.sorts.toSpliced(index, 1, {...view.sorts[index], order})};
+        }
+        case 'TOGGLE_SHORTCUT': {
+            const {shortcut} = action.payload;
+
+            // The `display` shortcut is always pinned (the UI disables its pin button); guard
+            // defensively so it can never be toggled off.
+            if (shortcut === ViewV2Shortcut.display) {
+                return view;
+            }
+
+            const isPinned = view.shortcuts.includes(shortcut);
+            const shortcuts = isPinned
+                ? view.shortcuts.filter(currentShortcut => currentShortcut !== shortcut)
+                : [...view.shortcuts, shortcut];
+
+            return {...view, shortcuts};
         }
         default:
             return view;

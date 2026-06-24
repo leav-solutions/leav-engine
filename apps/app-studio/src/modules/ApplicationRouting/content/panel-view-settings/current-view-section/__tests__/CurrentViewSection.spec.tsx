@@ -1,7 +1,7 @@
 import {useReducer} from 'react';
 import userEvent from '@testing-library/user-event';
 import {act, render, screen, within} from '_ui/_tests/testUtils';
-import {ViewV2Types} from '../../../../../../__generated__';
+import {ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
 import {CurrentViewContext} from '../../store-current-view/CurrentViewContext';
 import {currentViewReducer} from '../../store-current-view/currentViewReducer';
 import {type CurrentView} from '../../store-current-view/_types';
@@ -34,6 +34,7 @@ const makeView = (overrides: Partial<NonNullView> = {}): NonNullView => ({
     created_by: {id: '123', whoAmI: {id: '123', label: 'Moi'}},
     display: {type: ViewV2Types.list, attributes: []},
     sorts: [],
+    shortcuts: [ViewV2Shortcut.display],
     ...overrides,
 });
 

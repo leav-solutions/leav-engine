@@ -1,6 +1,6 @@
 import {type ReactNode} from 'react';
 import {renderHook} from '@testing-library/react';
-import {SortOrder, ViewV2Types} from '../../../../../../__generated__';
+import {SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
 import {CurrentViewContext} from '../CurrentViewContext';
 import {type CurrentView} from '../_types';
 import {useCurrentView} from '../useCurrentView';
@@ -28,6 +28,7 @@ const makeView = (overrides: Partial<NonNullView> = {}): NonNullView => ({
     created_by: {id: '123', whoAmI: {id: '123', label: 'Moi'}},
     display: {type: ViewV2Types.list, attributes: []},
     sorts: [],
+    shortcuts: [ViewV2Shortcut.display],
     ...overrides,
 });
 
@@ -94,6 +95,15 @@ describe('useCurrentView', () => {
             });
             expect(result.current.isDirty).toBe(false);
         });
+
+        it('is true when the shortcuts diverged', () => {
+            const {result} = renderUseCurrentView({
+                view: makeView({shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters]}),
+                savedView: makeView({shortcuts: [ViewV2Shortcut.display]}),
+                dispatch: jest.fn(),
+            });
+            expect(result.current.isDirty).toBe(true);
+        });
     });
 
     describe('isEmptyView', () => {
@@ -148,6 +158,12 @@ describe('useCurrentView', () => {
             expect(dispatch).toHaveBeenCalledWith({
                 type: 'SET_SORT_ORDER',
                 payload: {id: 'date', order: SortOrder.desc},
+            });
+
+            result.current.toggleShortcut(ViewV2Shortcut.filters);
+            expect(dispatch).toHaveBeenCalledWith({
+                type: 'TOGGLE_SHORTCUT',
+                payload: {shortcut: ViewV2Shortcut.filters},
             });
         });
     });

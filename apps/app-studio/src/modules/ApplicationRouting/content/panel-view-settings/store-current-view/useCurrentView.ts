@@ -1,12 +1,19 @@
 import {useCallback, useContext, useMemo} from 'react';
 import {useLang, useUser} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {type SortOrder, type ViewV2Types} from '../../../../../__generated__';
+import {type SortOrder, type ViewV2Shortcut, type ViewV2Types} from '../../../../../__generated__';
 import {CurrentViewContext} from './CurrentViewContext';
 import {type CurrentView, getSortId} from './_types';
 
 const displayFingerprint = (view: CurrentView) =>
-    view ? JSON.stringify({label: view.label, display: view.display, sorts: view.sorts}) : null;
+    view
+        ? JSON.stringify({
+              label: view.label,
+              display: view.display,
+              sorts: view.sorts,
+              shortcuts: view.shortcuts,
+          })
+        : null;
 
 export const useCurrentView = () => {
     const {view, savedView, isEmptyView, dispatch} = useContext(CurrentViewContext);
@@ -44,6 +51,11 @@ export const useCurrentView = () => {
     );
 
     const setShared = useCallback((shared: boolean) => dispatch({type: 'SET_SHARED', payload: {shared}}), [dispatch]);
+
+    const toggleShortcut = useCallback(
+        (shortcut: ViewV2Shortcut) => dispatch({type: 'TOGGLE_SHORTCUT', payload: {shortcut}}),
+        [dispatch],
+    );
 
     const resetView = useCallback(() => dispatch({type: 'RESET_VIEW'}), [dispatch]);
 
@@ -98,10 +110,12 @@ export const useCurrentView = () => {
         setSortOrder,
         setLabel,
         setShared,
+        toggleShortcut,
         resetView,
         markSaved,
         visibleColumns,
         invisibleColumns,
         sorts,
+        shortcuts: view?.shortcuts ?? [],
     };
 };

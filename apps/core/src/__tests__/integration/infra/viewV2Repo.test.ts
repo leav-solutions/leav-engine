@@ -7,7 +7,7 @@ import {
 } from '../../../infra/viewV2/viewV2Repo';
 import {SortOrder} from '../../../_types/list';
 import {AttributeCondition} from '../../../_types/record';
-import {ViewV2Types} from '../../../_types/viewsV2';
+import {ViewV2Shortcut, ViewV2Types} from '../../../_types/viewsV2';
 import {clearAllCollectionDocuments, getViewV2Repo} from './integrationTestRepoUtils';
 
 describe('viewV2Repo', () => {
@@ -35,6 +35,7 @@ describe('viewV2Repo', () => {
             },
         ],
         sorts: [{attributes: ['id'], order: SortOrder.ASC}],
+        shortcuts: [ViewV2Shortcut.DISPLAY, ViewV2Shortcut.FILTERS],
         shared: false,
         created_by: '1',
         created_at: 1234567890,
@@ -69,6 +70,12 @@ describe('viewV2Repo', () => {
 
             expect(created.id).toBeTruthy();
             expect(created.library).toBe('test_lib');
+        });
+
+        it('should persist the shortcuts list', async () => {
+            const created = await viewV2Repo.createViewV2({...baseView, id: 'view_with_shortcuts'}, ctx);
+
+            expect(created.shortcuts).toEqual([ViewV2Shortcut.DISPLAY, ViewV2Shortcut.FILTERS]);
         });
     });
 

@@ -222,7 +222,6 @@ export enum AutomationRuleActions {
 
 export enum AutomationRuleEventAction {
   RECORD_INIT = 'RECORD_INIT',
-  RECORD_SAVE = 'RECORD_SAVE',
   VALUE_DELETE = 'VALUE_DELETE',
   VALUE_SAVE = 'VALUE_SAVE'
 }
@@ -269,18 +268,6 @@ export enum AvailableLanguage {
   en = 'en',
   fr = 'fr'
 }
-
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
 
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
@@ -361,9 +348,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
   SDO_LOG_ERROR = 'SDO_LOG_ERROR',
   SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
@@ -586,9 +572,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
+  RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
   SDO_LOG_ERROR = 'SDO_LOG_ERROR',
   SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
@@ -975,14 +960,8 @@ export enum TaskType {
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
-};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1188,6 +1167,7 @@ export type ViewV2CreateInput = {
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
   shared: Scalars['Boolean']['input'];
+  shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
@@ -1210,6 +1190,13 @@ export type ViewV2FilterInput = {
   values: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
+export enum ViewV2Shortcut {
+  catalog = 'catalog',
+  display = 'display',
+  filters = 'filters',
+  sorts = 'sorts'
+}
+
 export type ViewV2SortInput = {
   attributes: Array<Scalars['ID']['input']>;
   order: SortOrder;
@@ -1229,6 +1216,7 @@ export type ViewV2UpdateInput = {
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
+  shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };

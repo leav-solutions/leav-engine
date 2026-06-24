@@ -51,8 +51,16 @@ type SerializedView = {
     sort?: Array<{field: string; order: SortOrder}>; // l'ordre du tableau = priorité de tri
     filters?: UIFilter[]; // user filters + pré-filtres masqués hidden:true
     filtersOperator?: 'AND' | 'OR';
+    shortcuts?: ViewSettingsShortcuts[]; // onglets du volet exposés en boutons-raccourcis
 };
 ```
+
+**Raccourcis (`shortcuts`)** : liste des onglets du volet (`catalog | display | filters | sorts`)
+exposés en boutons dans la toolbar. `useOpenViewSettingsV2` rend un bouton par entrée, **toujours
+dans l'ordre canonique** `catalog → display → filters → sorts` (l'ordre stocké ne fait que filtrer,
+pas ordonner). Fallback `['display']` si la liste est vide (l'API garantit déjà ce défaut à la
+création — cf. champ `shortcuts` de `ViewV2`, LEAVC-892). Lecture seule pour l'instant ; l'édition
+viendra dans un ticket ultérieur.
 
 Exporté sous l'alias **`SerializedViewV2`** dans l'API publique `@leav/ui` (c'est le nom que
 app-studio importe). Construit par `panel-view-settings/store-current-view/viewV2ToSerializedView.ts`.

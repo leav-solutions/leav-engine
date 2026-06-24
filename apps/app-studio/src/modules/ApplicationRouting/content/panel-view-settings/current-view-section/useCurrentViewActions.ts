@@ -55,7 +55,14 @@ export const useCurrentViewActions = () => {
 
         try {
             const {data} = await updateView({
-                variables: {view: {id: view.id, label: view.label, display: mapDisplay(view.display)}},
+                variables: {
+                    view: {
+                        id: view.id,
+                        label: view.label,
+                        display: mapDisplay(view.display),
+                        shortcuts: view.shortcuts,
+                    },
+                },
                 refetchQueries: refetchCatalog(view.library),
             });
 
@@ -93,6 +100,7 @@ export const useCurrentViewActions = () => {
                         display: mapDisplay(view.display),
                         filters: [],
                         sorts: [],
+                        shortcuts: view.shortcuts,
                     },
                 },
                 refetchQueries: refetchCatalog(view.library),

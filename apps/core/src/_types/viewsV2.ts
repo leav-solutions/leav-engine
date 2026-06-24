@@ -8,6 +8,13 @@ export enum ViewV2Types {
     TIMELINE = 'timeline',
 }
 
+export enum ViewV2Shortcut {
+    DISPLAY = 'display',
+    FILTERS = 'filters',
+    SORTS = 'sorts',
+    CATALOG = 'catalog',
+}
+
 export interface IViewV2DisplayAttribute {
     attributeId: string;
     visible: boolean;
@@ -46,6 +53,7 @@ interface IViewV2UserFields {
     shared: boolean;
     filters: IViewV2Filter[];
     sorts: IViewV2Sort[];
+    shortcuts: ViewV2Shortcut[];
     valuesVersions?: IViewV2ValuesVersion | null;
 }
 

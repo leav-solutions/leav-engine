@@ -14,6 +14,8 @@ import {IDENTITY_COLUMN_ID} from '../tabs/tab-display/_constants';
  * - `filters`: left empty for now — user filters are handled in a follow-up ticket (the viewV2 tabs are
  *   still WIP). Masked (`hidden:true`) pre-filters are NOT added here: they are injected by the caller
  *   into `currentView.filters`.
+ * - `shortcuts`: the view-settings tabs exposed as direct shortcuts. The API already defaults this to
+ *   `['display']`, the `??` is a defensive fallback.
  */
 export const viewV2ToSerializedView = (view: GetViewV2Query['viewV2']): SerializedViewV2 => ({
     viewId: view.id,
@@ -26,4 +28,5 @@ export const viewV2ToSerializedView = (view: GetViewV2Query['viewV2']): Serializ
         .map(sort => ({field: sort.attributes.at(-1)?.id, order: sort.order}))
         .filter((sort): sort is {field: string; order: SortOrder} => sort.field !== undefined),
     filters: [],
+    shortcuts: (view.shortcuts ?? ['display']) as SerializedViewV2['shortcuts'],
 });

@@ -12,3 +12,7 @@
     flex: 1 1 0;
     min-width: 0;
 }
+
+.unpinnedIcon {
+    color: var(--general-utilities-text-primary);
+}
