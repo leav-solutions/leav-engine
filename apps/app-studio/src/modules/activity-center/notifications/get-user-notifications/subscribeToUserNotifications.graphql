@@ -8,6 +8,12 @@ subscription subscribeToUserNotifications {
         attachments {
             label
             url
+            trackingEvent {
+                category
+                action
+                name
+                value
+            }
         }
         relatedEntities {
             label

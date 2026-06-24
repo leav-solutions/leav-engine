@@ -237,8 +237,20 @@ export type ApplicationsList = {
   totalCount: Scalars['Int']['output'];
 };
 
+export type Asset = {
+  creative: Creative;
+  id: Scalars['String']['output'];
+  key?: Maybe<Scalars['String']['output']>;
+  processingId?: Maybe<Scalars['String']['output']>;
+  processingIndex?: Maybe<Scalars['Int']['output']>;
+  progressPercentage?: Maybe<Scalars['Int']['output']>;
+  store?: Maybe<Store>;
+  template: Template;
+};
+
 export type Attachment = {
   label: Scalars['String']['output'];
+  trackingEvent?: Maybe<NotificationTrackingEvent>;
   url: Scalars['String']['output'];
 };
 
@@ -467,6 +479,44 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type Campaign = {
+  assetsCount?: Maybe<Scalars['Int']['output']>;
+  creatives: Array<Creative>;
+  deliveryPlatforms: Array<DeliveryPlatform>;
+  digram: Scalars['String']['output'];
+  failedAssetsCount?: Maybe<Scalars['Int']['output']>;
+  generationStartedAt?: Maybe<Scalars['String']['output']>;
+  generationStatus?: Maybe<GenerationStatus>;
+  generationStatusUpdatedAt?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  imagePreview?: Maybe<ImagePreview>;
+  label: Scalars['String']['output'];
+  offers: Array<Offer>;
+  stores: Array<Store>;
+  sublabel: Scalars['String']['output'];
+  successfulAssetsCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export type CampaignAssetGenerationState = {
+  assetsCount: Scalars['Int']['output'];
+  failedAssetsCount: Scalars['Int']['output'];
+  generationStartedAt: Scalars['String']['output'];
+  generationStatusUpdatedAt: Scalars['String']['output'];
+  successfulAssetsCount: Scalars['Int']['output'];
+};
+
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -491,6 +541,14 @@ export type CreateRecordResult = {
   valuesErrors?: Maybe<Array<ValueBatchError>>;
 };
 
+export type Creative = {
+  assets: Array<Asset>;
+  id: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  offers: Array<Offer>;
+  templates: Array<Template>;
+};
+
 export type DateRangeValue = {
   from?: Maybe<Scalars['String']['output']>;
   to?: Maybe<Scalars['String']['output']>;
@@ -499,6 +557,25 @@ export type DateRangeValue = {
 export type DeleteTaskInput = {
   archive: Scalars['Boolean']['input'];
   id: Scalars['ID']['input'];
+};
+
+export type DeliveryMedia = {
+  deliveryPlatform: DeliveryPlatform;
+  id: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  templates?: Maybe<Array<Template>>;
+};
+
+
+export type DeliveryMediaTemplatesArgs = {
+  campaignId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type DeliveryPlatform = {
+  deliveryMedias?: Maybe<Array<DeliveryMedia>>;
+  id: Scalars['String']['output'];
+  imagePreview?: Maybe<ImagePreview>;
+  label: Scalars['String']['output'];
 };
 
 export type DependentValuesPermissionFilterInput = {
@@ -794,6 +871,17 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
+export enum GenerationStatus {
+  DONE = 'DONE',
+  GENERATION_FAILED = 'GENERATION_FAILED',
+  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
+  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
+  PREPARATION_FAILED = 'PREPARATION_FAILED',
+  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
+  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
+  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
+}
+
 export type GenericDistinctValues = {
   count: Scalars['Int']['output'];
 };
@@ -843,6 +931,14 @@ export enum IoTypes {
   object = 'object',
   string = 'string'
 }
+
+export type ImagePreview = {
+  big: Scalars['String']['output'];
+  huge: Scalars['String']['output'];
+  medium: Scalars['String']['output'];
+  small: Scalars['String']['output'];
+  tiny: Scalars['String']['output'];
+};
 
 export enum ImportMode {
   insert = 'insert',
@@ -1201,11 +1297,25 @@ export enum MultiDisplayOption {
   tag = 'tag'
 }
 
+export type MoveThematicResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+  originalId: Scalars['ID']['output'];
+};
+
+export type MoveThematicsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  thematics?: Maybe<Array<MoveThematicResultThematic>>;
+};
+
+
 export type Mutation = {
   activateNewRecord: CreateRecordResult;
   activateRecords: Array<Record>;
   cancelTask: Scalars['Boolean']['output'];
   createAutomationRule: AutomationRule;
+  createCreative: Creative;
+  createCreativesAuto?: Maybe<Array<Creative>>;
   createDirectory: Record;
   createRecord: CreateRecordResult;
   createViewV2: ViewV2;
@@ -1218,6 +1328,7 @@ export type Mutation = {
   deleteForm?: Maybe<Form>;
   deleteLibrary: Library;
   deleteNotification: Notification;
+  deleteOffer?: Maybe<Scalars['Boolean']['output']>;
   deleteRecord: Record;
   deleteTasks: Scalars['Boolean']['output'];
   deleteTree: Tree;
@@ -1227,15 +1338,24 @@ export type Mutation = {
   deleteView: View;
   deleteViewV2: ViewV2;
   forcePreviewsGeneration: Scalars['Boolean']['output'];
+  generateAndSendJsonToDigitalHub?: Maybe<Scalars['Boolean']['output']>;
+  generateCreativeMasterAssets: Array<Asset>;
+  generateCreativesAssets: Array<Asset>;
   importConfig: Scalars['ID']['output'];
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
+  initRenewCampaigns: Scalars['String']['output'];
+  linkOfferToCampaign?: Maybe<Scalars['Boolean']['output']>;
+  moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
+  rankOffers?: Maybe<Scalars['Boolean']['output']>;
+  removeCampaigns: RemoveCampaignsResult;
+  removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1283,6 +1403,19 @@ export type MutationCancelTaskArgs = {
 
 export type MutationCreateAutomationRuleArgs = {
   rule: CreateAutomationRuleInput;
+};
+
+
+export type MutationCreateCreativeArgs = {
+  campaignId: Scalars['String']['input'];
+  deliveryMediaId: Scalars['String']['input'];
+  offersIds: Array<Scalars['String']['input']>;
+};
+
+
+export type MutationCreateCreativesAutoArgs = {
+  campaignId: Scalars['String']['input'];
+  deliveryMediaIds: Array<Scalars['String']['input']>;
 };
 
 
@@ -1348,6 +1481,11 @@ export type MutationDeleteNotificationArgs = {
 };
 
 
+export type MutationDeleteOfferArgs = {
+  offerId: Scalars['String']['input'];
+};
+
+
 export type MutationDeleteRecordArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
@@ -1396,6 +1534,21 @@ export type MutationForcePreviewsGenerationArgs = {
 };
 
 
+export type MutationGenerateAndSendJsonToDigitalHubArgs = {
+  campaignId: Scalars['String']['input'];
+};
+
+
+export type MutationGenerateCreativeMasterAssetsArgs = {
+  creativeId: Scalars['String']['input'];
+};
+
+
+export type MutationGenerateCreativesAssetsArgs = {
+  campaignId: Scalars['String']['input'];
+};
+
+
 export type MutationImportConfigArgs = {
   clear?: InputMaybe<Scalars['Boolean']['input']>;
   file: Scalars['Upload']['input'];
@@ -1421,6 +1574,28 @@ export type MutationIndexRecordsArgs = {
 };
 
 
+export type MutationInitRenewCampaignsArgs = {
+  campaigns: Array<CampaignToRenew>;
+  fromPacId: Scalars['String']['input'];
+  method?: InputMaybe<Scalars['String']['input']>;
+  redirectUrl: Scalars['String']['input'];
+  toPacId: Scalars['String']['input'];
+};
+
+
+export type MutationLinkOfferToCampaignArgs = {
+  campaignId: Scalars['String']['input'];
+  offerId: Scalars['String']['input'];
+};
+
+
+export type MutationMoveOrCopyCampaignThematicsArgs = {
+  moveThematic: Scalars['Boolean']['input'];
+  thematics: Array<ThematicToRenew>;
+  toCampaignId: Scalars['String']['input'];
+};
+
+
 export type MutationPostDiscussionCommentArgs = {
   comment?: InputMaybe<DiscussionCommentInput>;
 };
@@ -1439,6 +1614,22 @@ export type MutationPurgeMultipleValuesArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
+};
+
+
+export type MutationRankOffersArgs = {
+  campaignId: Scalars['String']['input'];
+  orderedOfferIds: Array<Scalars['String']['input']>;
+};
+
+
+export type MutationRemoveCampaignsArgs = {
+  campaignsIds: Array<Scalars['ID']['input']>;
+};
+
+
+export type MutationRemoveStructureItemsArgs = {
+  structureItemIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1577,6 +1768,7 @@ export type Notification = {
   relatedEntities?: Maybe<Array<RelatedEntity>>;
   taskId?: Maybe<Scalars['ID']['output']>;
   title: Scalars['String']['output'];
+  trackingEvents?: Maybe<Array<NotificationTrackingEvent>>;
 };
 
 export enum NotificationLevel {
@@ -1586,9 +1778,24 @@ export enum NotificationLevel {
   warning = 'warning'
 }
 
+export type NotificationTrackingEvent = {
+  action: Scalars['String']['output'];
+  category: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  value?: Maybe<Scalars['Int']['output']>;
+};
+
 export type NotificationsList = {
   list: Array<Notification>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type Offer = {
+  digram: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  imagePreview?: Maybe<ImagePreview>;
+  label: Scalars['String']['output'];
+  sublabel: Scalars['String']['output'];
 };
 
 export type Pagination = {
@@ -1777,6 +1984,12 @@ export type Query = {
   automationRuleForm: AutomationRuleForm;
   automationRules: AutomationRulesList;
   availableActions?: Maybe<Array<Action>>;
+  calculatedCampaignAssetsNumber?: Maybe<Scalars['Int']['output']>;
+  campaign?: Maybe<Campaign>;
+  campaignMasterStore?: Maybe<Store>;
+  campaigns: Array<Campaign>;
+  creative?: Maybe<Creative>;
+  deliveryMedia?: Maybe<DeliveryMedia>;
   doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
   export: Scalars['String']['output'];
   forms?: Maybe<FormsList>;
@@ -1840,6 +2053,31 @@ export type QueryAutomationRulesArgs = {
   filters?: InputMaybe<AutomationRulesFiltersInput>;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<AutomationRulesSortInput>;
+};
+
+
+export type QueryCalculatedCampaignAssetsNumberArgs = {
+  campaignId: Scalars['String']['input'];
+};
+
+
+export type QueryCampaignArgs = {
+  campaignId: Scalars['String']['input'];
+};
+
+
+export type QueryCampaignMasterStoreArgs = {
+  campaignId: Scalars['String']['input'];
+};
+
+
+export type QueryCreativeArgs = {
+  creativeId: Scalars['String']['input'];
+};
+
+
+export type QueryDeliveryMediaArgs = {
+  deliveryMediaId: Scalars['String']['input'];
 };
 
 
@@ -2226,6 +2464,18 @@ export type RelatedEntity = {
   url: Scalars['String']['output'];
 };
 
+export type RenewCampaignResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+  thematic_id: Scalars['ID']['output'];
+};
+
+export type SaveCampaignsDatesResult = {
+  campaign_id: Scalars['ID']['output'];
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<GenericValue>;
+};
+
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -2361,6 +2611,12 @@ export type StandardStringValuesListConf = {
 
 export type StandardValuesListConf = StandardDateRangeValuesListConf | StandardStringValuesListConf;
 
+export type Store = {
+  deliveryMedia: DeliveryMedia;
+  id: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+};
+
 export type StreamProgress = {
   delta?: Maybe<Scalars['Int']['output']>;
   eta?: Maybe<Scalars['Int']['output']>;
@@ -2374,6 +2630,8 @@ export type StreamProgress = {
 
 export type Subscription = {
   applicationEvent: ApplicationEvent;
+  assetState?: Maybe<Scalars['String']['output']>;
+  campaignAssetGenerationState?: Maybe<CampaignAssetGenerationState>;
   notification: Notification;
   recordNewComment: RecordNewCommentEvent;
   recordUpdate: RecordUpdateEvent;
@@ -2385,6 +2643,17 @@ export type Subscription = {
 
 export type SubscriptionApplicationEventArgs = {
   filters?: InputMaybe<ApplicationEventFiltersInput>;
+};
+
+
+export type SubscriptionAssetStateArgs = {
+  campaignId?: InputMaybe<Scalars['String']['input']>;
+  creativeId?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type SubscriptionCampaignAssetGenerationStateArgs = {
+  campaignId: Scalars['String']['input'];
 };
 
 
@@ -2470,6 +2739,20 @@ export enum TaskType {
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type Template = {
+  deliveryMedia: DeliveryMedia;
+  format: Scalars['String']['output'];
+  id: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  offersCount: Scalars['Int']['output'];
+  storeSpecific: Scalars['Boolean']['output'];
+};
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
 };
 
 export type Tree = {
@@ -3081,6 +3364,16 @@ export type ViewsV2List = {
   totalCount: Scalars['Int']['output'];
 };
 
+export type RemoveCampaignsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
+};
+
+export type RemoveStructureItemsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
+};
+
 export type SaveValueBatchResult = {
   errors?: Maybe<Array<ValueBatchError>>;
   values?: Maybe<Array<GenericValue>>;
@@ -3206,12 +3499,12 @@ export type DeleteAllUserNotificationsMutation = { deleteAllNotifications: Array
 export type GetUserNotificationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserNotificationsQuery = { notifications: { list: Array<{ id: string, date: number, level: NotificationLevel, message: string, title: string, attachments?: Array<{ label: string, url: string }> | null, relatedEntities?: Array<{ label: string, url: string }> | null }> } };
+export type GetUserNotificationsQuery = { notifications: { list: Array<{ id: string, date: number, level: NotificationLevel, message: string, title: string, attachments?: Array<{ label: string, url: string, trackingEvent?: { category: string, action: string, name?: string | null, value?: number | null } | null }> | null, relatedEntities?: Array<{ label: string, url: string }> | null }> } };
 
 export type SubscribeToUserNotificationsSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SubscribeToUserNotificationsSubscription = { notification: { id: string, date: number, level: NotificationLevel, message: string, title: string, attachments?: Array<{ label: string, url: string }> | null, relatedEntities?: Array<{ label: string, url: string }> | null } };
+export type SubscribeToUserNotificationsSubscription = { notification: { id: string, date: number, level: NotificationLevel, message: string, title: string, attachments?: Array<{ label: string, url: string, trackingEvent?: { category: string, action: string, name?: string | null, value?: number | null } | null }> | null, relatedEntities?: Array<{ label: string, url: string }> | null } };
 
 export type ArchiveUserTasksMutationVariables = Exact<{
   tasks: Array<DeleteTaskInput> | DeleteTaskInput;
@@ -4113,6 +4406,12 @@ export const GetUserNotificationsDocument = gql`
       attachments {
         label
         url
+        trackingEvent {
+          category
+          action
+          name
+          value
+        }
       }
       relatedEntities {
         label
@@ -4168,6 +4467,12 @@ export const SubscribeToUserNotificationsDocument = gql`
     attachments {
       label
       url
+      trackingEvent {
+        category
+        action
+        name
+        value
+      }
     }
     relatedEntities {
       label

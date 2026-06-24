@@ -122,12 +122,12 @@ export default function ({
                     }
                     
                     extend type Mutation {
-                        fakePluginCreateNotification(title: String!): ID!
+                        fakePluginCreateNotification(title: String!, withTracking: Boolean): ID!
                     }
                 `,
                 resolvers: {
                     Mutation: {
-                        fakePluginCreateNotification: async (_parent, {title}, ctx): Promise<string> =>
+                        fakePluginCreateNotification: async (_parent, {title, withTracking}, ctx): Promise<string> =>
                             (
                                 await notificationDomain.createNotification(
                                     {
@@ -138,11 +138,36 @@ export default function ({
                                         },
                                         metadata: {
                                             priority: 'normal',
+                                            ...(withTracking
+                                                ? {
+                                                      trackingEvents: [
+                                                          {
+                                                              category: 'Planning - Reconduction',
+                                                              action: 'Reconduction Campagne Effectuée',
+                                                              value: 1,
+                                                          },
+                                                      ],
+                                                  }
+                                                : {}),
                                         },
                                         content: {
                                             level: 'info',
                                             title,
                                             message: 'message',
+                                            ...(withTracking
+                                                ? {
+                                                      attachments: [
+                                                          {
+                                                              label: 'report',
+                                                              url: 'https://example.com/report.csv',
+                                                              trackingEvent: {
+                                                                  category: 'Planning - Reconduction',
+                                                                  action: 'Rapport Erreur Reconduction Ouvert',
+                                                              },
+                                                          },
+                                                      ],
+                                                  }
+                                                : {}),
                                         },
                                     },
                                     ctx,

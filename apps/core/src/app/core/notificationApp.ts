@@ -45,12 +45,20 @@ export default function ({
 
                     type Attachment {
                         url: String!,
-                        label: String!
+                        label: String!,
+                        trackingEvent: NotificationTrackingEvent
                     }
                    
                    type NotificationsList {
                         totalCount: Int!
                         list: [Notification!]!
+                    }
+
+                    type NotificationTrackingEvent {
+                        category: String!,
+                        action: String!,
+                        name: String,
+                        value: Int
                     }
                          
                     type Notification {
@@ -62,6 +70,7 @@ export default function ({
                         relatedEntities: [RelatedEntity!],
                         attachments: [Attachment!],
                         taskId: ID
+                        trackingEvents: [NotificationTrackingEvent!]
                     }
 
                     extend type Query {

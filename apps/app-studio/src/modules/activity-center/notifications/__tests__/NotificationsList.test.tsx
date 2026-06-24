@@ -16,6 +16,12 @@ jest.mock('../delete-user-notifications/useDeleteUserNotifications', () => ({
     useDeleteUserNotifications: () => ({deleteUserNotifications: mockUseDeleteUserNotifications}),
 }));
 
+const mockTrackNotificationEvents = jest.fn();
+
+jest.mock('../../../../services/analytics', () => ({
+    trackNotificationEvents: (...args: unknown[]) => mockTrackNotificationEvents(...args),
+}));
+
 const mockOpenConfirmModal = jest.fn(({onOk}) => onOk?.());
 
 jest.mock('_ui/hooks', () => ({
@@ -349,6 +355,74 @@ describe('NotificationsList', () => {
             render(<NotificationsList />);
 
             expect(screen.queryByRole('button', {name: 'global.download'})).not.toBeInTheDocument();
+        });
+
+        it('should emit trackingEvent with notification center source when download is clicked', async () => {
+            const windowOpenSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
+            const notification = createMockNotification({
+                level: NotificationLevel.error,
+                title: 'Avec pièce jointe',
+                message: 'Message',
+                attachments: [
+                    {
+                        label: 'Rapport',
+                        url: 'https://example.com/report.csv',
+                        trackingEvent: {
+                            category: 'Planning - Reconduction',
+                            action: 'Rapport Erreur Reconduction Ouvert',
+                            name: null,
+                            value: null,
+                        },
+                    },
+                ],
+            });
+            mockUseGetUserNotifications.mockReturnValue({
+                userNotifications: [notification],
+                loading: false,
+                error: undefined,
+                removeNotifications: mockRemoveNotifications,
+            });
+
+            render(<NotificationsList />);
+
+            await userEvent.click(screen.getByRole('button', {name: 'global.download'}));
+
+            expect(mockTrackNotificationEvents).toHaveBeenCalledWith([
+                {
+                    category: 'Planning - Reconduction',
+                    action: 'Rapport Erreur Reconduction Ouvert',
+                    name: 'Source : Centre de notifications',
+                    value: null,
+                },
+            ]);
+            expect(windowOpenSpy).toHaveBeenCalledWith('https://example.com/report.csv', '_blank');
+
+            windowOpenSpy.mockRestore();
+        });
+
+        it('should not emit trackingEvent when attachment has none', async () => {
+            const windowOpenSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
+            const notification = createMockNotification({
+                level: NotificationLevel.success,
+                title: 'Sans tracking',
+                message: 'Message',
+                attachments: [{label: 'Fichier', url: 'https://example.com/file.pdf'}],
+            });
+            mockUseGetUserNotifications.mockReturnValue({
+                userNotifications: [notification],
+                loading: false,
+                error: undefined,
+                removeNotifications: mockRemoveNotifications,
+            });
+
+            render(<NotificationsList />);
+
+            await userEvent.click(screen.getByRole('button', {name: 'global.download'}));
+
+            expect(mockTrackNotificationEvents).not.toHaveBeenCalled();
+            expect(windowOpenSpy).toHaveBeenCalledWith('https://example.com/file.pdf', '_blank');
+
+            windowOpenSpy.mockRestore();
         });
 
         it('should display show button when notification has related entities', () => {

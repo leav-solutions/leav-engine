@@ -73,3 +73,6 @@ export const SUBMIT_BUTTONS_PORTAL = 'submit_buttons_portal';
 export const NEW_RECORD_ID = 'newRecord';
 
 export const BREAK_TWO_LINES = '\n\n';
+
+export const NOTIFICATION_POPUP_TRACKING_SOURCE = 'Source : Notification pop up';
+export const NOTIFICATION_CENTER_TRACKING_SOURCE = 'Source : Centre de notifications';

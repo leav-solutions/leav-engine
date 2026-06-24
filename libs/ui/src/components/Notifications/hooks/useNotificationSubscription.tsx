@@ -4,16 +4,28 @@ import {KitButton, KitSpace, KitNotification, KitTypography} from 'aristid-ds';
 import dayjs from 'dayjs';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faDownload} from '@fortawesome/free-solid-svg-icons';
-import {SUBSCRIPTION_NOTIFICATION_DURATION} from '_ui/constants';
+import {NOTIFICATION_POPUP_TRACKING_SOURCE, SUBSCRIPTION_NOTIFICATION_DURATION} from '_ui/constants';
 
-export const useNotificationsSubscription = () => {
+export interface INotificationTrackingEvent {
+    category: string;
+    action: string;
+    name?: string | null;
+    value?: number | null;
+}
+
+export const useNotificationsSubscription = (onTrackingEvents?: (events: INotificationTrackingEvent[]) => void) => {
     const {t} = useSharedTranslation();
     return useNotificationSubscription({
         onData: ({data}) => {
             if (!data?.data?.notification?.title) {
                 return;
             }
-            const {level, title, message, attachments, relatedEntities, date} = data.data.notification;
+            const {level, title, message, attachments, relatedEntities, date, trackingEvents} = data.data.notification;
+
+            if (trackingEvents?.length && onTrackingEvents) {
+                onTrackingEvents(trackingEvents);
+            }
+
             const kitNotificationLevel = typeof KitNotification[level] === 'function' ? level : 'info';
 
             KitNotification[kitNotificationLevel]({
@@ -32,7 +44,14 @@ export const useNotificationsSubscription = () => {
                             <KitButton
                                 key={attachment.url}
                                 type="secondary"
-                                onClick={() => window.open(attachment.url, '_blank')}
+                                onClick={() => {
+                                    if (attachment.trackingEvent && onTrackingEvents) {
+                                        onTrackingEvents([
+                                            {...attachment.trackingEvent, name: NOTIFICATION_POPUP_TRACKING_SOURCE},
+                                        ]);
+                                    }
+                                    window.open(attachment.url, '_blank');
+                                }}
                                 icon={<FontAwesomeIcon icon={faDownload} />}
                             >
                                 {t('global.download')}

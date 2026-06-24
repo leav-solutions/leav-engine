@@ -5,7 +5,7 @@ import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IGetCoreEntitiesParams} from '../../_types/shared';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
-import {type INotification} from '../../_types/notification';
+import {type INotification, type INotificationTrackingEvent} from '../../_types/notification';
 import {type IDbDocument} from '../db/_types';
 
 export const NOTIFICATIONS_COLLECTION_NAME = 'core_notifications';
@@ -39,8 +39,10 @@ type INotificationBaseDocument = {
     attachments?: Array<{
         url: string;
         label: string;
+        trackingEvent?: INotificationTrackingEvent;
     }>;
     taskId?: string;
+    trackingEvents?: INotificationTrackingEvent[];
 };
 
 type INotificationDbDocument = INotificationBaseDocument & IDbDocument;

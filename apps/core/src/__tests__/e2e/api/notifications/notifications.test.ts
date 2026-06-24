@@ -6,7 +6,7 @@ describe('Notifications', () => {
 
     beforeAll(async () => {
         const res1 = await makeGraphQlCall(`mutation {
-                fakePluginCreateNotification(title: "notification test") 
+                fakePluginCreateNotification(title: "notification test", withTracking: true)
             }`);
 
         const res2 = await makeGraphQlCall(`mutation {
@@ -24,6 +24,22 @@ describe('Notifications', () => {
                 list {
                     id
                     title
+                    trackingEvents {
+                        category
+                        action
+                        name
+                        value
+                    }
+                    attachments {
+                        label
+                        url
+                        trackingEvent {
+                            category
+                            action
+                            name
+                            value
+                        }
+                    }
                 }
             }
         }`);
@@ -37,6 +53,26 @@ describe('Notifications', () => {
                 expect.objectContaining({
                     id: notificationId1,
                     title: 'notification test',
+                    trackingEvents: [
+                        {
+                            category: 'Planning - Reconduction',
+                            action: 'Reconduction Campagne Effectuée',
+                            name: null,
+                            value: 1,
+                        },
+                    ],
+                    attachments: [
+                        {
+                            label: 'report',
+                            url: 'https://example.com/report.csv',
+                            trackingEvent: {
+                                category: 'Planning - Reconduction',
+                                action: 'Rapport Erreur Reconduction Ouvert',
+                                name: null,
+                                value: null,
+                            },
+                        },
+                    ],
                 }),
                 expect.objectContaining({
                     id: notificationId2,
