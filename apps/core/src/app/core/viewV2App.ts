@@ -97,11 +97,13 @@ export default function ({
                     }
 
                     type ViewV2Sort {
+                        pinned: Boolean!,
                         attributes: [Attribute!]!,
                         order: SortOrder!,
                     }
 
                     input ViewV2SortInput {
+                        pinned: Boolean!,
                         attributes: [ID!]!,
                         order: SortOrder!,
                     }

@@ -269,6 +269,18 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -348,6 +360,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -561,6 +575,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -944,12 +960,19 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1188,6 +1211,7 @@ export enum ViewV2Shortcut {
 export type ViewV2SortInput = {
   attributes: Array<Scalars['ID']['input']>;
   order: SortOrder;
+  pinned: Scalars['Boolean']['input'];
 };
 
 export enum ViewV2Types {
@@ -1482,7 +1506,7 @@ export type GetViewsV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, shortcuts: Array<ViewV2Shortcut>, created_by: { whoAmI: { id: string } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, attributes: Array<{ id: string }> }>, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string }> }> }> } };
+export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, shortcuts: Array<ViewV2Shortcut>, created_by: { whoAmI: { id: string } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, attributes: Array<{ id: string }> }>, sorts: Array<{ pinned: boolean, order: SortOrder, attributes: Array<{ id: string }> }> }> } };
 
 export type GetViewV2QueryVariables = Exact<{
   viewId: Scalars['ID']['input'];
@@ -2025,6 +2049,7 @@ export const GetViewsV2Document = gql`
         condition
       }
       sorts {
+        pinned
         attributes {
           id
         }

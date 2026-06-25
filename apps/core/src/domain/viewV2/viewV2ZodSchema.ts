@@ -25,6 +25,7 @@ const viewV2FilterSchema = z.object({
 });
 
 const viewV2SortSchema = z.object({
+    pinned: z.boolean(),
     attributes: z.array(z.string()).min(1),
     order: z.enum(SortOrder),
 });
