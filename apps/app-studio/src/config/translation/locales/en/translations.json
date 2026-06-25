@@ -137,6 +137,11 @@
         "copy_id": "Copy view ID",
         "copy_id_disabled": "Share the view to be able to copy its ID",
         "id_copied": "View ID copied",
+        "delete_view": "Delete view",
+        "delete_view_confirm_title": "Delete view",
+        "delete_view_confirm_content": "This action is irreversible. Are you sure you want to delete this view?",
+        "delete_view_confirm_content_shared": "This view is shared: deleting it will remove it for every user who has access to it. This action is irreversible. Are you sure you want to delete it?",
+        "delete_view_success": "View deleted",
         "unsaved_changes": {
             "title": "Unsaved changes",
             "content": "You have made changes to the current view. Do you want to save them before switching views so you don't lose them?",

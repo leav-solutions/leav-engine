@@ -322,15 +322,29 @@ import {container} from './styles.module.css';
 "manage_available": "Manage available attributes"
 ```
 
-- In **French** translation files, use the typographic apostrophe `’` (U+2019) instead of the straight quote `'` (U+0027).
+- In **French** translation files, apply the following typography rules:
+    - Typographic apostrophe `’` (U+2019) instead of the straight quote `’` (U+0027)
+    - Non-breaking space (U+00A0) before double punctuation marks ` :`, ` ;`, ` ?`, ` !`
+    - French quotation marks `«` / `»` (U+00AB / U+00BB) with a non-breaking space inside
+    - Non-breaking space before `%`
 
 ```json
-// Bad — straight quote
-"label": "Copier l'identifiant de la vue"
+// Bad
+"confirm": "Etes-vous sûr ?",
+"error": "Erreur: champ requis",
+"quote": "Cliquez sur \"Valider\"",
+"progress": "50% des éléments sélectionnés",
+"copy": "Copier l’identifiant"
 
-// Good — typographic apostrophe
-"label": "Copier l’identifiant de la vue"
+// Good
+"confirm": "Êtes-vous sûr ?",
+"error": "Erreur : champ requis",
+"quote": "Cliquez sur « Valider »",
+"progress": "50 % des éléments sélectionnés",
+"copy": "Copier l’identifiant"
 ```
+
+> For all other French typography rules, refer to the [Lexique des règles typographiques en usage à l'Imprimerie nationale](https://fr.wikipedia.org/wiki/Lexique_des_r%C3%A8gles_typographiques_en_usage_%C3%A0_l%27Imprimerie_nationale).
 
 # GraphQL
 

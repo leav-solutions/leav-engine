@@ -39,6 +39,10 @@
     color: var(--general-colors-primary-300);
 }
 
+.dangerIcon {
+    color: var(--general-utilities-error-default);
+}
+
 .emptyBadge {
     --components-Badge-colors-background-default: var(--general-utilities-neutral-light);
     --components-Badge-colors-typography-default: var(--general-utilities-text-primary);

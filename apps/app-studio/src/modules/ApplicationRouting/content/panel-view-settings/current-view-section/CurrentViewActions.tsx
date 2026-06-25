@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {KitBadge, KitButton, KitTooltip} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faClone, faRotateLeft, faSave, faTrash} from '@fortawesome/free-solid-svg-icons';
+import {faClone, faRotateLeft, faSave} from '@fortawesome/free-solid-svg-icons';
 import {useLang} from '@leav/ui';
 import {useCurrentView} from '../store-current-view/useCurrentView';
 import {useCurrentViewActions} from './useCurrentViewActions';
@@ -101,19 +101,6 @@ export const CurrentViewActions = ({canEditAdminView}: {canEditAdminView: boolea
                 )}
                 {saveAsButton}
                 {resetButton}
-                {/* TODO: Implement deletion functionality in LEAVC-934 */}
-                {isOwner && (
-                    <KitTooltip title={String(t('view_settings.current_view.delete'))}>
-                        <KitButton
-                            type="secondary"
-                            size="m"
-                            disabled
-                            danger
-                            aria-label={String(t('view_settings.current_view.delete'))}
-                            icon={<FontAwesomeIcon icon={faTrash} />}
-                        />
-                    </KitTooltip>
-                )}
             </div>
             {saveAsModal}
         </div>
