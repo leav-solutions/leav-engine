@@ -1009,7 +1009,7 @@ build-docker-mcp-runtime:
         VERSION="$BASE_VERSION-$CI_COMMIT_SHORT_SHA"
       fi
       echo "Check if version $PKG@$VERSION already exists on registry"
-      EXISTS=$(yarn npm info "$PKG" --fields versions --json 2>/dev/null | jq -r --arg v "$VERSION" '.versions | index($v) // empty')
+      EXISTS=$(yarn npm info "$PKG" --fields versions --json 2>/dev/null | jq -r --arg v "$VERSION" '.versions | index($v) // empty' || true)
       if [ -n "$EXISTS" ]; then
         echo "Version $PKG@$VERSION already exists on registry, skipping publish."
       else
