@@ -13,9 +13,8 @@ import {
 } from '../../../_gqlTypes';
 
 vi.mock('../../../config/router/adminRouter', async () => {
-    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
     const React = await vi.importActual<typeof import('react')>('react');
-    // eslint-disable-next-line @typescript-eslint/consistent-type-imports
+
     const {createMemoryRouter} = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
     return {
         adminRouter: createMemoryRouter([{path: '/', element: React.createElement('div', null, 'Home')}]),

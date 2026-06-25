@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import {aql} from 'arangojs';
 import {join, type GeneratedAqlQuery} from 'arangojs/aql';
 import {

@@ -13,7 +13,6 @@ import {type SendRecordUpdateEventHelper} from '../record/helpers/sendRecordUpda
 import {type ITreeDomain} from '../tree/treeDomain';
 import {type IValueDomain} from '../value/valueDomain';
 
-// eslint-disable-next-line import/extensions
 import {type FileUpload} from 'graphql-upload/Upload.mjs';
 import {type i18n} from 'i18next';
 import {type IRecordRepo} from '../../infra/record/recordRepo';

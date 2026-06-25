@@ -8,7 +8,6 @@ interface IDeps {
     'core.domain.attribute'?: IAttributeDomain;
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type ActionParams = {
     Formula: true;
     Description: true;

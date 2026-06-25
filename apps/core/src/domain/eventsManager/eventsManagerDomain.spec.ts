@@ -9,8 +9,8 @@ import eventsManager, {type IEventsManagerDomainDeps} from './eventsManagerDomai
 import {type ILogger} from '@leav/logger';
 
 const logger: Mockify<ILogger> = {
-    error: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
-    warn: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
+    error: vi.fn((...args) => console.log(args)),
+    warn: vi.fn((...args) => console.log(args)),
 };
 
 const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {

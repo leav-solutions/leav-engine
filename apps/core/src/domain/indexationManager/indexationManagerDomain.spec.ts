@@ -39,7 +39,7 @@ const ctx: IQueryInfos = {
 };
 
 const mockLogger: Mockify<ILogger> = {
-    info: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
+    info: vi.fn((...args) => console.log(args)),
 };
 
 const depsBase: ToAny<IIndexationManagerDomainDeps> = {

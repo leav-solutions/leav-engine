@@ -24,7 +24,6 @@ export interface IEncodedMessage {
     [packetId]: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ComponentPropsWithKey<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>> =
     ComponentProps<T> & {
         key?: Key;

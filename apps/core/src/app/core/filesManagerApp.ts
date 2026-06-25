@@ -4,7 +4,6 @@ import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManage
 import express, {Express, type NextFunction, type Response} from 'express';
 import {withFilter} from 'graphql-subscriptions';
 
-// eslint-disable-next-line import/extensions
 import {type FileUpload} from 'graphql-upload/Upload.mjs';
 import {type IConfig} from '../../_types/config';
 import {type IRequestWithContext} from '../../_types/express';

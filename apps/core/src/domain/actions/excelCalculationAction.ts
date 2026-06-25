@@ -20,7 +20,6 @@ interface IDeps {
 
 type ActionsListExcelValueType = string | number | boolean | {};
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type ActionParams = {
     Formula: true;
     Description: true;
