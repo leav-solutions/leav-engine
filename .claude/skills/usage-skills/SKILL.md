@@ -18,7 +18,7 @@ Les invocations de skills sont persistées dans les transcripts JSONL :
 Chaque appel de skill est une entrée `assistant` contenant un `tool_use` dont :
 
 - `name` == `"Skill"`
-- `input.skill` == le nom du skill invoqué (ex. `create-worktree-skill`)
+- `input.skill` == le nom du skill invoqué (ex. `create-worktree`)
 
 Le timestamp ISO de l'entrée est le champ top-level `.timestamp` (ex. `2026-06-16T09:12:00.000Z`).
 
@@ -58,9 +58,9 @@ grep -rh '"name":"Skill"' ~/.claude/projects/*/*.jsonl 2>/dev/null \
 
 Tableau markdown trié décroissant + total, ex. :
 
-| Skill                   | Invocations |
-| ----------------------- | ----------- |
-| `create-worktree-skill` | 4           |
-| ...                     | ...         |
+| Skill             | Invocations |
+| ----------------- | ----------- |
+| `create-worktree` | 4           |
+| ...               | ...         |
 
 Toujours rappeler la période couverte et le caveat transcripts locaux.
