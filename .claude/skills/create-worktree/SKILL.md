@@ -1,5 +1,5 @@
 ---
-name: create-worktree-skill
+name: create-worktree
 description: Work on a different git branch via a temporary git worktree, without touching the current working tree. Triggers when the user wants to keep their current WIP intact while editing/amending/pushing somewhere else — e.g. "travaillons dans un git worktree", "je voudrais revenir sur une branche sans toucher à ma branche actuelle", "applique ça sur la branche X", "let's use a worktree to amend Y". Do NOT trigger for a plain branch switch where the user has no WIP to protect.
 ---
 
