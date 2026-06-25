@@ -62,7 +62,7 @@ export const ExportProfileSelectionModal: FunctionComponent<IExportProfileSelect
     const selectedProfileData = profiles.find(p => p.label === selectedProfile);
 
     const noProfiles = !queryLoading && !profiles?.length;
-    const hasProfiles = !queryLoading && profiles?.length;
+    const hasProfiles = !queryLoading && Boolean(profiles?.length);
 
     return (
         <KitModal
