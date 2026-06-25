@@ -20,7 +20,7 @@ describe('SDO Exports', () => {
             library: {
                 id: SDO_EXPORTS_LIBRARY_ID,
                 label: {fr: 'Test SDO', en: 'Test SDO'},
-                attributes: ['hash_sdo'],
+                attributes: ['hash_sdo', 'label'],
             },
         });
 
@@ -73,6 +73,7 @@ describe('SDO Exports', () => {
                     systemCreationDate: expect.any(Number),
                     systemLastModifiedDate: expect.any(Number),
                     systemSdoHash: null,
+                    systemLabel: null,
                 },
             },
         });
