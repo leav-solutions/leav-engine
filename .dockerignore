@@ -6,7 +6,6 @@
 /.gitlab-ci.yml
 /.prettierrc
 /.prettierignore
-/.eslintrc.js
 /.editorconfig
 /.dockerignore
 /.gitattributes
@@ -30,6 +29,7 @@
 **/jest-*config.json
 **/*.tsbuildinfo
 **/*.md
+/eslint.config.mjs
 /jestModuleNameMapper.js
 /commitlint.config.cjs
 /renovate.json

@@ -31,5 +31,5 @@
         "outDir": "dist",
         "useUnknownInCatchVariables": false
     },
-    "exclude": ["node_modules", "**/dist/**/*", "./.eslintrc.js"]
+    "exclude": ["node_modules", "**/dist/**/*", "./eslint.config.mjs"]
 }

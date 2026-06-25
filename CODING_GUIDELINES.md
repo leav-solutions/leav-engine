@@ -100,7 +100,7 @@ function calculateAverage(numbers: number[]): number {
 
 ### TypeScript
 
-Enforced by ESLint (`.eslintrc.js`, rule `@typescript-eslint/naming-convention`).
+Enforced by ESLint (`eslint.config.mjs`, rule `@typescript-eslint/naming-convention`).
 
 | Element           | Convention                                  | Example                    |
 | ----------------- | ------------------------------------------- | -------------------------- |
