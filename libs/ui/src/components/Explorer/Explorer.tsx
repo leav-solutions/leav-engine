@@ -11,7 +11,6 @@ import {type JoinLibraryContextFragment} from '_ui/_gqlTypes';
 import {
     type DefaultViewSettings,
     type Entrypoint,
-    type FiltersChangePayload,
     type IItemAction,
     type IMassActions,
     type IPrimaryAction,
@@ -44,7 +43,6 @@ import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {MASS_SELECTION_ALL, SNACKBAR_MASS_ID} from './_constants';
 import {useExplorerCountData} from './_queries/useExplorerCountData';
-import {useLoadViewById} from './useLoadViewById';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -108,7 +106,6 @@ export interface IExplorerProps {
             generatePreviews?: IMassActions['callback'];
         };
         viewSettings?: {
-            onFiltersChange?: (payload: FiltersChangePayload) => void;
             onViewSettingsShortcutClick?: ({
                 settingName,
                 viewId,
@@ -138,9 +135,6 @@ export interface IExplorerProps {
     tableBodyHeight?: string;
     creationFormId?: string;
     joinLibraryContext?: JoinLibraryContextFragment;
-
-    // ViewConfig specific props
-    loadedViewId?: string | null;
 }
 
 export interface IExplorerRef {
@@ -180,7 +174,6 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             defaultCallbacks,
             defaultViewSettings,
             joinLibraryContext,
-            loadedViewId,
         },
         ref,
     ) => {
@@ -201,14 +194,6 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             filtersOperator: defaultViewSettings?.filtersOperator ?? undefined,
             ignoreViewByDefault,
             skip: viewSettingsLoading,
-        });
-
-        useLoadViewById({
-            loadedViewId,
-            isLoading: viewSettingsLoading,
-            view,
-            viewSettingsDispatch,
-            filtersDispatch,
         });
 
         const {currentPage, setNewPageSize, setNewPage} = usePagination(viewSettingsDispatch);

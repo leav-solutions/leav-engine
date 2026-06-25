@@ -78,11 +78,6 @@ export type SerializedView = DefaultViewSettings;
 
 export type ViewSettingsShortcuts = z.infer<typeof ViewSettingsTabSchema>;
 
-export type FiltersChangePayload = {
-    filters: UIFilter[];
-    filtersOperator: 'AND' | 'OR';
-};
-
 export interface IEntrypointTree {
     type: 'tree';
     treeId: string;
