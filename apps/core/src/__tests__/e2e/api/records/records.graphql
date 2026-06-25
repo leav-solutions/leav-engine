@@ -18,6 +18,7 @@ mutation CreateRecord($library: ID!, $data: CreateRecordDataInput) {
         }
         record {
             id
+            uuid
         }
     }
 }
@@ -31,5 +32,19 @@ mutation DeleteRecord($id: ID, $library: ID) {
 mutation PurgeInactiveRecords($libraryId: String!) {
     purgeInactiveRecords(libraryId: $libraryId) {
         id
+    }
+}
+
+query GetRecordByUUID($libraryId: ID!, $recordUUID: String!, $retrieveInactive: Boolean) {
+    records(
+        library: $libraryId
+        filters: [{field: "uuid", condition: EQUAL, value: $recordUUID}]
+        retrieveInactive: $retrieveInactive
+    ) {
+        list {
+            id
+            uuid
+            active
+        }
     }
 }

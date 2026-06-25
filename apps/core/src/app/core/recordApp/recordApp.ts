@@ -121,6 +121,7 @@ export default function ({
 
                     type Record {
                         id: ID!,
+                        uuid: ID!,
                         created_at: Int!,
                         created_by: Record!,
                         modified_at: Int!,

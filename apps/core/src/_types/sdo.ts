@@ -9,7 +9,7 @@ export interface ISDO {
     date: number;
     action: SDOAction;
     content: {
-        identifier?: {uuid: string};
+        system: {systemId: string; [attributePath: string]: unknown};
         [attributePath: string]: unknown;
     };
 }
@@ -30,7 +30,7 @@ export interface IBuffer {
 
 export type SDOMappingAttributeFormat = 'number' | 'integer' | 'boolean' | 'string' | 'array' | 'object';
 
-export const sdoPathIdentifierUuid = 'identifier.uuid' as const;
+export const sdoPathIdentifierUuid = 'system.systemId' as const;
 
 export interface ISDOMappingAttribute {
     leavAttributeId: string;

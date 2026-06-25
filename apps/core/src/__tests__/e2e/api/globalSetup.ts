@@ -29,6 +29,8 @@ import {GUEST_USER_EMAIL, NON_ADMIN_USER_EMAIL} from './constants';
 import {type ICorePluginsApp} from '../../../app/core/pluginsApp';
 import {type TestProject} from 'vitest/node';
 import {CommonAttributes, UsersAttributes} from '../../../_constants/systemAttributes';
+import {type IAttributeDomain} from '../../../domain/attribute/attributeDomain';
+import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
@@ -104,6 +106,22 @@ const _createRequiredDirectories = async conf => {
     if (!fsremaned.existsSync(filesDir)) {
         await fsremaned.promises.mkdir(filesDir);
     }
+};
+
+const _createHashSDOAttribute = async (coreContainer: AwilixContainer) => {
+    const attributeDomain: IAttributeDomain = coreContainer.cradle['core.domain.attribute'];
+    const getSystemQueryContext: GetSystemQueryContext = coreContainer.cradle['core.utils.getSystemQueryContext'];
+    const systemCtx = getSystemQueryContext();
+
+    await attributeDomain.saveAttribute({
+        attrData: {
+            id: 'hash_sdo',
+            type: AttributeTypes.SIMPLE,
+            format: AttributeFormats.TEXT,
+            label: {fr: 'Hash SDO', en: 'SDO Hash'},
+        },
+        ctx: systemCtx,
+    });
 };
 
 const _createUsersAndGroups = async (coreContainer: AwilixContainer, project: TestProject) => {
@@ -202,6 +220,8 @@ export async function setup(project: TestProject) {
         await sdo.init();
 
         await _createUsersAndGroups(coreContainer, project);
+
+        await _createHashSDOAttribute(coreContainer); // to be removed when hash_sdo attribute is no longer used.
     } catch (e) {
         console.error(e);
         console.error(e.stack);

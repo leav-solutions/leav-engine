@@ -12,8 +12,8 @@ export const mockSDO: ISDO = {
     date: Date.now(),
     action: 'CREATE',
     content: {
-        identifier: {
-            uuid: '1',
+        system: {
+            systemId: '1',
         },
         simple: '123',
         simple_link: '1',
@@ -34,7 +34,7 @@ export const mockSDOMapping: ISDOMapping = {
     ['test']: {
         leavLibraryId: 'leavLibraryId',
         sdoAttributes: {
-            'identifier.uuid': {
+            'system.systemId': {
                 leavAttributeId: 'uuid',
                 valueRequired: false,
                 format: 'string',
