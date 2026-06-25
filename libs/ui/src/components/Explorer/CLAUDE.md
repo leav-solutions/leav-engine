@@ -83,8 +83,8 @@ Explorer v1 **possède** son état de vue. Trois briques :
 2. **Deux contextes** : `ViewSettingsContext` (`{view, dispatch}`) et `FiltersContext`
    (`useFiltersReducer` — filtres + pré-filtres masqués `hidden:true`).
 3. **Hydratation asynchrone** : charge les vues de la library (`useGetViewsList`) → résout
-   `viewId` (ou la dernière vue ajoutée si `ignoreViewByDefault` ≠ true, voir `useLoadView` /
-   `useLoadViewById`) → charge la méta des attributs → `dispatch(RESET)` une fois tout prêt
+   `viewId` (ou la dernière vue ajoutée si `ignoreViewByDefault` ≠ true, voir `useLoadView`)
+   → charge la méta des attributs → `dispatch(RESET)` une fois tout prêt
    (`loading === false`).
 
 **État éphémère NON persisté dans la vue** : sélection de masse (constante `MASS_SELECTION_ALL`
