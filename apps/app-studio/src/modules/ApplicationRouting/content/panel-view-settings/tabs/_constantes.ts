@@ -16,3 +16,5 @@ export const VIEW_SETTINGS_TABS: readonly ViewSettingsTabConfig[] = SHARED_VIEW_
     icon,
     labelKey: LABEL_KEY_BY_TAB[key],
 }));
+
+export const EDIT_AVAILABLE_ATTRIBUTES_IN_HEADER_TABS = ['sorts', 'filters'];

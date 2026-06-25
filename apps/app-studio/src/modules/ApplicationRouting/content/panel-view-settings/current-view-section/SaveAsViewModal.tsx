@@ -4,7 +4,7 @@ import {KitButton, KitInput, KitModal} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTimes, faSave} from '@fortawesome/free-solid-svg-icons';
 
-export const ForkViewModal = ({
+export const SaveAsViewModal = ({
     isOpen,
     onClose,
     onSubmit,
@@ -36,7 +36,7 @@ export const ForkViewModal = ({
     return (
         <KitModal
             appElement={document.getElementById('root')}
-            title={String(t('view_settings.current_view.clone_modal_title'))}
+            title={String(t('view_settings.current_view.save_as_modal_title'))}
             showCloseIcon={false}
             isOpen={isOpen}
             close={handleClose}
@@ -59,7 +59,7 @@ export const ForkViewModal = ({
             <KitInput
                 autoFocus
                 value={name}
-                placeholder={String(t('view_settings.current_view.clone_modal_placeholder'))}
+                placeholder={String(t('view_settings.current_view.save_as_modal_placeholder'))}
                 onChange={event => setName(event.target.value)}
                 onPressEnter={event => {
                     // Prevent the Enter key's default action from re-activating the trigger button:

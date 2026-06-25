@@ -1,7 +1,7 @@
 import {KitAlert} from 'aristid-ds';
 import {act, renderHook} from '_ui/_tests/testUtils';
 import * as generated from '../../../../../../__generated__';
-import {ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
+import {SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
 import {useCurrentViewActions} from '../useCurrentViewActions';
 
 const mockUpdate = jest.fn();
@@ -53,6 +53,10 @@ beforeEach(() => {
                 {visible: false, attribute: {id: 'b'}},
             ],
         },
+        sorts: [
+            {order: SortOrder.asc, attributes: [{id: 'a'}]},
+            {order: SortOrder.desc, attributes: [{id: 'campagnes'}, {id: 'thematiques'}]},
+        ],
         shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters],
     };
     mockUpdate.mockResolvedValue({data: {updateViewV2: echoView}});
@@ -69,9 +73,14 @@ const mappedDisplay = {
     ],
 };
 
+const mappedSorts = [
+    {attributes: ['a'], order: SortOrder.asc},
+    {attributes: ['campagnes', 'thematiques'], order: SortOrder.desc},
+];
+
 describe('useCurrentViewActions', () => {
     describe('save', () => {
-        it('updates with the full label + mapped display, echoes LOAD_VIEW and notifies success', async () => {
+        it('updates with the full label + mapped display + mapped sorts, echoes LOAD_VIEW and notifies success', async () => {
             const {result} = renderHook(() => useCurrentViewActions());
 
             await act(async () => {
@@ -85,6 +94,7 @@ describe('useCurrentViewActions', () => {
                             id: 'view-1',
                             label: {fr: 'V', en: 'V-en'},
                             display: mappedDisplay,
+                            sorts: mappedSorts,
                             shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters],
                         },
                     },
@@ -108,12 +118,12 @@ describe('useCurrentViewActions', () => {
         });
     });
 
-    describe('fork', () => {
-        it('creates an independent view (name on every lang, shared false, empty filters/sorts) and switches to it', async () => {
+    describe('saveAs', () => {
+        it('creates an independent view (name on every lang, shared false, current sorts, empty filters) and switches to it', async () => {
             const {result} = renderHook(() => useCurrentViewActions());
 
             await act(async () => {
-                await result.current.fork('Ma copie');
+                await result.current.saveAs('Ma copie');
             });
 
             expect(mockCreate).toHaveBeenCalledWith(
@@ -125,7 +135,7 @@ describe('useCurrentViewActions', () => {
                             shared: false,
                             display: mappedDisplay,
                             filters: [],
-                            sorts: [],
+                            sorts: mappedSorts,
                             shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters],
                         },
                     },
@@ -142,7 +152,7 @@ describe('useCurrentViewActions', () => {
                 data: {viewId: createdView.id},
             });
             expect(mockDispatch).not.toHaveBeenCalled();
-            expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.clone_success`}));
+            expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.save_as_success`}));
         });
     });
 

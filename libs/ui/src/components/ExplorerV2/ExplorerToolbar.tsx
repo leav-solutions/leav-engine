@@ -44,6 +44,7 @@ export const ExplorerToolbar: FunctionComponent<{
     canRemoveFilters: boolean;
     selectAllButton: ReactNode | null;
     viewSettingsLoading: boolean;
+    onSortClick?: () => void;
 }> = ({
     isMassSelectionAll,
     showFilters,
@@ -52,6 +53,7 @@ export const ExplorerToolbar: FunctionComponent<{
     canRemoveFilters,
     selectAllButton,
     viewSettingsLoading,
+    onSortClick,
     children,
 }) => {
     const {t} = useSharedTranslation();
@@ -66,6 +68,7 @@ export const ExplorerToolbar: FunctionComponent<{
                         showSorts={showSorts}
                         canRemoveFilters={canRemoveFilters}
                         isMassSelectionAll={isMassSelectionAll}
+                        onSortClick={onSortClick}
                     />
                 )}
             </Section>

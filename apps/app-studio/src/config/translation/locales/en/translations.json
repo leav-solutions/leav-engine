@@ -121,6 +121,14 @@
                 "hide": "Hide"
             }
         },
+        "sorts": {
+            "manage_available": "Manage available attributes"
+        },
+        "available_attributes": {
+            "title": "Available attributes",
+            "subtitle": "Select the attributes you want to make available to users",
+            "search_placeholder": "Search..."
+        },
         "empty_view": "Select or create a view to configure its display",
         "my_views": "My views",
         "my_views_empty": "No personal view yet",
@@ -141,17 +149,17 @@
             "shared": "Shared",
             "close": "Close",
             "save": "Save",
-            "clone": "Duplicate view",
+            "save_as": "Save as",
             "delete": "Delete view",
             "reset": "Reset",
             "shared_by": "Shared by {{name}}",
             "label_required": "View name is required.",
-            "clone_modal_title": "Duplicate view",
-            "clone_modal_placeholder": "New view name",
+            "save_as_modal_title": "Save as",
+            "save_as_modal_placeholder": "New view name",
             "unshare_confirm_title": "Stop sharing the view",
             "unshare_confirm_content": "This view will no longer be accessible to other users.",
             "save_success": "View saved",
-            "clone_success": "View duplicated",
+            "save_as_success": "New view created",
             "share_success": "View shared",
             "unshare_success": "View unshared",
             "action_error": "The view operation failed."

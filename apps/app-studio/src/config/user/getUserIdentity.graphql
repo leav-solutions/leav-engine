@@ -13,6 +13,7 @@ query getUserIdentity {
                 payload {
                     record {
                         whoAmI {
+                            id
                             label
                         }
                     }

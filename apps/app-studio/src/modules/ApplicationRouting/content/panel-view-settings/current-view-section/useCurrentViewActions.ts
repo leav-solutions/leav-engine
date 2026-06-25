@@ -15,6 +15,7 @@ import {useCurrentView} from '../store-current-view/useCurrentView';
 import {type AppStudioInternalEvent} from '../../../types';
 
 type ViewDisplay = NonNullable<CurrentView>['display'];
+type ViewSorts = NonNullable<CurrentView>['sorts'];
 
 const mapDisplay = (display: ViewDisplay) => ({
     type: display.type,
@@ -22,6 +23,10 @@ const mapDisplay = (display: ViewDisplay) => ({
         .filter(({attribute}) => attribute.id !== IDENTITY_COLUMN_ID)
         .map(({attribute, visible}) => ({attributeId: attribute.id, visible})),
 });
+
+// `ViewV2SortInput` carries the descent path as bare attribute ids (the labels live server-side).
+const mapSorts = (sorts: ViewSorts) =>
+    sorts.map(sort => ({attributes: sort.attributes.map(attribute => attribute.id), order: sort.order}));
 
 export const useCurrentViewActions = () => {
     const {t} = useTranslation();
@@ -33,7 +38,7 @@ export const useCurrentViewActions = () => {
 
     const [updateView, {loading: saveLoading}] = useUpdateViewV2Mutation();
     const [shareView, {loading: shareLoading}] = useUpdateViewV2Mutation();
-    const [createView, {loading: forkLoading}] = useCreateViewV2Mutation();
+    const [createView, {loading: saveAsLoading}] = useCreateViewV2Mutation();
 
     const notifyError = () =>
         KitAlert.error({
@@ -60,6 +65,7 @@ export const useCurrentViewActions = () => {
                         id: view.id,
                         label: view.label,
                         display: mapDisplay(view.display),
+                        sorts: mapSorts(view.sorts),
                         shortcuts: view.shortcuts,
                     },
                 },
@@ -80,7 +86,7 @@ export const useCurrentViewActions = () => {
         }
     };
 
-    const fork = async (name: string) => {
+    const saveAs = async (name: string) => {
         if (!view) {
             return;
         }
@@ -92,14 +98,14 @@ export const useCurrentViewActions = () => {
                     view: {
                         library: view.library,
                         // TODO: We might need to change the label type to string as SystemTranslation doesn't seem necessary
-                        // The fork modal captures a single name, but `label` is a SystemTranslation
+                        // The save-as modal captures a single name, but `label` is a SystemTranslation
                         // expected to carry a value per language. We replicate the entered name across
                         // every active language so no language ends up with an empty label.
                         label: Object.fromEntries(lang.map(language => [language, name])),
                         shared: false,
                         display: mapDisplay(view.display),
                         filters: [],
-                        sorts: [],
+                        sorts: mapSorts(view.sorts),
                         shortcuts: view.shortcuts,
                     },
                 },
@@ -113,7 +119,7 @@ export const useCurrentViewActions = () => {
                     data: {viewV2: data.createViewV2},
                 });
                 dispatchPanelEvent({type: 'view-settings-select-view', data: {viewId: data.createViewV2.id}});
-                notifySuccess(t('view_settings.current_view.clone_success'));
+                notifySuccess(t('view_settings.current_view.save_as_success'));
             }
         } catch {
             notifyError();
@@ -153,5 +159,5 @@ export const useCurrentViewActions = () => {
         });
     };
 
-    return {save, saveLoading, fork, forkLoading, toggleShared, shareLoading};
+    return {save, saveLoading, saveAs, saveAsLoading, toggleShared, shareLoading};
 };

@@ -2,6 +2,7 @@ import {useGetUserIdentityQuery} from '../../__generated__';
 import {type IUserContext, UserContext} from '@leav/ui';
 import {type FunctionComponent, useEffect, useMemo} from 'react';
 import {matomo} from '../../services/analytics';
+import {UserGroupsProvider} from './UserGroupsContext';
 
 export const InitUser: FunctionComponent = ({children}) => {
     const {data: userData, error, loading} = useGetUserIdentityQuery();
@@ -12,11 +13,19 @@ export const InitUser: FunctionComponent = ({children}) => {
         }
         const groups =
             userData?.me?.user_groups
-                ?.map(v => v.payload.record.whoAmI.label)
+                ?.map(v => v.payload?.record.whoAmI.label)
                 .sort()
                 .join(' | ') ?? '';
         matomo.setUserRole(groups);
     }, [loading]);
+
+    const groupIds = useMemo(
+        () =>
+            userData?.me?.user_groups
+                ?.map(v => v.payload?.record.whoAmI.id)
+                .filter((id): id is string => Boolean(id)) ?? [],
+        [userData],
+    );
 
     const userIdentity = useMemo<IUserContext>(() => {
         if (userData?.me) {
@@ -36,5 +45,9 @@ export const InitUser: FunctionComponent = ({children}) => {
         throw error;
     }
 
-    return <UserContext.Provider value={userIdentity}>{children}</UserContext.Provider>;
+    return (
+        <UserContext.Provider value={userIdentity}>
+            <UserGroupsProvider value={groupIds}>{children}</UserGroupsProvider>
+        </UserContext.Provider>
+    );
 };

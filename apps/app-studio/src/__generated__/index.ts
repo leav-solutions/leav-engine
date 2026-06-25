@@ -237,17 +237,6 @@ export type ApplicationsList = {
   totalCount: Scalars['Int']['output'];
 };
 
-export type Asset = {
-  creative: Creative;
-  id: Scalars['String']['output'];
-  key?: Maybe<Scalars['String']['output']>;
-  processingId?: Maybe<Scalars['String']['output']>;
-  processingIndex?: Maybe<Scalars['Int']['output']>;
-  progressPercentage?: Maybe<Scalars['Int']['output']>;
-  store?: Maybe<Store>;
-  template: Template;
-};
-
 export type Attachment = {
   label: Scalars['String']['output'];
   trackingEvent?: Maybe<NotificationTrackingEvent>;
@@ -478,32 +467,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type Campaign = {
-  assetsCount?: Maybe<Scalars['Int']['output']>;
-  creatives: Array<Creative>;
-  deliveryPlatforms: Array<DeliveryPlatform>;
-  digram: Scalars['String']['output'];
-  failedAssetsCount?: Maybe<Scalars['Int']['output']>;
-  generationStartedAt?: Maybe<Scalars['String']['output']>;
-  generationStatus?: Maybe<GenerationStatus>;
-  generationStatusUpdatedAt?: Maybe<Scalars['String']['output']>;
-  id: Scalars['String']['output'];
-  imagePreview?: Maybe<ImagePreview>;
-  label: Scalars['String']['output'];
-  offers: Array<Offer>;
-  stores: Array<Store>;
-  sublabel: Scalars['String']['output'];
-  successfulAssetsCount?: Maybe<Scalars['Int']['output']>;
-};
-
-export type CampaignAssetGenerationState = {
-  assetsCount: Scalars['Int']['output'];
-  failedAssetsCount: Scalars['Int']['output'];
-  generationStartedAt: Scalars['String']['output'];
-  generationStatusUpdatedAt: Scalars['String']['output'];
-  successfulAssetsCount: Scalars['Int']['output'];
-};
-
 export type CampaignToRenew = {
   endDate: Scalars['String']['input'];
   id: Scalars['String']['input'];
@@ -540,14 +503,6 @@ export type CreateRecordResult = {
   valuesErrors?: Maybe<Array<ValueBatchError>>;
 };
 
-export type Creative = {
-  assets: Array<Asset>;
-  id: Scalars['String']['output'];
-  label: Scalars['String']['output'];
-  offers: Array<Offer>;
-  templates: Array<Template>;
-};
-
 export type DateRangeValue = {
   from?: Maybe<Scalars['String']['output']>;
   to?: Maybe<Scalars['String']['output']>;
@@ -556,25 +511,6 @@ export type DateRangeValue = {
 export type DeleteTaskInput = {
   archive: Scalars['Boolean']['input'];
   id: Scalars['ID']['input'];
-};
-
-export type DeliveryMedia = {
-  deliveryPlatform: DeliveryPlatform;
-  id: Scalars['String']['output'];
-  label: Scalars['String']['output'];
-  templates?: Maybe<Array<Template>>;
-};
-
-
-export type DeliveryMediaTemplatesArgs = {
-  campaignId?: InputMaybe<Scalars['String']['input']>;
-};
-
-export type DeliveryPlatform = {
-  deliveryMedias?: Maybe<Array<DeliveryMedia>>;
-  id: Scalars['String']['output'];
-  imagePreview?: Maybe<ImagePreview>;
-  label: Scalars['String']['output'];
 };
 
 export type DependentValuesPermissionFilterInput = {
@@ -645,6 +581,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -871,17 +809,6 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
-}
-
 export type GenericDistinctValues = {
   count: Scalars['Int']['output'];
 };
@@ -931,14 +858,6 @@ export enum IoTypes {
   object = 'object',
   string = 'string'
 }
-
-export type ImagePreview = {
-  big: Scalars['String']['output'];
-  huge: Scalars['String']['output'];
-  medium: Scalars['String']['output'];
-  small: Scalars['String']['output'];
-  tiny: Scalars['String']['output'];
-};
 
 export enum ImportMode {
   insert = 'insert',
@@ -1164,6 +1083,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -1292,12 +1213,6 @@ export type Logs = {
   total: Scalars['Int']['output'];
 };
 
-export enum MultiDisplayOption {
-  avatar = 'avatar',
-  badge_qty = 'badge_qty',
-  tag = 'tag'
-}
-
 export type MoveThematicResultThematic = {
   id: Scalars['ID']['output'];
   id_value: Scalars['ID']['output'];
@@ -1309,14 +1224,17 @@ export type MoveThematicsResult = {
   thematics?: Maybe<Array<MoveThematicResultThematic>>;
 };
 
+export enum MultiDisplayOption {
+  avatar = 'avatar',
+  badge_qty = 'badge_qty',
+  tag = 'tag'
+}
 
 export type Mutation = {
   activateNewRecord: CreateRecordResult;
   activateRecords: Array<Record>;
   cancelTask: Scalars['Boolean']['output'];
   createAutomationRule: AutomationRule;
-  createCreative: Creative;
-  createCreativesAuto?: Maybe<Array<Creative>>;
   createDirectory: Record;
   createRecord: CreateRecordResult;
   createViewV2: ViewV2;
@@ -1329,7 +1247,6 @@ export type Mutation = {
   deleteForm?: Maybe<Form>;
   deleteLibrary: Library;
   deleteNotification: Notification;
-  deleteOffer?: Maybe<Scalars['Boolean']['output']>;
   deleteRecord: Record;
   deleteTasks: Scalars['Boolean']['output'];
   deleteTree: Tree;
@@ -1339,22 +1256,17 @@ export type Mutation = {
   deleteView: View;
   deleteViewV2: ViewV2;
   forcePreviewsGeneration: Scalars['Boolean']['output'];
-  generateAndSendJsonToDigitalHub?: Maybe<Scalars['Boolean']['output']>;
-  generateCreativeMasterAssets: Array<Asset>;
-  generateCreativesAssets: Array<Asset>;
   importConfig: Scalars['ID']['output'];
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
   initRenewCampaigns: Scalars['String']['output'];
-  linkOfferToCampaign?: Maybe<Scalars['Boolean']['output']>;
   moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
-  rankOffers?: Maybe<Scalars['Boolean']['output']>;
   removeCampaigns: RemoveCampaignsResult;
   removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
@@ -1377,6 +1289,7 @@ export type Mutation = {
   treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
   updateAutomationRule: AutomationRule;
+  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   updateViewV2: ViewV2;
   upload: Array<UploadData>;
@@ -1404,19 +1317,6 @@ export type MutationCancelTaskArgs = {
 
 export type MutationCreateAutomationRuleArgs = {
   rule: CreateAutomationRuleInput;
-};
-
-
-export type MutationCreateCreativeArgs = {
-  campaignId: Scalars['String']['input'];
-  deliveryMediaId: Scalars['String']['input'];
-  offersIds: Array<Scalars['String']['input']>;
-};
-
-
-export type MutationCreateCreativesAutoArgs = {
-  campaignId: Scalars['String']['input'];
-  deliveryMediaIds: Array<Scalars['String']['input']>;
 };
 
 
@@ -1482,11 +1382,6 @@ export type MutationDeleteNotificationArgs = {
 };
 
 
-export type MutationDeleteOfferArgs = {
-  offerId: Scalars['String']['input'];
-};
-
-
 export type MutationDeleteRecordArgs = {
   id?: InputMaybe<Scalars['ID']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
@@ -1535,21 +1430,6 @@ export type MutationForcePreviewsGenerationArgs = {
 };
 
 
-export type MutationGenerateAndSendJsonToDigitalHubArgs = {
-  campaignId: Scalars['String']['input'];
-};
-
-
-export type MutationGenerateCreativeMasterAssetsArgs = {
-  creativeId: Scalars['String']['input'];
-};
-
-
-export type MutationGenerateCreativesAssetsArgs = {
-  campaignId: Scalars['String']['input'];
-};
-
-
 export type MutationImportConfigArgs = {
   clear?: InputMaybe<Scalars['Boolean']['input']>;
   file: Scalars['Upload']['input'];
@@ -1578,15 +1458,8 @@ export type MutationIndexRecordsArgs = {
 export type MutationInitRenewCampaignsArgs = {
   campaigns: Array<CampaignToRenew>;
   fromPacId: Scalars['String']['input'];
-  method?: InputMaybe<Scalars['String']['input']>;
   redirectUrl: Scalars['String']['input'];
   toPacId: Scalars['String']['input'];
-};
-
-
-export type MutationLinkOfferToCampaignArgs = {
-  campaignId: Scalars['String']['input'];
-  offerId: Scalars['String']['input'];
 };
 
 
@@ -1615,12 +1488,6 @@ export type MutationPurgeMultipleValuesArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
-};
-
-
-export type MutationRankOffersArgs = {
-  campaignId: Scalars['String']['input'];
-  orderedOfferIds: Array<Scalars['String']['input']>;
 };
 
 
@@ -1744,6 +1611,11 @@ export type MutationUpdateAutomationRuleArgs = {
 };
 
 
+export type MutationUpdateCampaignsDatesArgs = {
+  campaigns: Array<CampaignToUpdateDates>;
+};
+
+
 export type MutationUpdateViewArgs = {
   view: ViewInputPartial;
 };
@@ -1789,14 +1661,6 @@ export type NotificationTrackingEvent = {
 export type NotificationsList = {
   list: Array<Notification>;
   totalCount: Scalars['Int']['output'];
-};
-
-export type Offer = {
-  digram: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  imagePreview?: Maybe<ImagePreview>;
-  label: Scalars['String']['output'];
-  sublabel: Scalars['String']['output'];
 };
 
 export type Pagination = {
@@ -1985,12 +1849,6 @@ export type Query = {
   automationRuleForm: AutomationRuleForm;
   automationRules: AutomationRulesList;
   availableActions?: Maybe<Array<Action>>;
-  calculatedCampaignAssetsNumber?: Maybe<Scalars['Int']['output']>;
-  campaign?: Maybe<Campaign>;
-  campaignMasterStore?: Maybe<Store>;
-  campaigns: Array<Campaign>;
-  creative?: Maybe<Creative>;
-  deliveryMedia?: Maybe<DeliveryMedia>;
   doesFileExistAsChild?: Maybe<Scalars['Boolean']['output']>;
   export: Scalars['String']['output'];
   forms?: Maybe<FormsList>;
@@ -2054,31 +1912,6 @@ export type QueryAutomationRulesArgs = {
   filters?: InputMaybe<AutomationRulesFiltersInput>;
   pagination?: InputMaybe<Pagination>;
   sort?: InputMaybe<AutomationRulesSortInput>;
-};
-
-
-export type QueryCalculatedCampaignAssetsNumberArgs = {
-  campaignId: Scalars['String']['input'];
-};
-
-
-export type QueryCampaignArgs = {
-  campaignId: Scalars['String']['input'];
-};
-
-
-export type QueryCampaignMasterStoreArgs = {
-  campaignId: Scalars['String']['input'];
-};
-
-
-export type QueryCreativeArgs = {
-  creativeId: Scalars['String']['input'];
-};
-
-
-export type QueryDeliveryMediaArgs = {
-  deliveryMediaId: Scalars['String']['input'];
 };
 
 
@@ -2612,12 +2445,6 @@ export type StandardStringValuesListConf = {
 
 export type StandardValuesListConf = StandardDateRangeValuesListConf | StandardStringValuesListConf;
 
-export type Store = {
-  deliveryMedia: DeliveryMedia;
-  id: Scalars['String']['output'];
-  label: Scalars['String']['output'];
-};
-
 export type StreamProgress = {
   delta?: Maybe<Scalars['Int']['output']>;
   eta?: Maybe<Scalars['Int']['output']>;
@@ -2631,8 +2458,6 @@ export type StreamProgress = {
 
 export type Subscription = {
   applicationEvent: ApplicationEvent;
-  assetState?: Maybe<Scalars['String']['output']>;
-  campaignAssetGenerationState?: Maybe<CampaignAssetGenerationState>;
   notification: Notification;
   recordNewComment: RecordNewCommentEvent;
   recordUpdate: RecordUpdateEvent;
@@ -2644,17 +2469,6 @@ export type Subscription = {
 
 export type SubscriptionApplicationEventArgs = {
   filters?: InputMaybe<ApplicationEventFiltersInput>;
-};
-
-
-export type SubscriptionAssetStateArgs = {
-  campaignId?: InputMaybe<Scalars['String']['input']>;
-  creativeId?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type SubscriptionCampaignAssetGenerationStateArgs = {
-  campaignId: Scalars['String']['input'];
 };
 
 
@@ -2730,25 +2544,18 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int']['output'];
-};
-
-export type Template = {
-  deliveryMedia: DeliveryMedia;
-  format: Scalars['String']['output'];
-  id: Scalars['String']['output'];
-  label: Scalars['String']['output'];
-  offersCount: Scalars['Int']['output'];
-  storeSpecific: Scalars['Boolean']['output'];
 };
 
 export type ThematicToRenew = {
@@ -3405,7 +3212,7 @@ export type GetLanguagesQuery = { langs: Array<string | null> };
 export type GetUserIdentityQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetUserIdentityQuery = { me?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } }, user_groups: Array<{ payload?: { record: { whoAmI: { label?: string | null } } } | null }> } | null };
+export type GetUserIdentityQuery = { me?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } }, user_groups: Array<{ payload?: { record: { whoAmI: { id: string, label?: string | null } } } | null }> } | null };
 
 export type GetRecordInformationQueryVariables = Exact<{
   library: Scalars['ID']['input'];
@@ -3457,12 +3264,28 @@ export type UpdateViewV2MutationVariables = Exact<{
 
 export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> } };
 
-export type GetPermissionEditViewOnLibraryQueryVariables = Exact<{
+type ViewSettingsLibraryAttributeLinkAttributeFragment = { id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } };
+
+type ViewSettingsLibraryAttributeStandardAttributeFragment = { id: string, type: AttributeType, label?: any | null, permissions: { access_attribute: boolean } };
+
+type ViewSettingsLibraryAttributeTreeAttributeFragment = { id: string, type: AttributeType, label?: any | null, linked_tree?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } };
+
+export type ViewSettingsLibraryAttributeFragment =
+  | ViewSettingsLibraryAttributeLinkAttributeFragment
+  | ViewSettingsLibraryAttributeStandardAttributeFragment
+  | ViewSettingsLibraryAttributeTreeAttributeFragment
+;
+
+export type GetViewSettingsLibraryAttributesQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
 }>;
 
 
-export type GetPermissionEditViewOnLibraryQuery = { libraries?: { list: Array<{ id: string, permissions?: { admin_library: boolean } | null }> } | null };
+export type GetViewSettingsLibraryAttributesQuery = { libraries?: { list: Array<{ id: string, label?: any | null, attributes?: Array<
+        | { id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } }
+        | { id: string, type: AttributeType, label?: any | null, permissions: { access_attribute: boolean } }
+        | { id: string, type: AttributeType, label?: any | null, linked_tree?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } }
+      > | null }> } | null };
 
 export type GetViewV2QueryVariables = Exact<{
   viewId: Scalars['ID']['input'];
@@ -3538,6 +3361,28 @@ export type SubscribeToUserTasksSubscriptionVariables = Exact<{
 
 export type SubscribeToUserTasksSubscription = { task: { id: string, status: TaskStatus, label: any, created_at: number, startedAt?: number | null, completedAt?: number | null, progress?: { description?: any | null, percent?: number | null } | null, link?: { url: string } | null } };
 
+export const ViewSettingsLibraryAttributeFragmentDoc = gql`
+    fragment ViewSettingsLibraryAttribute on Attribute {
+  id
+  type
+  label
+  permissions {
+    access_attribute
+  }
+  ... on LinkAttribute {
+    linked_library {
+      id
+      label
+    }
+  }
+  ... on TreeAttribute {
+    linked_tree {
+      id
+      label
+    }
+  }
+}
+    `;
 export const AppStudioViewSettingsViewFragmentDoc = gql`
     fragment AppStudioViewSettingsView on ViewV2 {
   id
@@ -3677,6 +3522,7 @@ export const GetUserIdentityDocument = gql`
         payload {
           record {
             whoAmI {
+              id
               label
             }
           }
@@ -4111,54 +3957,55 @@ export function useUpdateViewV2Mutation(baseOptions?: Apollo.MutationHookOptions
 export type UpdateViewV2MutationHookResult = ReturnType<typeof useUpdateViewV2Mutation>;
 export type UpdateViewV2MutationResult = Apollo.MutationResult<UpdateViewV2Mutation>;
 export type UpdateViewV2MutationOptions = Apollo.BaseMutationOptions<UpdateViewV2Mutation, UpdateViewV2MutationVariables>;
-export const GetPermissionEditViewOnLibraryDocument = gql`
-    query GetPermissionEditViewOnLibrary($libraryId: ID!) {
+export const GetViewSettingsLibraryAttributesDocument = gql`
+    query GetViewSettingsLibraryAttributes($libraryId: ID!) {
   libraries(filters: {id: [$libraryId]}) {
     list {
       id
-      permissions {
-        admin_library
+      label
+      attributes {
+        ...ViewSettingsLibraryAttribute
       }
     }
   }
 }
-    `;
+    ${ViewSettingsLibraryAttributeFragmentDoc}`;
 
 /**
- * __useGetPermissionEditViewOnLibraryQuery__
+ * __useGetViewSettingsLibraryAttributesQuery__
  *
- * To run a query within a React component, call `useGetPermissionEditViewOnLibraryQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPermissionEditViewOnLibraryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetViewSettingsLibraryAttributesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetViewSettingsLibraryAttributesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetPermissionEditViewOnLibraryQuery({
+ * const { data, loading, error } = useGetViewSettingsLibraryAttributesQuery({
  *   variables: {
  *      libraryId: // value for 'libraryId'
  *   },
  * });
  */
-export function useGetPermissionEditViewOnLibraryQuery(baseOptions: Apollo.QueryHookOptions<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables> & ({ variables: GetPermissionEditViewOnLibraryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useGetViewSettingsLibraryAttributesQuery(baseOptions: Apollo.QueryHookOptions<GetViewSettingsLibraryAttributesQuery, GetViewSettingsLibraryAttributesQueryVariables> & ({ variables: GetViewSettingsLibraryAttributesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>(GetPermissionEditViewOnLibraryDocument, options);
+        return Apollo.useQuery<GetViewSettingsLibraryAttributesQuery, GetViewSettingsLibraryAttributesQueryVariables>(GetViewSettingsLibraryAttributesDocument, options);
       }
-export function useGetPermissionEditViewOnLibraryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>) {
+export function useGetViewSettingsLibraryAttributesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetViewSettingsLibraryAttributesQuery, GetViewSettingsLibraryAttributesQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>(GetPermissionEditViewOnLibraryDocument, options);
+          return Apollo.useLazyQuery<GetViewSettingsLibraryAttributesQuery, GetViewSettingsLibraryAttributesQueryVariables>(GetViewSettingsLibraryAttributesDocument, options);
         }
 // @ts-ignore
-export function useGetPermissionEditViewOnLibrarySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>): Apollo.UseSuspenseQueryResult<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>;
-export function useGetPermissionEditViewOnLibrarySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>): Apollo.UseSuspenseQueryResult<GetPermissionEditViewOnLibraryQuery | undefined, GetPermissionEditViewOnLibraryQueryVariables>;
-export function useGetPermissionEditViewOnLibrarySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>) {
+export function useGetViewSettingsLibraryAttributesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetViewSettingsLibraryAttributesQuery, GetViewSettingsLibraryAttributesQueryVariables>): Apollo.UseSuspenseQueryResult<GetViewSettingsLibraryAttributesQuery, GetViewSettingsLibraryAttributesQueryVariables>;
+export function useGetViewSettingsLibraryAttributesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetViewSettingsLibraryAttributesQuery, GetViewSettingsLibraryAttributesQueryVariables>): Apollo.UseSuspenseQueryResult<GetViewSettingsLibraryAttributesQuery | undefined, GetViewSettingsLibraryAttributesQueryVariables>;
+export function useGetViewSettingsLibraryAttributesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetViewSettingsLibraryAttributesQuery, GetViewSettingsLibraryAttributesQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>(GetPermissionEditViewOnLibraryDocument, options);
+          return Apollo.useSuspenseQuery<GetViewSettingsLibraryAttributesQuery, GetViewSettingsLibraryAttributesQueryVariables>(GetViewSettingsLibraryAttributesDocument, options);
         }
-export type GetPermissionEditViewOnLibraryQueryHookResult = ReturnType<typeof useGetPermissionEditViewOnLibraryQuery>;
-export type GetPermissionEditViewOnLibraryLazyQueryHookResult = ReturnType<typeof useGetPermissionEditViewOnLibraryLazyQuery>;
-export type GetPermissionEditViewOnLibrarySuspenseQueryHookResult = ReturnType<typeof useGetPermissionEditViewOnLibrarySuspenseQuery>;
-export type GetPermissionEditViewOnLibraryQueryResult = Apollo.QueryResult<GetPermissionEditViewOnLibraryQuery, GetPermissionEditViewOnLibraryQueryVariables>;
+export type GetViewSettingsLibraryAttributesQueryHookResult = ReturnType<typeof useGetViewSettingsLibraryAttributesQuery>;
+export type GetViewSettingsLibraryAttributesLazyQueryHookResult = ReturnType<typeof useGetViewSettingsLibraryAttributesLazyQuery>;
+export type GetViewSettingsLibraryAttributesSuspenseQueryHookResult = ReturnType<typeof useGetViewSettingsLibraryAttributesSuspenseQuery>;
+export type GetViewSettingsLibraryAttributesQueryResult = Apollo.QueryResult<GetViewSettingsLibraryAttributesQuery, GetViewSettingsLibraryAttributesQueryVariables>;
 export const GetViewV2Document = gql`
     query GetViewV2($viewId: ID!) {
   viewV2(viewId: $viewId) {

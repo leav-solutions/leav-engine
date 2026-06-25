@@ -1,0 +1,77 @@
+.dropdownOverlay {
+    padding: 0;
+}
+
+.dropdownContent {
+    display: flex;
+    flex-direction: column;
+    width: 340px;
+    /* The card never grows past this; only the list scrolls (header + search stay fixed). */
+    max-height: 420px;
+}
+
+.header {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xxs) * 1px);
+    padding: calc(var(--general-spacing-s) * 1px);
+    background: var(--general-utilities-neutral-light);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+}
+
+.content {
+    /* Fill the height left under the fixed header and constrain its children, so the list (and only
+       the list) scrolls instead of overflowing the card. min-height:0 lets it shrink below content. */
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xs) * 1px);
+    padding: calc(var(--general-spacing-xs) * 1px);
+}
+
+.subtitle {
+    color: var(--general-colors-neutral-grey-500);
+}
+
+.search {
+    flex: 0 0 auto;
+}
+
+.list {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    :global(.ant-tree-treenode-checkbox-checked) {
+        background: var(--general-utilities-main-light);
+        border-radius: calc(var(--general-border-radius-s) * 1px);
+    }
+
+    /* Let the title fill the row so the descendant-count badge can sit at the far right. */
+    :global(.ant-tree-title) {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+}
+
+.nodeTitle {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+    width: 100%;
+}
+
+.nodeLabel {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nodeBadge {
+    flex: 0 0 auto;
+}

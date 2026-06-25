@@ -23,14 +23,13 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
     showSorts: boolean;
     canRemoveFilters: boolean;
     selectAllButton: ReactNode | null;
-}> = ({isMassSelectionAll, showFilters, showSorts, canRemoveFilters, selectAllButton}) => {
+    onSortClick?: () => void;
+}> = ({isMassSelectionAll, showFilters, showSorts, canRemoveFilters, selectAllButton, onSortClick}) => {
     const {t} = useSharedTranslation();
 
     const {view} = useViewSettingsContext();
     const {sort} = view;
 
-    // TODO: modify to use app-studio
-    // const {openSettingsPanel} = useOpenViewSettings({view, isEnabled: true});
     const {filtersProps} = useFilters(!canRemoveFilters);
 
     const {attributeDetailsById} = useAttributeDetailsData(view.libraryId);
@@ -49,8 +48,6 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
                       (order === SortOrder.asc ? t('explorer.sort-ascending') : t('explorer.sort-descending')),
               );
 
-    // const _handleClickOnSort: ComponentProps<typeof FilterStyled>['onClick'] = () =>
-    //     isMassSelectionAll ? undefined : openSettingsPanel('sort-items');
     if (!Object.keys(attributeDetailsById).length) {
         return <></>;
     }
@@ -83,7 +80,7 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
                                 label={t('explorer.sort-items')}
                                 values={sortValues}
                                 disabled={isMassSelectionAll}
-                                // onClick={_handleClickOnSort}
+                                onClick={isMassSelectionAll ? undefined : onSortClick}
                             />
                         </li>
                     )}

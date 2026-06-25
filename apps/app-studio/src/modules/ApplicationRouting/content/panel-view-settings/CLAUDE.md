@@ -26,23 +26,31 @@ header `CurrentViewSection`.
 ### Actions reducer (`currentViewReducer.ts` / `_types.ts`)
 
 `LOAD_VIEW`, `RESET_VIEW`, `MARK_SAVED`, `SET_LABEL`, `SET_SHARED`, `SET_VIEW_TYPE`,
-`TOGGLE_VISIBILITY`, `MOVE_ATTRIBUTE`, **`MOVE_SORT`**, **`SET_SORT_ORDER`**.
+`TOGGLE_VISIBILITY`, `MOVE_ATTRIBUTE`, **`MOVE_SORT`**, **`SET_SORT_ORDER`**,
+**`SET_AVAILABLE_COLUMNS`**, **`SET_AVAILABLE_SORTS`** (roue admin).
 
-- `LOAD_VIEW` **sème les deux snapshots** (chargement initial + écho serveur après save/fork).
+- `LOAD_VIEW` **sème les deux snapshots** (chargement initial + écho serveur après save/save-as).
+- `INIT_DEFAULT_VIEW` **sème les deux snapshots** avec un brouillon synthétique vide
+  (`createDefaultView`, id sentinelle `DEFAULT_DRAFT_VIEW_ID`). Semé par `CurrentViewStoreProvider`
+  **uniquement pour un admin** sur la vue par défaut (`isEmptyView`) → corrige la roue « attributs
+  disponibles » (qui lit `view.library`), rend la vue éditable (`isDirty`/Reset) et sérialisée pour
+  l'aperçu live d'ExplorerV2. « Enregistrer sous » crée une vraie vue à partir de ce brouillon.
 - `SET_SHARED` écrit **symétriquement** sur `view` et `savedView` (cf. fingerprint ci-dessus).
 - Les actions display/sort sont déléguées à un sous-reducer pur `viewReducer(view, action)`.
 
 ### `useCurrentView()`
 
 Expose `view`, `savedView`, `isOwner`, `isDirty`, `visibleColumns`, `invisibleColumns`,
-`sorts`, et les dispatchers : `setViewType`, `toggleVisibility`, `moveAttribute`, `moveSort`,
-`setSortOrder`, `setLabel`, `setShared`, `resetView`, `markSaved`.
+`sorts`, `availableColumnIds`, `availableSortPaths`, et les dispatchers : `setViewType`,
+`toggleVisibility`, `moveAttribute`, `moveSort`, `setSortOrder`, `setLabel`, `setShared`,
+`setAvailableColumns`, `setAvailableSorts`, `resetView`, `markSaved`.
 
 - **`isOwner`** = `view.created_by.whoAmI.id === userData.userId`.
 - `visibleColumns` garde l'ordre de la vue ; `invisibleColumns` est trié alphabétiquement.
-- `sorts` mappe `view.sorts` en `{id, order, ids, label}` ; `label` = libellé du **dernier**
-  attribut du chemin (la descente d'attribut-lien n'est pas encore supportée → un tri cible un
-  seul attribut).
+- `sorts` mappe `view.sorts` en `{id, order, ids, label}` ; `label` = chemin de descente joint par
+  `›` (un tri mono-attribut affiche juste son libellé).
+- `availableColumnIds` / `availableSortPaths` = la **sélection courante de la roue admin** (ids des
+  colonnes / chemins d'ids des tris) ; `setAvailableColumns` / `setAvailableSorts` la pilotent.
 
 ---
 
@@ -56,8 +64,8 @@ Expose `view`, `savedView`, `isOwner`, `isDirty`, `visibleColumns`, `invisibleCo
 | `TabFilters.tsx` | ⏳     | Placeholder WIP                                                                                    |
 
 > Détail tris : clé DnD = **`getSortId(sort)`** (ids du chemin joints par `/`, cf. JSDoc dans
-> `store-current-view/_types.ts`) — DnD et reducer doivent s'accorder dessus. TODO LEAVC-809 :
-> config des attributs disponibles + ajout/retrait de tris.
+> `store-current-view/_types.ts`) — DnD et reducer doivent s'accorder dessus. La config des
+> attributs disponibles (ajout/retrait de tris) se fait via la **roue admin** (voir ci-dessous).
 
 ---
 
@@ -66,9 +74,11 @@ Expose `view`, `savedView`, `isOwner`, `isDirty`, `visibleColumns`, `invisibleCo
 Convertit la `ViewV2` GraphQL en `SerializedView` (contrat consommé par la prop `currentView`).
 
 - `attributesIds` : attributs display visibles, **hors** colonne d'identité (`IDENTITY_COLUMN_ID`).
-- **`sort`** : `view.sorts.map(s => ({field: s.attributes.at(-1)?.id, order: s.order}))`, puis
-  on **filtre les `field` undefined** (un tri sans attribut n'a rien sur quoi trier). Dernier
-  attribut du chemin uniquement.
+- **`sort`** : `view.sorts.map(s => ({field: s.attributes.map(a => a.id).join('.'), order: s.order}))`,
+  puis on **filtre les `field` vides** (un tri sans attribut n'a rien sur quoi trier). Le `field`
+  est le **chemin de descente joint par `.`** — format compris par la query records (cf. core
+  `getAttributesFromField`) : `campagnes.label` trie sur un attribut lié, `campagnes` seul trie sur
+  l'identité de l'enregistrement lié. Un tri mono-attribut donne juste l'id de l'attribut.
 - `filters` : **vide ici** (user filters = ticket à venir). Les pré-filtres masqués `hidden:true`
   ne sont **pas** ajoutés ici — ils sont injectés par l'appelant dans `currentView.filters`.
 - **`shortcuts`** : onglets du volet exposés en boutons-raccourcis (`display | filters | sorts |
@@ -84,13 +94,13 @@ les callbacks `viewSettings` à `ExplorerV2` (monté dans `PanelLibraryExplorer.
 
 ## Actions CRUD (`current-view-section/`)
 
-| Action        | Mutation / dispatch                      | Condition                                     |
-| ------------- | ---------------------------------------- | --------------------------------------------- |
-| Sauvegarder   | `updateViewV2`                           | `isOwner && isDirty && label non vide`        |
-| Forker        | `createViewV2` (`ForkViewModal`)         | ouvert à **tous**                             |
-| Partager      | `updateViewV2 {shared}` (`ShareControl`) | `isOwner && canEditAdminView` (voir plus bas) |
-| Réinitialiser | dispatch `RESET_VIEW`                    | `isDirty` (sans requête réseau)               |
-| Supprimer     | —                                        | **TODO LEAVC-934** (bouton désactivé)         |
+| Action           | Mutation / dispatch                      | Condition                                     |
+| ---------------- | ---------------------------------------- | --------------------------------------------- |
+| Sauvegarder      | `updateViewV2`                           | `isOwner && isDirty && label non vide`        |
+| Enregistrer sous | `createViewV2` (`SaveAsViewModal`)       | ouvert à **tous** (ex-« Forker »)             |
+| Partager         | `updateViewV2 {shared}` (`ShareControl`) | `isOwner && canEditAdminView` (voir plus bas) |
+| Réinitialiser    | dispatch `RESET_VIEW`                    | `isDirty` (sans requête réseau)               |
+| Supprimer        | —                                        | **TODO LEAVC-934** (bouton désactivé)         |
 
 Le back rejette une modif par un non-propriétaire (`USER_IS_NOT_VIEW_OWNER`).
 
@@ -98,33 +108,55 @@ Le back rejette une modif par un non-propriétaire (`USER_IS_NOT_VIEW_OWNER`).
 
 ## Distinction admin / utilisateur
 
-> **Important** : ne pas confondre ce qui existe avec ce qui est planifié.
-> Ticket de référence : **LEAVC-852** (encore en backlog au moment de l'écriture).
+> Ticket de référence : **LEAVC-852** (mode admin du volet de configuration des vues).
 
-### ✅ Implémenté aujourd'hui
+### Détection admin (par groupe, global)
 
-- **`canEditAdminView`** = permission `admin_library` de la bibliothèque
-  (`PanelViewSettings.tsx`, query `GetPermissionEditViewOnLibrary`). Propagée en prop aux onglets.
+- **`canEditAdminView`** = `useIsAdminUser()` (`config/user/useIsAdminUser.ts`) → appartenance au
+  **groupe d'id `'1'`** (groupe administrateurs créé d'office par le core, cf. `adminsGroupId` dans
+  `apps/core/src/_constants/systemRecords.ts`). C'est **global**, pas une permission par bibliothèque :
+  un admin configure la vue de référence de **toutes** les bibliothèques.
+- Plomberie : `getUserIdentity.graphql` récupère `user_groups { … whoAmI { id label } }` →
+  `InitUser.tsx` fournit les ids de groupes via `UserGroupsProvider` (contexte **local app-studio**,
+  le `UserContext` public de `@leav/ui` reste inchangé) → `useIsAdminUser` teste l'id `'1'`.
+- ⚠️ L'ancienne détection par permission `admin_library` (query `GetPermissionEditViewOnLibrary`) a
+  été **supprimée**.
+
+### ✅ Implémenté
+
 - **`isOwner`** = `view.created_by.whoAmI.id === userData.userId` (`useCurrentView.ts`).
 - **`canShare = isOwner && canEditAdminView`** (`CurrentViewActions.tsx`) → si vrai, affiche
   `ShareControl` (toggle partage) ; sinon `SharedByLabel` (lecture seule, nom du créateur).
 - Édition du label, bouton Sauvegarder, bouton Supprimer : gated par `isOwner`.
 - Catalogue (`useViewCatalog`) : `myViews` (`created_by.id === userId`) vs `sharedViews`
   (`shared === true` d'un autre user). Les vues perso d'autrui sont invisibles.
+- **Roue « attributs disponibles »** (`manage-available-attributes/AvailableAttributesDropdown.tsx`),
+  rendue **uniquement si `canEditAdminView`**, sur **Affichage** et **Tris** :
+    - « Disponible » = **appartenance à la liste de la facette** (pas de champ persisté en plus) : la
+      roue édite `view.display.attributes` (colonnes) / `view.sorts` (tris) via les actions reducer
+      `SET_AVAILABLE_COLUMNS` / `SET_AVAILABLE_SORTS` (réconciliation : conserve ordre + visibilité /
+      asc-desc des entrées gardées, ajoute les nouvelles, retire les décochées).
+    - **Affichage** : arbre **à plat** (`mode="columns"`) — attributs directs uniquement ; un lien/arbre
+      est une simple entrée cochable (son label), pas de descente. Roue dans la **sous-section** « Colonnes »
+      (`ColumnsSettings`), car le titre de section diffère du titre d'onglet.
+    - **Tris** (et plus tard **Filtres**) : arbre **multi-niveaux** (`mode="sorts"`) — un attribut **lien**
+      est un nœud dépliable cochable (le cocher = tri sur l'identité du lien ; descendre = tri sur un
+      sous-attribut, chemin `[lien, sousAttr]`). Descente **lazy** par expansion
+      (`useGetViewSettingsLibraryAttributesLazyQuery`). Pour éviter un double en-tête, la roue est rendue
+      dans le **`TabHeader` partagé**, à gauche du bouton épingle, et non dans une sous-section de l'onglet.
+      `PanelViewSettings` calcule `canEditAvailableAttributesInHeader` (= `canEditAdminView` + onglet à roue
+      d'en-tête, via le helper `headerAvailableAttributesMode(tab.key)`) et le passe à `TabHeader`.
+    - Query : `getViewSettingsLibraryAttributes.graphql` (réutilisée pour chaque bibliothèque visitée).
 
-### ⏳ Planifié — LEAVC-852 (pas encore codé)
+### ⏳ Limites / à venir
 
-- **Backend** : exposer les **groupes** de l'utilisateur connecté (sans requête supplémentaire)
-  → enrichir le **contexte utilisateur** front → détecter le **profil admin** par groupe.
-- **Roue dentée « attributs disponibles »** par onglet (Affichage / Filtres / Tris) : **visible
-  admin seulement**. L'admin coche les attributs rendus disponibles aux utilisateurs.
-- **Liste d'attributs** : l'admin voit **tous** les attributs de la bibliothèque ; l'utilisateur
-  ne voit que ceux **rendus disponibles** (les actions épingle / œil / DnD sont restreintes en
-  conséquence).
-- Toggle de partage visible **uniquement** pour un profil admin (même s'il est propriétaire).
-- Un filtre **caché** (pré-filtrage posé par app-studio) ne doit **pas** être sauvegardé dans la vue.
-- État actuel du code : les onglets reçoivent `canEditAdminView` en prop mais **ne l'exploitent
-  pas encore** (TODO, ex. commentaire `// TODO (admin)` dans `TabSorts.tsx`).
+- **Descente par attribut `tree`** dans les tris : un attribut **arbre** n'est cochable qu'à son
+  niveau identité (tri sur le nœud). La descente dans les bibliothèques de l'arbre exigerait un
+  segment « bibliothèque » dans le chemin (`arbre.lib.sousAttr`) que le modèle `ViewV2Sort.attributes`
+  (résolu attribut par attribut) ne sait pas stocker — chantier back dédié.
+- **Onglet Filtres** : la roue n'y est pas encore branchée (placeholder ; sera fait avec l'onglet Filtres).
+- **Liste utilisateur** : l'utilisateur (sans roue) ne voit que les attributs rendus disponibles par
+  l'admin (= la liste de la facette) et agit dessus (œil / DnD / asc-desc).
 
 ---
 
@@ -136,7 +168,7 @@ Le back rejette une modif par un non-propriétaire (`USER_IS_NOT_VIEW_OWNER`).
 - **Événements internes** (bus `usePanelEventHandlers<AppStudioInternalEvent>` de `@leav/ui`,
   types dans `ApplicationRouting/types.ts`) :
     - `open-view-settings` : ouverture du volet (depuis le bouton/raccourci d'ExplorerV2).
-    - `view-settings-select-view` : changement de vue active (depuis `TabCatalog` ou post-fork).
+    - `view-settings-select-view` : changement de vue active (depuis `TabCatalog` ou post-« Enregistrer sous »).
 
 ---
 

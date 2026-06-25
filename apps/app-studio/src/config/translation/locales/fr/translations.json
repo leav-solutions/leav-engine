@@ -121,6 +121,14 @@
                 "hide": "Masquer"
             }
         },
+        "sorts": {
+            "manage_available": "Gérer les attributs disponibles"
+        },
+        "available_attributes": {
+            "title": "Attributs disponibles",
+            "subtitle": "Sélectionnez les attributs que vous voulez rendre disponibles pour les utilisateurs",
+            "search_placeholder": "Rechercher..."
+        },
         "empty_view": "Sélectionnez ou créez une vue pour configurer son affichage",
         "my_views": "Mes vues",
         "my_views_empty": "Aucune vue personnelle",
@@ -141,17 +149,17 @@
             "shared": "Partagée",
             "close": "Fermer",
             "save": "Enregistrer",
-            "clone": "Dupliquer la vue",
+            "save_as": "Enregistrer sous",
             "delete": "Supprimer la vue",
             "reset": "Réinitialiser",
             "shared_by": "Partagée par {{name}}",
             "label_required": "Le nom de la vue est requis.",
-            "clone_modal_title": "Dupliquer la vue",
-            "clone_modal_placeholder": "Nom de la nouvelle vue",
+            "save_as_modal_title": "Enregistrer sous",
+            "save_as_modal_placeholder": "Nom de la nouvelle vue",
             "unshare_confirm_title": "Ne plus partager la vue",
             "unshare_confirm_content": "Cette vue ne sera plus accessible aux autres utilisateurs.",
             "save_success": "Vue enregistrée",
-            "clone_success": "Vue dupliquée",
+            "save_as_success": "Nouvelle vue créée",
             "share_success": "Vue partagée",
             "unshare_success": "Vue départagée",
             "action_error": "L’opération sur la vue a échoué."

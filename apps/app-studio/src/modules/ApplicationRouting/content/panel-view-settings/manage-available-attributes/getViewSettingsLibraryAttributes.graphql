@@ -1,0 +1,36 @@
+# Scoped to the app-studio view-settings admin gear ONLY (configure available attributes).
+# The same query is reused for every library: the top-level (view.library) and each linked
+# library reached by expanding a link attribute (lazy descent — see AvailableAttributesDropdown).
+# A link attribute is detected by the presence of `linked_library`; a tree by `linked_tree`.
+fragment ViewSettingsLibraryAttribute on Attribute {
+    id
+    type
+    label
+    permissions {
+        access_attribute
+    }
+    ... on LinkAttribute {
+        linked_library {
+            id
+            label
+        }
+    }
+    ... on TreeAttribute {
+        linked_tree {
+            id
+            label
+        }
+    }
+}
+
+query GetViewSettingsLibraryAttributes($libraryId: ID!) {
+    libraries(filters: {id: [$libraryId]}) {
+        list {
+            id
+            label
+            attributes {
+                ...ViewSettingsLibraryAttribute
+            }
+        }
+    }
+}

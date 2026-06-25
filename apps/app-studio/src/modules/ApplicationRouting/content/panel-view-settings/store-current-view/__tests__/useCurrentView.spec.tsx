@@ -174,7 +174,7 @@ describe('useCurrentView', () => {
             const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn()});
 
             expect(result.current.sorts).toEqual([
-                {id: 'author/name', order: SortOrder.desc, ids: ['author', 'name'], label: 'NAME'},
+                {id: 'author/name', order: SortOrder.desc, ids: ['author', 'name'], label: 'AUTHOR › NAME'},
             ]);
         });
     });

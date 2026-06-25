@@ -1,4 +1,4 @@
-import {KitFilter} from 'aristid-ds';
+import {KitFilter, KitSection, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     closestCenter,
@@ -14,10 +14,11 @@ import {restrictToParentElement, restrictToVerticalAxis} from '@dnd-kit/modifier
 import {SortOrder} from '_ui/_gqlTypes';
 import {useCurrentView} from '../../store-current-view/useCurrentView';
 import {SortItem} from './SortItem';
-import {tab, list, sortFilter} from './tabSorts.module.css';
+import {tab, list, sortFilter, emptyBox} from './tabSorts.module.css';
 
-// TODO (admin): configure available attributes for sorts, add/remove from the active sorts list
-export const TabSorts = ({canEditAdminView}: {canEditAdminView: boolean}) => {
+// The admin "available attributes" gear for sorts lives in the shared TabHeader (left of the pin),
+// not here — see TabHeader. This tab only renders the list of configured sorts.
+export const TabSorts = () => {
     const {t} = useSharedTranslation();
     const {sorts, moveSort, setSortOrder} = useCurrentView();
 
@@ -32,6 +33,14 @@ export const TabSorts = ({canEditAdminView}: {canEditAdminView: boolean}) => {
             moveSort(String(active.id), String(over.id));
         }
     };
+
+    if (sorts.length === 0) {
+        return (
+            <KitSection className={emptyBox}>
+                <KitTypography.Text size="fontSize7">{t('explorer.sorts-empty')}</KitTypography.Text>
+            </KitSection>
+        );
+    }
 
     return (
         <div className={tab}>
