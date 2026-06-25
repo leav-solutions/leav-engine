@@ -112,6 +112,32 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
 
             return {...view, sorts: view.sorts.toSpliced(index, 1, {...view.sorts[index], order})};
         }
+        case 'TOGGLE_SORT_PINNED': {
+            const {id} = action.payload;
+            const index = view.sorts.findIndex(sort => getSortId(sort) === id);
+
+            if (index === -1) {
+                return view;
+            }
+
+            const target = view.sorts[index];
+
+            if (target.pinned) {
+                // Unpinning: flip the flag in place. The array position is irrelevant for unpinned
+                // sorts since the unpinned list is re-sorted alphabetically by the selector.
+                const sorts = view.sorts.toSpliced(index, 1, {...target, pinned: false});
+
+                return {...view, sorts};
+            }
+
+            // Pinning: flip AND move just after the last pinned sort, so it appends to the end of
+            // the pinned group (mirrors TOGGLE_VISIBILITY). The pinned order IS the sort priority.
+            const withoutTarget = view.sorts.filter((_, i) => i !== index);
+            const lastPinnedPos = withoutTarget.findLastIndex(sort => sort.pinned);
+            const sorts = withoutTarget.toSpliced(lastPinnedPos + 1, 0, {...target, pinned: true});
+
+            return {...view, sorts};
+        }
         case 'TOGGLE_SHORTCUT': {
             const {shortcut} = action.payload;
 
@@ -157,7 +183,7 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
             const keptKeys = new Set(kept.map(getSortId));
             const added = sorts
                 .filter(path => !keptKeys.has(pathKey(path)))
-                .map(path => ({attributes: path.attributes, order: SortOrder.asc}));
+                .map(path => ({attributes: path.attributes, order: SortOrder.asc, pinned: false}));
 
             return {...view, sorts: [...kept, ...added]};
         }

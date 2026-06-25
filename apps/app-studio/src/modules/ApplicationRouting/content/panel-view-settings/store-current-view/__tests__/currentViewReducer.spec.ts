@@ -10,14 +10,15 @@ const makeAttributes = (
 ): NonNullState['display']['attributes'] =>
     defs.map(({id, label, visible}) => ({visible, attribute: {id, label: {en: label}}}));
 
-const makeSorts = (ids: string[]): NonNullState['sorts'] =>
-    ids.map(id => ({attributes: [{id, label: {en: id.toUpperCase()}}], order: SortOrder.asc}));
+const makeSorts = (ids: string[], pinned = true): NonNullState['sorts'] =>
+    ids.map(id => ({attributes: [{id, label: {en: id.toUpperCase()}}], order: SortOrder.asc, pinned}));
 
 // A sort whose path descends through several attributes (link-attribute descent). Its DnD id is the
 // joined attribute ids (e.g. 'author/name'), per getSortId.
-const makeCompositeSort = (attributePath: string[]): NonNullState['sorts'][number] => ({
+const makeCompositeSort = (attributePath: string[], pinned = true): NonNullState['sorts'][number] => ({
     attributes: attributePath.map(id => ({id, label: {en: id.toUpperCase()}})),
     order: SortOrder.asc,
+    pinned,
 });
 
 const sortIds = (view: NonNullState) => view.sorts.map(sort => sort.attributes.map(attr => attr.id).join('/'));
@@ -159,6 +160,41 @@ describe('viewReducer (display actions)', () => {
         });
     });
 
+    describe('TOGGLE_SORT_PINNED', () => {
+        const pinnedOf = (view: NonNullState, id: string) =>
+            view.sorts.find(sort => sort.attributes.map(attr => attr.id).join('/') === id)?.pinned;
+
+        it('unpins a pinned sort in place (order unchanged)', () => {
+            const view = makeView({sorts: makeSorts(['a', 'b', 'c'])});
+            const next = viewReducer(view, {type: 'TOGGLE_SORT_PINNED', payload: {id: 'a'}});
+            expect(pinnedOf(next, 'a')).toBe(false);
+            expect(sortIds(next)).toEqual(['a', 'b', 'c']);
+        });
+
+        it('pins an unpinned sort and appends it after the last pinned sort', () => {
+            // a(pinned), b(pinned), c(unpinned), d(unpinned). Pinning 'd' must move it just after the
+            // last pinned sort 'b', proving the repositioning — not merely the flag flip.
+            const view = makeView({sorts: [...makeSorts(['a', 'b']), ...makeSorts(['c', 'd'], false)]});
+            const next = viewReducer(view, {type: 'TOGGLE_SORT_PINNED', payload: {id: 'd'}});
+            expect(pinnedOf(next, 'd')).toBe(true);
+            expect(next.sorts.filter(sort => sort.pinned).map(sort => sort.attributes[0].id)).toEqual(['a', 'b', 'd']);
+            expect(sortIds(next)).toEqual(['a', 'b', 'd', 'c']);
+        });
+
+        it('pins an unpinned sort at the front when none is pinned', () => {
+            const view = makeView({sorts: makeSorts(['a', 'b'], false)});
+            const next = viewReducer(view, {type: 'TOGGLE_SORT_PINNED', payload: {id: 'b'}});
+            expect(sortIds(next)).toEqual(['b', 'a']);
+            expect(next.sorts[0].pinned).toBe(true);
+        });
+
+        it('targets a sort identified by its composite attribute path', () => {
+            const view = makeView({sorts: [makeCompositeSort(['author', 'name'], false)]});
+            const next = viewReducer(view, {type: 'TOGGLE_SORT_PINNED', payload: {id: 'author/name'}});
+            expect(pinnedOf(next, 'author/name')).toBe(true);
+        });
+    });
+
     describe('TOGGLE_SHORTCUT', () => {
         it('pins a shortcut that is not pinned yet', () => {
             const view = makeView({shortcuts: [ViewV2Shortcut.display]});
@@ -224,7 +260,7 @@ describe('viewReducer (display actions)', () => {
         it('keeps still-selected sorts (priority order + asc/desc), appends new ones ascending, drops the rest', () => {
             const view = makeView({
                 sorts: [
-                    {attributes: [{id: 'date', label: {en: 'DATE'}}], order: SortOrder.desc},
+                    {attributes: [{id: 'date', label: {en: 'DATE'}}], order: SortOrder.desc, pinned: true},
                     makeCompositeSort(['author', 'name']),
                 ],
             });
@@ -245,13 +281,16 @@ describe('viewReducer (display actions)', () => {
             });
 
             // 'date' deselected → dropped; 'author/name' kept (and keeps its ascending order);
-            // 'price' is new → appended ascending.
+            // 'price' is new → appended ascending and unpinned by default.
             expect(sortIds(next)).toEqual(['author/name', 'price']);
             expect(next.sorts[1].order).toBe(SortOrder.asc);
+            expect(next.sorts[1].pinned).toBe(false);
         });
 
         it('preserves the asc/desc order of a kept sort', () => {
-            const view = makeView({sorts: [{attributes: [{id: 'date', label: {en: 'DATE'}}], order: SortOrder.desc}]});
+            const view = makeView({
+                sorts: [{attributes: [{id: 'date', label: {en: 'DATE'}}], order: SortOrder.desc, pinned: true}],
+            });
             const next = viewReducer(view, {
                 type: 'SET_AVAILABLE_SORTS',
                 payload: {sorts: [{attributes: [{id: 'date', label: {en: 'DATE'}}]}]},

@@ -1,9 +1,17 @@
 .tab {
     display: flex;
     flex-direction: column;
-    gap: calc(var(--general-spacing-l) * 1px);
+    gap: calc(var(--general-spacing-s) * 1px);
     height: 100%;
     min-height: 0;
+}
+
+/* Mirrors tab-display's .lists: the pinned list, the divider and the unpinned list share one
+   small-gap grid container so the separator is not surrounded by oversized spacing. */
+.lists {
+    display: grid;
+    gap: calc(var(--general-spacing-s) * 1px);
+    overflow-y: auto;
 }
 
 .list {

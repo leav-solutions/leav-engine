@@ -42,7 +42,7 @@ describe('viewV2ToSerializedView', () => {
         expect(result.attributesIds).toEqual(['attribute_2']);
     });
 
-    it('serializes each sort in order, joining the descent path into a dotted field', () => {
+    it('serializes each pinned sort in order, joining the descent path into a dotted field', () => {
         const result = viewV2ToSerializedView(
             makeView({
                 sorts: [
@@ -52,8 +52,9 @@ describe('viewV2ToSerializedView', () => {
                             {id: 'name', label: {}},
                         ],
                         order: SortOrder.desc,
+                        pinned: true,
                     },
-                    {attributes: [{id: 'date', label: {}}], order: SortOrder.asc},
+                    {attributes: [{id: 'date', label: {}}], order: SortOrder.asc, pinned: true},
                 ],
             }),
         );
@@ -64,12 +65,25 @@ describe('viewV2ToSerializedView', () => {
         ]);
     });
 
+    it('keeps only pinned sorts (unpinned sorts are configured but not applied)', () => {
+        const result = viewV2ToSerializedView(
+            makeView({
+                sorts: [
+                    {attributes: [{id: 'author', label: {}}], order: SortOrder.asc, pinned: false},
+                    {attributes: [{id: 'date', label: {}}], order: SortOrder.desc, pinned: true},
+                ],
+            }),
+        );
+
+        expect(result.sort).toEqual([{field: 'date', order: SortOrder.desc}]);
+    });
+
     it('skips a sort that has no attribute to sort on', () => {
         const result = viewV2ToSerializedView(
             makeView({
                 sorts: [
-                    {attributes: [], order: SortOrder.asc},
-                    {attributes: [{id: 'date', label: {}}], order: SortOrder.desc},
+                    {attributes: [], order: SortOrder.asc, pinned: true},
+                    {attributes: [{id: 'date', label: {}}], order: SortOrder.desc, pinned: true},
                 ],
             }),
         );

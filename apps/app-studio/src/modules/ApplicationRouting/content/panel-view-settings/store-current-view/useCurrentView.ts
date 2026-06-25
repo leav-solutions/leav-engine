@@ -45,6 +45,11 @@ export const useCurrentView = () => {
         [dispatch],
     );
 
+    const toggleSortPinned = useCallback(
+        (id: string) => dispatch({type: 'TOGGLE_SORT_PINNED', payload: {id}}),
+        [dispatch],
+    );
+
     const setLabel = useCallback(
         (value: string) => dispatch({type: 'SET_LABEL', payload: {lang: lang[0], value}}),
         [dispatch, lang],
@@ -99,12 +104,26 @@ export const useCurrentView = () => {
             view?.sorts.map(sort => ({
                 id: getSortId(sort),
                 order: sort.order,
+                pinned: sort.pinned,
                 ids: sort.attributes.map(attribute => attribute.id),
                 // Descent path label, e.g. "Campagnes › Thématiques". A single-attribute sort just
                 // shows that attribute's label.
                 label: sort.attributes.map(attribute => localizedTranslation(attribute.label ?? {}, lang)).join(' › '),
             })) ?? [],
         [view, lang],
+    );
+
+    // Pinned sorts keep the view-defined order (= sort priority). Unpinned sorts are sorted
+    // alphabetically. Mirrors visibleColumns / invisibleColumns.
+    const pinnedSorts = useMemo(() => sorts.filter(sort => sort.pinned), [sorts]);
+
+    const unpinnedSorts = useMemo(
+        () =>
+            sorts
+                .filter(sort => !sort.pinned)
+                .slice()
+                .sort((a, b) => a.label.localeCompare(b.label)),
+        [sorts],
     );
 
     // The currently-available attributes per facet (= the gear selection). Columns are keyed by
@@ -128,6 +147,7 @@ export const useCurrentView = () => {
         moveAttribute,
         moveSort,
         setSortOrder,
+        toggleSortPinned,
         setLabel,
         setShared,
         toggleShortcut,
@@ -138,6 +158,8 @@ export const useCurrentView = () => {
         visibleColumns,
         invisibleColumns,
         sorts,
+        pinnedSorts,
+        unpinnedSorts,
         shortcuts: view?.shortcuts ?? [],
         availableColumnIds,
         availableSortPaths,

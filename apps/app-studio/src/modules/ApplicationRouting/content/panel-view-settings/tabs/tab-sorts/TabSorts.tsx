@@ -1,4 +1,4 @@
-import {KitFilter, KitSection, KitTypography} from 'aristid-ds';
+import {KitDivider, KitFilter, KitSection, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {
     closestCenter,
@@ -14,25 +14,47 @@ import {restrictToParentElement, restrictToVerticalAxis} from '@dnd-kit/modifier
 import {SortOrder} from '_ui/_gqlTypes';
 import {useCurrentView} from '../../store-current-view/useCurrentView';
 import {SortItem} from './SortItem';
-import {tab, list, sortFilter, emptyBox} from './tabSorts.module.css';
+import {tab, lists, list, sortFilter, emptyBox} from './tabSorts.module.css';
 
 // The admin "available attributes" gear for sorts lives in the shared TabHeader (left of the pin),
 // not here — see TabHeader. This tab only renders the list of configured sorts.
 export const TabSorts = () => {
     const {t} = useSharedTranslation();
-    const {sorts, moveSort, setSortOrder} = useCurrentView();
+    const {sorts, pinnedSorts, unpinnedSorts, moveSort, setSortOrder, toggleSortPinned} = useCurrentView();
 
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates}),
     );
 
-    // The order of the sorts list IS the order in which sorts are applied in the explorer.
+    // The order of the pinned sorts list IS the order in which sorts are applied in the explorer.
     const handleDragEnd = ({active, over}: DragEndEvent) => {
         if (over && active.id !== over.id) {
             moveSort(String(active.id), String(over.id));
         }
     };
+
+    const renderSortFilter = (sort: (typeof sorts)[number], disabled: boolean = false) => (
+        <KitFilter
+            className={sortFilter}
+            expandable
+            showSingleValue
+            disabled={disabled}
+            label={sort.label}
+            values={[sort.order === SortOrder.asc ? t('explorer.sort-ascending') : t('explorer.sort-descending')]}
+            dropDownProps={{
+                menu: {
+                    selectable: true,
+                    selectedKeys: [sort.order],
+                    items: [
+                        {key: SortOrder.asc, label: t('explorer.sort-ascending')},
+                        {key: SortOrder.desc, label: t('explorer.sort-descending')},
+                    ],
+                    onSelect: ({selectedKeys: [selectedOrder]}) => setSortOrder(sort.id, selectedOrder as SortOrder),
+                },
+            }}
+        />
+    );
 
     if (sorts.length === 0) {
         return (
@@ -44,50 +66,50 @@ export const TabSorts = () => {
 
     return (
         <div className={tab}>
-            <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-                modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            >
-                <SortableContext items={sorts.map(sort => sort.id)} strategy={verticalListSortingStrategy}>
+            <div className={lists}>
+                {pinnedSorts.length > 0 && (
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                        modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+                    >
+                        <SortableContext
+                            items={pinnedSorts.map(sort => sort.id)}
+                            strategy={verticalListSortingStrategy}
+                        >
+                            <ul className={list}>
+                                {pinnedSorts.map(sort => (
+                                    <SortItem
+                                        key={sort.id}
+                                        id={sort.id}
+                                        pinned
+                                        onTogglePinned={() => toggleSortPinned(sort.id)}
+                                    >
+                                        {renderSortFilter(sort)}
+                                    </SortItem>
+                                ))}
+                            </ul>
+                        </SortableContext>
+                    </DndContext>
+                )}
+                {pinnedSorts.length > 0 && unpinnedSorts.length > 0 && <KitDivider noMargin />}
+                {unpinnedSorts.length > 0 && (
                     <ul className={list}>
-                        {sorts.map(sort => (
-                            <SortItem key={sort.id} id={sort.id}>
-                                <KitFilter
-                                    className={sortFilter}
-                                    expandable
-                                    showSingleValue
-                                    label={sort.label}
-                                    values={[
-                                        sort.order === SortOrder.asc
-                                            ? t('explorer.sort-ascending')
-                                            : t('explorer.sort-descending'),
-                                    ]}
-                                    dropDownProps={{
-                                        menu: {
-                                            selectable: true,
-                                            selectedKeys: [sort.order],
-                                            items: [
-                                                {
-                                                    key: SortOrder.asc,
-                                                    label: t('explorer.sort-ascending'),
-                                                },
-                                                {
-                                                    key: SortOrder.desc,
-                                                    label: t('explorer.sort-descending'),
-                                                },
-                                            ],
-                                            onSelect: ({selectedKeys: [selectedOrder]}) =>
-                                                setSortOrder(sort.id, selectedOrder as SortOrder),
-                                        },
-                                    }}
-                                />
+                        {unpinnedSorts.map(sort => (
+                            <SortItem
+                                key={sort.id}
+                                id={sort.id}
+                                pinned={false}
+                                draggable={false}
+                                onTogglePinned={() => toggleSortPinned(sort.id)}
+                            >
+                                {renderSortFilter(sort, true)}
                             </SortItem>
                         ))}
                     </ul>
-                </SortableContext>
-            </DndContext>
+                )}
+            </div>
         </div>
     );
 };

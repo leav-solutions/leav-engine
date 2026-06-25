@@ -32,18 +32,6 @@
     color: var(--general-utilities-text-primary);
 }
 
-.visibilityButton {
-    border: none;
-    background: transparent;
-    padding: 0;
-    display: flex;
-    color: var(--general-utilities-text-primary);
-}
-
-.visibilityButton:not([disabled]) {
-    cursor: pointer;
-}
-
 .visibleIcon {
     color: var(--general-utilities-text-blue);
 }

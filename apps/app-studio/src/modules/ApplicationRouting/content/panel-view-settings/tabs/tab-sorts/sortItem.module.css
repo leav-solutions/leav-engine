@@ -41,3 +41,15 @@
     cursor: grabbing;
     color: var(--general-utilities-text-primary);
 }
+
+.pinButton {
+    margin-left: auto;
+}
+
+.pinnedIcon {
+    color: var(--general-utilities-text-blue);
+}
+
+.unpinnedIcon {
+    color: var(--general-utilities-disabled);
+}

@@ -7,9 +7,10 @@ import {useCurrentView} from '../useCurrentView';
 
 type NonNullSort = NonNullable<CurrentView>['sorts'][number];
 
-const makeSort = (attributePath: string[], order: SortOrder = SortOrder.asc): NonNullSort => ({
+const makeSort = (attributePath: string[], order: SortOrder = SortOrder.asc, pinned = true): NonNullSort => ({
     attributes: attributePath.map(id => ({id, label: {en: id.toUpperCase()}})),
     order,
+    pinned,
 });
 
 // Deterministic lang/user without spinning up the providers: the current user is '123'.
@@ -160,6 +161,9 @@ describe('useCurrentView', () => {
                 payload: {id: 'date', order: SortOrder.desc},
             });
 
+            result.current.toggleSortPinned('date');
+            expect(dispatch).toHaveBeenCalledWith({type: 'TOGGLE_SORT_PINNED', payload: {id: 'date'}});
+
             result.current.toggleShortcut(ViewV2Shortcut.filters);
             expect(dispatch).toHaveBeenCalledWith({
                 type: 'TOGGLE_SHORTCUT',
@@ -169,13 +173,36 @@ describe('useCurrentView', () => {
     });
 
     describe('sorts', () => {
-        it('derives the dnd id, order, attribute ids and label of each sort', () => {
+        it('derives the dnd id, order, pinned flag, attribute ids and label of each sort', () => {
             const view = makeView({sorts: [makeSort(['author', 'name'], SortOrder.desc)]});
             const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn()});
 
             expect(result.current.sorts).toEqual([
-                {id: 'author/name', order: SortOrder.desc, ids: ['author', 'name'], label: 'AUTHOR › NAME'},
+                {
+                    id: 'author/name',
+                    order: SortOrder.desc,
+                    pinned: true,
+                    ids: ['author', 'name'],
+                    label: 'AUTHOR › NAME',
+                },
             ]);
+        });
+
+        it('splits pinned (view order) and unpinned (alphabetical) sorts', () => {
+            const view = makeView({
+                sorts: [
+                    makeSort(['zeta'], SortOrder.asc, true),
+                    makeSort(['alpha'], SortOrder.asc, true),
+                    makeSort(['gamma'], SortOrder.asc, false),
+                    makeSort(['beta'], SortOrder.asc, false),
+                ],
+            });
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn()});
+
+            // Pinned keep the view-defined order (= sort priority).
+            expect(result.current.pinnedSorts.map(sort => sort.id)).toEqual(['zeta', 'alpha']);
+            // Unpinned are sorted alphabetically by label.
+            expect(result.current.unpinnedSorts.map(sort => sort.id)).toEqual(['beta', 'gamma']);
         });
     });
 });
