@@ -37,31 +37,9 @@ You can add plugins to the core by adding them to the plugins folder. Each plugi
 The plugin folder is located by default in `apps/core/src/plugins` on development environment and `apps/core/dist/plugins` on build.
 It can be configured with the `PLUGINS_PATH` environment variable or the `pluginsPath` variable in the `config/local.js` file. ⚠️ The path must be under the `apps/core/src/plugins` folder (eg. `apps/core/src/plugins/my-own-repo/my-plugins`)
 
-### Create a plugin (WIP)
+### Create a plugin
 
-In your plugins, import [@leav/core-types](../../libs/core-types)
-
-In your tsconfig.json
-
-```json
-{
-    "compilerOptions": {
-        "paths": {
-            "@leav/core/*": ["./node_modules/@leav/core-types/apps/core/src/*"],
-            "@leav/utils": ["./node_modules/@leav/core-types/libs/utils/src/index"],
-            "@leav/logger": ["./node_modules/@leav/core-types/libs/logger/src/index"]
-        }
-    }
-}
-```
-
-In your code
-
-```ts
-import {type ILogger} from '@leav/logger';
-import {AttributeCondition, Operator, type IRecord} from '@leav/core/_types/record';
-import {EventAction, type IDbEvent, type IDbPayload} from '@leav/utils';
-```
+In your plugins, import [@leav/core-publish](../../libs/core-publish). See [CLAUDE.md](../../libs/core-publish/CLAUDE.md) for setup and usage into plugins
 
 ### Tests
 

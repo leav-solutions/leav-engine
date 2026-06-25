@@ -1041,6 +1041,13 @@ build-npm-leav-core-types:
     FOCUS: core
     PATH_CHANGES: apps/core/**/* # libs/core-types is a projection of apps/core
 
+build-npm-leav-core-publish:
+  <<: *build_npm
+  variables:
+    PKG: "@leav/core-publish"
+    FOCUS: core
+    PATH_CHANGES: apps/core/**/* # libs/core-publish is a projection of apps/core
+
 build-npm-leav-ui:
   <<: *build_npm
   variables:

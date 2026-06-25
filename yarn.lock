@@ -5067,6 +5067,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@leav/core-publish@workspace:libs/core-publish":
+  version: 0.0.0-use.local
+  resolution: "@leav/core-publish@workspace:libs/core-publish"
+  languageName: unknown
+  linkType: soft
+
 "@leav/core-types@workspace:libs/core-types":
   version: 0.0.0-use.local
   resolution: "@leav/core-types@workspace:libs/core-types"
