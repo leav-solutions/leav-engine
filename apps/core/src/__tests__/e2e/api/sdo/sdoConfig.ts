@@ -24,6 +24,7 @@ export const sdoGlobalSettings: ISDOSettings = {
                     format: 'number',
                 },
                 'system.systemSdoHash': {leavAttributeId: 'hash_sdo', valueRequired: false, format: 'string'},
+                'system.systemLabel': {leavAttributeId: 'label', valueRequired: false, format: 'string'},
                 // info object is required by generic.json schema; leavAttributeId '' maps to null (no fetch)
                 'info._': {leavAttributeId: '', valueRequired: false, format: 'string'},
             },
@@ -44,6 +45,7 @@ export const sdoGlobalSettings: ISDOSettings = {
                     format: 'number',
                 },
                 'system.systemSdoHash': {leavAttributeId: 'hash_sdo', valueRequired: false, format: 'string'},
+                'system.systemLabel': {leavAttributeId: 'label', valueRequired: false, format: 'string'},
                 // info object is required by generic.json schema; leavAttributeId '' maps to null (no fetch)
                 'info._': {leavAttributeId: '', valueRequired: false, format: 'string'},
             },

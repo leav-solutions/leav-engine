@@ -75,9 +75,8 @@ export default function ({
         const isActive = valuesToSave.find(value => value.attribute === 'active')?.payload as boolean | undefined;
 
         // filter out immutable core system attributes to avoid create record failure
-        // maybe it is better to ignore a specific group of attributes on sdo mapping later.
         valuesToSave = valuesToSave.filter(
-            value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute) && value.attribute !== 'active', // FIXME: active
+            value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute) && value.attribute !== 'active',
         );
 
         if (debugSaveValues) {
@@ -120,9 +119,10 @@ export default function ({
             );
         }
 
-        const valuesToSave = (await _mapRecordValuesFromSDO(sdo, sdoLibrary, ctx, records[0])).filter(
-            value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute),
-        );
+        let valuesToSave = await _mapRecordValuesFromSDO(sdo, sdoLibrary, ctx, records[0]);
+
+        // filter out immutable core system attributes to avoid update system informations
+        valuesToSave = valuesToSave.filter(value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute));
 
         if (debugSaveValues) {
             logger.debug(`SDO Import update values to save on record ${leavLibraryId}/${records[0].id} >> `, {
@@ -130,7 +130,6 @@ export default function ({
             });
         }
 
-        // saveValueBatch
         const res = await valueDomain.saveValueBatch({
             library: leavLibraryId,
             recordId: records[0].id,
