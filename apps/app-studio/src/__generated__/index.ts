@@ -3296,6 +3296,13 @@ export type GetViewV2Query = { viewV2: { id: string, library: string, label: any
 
 export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, attributes: Array<{ id: string, label?: any | null }> }> };
 
+export type DeleteViewV2MutationVariables = Exact<{
+  viewId: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteViewV2Mutation = { deleteViewV2: { id: string } };
+
 export type GetViewListQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
 }>;
@@ -4049,6 +4056,39 @@ export type GetViewV2QueryHookResult = ReturnType<typeof useGetViewV2Query>;
 export type GetViewV2LazyQueryHookResult = ReturnType<typeof useGetViewV2LazyQuery>;
 export type GetViewV2SuspenseQueryHookResult = ReturnType<typeof useGetViewV2SuspenseQuery>;
 export type GetViewV2QueryResult = Apollo.QueryResult<GetViewV2Query, GetViewV2QueryVariables>;
+export const DeleteViewV2Document = gql`
+    mutation DeleteViewV2($viewId: ID!) {
+  deleteViewV2(viewId: $viewId) {
+    id
+  }
+}
+    `;
+export type DeleteViewV2MutationFn = Apollo.MutationFunction<DeleteViewV2Mutation, DeleteViewV2MutationVariables>;
+
+/**
+ * __useDeleteViewV2Mutation__
+ *
+ * To run a mutation, you first call `useDeleteViewV2Mutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteViewV2Mutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteViewV2Mutation, { data, loading, error }] = useDeleteViewV2Mutation({
+ *   variables: {
+ *      viewId: // value for 'viewId'
+ *   },
+ * });
+ */
+export function useDeleteViewV2Mutation(baseOptions?: Apollo.MutationHookOptions<DeleteViewV2Mutation, DeleteViewV2MutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteViewV2Mutation, DeleteViewV2MutationVariables>(DeleteViewV2Document, options);
+      }
+export type DeleteViewV2MutationHookResult = ReturnType<typeof useDeleteViewV2Mutation>;
+export type DeleteViewV2MutationResult = Apollo.MutationResult<DeleteViewV2Mutation>;
+export type DeleteViewV2MutationOptions = Apollo.BaseMutationOptions<DeleteViewV2Mutation, DeleteViewV2MutationVariables>;
 export const GetViewListDocument = gql`
     query GetViewList($libraryId: ID!) {
   viewsV2(library: $libraryId) {

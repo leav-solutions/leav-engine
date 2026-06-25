@@ -1,0 +1,5 @@
+mutation DeleteViewV2($viewId: ID!) {
+    deleteViewV2(viewId: $viewId) {
+        id
+    }
+}

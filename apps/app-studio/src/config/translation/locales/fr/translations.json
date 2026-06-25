@@ -137,9 +137,14 @@
         "copy_id": "Copier l’identifiant de la vue",
         "copy_id_disabled": "Partagez la vue pour pouvoir copier son identifiant",
         "id_copied": "Identifiant de la vue copié",
+        "delete_view": "Supprimer la vue",
+        "delete_view_confirm_title": "Supprimer la vue",
+        "delete_view_confirm_content_shared": "Cette vue est partagée : sa suppression la retirera pour tous les utilisateurs qui y ont accès. Cette action est irréversible. Voulez-vous vraiment la supprimer ?",
+        "delete_view_confirm_content": "Cette action est irréversible. Voulez-vous vraiment supprimer cette vue ?",
+        "delete_view_success": "Vue supprimée",
         "unsaved_changes": {
             "title": "Modifications non enregistrées",
-            "content": "Vous avez apporté des modifications à la vue actuelle. Voulez-vous les enregistrer avant de changer de vue pour ne pas les perdre ?",
+            "content": "Vous avez apporté des modifications à la vue actuelle. Voulez-vous les enregistrer avant de changer de vue pour ne pas les perdre ?",
             "discard": "Ignorer"
         },
         "current_view": {

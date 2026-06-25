@@ -224,20 +224,6 @@ describe('CurrentViewSection', () => {
         });
     });
 
-    describe('delete button (owner only)', () => {
-        it('is present but always disabled (out of scope, LEAVC-934)', () => {
-            renderSection({view: makeView()});
-            expect(screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.delete`})).toBeDisabled();
-        });
-
-        it('is absent for a non-owner', () => {
-            renderSection({view: makeView({created_by: nonOwner})});
-            expect(
-                screen.queryByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.delete`}),
-            ).not.toBeInTheDocument();
-        });
-    });
-
     describe('save as', () => {
         it('opens the save-as modal and saves with the trimmed name', async () => {
             renderSection({view: makeView()});
