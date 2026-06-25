@@ -3,12 +3,12 @@ import {getConfig} from '../../../../config';
 import {RabbitMqClient} from './rabbitMQUtils';
 import {type IConfig} from '../../../../_types/config';
 import {adminUserSdk} from '../e2eUtils';
-import {SDO_LIBRARY_ID, sdoGlobalSettings} from './sdoConfig';
+import {SDO_IMPORTS_LIBRARY_ID, sdoGlobalSettings} from './sdoConfig';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes';
 
 export const formatDate = (date: string) => (new Date(date).getTime() / 1000).toString();
 
-describe('SDO Map Imports', () => {
+describe('SDO Imports', () => {
     let conf: IConfig;
     let rabbitmqClient: RabbitMqClient;
 
@@ -16,20 +16,9 @@ describe('SDO Map Imports', () => {
         conf = await getConfig();
         rabbitmqClient = new RabbitMqClient();
 
-        // hash_sdo attribute is written back by the SDO domain after each export to track changes.
-        // It must exist on the library before any record is created.
-        await adminUserSdk.SaveAttribute({
-            attribute: {
-                id: 'hash_sdo',
-                type: AttributeType.simple,
-                format: AttributeFormat.text,
-                label: {fr: 'Hash SDO', en: 'SDO Hash'},
-            },
-        });
-
         await adminUserSdk.SaveLibrary({
             library: {
-                id: SDO_LIBRARY_ID,
+                id: SDO_IMPORTS_LIBRARY_ID,
                 label: {fr: 'Test SDO', en: 'Test SDO'},
                 attributes: ['hash_sdo'],
             },
@@ -56,7 +45,7 @@ describe('SDO Map Imports', () => {
         const uuid = crypto.randomUUID();
 
         const sdoToEmit: ISDO = {
-            name: SDO_LIBRARY_ID, // SDO_LIBRARIES.MAP,
+            name: SDO_IMPORTS_LIBRARY_ID, // SDO_LIBRARIES.MAP,
             dataModelRelease: 'dataModelRelease',
             date: creationDateSec,
             action: 'CREATE',
@@ -81,7 +70,7 @@ describe('SDO Map Imports', () => {
         await vi.waitFor(
             async () => {
                 const record = await adminUserSdk.GetRecordByUUID({
-                    libraryId: SDO_LIBRARY_ID,
+                    libraryId: SDO_IMPORTS_LIBRARY_ID,
                     recordUUID: uuid,
                     retrieveInactive: false,
                 });
@@ -102,7 +91,7 @@ describe('SDO Map Imports', () => {
         const uuid = crypto.randomUUID();
 
         const sdoToEmit: ISDO = {
-            name: SDO_LIBRARY_ID,
+            name: SDO_IMPORTS_LIBRARY_ID,
             dataModelRelease: 'dataModelRelease',
             date: creationDateSec,
             action: 'CREATE',
@@ -127,7 +116,7 @@ describe('SDO Map Imports', () => {
         await vi.waitFor(
             async () => {
                 const record = await adminUserSdk.GetRecordByUUID({
-                    libraryId: SDO_LIBRARY_ID,
+                    libraryId: SDO_IMPORTS_LIBRARY_ID,
                     recordUUID: uuid,
                     retrieveInactive: true,
                 });

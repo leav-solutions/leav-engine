@@ -1,7 +1,7 @@
 import {type ISDO} from '../../../../_types/sdo';
 import {adminUserSdk} from '../e2eUtils';
 import {RabbitMqClient} from './rabbitMQUtils';
-import {SDO_EXPORT_TIMER, sdoGlobalSettings, SDO_LIBRARY_ID} from './sdoConfig';
+import {SDO_EXPORT_TIMER, sdoGlobalSettings, SDO_EXPORTS_LIBRARY_ID} from './sdoConfig';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes';
 import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
@@ -10,26 +10,15 @@ const rabbitmqClient = new RabbitMqClient();
 
 const TEST_GET_EXPORT_MSG_QUEUE = 'test_get_export_queue';
 
-describe('SDO Export', () => {
+describe('SDO Exports', () => {
     let conf: IConfig;
 
     beforeAll(async () => {
         conf = await getConfig();
 
-        // hash_sdo attribute is written back by the SDO domain after each export to track changes.
-        // It must exist on the library before any record is created.
-        await adminUserSdk.SaveAttribute({
-            attribute: {
-                id: 'hash_sdo',
-                type: AttributeType.simple,
-                format: AttributeFormat.text,
-                label: {fr: 'Hash SDO', en: 'SDO Hash'},
-            },
-        });
-
         await adminUserSdk.SaveLibrary({
             library: {
-                id: SDO_LIBRARY_ID,
+                id: SDO_EXPORTS_LIBRARY_ID,
                 label: {fr: 'Test SDO', en: 'Test SDO'},
                 attributes: ['hash_sdo'],
             },
@@ -62,18 +51,18 @@ describe('SDO Export', () => {
     const waitForSdo = (recordUUID: string, timeoutMs = SDO_EXPORT_TIMER * 10): Promise<ISDO> =>
         rabbitmqClient.waitForMessage<ISDO>(
             TEST_GET_EXPORT_MSG_QUEUE,
-            m => m.name === SDO_LIBRARY_ID && String((m.content as any).system?.systemId) === recordUUID,
+            m => m.name === SDO_EXPORTS_LIBRARY_ID && String((m.content as any).system?.systemId) === recordUUID,
             timeoutMs,
         );
 
     test('create a record triggers a CREATE export message', async () => {
-        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_LIBRARY_ID});
+        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const recordUUID = createRecord.record!.uuid;
 
         const msg = await waitForSdo(recordUUID);
 
         expect(msg).toMatchObject({
-            name: SDO_LIBRARY_ID,
+            name: SDO_EXPORTS_LIBRARY_ID,
             dataModelRelease: 'dataModelRelease',
             date: expect.any(Number),
             action: 'CREATE',
