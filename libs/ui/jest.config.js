@@ -20,5 +20,10 @@ module.exports = {
     ],
     testRegex: '.test.(ts|tsx)$',
     testTimeout: 90_000,
-    moduleNameMapper: require('../../jestModuleNameMapper'),
+    moduleNameMapper: {
+        ...require('../../jestModuleNameMapper'),
+        // Map CSS module imports to identity-obj-proxy: in tests `import {x} from './y.module.css'`
+        // resolves `x` to the literal string 'x', so styling never breaks rendering assertions.
+        '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    },
 };
