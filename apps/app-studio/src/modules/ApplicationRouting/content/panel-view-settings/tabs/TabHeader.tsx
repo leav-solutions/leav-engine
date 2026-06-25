@@ -5,10 +5,17 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faThumbtack, faThumbtackSlash} from '@fortawesome/free-solid-svg-icons';
 import {ViewV2Shortcut} from '../../../../../__generated__';
 import {useCurrentView} from '../store-current-view/useCurrentView';
+import {AvailableAttributesDropdown} from '../manage-available-attributes/AvailableAttributesDropdown';
 import {tabHeader, title, unpinnedIcon} from './tabHeader.module.css';
 import {type ViewSettingsTabConfig} from './_types';
 
-export const TabHeader = ({tab}: {tab: ViewSettingsTabConfig}) => {
+export const TabHeader = ({
+    tab,
+    canEditAvailableAttributesInHeader,
+}: {
+    tab: ViewSettingsTabConfig;
+    canEditAvailableAttributesInHeader: boolean;
+}) => {
     const {t} = useTranslation();
     const {shortcuts, toggleShortcut} = useCurrentView();
 
@@ -23,6 +30,7 @@ export const TabHeader = ({tab}: {tab: ViewSettingsTabConfig}) => {
             <KitTypography.Text weight="bold" size="fontSize5" className={title}>
                 {t(tab.labelKey)}
             </KitTypography.Text>
+            {canEditAvailableAttributesInHeader && <AvailableAttributesDropdown mode="nested" />}
             {!isPinLocked && (
                 <KitTooltip title={pinLabel}>
                     <KitButton

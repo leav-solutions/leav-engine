@@ -22,7 +22,7 @@ describe('TabHeader', () => {
     });
 
     it('toggles the shortcut of a non-display tab on click', async () => {
-        render(<TabHeader tab={filtersTab} />);
+        render(<TabHeader tab={filtersTab} canEditAvailableAttributesInHeader={false} />);
 
         await act(async () => userEvent.click(screen.getByLabelText('view_settings.pin')));
 
@@ -31,13 +31,13 @@ describe('TabHeader', () => {
 
     it('shows the unpin label when the tab is already pinned', () => {
         mockShortcuts = [ViewV2Shortcut.display, ViewV2Shortcut.filters];
-        render(<TabHeader tab={filtersTab} />);
+        render(<TabHeader tab={filtersTab} canEditAvailableAttributesInHeader={false} />);
 
         expect(screen.getByLabelText('view_settings.unpin')).toBeInTheDocument();
     });
 
     it('hides the pin button on the always-pinned display tab', () => {
-        render(<TabHeader tab={displayTab} />);
+        render(<TabHeader tab={displayTab} canEditAvailableAttributesInHeader={false} />);
 
         expect(screen.queryByLabelText('view_settings.unpin')).not.toBeInTheDocument();
         expect(screen.queryByLabelText('view_settings.pin')).not.toBeInTheDocument();

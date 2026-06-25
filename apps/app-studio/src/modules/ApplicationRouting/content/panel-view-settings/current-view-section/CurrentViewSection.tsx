@@ -9,7 +9,7 @@ import {header, currentView} from './currentViewSection.module.css';
 
 /**
  * Persistent header of the view-settings panel. Shows the current view and lets the user act on it
- * (rename, save, clone, share, reset) regardless of the open tab.
+ * (rename, save, save as, share, reset) regardless of the open tab.
  */
 export const CurrentViewSection = ({
     onViewSettingsClose,

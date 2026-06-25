@@ -403,6 +403,15 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
          */
         const canManageViewSettings = defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick !== undefined;
 
+        const handleSortClick =
+            canManageViewSettings && view.viewId
+                ? () =>
+                      defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick?.({
+                          settingName: 'sorts',
+                          viewId: view.viewId!,
+                      })
+                : undefined;
+
         const {viewSettingsShortcutsButtons} = useOpenViewSettingsV2({
             isEnabled: canManageViewSettings,
             view,
@@ -451,6 +460,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                                 canRemoveFilters={canManageViewSettings}
                                 selectAllButton={hideSelectAllAction ? null : selectAllButton}
                                 viewSettingsLoading={viewSettingsLoading}
+                                onSortClick={handleSortClick}
                             >
                                 {showSearch ? searchInput : null}
                                 {viewSettingsShortcutsButtons}

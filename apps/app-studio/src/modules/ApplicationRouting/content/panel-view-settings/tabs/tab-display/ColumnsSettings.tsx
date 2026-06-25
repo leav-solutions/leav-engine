@@ -2,9 +2,9 @@ import {type ChangeEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {KitButton, KitDivider, KitInput, KitTooltip, KitTypography} from 'aristid-ds';
+import {KitDivider, KitInput, KitTypography} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faGear, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
+import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
 import {
     closestCenter,
     DndContext,
@@ -18,11 +18,13 @@ import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrateg
 import {restrictToParentElement, restrictToVerticalAxis} from '@dnd-kit/modifiers';
 import {ColumnItem} from './ColumnItem';
 import {IDENTITY_COLUMN_ID} from './_constants';
+import {AvailableAttributesDropdown} from '../../manage-available-attributes/AvailableAttributesDropdown';
 import {section, header, lists, list} from './columnsSettings.module.css';
 import {type CurrentViewColumn} from '../../store-current-view/_types';
 
 export const ColumnsSettings = ({
     search,
+    canEditAdminView,
     visibleColumns,
     invisibleColumns,
     onSearchChange,
@@ -30,6 +32,7 @@ export const ColumnsSettings = ({
     onMoveAttribute,
 }: {
     search: string;
+    canEditAdminView: boolean;
     visibleColumns: CurrentViewColumn[];
     invisibleColumns: CurrentViewColumn[];
     onSearchChange: (search: string) => void;
@@ -65,15 +68,7 @@ export const ColumnsSettings = ({
                 <KitTypography.Text weight="bold" size="fontSize5">
                     {t('view_settings.display.columns.title')}
                 </KitTypography.Text>
-                <KitTooltip title={String(t('view_settings.display.columns.manage_available'))}>
-                    <KitButton
-                        type="secondary"
-                        size="m"
-                        disabled
-                        aria-label={String(t('view_settings.display.columns.manage_available'))}
-                        icon={<FontAwesomeIcon icon={faGear} />}
-                    />
-                </KitTooltip>
+                {canEditAdminView && <AvailableAttributesDropdown mode="flat" />}
             </header>
             <KitInput
                 placeholder={String(t('view_settings.display.columns.search_placeholder'))}

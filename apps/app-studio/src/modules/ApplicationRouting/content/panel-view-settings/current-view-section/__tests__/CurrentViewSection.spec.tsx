@@ -10,16 +10,16 @@ import {CurrentViewSection} from '../CurrentViewSection';
 type NonNullView = NonNullable<CurrentView>;
 
 const mockSave = jest.fn();
-const mockFork = jest.fn();
+const mockSaveAs = jest.fn();
 const mockToggleShared = jest.fn();
 
 jest.mock('../useCurrentViewActions', () => ({
     useCurrentViewActions: () => ({
         save: mockSave,
-        fork: mockFork,
+        saveAs: mockSaveAs,
         toggleShared: mockToggleShared,
         saveLoading: false,
-        forkLoading: false,
+        saveAsLoading: false,
         shareLoading: false,
     }),
 }));
@@ -104,14 +104,41 @@ describe('CurrentViewSection', () => {
             expect(onClose).toHaveBeenCalledTimes(1);
         });
 
-        it('exposes no CRUD action (save/clone/reset/delete)', () => {
+        it('exposes no CRUD action for a non-admin (save/save_as/reset/delete)', () => {
             renderSection({view: null, savedView: null, isEmptyView: true});
 
-            for (const action of ['save', 'clone', 'reset', 'delete']) {
+            for (const action of ['save', 'save_as', 'reset', 'delete']) {
                 expect(
                     screen.queryByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.${action}`}),
                 ).not.toBeInTheDocument();
             }
+        });
+    });
+
+    describe('empty (default) view state — admin', () => {
+        // The store seeds a synthetic editable draft for the admin; isEmptyView stays true.
+        const draft = makeView({label: {}});
+
+        it('exposes only "save as" and "reset", not save/delete/share', () => {
+            renderSection({view: draft, savedView: draft, isEmptyView: true, canEditAdminView: true});
+
+            expect(
+                screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.save_as`}),
+            ).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.reset`})).toBeInTheDocument();
+
+            expect(
+                screen.queryByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.save`}),
+            ).not.toBeInTheDocument();
+            expect(
+                screen.queryByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.delete`}),
+            ).not.toBeInTheDocument();
+            expect(screen.queryByRole('switch')).not.toBeInTheDocument();
+        });
+
+        it('disables "reset" while the draft is pristine (not dirty)', () => {
+            renderSection({view: draft, savedView: draft, isEmptyView: true, canEditAdminView: true});
+            expect(screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.reset`})).toBeDisabled();
         });
     });
 
@@ -211,12 +238,12 @@ describe('CurrentViewSection', () => {
         });
     });
 
-    describe('clone', () => {
-        it('opens the fork modal and forks with the trimmed name', async () => {
+    describe('save as', () => {
+        it('opens the save-as modal and saves with the trimmed name', async () => {
             renderSection({view: makeView()});
 
             await act(async () => {
-                await user.click(screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.clone`}));
+                await user.click(screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.save_as`}));
             });
 
             const dialog = screen.getByRole('dialog');
@@ -231,7 +258,7 @@ describe('CurrentViewSection', () => {
             await act(async () => {
                 await user.click(modalSave);
             });
-            expect(mockFork).toHaveBeenCalledWith('Ma copie');
+            expect(mockSaveAs).toHaveBeenCalledWith('Ma copie');
         });
     });
 

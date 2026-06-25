@@ -685,6 +685,7 @@
         "empty-data": "Aucun élément trouvé.",
         "sort-ascending": "Ascendant",
         "sort-descending": "Descendant",
+        "sorts-empty": "Aucun tri appliqué",
         "available-attributes": "Autres propriétés disponibles",
         "coming-soon": "À venir",
         "show": "Afficher",

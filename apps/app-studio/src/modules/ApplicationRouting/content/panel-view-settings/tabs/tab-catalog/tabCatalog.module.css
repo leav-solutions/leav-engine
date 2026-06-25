@@ -8,11 +8,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--general-utilities-border);
-    border-radius: calc(var(--general-border-radius-s) * 1px);
-    background: var(--general-utilities-neutral-light);
-    color: var(--general-colors-neutral-grey-400);
     text-align: center;
+    padding: calc(var(--general-spacing-m) * 1px) 0;
+
+    :global(.ant-typography) {
+        color: var(--general-colors-neutral-grey-400);
+    }
 }
 
 .viewItem {

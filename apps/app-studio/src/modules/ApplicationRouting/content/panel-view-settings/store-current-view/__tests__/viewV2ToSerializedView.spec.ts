@@ -42,7 +42,7 @@ describe('viewV2ToSerializedView', () => {
         expect(result.attributesIds).toEqual(['attribute_2']);
     });
 
-    it('serializes each sort in order, using the last attribute of the path as the field', () => {
+    it('serializes each sort in order, joining the descent path into a dotted field', () => {
         const result = viewV2ToSerializedView(
             makeView({
                 sorts: [
@@ -59,7 +59,7 @@ describe('viewV2ToSerializedView', () => {
         );
 
         expect(result.sort).toEqual([
-            {field: 'name', order: SortOrder.desc},
+            {field: 'author.name', order: SortOrder.desc},
             {field: 'date', order: SortOrder.asc},
         ]);
     });

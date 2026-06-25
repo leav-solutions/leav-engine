@@ -17,10 +17,10 @@ const SEEDED_COLUMNS: CurrentViewColumn[] = [
 // Reducer-backed provider so toggling the eye dispatches real actions and re-renders.
 const TabDisplayWithState = ({
     columns = SEEDED_COLUMNS,
-    isEmptyView = false,
+    canEditAdminView = false,
 }: {
     columns?: CurrentViewColumn[];
-    isEmptyView?: boolean;
+    canEditAdminView?: boolean;
 }) => {
     const seed = {
         id: 'view-1',
@@ -34,8 +34,8 @@ const TabDisplayWithState = ({
     };
     const [state, dispatch] = useReducer(currentViewReducer, {view: seed, savedView: seed});
     return (
-        <CurrentViewContext.Provider value={{...state, isEmptyView, dispatch}}>
-            <TabDisplay canEditAdminView={false} />
+        <CurrentViewContext.Provider value={{...state, isEmptyView: false, dispatch}}>
+            <TabDisplay canEditAdminView={canEditAdminView} />
         </CurrentViewContext.Provider>
     );
 };
@@ -55,12 +55,31 @@ describe('TabDisplay', () => {
             .getAllByRole('button')
             .find(button => button.tagName === 'BUTTON') as HTMLElement;
 
-    it('renders an empty-state message and no column lists in the empty (default) view state', () => {
-        render(<TabDisplayWithState isEmptyView />);
+    it('renders the display modes and only the locked identity column in the empty (default) view state', () => {
+        // Empty state = no view in the store (null). The tab no longer shows a KitEmpty placeholder:
+        // the (hardcoded) display modes and the locked identity column are always rendered.
+        render(
+            <CurrentViewContext.Provider value={{view: null, savedView: null, isEmptyView: true, dispatch: jest.fn()}}>
+                <TabDisplay canEditAdminView={false} />
+            </CurrentViewContext.Provider>,
+        );
 
-        expect(screen.getByText('view_settings.empty_view')).toBeInTheDocument();
-        expect(screen.queryAllByRole('list')).toHaveLength(0);
-        expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+        expect(screen.queryByText('view_settings.empty_view')).not.toBeInTheDocument();
+        expect(screen.getAllByRole('checkbox')).toHaveLength(3);
+
+        const visibleItems = within(getVisibleList()).getAllByRole('listitem');
+        expect(visibleItems).toHaveLength(1);
+        expect(within(getVisibleList()).getByText(/columns\.identity$/)).toBeInTheDocument();
+    });
+
+    it('shows the admin "manage available attributes" gear only for an admin user', () => {
+        const gearLabel = 'view_settings.display.columns.manage_available';
+
+        const {rerender} = render(<TabDisplayWithState canEditAdminView={false} />);
+        expect(screen.queryByLabelText(gearLabel)).not.toBeInTheDocument();
+
+        rerender(<TabDisplayWithState canEditAdminView />);
+        expect(screen.getByLabelText(gearLabel)).toBeInTheDocument();
     });
 
     it('renders three display modes: one selected, the two others disabled', () => {

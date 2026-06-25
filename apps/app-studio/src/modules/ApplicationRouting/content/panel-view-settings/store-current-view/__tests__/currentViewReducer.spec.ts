@@ -1,5 +1,6 @@
 import {SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
 import {currentViewReducer, initialCurrentViewState, viewReducer} from '../currentViewReducer';
+import {IDENTITY_COLUMN_ID} from '../../tabs/tab-display/_constants';
 import {type CurrentView} from '../_types';
 
 type NonNullState = NonNullable<CurrentView>;
@@ -177,6 +178,88 @@ describe('viewReducer (display actions)', () => {
             expect(next.shortcuts).toEqual([ViewV2Shortcut.display]);
         });
     });
+
+    describe('SET_AVAILABLE_COLUMNS', () => {
+        it('keeps still-selected columns (order + visibility), appends new ones hidden, drops the rest', () => {
+            // makeView: a(visible), b(visible), c(hidden), d(hidden)
+            const next = viewReducer(makeView(), {
+                type: 'SET_AVAILABLE_COLUMNS',
+                payload: {
+                    attributes: [
+                        {id: 'b', label: {en: 'B'}},
+                        {id: 'a', label: {en: 'A'}},
+                        {id: 'e', label: {en: 'E'}},
+                    ],
+                },
+            });
+
+            // c and d deselected → dropped; a and b keep their existing view order + visibility;
+            // e is new → appended hidden. Payload order does not reorder kept columns.
+            expect(attrIds(next)).toEqual(['a', 'b', 'e']);
+            expect(attrVisible(next, 'a')).toBe(true);
+            expect(attrVisible(next, 'b')).toBe(true);
+            expect(attrVisible(next, 'e')).toBe(false);
+        });
+
+        it('never drops the hard-coded identity column, even when absent from the gear selection', () => {
+            const view = makeView({
+                display: {
+                    type: ViewV2Types.list,
+                    attributes: makeAttributes([
+                        {id: IDENTITY_COLUMN_ID, label: 'Identity', visible: true},
+                        {id: 'a', label: 'A', visible: true},
+                    ]),
+                },
+            });
+            const next = viewReducer(view, {
+                type: 'SET_AVAILABLE_COLUMNS',
+                payload: {attributes: [{id: 'a', label: {en: 'A'}}]},
+            });
+
+            expect(attrIds(next)).toContain(IDENTITY_COLUMN_ID);
+        });
+    });
+
+    describe('SET_AVAILABLE_SORTS', () => {
+        it('keeps still-selected sorts (priority order + asc/desc), appends new ones ascending, drops the rest', () => {
+            const view = makeView({
+                sorts: [
+                    {attributes: [{id: 'date', label: {en: 'DATE'}}], order: SortOrder.desc},
+                    makeCompositeSort(['author', 'name']),
+                ],
+            });
+
+            const next = viewReducer(view, {
+                type: 'SET_AVAILABLE_SORTS',
+                payload: {
+                    sorts: [
+                        {
+                            attributes: [
+                                {id: 'author', label: {en: 'AUTHOR'}},
+                                {id: 'name', label: {en: 'NAME'}},
+                            ],
+                        },
+                        {attributes: [{id: 'price', label: {en: 'PRICE'}}]},
+                    ],
+                },
+            });
+
+            // 'date' deselected → dropped; 'author/name' kept (and keeps its ascending order);
+            // 'price' is new → appended ascending.
+            expect(sortIds(next)).toEqual(['author/name', 'price']);
+            expect(next.sorts[1].order).toBe(SortOrder.asc);
+        });
+
+        it('preserves the asc/desc order of a kept sort', () => {
+            const view = makeView({sorts: [{attributes: [{id: 'date', label: {en: 'DATE'}}], order: SortOrder.desc}]});
+            const next = viewReducer(view, {
+                type: 'SET_AVAILABLE_SORTS',
+                payload: {sorts: [{attributes: [{id: 'date', label: {en: 'DATE'}}]}]},
+            });
+
+            expect(next.sorts[0].order).toBe(SortOrder.desc);
+        });
+    });
 });
 
 // The top-level reducer tracking the {view, savedView} snapshots.
@@ -187,6 +270,36 @@ describe('currentViewReducer (state wrapper)', () => {
             const next = currentViewReducer(initialCurrentViewState, {type: 'LOAD_VIEW', payload});
             expect(next.view).toBe(payload);
             expect(next.savedView).toBe(payload);
+        });
+    });
+
+    describe('INIT_DEFAULT_VIEW', () => {
+        it('seeds both snapshots with an identical synthetic empty draft (starts pristine)', () => {
+            const next = currentViewReducer(initialCurrentViewState, {
+                type: 'INIT_DEFAULT_VIEW',
+                payload: {library: 'my_lib', createdBy: {id: 'user-1', label: 'Me'}},
+            });
+
+            expect(next.view).not.toBeNull();
+            expect(next.view!.library).toBe('my_lib');
+            expect(next.view!.display.attributes).toEqual([]);
+            expect(next.view!.sorts).toEqual([]);
+            expect(next.view!.created_by.whoAmI.id).toBe('user-1');
+            // Both snapshots reference the same draft → isDirty starts false.
+            expect(next.savedView).toBe(next.view);
+        });
+
+        it('RESET_VIEW reverts edits back to the empty draft', () => {
+            const seeded = currentViewReducer(initialCurrentViewState, {
+                type: 'INIT_DEFAULT_VIEW',
+                payload: {library: 'my_lib', createdBy: {id: 'user-1', label: 'Me'}},
+            });
+            const edited = currentViewReducer(seeded, {type: 'SET_VIEW_TYPE', payload: {viewType: ViewV2Types.cards}});
+            expect(edited.view!.display.type).toBe(ViewV2Types.cards);
+
+            const reset = currentViewReducer(edited, {type: 'RESET_VIEW'});
+            expect(reset.view).toBe(seeded.savedView);
+            expect(reset.view!.display.type).toBe(ViewV2Types.list);
         });
     });
 

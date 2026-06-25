@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {useLang, usePanelEventHandlers} from '@leav/ui';
-import {KitAlert, KitBadge, KitItemList, KitSpace, KitTag, KitTypography} from 'aristid-ds';
+import {KitAlert, KitBadge, KitItemList, KitSection, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {type IKitActionButton} from 'aristid-ds/dist/Kit/DataDisplay/types';
 import {useTranslation} from 'react-i18next';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -36,7 +36,7 @@ export const TabCatalog = ({libraryId}: {libraryId: string}) => {
     const {saveLastUsedView} = useLastUsedView();
 
     // The view we're about to switch to, deferred until the unsaved-changes modal is resolved.
-    // The modal is open iff this is non-null (mirrors CurrentViewActions' isForkModalOpen pattern).
+    // The modal is open iff this is non-null (mirrors CurrentViewActions' isSaveAsModalOpen pattern).
     const [pendingViewId, setPendingViewId] = useState<string | null>(null);
 
     // Same rule as `canSave` in CurrentViewActions: a view without a label can't be saved.
@@ -124,9 +124,9 @@ export const TabCatalog = ({libraryId}: {libraryId: string}) => {
                     )}
                 </header>
                 {myViews.length === 0 ? (
-                    <KitTypography.Text className={cn(emptyBox, viewItem)}>
-                        {t('view_settings.my_views_empty')}
-                    </KitTypography.Text>
+                    <KitSection className={emptyBox}>
+                        <KitTypography.Text size="fontSize7">{t('view_settings.my_views_empty')}</KitTypography.Text>
+                    </KitSection>
                 ) : (
                     <KitSpace direction="vertical" size="xs" className="full-width">
                         {myViews.map(view => (
@@ -171,9 +171,11 @@ export const TabCatalog = ({libraryId}: {libraryId: string}) => {
                     )}
                 </header>
                 {sharedViews.length === 0 ? (
-                    <KitTypography.Text className={cn(emptyBox, viewItem)}>
-                        {t('view_settings.shared_views_empty')}
-                    </KitTypography.Text>
+                    <KitSection className={emptyBox}>
+                        <KitTypography.Text size="fontSize7">
+                            {t('view_settings.shared_views_empty')}
+                        </KitTypography.Text>
+                    </KitSection>
                 ) : (
                     <KitSpace direction="vertical" size="xs" className="full-width">
                         {sharedViews.map(view => (

@@ -6,6 +6,7 @@
     padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px);
     border-top: 1px solid var(--general-utilities-border);
     border-bottom: 1px solid var(--general-utilities-border);
+    height: 66px;
 }
 
 .title {

@@ -1,8 +1,29 @@
 import {arrayMove} from '@dnd-kit/sortable';
-import {ViewV2Shortcut} from '../../../../../__generated__';
+import {SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../__generated__';
+import {IDENTITY_COLUMN_ID} from '../tabs/tab-display/_constants';
+import {DEFAULT_DRAFT_VIEW_ID} from './_constants';
 import {type CurrentViewAction, type CurrentView, type ICurrentViewState, getSortId} from './_types';
 
 export const initialCurrentViewState: ICurrentViewState = {view: null, savedView: null};
+
+/**
+ * Builds a synthetic, empty-but-editable "default view" draft for the admin empty state. Shaped like
+ * the `AppStudioViewSettingsView` fragment so every consumer (tabs, header, serializer) treats it as a
+ * regular view. `library` is the displayed library so the admin gear's attributes query resolves.
+ */
+export const createDefaultView = (
+    library: string,
+    createdBy: {id: string; label: string},
+): NonNullable<CurrentView> => ({
+    id: DEFAULT_DRAFT_VIEW_ID,
+    library,
+    label: {},
+    shared: false,
+    shortcuts: [ViewV2Shortcut.display],
+    created_by: {id: createdBy.id, whoAmI: {id: createdBy.id, label: createdBy.label}},
+    display: {type: ViewV2Types.list, attributes: []},
+    sorts: [],
+});
 
 /**
  * Pure reducer over a single (non-null) view, handling the display-only actions shared by every
@@ -107,6 +128,39 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
 
             return {...view, shortcuts};
         }
+        // Admin gear: the desired set of attributes available as columns. Reconcile against the
+        // current list: keep still-selected columns as-is (preserving order AND visibility), append
+        // newly-selected ones (hidden by default), drop deselected ones.
+        case 'SET_AVAILABLE_COLUMNS': {
+            const {attributes} = action.payload;
+            const desiredIds = new Set(attributes.map(attribute => attribute.id));
+            // The hard-coded identity column is never offered in the gear → never drop it here.
+            const kept = view.display.attributes.filter(
+                column => desiredIds.has(column.attribute.id) || column.attribute.id === IDENTITY_COLUMN_ID,
+            );
+            const keptIds = new Set(kept.map(column => column.attribute.id));
+            const added = attributes
+                .filter(attribute => !keptIds.has(attribute.id))
+                .map(attribute => ({visible: false, attribute}));
+
+            return {...view, display: {...view.display, attributes: [...kept, ...added]}};
+        }
+        // Admin gear: the desired set of attribute paths available as sorts. Reconcile against the
+        // current list (keyed by `getSortId`): keep still-selected sorts as-is (preserving priority
+        // order AND asc/desc), append newly-selected paths (ascending by default), drop deselected ones.
+        case 'SET_AVAILABLE_SORTS': {
+            const {sorts} = action.payload;
+            const pathKey = (path: {attributes: (typeof sorts)[number]['attributes']}) =>
+                path.attributes.map(attribute => attribute.id).join('/');
+            const desiredKeys = new Set(sorts.map(pathKey));
+            const kept = view.sorts.filter(sort => desiredKeys.has(getSortId(sort)));
+            const keptKeys = new Set(kept.map(getSortId));
+            const added = sorts
+                .filter(path => !keptKeys.has(pathKey(path)))
+                .map(path => ({attributes: path.attributes, order: SortOrder.asc}));
+
+            return {...view, sorts: [...kept, ...added]};
+        }
         default:
             return view;
     }
@@ -119,9 +173,15 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
  */
 export const currentViewReducer = (state: ICurrentViewState, action: CurrentViewAction): ICurrentViewState => {
     switch (action.type) {
-        // Seeds both snapshots: used on initial load and as the server echo after save/fork.
+        // Seeds both snapshots: used on initial load and as the server echo after save/save-as.
         case 'LOAD_VIEW':
             return {view: action.payload, savedView: action.payload};
+        // Seeds both snapshots with a fresh synthetic draft: identical snapshots → isDirty starts at
+        // false; RESET_VIEW returns to the empty draft.
+        case 'INIT_DEFAULT_VIEW': {
+            const draft = createDefaultView(action.payload.library, action.payload.createdBy);
+            return {view: draft, savedView: draft};
+        }
         case 'RESET_VIEW':
             return {...state, view: state.savedView};
         case 'MARK_SAVED':

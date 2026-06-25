@@ -19,7 +19,7 @@ export const CurrentViewLabel = () => {
     const value = view.label?.[lang[0]] ?? '';
     const isLabelEmpty = value.trim() === '';
 
-    // Non-owner: the label is read-only (a fork is needed to rename).
+    // Non-owner: the label is read-only ("save as" is needed to rename a copy).
     if (!isOwner) {
         return <KitInput readonly value={value} />;
     }
