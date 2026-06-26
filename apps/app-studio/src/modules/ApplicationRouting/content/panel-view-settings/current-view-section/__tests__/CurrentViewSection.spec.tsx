@@ -2,6 +2,7 @@ import {useReducer} from 'react';
 import userEvent from '@testing-library/user-event';
 import {act, render, screen, within} from '_ui/_tests/testUtils';
 import {ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
+import * as UseIsAdminUser from '../../../../../../config/user/useIsAdminUser';
 import {CurrentViewContext} from '../../store-current-view/CurrentViewContext';
 import {currentViewReducer} from '../../store-current-view/currentViewReducer';
 import {type CurrentView} from '../../store-current-view/_types';
@@ -76,8 +77,11 @@ const renderSection = (opts: {
         />,
     );
 
+const spyOnUseIsAdminUser = jest.spyOn(UseIsAdminUser, 'useIsAdminUser');
+
 beforeEach(() => {
     jest.clearAllMocks();
+    spyOnUseIsAdminUser.mockReturnValue(false);
 });
 
 describe('CurrentViewSection', () => {
@@ -272,6 +276,37 @@ describe('CurrentViewSection', () => {
             // libs/ui test i18n renders interpolated keys as `key|value` ⇒ asserts the name is passed.
             expect(screen.getByText(/current_view\.shared_by\|Alice/)).toBeInTheDocument();
             expect(screen.queryByRole('switch')).not.toBeInTheDocument();
+        });
+    });
+
+    describe('admin override on a shared view owned by another user', () => {
+        beforeEach(() => {
+            spyOnUseIsAdminUser.mockReturnValue(true);
+        });
+
+        const sharedViewOfOther = () => makeView({created_by: nonOwner, shared: true});
+
+        it('makes the label editable', () => {
+            renderSection({view: sharedViewOfOther()});
+            expect(screen.getByRole('textbox')).toBeEnabled();
+        });
+
+        it('shows the save button', () => {
+            renderSection({
+                view: sharedViewOfOther(),
+                savedView: makeView({created_by: nonOwner, shared: true, label: {fr: 'Ma vue'}}),
+            });
+            expect(screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.save`})).toBeInTheDocument();
+        });
+
+        it('shows the share switch (can un-share)', () => {
+            renderSection({view: sharedViewOfOther(), canEditAdminView: true});
+            expect(screen.getByRole('switch')).toBeInTheDocument();
+        });
+
+        it('keeps the label read-only on a private view owned by another user', () => {
+            renderSection({view: makeView({created_by: nonOwner, shared: false})});
+            expect(screen.getByRole('textbox')).toBeDisabled();
         });
     });
 });

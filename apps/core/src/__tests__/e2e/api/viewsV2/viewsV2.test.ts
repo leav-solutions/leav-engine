@@ -159,6 +159,24 @@ describe('ViewsV2', () => {
             return createViewV2.id;
         };
 
+        // Produces a view owned by another user than the admin (the guest), to exercise the admin override.
+        const createViewAsGuest = async (shared: boolean): Promise<string> => {
+            const {createViewV2} = await guestUserSdk.CreateViewV2({
+                view: {
+                    library: testLibName,
+                    display: {
+                        type: ViewV2Types.list,
+                        attributes: [{attributeId: 'id', visible: true}],
+                    },
+                    shared,
+                    label: {en: 'guest_view'},
+                    filters: [],
+                    sorts: [],
+                },
+            });
+            return createViewV2.id;
+        };
+
         describe('Private viewsV2', () => {
             it('Should not be able to get viewsV2 owned by other users', async () => {
                 const id = await createViewAsAdmin(false);
@@ -284,6 +302,34 @@ describe('ViewsV2', () => {
             it('Should not be able to delete shared viewsV2 owned by other users', async () => {
                 const id = await createViewAsAdmin(true);
                 await expect(guestUserSdk.DeleteViewV2({viewId: id})).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
+            });
+        });
+
+        describe('Admin override on viewsV2 owned by other users', () => {
+            it('Should be able to edit a shared viewV2 owned by another user', async () => {
+                const id = await createViewAsGuest(true);
+                const {updateViewV2} = await adminUserSdk.UpdateViewV2({
+                    view: {id, label: {en: 'edited_by_admin'}},
+                });
+                expect(updateViewV2.id).toBe(id);
+            });
+
+            it('Should be able to delete a shared viewV2 owned by another user', async () => {
+                const id = await createViewAsGuest(true);
+                const {deleteViewV2} = await adminUserSdk.DeleteViewV2({viewId: id});
+                expect(deleteViewV2.id).toBe(id);
+            });
+
+            it('Should not be able to edit a private viewV2 owned by another user', async () => {
+                const id = await createViewAsGuest(false);
+                await expect(
+                    adminUserSdk.UpdateViewV2({view: {id, display: {type: ViewV2Types.list, attributes: []}}}),
+                ).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
+            });
+
+            it('Should not be able to delete a private viewV2 owned by another user', async () => {
+                const id = await createViewAsGuest(false);
+                await expect(adminUserSdk.DeleteViewV2({viewId: id})).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
             });
         });
     });

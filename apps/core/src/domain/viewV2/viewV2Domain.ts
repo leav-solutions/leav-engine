@@ -17,6 +17,7 @@ import {
     ViewV2Shortcut,
 } from '../../_types/viewsV2';
 import {viewV2UpdateFieldsSchema, viewV2UserFieldsSchema} from './viewV2ZodSchema';
+import {adminsGroupId} from '../../_constants/users';
 
 export interface IViewV2Domain {
     createViewV2(input: IViewV2CreateInput, ctx: IQueryInfos): Promise<IViewV2>;
@@ -53,6 +54,12 @@ export default function ({
             {} as Record<string, {msg: string; vars: Record<string, unknown>}>,
         );
         throw new ValidationError(details, 'Invalid view v2 input');
+    };
+
+    const _canManageView = (view: IViewV2, ctx: IQueryInfos): boolean => {
+        const isOwner = view.created_by === ctx.userId;
+        const isAdmin = ctx.groupsId?.includes(adminsGroupId) ?? false;
+        return isOwner || (isAdmin && view.shared);
     };
 
     const _validateValuesVersions = async (valuesVersions: IViewV2ValuesVersion, ctx: IQueryInfos): Promise<void> => {
@@ -130,7 +137,7 @@ export default function ({
                 throw new ValidationError({id: Errors.UNKNOWN_VIEW});
             }
 
-            if (existingView.list[0].created_by !== ctx.userId) {
+            if (!_canManageView(existingView.list[0], ctx)) {
                 throw new ValidationError({id: Errors.USER_IS_NOT_VIEW_OWNER});
             }
 
@@ -174,7 +181,7 @@ export default function ({
                 throw new ValidationError({id: Errors.UNKNOWN_VIEW});
             }
 
-            if (existingView.list[0].created_by !== ctx.userId) {
+            if (!_canManageView(existingView.list[0], ctx)) {
                 throw new ValidationError({id: Errors.USER_IS_NOT_VIEW_OWNER});
             }
 

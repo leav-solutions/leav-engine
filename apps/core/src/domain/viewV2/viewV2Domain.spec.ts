@@ -7,6 +7,7 @@ import {type ToAny} from '../../utils/utils';
 import {SortOrder} from '../../_types/list';
 import {AttributeCondition} from '../../_types/record';
 import {type IViewV2, type IViewV2CreateInput, ViewV2Shortcut, ViewV2Types} from '../../_types/viewsV2';
+import {adminsGroupId} from '../../_constants/users';
 
 const depsBase: ToAny<IViewV2DomainDeps> = {
     'core.domain.helpers.validate': vi.fn(),
@@ -63,6 +64,16 @@ describe('viewV2Domain', () => {
     const mockViewV2RepoNoView: Mockify<IViewV2Repo> = {
         getViewsOwnedOrSharedV2: global.__mockPromise({list: []}),
     };
+
+    // Same view (owned by user '1') but private: used to assert the admin override is restricted to shared views.
+    const mockViewV2RepoPrivate = {
+        updateViewV2: global.__mockPromise({...mockViewV2, shared: false}),
+        deleteViewV2: global.__mockPromise({...mockViewV2, shared: false}),
+        getViewsOwnedOrSharedV2: global.__mockPromise({list: [{...mockViewV2, shared: false}]}),
+    } satisfies Mockify<IViewV2Repo>;
+
+    // An admin who is NOT the owner of mockViewV2 (created_by '1').
+    const mockAdminCtx = {...mockCtx, userId: '42', groupsId: [adminsGroupId]};
 
     const mockValidationHelper: Mockify<IValidateHelper> = {
         validateLibrary: vi.fn(),
@@ -254,6 +265,31 @@ describe('viewV2Domain', () => {
             );
         });
 
+        test('Should allow an admin to update a shared view owned by another user', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
+            });
+
+            await domain.updateViewV2({id: mockViewV2.id, label: {fr: 'Edited by admin'}}, mockAdminCtx);
+
+            expect(mockViewV2Repo.updateViewV2).toBeCalled();
+        });
+
+        test('Should throw if an admin updates a private view owned by another user', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2RepoPrivate as IViewV2Repo,
+            });
+
+            await expect(
+                domain.updateViewV2({id: mockViewV2.id, label: {fr: 'Edited by admin'}}, mockAdminCtx),
+            ).rejects.toThrow(ValidationError);
+            expect(mockViewV2RepoPrivate.updateViewV2).not.toBeCalled();
+        });
+
         test('Should throw ValidationError when update payload shape is invalid and skip downstream checks', async () => {
             const domain = viewV2Domain({
                 ...depsBase,
@@ -372,6 +408,27 @@ describe('viewV2Domain', () => {
                 ValidationError,
             );
             expect(mockViewV2Repo.deleteViewV2).not.toBeCalled();
+        });
+
+        test('Should allow an admin to delete a shared view owned by another user', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
+            });
+
+            await domain.deleteViewV2(mockViewV2.id, mockAdminCtx);
+
+            expect(mockViewV2Repo.deleteViewV2).toBeCalled();
+        });
+
+        test('Should throw if an admin deletes a private view owned by another user', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.infra.viewV2': mockViewV2RepoPrivate as IViewV2Repo,
+            });
+
+            await expect(domain.deleteViewV2(mockViewV2.id, mockAdminCtx)).rejects.toThrow(ValidationError);
+            expect(mockViewV2RepoPrivate.deleteViewV2).not.toBeCalled();
         });
     });
 });

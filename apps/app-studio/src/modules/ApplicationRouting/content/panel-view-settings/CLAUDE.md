@@ -40,12 +40,14 @@ header `CurrentViewSection`.
 
 ### `useCurrentView()`
 
-Expose `view`, `savedView`, `isOwner`, `isDirty`, `visibleColumns`, `invisibleColumns`,
+Expose `view`, `savedView`, `isOwner`, `canManageView`, `isDirty`, `visibleColumns`, `invisibleColumns`,
 `sorts`, `availableColumnIds`, `availableSortPaths`, et les dispatchers : `setViewType`,
 `toggleVisibility`, `moveAttribute`, `moveSort`, `setSortOrder`, `setLabel`, `setShared`,
 `setAvailableColumns`, `setAvailableSorts`, `resetView`, `markSaved`.
 
 - **`isOwner`** = `view.created_by.whoAmI.id === userData.userId`.
+- **`canManageView`** = `isOwner || (isAdmin && view.shared)` droit de gérer la vue ;
+  override admin restreint aux vues partagées.
 - `visibleColumns` garde l'ordre de la vue ; `invisibleColumns` est trié alphabétiquement.
 - `sorts` mappe `view.sorts` en `{id, order, ids, label}` ; `label` = chemin de descente joint par
   `›` (un tri mono-attribut affiche juste son libellé).
@@ -94,15 +96,17 @@ les callbacks `viewSettings` à `ExplorerV2` (monté dans `PanelLibraryExplorer.
 
 ## Actions CRUD (`current-view-section/`)
 
-| Action           | Mutation / dispatch                      | Condition                                     |
-| ---------------- | ---------------------------------------- | --------------------------------------------- |
-| Sauvegarder      | `updateViewV2`                           | `isOwner && isDirty && label non vide`        |
-| Enregistrer sous | `createViewV2` (`SaveAsViewModal`)       | ouvert à **tous** (ex-« Forker »)             |
-| Partager         | `updateViewV2 {shared}` (`ShareControl`) | `isOwner && canEditAdminView` (voir plus bas) |
-| Réinitialiser    | dispatch `RESET_VIEW`                    | `isDirty` (sans requête réseau)               |
-| Supprimer        | —                                        | **TODO LEAVC-934** (bouton désactivé)         |
+| Action           | Mutation / dispatch                      | Condition                                            |
+| ---------------- | ---------------------------------------- | ---------------------------------------------------- |
+| Sauvegarder      | `updateViewV2`                           | `canManageView && isDirty && label non vide`         |
+| Enregistrer sous | `createViewV2` (`SaveAsViewModal`)       | ouvert à **tous** (ex-« Forker »)                    |
+| Partager         | `updateViewV2 {shared}` (`ShareControl`) | `canEditAdminView && canManageView` (voir plus bas)  |
+| Réinitialiser    | dispatch `RESET_VIEW`                    | `isDirty` (sans requête réseau)                      |
+| Supprimer        | `deleteViewV2` (catalogue)               | `canManageView` (= owner, ou admin sur vue partagée) |
 
-Le back rejette une modif par un non-propriétaire (`USER_IS_NOT_VIEW_OWNER`).
+Le back rejette une modif par quelqu'un qui n'a pas le droit de gérer la vue (`USER_IS_NOT_VIEW_OWNER`) :
+il applique exactement la même règle `canManageView = isOwner || (isAdmin && view.shared)`
+(`viewV2Domain.ts`, `_canManageView`).
 
 ---
 
@@ -125,11 +129,19 @@ Le back rejette une modif par un non-propriétaire (`USER_IS_NOT_VIEW_OWNER`).
 ### ✅ Implémenté
 
 - **`isOwner`** = `view.created_by.whoAmI.id === userData.userId` (`useCurrentView.ts`).
-- **`canShare = isOwner && canEditAdminView`** (`CurrentViewActions.tsx`) → si vrai, affiche
-  `ShareControl` (toggle partage) ; sinon `SharedByLabel` (lecture seule, nom du créateur).
-- Édition du label, bouton Sauvegarder, bouton Supprimer : gated par `isOwner`.
+- **`canManageView = isOwner || (isAdmin && view.shared)`** (`useCurrentView.ts`) →
+  droit de gérer la vue (renommer / sauvegarder / supprimer / (dé)partager). L'override admin est
+  **restreint aux vues partagées** : un admin ne touche jamais la vue privée d'un autre utilisateur.
+  Même règle côté back (`viewV2Domain.ts` → `_canManageView`).
+- **`canShare = canEditAdminView && canManageView`** (`CurrentViewActions.tsx`) → si vrai, affiche
+  `ShareControl` (toggle partage) ; sinon `SharedByLabel` (lecture seule, nom du créateur). Effet :
+  un admin sur une vue partagée d'autrui peut la dé-partager ; un owner non-admin reste inchangé.
+- Édition du label (`CurrentViewLabel`), bouton Sauvegarder (`CurrentViewActions`) : gated par
+  `canManageView`.
 - Catalogue (`useViewCatalog`) : `myViews` (`created_by.id === userId`) vs `sharedViews`
-  (`shared === true` d'un autre user). Les vues perso d'autrui sont invisibles.
+  (`shared === true` d'un autre user). Les vues perso d'autrui sont invisibles. L'action **Supprimer**
+  (`useViewActions`) est visible si `isOwner || (isAdmin && view.shared)`, désactivée sur la vue
+  actuellement chargée.
 - **Roue « attributs disponibles »** (`manage-available-attributes/AvailableAttributesDropdown.tsx`),
   rendue **uniquement si `canEditAdminView`**, sur **Affichage** et **Tris** :
     - « Disponible » = **appartenance à la liste de la facette** (pas de champ persisté en plus) : la

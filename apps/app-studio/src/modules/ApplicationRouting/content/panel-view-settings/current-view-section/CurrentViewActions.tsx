@@ -14,7 +14,7 @@ import {actions, actionButtons} from './currentViewSection.module.css';
 export const CurrentViewActions = ({canEditAdminView}: {canEditAdminView: boolean}) => {
     const {t} = useTranslation();
     const {lang} = useLang();
-    const {view, isOwner, isDirty, isEmptyView, resetView} = useCurrentView();
+    const {view, canManageView, isDirty, isEmptyView, resetView} = useCurrentView();
     const {save, saveLoading, saveAs, saveAsLoading, toggleShared, shareLoading} = useCurrentViewActions();
     const [isSaveAsModalOpen, setIsSaveAsModalOpen] = useState(false);
 
@@ -74,7 +74,7 @@ export const CurrentViewActions = ({canEditAdminView}: {canEditAdminView: boolea
 
     const hasLabel = (view.label?.[lang[0]] ?? '').trim() !== '';
     const canSave = isDirty && hasLabel;
-    const canShare = isOwner && canEditAdminView;
+    const canShare = canEditAdminView && canManageView;
 
     return (
         <div className={actions}>
@@ -84,7 +84,7 @@ export const CurrentViewActions = ({canEditAdminView}: {canEditAdminView: boolea
                 <SharedByLabel createdByLabel={view.created_by.whoAmI.label} />
             )}
             <div className={actionButtons}>
-                {isOwner && (
+                {canManageView && (
                     <KitTooltip title={String(t('view_settings.current_view.save'))}>
                         <KitBadge dot={canSave}>
                             <KitButton
