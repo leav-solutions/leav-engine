@@ -11,13 +11,7 @@ import {header, currentView} from './currentViewSection.module.css';
  * Persistent header of the view-settings panel. Shows the current view and lets the user act on it
  * (rename, save, save as, share, reset) regardless of the open tab.
  */
-export const CurrentViewSection = ({
-    onViewSettingsClose,
-    canEditAdminView,
-}: {
-    onViewSettingsClose: () => void;
-    canEditAdminView: boolean;
-}) => {
+export const CurrentViewSection = ({onViewSettingsClose}: {onViewSettingsClose: () => void}) => {
     const {t} = useTranslation();
     const {view, isEmptyView} = useCurrentView();
 
@@ -42,7 +36,7 @@ export const CurrentViewSection = ({
                 </KitTooltip>
             </header>
             <CurrentViewLabel />
-            <CurrentViewActions canEditAdminView={canEditAdminView} />
+            <CurrentViewActions />
         </section>
     );
 };

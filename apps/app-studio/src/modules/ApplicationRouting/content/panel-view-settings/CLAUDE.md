@@ -156,8 +156,8 @@ il applique exactement la même règle `canManageView = isOwner || (isAdmin && v
       sous-attribut, chemin `[lien, sousAttr]`). Descente **lazy** par expansion
       (`useGetViewSettingsLibraryAttributesLazyQuery`). Pour éviter un double en-tête, la roue est rendue
       dans le **`TabHeader` partagé**, à gauche du bouton épingle, et non dans une sous-section de l'onglet.
-      `PanelViewSettings` calcule `canEditAvailableAttributesInHeader` (= `canEditAdminView` + onglet à roue
-      d'en-tête, via le helper `headerAvailableAttributesMode(tab.key)`) et le passe à `TabHeader`.
+      `TabHeader` décide lui-même de l'afficher : `useIsAdminUser() && EDIT_AVAILABLE_ATTRIBUTES_IN_HEADER_TABS.includes(tab.key)`
+      (constante dans `tabs/_constantes.ts` ; `['sorts']` aujourd'hui, `filters` à ajouter quand l'onglet sera câblé).
     - Query : `getViewSettingsLibraryAttributes.graphql` (réutilisée pour chaque bibliothèque visitée).
 
 ### ⏳ Limites / à venir

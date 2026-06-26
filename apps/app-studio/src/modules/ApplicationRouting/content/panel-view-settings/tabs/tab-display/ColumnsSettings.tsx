@@ -18,13 +18,13 @@ import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrateg
 import {restrictToParentElement, restrictToVerticalAxis} from '@dnd-kit/modifiers';
 import {ColumnItem} from './ColumnItem';
 import {IDENTITY_COLUMN_ID} from './_constants';
+import {useIsAdminUser} from '../../../../../../config/user/useIsAdminUser';
 import {AvailableAttributesDropdown} from '../../manage-available-attributes/AvailableAttributesDropdown';
 import {section, header, lists, list} from './columnsSettings.module.css';
 import {type CurrentViewColumn} from '../../store-current-view/_types';
 
 export const ColumnsSettings = ({
     search,
-    canEditAdminView,
     visibleColumns,
     invisibleColumns,
     onSearchChange,
@@ -32,7 +32,6 @@ export const ColumnsSettings = ({
     onMoveAttribute,
 }: {
     search: string;
-    canEditAdminView: boolean;
     visibleColumns: CurrentViewColumn[];
     invisibleColumns: CurrentViewColumn[];
     onSearchChange: (search: string) => void;
@@ -41,6 +40,8 @@ export const ColumnsSettings = ({
 }) => {
     const {t} = useTranslation();
     const {lang} = useLang();
+
+    const canEditAdminView = useIsAdminUser();
 
     const getLabel = (attr: CurrentViewColumn) =>
         attr.attribute.label ? localizedTranslation(attr.attribute.label, lang) : attr.attribute.id;

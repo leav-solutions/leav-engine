@@ -4,6 +4,7 @@ import {KitBadge, KitButton, KitTooltip} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClone, faRotateLeft, faSave} from '@fortawesome/free-solid-svg-icons';
 import {useLang} from '@leav/ui';
+import {useIsAdminUser} from '../../../../../config/user/useIsAdminUser';
 import {useCurrentView} from '../store-current-view/useCurrentView';
 import {useCurrentViewActions} from './useCurrentViewActions';
 import {ShareControl} from './ShareControl';
@@ -11,9 +12,10 @@ import {SharedByLabel} from './SharedByLabel';
 import {SaveAsViewModal} from './SaveAsViewModal';
 import {actions, actionButtons} from './currentViewSection.module.css';
 
-export const CurrentViewActions = ({canEditAdminView}: {canEditAdminView: boolean}) => {
+export const CurrentViewActions = () => {
     const {t} = useTranslation();
     const {lang} = useLang();
+    const canEditAdminView = useIsAdminUser();
     const {view, canManageView, isDirty, isEmptyView, resetView} = useCurrentView();
     const {save, saveLoading, saveAs, saveAsLoading, toggleShared, shareLoading} = useCurrentViewActions();
     const [isSaveAsModalOpen, setIsSaveAsModalOpen] = useState(false);

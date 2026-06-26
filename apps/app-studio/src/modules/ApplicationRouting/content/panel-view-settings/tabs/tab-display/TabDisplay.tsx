@@ -9,7 +9,7 @@ import {tab} from './tabDisplay.module.css';
 import {type CurrentViewColumn} from '../../store-current-view/_types';
 
 // TODO (display mode): wire DisplayModeSelector to view.display.type + dispatch SET_VIEW_TYPE
-export const TabDisplay = ({canEditAdminView}: {canEditAdminView: boolean}) => {
+export const TabDisplay = () => {
     const {visibleColumns, invisibleColumns, toggleVisibility, moveAttribute} = useCurrentView();
     const {lang} = useLang();
 
@@ -37,7 +37,6 @@ export const TabDisplay = ({canEditAdminView}: {canEditAdminView: boolean}) => {
             <DisplayModeSelector />
             <ColumnsSettings
                 search={search}
-                canEditAdminView={canEditAdminView}
                 visibleColumns={filteredVisibleColumns}
                 invisibleColumns={filteredInvisibleColumns}
                 onSearchChange={setSearch}

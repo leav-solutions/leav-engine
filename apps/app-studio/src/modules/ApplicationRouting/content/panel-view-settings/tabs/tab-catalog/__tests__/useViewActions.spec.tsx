@@ -65,16 +65,12 @@ describe('useViewActions', () => {
 
         it('adds the delete action when an admin views a shared view owned by another user', () => {
             spyOnUseIsAdminUser.mockReturnValue(true);
-            expect(
-                findAction(makeView({created_by: {id: 'someone-else'}, shared: true}), 'delete'),
-            ).toBeDefined();
+            expect(findAction(makeView({created_by: {id: 'someone-else'}, shared: true}), 'delete')).toBeDefined();
         });
 
         it('omits the delete action when an admin views a private view owned by another user', () => {
             spyOnUseIsAdminUser.mockReturnValue(true);
-            expect(
-                findAction(makeView({created_by: {id: 'someone-else'}, shared: false}), 'delete'),
-            ).toBeUndefined();
+            expect(findAction(makeView({created_by: {id: 'someone-else'}, shared: false}), 'delete')).toBeUndefined();
         });
 
         it('disables the delete action when the view is the one currently loaded', () => {

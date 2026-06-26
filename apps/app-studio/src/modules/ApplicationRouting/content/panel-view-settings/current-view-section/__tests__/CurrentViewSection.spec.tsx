@@ -47,37 +47,32 @@ const Harness = ({
     view,
     savedView,
     isEmptyView = false,
-    canEditAdminView = false,
 }: {
     view: CurrentView;
     savedView: CurrentView;
     isEmptyView?: boolean;
-    canEditAdminView?: boolean;
 }) => {
     const [state, dispatch] = useReducer(currentViewReducer, {view, savedView});
     return (
         <CurrentViewContext.Provider value={{...state, isEmptyView, dispatch}}>
-            <CurrentViewSection onViewSettingsClose={onClose} canEditAdminView={canEditAdminView} />
+            <CurrentViewSection onViewSettingsClose={onClose} />
         </CurrentViewContext.Provider>
     );
 };
+
+const spyOnUseIsAdminUser = jest.spyOn(UseIsAdminUser, 'useIsAdminUser');
 
 const renderSection = (opts: {
     view: CurrentView;
     savedView?: CurrentView;
     isEmptyView?: boolean;
-    canEditAdminView?: boolean;
-}) =>
-    render(
-        <Harness
-            view={opts.view}
-            savedView={opts.savedView ?? opts.view}
-            isEmptyView={opts.isEmptyView}
-            canEditAdminView={opts.canEditAdminView}
-        />,
-    );
-
-const spyOnUseIsAdminUser = jest.spyOn(UseIsAdminUser, 'useIsAdminUser');
+    isAdmin?: boolean;
+}) => {
+    if (opts.isAdmin !== undefined) {
+        spyOnUseIsAdminUser.mockReturnValue(opts.isAdmin);
+    }
+    return render(<Harness view={opts.view} savedView={opts.savedView ?? opts.view} isEmptyView={opts.isEmptyView} />);
+};
 
 beforeEach(() => {
     jest.clearAllMocks();
@@ -124,7 +119,7 @@ describe('CurrentViewSection', () => {
         const draft = makeView({label: {}});
 
         it('exposes only "save as" and "reset", not save/delete/share', () => {
-            renderSection({view: draft, savedView: draft, isEmptyView: true, canEditAdminView: true});
+            renderSection({view: draft, savedView: draft, isEmptyView: true, isAdmin: true});
 
             expect(
                 screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.save_as`}),
@@ -141,7 +136,7 @@ describe('CurrentViewSection', () => {
         });
 
         it('disables "reset" while the draft is pristine (not dirty)', () => {
-            renderSection({view: draft, savedView: draft, isEmptyView: true, canEditAdminView: true});
+            renderSection({view: draft, savedView: draft, isEmptyView: true, isAdmin: true});
             expect(screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.reset`})).toBeDisabled();
         });
     });
@@ -254,7 +249,7 @@ describe('CurrentViewSection', () => {
 
     describe('share zone', () => {
         it('shows the share switch for an owner with admin rights and toggles it', async () => {
-            renderSection({view: makeView({shared: false}), canEditAdminView: true});
+            renderSection({view: makeView({shared: false}), isAdmin: true});
 
             const shareSwitch = screen.getByRole('switch');
             expect(shareSwitch).not.toBeChecked();
@@ -267,12 +262,12 @@ describe('CurrentViewSection', () => {
         });
 
         it('hides the share switch for an owner without admin rights', () => {
-            renderSection({view: makeView(), canEditAdminView: false});
+            renderSection({view: makeView(), isAdmin: false});
             expect(screen.queryByRole('switch')).not.toBeInTheDocument();
         });
 
         it('shows "shared by" (with the creator display name) and no switch for a non-owner', () => {
-            renderSection({view: makeView({created_by: nonOwner}), canEditAdminView: true});
+            renderSection({view: makeView({created_by: nonOwner}), isAdmin: true});
             // libs/ui test i18n renders interpolated keys as `key|value` ⇒ asserts the name is passed.
             expect(screen.getByText(/current_view\.shared_by\|Alice/)).toBeInTheDocument();
             expect(screen.queryByRole('switch')).not.toBeInTheDocument();
@@ -300,7 +295,7 @@ describe('CurrentViewSection', () => {
         });
 
         it('shows the share switch (can un-share)', () => {
-            renderSection({view: sharedViewOfOther(), canEditAdminView: true});
+            renderSection({view: sharedViewOfOther(), isAdmin: true});
             expect(screen.getByRole('switch')).toBeInTheDocument();
         });
 
