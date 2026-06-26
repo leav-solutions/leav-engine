@@ -56,7 +56,6 @@ describe('formatLogValue', () => {
 
     describe('formatAsString', () => {
         it('Should return unknown value when attribute not found', () => {
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             const log: Log = {
                 action: EventAction.VALUE_SAVE,
                 topic: {
@@ -76,7 +75,6 @@ describe('formatLogValue', () => {
         });
 
         describe('standard attribute', () => {
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             const log: Log = {
                 action: EventAction.VALUE_SAVE,
                 topic: {
@@ -320,7 +318,6 @@ describe('formatLogValue', () => {
         });
 
         describe('link attribute', () => {
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             const log: Log = {
                 action: EventAction.VALUE_SAVE,
                 topic: {
@@ -470,7 +467,6 @@ describe('formatLogValue', () => {
         });
 
         describe('tree attribute', () => {
-            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             const log: Log = {
                 action: EventAction.VALUE_SAVE,
                 topic: {

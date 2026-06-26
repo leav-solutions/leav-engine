@@ -1,7 +1,6 @@
 import {logger} from '@leav/logger';
 import fs from 'fs';
 
-// eslint-disable-next-line import/extensions
 import {type FileUpload} from 'graphql-upload/Upload.mjs';
 import progress, {type Progress} from 'progress-stream';
 

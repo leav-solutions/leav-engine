@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import {aql} from 'arangojs';
 import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';

@@ -75,9 +75,9 @@ vi.mock('amqplib', () => ({
 }));
 
 const logger: Mockify<ILogger> = {
-    info: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
-    error: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
-    warn: vi.fn((...args) => console.log(args)), // eslint-disable-line no-restricted-syntax
+    info: vi.fn((...args) => console.log(args)),
+    error: vi.fn((...args) => console.log(args)),
+    warn: vi.fn((...args) => console.log(args)),
 };
 
 vi.mock('./helpers/handlePreview', () => ({

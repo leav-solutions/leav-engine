@@ -14,8 +14,8 @@
         "fronts:graphql-generate": "yarn workspaces foreach -v -A run graphql-generate",
         "test": "CI=true node ./scripts/testChangedProjects.js",
         "test:ci": "",
-        "lint": "eslint --ext=ts,tsx --fix apps/ libs/ test-apps/",
-        "lint:check": "eslint --ext=ts,tsx apps/ libs/ test-apps/",
+        "lint": "eslint --fix apps libs test-apps",
+        "lint:check": "eslint apps libs test-apps",
         "prettier:fix": "prettier --write",
         "prettier:fix:all": "prettier --write .",
         "prettier:check": "prettier --check .",
@@ -27,26 +27,18 @@
         "commit": "cz"
     },
     "devDependencies": {
-        "@aristid/eslint-plugin": "1.3.0",
+        "@aristid/eslint-plugin": "2.1.0",
         "@babel/preset-env": "7.29.7",
         "@commitlint/cli": "19.8.1",
         "@commitlint/config-conventional": "19.8.1",
-        "@rushstack/eslint-patch": "1.16.1",
         "@types/babel__preset-env": "^7",
         "@types/jest": "29.5.14",
         "@types/testing-library__jest-dom": "5.14.9",
-        "@typescript-eslint/eslint-plugin": "7.18.0",
-        "@typescript-eslint/parser": "7.18.0",
         "commitizen": "4.3.2",
         "cz-conventional-changelog": "3.3.0",
-        "eslint": "8.57.1",
+        "eslint": "9.39.4",
         "eslint-formatter-gitlab": "5.1.0",
-        "eslint-plugin-import": "2.32.0",
-        "eslint-plugin-jsdoc": "39.9.1",
-        "eslint-plugin-jsx-a11y": "6.10.2",
         "eslint-plugin-no-only-tests": "3.4.0",
-        "eslint-plugin-react-hooks": "4.4.0",
-        "eslint-plugin-react-refresh": "0.4.26",
         "husky": "6.0.0",
         "jest-watch-typeahead": "2.2.2",
         "lint-staged": "16.4.0",
@@ -78,7 +70,7 @@
         "*": [
             "prettier --write"
         ],
-        "*.{ts,js,tsx,jsx}": [
+        "*.{ts,tsx}": [
             "eslint --fix"
         ]
     },
