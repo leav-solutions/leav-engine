@@ -1506,14 +1506,14 @@ export type GetViewsV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, shortcuts: Array<ViewV2Shortcut>, created_by: { whoAmI: { id: string } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, attributes: Array<{ id: string }> }>, sorts: Array<{ pinned: boolean, order: SortOrder, attributes: Array<{ id: string }> }> }> } };
+export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, attributes: Array<{ id: string }> }>, sorts: Array<{ pinned: boolean, order: SortOrder, attributes: Array<{ id: string }> }> }> } };
 
 export type GetViewV2QueryVariables = Exact<{
   viewId: Scalars['ID']['input'];
 }>;
 
 
-export type GetViewV2Query = { viewV2: { id: string } };
+export type GetViewV2Query = { viewV2: { id: string, created_by: { id: string, whoAmI: { id: string, label?: string | null } } } };
 
 export type UpdateViewV2MutationVariables = Exact<{
   view: ViewV2UpdateInput;
@@ -2023,8 +2023,10 @@ export const GetViewsV2Document = gql`
     list {
       id
       created_by {
+        id
         whoAmI {
           id
+          label
         }
       }
       display {
@@ -2064,6 +2066,13 @@ export const GetViewV2Document = gql`
     query GetViewV2($viewId: ID!) {
   viewV2(viewId: $viewId) {
     id
+    created_by {
+      id
+      whoAmI {
+        id
+        label
+      }
+    }
   }
 }
     `;

@@ -233,7 +233,8 @@
         "previews_status": "Statut des aperçus"
     },
     "labels": {
-        "date_range": "Du {{from}} au {{to}}"
+        "date_range": "Du {{from}} au {{to}}",
+        "an_administrator": "un administrateur"
     },
     "logs": {
         "unknown_attribute": "Attribut inconnu ({{id}})",

@@ -1,5 +1,17 @@
+import {UsersAttributes} from '../../../../_constants/systemAttributes';
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {SystemTrees} from '../../../../_constants/systemTrees';
+import {adminsGroupId, adminUserId} from '../../../../_constants/users';
 import {RecordFilterCondition, SortOrder, ViewV2Shortcut, ViewV2Types} from '../../_gqlTypes';
-import {adminUserSdk, guestUserSdk} from '../e2eUtils';
+import {
+    adminUserSdk,
+    e2eUser,
+    getSdkWithUser,
+    gqlAddElemToTree,
+    gqlCreateRecord,
+    guestUserSdk,
+    makeGraphQlCall,
+} from '../e2eUtils';
 
 describe('ViewsV2', () => {
     const testLibName = 'test_views_v2_lib';
@@ -170,6 +182,96 @@ describe('ViewsV2', () => {
             it('Should be able to get viewsV2 owned by other users', async () => {
                 const id = await createViewAsAdmin(true);
                 await guestUserSdk.GetViewV2({viewId: id});
+            });
+
+            it('Should expose the real creator identity to a user who can see it', async () => {
+                const id = await createViewAsAdmin(true);
+
+                // The admin can see their own creator record → real identity, no fallback label.
+                const {viewV2} = await adminUserSdk.GetViewV2({viewId: id});
+                expect(viewV2.created_by.id).toBe(adminUserId);
+                expect(viewV2.created_by.whoAmI.id).toBe(adminUserId);
+                expect(viewV2.created_by.whoAmI.label).not.toBe('an administrator');
+            });
+
+            describe('Creator restricted by permissions', () => {
+                let readerSdk: typeof adminUserSdk;
+                let readerGroupNodeId: string;
+
+                beforeAll(async () => {
+                    // 1. Extend the `users` library permissions via its `user_groups` tree attribute.
+                    //    saveLibrary does an ArangoDB UPDATE → existing attributes/label are preserved.
+                    await makeGraphQlCall(`mutation {
+                        saveLibrary(library: {
+                            id: "${SystemLibraries.USERS}",
+                            permissions_conf: {permissionTreeAttributes: ["${UsersAttributes.USER_GROUPS}"], relation: and}
+                        }) { id }
+                    }`);
+
+                    // 2. Dedicated reader group (keeps the deny scoped → parallel-safe).
+                    const readerGroupRecordId = await gqlCreateRecord(SystemLibraries.USERS_GROUPS);
+                    readerGroupNodeId = await gqlAddElemToTree(SystemTrees.USERS_GROUPS, {
+                        id: readerGroupRecordId,
+                        library: SystemLibraries.USERS_GROUPS,
+                    });
+
+                    // 3. Reader user (must exist for auth; its groups come from the JWT claim).
+                    const {createRecord} = await adminUserSdk.CreateRecord({
+                        library: SystemLibraries.USERS,
+                        data: {values: [{attribute: UsersAttributes.EMAIL, payload: 'view_reader@test.com'}]},
+                    });
+                    readerSdk = getSdkWithUser(
+                        e2eUser({userId: createRecord.record!.id, groupsId: [readerGroupNodeId]}),
+                    );
+
+                    // 4. Deny access_record on the Administrators node (where the admin creator is
+                    //    classified) for the reader group only.
+                    await makeGraphQlCall(`mutation {
+                        savePermission(permission: {
+                            type: record,
+                            applyTo: "${SystemLibraries.USERS}",
+                            usersGroup: "${readerGroupNodeId}",
+                            permissionTreeTarget: {tree: "${SystemTrees.USERS_GROUPS}", nodeId: "${adminsGroupId}"},
+                            actions: [{name: access_record, allowed: false}]
+                        }) { type }
+                    }`);
+                });
+
+                afterAll(async () => {
+                    // Reset the deny, then disable the permission tree on `users` (restore default).
+                    await makeGraphQlCall(`mutation {
+                        savePermission(permission: {
+                            type: record,
+                            applyTo: "${SystemLibraries.USERS}",
+                            usersGroup: "${readerGroupNodeId}",
+                            permissionTreeTarget: {tree: "${SystemTrees.USERS_GROUPS}", nodeId: "${adminsGroupId}"},
+                            actions: [{name: access_record, allowed: null}]
+                        }) { type }
+                    }`);
+                    await makeGraphQlCall(`mutation {
+                        saveLibrary(library: {
+                            id: "${SystemLibraries.USERS}",
+                            permissions_conf: {permissionTreeAttributes: [], relation: and}
+                        }) { id }
+                    }`);
+                });
+
+                it('falls back to a generic identity when the creator is not visible to the reader', async () => {
+                    const sharedViewId = await createViewAsAdmin(true);
+
+                    const {viewV2} = await readerSdk.GetViewV2({viewId: sharedViewId});
+                    // The real creator id is preserved (so `isOwner` checks keep working)...
+                    expect(viewV2.created_by.id).toBe(adminUserId);
+                    expect(viewV2.created_by.whoAmI.id).toBe(adminUserId);
+                    // ...but the label is masked, without leaking the admin identity.
+                    expect(viewV2.created_by.whoAmI.label).toBe('an administrator');
+
+                    // Same fallback through the list query.
+                    const {viewsV2} = await readerSdk.GetViewsV2({library: testLibName});
+                    const sharedView = viewsV2.list.find(view => view.id === sharedViewId);
+                    expect(sharedView?.created_by.id).toBe(adminUserId);
+                    expect(sharedView?.created_by.whoAmI.label).toBe('an administrator');
+                });
             });
 
             it('Should not be able to edit shared viewsV2 owned by other users', async () => {

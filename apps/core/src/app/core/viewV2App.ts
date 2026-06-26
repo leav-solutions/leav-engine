@@ -6,7 +6,8 @@ import {type IUtils} from '../../utils/utils';
 import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {AttributeCondition, type IRecord} from '../../_types/record';
+import {AttributeCondition, type IRecordIdentity} from '../../_types/record';
+import {type i18n} from 'i18next';
 import {
     type IViewV2,
     type IViewV2DisplayAttribute,
@@ -26,6 +27,7 @@ interface IDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.viewV2': IViewV2Domain;
     'core.utils': IUtils;
+    translator: i18n;
 }
 
 export type IViewV2App = IGraphqlAppModule;
@@ -35,6 +37,7 @@ export default function ({
     'core.domain.viewV2': viewV2Domain,
     'core.domain.record': recordDomain,
     'core.utils': utils,
+    translator,
 }: IDeps): IViewV2App {
     const _resolveAttribute = (parent: {attributeId: string}, _: unknown, ctx: IQueryInfos) =>
         attributeDomain.getAttributeProperties({id: parent.attributeId, ctx});
@@ -108,10 +111,15 @@ export default function ({
                         order: SortOrder!,
                     }
 
+                    type ViewV2Creator {
+                        id: ID!,
+                        whoAmI: RecordIdentity!
+                    }
+
                     type ViewV2 {
                         id: ID!,
                         library: ID!,
-                        created_by: Record!,
+                        created_by: ViewV2Creator!,
                         shared: Boolean!,
                         created_at: Int!,
                         modified_at: Int!,
@@ -199,23 +207,7 @@ export default function ({
                             viewV2Domain.deleteViewV2(viewId, ctx),
                     },
                     ViewV2: {
-                        created_by: async (view: IViewV2, _, ctx): Promise<IRecord | null> => {
-                            const record = await recordDomain.find({
-                                params: {
-                                    library: SystemLibraries.USERS,
-                                    filters: [
-                                        {
-                                            field: CommonAttributes.ID,
-                                            value: view.created_by,
-                                            condition: AttributeCondition.EQUAL,
-                                        },
-                                    ],
-                                },
-                                ctx,
-                            });
-
-                            return record.list.length ? record.list[0] : null;
-                        },
+                        created_by: (view: IViewV2): {id: string} => ({id: view.created_by}),
                         valuesVersions: (view: IViewV2): IViewV2ValuesVersionForGraphql[] | null => {
                             if (!view.valuesVersions) {
                                 return null;
@@ -225,6 +217,34 @@ export default function ({
                                 treeId,
                                 treeNode: {id: view.valuesVersions[treeId], treeId},
                             }));
+                        },
+                    },
+                    ViewV2Creator: {
+                        whoAmI: async ({id}: {id: string}, _: unknown, ctx: IQueryInfos): Promise<IRecordIdentity> => {
+                            const found = await recordDomain.find({
+                                params: {
+                                    library: SystemLibraries.USERS,
+                                    filters: [
+                                        {
+                                            field: CommonAttributes.ID,
+                                            value: id,
+                                            condition: AttributeCondition.EQUAL,
+                                        },
+                                    ],
+                                },
+                                ctx,
+                            });
+
+                            if (found.list.length) {
+                                return recordDomain.getRecordIdentity(found.list[0], ctx);
+                            }
+
+                            // Creator record not found (hidden / no access): return a minimal identity
+                            return {
+                                id,
+                                library: {id: SystemLibraries.USERS},
+                                getLabel: async () => translator.t('labels.an_administrator', {lng: ctx.lang}),
+                            };
                         },
                     },
                     ViewV2Filter: {
