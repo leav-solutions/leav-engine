@@ -26,7 +26,11 @@ const mapDisplay = (display: ViewDisplay) => ({
 
 // `ViewV2SortInput` carries the descent path as bare attribute ids (the labels live server-side).
 const mapSorts = (sorts: ViewSorts) =>
-    sorts.map(sort => ({attributes: sort.attributes.map(attribute => attribute.id), order: sort.order}));
+    sorts.map(sort => ({
+        attributes: sort.attributes.map(attribute => attribute.id),
+        order: sort.order,
+        pinned: sort.pinned,
+    }));
 
 export const useCurrentViewActions = () => {
     const {t} = useTranslation();

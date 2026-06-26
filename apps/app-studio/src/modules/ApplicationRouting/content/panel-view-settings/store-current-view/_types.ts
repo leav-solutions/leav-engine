@@ -43,6 +43,7 @@ export type CurrentViewAction =
     | {type: 'MOVE_ATTRIBUTE'; payload: {activeId: string; overId: string}}
     | {type: 'MOVE_SORT'; payload: {activeId: string; overId: string}}
     | {type: 'SET_SORT_ORDER'; payload: {id: string; order: SortOrder}}
+    | {type: 'TOGGLE_SORT_PINNED'; payload: {id: string}}
     | {type: 'TOGGLE_SHORTCUT'; payload: {shortcut: ViewV2Shortcut}}
     | {type: 'SET_AVAILABLE_COLUMNS'; payload: {attributes: AvailableAttribute[]}}
     | {type: 'SET_AVAILABLE_SORTS'; payload: {sorts: Array<{attributes: AvailableAttribute[]}>}}

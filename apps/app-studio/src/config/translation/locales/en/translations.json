@@ -122,7 +122,9 @@
             }
         },
         "sorts": {
-            "manage_available": "Manage available attributes"
+            "manage_available": "Manage available attributes",
+            "pin": "Pin",
+            "unpin": "Unpin"
         },
         "available_attributes": {
             "title": "Available attributes",

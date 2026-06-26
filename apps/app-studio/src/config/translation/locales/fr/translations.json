@@ -122,7 +122,9 @@
             }
         },
         "sorts": {
-            "manage_available": "Gérer les attributs disponibles"
+            "manage_available": "Gérer les attributs disponibles",
+            "pin": "Épingler",
+            "unpin": "Détacher"
         },
         "available_attributes": {
             "title": "Attributs disponibles",

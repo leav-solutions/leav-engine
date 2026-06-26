@@ -1,19 +1,10 @@
-import {KitTooltip, KitTypography} from 'aristid-ds';
+import {KitButton, KitTooltip, KitTypography} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEye, faEyeSlash, faGripLines} from '@fortawesome/free-solid-svg-icons';
-import {
-    dragHandle,
-    dragging,
-    item,
-    columnTitle,
-    handleSlot,
-    visibilityButton,
-    visibleIcon,
-    hiddenIcon,
-} from './columnItem.module.css';
+import {dragHandle, dragging, item, columnTitle, handleSlot, visibleIcon, hiddenIcon} from './columnItem.module.css';
 
 export const ColumnItem = ({
     id,
@@ -64,18 +55,20 @@ export const ColumnItem = ({
                 {title}
             </KitTypography.Text>
             <KitTooltip title={locked ? undefined : visibilityLabel}>
-                <button
-                    className={visibilityButton}
+                <KitButton
+                    type="tertiary"
+                    size="s"
                     aria-label={visibilityLabel}
                     disabled={locked}
+                    icon={
+                        visible ? (
+                            <FontAwesomeIcon className={locked ? hiddenIcon : visibleIcon} icon={faEye} />
+                        ) : (
+                            <FontAwesomeIcon className={hiddenIcon} icon={faEyeSlash} />
+                        )
+                    }
                     onClick={onToggleVisibility}
-                >
-                    {visible ? (
-                        <FontAwesomeIcon className={locked ? hiddenIcon : visibleIcon} icon={faEye} />
-                    ) : (
-                        <FontAwesomeIcon className={hiddenIcon} icon={faEyeSlash} />
-                    )}
-                </button>
+                />
             </KitTooltip>
         </li>
     );

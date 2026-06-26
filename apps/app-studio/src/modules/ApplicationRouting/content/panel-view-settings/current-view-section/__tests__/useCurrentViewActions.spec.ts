@@ -54,8 +54,8 @@ beforeEach(() => {
             ],
         },
         sorts: [
-            {order: SortOrder.asc, attributes: [{id: 'a'}]},
-            {order: SortOrder.desc, attributes: [{id: 'campagnes'}, {id: 'thematiques'}]},
+            {order: SortOrder.asc, pinned: true, attributes: [{id: 'a'}]},
+            {order: SortOrder.desc, pinned: false, attributes: [{id: 'campagnes'}, {id: 'thematiques'}]},
         ],
         shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters],
     };
@@ -74,8 +74,8 @@ const mappedDisplay = {
 };
 
 const mappedSorts = [
-    {attributes: ['a'], order: SortOrder.asc},
-    {attributes: ['campagnes', 'thematiques'], order: SortOrder.desc},
+    {attributes: ['a'], order: SortOrder.asc, pinned: true},
+    {attributes: ['campagnes', 'thematiques'], order: SortOrder.desc, pinned: false},
 ];
 
 describe('useCurrentViewActions', () => {

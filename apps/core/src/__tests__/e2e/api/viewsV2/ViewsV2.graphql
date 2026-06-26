@@ -36,6 +36,7 @@ query GetViewsV2($library: ID!) {
                 condition
             }
             sorts {
+                pinned
                 attributes {
                     id
                 }
