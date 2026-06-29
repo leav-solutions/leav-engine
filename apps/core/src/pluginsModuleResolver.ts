@@ -6,12 +6,7 @@ const coreRootPath = isInJavascript ? __dirname.replace('/src', '/dist') : __dir
 function resolve(specifier, context, nextResolve) {
     // Custom resolution logic for '@leav/core' imports
     // in plugins tsconfig.json
-    // "paths": {
-    //     "@leav/core/*": ["../../node_modules/@leav/core-types/apps/core/src/*"],
-    //     "@leav/utils": ["../../node_modules/@leav/core-types/libs/utils/src/index"],
-    //     "@leav/logger": ["../../node_modules/@leav/core-types/libs/logger/src/index"]
-    //     ...and other paths if needed
-    // },
+    // @see ../../../libs/core-publish
 
     if (specifier.includes('@leav/core/')) {
         const newSpecifier = specifier.replace('@leav/core', coreRootPath);
