@@ -11,18 +11,6 @@ export const sdoGlobalSettings: ISDOSettings = {
         [SDO_EXPORTS_LIBRARY_ID]: {
             leavLibraryId: SDO_EXPORTS_LIBRARY_ID,
             sdoAttributes: {
-                'system.systemId': {leavAttributeId: 'uuid', valueRequired: true, format: 'string'},
-                'system.systemActive': {leavAttributeId: 'active', valueRequired: false, format: 'boolean'},
-                'system.systemCreationDate': {
-                    leavAttributeId: 'created_at',
-                    valueRequired: false,
-                    format: 'number',
-                },
-                'system.systemLastModifiedDate': {
-                    leavAttributeId: 'modified_at',
-                    valueRequired: false,
-                    format: 'number',
-                },
                 'system.systemSdoHash': {leavAttributeId: 'hash_sdo', valueRequired: false, format: 'string'},
                 'system.systemLabel': {leavAttributeId: 'label', valueRequired: false, format: 'string'},
                 // info object is required by generic.json schema; leavAttributeId '' maps to null (no fetch)
@@ -32,18 +20,6 @@ export const sdoGlobalSettings: ISDOSettings = {
         [SDO_IMPORTS_LIBRARY_ID]: {
             leavLibraryId: SDO_IMPORTS_LIBRARY_ID,
             sdoAttributes: {
-                'system.systemId': {leavAttributeId: 'uuid', valueRequired: true, format: 'string'},
-                'system.systemActive': {leavAttributeId: 'active', valueRequired: false, format: 'boolean'},
-                'system.systemCreationDate': {
-                    leavAttributeId: 'created_at',
-                    valueRequired: false,
-                    format: 'number',
-                },
-                'system.systemLastModifiedDate': {
-                    leavAttributeId: 'modified_at',
-                    valueRequired: false,
-                    format: 'number',
-                },
                 'system.systemSdoHash': {leavAttributeId: 'hash_sdo', valueRequired: false, format: 'string'},
                 'system.systemLabel': {leavAttributeId: 'label', valueRequired: false, format: 'string'},
                 // info object is required by generic.json schema; leavAttributeId '' maps to null (no fetch)

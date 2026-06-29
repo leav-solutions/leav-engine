@@ -73,7 +73,6 @@ describe('sdoDomain', () => {
         mockEventsManagerDomain.sendDatabaseEvent.mockResolvedValue(undefined);
         mockRecordDomain.find.mockResolvedValue({list: []} as IListWithCursor<IRecord>);
         mockSDOUtils.tmpRecordIdToUuid.mockImplementation((recordId: string) => recordId);
-        mockSDOUtils.getLibraryUUIDAttributeID.mockReturnValue('uuid');
         mockRecordRepo.getRecord.mockImplementation(async ({recordId}) => ({uuid: recordId}));
         _sdoDomain = sdoDomain(deps);
     });
@@ -84,13 +83,25 @@ describe('sdoDomain', () => {
                 system: {systemId: '1'},
             };
 
-            await expect(_sdoDomain.schemaValidation(mockSDOMissingField)).rejects.toThrow();
+            await expect(_sdoDomain.schemaValidation(mockSDOMissingField as ISDO['content'])).rejects.toThrow();
             expect(jsonschemaSpy).toHaveBeenCalled();
         });
 
         it('[+] should NOT throw an error when validate', async () => {
             // Core validates against the generic schema (system + info required)
-            await expect(_sdoDomain.schemaValidation({system: {systemId: '1'}, info: {}})).resolves.not.toThrow();
+            await expect(
+                _sdoDomain.schemaValidation({
+                    system: {
+                        systemId: '1',
+                        systemActive: true,
+                        systemCreator: 'created_id',
+                        systemCreationDate: Date.now(),
+                        systemLastModificator: 'modificator_id',
+                        systemLastModifiedDate: Date.now(),
+                    },
+                    info: {},
+                }),
+            ).resolves.not.toThrow();
             expect(jsonschemaSpy).toHaveBeenCalled();
         });
     });

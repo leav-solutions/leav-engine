@@ -1389,6 +1389,11 @@ describe('importDomain', () => {
             content: {
                 system: {
                     systemId: '1',
+                    systemActive: true,
+                    systemCreator: 'created_id',
+                    systemCreationDate: Date.now(),
+                    systemLastModificator: 'modificator_id',
+                    systemLastModifiedDate: Date.now(),
                 },
                 ...content,
             },

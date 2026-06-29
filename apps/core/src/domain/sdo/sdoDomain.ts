@@ -278,7 +278,16 @@ export default function ({
             name: sdoLibraryId,
             date: Date.now(),
             action,
-            content: {system: {systemId: ''}},
+            content: {
+                system: {
+                    systemId: record.uuid,
+                    systemActive: record.active,
+                    systemCreator: record.created_by,
+                    systemCreationDate: record.created_at,
+                    systemLastModificator: record.modified_by,
+                    systemLastModifiedDate: record.modified_at,
+                },
+            },
         };
 
         await Promise.all(

@@ -14,6 +14,11 @@ export const mockSDO: ISDO = {
     content: {
         system: {
             systemId: '1',
+            systemActive: true,
+            systemCreator: 'created_id',
+            systemCreationDate: Date.now(),
+            systemLastModificator: 'modificator_id',
+            systemLastModifiedDate: Date.now(),
         },
         simple: '123',
         simple_link: '1',
