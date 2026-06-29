@@ -60,7 +60,7 @@
         "redux-mock-store": "1.5.5",
         "styled-components": "6.0.8",
         "typescript": "5.9.3",
-        "vite": "7.3.5",
+        "vite": "7.3.6",
         "vite-plugin-dynamic-base": "1.4.1",
         "vite-plugin-svgr": "4.5.0",
         "vitest": "4.1.9"
