@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {type IGroupedPermissionsActions} from '../../../_types/permissions';
 import {fakeRootId, type ITreeNodeData} from '../../../_types/trees';
 import {getTreeNodeKey} from '../../../utils/utils';

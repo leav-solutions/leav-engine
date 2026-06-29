@@ -1,6 +1,5 @@
 import {localizedTranslation} from '@leav/utils';
 import useLang from '../../../../hooks/useLang';
-import React from 'react';
 import {Form, type FormDropdownProps} from 'semantic-ui-react';
 import {type GET_VERSION_PROFILES_versionProfiles_list} from '../../../../_gqlTypes/GET_VERSION_PROFILES';
 

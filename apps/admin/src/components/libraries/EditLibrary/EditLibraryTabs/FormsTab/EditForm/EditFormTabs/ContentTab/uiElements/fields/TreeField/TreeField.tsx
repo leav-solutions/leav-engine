@@ -1,5 +1,4 @@
 import RecordCardSkeleton from '../../../../../../../../../../shared/RecordCardSkeleton';
-import React from 'react';
 import {Breadcrumb, type BreadcrumbSectionProps, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type ICommonFieldsSettings, type IFormElementProps} from '../../../_types';

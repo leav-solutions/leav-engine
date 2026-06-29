@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon, Modal} from 'semantic-ui-react';
 import styled from 'styled-components';

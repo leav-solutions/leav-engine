@@ -1,4 +1,3 @@
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Table} from 'semantic-ui-react';
 import {type GET_ALL_PLUGINS_plugins} from '../../../../_gqlTypes/GET_ALL_PLUGINS';

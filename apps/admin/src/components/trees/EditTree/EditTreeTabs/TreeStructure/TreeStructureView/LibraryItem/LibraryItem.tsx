@@ -1,6 +1,5 @@
 import {localizedTranslation} from '@leav/utils';
 import useLang from '../../../../../../../hooks/useLang';
-import React from 'react';
 import {useDrag} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon} from 'semantic-ui-react';

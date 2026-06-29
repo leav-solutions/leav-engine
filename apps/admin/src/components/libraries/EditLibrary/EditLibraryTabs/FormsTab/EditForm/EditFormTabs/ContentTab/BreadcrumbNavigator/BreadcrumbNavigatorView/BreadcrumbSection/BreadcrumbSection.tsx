@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {type NodeData} from '@nosferatu500/react-sortable-tree';
 import {Breadcrumb, Icon, Popup} from 'semantic-ui-react';
 import styled from 'styled-components';

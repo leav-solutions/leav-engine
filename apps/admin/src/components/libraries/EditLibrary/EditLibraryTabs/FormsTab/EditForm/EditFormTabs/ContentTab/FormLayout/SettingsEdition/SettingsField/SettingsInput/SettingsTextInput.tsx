@@ -1,4 +1,3 @@
-import React from 'react';
 import {Input} from 'semantic-ui-react';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {type ISettingsFieldCommonProps} from '../../../../_types';

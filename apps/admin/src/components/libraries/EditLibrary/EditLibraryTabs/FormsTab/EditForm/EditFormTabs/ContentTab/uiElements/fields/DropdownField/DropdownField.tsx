@@ -1,4 +1,3 @@
-import React from 'react';
 import {Dropdown} from 'semantic-ui-react';
 import {type ICommonFieldsSettings, type IFormElementProps} from '../../../_types';
 import {localizedLabel} from '../../../../../../../../../../../utils';

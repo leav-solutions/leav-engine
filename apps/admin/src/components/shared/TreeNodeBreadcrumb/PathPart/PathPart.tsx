@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {Dropdown, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';

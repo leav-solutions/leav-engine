@@ -1,4 +1,3 @@
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, Tab} from 'semantic-ui-react';
 import useLang from '../../../../../../../hooks/useLang';

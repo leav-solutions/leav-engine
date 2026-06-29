@@ -8,7 +8,7 @@ import {type WithOptional} from '../../../_types/WithOptional';
 import {type ITreeNode, type ITreeNodeData, fakeRootId} from '../../../_types/trees';
 import {type ITreeItem} from '../../attributes/EditAttribute/EditAttributeTabs/EmbeddedFieldsTab/EmbeddedFieldsTab';
 import {getTreeNodeChildrenQuery} from '../../../queries/trees/treeNodeChildrenQuery';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {
     addNodeUnderParent,
     changeNodeAtPath,

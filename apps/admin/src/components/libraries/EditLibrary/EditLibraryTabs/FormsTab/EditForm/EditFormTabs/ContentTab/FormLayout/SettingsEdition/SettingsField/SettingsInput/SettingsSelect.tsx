@@ -1,4 +1,3 @@
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {type DropdownItemProps, Select} from 'semantic-ui-react';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';

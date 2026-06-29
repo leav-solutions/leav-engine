@@ -1,5 +1,4 @@
 import AttributeSelector from '../../../../../../../../../../../attributes/AttributeSelector';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {type GET_ATTRIBUTESVariables} from '../../../../../../../../../../../../_gqlTypes/GET_ATTRIBUTES';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';

@@ -1,4 +1,3 @@
-import React from 'react';
 import CustomMessage from './CustomMessage';
 import {render, screen} from '../../../../../../../../_tests/testUtils';
 

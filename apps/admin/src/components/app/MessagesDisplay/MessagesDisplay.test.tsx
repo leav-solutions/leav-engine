@@ -2,7 +2,6 @@ import '@testing-library/jest-dom';
 import {act, render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as useMessages from '../../../hooks/useMessages';
-import React from 'react';
 import {MessagesTypes} from '../../../reduxStore/messages/messages';
 import MessagesDisplay from './MessagesDisplay';
 

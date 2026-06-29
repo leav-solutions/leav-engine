@@ -1,5 +1,4 @@
 import {MockedProvider} from '@apollo/client/testing';
-import React from 'react';
 import {act, render, screen} from '../../../_tests/testUtils';
 import {type GET_ATTRIBUTES_attributes_list} from '../../../_gqlTypes/GET_ATTRIBUTES';
 import {type Mockify} from '../../../_types//Mockify';

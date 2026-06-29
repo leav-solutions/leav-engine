@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, {type ChangeEvent, useState} from 'react';
+import {type ChangeEvent, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Input} from 'semantic-ui-react';
 import styled from 'styled-components';

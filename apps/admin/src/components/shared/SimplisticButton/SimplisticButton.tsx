@@ -1,4 +1,3 @@
-import React from 'react';
 import {Button, type ButtonProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 

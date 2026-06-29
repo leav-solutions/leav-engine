@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Table, Progress, Icon} from 'semantic-ui-react';
 import {type GET_TASKS_tasks_list} from '../../../_gqlTypes/GET_TASKS';

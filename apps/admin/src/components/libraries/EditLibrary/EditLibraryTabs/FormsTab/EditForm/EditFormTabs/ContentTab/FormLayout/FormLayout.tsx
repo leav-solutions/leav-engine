@@ -1,4 +1,3 @@
-import React from 'react';
 import {Sidebar} from 'semantic-ui-react';
 import {FormElementTypes} from '../../../../../../../../../_gqlTypes';
 import {defaultContainerId} from '../formBuilderReducer/formBuilderReducer';

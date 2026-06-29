@@ -1,4 +1,3 @@
-import React from 'react';
 import {type IFormElementProps} from '../../../_types';
 
 interface IUiIframeSettings {

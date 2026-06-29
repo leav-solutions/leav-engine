@@ -1,4 +1,3 @@
-import React from 'react';
 import CustomIcon from '../../CustomIcon';
 import IconSvg from './PermissionsForbiddenIcon.svg';
 

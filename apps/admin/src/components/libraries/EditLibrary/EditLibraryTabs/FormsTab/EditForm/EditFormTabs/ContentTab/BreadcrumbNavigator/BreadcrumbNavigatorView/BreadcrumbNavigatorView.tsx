@@ -1,4 +1,3 @@
-import React from 'react';
 import {Breadcrumb, type BreadcrumbSectionProps} from 'semantic-ui-react';
 import {type GET_TREE_BY_ID_trees_list} from '../../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
 import {type ActiveDependencyNode, defaultDepValue} from '../../formBuilderReducer/formBuilderReducer';

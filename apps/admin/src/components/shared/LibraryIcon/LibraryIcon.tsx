@@ -1,4 +1,3 @@
-import React from 'react';
 import {Icon, type SemanticICONS} from 'semantic-ui-react';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../_gqlTypes/GET_LIB_BY_ID';
 import {LibraryBehavior} from '../../../_gqlTypes';

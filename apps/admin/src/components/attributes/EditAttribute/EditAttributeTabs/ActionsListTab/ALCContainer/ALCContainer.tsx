@@ -1,5 +1,5 @@
 import {cloneDeep} from 'lodash';
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {type GET_ACTIONS_LIST_QUERY_attributes_list_actions_list} from '../../../../../../_gqlTypes/GET_ACTIONS_LIST_QUERY';
 import Loading from '../../../../../shared/Loading';
 import ALCList from '../ALCList';

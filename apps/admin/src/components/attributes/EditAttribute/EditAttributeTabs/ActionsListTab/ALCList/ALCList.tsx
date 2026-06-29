@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useDrop} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import {Button, Header} from 'semantic-ui-react';

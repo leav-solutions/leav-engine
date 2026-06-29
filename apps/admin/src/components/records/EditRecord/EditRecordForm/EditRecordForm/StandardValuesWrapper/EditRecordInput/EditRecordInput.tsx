@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Input} from 'semantic-ui-react';
 import styled from 'styled-components';

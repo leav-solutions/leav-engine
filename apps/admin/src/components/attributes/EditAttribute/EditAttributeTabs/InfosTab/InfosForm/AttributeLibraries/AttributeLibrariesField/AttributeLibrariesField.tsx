@@ -1,5 +1,4 @@
 import useLang from '../../../../../../../../hooks/useLang';
-import React from 'react';
 import {Form, type FormDropdownProps} from 'semantic-ui-react';
 import {localizedLabel} from '../../../../../../../../utils';
 import {type GET_LIBRARIES_WITH_ATTRIBUTES_libraries_list} from '../../../../../../../../_gqlTypes/GET_LIBRARIES_WITH_ATTRIBUTES';

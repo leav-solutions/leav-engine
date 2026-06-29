@@ -1,4 +1,3 @@
-import React from 'react';
 import {render, screen} from '../../../../../_tests/testUtils';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
 import {type Mockify} from '../../../../../_types/Mockify';

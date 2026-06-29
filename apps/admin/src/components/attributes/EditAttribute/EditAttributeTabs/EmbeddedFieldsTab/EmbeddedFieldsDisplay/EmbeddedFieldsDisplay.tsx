@@ -1,4 +1,3 @@
-import React from 'react';
 import {Container, Header} from 'semantic-ui-react';
 import {type IEmbeddedFields} from '../../../../../../_types/embeddedFields';
 import {localizedLabel} from '../../../../../../utils';

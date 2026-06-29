@@ -1,4 +1,3 @@
-import React from 'react';
 import {render, screen, within} from '../../../../_tests/testUtils';
 import {mockAttrSimple} from '../../../../__mocks__/attributes';
 import {mockLibrary} from '../../../../__mocks__/libraries';

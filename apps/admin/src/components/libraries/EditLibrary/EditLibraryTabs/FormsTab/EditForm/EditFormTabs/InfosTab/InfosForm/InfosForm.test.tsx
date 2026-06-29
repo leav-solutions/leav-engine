@@ -1,5 +1,4 @@
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import {render, screen} from '../../../../../../../../../_tests/testUtils';
 import InfosForm from '.';
 import {mockFormFull} from '../../../../../../../../../__mocks__/forms';
