@@ -1,6 +1,6 @@
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import useLang from '../../../../../../hooks/useLang';
-import React from 'react';
+import {type HTMLAttributes} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Checkbox, Icon, Popup, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -35,7 +35,7 @@ const FooterCell = styled(Table.Cell)<{$hasAttributes: boolean}>`
 export type ITreePermissionsDependentValuesConf =
     GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_dependent_values;
 
-interface IPermissionsSettingsProps extends React.HTMLAttributes<HTMLDivElement> {
+interface IPermissionsSettingsProps extends HTMLAttributes<HTMLDivElement> {
     attribute: AttributeDetailsTreeAttributeFragment;
     dependenciesSettings: ITreePermissionsDependentValuesConf;
     onChangeSettings: (settings: TreePermissionsDependentValuesConfInput) => void;

@@ -1,5 +1,5 @@
 import {useQuery, NetworkStatus} from '@apollo/client';
-import React, {useCallback, useEffect} from 'react';
+import {useCallback, useEffect, type SetStateAction} from 'react';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../../hooks/useLang';
 import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
@@ -32,7 +32,7 @@ interface IEditRecordFormProps {
     valueVersion?: {[treeName: string]: string};
     onIdentityUpdate?: any;
     initialRecordId?: string;
-    setRecordIdentity?: (input: React.SetStateAction<RecordIdentity_whoAmI | undefined>) => void;
+    setRecordIdentity?: (input: SetStateAction<RecordIdentity_whoAmI | undefined>) => void;
 }
 
 export interface IEditRecordFormError {

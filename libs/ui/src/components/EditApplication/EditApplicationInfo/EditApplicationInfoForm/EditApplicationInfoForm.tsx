@@ -2,7 +2,7 @@ import {endpointFormatRegex, getFlagByLang, idFormatRegex, slugifyString} from '
 import {ColorPicker, Form, type FormInstance} from 'antd';
 import {type Color} from 'antd/es/color-picker';
 import {KitInput, KitSelect} from 'aristid-ds';
-import React, {useState} from 'react';
+import {useState, type ChangeEvent, type FocusEvent, type KeyboardEvent} from 'react';
 import styled from 'styled-components';
 import {useLang} from '../../../../hooks';
 import {useSharedTranslation} from '../../../../hooks/useSharedTranslation';
@@ -48,7 +48,7 @@ function EditApplicationInfoForm({
             fieldName: t(`applications.${field}`),
         });
 
-    const _handleLabelChange = (lang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const _handleLabelChange = (lang: string) => (e: ChangeEvent<HTMLInputElement>) => {
         if (isEditing || lang !== defaultLang) {
             return;
         }
@@ -104,25 +104,24 @@ function EditApplicationInfoForm({
         }
     };
 
-    const _handleBlur = (field: string) => async (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const _handleBlur = (field: string) => async (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (isEditing) {
             _handleFieldSubmit(field, e.target.value);
         }
     };
 
-    const _handleSubmitOnEnter =
-        (field: string) => (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            // If shift is pressed, don't submit
-            if (e.shiftKey || !isEditing) {
-                return;
-            }
+    const _handleSubmitOnEnter = (field: string) => (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        // If shift is pressed, don't submit
+        if (e.shiftKey || !isEditing) {
+            return;
+        }
 
-            if (e.key === 'Enter') {
-                e.preventDefault();
+        if (e.key === 'Enter') {
+            e.preventDefault();
 
-                _handleFieldSubmit(field, e.currentTarget.value);
-            }
-        };
+            _handleFieldSubmit(field, e.currentTarget.value);
+        }
+    };
 
     const label = application?.label
         ? {

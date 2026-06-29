@@ -1,11 +1,11 @@
 import {GLOBAL_BASE_URL} from '../../../constants';
-import React from 'react';
+import {type CSSProperties} from 'react';
 
 type PossibleSizes = 'tiny' | 'small' | 'medium' | 'big' | 'huge';
 
 interface IAppIconProps {
     size: PossibleSizes;
-    style?: React.CSSProperties;
+    style?: CSSProperties;
 }
 
 function AppIcon({style, size}: IAppIconProps): JSX.Element {

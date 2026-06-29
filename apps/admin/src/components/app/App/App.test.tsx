@@ -1,3 +1,4 @@
+import {type RouteObject} from 'react-router-dom';
 import {type MockedResponse} from '@apollo/client/testing';
 import {render, screen} from '../../../_tests/testUtils';
 import {mockApplicationDetails} from '../../../__mocks__/common/applications';
@@ -13,11 +14,11 @@ import {
 } from '../../../_gqlTypes';
 
 vi.mock('../../../config/router/adminRouter', async () => {
-    const React = await vi.importActual<typeof import('react')>('react');
-
-    const {createMemoryRouter} = await vi.importActual<typeof import('react-router-dom')>('react-router-dom');
+    const {createMemoryRouter} = await vi.importActual<{
+        createMemoryRouter: (routes: RouteObject[]) => unknown;
+    }>('react-router-dom');
     return {
-        adminRouter: createMemoryRouter([{path: '/', element: React.createElement('div', null, 'Home')}]),
+        adminRouter: createMemoryRouter([{path: '/', element: 'Home'}]),
     };
 });
 

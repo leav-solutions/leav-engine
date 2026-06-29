@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState, type ChangeEvent, type Dispatch, type SetStateAction} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, type InputOnChangeData} from 'semantic-ui-react';
 import {AttributeFormat} from '../../../../../../_gqlTypes';
@@ -10,7 +10,7 @@ import SelectFormat from './SelectFormat';
 interface IEmbeddedFieldsFormProps {
     attribute: IEmbeddedFields;
     formValues: IFormValue[];
-    setFormValues: React.Dispatch<React.SetStateAction<IFormValue[]>>;
+    setFormValues: Dispatch<SetStateAction<IFormValue[]>>;
     save: (newValues: IFormValue[]) => void;
     isRoot?: boolean;
 }
@@ -39,7 +39,7 @@ function EmbeddedFieldsForm({
         validation_regex,
     });
 
-    const _handleId = (event: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
+    const _handleId = (event: ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
         const newId = data.value?.toString() ?? '';
         setFormValues(v => ({...v, id: newId}));
         _updateValues({...formValues, id: newId});
@@ -50,10 +50,7 @@ function EmbeddedFieldsForm({
         _updateValues({...formValues, format: newFormat});
     };
 
-    const _handleOnChangeValidationRegex = async (
-        event: React.ChangeEvent<HTMLInputElement>,
-        data: InputOnChangeData,
-    ) => {
+    const _handleOnChangeValidationRegex = async (event: ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
         const newValidationRegex = data.value?.toString() ?? '';
         setFormValues(v => ({...v, validation_regex: newValidationRegex}));
 

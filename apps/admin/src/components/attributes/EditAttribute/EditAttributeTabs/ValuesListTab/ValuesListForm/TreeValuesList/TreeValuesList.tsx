@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState, type SyntheticEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {type TreeItem} from '@nosferatu500/react-sortable-tree';
 import {Button, Icon, List} from 'semantic-ui-react';
@@ -54,7 +54,7 @@ function TreeValuesList({values, onValuesUpdate, linkedTree}: ITreeValuesListPro
         onValuesUpdate(newValuesList);
     };
 
-    const _deleteValue = (i: number) => (e: React.SyntheticEvent) => {
+    const _deleteValue = (i: number) => (e: SyntheticEvent) => {
         e.stopPropagation();
         e.preventDefault();
         const newValuesList = [...values.slice(0, i), ...values.slice(i + 1)];

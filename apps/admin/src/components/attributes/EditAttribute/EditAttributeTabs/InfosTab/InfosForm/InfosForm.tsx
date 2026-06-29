@@ -1,7 +1,7 @@
 import AttributeSelector from '../../../../AttributeSelector';
 import VersionProfilesSelector from '../../../../../versionProfiles/VersionProfilesSelector';
 import {Formik, type FormikProps} from 'formik';
-import React from 'react';
+import {type FocusEvent, type KeyboardEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -242,7 +242,7 @@ function InfosForm({
                 inputErrors,
             );
 
-        const _handleBlur = (e: React.FocusEvent) => {
+        const _handleBlur = (e: FocusEvent) => {
             if (isNewAttribute) {
                 handleBlur(e);
             } else {
@@ -250,7 +250,7 @@ function InfosForm({
             }
         };
 
-        const _handleKeyPress = (e: React.KeyboardEvent) => {
+        const _handleKeyPress = (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
                 submitForm();
             }

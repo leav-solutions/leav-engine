@@ -27,7 +27,7 @@
         "commit": "cz"
     },
     "devDependencies": {
-        "@aristid/eslint-plugin": "2.1.0",
+        "@aristid/eslint-plugin": "2.2.1",
         "@babel/preset-env": "7.29.7",
         "@commitlint/cli": "19.8.1",
         "@commitlint/config-conventional": "19.8.1",

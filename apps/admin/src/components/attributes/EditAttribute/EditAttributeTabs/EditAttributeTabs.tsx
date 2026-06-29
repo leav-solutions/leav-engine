@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState, type MouseEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate, useLocation} from 'react-router-dom';
 import {Header, Tab, type TabProps} from 'semantic-ui-react';
@@ -156,7 +156,7 @@ function EditAttributeTabs({
         tabName ? panes.findIndex(p => tabName === p.key) : 0,
     );
 
-    const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
+    const _handleOnTabChange = (event: MouseEvent<HTMLDivElement>, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {
             setActiveIndex(Number(data.activeIndex.toString()));
             navigate(`#${data.panes[data.activeIndex].key}`);

@@ -1,6 +1,6 @@
 import {idFormatRegex, type Override, slugifyString} from '@leav/utils';
 import {Form, type FormInstance, Input, InputNumber, Select, Switch} from 'antd';
-import React, {useState} from 'react';
+import {useState, type ChangeEvent, type FocusEvent, type KeyboardEvent} from 'react';
 import styled from 'styled-components';
 import {useLang} from '../../../../../hooks';
 import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
@@ -87,7 +87,7 @@ function EditAttributeInfoForm({
             fieldName: t(`attributes.${field}`),
         });
 
-    const _handleLabelChange = (labelLang: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const _handleLabelChange = (labelLang: string) => (e: ChangeEvent<HTMLInputElement>) => {
         // If ID hasn't been edited manually, generate it from label
         if (!isEditing && labelLang === defaultLang && !hasIdBeenEdited) {
             form.setFieldsValue({id: slugifyString(e.target.value)});
@@ -140,23 +140,22 @@ function EditAttributeInfoForm({
         _handleFieldSubmit('versions_conf', value);
     };
 
-    const _handleBlur = (field: string) => async (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const _handleBlur = (field: string) => async (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         _handleFieldSubmit(field, e.target.value);
     };
 
-    const _handleSubmitOnEnter =
-        (field: string) => (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            // If shift is pressed, don't submit
-            if (e.shiftKey || !isEditing) {
-                return;
-            }
+    const _handleSubmitOnEnter = (field: string) => (e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        // If shift is pressed, don't submit
+        if (e.shiftKey || !isEditing) {
+            return;
+        }
 
-            if (e.key === 'Enter') {
-                e.preventDefault();
+        if (e.key === 'Enter') {
+            e.preventDefault();
 
-                _handleFieldSubmit(field, e.currentTarget.value);
-            }
-        };
+            _handleFieldSubmit(field, e.currentTarget.value);
+        }
+    };
 
     const {label: attributeLabel, description: attributeDescription, ...attributeSettings} = attribute ?? {};
     const label = attributeLabel

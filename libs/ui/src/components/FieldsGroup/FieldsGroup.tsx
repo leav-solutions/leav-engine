@@ -1,12 +1,12 @@
 import {theme} from 'antd';
-import React from 'react';
+import {type ReactNode} from 'react';
 import styled, {type CSSObject} from 'styled-components';
 import {type AntdThemeToken} from '../../antdTheme';
 
 interface IFieldsGroupProps {
-    label?: string | React.ReactNode;
+    label?: string | ReactNode;
     style?: CSSObject;
-    children: React.ReactNode;
+    children: ReactNode;
 }
 
 const FieldsSet = styled.fieldset<{$themeToken: AntdThemeToken; style: CSSObject}>`

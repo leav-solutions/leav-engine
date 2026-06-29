@@ -1,6 +1,6 @@
 import FileSelector from '../../../../../shared/FileSelector';
 import {Formik, type FormikProps} from 'formik';
-import React from 'react';
+import {type FocusEvent, type KeyboardEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -206,7 +206,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             }
         };
 
-        const _handleBlur = (e: React.FocusEvent) => {
+        const _handleBlur = (e: FocusEvent) => {
             if (!isExistingLib) {
                 handleBlur(e);
             } else {
@@ -214,7 +214,7 @@ const InfosForm = ({library, onSubmit, readonly, errors, onCheckIdExists}: IInfo
             }
         };
 
-        const _handleKeyPress = (e: React.KeyboardEvent) => {
+        const _handleKeyPress = (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
                 submitForm();
             }

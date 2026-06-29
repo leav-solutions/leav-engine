@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState, type SyntheticEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, List} from 'semantic-ui-react';
 import {type RecordIdentity_whoAmI} from '../../../../../../../_gqlTypes/RecordIdentity';
@@ -66,7 +66,7 @@ function LinkValuesList({values, onValuesUpdate, linkedLibrary}: ILinkValuesList
         _handleOpenEditRecordModal();
     };
 
-    const _deleteValue = (i: number) => (e: React.SyntheticEvent) => {
+    const _deleteValue = (i: number) => (e: SyntheticEvent) => {
         e.stopPropagation();
         e.preventDefault();
         const newValuesList = [...values.slice(0, i), ...values.slice(i + 1)];

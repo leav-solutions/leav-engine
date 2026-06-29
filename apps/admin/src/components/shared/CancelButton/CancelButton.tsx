@@ -1,9 +1,9 @@
-import React from 'react';
+import {type SyntheticEvent} from 'react';
 import {Button} from 'semantic-ui-react';
 
 interface ICancelButtonProps {
     disabled: boolean;
-    onClick?: (event: React.SyntheticEvent) => void;
+    onClick?: (event: SyntheticEvent) => void;
 }
 
 function CancelButton({disabled, onClick}: ICancelButtonProps): JSX.Element {

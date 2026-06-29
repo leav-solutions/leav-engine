@@ -1,4 +1,4 @@
-import React from 'react';
+import {type Dispatch, type SetStateAction} from 'react';
 import EmbeddedFieldsDisplay from '../EmbeddedFieldsDisplay';
 import EmbeddedFieldsForm from '../EmbeddedFieldsForm';
 import {type IFormValue} from '../EmbeddedFieldsTab';
@@ -7,7 +7,7 @@ interface IEmbeddedFieldsWrapperProps {
     attribute: any;
     displayForm: boolean;
     formValues: IFormValue[];
-    setFormValues: React.Dispatch<React.SetStateAction<IFormValue[]>>;
+    setFormValues: Dispatch<SetStateAction<IFormValue[]>>;
     isRoot?: boolean;
     save: (newValues: IFormValue[]) => void;
 }

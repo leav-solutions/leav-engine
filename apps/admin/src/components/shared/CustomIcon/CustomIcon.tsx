@@ -1,11 +1,11 @@
-import React from 'react';
+import {type CSSProperties} from 'react';
 import styled from 'styled-components';
 
 export interface ICustomIconProps {
     svg: string;
     label?: string;
     size?: string;
-    style?: React.CSSProperties;
+    style?: CSSProperties;
 }
 
 const CustomImg = styled.img<{size?: string}>`

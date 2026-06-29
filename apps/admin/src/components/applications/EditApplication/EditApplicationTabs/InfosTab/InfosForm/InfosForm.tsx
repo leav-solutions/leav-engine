@@ -1,7 +1,7 @@
 import {type Override} from '@leav/utils';
 import {useEditApplicationContext} from '../../../../../../context/EditApplicationContext';
 import {Formik, type FormikProps} from 'formik';
-import React from 'react';
+import {type FocusEvent, type KeyboardEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, type FormProps, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -177,7 +177,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<ApplicationInfosFormValues>(fieldName, touched, serverValidationErrors || {}, inputErrors);
 
-        const _handleBlur = (e: React.FocusEvent) => {
+        const _handleBlur = (e: FocusEvent) => {
             if (isNewApp) {
                 handleBlur(e);
             } else {
@@ -185,7 +185,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
             }
         };
 
-        const _handleKeyPress = (e: React.KeyboardEvent) => {
+        const _handleKeyPress = (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
                 submitForm();
             }

@@ -1,5 +1,5 @@
 import {type TFunction} from 'i18next';
-import React, {useState} from 'react';
+import {useState, type SyntheticEvent} from 'react';
 import {Confirm, type DropdownProps, Form} from 'semantic-ui-react';
 import {AttributeFormat} from '../../../../../../../_gqlTypes';
 import {type IFormValues} from '../EmbeddedFieldsForm';
@@ -16,7 +16,7 @@ function SelectFormat({formValues, hasChild, onChange, t, save}: ISelectFormatPr
     const [show, setShow] = useState<boolean>(false);
     const [format, setFormat] = useState<string>(formValues.format);
 
-    const _onChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+    const _onChange = (event: SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
         const newFormat = data.value?.toString() ?? '';
         setFormat(newFormat);
 

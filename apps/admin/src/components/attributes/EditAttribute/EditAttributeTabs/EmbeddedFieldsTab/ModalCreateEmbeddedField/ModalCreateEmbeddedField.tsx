@@ -1,5 +1,5 @@
 import {type TFunction} from 'i18next';
-import React, {useState} from 'react';
+import {useState, type ChangeEvent} from 'react';
 import {Button, Confirm, Input} from 'semantic-ui-react';
 
 interface IModalCreateEmbeddedFieldProps {
@@ -15,7 +15,7 @@ function ModalCreateEmbeddedField({attrId, add, t}: IModalCreateEmbeddedFieldPro
     const _show = () => setShow(true);
     const _close = () => setShow(false);
 
-    const _handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const _handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setNewId(e.target.value);
     };
 

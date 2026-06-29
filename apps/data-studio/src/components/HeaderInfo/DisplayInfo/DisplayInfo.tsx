@@ -1,7 +1,7 @@
 import {CheckCircleOutlined, CloseCircleOutlined, CloseOutlined, WarningOutlined} from '@ant-design/icons';
 import {type AntdThemeToken} from '@leav/ui';
 import {Badge, message as antMessage, Space, theme} from 'antd';
-import React, {useEffect} from 'react';
+import {useEffect, type Dispatch, type SetStateAction} from 'react';
 import {useAppSelector} from '../../../reduxStore/store';
 import styled from 'styled-components';
 import {type IInfo, InfoType} from '../../../_types/types';
@@ -54,7 +54,7 @@ interface IDisplayInfoProps {
     activeTimeouts: {info: any; base: any};
     cancelInfo: () => void;
     triggerInfos: IInfo[];
-    setTriggerInfos: React.Dispatch<React.SetStateAction<IInfo[]>>;
+    setTriggerInfos: Dispatch<SetStateAction<IInfo[]>>;
 }
 
 function DisplayInfo({

@@ -3,7 +3,7 @@ import FormFieldWrapper from '../../../shared/FormFieldWrapper';
 import TreesSelector from '../../../trees/TreesSelector';
 import {Formik, type FormikProps} from 'formik';
 import useLang from '../../../../hooks/useLang';
-import React from 'react';
+import {type FocusEvent, type KeyboardEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form, type FormProps, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -143,7 +143,7 @@ function InfoForm({readonly, loading, profile, onSubmit, errors, onCheckIdUnique
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<VersionProfileInput>(fieldName, touched, serverValidationErrors || {}, inputErrors);
 
-        const _handleBlur = (e: React.FocusEvent) => {
+        const _handleBlur = (e: FocusEvent) => {
             if (isNewProfile) {
                 handleBlur(e);
             } else {
@@ -151,7 +151,7 @@ function InfoForm({readonly, loading, profile, onSubmit, errors, onCheckIdUnique
             }
         };
 
-        const _handleKeyPress = (e: React.KeyboardEvent) => {
+        const _handleKeyPress = (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
                 submitForm();
             }

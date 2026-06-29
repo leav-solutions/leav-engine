@@ -1,9 +1,9 @@
-import React from 'react';
+import {type SyntheticEvent} from 'react';
 import {Button} from 'semantic-ui-react';
 
 interface IDeleteButtonProps {
     disabled: boolean;
-    onClick?: (event: React.SyntheticEvent) => void;
+    onClick?: (event: SyntheticEvent) => void;
 }
 
 function DeleteButton({disabled, onClick}: IDeleteButtonProps): JSX.Element {
