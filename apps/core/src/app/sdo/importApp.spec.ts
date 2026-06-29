@@ -7,7 +7,6 @@ import {EventAction} from '@leav/utils';
 import ValidationError from '../../errors/ValidationError';
 import {mockImportDomain, mockSdoDomain} from '../../__tests__/mocks/sdo/domains';
 import {mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
-import {ISDOSettings} from '../../_types/sdo';
 
 const depsBase: ToAny<IImportAppDeps> = {
     'core.infra.sdo.rabbitMQ': mockRabbitMQService,

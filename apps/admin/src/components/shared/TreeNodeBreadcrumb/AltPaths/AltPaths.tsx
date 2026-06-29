@@ -3,7 +3,6 @@ import {Modal, Breadcrumb, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
 import RecordCard from '../../RecordCard';
-import * as Crypto from 'crypto';
 
 const PathPartWrapper = styled.div`
     position: relative;

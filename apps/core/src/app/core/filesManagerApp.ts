@@ -1,7 +1,7 @@
 import {FileType} from '@leav/utils';
 import {type InitQueryContextFunc} from '../helpers/initQueryContext';
 import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
-import express, {Express, type NextFunction, type Response} from 'express';
+import express, {type NextFunction, type Response} from 'express';
 import {withFilter} from 'graphql-subscriptions';
 
 import {type FileUpload} from 'graphql-upload/Upload.mjs';

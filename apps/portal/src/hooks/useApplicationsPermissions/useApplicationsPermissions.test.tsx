@@ -55,7 +55,6 @@ describe('useCanEditRecord', () => {
                     },
                 },
                 result: {
-                    // @ts-ignore
                     errors: [new Error('Test error')],
                 },
             },

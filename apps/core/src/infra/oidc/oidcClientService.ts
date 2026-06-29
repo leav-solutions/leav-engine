@@ -179,7 +179,7 @@ export default function ({
                     // We had race condition on multiple refresh requests, so we need to make sure that the old token can be used
                     await _writeTokensSetByUserId(userId, newTokenSet);
                 }
-            } catch (err) {
+            } catch {
                 throw new AuthenticationError('OIDC session expired');
             }
         },

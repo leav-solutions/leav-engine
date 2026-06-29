@@ -6,8 +6,6 @@ import {adminUserSdk, gqlCreateRecord, gqlSaveAttribute, gqlSaveValue, makeGraph
 
 describe('inheritanceCalculationAction', () => {
     const libraryId = 'test_inheritance_action_library';
-    const libraryGqlType = 'testInheritanceActionLibrary';
-
     const linkAttributeId = 'test_inheritance_action_link';
 
     const sourceSimpleAttributeId = 'test_inheritance_action_source_simple';

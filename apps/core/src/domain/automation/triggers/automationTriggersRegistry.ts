@@ -1,10 +1,6 @@
 import {EventAction} from '@leav/utils';
 import {z, type ZodType} from 'zod';
-import {
-    type AutomationRuleEventAction,
-    type AutomationRuleEventTopic,
-    SyncAutomationRuleEventAction,
-} from '../../../_types/automation';
+import {type AutomationRuleEventAction, type AutomationRuleEventTopic} from '../../../_types/automation';
 import {type IAutomationTriggersTopics} from './automationTriggersTopics';
 import {Errors} from '../../../_types/errors';
 import ValidationError from '../../../errors/ValidationError';

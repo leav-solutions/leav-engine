@@ -1,4 +1,3 @@
-import {type GET_LIB_BY_ID_libraries_list} from '../../../../../../_gqlTypes/GET_LIB_BY_ID';
 import useLang from '../../../../../../hooks/useLang';
 import {type HTMLAttributes} from 'react';
 import {useTranslation} from 'react-i18next';

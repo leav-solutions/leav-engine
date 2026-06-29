@@ -29,7 +29,7 @@ export default function ({
         .check(async input => {
             try {
                 await validate.validateLibrary(input.value, systemCtx);
-            } catch (err) {
+            } catch {
                 // TODO add translation if necessary for frontend display
                 input.issues.push({
                     code: 'invalid_value',
@@ -52,7 +52,7 @@ export default function ({
         .check(async input => {
             try {
                 await attributeDomain.getAttributeProperties({id: input.value, ctx: systemCtx});
-            } catch (err) {
+            } catch {
                 // TODO add translation if necessary for frontend display
                 input.issues.push({
                     code: 'invalid_value',
@@ -81,7 +81,7 @@ export default function ({
             }
             try {
                 await validate.validateLibraryAttribute(input.value.library, input.value.attribute, systemCtx);
-            } catch (err) {
+            } catch {
                 // TODO add translation if necessary for frontend display
                 input.issues.push({
                     code: 'invalid_value',

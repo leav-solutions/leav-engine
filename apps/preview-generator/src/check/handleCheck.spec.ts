@@ -1,4 +1,3 @@
-import {initialCheck} from './initialCheck/initialCheck';
 import {handleCheck} from './handleCheck';
 import {checkInput} from './checkInput/checkInput';
 import {type IMessageConsume, type IConfig} from '../types/types';

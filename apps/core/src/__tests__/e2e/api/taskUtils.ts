@@ -49,7 +49,7 @@ export async function waitForTaskCompletedWithStatus(
     const task = await waitForTaskCompletion(taskId);
     try {
         expect(task.status).toBe(expectedStatus);
-    } catch (err) {
+    } catch {
         throw new Error(
             `Task ${taskId} expected to be ${expectedStatus}, but found status ${task.status}. Progress percent ${task.progress.percent} description ${task.progress.description.en}`,
         );

@@ -1,4 +1,4 @@
-import {render, screen, waitFor} from '_ui/_tests/testUtils';
+import {render, screen} from '_ui/_tests/testUtils';
 import {DSColorPickerWrapper} from './DSColorPickerWrapper';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import userEvent from '@testing-library/user-event';

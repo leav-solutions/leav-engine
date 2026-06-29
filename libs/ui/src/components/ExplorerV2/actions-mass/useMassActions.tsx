@@ -1,5 +1,5 @@
-import {closeKitSnackBar, KitCheckbox, KitDropDown, KitSpace, KitTypography, openKitSnackBar} from 'aristid-ds';
-import {type Dispatch, useCallback, useEffect, useRef, useState} from 'react';
+import {closeKitSnackBar, KitCheckbox, KitDropDown, KitSpace, openKitSnackBar} from 'aristid-ds';
+import {type Dispatch, useCallback, useEffect, useState} from 'react';
 import {RecordFilterCondition, RecordFilterOperator} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {interleaveElement} from '_ui/_utils/interleaveElement';
@@ -11,7 +11,6 @@ import {type IUIFiltersState} from '_ui/components/Filters/context/filtersReduce
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCaretDown} from '@fortawesome/free-solid-svg-icons';
 import {ResultsCount} from './ResultsCount';
-import {IKitDropdown} from 'aristid-ds/dist/Kit/Navigation/DropDown/types';
 
 /**
  * Hook used to manage mass selection as the snackbar and all kind of selection (manual, all in page, all in filters)

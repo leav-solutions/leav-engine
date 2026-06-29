@@ -1,8 +1,5 @@
-import {execFile} from 'child_process';
 import {type IConfig, type IMessageConsume} from '../types/types';
-import {getArgs} from './../getArgs/getArgs';
 import {getConfig} from './../getConfig/getConfig';
-import {handleDocument} from './../handleDocument/handleDocument';
 import {generatePreview} from './generatePreview';
 
 vi.mock('child_process', () => ({execFile: vi.fn(() => '')}));

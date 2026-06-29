@@ -156,7 +156,7 @@ const getAttributesFromField = async (params: {
                             ctx,
                         });
                         attributes.push(libLabelAttributeProps);
-                    } catch (err) {
+                    } catch {
                         // Ignore error, we just won't use this attribute for search
                     }
                 }
@@ -179,7 +179,7 @@ const getAttributesFromField = async (params: {
                         ctx,
                     });
                     attributes.push(libLabelAttributeProps);
-                } catch (err) {
+                } catch {
                     // Ignore error, we just won't use this attribute for search
                 }
             } else {

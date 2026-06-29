@@ -7,7 +7,6 @@ import {EventAction} from '@leav/utils';
 import LeavError from '../../errors/LeavError';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 import {logger} from '@leav/logger';
-import {type IGlobalSettingsDomain} from '../../domain/globalSettings/globalSettingsDomain';
 
 export interface IImportAppDeps {
     'core.infra.sdo.rabbitMQ': IRabbitMQ;

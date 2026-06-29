@@ -2,7 +2,7 @@ import _ from 'lodash';
 import {type ISDO, type ISDOMappingAttribute, type ISDOMappingLibrary} from '../../../_types/sdo';
 import {type IRecordDomain} from '../../record/recordDomain';
 import {type ISDOUtils} from '../../../utils/sdo/sdo';
-import {hashSDOAttributeId, type ISDODomain} from '../sdoDomain';
+import {type ISDODomain} from '../sdoDomain';
 import {AttributeCondition, type IRecord, Operator} from '../../../_types/record';
 import {type ISaveBatchValueError, type IValueDomain} from '../../value/valueDomain';
 import {type ISDOExportDomain} from '../export/sdoExportDomain';

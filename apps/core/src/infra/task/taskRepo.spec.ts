@@ -1,10 +1,8 @@
 import {Database} from 'arangojs';
 import {type IDbUtils} from '../db/dbUtils';
 import {type IUtils} from '../../utils/utils';
-import {IFormFilterOptions} from '../../_types/forms';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
-import {mockForm} from '../../__tests__/mocks/forms';
 import taskRepo from './taskRepo';
 
 const mockTask: ITask = {

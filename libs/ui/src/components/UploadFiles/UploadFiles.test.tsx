@@ -7,7 +7,6 @@ import {fireEvent, render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeSimple} from '_ui/__mocks__/common/tree';
 import UploadFiles from './UploadFiles';
-import {App} from 'antd';
 
 jest.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNode: () => <div>SelectTreeNode</div>,

@@ -235,7 +235,7 @@ export default function ({
                                 }
 
                                 return result.list[0];
-                            } catch (error) {
+                            } catch {
                                 return {
                                     _isUnknown: true,
                                     id: log.userId,
@@ -330,7 +330,7 @@ export default function ({
                                 }
 
                                 return result.list[0];
-                            } catch (error) {
+                            } catch {
                                 return {
                                     _isUnknown: true,
                                     id: topic.record.id,
@@ -345,7 +345,7 @@ export default function ({
                             try {
                                 const result = await libraryDomain.getLibraryProperties(topic.library, ctx);
                                 return result;
-                            } catch (error) {
+                            } catch {
                                 return {
                                     _isUnknown: true,
                                     id: topic.library,
@@ -360,7 +360,7 @@ export default function ({
                             try {
                                 const result = await attributeDomain.getAttributeProperties({id: topic.attribute, ctx});
                                 return result;
-                            } catch (error) {
+                            } catch {
                                 return {
                                     _isUnknown: true,
                                     id: topic.attribute,
@@ -375,7 +375,7 @@ export default function ({
                             try {
                                 const result = await treeDomain.getTreeProperties(topic.tree, ctx);
                                 return result;
-                            } catch (error) {
+                            } catch {
                                 return {
                                     _isUnknown: true,
                                     id: topic.tree,
@@ -393,7 +393,7 @@ export default function ({
                                     ctx,
                                 });
                                 return result;
-                            } catch (error) {
+                            } catch {
                                 return {
                                     _isUnknown: true,
                                     id: topic.profile,
@@ -424,7 +424,7 @@ export default function ({
                                         label: toSystemTranslation('logs.unknown_application', topic.application),
                                     }
                                 );
-                            } catch (error) {
+                            } catch {
                                 return {
                                     _isUnknown: true,
                                     id: topic.application,
@@ -458,7 +458,7 @@ export default function ({
                                     };
                                 }
                                 return result.list[0];
-                            } catch (error) {
+                            } catch {
                                 return {
                                     _isUnknown: true,
                                     id: topic.automationRule,

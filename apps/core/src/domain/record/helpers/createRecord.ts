@@ -14,7 +14,6 @@ import {Errors} from '../../../_types/errors';
 import {isValidUuid} from '../../../utils/helpers/validateUuid';
 import {type ICreateRecordValueError} from '../_types';
 import {type IAutomationDomain} from '../../automation/automationDomain';
-import {SyncAutomationRuleEventAction} from '../../../_types/automation';
 
 export type IPreCreateRecordCallback = () => Promise<ICreateRecordValueError[]>;
 

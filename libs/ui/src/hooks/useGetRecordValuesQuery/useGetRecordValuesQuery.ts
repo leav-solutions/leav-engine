@@ -74,7 +74,7 @@ export const useGetRecordValuesQuery = (
         return refetchData;
     };
 
-    // @ts-ignore
+    // @ts-expect-error returned shape does not match the query result type
     return {
         ...query,
         loading: query.loading || typeof queryData === undefined,

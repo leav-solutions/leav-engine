@@ -1,9 +1,7 @@
 import {useSaveLibraryMutation} from '../../../../../_gqlTypes';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../../_gqlTypes/GET_LIB_BY_ID';
-import {type SAVE_LIBRARYVariables, type SAVE_LIBRARY} from '../../../../../_gqlTypes/SAVE_LIBRARY';
 import {JsonEditor} from 'jsoneditor-react';
 import 'jsoneditor-react/es/editor.min.css';
-import {saveLibQuery} from '../../../../../queries/libraries/saveLibMutation';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`

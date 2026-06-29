@@ -1,5 +1,5 @@
 import {type ILogRepo} from '../../infra/log/logRepo';
-import {type ILogFilters, type ILogPagination, type ILogResponse, type ILogSort, Log} from '../../_types/log';
+import {type ILogFilters, type ILogPagination, type ILogResponse, type ILogSort} from '../../_types/log';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {AdminPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';

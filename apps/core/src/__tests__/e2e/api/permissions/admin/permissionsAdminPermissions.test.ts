@@ -1,4 +1,4 @@
-import {adminUserSdk, e2eAdminUser, e2eGuestUser, e2eNonAdminGroupId, makeGraphQlCall} from '../../e2eUtils';
+import {adminUserSdk, e2eAdminUser, e2eGuestUser, makeGraphQlCall} from '../../e2eUtils';
 
 describe('PermissionsAdminPermissions', () => {
     const libraryId = 'permissions_admin_permissions_library_name';

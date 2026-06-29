@@ -6,7 +6,6 @@ import {mockLibraryWithDetails} from '_ui/__mocks__/common/library';
 import * as gqlTypes from '../../../../_gqlTypes';
 import {render, screen, waitFor} from '../../../../_tests/testUtils';
 import EditLibraryAttributes from './EditLibraryAttributes';
-import {App} from 'antd';
 
 jest.mock('../../../../hooks/useSharedTranslation/useSharedTranslation');
 

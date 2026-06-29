@@ -2,7 +2,6 @@ import {type ISDO} from '../../../../_types/sdo';
 import {adminUserSdk} from '../e2eUtils';
 import {RabbitMqClient} from './rabbitMQUtils';
 import {SDO_EXPORT_TIMER, sdoGlobalSettings, SDO_EXPORTS_LIBRARY_ID} from './sdoConfig';
-import {AttributeFormat, AttributeType} from '../../_gqlTypes';
 import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
 

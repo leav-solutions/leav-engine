@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-// @ts-ignore
+// @ts-expect-error svg module has no type declaration
 import IconSvg from '../svg/svgEllipsis.svg';
 
 const CustomImg = styled.img`

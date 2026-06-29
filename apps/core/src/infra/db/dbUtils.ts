@@ -172,7 +172,7 @@ export default function ({
 
                 try {
                     await fs.promises.access(pluginMigrationFolderPath, fs.constants.R_OK);
-                } catch (e) {
+                } catch {
                     continue;
                 }
 

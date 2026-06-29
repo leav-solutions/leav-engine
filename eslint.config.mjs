@@ -33,16 +33,13 @@ export default defineConfig([
             // eslint / typescript-eslint recommended
             '@typescript-eslint/no-unused-vars': 'off',
             '@typescript-eslint/no-empty-object-type': 'off',
-            '@typescript-eslint/ban-ts-comment': 'off',
             '@typescript-eslint/no-unnecessary-type-constraint': 'off',
             'no-extra-boolean-cast': 'off',
             'no-case-declarations': 'off',
             'no-async-promise-executor': 'off',
             'no-useless-escape': 'off',
             'no-constant-binary-expression': 'off',
-            'no-prototype-builtins': 'off',
             'no-unsafe-optional-chaining': 'off',
-            'no-empty-pattern': 'off',
             // react recommended
             'react/jsx-key': 'off',
             'react/jsx-no-target-blank': 'off',

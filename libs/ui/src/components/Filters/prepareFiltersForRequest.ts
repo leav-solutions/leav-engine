@@ -225,7 +225,7 @@ export const prepareFiltersForRequest = (
                 return {...filter, condition, field};
             })
             .map(filter => {
-                //@ts-ignore typscript does not recognize filter as a UIFilter
+                // @ts-expect-error typescript does not recognize filter as a UIFilter
                 if (isUIFilterValueList(filter) || isUIFilterTree(filter) || isUIFilterWithSmartFilter(filter)) {
                     const field = (Array.isArray(filter.field) ? filter.field[0] : filter.field) || filter.attribute.id;
                     if (filter.condition && nullValueConditions.includes(filter.condition)) {

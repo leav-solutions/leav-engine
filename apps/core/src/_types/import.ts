@@ -1,5 +1,4 @@
-import {ReadStream} from 'fs-capacitor';
-import {type IValueMetadata, IValueVersion} from './value';
+import {type IValueMetadata} from './value';
 
 export enum ImportType {
     IGNORE = 'IGNORE',

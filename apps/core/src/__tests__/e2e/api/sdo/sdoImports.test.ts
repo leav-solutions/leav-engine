@@ -4,7 +4,6 @@ import {RabbitMqClient} from './rabbitMQUtils';
 import {type IConfig} from '../../../../_types/config';
 import {adminUserSdk} from '../e2eUtils';
 import {SDO_IMPORTS_LIBRARY_ID, sdoGlobalSettings} from './sdoConfig';
-import {AttributeFormat, AttributeType} from '../../_gqlTypes';
 
 export const formatDate = (date: string) => (new Date(date).getTime() / 1000).toString();
 

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import {logger} from '@leav/logger';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IRecord} from '../../_types/record';
-import {type IStandardValue, type ILinkValue, type ITreeValue, type ISaveValue, type IValue} from '../../_types/value';
+import {type IStandardValue, type ILinkValue, type ITreeValue, type ISaveValue} from '../../_types/value';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IValueDomain} from '../value/valueDomain';
 import {ActionsListIOTypes, type IActionsListFunction} from '../../_types/actionsList';

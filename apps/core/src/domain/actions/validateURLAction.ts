@@ -15,7 +15,7 @@ export default function (): IActionsListFunction {
                 (errors, elementValue) => {
                     try {
                         new URL(elementValue as string);
-                    } catch (err) {
+                    } catch {
                         errors.push({errorType: Errors.INVALID_URL, attributeValue: elementValue});
                     }
 

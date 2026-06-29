@@ -87,7 +87,7 @@ export const useGeneratePreviewsMassAction = ({
 
                 onGeneratePreviews?.(massSelectionFilter, view.massSelection);
                 setIsModalOpen(false);
-            } catch (e) {
+            } catch {
                 KitAlert.error({
                     showIcon: true,
                     duration: ERROR_ALERT_DURATION,

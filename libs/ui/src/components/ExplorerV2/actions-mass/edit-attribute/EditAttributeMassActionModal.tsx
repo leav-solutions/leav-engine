@@ -2,7 +2,6 @@ import {type ReactNode} from 'react';
 import {faCheck, faXmark} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitModal, KitSpace, KitTypography} from 'aristid-ds';
-import {type RecordFilterInput} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 const MODAL_WIDTH = '90vw';

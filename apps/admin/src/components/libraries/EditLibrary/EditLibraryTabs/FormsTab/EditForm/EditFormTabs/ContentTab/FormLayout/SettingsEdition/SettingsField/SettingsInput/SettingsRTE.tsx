@@ -31,7 +31,7 @@ function SettingsRTE({fieldName, onChange, disabled}: ISettingsFieldCommonProps)
             <RichTextEditor
                 value={editorState}
                 onChange={setEditorState}
-                //@ts-ignore
+                // @ts-expect-error onBlur prop type does not match the editor signature
                 onBlur={_handleBlur}
                 disabled={disabled}
                 toolbarConfig={{

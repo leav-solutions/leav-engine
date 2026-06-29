@@ -4,13 +4,7 @@ import {type IDbService} from '../db/dbService';
 import {type IConfig} from '../../_types/config';
 import {type IAttribute} from '../../_types/attribute';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {
-    type IDistinctValue,
-    type ISaveValue,
-    type IValue,
-    type IValueVersion,
-    type IBaseValue,
-} from '../../_types/value';
+import {type IDistinctValue, type ISaveValue, type IValue, type IValueVersion} from '../../_types/value';
 import {
     type IAttributeTypesRepo,
     type IAttributeWithRevLink,

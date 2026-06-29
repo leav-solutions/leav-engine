@@ -1,4 +1,4 @@
-import {type Key, useState, type ComponentProps, type FunctionComponent} from 'react';
+import {type Key, useState, type ComponentProps} from 'react';
 import {KitButton, KitSpace, KitModal, KitTree, KitIdCard, KitSwitch, useKitTheme, KitLoader} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faXmark, faCircleInfo, faCheck} from '@fortawesome/free-solid-svg-icons';

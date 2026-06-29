@@ -1,5 +1,5 @@
 import {type IAmqpService} from '@leav/message-broker';
-import {groupDbFilesByDatas, groupFsFilesByDatas, _logMem} from './utils';
+import {groupDbFilesByDatas, groupFsFilesByDatas} from './utils';
 import * as events from './events';
 import {type FilesystemContent, type IFileContent, type IFilesystemDatas} from './_types/filesystem';
 import {type FullTreeContent, type IDbFilesDatas, type IDbLibrariesSettings, type IRecord} from './_types/queries';

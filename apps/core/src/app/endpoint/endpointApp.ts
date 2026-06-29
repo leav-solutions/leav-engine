@@ -1,6 +1,6 @@
 import {SystemLibraries} from '../../_constants/systemLibraries';
 import {UsersAttributes} from '../../_constants/systemAttributes';
-import {type Express, type RequestHandler} from 'express';
+import {type RequestHandler} from 'express';
 import {type IAppModule} from '../../_types/shared';
 import {type ExpressAppMethod, type PluginRegisterRoute} from '../../_types/endpoint';
 import {type IRequestWithContext} from '../../_types/express';

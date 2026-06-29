@@ -1364,7 +1364,7 @@ describe('Explorer', () => {
             </Explorer.EditSettingsContextProvider>,
         );
 
-        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+        const [, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
 
         expect(await screen.findByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
@@ -1409,7 +1409,7 @@ describe('Explorer', () => {
             </Explorer.EditSettingsContextProvider>,
         );
 
-        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+        const [, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
 
         expect(await screen.findByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
@@ -1462,7 +1462,7 @@ describe('Explorer', () => {
             </Explorer.EditSettingsContextProvider>,
         );
 
-        const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+        const [, firstRecordRow] = screen.getAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.activate-item'}));
 
         expect(await screen.findByText('explorer.activate_item_description', {exact: false})).toBeVisible();
@@ -1508,7 +1508,7 @@ describe('Explorer', () => {
             },
         );
 
-        const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
+        const [, firstRecordRow] = await screen.findAllByRole('row');
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'}));
 
         expect(await screen.findByText('explorer.delete_link_one')).toBeVisible();
@@ -1586,7 +1586,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+            const [, firstRecordRow] = screen.getAllByRole('row');
             await user.click(within(firstRecordRow).getByRole('button', {name: customAction.label}));
 
             expect(customAction.callback).toHaveBeenCalled();
@@ -1622,7 +1622,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+            const [, firstRecordRow] = screen.getAllByRole('row');
             await user.hover(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
 
             expect(within(firstRecordRow).getByRole('button', {name: /Test 1/})).toBeVisible();
@@ -1646,7 +1646,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+            const [, firstRecordRow] = screen.getAllByRole('row');
             expect(within(firstRecordRow).queryByRole('button')).not.toBeInTheDocument();
         });
 
@@ -1664,7 +1664,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+            const [, firstRecordRow] = screen.getAllByRole('row');
             await user.click(firstRecordRow);
             expect(customAction.callback).toHaveBeenCalled();
         });
@@ -1700,7 +1700,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const [_columnNameRow, firstRecordRow] = screen.getAllByRole('row');
+            const [, firstRecordRow] = screen.getAllByRole('row');
             await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
             expect(customActions[0].callback).not.toHaveBeenCalled();
         });
@@ -3251,7 +3251,7 @@ describe('Explorer', () => {
                 },
             );
 
-            const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
+            const [, firstRecordRow] = await screen.findAllByRole('row');
             expect(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'})).not.toBeEnabled();
         });
 
@@ -3268,7 +3268,7 @@ describe('Explorer', () => {
                 },
             );
 
-            const [_columnNameRow, firstRecordRow] = await screen.findAllByRole('row');
+            const [, firstRecordRow] = await screen.findAllByRole('row');
             expect(within(firstRecordRow).getByRole('button', {name: 'explorer.replace-item'})).not.toBeEnabled();
         });
 

@@ -336,7 +336,6 @@ describe('AttributeRepo', () => {
                     .mockReturnValueOnce(Promise.resolve([docAttrData])),
             };
 
-            const mockCleanupRes = attrData;
             const mockDbUtils: Mockify<IDbUtils> = {
                 cleanup: vi.fn().mockReturnValue(attrData),
                 convertToDoc: vi.fn().mockReturnValue(docAttrData),

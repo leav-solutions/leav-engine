@@ -100,7 +100,7 @@ function TriggerPreviewsGenerationModal({
             }
 
             onClose();
-        } catch (e) {
+        } catch {
             // Nothing to do here, error should be handled globally by Apollo. Uncomment next line for easier debugging
             // console.error(e);
         }

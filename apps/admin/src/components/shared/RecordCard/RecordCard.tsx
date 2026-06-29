@@ -29,7 +29,7 @@ const CardPart = styled.div`
     justify-content: center;
 `;
 
-// @ts-ignore
+// @ts-expect-error styled-components typing does not accept CardPart here
 const PreviewWrapper = styled(CardPart)`
     margin: 0 0.8em;
 `;

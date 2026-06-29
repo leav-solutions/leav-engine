@@ -12,7 +12,7 @@ export default function useAuthChecker(): UseAuthCheckerStatus {
             await loginChecker();
 
             setStatus('success');
-        } catch (err) {
+        } catch {
             setStatus('fail');
         }
     };

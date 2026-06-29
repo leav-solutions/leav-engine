@@ -2,8 +2,7 @@ import {systemUserId} from '../../../../_constants/users';
 import {type ILibraryDomain} from '../../../../domain/library/libraryDomain';
 import {type IRecordDomain} from '../../../../domain/record/recordDomain';
 import {type IValueDomain} from '../../../../domain/value/valueDomain';
-import ValidationError from '../../../../errors/ValidationError';
-import {Errors, ErrorTypes} from '../../../../_types/errors';
+import {ErrorTypes} from '../../../../_types/errors';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
 import {getCoreDep} from '../../integrationTestUtils';
 

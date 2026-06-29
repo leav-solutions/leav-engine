@@ -1,5 +1,4 @@
 import {type FunctionComponent} from 'react';
-import styled from 'styled-components';
 import {KitTree} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type UIFilter} from '../../_types';

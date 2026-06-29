@@ -23,13 +23,10 @@
 // expect(mockDispatch.mock.calls.length).toBe(1);
 // const mockCall = mockDispatch.mock.calls[0];
 // expect(mockCall.length).toBe(1);
-// @ts-ignore : mockCall may be empty, handled on previous expect
 // const firstArg = mockCall[0];
 // expect(firstArg).toHaveProperty('type');
-// @ts-ignore : firstArg may not have type property, handled on previous expect
 // expect(firstArg.type).toBe(ActionTypes.SET_SELECTED_ROOT);
 // expect(firstArg).toHaveProperty('data');
-// @ts-ignore : firstArg may not have data property, handled on previous expect
 // expect(firstArg.data).toBe(null);
 // });
 // test('can trigger toggle filters', async () => {
@@ -48,10 +45,8 @@
 // expect(mockDispatch.mock.calls.length).toBe(1);
 // const mockCall = mockDispatch.mock.calls[0];
 // expect(mockCall.length).toBe(1);
-// @ts-ignore : mockCall may be empty, handled on previous expect
 // const firstArg = mockCall[0];
 // expect(firstArg).toHaveProperty('type');
-// @ts-ignore : firstArg may not have type property, handled on previous expect
 // expect(firstArg.type).toBe(ActionTypes.TOGGLE_FILTERS);
 // });
 // });

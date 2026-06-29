@@ -227,7 +227,7 @@ export default function ({
                             ctx.extra = {...ctx.extra, leavCtx: context};
 
                             return true;
-                        } catch (e) {
+                        } catch {
                             return false; // Will close connection with a "403 Forbidden" error
                         }
                     },

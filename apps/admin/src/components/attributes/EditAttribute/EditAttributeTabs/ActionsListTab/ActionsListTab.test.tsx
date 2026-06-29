@@ -1,7 +1,6 @@
 import {MockedProvider} from '@apollo/client/testing';
 import {DndProvider} from 'react-dnd';
 import {TestBackend} from 'react-dnd-test-backend';
-import {act} from 'react-dom/test-utils';
 import {mockAttrSimple} from '../../../../../__mocks__/attributes';
 import ActionsListTab from './ActionsListTab';
 import {AVAILABLE_ACTIONS_MOCK, NO_AVAILABLE_ACTION_MOCK} from './mocks/ALCMocks';

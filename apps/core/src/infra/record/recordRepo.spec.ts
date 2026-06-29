@@ -74,7 +74,7 @@ describe('RecordRepo', () => {
             expect(mockDbCollec.save).toBeCalledWith(recordData, {returnNew: true});
 
             expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
-            expect(mockDbUtils.cleanup.mock.calls[0][0].hasOwnProperty('library')).toBe(true);
+            expect(Object.hasOwn(mockDbUtils.cleanup.mock.calls[0][0], 'library')).toBe(true);
 
             expect(createdRecord).toMatchObject(cleanCreatedRecordData);
         });

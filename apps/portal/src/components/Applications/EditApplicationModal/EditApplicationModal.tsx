@@ -60,7 +60,7 @@ function EditApplicationModal({open, applicationId, onClose, activeTab}: IEditAp
                 await submitFunction();
             }
             onClose();
-        } catch (e) {
+        } catch {
             // Nothing to do, errors are handled by the form
         } finally {
             setSubmitLoading(false);

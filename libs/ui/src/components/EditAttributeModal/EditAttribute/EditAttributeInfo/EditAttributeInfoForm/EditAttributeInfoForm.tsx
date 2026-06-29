@@ -1,5 +1,5 @@
 import {idFormatRegex, type Override, slugifyString} from '@leav/utils';
-import {Form, type FormInstance, Input, InputNumber, Select, Switch} from 'antd';
+import {Form, type FormInstance, Input, Select, Switch} from 'antd';
 import {useState, type ChangeEvent, type FocusEvent, type KeyboardEvent} from 'react';
 import styled from 'styled-components';
 import {useLang} from '../../../../../hooks';

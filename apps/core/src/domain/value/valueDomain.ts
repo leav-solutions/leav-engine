@@ -17,7 +17,7 @@ import {type IRecordFilterLight, type IRecord} from '../../_types/record';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
-import {AttributeTypes, type IAttribute, ValueVersionMode} from '../../_types/attribute';
+import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type ErrorFieldDetail, Errors, ErrorTypes} from '../../_types/errors';
 import {
     AttributeDependentValuesPermissionsActions,
@@ -27,7 +27,6 @@ import {
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {
     type IValueVersion,
-    type IFindValueTree,
     type ISaveValue,
     type IStandardValue,
     type IValue,
@@ -41,7 +40,6 @@ import {type IAttributeDependentValuesPermissionDomain} from '../permission/attr
 import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
 import canSaveRecordValue, {IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS} from './helpers/canSaveRecordValue';
-import findValue from './helpers/findValue';
 import prepareValue from './helpers/prepareValue';
 import postSaveValue from './helpers/postSaveValue';
 import postDeleteValue from './helpers/postDeleteValue';

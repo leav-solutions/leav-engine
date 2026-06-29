@@ -8,7 +8,7 @@ export function setupCryptoRandomUUIDPolyfill(test: typeof Test) {
         await page.addInitScript(() => {
             if (typeof window.crypto.randomUUID === 'undefined') {
                 window.crypto.randomUUID = () =>
-                    // @ts-ignore
+                    // @ts-expect-error return type does not match the randomUUID signature
                     'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
                         // eslint-disable-next-line no-bitwise
                         const r = (Math.random() * 16) | 0;

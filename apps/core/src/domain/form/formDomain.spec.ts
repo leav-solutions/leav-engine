@@ -8,7 +8,7 @@ import {type IRecordDomain} from '../record/recordDomain';
 import {type ITreeDomain} from '../tree/treeDomain';
 import {type IFormRepo} from '../../infra/form/formRepo';
 import {type IUtils, type ToAny} from '../../utils/utils';
-import {FormElementTypes, type IForm, IFormElement, type IFormElementWithValues} from '../../_types/forms';
+import {FormElementTypes, type IForm, type IFormElementWithValues} from '../../_types/forms';
 import {type ILogger} from '@leav/logger';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';

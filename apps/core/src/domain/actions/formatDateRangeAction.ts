@@ -79,7 +79,7 @@ export default function (): IActionsListFunction<{localized: false; universal: f
                 let options: Intl.DateTimeFormatOptions = {};
                 try {
                     options = JSON.parse(localized ?? '{}');
-                } catch (e) {
+                } catch {
                     errors.push({
                         errorType: Errors.FORMAT_ERROR,
                         attributeValue: {payload: localized},

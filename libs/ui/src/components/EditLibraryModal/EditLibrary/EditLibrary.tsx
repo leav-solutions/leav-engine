@@ -1,4 +1,4 @@
-import {Tabs, type TabsProps, Spin} from 'antd';
+import {Tabs, type TabsProps} from 'antd';
 import styled from 'styled-components';
 import {useSharedTranslation} from '../../../hooks/useSharedTranslation';
 import {LibraryBehavior, type SaveLibraryMutation, useGetLibraryByIdQuery} from '../../../_gqlTypes';

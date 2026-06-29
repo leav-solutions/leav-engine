@@ -69,7 +69,6 @@
 // });
 
 // act(() => {
-// @ts-ignore
 // comp.find('Confirm[name="enableConfirm"]').props().onConfirm();
 // });
 

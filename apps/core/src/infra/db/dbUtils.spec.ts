@@ -1,7 +1,6 @@
 import {aql, Database} from 'arangojs';
 import {type DocumentCollection} from 'arangojs/collection';
 import * as awilix from 'awilix';
-import {resolve} from 'dns';
 import * as fs from 'fs';
 import {type ICachesService} from '../cache/cacheService';
 import {type ILogger} from '@leav/logger';

@@ -73,7 +73,7 @@ function InfosTab(): JSX.Element {
 
             // No result means id is unique
             return !res?.data?.applications?.list?.length;
-        } catch (err) {
+        } catch {
             return true;
         }
     };

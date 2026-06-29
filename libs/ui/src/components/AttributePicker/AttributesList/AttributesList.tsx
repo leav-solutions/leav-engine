@@ -288,7 +288,7 @@ function AttributesList({
                 placeholder={t('global.search') + '...'}
                 allowClear
                 suffix={<SearchOutlined />}
-                // @ts-ignore - ref is a valid prop
+                // @ts-expect-error ref is a valid prop
                 ref={inputRef}
             />
             {canCreate && (

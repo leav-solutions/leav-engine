@@ -1,7 +1,7 @@
 import {appRootPath} from '@leav/app-root-path';
 import {type InitQueryContextFunc} from '../helpers/initQueryContext';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
-import {Express, type NextFunction, type Response} from 'express';
+import {type NextFunction, type Response} from 'express';
 import path from 'node:path';
 import {type IUtils} from '../../utils/utils';
 import {type ILogger} from '@leav/logger';

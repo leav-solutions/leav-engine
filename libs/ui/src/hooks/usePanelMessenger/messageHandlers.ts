@@ -36,7 +36,7 @@ export const decodeMessage = (raw: string): Message | undefined => {
         if (packetId in decoded && decoded[packetId] === true) {
             return JSON.parse(decoded.payload) as Message;
         }
-    } catch (e) {
+    } catch {
         return undefined;
     }
     return undefined;

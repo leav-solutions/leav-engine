@@ -16,7 +16,7 @@ import {logger} from '@leav/logger';
     // Create the output directory if it doesn't exist
     try {
         await fs.promises.access(config.outputRootPath, fs.constants.F_OK);
-    } catch (e) {
+    } catch {
         await fs.promises.mkdir(config.outputRootPath);
     }
 

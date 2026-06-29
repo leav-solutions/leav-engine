@@ -40,7 +40,7 @@ export const handleRemoveEvent = async (
     // Deactivate the record
     try {
         await deps.recordDomain.deactivateRecord(record, ctx);
-    } catch (e) {
+    } catch {
         deps.logger.warn(`[FilesManager] Error when deactivating the record: ${record.id}`);
     }
 

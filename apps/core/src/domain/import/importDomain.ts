@@ -1143,7 +1143,7 @@ export default function ({
                             ctx,
                         );
                     }
-                } catch (err) {
+                } catch {
                     continue;
                 }
             }

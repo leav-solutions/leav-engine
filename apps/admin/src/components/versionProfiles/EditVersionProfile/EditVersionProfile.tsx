@@ -89,7 +89,7 @@ function EditVersionProfile(): JSX.Element {
 
             // No result means id is unique
             return !res?.data?.versionProfiles?.list.length;
-        } catch (err) {
+        } catch {
             return true;
         }
     };

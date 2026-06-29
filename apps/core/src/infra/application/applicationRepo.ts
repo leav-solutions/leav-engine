@@ -103,7 +103,7 @@ export default function ({
                     // Check if manifest file exists. If not, just ignore the folder
                     try {
                         await fs.stat(manifestJsonPath);
-                    } catch (e) {
+                    } catch {
                         logger.warn(`Manifest file not found for module "${appPath}"`);
                         return acc;
                     }
