@@ -49,7 +49,15 @@ const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
         isUIFilterStandard(filter) &&
         [AttributeFormat.date, AttributeFormat.boolean].includes(filter.attribute.format)
     ) {
-        return filter.formattedValue ? [...filterValues, filter.formattedValue] : filterValues;
+        if (!filter.formattedValue) {
+            return filterValues;
+        }
+        if (filter.condition === AttributeConditionFilter.LESS_THAN) {
+            return [`< ${filter.formattedValue ? filter.formattedValue : filterValues}`];
+        } else if (filter.condition === AttributeConditionFilter.GREATER_THAN) {
+            return [`> ${filter.formattedValue ? filter.formattedValue : filterValues}`];
+        }
+        return [...filterValues, filter.formattedValue];
     }
 
     const valuesList = filter.attribute.valuesList;
