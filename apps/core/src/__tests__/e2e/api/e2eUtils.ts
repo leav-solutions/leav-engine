@@ -32,7 +32,7 @@ export interface IE2EUserParams {
     groupsId: string[];
 }
 
-const e2eUser = ({userId, groupsId}: IE2EUserParams): IE2EUser => ({
+export const e2eUser = ({userId, groupsId}: IE2EUserParams): IE2EUser => ({
     userId,
     getAuthToken: async () => {
         const conf = await getConfig();

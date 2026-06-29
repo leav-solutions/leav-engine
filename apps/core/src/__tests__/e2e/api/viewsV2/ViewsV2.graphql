@@ -10,8 +10,10 @@ query GetViewsV2($library: ID!) {
         list {
             id
             created_by {
+                id
                 whoAmI {
                     id
+                    label
                 }
             }
             display {
@@ -50,6 +52,13 @@ query GetViewsV2($library: ID!) {
 query GetViewV2($viewId: ID!) {
     viewV2(viewId: $viewId) {
         id
+        created_by {
+            id
+            whoAmI {
+                id
+                label
+            }
+        }
     }
 }
 
