@@ -2,6 +2,9 @@ module.exports = {
     testEnvironment: 'jest-environment-jsdom',
     moduleFileExtensions: ['ts', 'tsx', 'js'],
     setupFilesAfterEnv: ['./tests/setupTests.ts'],
+    // Shared fixtures live next to the specs that use them (inside __tests__) but are not test suites
+    // themselves; exclude them so Jest does not fail on "must contain at least one test".
+    testPathIgnorePatterns: ['/node_modules/', '\\.fixture\\.ts$'],
     transform: {
         '\\.(ts|tsx)$': [
             'ts-jest',
