@@ -60,7 +60,7 @@ export const usePostDiscussionComment = ({recordId, libraryId}: IUseThreadAction
                 },
             });
             await refetch();
-        } catch (err) {
+        } catch {
             throw new Error(t('threads.post_error_title'));
         } finally {
             setIsPosting(false);

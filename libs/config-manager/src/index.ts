@@ -17,7 +17,7 @@ const _getConfigByEnv = async function <T extends object>(dirPath: string, env: 
 
     try {
         await fs.promises.access(envFile, fs.constants.F_OK);
-    } catch (err) {
+    } catch {
         return {};
     }
 

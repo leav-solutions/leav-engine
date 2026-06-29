@@ -5,7 +5,7 @@ import {KitSpace} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSearch} from '@fortawesome/free-solid-svg-icons';
 import {useNavigate, useLocation} from 'react-router-dom';
-import {Button, Grid, Header, Tab, type TabProps} from 'semantic-ui-react';
+import {Button, Grid, Header, Tab} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import AttributesTab from './AttributesTab';

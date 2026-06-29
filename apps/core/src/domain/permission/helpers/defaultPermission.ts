@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {adminsGroupId, systemUserId} from '../../../_constants/users';
 import {type IConfig} from '../../../_types/config';
 import {

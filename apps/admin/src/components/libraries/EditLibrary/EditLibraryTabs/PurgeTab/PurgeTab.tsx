@@ -55,7 +55,7 @@ function PurgeTab({library, readonly}: IPurgeTabProps): JSX.Element {
             _handleCloseConfirm();
             await purgeRecords();
             refetch();
-        } catch (e) {
+        } catch {
             // Error is handled with error variable
         }
     };

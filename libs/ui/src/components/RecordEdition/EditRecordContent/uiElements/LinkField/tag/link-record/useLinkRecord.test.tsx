@@ -1,4 +1,4 @@
-import {render, screen, renderHook, act, waitFor} from '@testing-library/react';
+import {render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {useLinkRecord} from './useLinkRecord';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';

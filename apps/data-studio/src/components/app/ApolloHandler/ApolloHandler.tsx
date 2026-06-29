@@ -58,7 +58,7 @@ const ApolloHandler: FunctionComponent = ({children}) => {
             // Check if error response is JSON
             try {
                 JSON.parse(networkError.message);
-            } catch (e) {
+            } catch {
                 // If not replace parsing error message with real one
                 networkError.message = t('error.network_error_occured_details');
             }

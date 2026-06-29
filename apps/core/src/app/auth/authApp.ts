@@ -542,7 +542,7 @@ export default function ({
                         // to catch expired token error properly
                         try {
                             payload = jwt.verify(token, config.auth.key) as jwt.JwtPayload;
-                        } catch (e) {
+                        } catch {
                             throw new AuthenticationError('Invalid token');
                         }
 
@@ -563,7 +563,7 @@ export default function ({
                                 value: {payload: newPassword},
                                 ctx: systemCtx,
                             });
-                        } catch (e) {
+                        } catch {
                             return res.status(422).send('Invalid password');
                         }
 
@@ -589,7 +589,7 @@ export default function ({
 
                     try {
                         payload = jwt.verify(refreshToken, config.auth.key) as ISessionPayload;
-                    } catch (e) {
+                    } catch {
                         throw new AuthenticationError('Invalid token');
                     }
 

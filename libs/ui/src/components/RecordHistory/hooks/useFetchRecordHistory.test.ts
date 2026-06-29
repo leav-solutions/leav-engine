@@ -1,11 +1,9 @@
-import {type QueryResult, useQuery} from '@apollo/client';
+import {type QueryResult} from '@apollo/client';
 import * as ApolloClient from '@apollo/client';
 import {renderHook} from '@testing-library/react';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {RECORD_HISTORY_LOGS_FIRST_PAGE, RECORD_HISTORY_LOGS_PAGE, useFetchRecordHistory} from './useFetchRecordHistory';
 import {getRecordHistoryQuery} from '../_queries/recordHistoryQuery';
-import {type GetRecordHistoryQueryHookResult} from '_ui/_gqlTypes';
-import {gqlUnchecked} from '_ui/_utils';
 
 describe('useFetchRecordHistory', () => {
     const useQuerySpy = jest.spyOn(ApolloClient, 'useQuery');

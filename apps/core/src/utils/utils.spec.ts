@@ -1,6 +1,5 @@
 import {type i18n} from 'i18next';
 import {type IConfig, type IServer} from '../_types/config';
-import {type ISaveValue, type IValue} from '../_types/value';
 import {AttributeFormats} from '../_types/attribute';
 import {Errors} from '../_types/errors';
 import {

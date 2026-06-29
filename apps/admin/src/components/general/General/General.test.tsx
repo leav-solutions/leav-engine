@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import {act, render, screen} from '../../../_tests/testUtils';
+import {render, screen} from '../../../_tests/testUtils';
 import General from './General';
 
 vi.mock('./GeneralInfosTab', () => ({

@@ -1,4 +1,4 @@
-import {type EventAction, IDbEvent, type Log as LogExternal} from '@leav/utils';
+import {type EventAction, type Log as LogExternal} from '@leav/utils';
 import {type IDbPayloadInternal} from './events';
 
 export interface ILogTopicFilter {

@@ -14,7 +14,6 @@ import {
     type TreePermissionsActions,
 } from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {type TreePath} from '../../_types/tree';
 import {type IGetDefaultPermissionParams} from './helpers/defaultPermission';
 
 export const PERMISSIONS_CACHE_HEADER = 'permissions';

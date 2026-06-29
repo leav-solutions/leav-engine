@@ -24,7 +24,7 @@ export default function (): IActionsListFunction {
                         const hash = await bcrypt.hash(valueElement.payload, salt);
 
                         acc.values.push({...valueElement, payload: hash});
-                    } catch (e) {
+                    } catch {
                         acc.errors.push({errorType: Errors, attributeValue: valueElement});
                     }
 

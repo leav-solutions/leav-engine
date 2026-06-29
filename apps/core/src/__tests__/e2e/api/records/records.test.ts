@@ -1,6 +1,6 @@
 import {SystemLibraries} from '../../../../_constants/systemLibraries';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
-import {AttributeCondition, Operator, TreeCondition} from '../../../../_types/record';
+import {AttributeCondition, TreeCondition} from '../../../../_types/record';
 import {
     adminUserSdk,
     e2eNonAdminGroupId,

@@ -1,15 +1,6 @@
 import {CloseCode, createClient} from 'graphql-ws';
 import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
-import {
-    ApolloClient,
-    from,
-    HttpLink,
-    InMemoryCache,
-    type Observable,
-    type ServerError,
-    split,
-    gql,
-} from '@apollo/client';
+import {ApolloClient, from, HttpLink, InMemoryCache, type Observable, type ServerError, split} from '@apollo/client';
 import {onError} from '@apollo/client/link/error';
 import {type NextLink, type Operation} from '@apollo/client/link/core';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
@@ -37,7 +28,7 @@ export const useInitApollo = (
             // Check if the error response is JSON
             try {
                 JSON.parse(networkError.message);
-            } catch (e) {
+            } catch {
                 // If not, replace a parsing error message with a real one
                 // TODO: get lang from context
                 networkError.message = 'Unable to connect to server. Please check your Internet connection.';

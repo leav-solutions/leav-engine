@@ -158,7 +158,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
         fileExists: async (path: string): Promise<boolean> => {
             try {
                 await fs.promises.access(path, fs.constants.F_OK);
-            } catch (e) {
+            } catch {
                 return false;
             }
 
@@ -196,7 +196,7 @@ export default function ({config = null, translator = null}: IUtilsDeps = {}): I
                 try {
                     new URL(endpoint);
                     return true;
-                } catch (err) {
+                } catch {
                     return false;
                 }
             }

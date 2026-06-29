@@ -11,7 +11,6 @@ import {
 
 describe('Versions', () => {
     const testLibName = 'versions_library_test';
-    const testLibNameFormatted = 'versionsLibraryTest';
     const attrAdvName = 'versions_attribute_test';
     const treeName = 'versions_tree';
     const treeElementLibName = 'versions_library_tree_test';

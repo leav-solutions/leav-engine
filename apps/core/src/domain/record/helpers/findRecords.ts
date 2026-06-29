@@ -30,7 +30,6 @@ import {type ITreeRepo} from '../../../infra/tree/treeRepo';
 import {type GetCoreEntityByIdFunc} from '../../helpers/getCoreEntityById';
 import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
 import {type IDefaultPermissionHelper} from '../../permission/helpers/defaultPermission';
-import {type IConfig} from '../../../_types/config';
 
 /**
  * Search records

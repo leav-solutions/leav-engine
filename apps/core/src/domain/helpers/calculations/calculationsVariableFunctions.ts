@@ -3,7 +3,7 @@ import {type IVariableValue} from './calculationVariable';
 import {type IRecordDomain} from '../../record/recordDomain';
 import {type IActionsListContext} from '../../../_types/actionsList';
 import {TypeGuards} from '../../../utils';
-import {type IDateRangeValue, ITreeValue} from '../../../_types/value';
+import {type IDateRangeValue} from '../../../_types/value';
 import {type ITreeNode} from '../../../_types/tree';
 
 interface IDeps {
@@ -79,7 +79,7 @@ export default function ({
         const seen = {};
         return inputValue.filter(function (v) {
             const stringRepresentation = JSON.stringify(v.payload);
-            return seen.hasOwnProperty(stringRepresentation) ? false : (seen[stringRepresentation] = true);
+            return Object.hasOwn(seen, stringRepresentation) ? false : (seen[stringRepresentation] = true);
         });
     };
 

@@ -17,7 +17,6 @@ import {
 import {type IGlobalSettings} from '../../_types/globalSettings';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IValue, type ILinkValue, type IStandardValue, type ITreeValue} from '../../_types/value';
-import ValidationError from '../../errors/ValidationError';
 import {type IGlobalSettingsDomain} from '../globalSettings/globalSettingsDomain';
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {type IRecordDomain} from '../record/recordDomain';

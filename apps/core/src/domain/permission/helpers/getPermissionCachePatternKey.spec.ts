@@ -74,8 +74,6 @@ describe('getPermissionCacheKey', () => {
         const permissionType = PermissionTypes.ATTRIBUTE;
         const applyTo = 'attribute';
         const permissionAction = AttributePermissionsActions.ACCESS_ATTRIBUTE;
-        const key = 'key';
-
         const cacheKey = getPermissionCachePatternKey({groupsId, permissionType, applyTo, permissionAction});
 
         expect(cacheKey).toBe(

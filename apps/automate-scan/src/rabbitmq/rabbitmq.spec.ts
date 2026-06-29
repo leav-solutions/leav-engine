@@ -1,4 +1,3 @@
-import {logger} from '@leav/logger';
 import {generateMsgRabbitMQ, sendToRabbitMQ} from './rabbitmq';
 
 vi.mock('../index');

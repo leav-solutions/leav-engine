@@ -1,5 +1,5 @@
 import {type IAmqpService} from '@leav/message-broker';
-import {EventAction, IDbPayload, type IPubSubEvent, type IPubSubPayload} from '@leav/utils';
+import {EventAction, type IPubSubEvent, type IPubSubPayload} from '@leav/utils';
 import type * as amqp from 'amqplib';
 import {PubSub} from 'graphql-subscriptions';
 import Joi from 'joi';

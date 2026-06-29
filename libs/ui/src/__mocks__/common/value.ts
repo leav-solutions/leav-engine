@@ -1,5 +1,5 @@
 import {type IRecordPropertyWithAttribute} from '../../components/RecordEdition/editRecordReducer/editRecordReducer';
-import {type IRecordPropertyModifier, RecordProperty} from '../../_queries/records/getRecordPropertiesQuery';
+import {type IRecordPropertyModifier} from '../../_queries/records/getRecordPropertiesQuery';
 import {mockAttributeSimple} from './attribute';
 import {mockPreviews} from './record';
 

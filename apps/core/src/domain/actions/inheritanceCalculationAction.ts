@@ -1,6 +1,6 @@
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type ICalculationVariable} from '../helpers/calculations/calculationVariable';
-import {ActionsListIOTypes, type IActionsListFunction, ActionsListEvents} from '../../_types/actionsList';
+import {ActionsListIOTypes, type IActionsListFunction} from '../../_types/actionsList';
 import {AttributeTypes} from '../../_types/attribute';
 
 interface IDeps {

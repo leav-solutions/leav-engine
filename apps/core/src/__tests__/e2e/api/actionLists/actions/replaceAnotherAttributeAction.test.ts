@@ -656,8 +656,6 @@ describe('replaceAnotherAttributeAction', () => {
 
                     it('delete trigger value should remove all children records value', async () => {
                         const deleteValueId = savedIdValue1;
-                        const remainingRecordLinkId = savedIdValue2;
-
                         await gqlDeleteValue(attrAdvancedLinkTriggerId, libraryId, parentRecordId, deleteValueId);
 
                         await assertLinkAttributePayloadId(childRecordId1, [treeNodeRecord2Id]);

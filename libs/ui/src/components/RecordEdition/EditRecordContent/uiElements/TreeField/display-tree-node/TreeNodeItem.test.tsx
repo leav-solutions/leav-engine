@@ -1,7 +1,6 @@
 import {render, screen} from '_ui/_tests/testUtils';
 import TreeNodeItem from './TreeNodeItem';
 import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
-import {KitApp} from 'aristid-ds';
 import userEvent from '@testing-library/user-event';
 
 describe('TreeNodeItem', () => {

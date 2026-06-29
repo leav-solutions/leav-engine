@@ -9,7 +9,7 @@ export const processPreview = async (msg: ConsumeMessage, config: IConfig): Prom
     let msgContent: IMessageConsume;
     try {
         msgContent = JSON.parse(msg.content.toString());
-    } catch (err) {
+    } catch {
         throw new Error(`Invalid message ${msg.content.toString()}`);
     }
 

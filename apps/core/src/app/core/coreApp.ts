@@ -143,7 +143,7 @@ export default function ({
             registerTranslations: async (path: string) => {
                 try {
                     await fs.promises.access(path, fs.constants.R_OK);
-                } catch (e) {
+                } catch {
                     throw new Error('Translations folder unknown or not readable: ' + path);
                 }
 

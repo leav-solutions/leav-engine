@@ -70,7 +70,6 @@ function ALCReserveCard({
 
     useEffect(() => {
         preview(getEmptyImage(), {captureDraggingState: false});
-        // @ts-ignore
         setWidth(container && container.current && container.current.offsetWidth);
     }, [preview]);
 

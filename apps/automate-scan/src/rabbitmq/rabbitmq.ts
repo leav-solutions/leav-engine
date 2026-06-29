@@ -10,7 +10,7 @@ export const sendToRabbitMQ = (msg: string, amqp?: IAmqpParams) => {
             channel.publish(exchange, routingKey, Buffer.from(msg), {
                 persistent: true,
             });
-        } catch (e) {
+        } catch {
             logger.error("105 - Can't publish to rabbitMQ");
             process.exit(105);
         }

@@ -8,7 +8,6 @@ import {useViewSettingsContext} from '../manage-view-settings-v2';
 import {useReplaceLinkMassAction} from './useReplaceLinkMassAction';
 import {LINK_RECORDS_MODAL_CLASSNAME} from '../_constants';
 import {SelectTreeNodeModal} from '_ui/components';
-import {ITreeNodeWithRecord} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 interface ILinkModalProps {

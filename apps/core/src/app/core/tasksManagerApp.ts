@@ -11,7 +11,7 @@ import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IRecord, AttributeCondition} from '../../_types/record';
 import {type ITasksManagerDomain} from '../../domain/tasksManager/tasksManagerDomain';
 import {type IPubSubTaskData, TriggerNames} from '../../_types/eventsManager';
-import {type ITask, TaskPriority, TaskStatus, TaskType} from '../../_types/tasksManager';
+import {type ITask, TaskPriority, TaskStatus} from '../../_types/tasksManager';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IAdminPermissionDomain} from '../../domain/permission/adminPermissionDomain';
 import {AdminPermissionsActions} from '../../_types/permissions';

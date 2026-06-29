@@ -1,5 +1,6 @@
 import {type CodegenConfig} from '@graphql-codegen/cli';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment -- gitignored file, absent in CI but present locally
 // @ts-ignore this file might not be present in local
 import apiKey from './apolloApiKey';
 

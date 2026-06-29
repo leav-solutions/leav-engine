@@ -14,7 +14,7 @@ import {
     STANDARD_FIELD_LIBRARY_ID,
 } from '../constants';
 
-teardown('Delete datas, libraries et attributes', async ({}) => {
+teardown('Delete datas, libraries et attributes', async () => {
     console.info('Deleting data ...');
     const recordsClient = new RecordsClient();
     await recordsClient.deleteAndPurgeLibrariesRecords([STANDARD_FIELD_LIBRARY_ID]);

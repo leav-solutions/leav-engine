@@ -29,7 +29,7 @@ import {
     STANDARD_FIELD_LIBRARY_LABEL,
 } from '../constants';
 
-setup('Create test database', async ({}) => {
+setup('Create test database', async () => {
     console.info('Configure database...');
     const applicationClient = new ApplicationClient();
     await applicationClient.createApplication('app-studio');

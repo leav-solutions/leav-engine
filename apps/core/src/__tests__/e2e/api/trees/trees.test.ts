@@ -3,7 +3,6 @@ import {AttributeTypes} from '../../../../_types/attribute';
 import {
     adminUserSdk,
     e2eGuestUser,
-    e2eNonAdminGroupId,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
@@ -15,7 +14,6 @@ describe('Trees', () => {
     const testTreeName = 'test_tree';
     const testTreeName2 = 'test_tree2';
     const testLibName = 'trees_library_test';
-    const testLibTypeName = 'treesLibraryTest';
     const attrTreeName = 'trees_attribute_test_tree';
 
     describe('Tree operations', () => {

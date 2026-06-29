@@ -17,7 +17,6 @@ import {MockedLangContextProvider} from '_ui/testing';
 import {initialState} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {type RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import * as _ from 'lodash';
 
 const mockInitialState = {...initialState};
 const mockedUseFormInstance = AntForm.useFormInstance as jest.MockedFunction<typeof AntForm.useFormInstance>;

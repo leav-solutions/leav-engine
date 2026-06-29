@@ -64,7 +64,7 @@ export default function ({
                     withTotalCount: false,
                     ctx,
                 });
-            } catch (e) {
+            } catch {
                 return null;
             }
 
@@ -98,7 +98,7 @@ export default function ({
                     withTotalCount: false,
                     ctx,
                 });
-            } catch (e) {
+            } catch {
                 logger.warn(`[FilesManager] Error when search parent folder : ${fullParentPath}`);
                 return null;
             }

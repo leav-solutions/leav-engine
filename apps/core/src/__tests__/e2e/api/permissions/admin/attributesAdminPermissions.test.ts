@@ -25,7 +25,7 @@ describe('AttributesAdminPermissions', () => {
             // Clean up: delete the attribute if it exists
             try {
                 await makeGraphQlCall(makeDeleteQuery(createAttributeId), {user: e2eAdminUser()});
-            } catch (e) {
+            } catch {
                 // Ignore errors if attribute doesn't exist
             }
         });
@@ -77,7 +77,7 @@ describe('AttributesAdminPermissions', () => {
             // Clean up: try to delete if it still exists
             try {
                 await makeGraphQlCall(makeDeleteQuery(deleteAttributeId), {user: e2eAdminUser()});
-            } catch (e) {
+            } catch {
                 // Ignore errors if attribute was already deleted
             }
         });

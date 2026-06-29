@@ -1,4 +1,4 @@
-import {type FunctionComponent, type ReactNode, useEffect, useMemo, useRef, useState} from 'react';
+import {type FunctionComponent, type ReactNode, useEffect, useRef, useState} from 'react';
 import {KitButton, KitDivider, KitLoader, KitSpace, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';

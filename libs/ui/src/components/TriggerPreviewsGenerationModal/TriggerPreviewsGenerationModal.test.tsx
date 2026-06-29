@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import {mockLibraryWithDetails} from '_ui/__mocks__/common/library';
 import {forcePreviewsGenerationMutation} from '../../_queries/files/forcePreviewsGenerationMutation';
 import {getLibraryPreviewsSettingsQuery} from '../../_queries/libraries/getLibraryPreviewsSettingsQuery';
-import {act, render, screen, waitFor} from '../../_tests/testUtils';
+import {render, screen, waitFor} from '../../_tests/testUtils';
 import TriggerPreviewsGenerationModal from './TriggerPreviewsGenerationModal';
 
 describe('TriggerPreviewsGenerationModal', () => {

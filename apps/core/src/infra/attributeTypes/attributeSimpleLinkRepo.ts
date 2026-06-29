@@ -6,7 +6,7 @@ import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/at
 import {type ILinkBaseValue, type ILinkValue, type IDistinctValue} from '../../_types/value';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
-import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo, IAttributeWithRevLink} from './attributeTypesRepo';
+import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
 import {type GetConditionPart} from './helpers/getConditionPart';
 import {type IAttributeSimpleRepo} from './attributeSimpleRepo';
 import _ from 'lodash';

@@ -1,5 +1,4 @@
 import {execFile} from 'child_process';
-import {exists, mkdir} from 'fs';
 import {handleMultiPage} from './handleMultiPage';
 
 vi.mock('child_process', () => ({

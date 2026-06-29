@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import {screen, render, waitFor, act} from '_ui/_tests/testUtils';
+import {screen, render, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {EditRecordPage} from './EditRecordPage';
 import {Form, Input} from 'antd';

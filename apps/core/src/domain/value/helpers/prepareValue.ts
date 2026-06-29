@@ -3,7 +3,7 @@ import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IUtils} from '../../../utils/utils';
 import {type IAttribute} from '../../../_types/attribute';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {type ISaveValue, IValue} from '../../../_types/value';
+import {type ISaveValue} from '../../../_types/value';
 import ValidationError from '../../../errors/ValidationError';
 import {ActionsListEvents} from '../../../_types/actionsList';
 

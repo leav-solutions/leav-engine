@@ -12,7 +12,6 @@ import {LibraryBehavior} from '../../../_types/library';
 import {AttributeCondition} from '../../../_types/record';
 import {mockAttrAdvLink, mockAttrSimple, mockAttrSimpleLink, mockAttrTree} from '../../../__tests__/mocks/attribute';
 import {mockLibrary} from '../../../__tests__/mocks/library';
-import {type IConfig} from '../../../_types/config';
 import {mockTree} from '../../../__tests__/mocks/tree';
 import findRecordsHelper, {type IFindRecordsHelperDeps} from './findRecords';
 

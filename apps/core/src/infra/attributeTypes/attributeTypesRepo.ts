@@ -1,4 +1,4 @@
-import {type AqlLiteral, AqlQuery, type GeneratedAqlQuery} from 'arangojs/aql';
+import {type AqlLiteral, type GeneratedAqlQuery} from 'arangojs/aql';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {AttributeCondition, type IRecordFilterOption} from '../../_types/record';

@@ -2,7 +2,6 @@ import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {SystemTrees} from '../../../_constants/systemTrees';
 import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
-import {IValueRepo} from '../../../infra/value/valueRepo';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type ICacheService, type ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsRelations, PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';

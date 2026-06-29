@@ -1,4 +1,4 @@
-import {aql, literal} from 'arangojs/aql';
+import {aql} from 'arangojs/aql';
 import {type IDbDocument} from '../db/_types';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {

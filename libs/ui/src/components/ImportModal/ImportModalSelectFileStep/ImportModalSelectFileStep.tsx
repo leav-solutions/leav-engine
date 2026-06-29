@@ -36,7 +36,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
         const s: ISheet[] = [];
 
         for (const sheetName in workbook.Sheets) {
-            if (workbook.Sheets.hasOwnProperty(sheetName)) {
+            if (Object.hasOwn(workbook.Sheets, sheetName)) {
                 // Use the sheet_to_json method to convert excel to json data
                 const sheetData: Array<{[col: string]: string}> = xlsxUtils.sheet_to_json(workbook.Sheets[sheetName], {
                     blankrows: false,

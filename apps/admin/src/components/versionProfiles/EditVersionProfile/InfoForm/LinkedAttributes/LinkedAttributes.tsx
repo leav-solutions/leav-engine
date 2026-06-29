@@ -139,7 +139,7 @@ function LinkedAttributes({readonly, profile}: ILinkedAttributesProps): JSX.Elem
                     },
                 },
             });
-        } catch (e) {
+        } catch {
             // Exception is handled in Apollo Client
         }
     };

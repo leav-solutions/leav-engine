@@ -13,7 +13,7 @@ export function loadLocalesForDayjs(langConfig: ILang) {
     langConfig.available.forEach(lang => {
         try {
             require(`dayjs/locale/${lang}`);
-        } catch (e) {
+        } catch {
             logger.warn(`Locale ${lang} not found for dayjs, fallback to default locale`);
         }
     });

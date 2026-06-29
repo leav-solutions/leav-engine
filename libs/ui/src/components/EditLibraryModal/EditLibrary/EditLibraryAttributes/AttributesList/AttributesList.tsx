@@ -238,7 +238,7 @@ function AttributesList({library, readOnly, onDeleteAttribute, onAddAttributes}:
                 placeholder={t('global.search') + '...'}
                 allowClear
                 suffix={<SearchOutlined />}
-                // @ts-ignore - ref is a valid prop
+                // @ts-expect-error ref is a valid prop
                 ref={inputRef}
             />
             {!readOnly && (

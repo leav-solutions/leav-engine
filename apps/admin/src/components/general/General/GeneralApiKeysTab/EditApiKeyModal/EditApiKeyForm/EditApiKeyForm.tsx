@@ -58,7 +58,7 @@ function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading, onClose}: 
 
     const isNewKey = !apiKey?.id;
 
-    // @ts-ignore
+    // @ts-expect-error yup schema type does not match IEditApiKeyFormValues
     const validationSchema: yup.ObjectSchema<IEditApiKeyFormValues> = yup.object().shape({
         label: yup.string().nullable().required(),
         expiresAt: yup.number().nullable(),

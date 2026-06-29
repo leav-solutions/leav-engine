@@ -106,7 +106,7 @@ export default function ({
                     previewAttributeProps.linked_library,
                     ctx,
                 );
-            } catch (e) {
+            } catch {
                 return null;
             }
 

@@ -96,7 +96,7 @@ function InfosForm({onSubmitInfos, errors, onCheckIdIsUnique, loading}: IInfosFo
         idValidator = idValidator.test('isIdUnique', t('admin.validation_errors.id_exists'), onCheckIdIsUnique);
     }
 
-    // @ts-ignore
+    // @ts-expect-error yup schema type does not match the Override form values type
     const validationSchema: yup.ObjectSchema<Override<ApplicationInfosFormValues, {type: string}>> = yup
         .object()
         .shape({
