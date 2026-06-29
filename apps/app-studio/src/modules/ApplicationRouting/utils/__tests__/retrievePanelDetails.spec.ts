@@ -1,5 +1,6 @@
 import {type Application} from '../../types';
-import {retrievePanelDetails} from '../retrievePanelDetails';
+import {getPanelIndex, retrievePanelDetails} from '../retrievePanelDetails';
+import {campaignsManagerApplication} from './campaignsManagerApplication.fixture';
 
 describe('retrievePanelDetails', () => {
     const emptyApplication: Application = {
@@ -139,5 +140,62 @@ describe('retrievePanelDetails', () => {
             isSelfContaining: true,
             isStandalone: true,
         });
+    });
+});
+
+/**
+ * KPI A (LEAVC-948), read side — the flat `panelId → {currentPanel, libraryId, panelType}` index is
+ * built once per `application` reference and reused on every subsequent call (O(1) lookup instead of
+ * the O(N panels) `flatMap(...).find(...)` rebuilt on each of the ~10 render call sites). A new
+ * `application` reference rebuilds the index; the old one is garbage-collected with it (WeakMap).
+ *
+ * The memoization is observed through `getPanelIndex`, which exposes the memoized Map. The public
+ * `retrievePanelDetails` signature is unchanged — it consumes this index internally.
+ */
+describe('getPanelIndex — memoized read index (LEAVC-948)', () => {
+    it('should return the same index instance for the same application reference (cache hit)', () => {
+        const firstIndex = getPanelIndex(campaignsManagerApplication);
+        const secondIndex = getPanelIndex(campaignsManagerApplication);
+
+        expect(secondIndex).toBe(firstIndex);
+    });
+
+    it('should rebuild the index for a different application reference', () => {
+        const otherApplication: Application = {...campaignsManagerApplication};
+
+        const index = getPanelIndex(campaignsManagerApplication);
+        const otherIndex = getPanelIndex(otherApplication);
+
+        expect(otherIndex).not.toBe(index);
+    });
+
+    it('should index every panel across all libraries by its id', () => {
+        const index = getPanelIndex(campaignsManagerApplication);
+
+        // 5 libraries, 18 panels total (4 libraryPanels + 14 recordPanels).
+        expect(index.size).toBe(18);
+        expect(index.get('campaigns')).toMatchObject({libraryId: 'map', panelType: 'recordPanels'});
+        expect(index.get('event-list')).toMatchObject({libraryId: 'events', panelType: 'libraryPanels'});
+    });
+});
+
+describe('retrievePanelDetails — backed by the memoized index (LEAVC-948)', () => {
+    it('should resolve a panel located in the real campaigns_manager config', () => {
+        const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({
+            application: campaignsManagerApplication,
+            panelId: 'campaigns',
+        });
+
+        expect(libraryId).toBe('map');
+        expect(panelType).toBe('recordPanels');
+        // Record-panel link explorer: it displays the linked `campaigns` library, not its owner `map`.
+        expect(displayedLibraryId).toBe('campaigns');
+        expect(currentPanel?.id).toBe('campaigns');
+    });
+
+    it('should return the same panel object reference as the one stored in the application config', () => {
+        const {currentPanel} = retrievePanelDetails({application: campaignsManagerApplication, panelId: 'map-list'});
+
+        expect(currentPanel).toBe(campaignsManagerApplication.libraries.map.libraryPanels[0]);
     });
 });

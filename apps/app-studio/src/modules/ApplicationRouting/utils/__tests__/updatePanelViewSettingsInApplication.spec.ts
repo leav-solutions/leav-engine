@@ -4,6 +4,7 @@ import {
     resetPanelViewSettingsInApplication,
     updatePanelViewSettingsInApplication,
 } from '../updatePanelViewSettingsInApplication';
+import {campaignsManagerApplication} from './campaignsManagerApplication.fixture';
 
 describe('updatePanelViewSettingsInApplication', () => {
     const baseApplication: Application = {
@@ -83,6 +84,80 @@ describe('updatePanelViewSettingsInApplication', () => {
         );
 
         expect(JSON.stringify(baseApplication)).toBe(originalSnapshot);
+    });
+});
+
+/**
+ * KPI A (LEAVC-948) — structural sharing must preserve referential identity on every branch that is
+ * NOT on the path to the mutated panel. This is the binary proof that the memoization break (deep
+ * clone recreating every nested reference, forcing all `application-settings` consumers to re-render)
+ * is fixed. It runs against the real `campaigns_manager` config (5 libraries, 18 panels), and targets
+ * the `campaigns` explorer nested in `map`'s record panels — a realistic view-settings toggle target.
+ */
+describe('updatePanelViewSettingsInApplication — structural sharing (LEAVC-948)', () => {
+    const targetLocation = {libraryId: 'map', panelType: 'recordPanels', panelId: 'campaigns'} as const;
+    const viewSettings: PanelViewSettings = {
+        isViewSettingsActive: true,
+        selectedTab: 'filters',
+        currentViewId: 'someView',
+        targetLibraryId: 'campaigns',
+    };
+
+    it('should preserve the reference of every library that is not the mutated one', () => {
+        const result = updatePanelViewSettingsInApplication(campaignsManagerApplication, targetLocation, viewSettings);
+
+        const untouchedLibraryIds = ['campaigns', 'events', 'requests', 'thematics'] as const;
+        const preservedLibraries = untouchedLibraryIds.filter(
+            libraryId => result.libraries[libraryId] === campaignsManagerApplication.libraries[libraryId],
+        );
+
+        expect(preservedLibraries).toEqual([...untouchedLibraryIds]);
+        expect(result.workspaces).toBe(campaignsManagerApplication.workspaces);
+    });
+
+    it('should preserve the reference of the untouched panel array inside the mutated library', () => {
+        const result = updatePanelViewSettingsInApplication(campaignsManagerApplication, targetLocation, viewSettings);
+
+        expect(result.libraries.map.libraryPanels).toBe(campaignsManagerApplication.libraries.map.libraryPanels);
+    });
+
+    it('should preserve the reference of every sibling panel and only recreate the targeted one', () => {
+        const result = updatePanelViewSettingsInApplication(campaignsManagerApplication, targetLocation, viewSettings);
+
+        const previousRecordPanels = campaignsManagerApplication.libraries.map.recordPanels;
+        const preservedSiblings = result.libraries.map.recordPanels.filter((panel, index) =>
+            panel.id === targetLocation.panelId ? false : panel === previousRecordPanels[index],
+        );
+
+        // 5 record panels on `map`; 4 siblings keep their reference, only `campaigns` is recreated.
+        expect(preservedSiblings).toHaveLength(previousRecordPanels.length - 1);
+    });
+
+    it('should recreate only the references on the path to the mutated panel', () => {
+        const result = updatePanelViewSettingsInApplication(campaignsManagerApplication, targetLocation, viewSettings);
+
+        expect(result).not.toBe(campaignsManagerApplication);
+        expect(result.libraries).not.toBe(campaignsManagerApplication.libraries);
+        expect(result.libraries.map).not.toBe(campaignsManagerApplication.libraries.map);
+        expect(result.libraries.map.recordPanels).not.toBe(campaignsManagerApplication.libraries.map.recordPanels);
+    });
+
+    it('should merge the view settings into the targeted panel', () => {
+        const result = updatePanelViewSettingsInApplication(campaignsManagerApplication, targetLocation, viewSettings);
+
+        const updatedPanel = result.libraries.map.recordPanels.find(panel => panel.id === targetLocation.panelId);
+
+        expect(updatedPanel).toMatchObject(viewSettings);
+    });
+
+    it('should return the very same application reference when the library is not found', () => {
+        const result = updatePanelViewSettingsInApplication(
+            campaignsManagerApplication,
+            {libraryId: 'unknown', panelType: 'libraryPanels', panelId: 'whatever'},
+            viewSettings,
+        );
+
+        expect(result).toBe(campaignsManagerApplication);
     });
 });
 

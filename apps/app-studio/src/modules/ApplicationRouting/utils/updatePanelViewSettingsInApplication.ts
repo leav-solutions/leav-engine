@@ -25,20 +25,26 @@ export const updatePanelViewSettingsInApplication = (
     location: PanelLocation,
     viewSettings: PanelViewSettings,
 ): Application => {
-    // TODO(LEAVC-948): replace this full deep clone with structural sharing — it serializes the whole
-    // app config on every call and breaks memoization (fresh refs force all settings consumers to re-render).
-    const newApplication = JSON.parse(JSON.stringify(prevApplication)) as Application;
-
-    const library = newApplication.libraries[location.libraryId];
+    const library = prevApplication.libraries[location.libraryId];
     if (!library) {
-        return newApplication;
+        return prevApplication;
     }
 
-    library[location.panelType] = library[location.panelType].map(panel =>
-        panel.id === location.panelId ? {...panel, ...viewSettings} : panel,
-    );
-
-    return newApplication;
+    // Structural sharing: recreate only the objects on the path to the mutated panel and keep the
+    // references of every untouched branch, so memoization holds and `application-settings` consumers
+    // on intact branches do not re-render.
+    return {
+        ...prevApplication,
+        libraries: {
+            ...prevApplication.libraries,
+            [location.libraryId]: {
+                ...library,
+                [location.panelType]: library[location.panelType].map(panel =>
+                    panel.id === location.panelId ? {...panel, ...viewSettings} : panel,
+                ),
+            },
+        },
+    };
 };
 
 export const resetPanelViewSettingsInApplication = (

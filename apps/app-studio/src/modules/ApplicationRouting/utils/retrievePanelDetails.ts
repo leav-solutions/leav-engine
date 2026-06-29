@@ -1,5 +1,47 @@
 import {type Application} from '../types';
 
+type Panel = Application['libraries'][string]['libraryPanels'][number];
+type PanelType = 'libraryPanels' | 'recordPanels';
+type PanelLocation = {currentPanel: Panel; libraryId: string; panelType: PanelType};
+type PanelIndex = Map<string, PanelLocation>;
+
+/**
+ * Memoized flat index `panelId → {currentPanel, libraryId, panelType}`, keyed by the `application`
+ * reference. Built once per reference (the O(N panels) traversal), then reused for O(1) lookups across
+ * the ~10 render call sites. A new `application` reference gets a fresh entry and the old one is
+ * garbage-collected with it — hence the WeakMap, no manual invalidation needed.
+ *
+ * Relies on panel IDs being unique across every library, which `checkPanelIdsUniqueness`
+ * (schemaValidators.ts) guarantees at config-load time.
+ */
+const panelIndexCache = new WeakMap<Application, PanelIndex>();
+
+const buildPanelIndex = (application: Application): PanelIndex => {
+    const index: PanelIndex = new Map();
+
+    for (const [libraryId, {libraryPanels, recordPanels}] of Object.entries(application.libraries)) {
+        for (const currentPanel of libraryPanels) {
+            index.set(currentPanel.id, {currentPanel, libraryId, panelType: 'libraryPanels'});
+        }
+        for (const currentPanel of recordPanels) {
+            index.set(currentPanel.id, {currentPanel, libraryId, panelType: 'recordPanels'});
+        }
+    }
+
+    return index;
+};
+
+export const getPanelIndex = (application: Application): PanelIndex => {
+    const cachedIndex = panelIndexCache.get(application);
+    if (cachedIndex) {
+        return cachedIndex;
+    }
+
+    const index = buildPanelIndex(application);
+    panelIndexCache.set(application, index);
+    return index;
+};
+
 export const retrievePanelDetails = ({
     application,
     recordPanelId,
@@ -9,26 +51,10 @@ export const retrievePanelDetails = ({
     panelId?: string;
     recordPanelId?: string;
 }) => {
-    const [currentPanel, libraryId, panelType] = Object.entries(application.libraries)
-        .flatMap(([libId, {libraryPanels, recordPanels}]) => [
-            ...libraryPanels.map(
-                panel =>
-                    [
-                        panel,
-                        libId,
-                        'libraryPanels', // Keep origin to know the panel type, if needed downstream
-                    ] as const, // Tells to TypeScript that is a tuple
-            ),
-            ...recordPanels.map(
-                panel =>
-                    [
-                        panel,
-                        libId,
-                        'recordPanels', // Keep origin to know the panel type, if needed downstream
-                    ] as const, // Tells to TypeScript that is a tuple
-            ),
-        ])
-        .find(([panel]) => panel.id === (recordPanelId ?? panelId)) ?? [null, null, null];
+    const targetPanelId = recordPanelId ?? panelId;
+    const {currentPanel, libraryId, panelType} =
+        (targetPanelId === undefined ? undefined : getPanelIndex(application).get(targetPanelId)) ??
+        ({currentPanel: null, libraryId: null, panelType: null} as const);
 
     // The library whose VIEWS the explorer shows. For a record-panel link explorer this is the linked
     // library carried on the panel (`panel.libraryId`), NOT the owner library under which the panel is
