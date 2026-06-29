@@ -34,7 +34,7 @@ describe('useViewActions', () => {
         jest.clearAllMocks();
         spyOnUseUser.mockReturnValue({userData: {userId: currentUserId}} as any);
         spyOnUseConfirmModal.mockReturnValue({openConfirmModal} as any);
-        spyOnUseCurrentView.mockReturnValue({view: {id: loadedViewId}} as any);
+        spyOnUseCurrentView.mockReturnValue({view: {id: loadedViewId}, canManageViews: false} as any);
         spyOnUseDeleteView.mockReturnValue({deleteView, deleteLoading: false} as any);
         deleteView.mockResolvedValue(true);
     });
@@ -58,6 +58,16 @@ describe('useViewActions', () => {
 
         it('omits the delete action when the current user does not own the view', () => {
             expect(findAction(makeView({created_by: {id: 'someone-else'}}), 'delete')).toBeUndefined();
+        });
+
+        it('adds the delete action when a views-manager sees a shared view owned by another user', () => {
+            spyOnUseCurrentView.mockReturnValue({view: {id: loadedViewId}, canManageViews: true} as any);
+            expect(findAction(makeView({created_by: {id: 'someone-else'}, shared: true}), 'delete')).toBeDefined();
+        });
+
+        it('omits the delete action when a views-manager sees a private view owned by another user', () => {
+            spyOnUseCurrentView.mockReturnValue({view: {id: loadedViewId}, canManageViews: true} as any);
+            expect(findAction(makeView({created_by: {id: 'someone-else'}, shared: false}), 'delete')).toBeUndefined();
         });
 
         it('disables the delete action when the view is the one currently loaded', () => {

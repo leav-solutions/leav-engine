@@ -11,10 +11,10 @@ import {SharedByLabel} from './SharedByLabel';
 import {SaveAsViewModal} from './SaveAsViewModal';
 import {actions, actionButtons} from './currentViewSection.module.css';
 
-export const CurrentViewActions = ({canEditAdminView}: {canEditAdminView: boolean}) => {
+export const CurrentViewActions = () => {
     const {t} = useTranslation();
     const {lang} = useLang();
-    const {view, isOwner, isDirty, isEmptyView, resetView} = useCurrentView();
+    const {view, canManageCurrentView, canManageViews, isDirty, isEmptyView, resetView} = useCurrentView();
     const {save, saveLoading, saveAs, saveAsLoading, toggleShared, shareLoading} = useCurrentViewActions();
     const [isSaveAsModalOpen, setIsSaveAsModalOpen] = useState(false);
 
@@ -54,10 +54,9 @@ export const CurrentViewActions = ({canEditAdminView}: {canEditAdminView: boolea
         <SaveAsViewModal isOpen={isSaveAsModalOpen} onClose={() => setIsSaveAsModalOpen(false)} onSubmit={saveAs} />
     );
 
-    // Default (empty) view state: only an admin can configure the reference view, and only via
     // "Save as" (create a real view from the synthetic draft) + "Reset" (revert to the empty draft).
     if (isEmptyView) {
-        if (!canEditAdminView) {
+        if (!canManageViews) {
             return null;
         }
 
@@ -74,7 +73,7 @@ export const CurrentViewActions = ({canEditAdminView}: {canEditAdminView: boolea
 
     const hasLabel = (view.label?.[lang[0]] ?? '').trim() !== '';
     const canSave = isDirty && hasLabel;
-    const canShare = isOwner && canEditAdminView;
+    const canShare = canManageViews && canManageCurrentView;
 
     return (
         <div className={actions}>
@@ -84,7 +83,7 @@ export const CurrentViewActions = ({canEditAdminView}: {canEditAdminView: boolea
                 <SharedByLabel createdByLabel={view.created_by.whoAmI.label} />
             )}
             <div className={actionButtons}>
-                {isOwner && (
+                {canManageCurrentView && (
                     <KitTooltip title={String(t('view_settings.current_view.save'))}>
                         <KitBadge dot={canSave}>
                             <KitButton

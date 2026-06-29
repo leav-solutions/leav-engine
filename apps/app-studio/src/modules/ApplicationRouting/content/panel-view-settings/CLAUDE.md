@@ -40,12 +40,17 @@ header `CurrentViewSection`.
 
 ### `useCurrentView()`
 
-Expose `view`, `savedView`, `isOwner`, `isDirty`, `visibleColumns`, `invisibleColumns`,
-`sorts`, `availableColumnIds`, `availableSortPaths`, et les dispatchers : `setViewType`,
-`toggleVisibility`, `moveAttribute`, `moveSort`, `setSortOrder`, `setLabel`, `setShared`,
-`setAvailableColumns`, `setAvailableSorts`, `resetView`, `markSaved`.
+Expose `view`, `savedView`, `isOwner`, `canManageCurrentView`, `canManageViews`, `isDirty`,
+`visibleColumns`, `invisibleColumns`, `sorts`, `availableColumnIds`, `availableSortPaths`, et les
+dispatchers : `setViewType`, `toggleVisibility`, `moveAttribute`, `moveSort`, `setSortOrder`,
+`setLabel`, `setShared`, `setAvailableColumns`, `setAvailableSorts`, `resetView`, `markSaved`.
 
 - **`isOwner`** = `view.created_by.whoAmI.id === userData.userId`.
+- **`canManageViews`** = permission `manage_views` sur la bibliothèque affichée (droit « gestionnaire
+  de vues », cf. plus bas).
+- **`canManageCurrentView`** = `isOwner || (canManageViews && view.shared)` droit de gérer **la vue
+  courante** ; l'override est restreint aux vues partagées. (Nommée `Current` pour la distinguer de
+  `canManageViews`, le droit global par bibliothèque.)
 - `visibleColumns` garde l'ordre de la vue ; `invisibleColumns` est trié alphabétiquement.
 - `sorts` mappe `view.sorts` en `{id, order, ids, label}` ; `label` = chemin de descente joint par
   `›` (un tri mono-attribut affiche juste son libellé).
@@ -94,44 +99,60 @@ les callbacks `viewSettings` à `ExplorerV2` (monté dans `PanelLibraryExplorer.
 
 ## Actions CRUD (`current-view-section/`)
 
-| Action           | Mutation / dispatch                      | Condition                                     |
-| ---------------- | ---------------------------------------- | --------------------------------------------- |
-| Sauvegarder      | `updateViewV2`                           | `isOwner && isDirty && label non vide`        |
-| Enregistrer sous | `createViewV2` (`SaveAsViewModal`)       | ouvert à **tous** (ex-« Forker »)             |
-| Partager         | `updateViewV2 {shared}` (`ShareControl`) | `isOwner && canEditAdminView` (voir plus bas) |
-| Réinitialiser    | dispatch `RESET_VIEW`                    | `isDirty` (sans requête réseau)               |
-| Supprimer        | —                                        | **TODO LEAVC-934** (bouton désactivé)         |
+| Action           | Mutation / dispatch                      | Condition                                                            |
+| ---------------- | ---------------------------------------- | -------------------------------------------------------------------- |
+| Sauvegarder      | `updateViewV2`                           | `canManageCurrentView && isDirty && label non vide`                  |
+| Enregistrer sous | `createViewV2` (`SaveAsViewModal`)       | ouvert à **tous** (ex-« Forker »)                                    |
+| Partager         | `updateViewV2 {shared}` (`ShareControl`) | `canManageViews && canManageCurrentView` (voir plus bas)             |
+| Réinitialiser    | dispatch `RESET_VIEW`                    | `isDirty` (sans requête réseau)                                      |
+| Supprimer        | `deleteViewV2` (catalogue)               | `canManageCurrentView` (= owner, ou `manage_views` sur vue partagée) |
 
-Le back rejette une modif par un non-propriétaire (`USER_IS_NOT_VIEW_OWNER`).
+Le back rejette une modif par quelqu'un qui n'a pas le droit de gérer la vue (`USER_IS_NOT_VIEW_OWNER`) :
+il applique exactement la même règle `isOwner || (manage_views && view.shared)`
+(`viewV2Domain.ts`, `_canManageView`).
 
 ---
 
-## Distinction admin / utilisateur
+## Distinction gestionnaire de vues / utilisateur
 
-> Ticket de référence : **LEAVC-852** (mode admin du volet de configuration des vues).
+> Tickets de référence : **LEAVC-852** (mode admin du volet) puis **LEAVC-960** (passage d'une
+> détection par groupe à une **permission**).
 
-### Détection admin (par groupe, global)
+### Détection par permission (`manage_views`, par bibliothèque)
 
-- **`canEditAdminView`** = `useIsAdminUser()` (`config/user/useIsAdminUser.ts`) → appartenance au
-  **groupe d'id `'1'`** (groupe administrateurs créé d'office par le core, cf. `adminsGroupId` dans
-  `apps/core/src/_constants/systemRecords.ts`). C'est **global**, pas une permission par bibliothèque :
-  un admin configure la vue de référence de **toutes** les bibliothèques.
-- Plomberie : `getUserIdentity.graphql` récupère `user_groups { … whoAmI { id label } }` →
-  `InitUser.tsx` fournit les ids de groupes via `UserGroupsProvider` (contexte **local app-studio**,
-  le `UserContext` public de `@leav/ui` reste inchangé) → `useIsAdminUser` teste l'id `'1'`.
-- ⚠️ L'ancienne détection par permission `admin_library` (query `GetPermissionEditViewOnLibrary`) a
-  été **supprimée**.
+- **`canManageViews`** = permission **`manage_views`** de type `library` sur la bibliothèque affichée,
+  résolue via la query `isAllowed` (hook `store-current-view/useCanManageViews.ts`,
+  `isAllowed.graphql`). Côté core, c'est une `LibraryPermissionsActions` **à vrai par défaut pour les
+  admins uniquement** (override `everybody.library.manage_views = false` dans `config/default.js`) →
+  comportement par défaut identique à l'ancien check « groupe admin », mais désormais configurable par
+  groupe d'utilisateurs dans l'onglet Permissions de chaque bibliothèque.
+- **Résolu une seule fois** par `CurrentViewStoreProvider` (qui connaît `displayedLibraryId`) puis
+  exposé via `CurrentViewContext` → tous les composants du volet le lisent par `useCurrentView()`.
+  `false` pendant le chargement ; le **back reste le gardien autoritaire** (re-check à chaque mutation).
+- ⚠️ Historique : l'ancienne détection par permission `admin_library` (query
+  `GetPermissionEditViewOnLibrary`) avait été remplacée par `useIsAdminUser()` (groupe `'1'`,
+  LEAVC-852) ; ce dernier — et toute la plomberie `UserGroupsContext` — a été **supprimé** au profit
+  de `manage_views` (LEAVC-960).
 
 ### ✅ Implémenté
 
 - **`isOwner`** = `view.created_by.whoAmI.id === userData.userId` (`useCurrentView.ts`).
-- **`canShare = isOwner && canEditAdminView`** (`CurrentViewActions.tsx`) → si vrai, affiche
-  `ShareControl` (toggle partage) ; sinon `SharedByLabel` (lecture seule, nom du créateur).
-- Édition du label, bouton Sauvegarder, bouton Supprimer : gated par `isOwner`.
+- **`canManageCurrentView = isOwner || (canManageViews && view.shared)`** (`useCurrentView.ts`) →
+  droit de gérer **la vue courante** (renommer / sauvegarder / supprimer / (dé)partager). L'override est
+  **restreint aux vues partagées** : un gestionnaire ne touche jamais la vue privée d'un autre
+  utilisateur. Même règle côté back (`viewV2Domain.ts` → `_canManageView`).
+- **`canShare = canManageViews && canManageCurrentView`** (`CurrentViewActions.tsx`) → si vrai, affiche
+  `ShareControl` (toggle partage) ; sinon `SharedByLabel` (lecture seule, nom du créateur). Effet :
+  un gestionnaire sur une vue partagée d'autrui peut la dé-partager ; un owner sans `manage_views`
+  reste inchangé.
+- Édition du label (`CurrentViewLabel`), bouton Sauvegarder (`CurrentViewActions`) : gated par
+  `canManageCurrentView`.
 - Catalogue (`useViewCatalog`) : `myViews` (`created_by.id === userId`) vs `sharedViews`
-  (`shared === true` d'un autre user). Les vues perso d'autrui sont invisibles.
+  (`shared === true` d'un autre user). Les vues perso d'autrui sont invisibles. L'action **Supprimer**
+  (`useViewActions`) est visible si `isOwner || (canManageViews && view.shared)`, désactivée sur la vue
+  actuellement chargée.
 - **Roue « attributs disponibles »** (`manage-available-attributes/AvailableAttributesDropdown.tsx`),
-  rendue **uniquement si `canEditAdminView`**, sur **Affichage** et **Tris** :
+  rendue **uniquement si `canManageViews`**, sur **Affichage** et **Tris** :
     - « Disponible » = **appartenance à la liste de la facette** (pas de champ persisté en plus) : la
       roue édite `view.display.attributes` (colonnes) / `view.sorts` (tris) via les actions reducer
       `SET_AVAILABLE_COLUMNS` / `SET_AVAILABLE_SORTS` (réconciliation : conserve ordre + visibilité /
@@ -144,8 +165,8 @@ Le back rejette une modif par un non-propriétaire (`USER_IS_NOT_VIEW_OWNER`).
       sous-attribut, chemin `[lien, sousAttr]`). Descente **lazy** par expansion
       (`useGetViewSettingsLibraryAttributesLazyQuery`). Pour éviter un double en-tête, la roue est rendue
       dans le **`TabHeader` partagé**, à gauche du bouton épingle, et non dans une sous-section de l'onglet.
-      `PanelViewSettings` calcule `canEditAvailableAttributesInHeader` (= `canEditAdminView` + onglet à roue
-      d'en-tête, via le helper `headerAvailableAttributesMode(tab.key)`) et le passe à `TabHeader`.
+      `TabHeader` décide lui-même de l'afficher : `canManageViews && EDIT_AVAILABLE_ATTRIBUTES_IN_HEADER_TABS.includes(tab.key)`
+      (constante dans `tabs/_constantes.ts` ; `['sorts']` aujourd'hui, `filters` à ajouter quand l'onglet sera câblé).
     - Query : `getViewSettingsLibraryAttributes.graphql` (réutilisée pour chaque bibliothèque visitée).
 
 ### ⏳ Limites / à venir

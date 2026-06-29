@@ -6,7 +6,7 @@ import {useCurrentView} from '../store-current-view/useCurrentView';
 export const CurrentViewLabel = () => {
     const {t} = useTranslation();
     const {lang} = useLang();
-    const {view, isOwner, isEmptyView, setLabel} = useCurrentView();
+    const {view, canManageCurrentView, isEmptyView, setLabel} = useCurrentView();
 
     if (!view && !isEmptyView) {
         return null;
@@ -19,8 +19,8 @@ export const CurrentViewLabel = () => {
     const value = view.label?.[lang[0]] ?? '';
     const isLabelEmpty = value.trim() === '';
 
-    // Non-owner: the label is read-only ("save as" is needed to rename a copy).
-    if (!isOwner) {
+    // Cannot manage the view: the label is read-only ("save as" is needed to rename a copy).
+    if (!canManageCurrentView) {
         return <KitInput readonly value={value} />;
     }
 

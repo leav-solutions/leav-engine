@@ -277,6 +277,7 @@
         "group": {
             "library": "Library",
             "entities": "Entities",
+            "views": "Views",
             "libraries": "Libraries",
             "attributes": "Attributes",
             "tasks": "Tasks",

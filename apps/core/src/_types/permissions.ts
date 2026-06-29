@@ -22,6 +22,7 @@ export enum LibraryPermissionsActions {
     CREATE_RECORD = 'create_record',
     EDIT_RECORD = 'edit_record',
     DELETE_RECORD = 'delete_record',
+    MANAGE_VIEWS = 'manage_views',
 }
 
 export enum RecordPermissionsActions {

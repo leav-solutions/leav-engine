@@ -40,9 +40,9 @@ const MANAGE_LABEL_KEY: Record<AvailableAttributesMode, string> = {
 };
 
 /**
- * Admin-only gear: a checkable tree of the library's attributes letting the admin curate which
+ * Views-manager gear: a checkable tree of the library's attributes letting a manager curate which
  * attributes are "available" in a facet (= membership in `view.display.attributes` for columns /
- * `view.sorts` for sorts). Rendered only when `canEditAdminView` is true (caller's responsibility).
+ * `view.sorts` for sorts). Rendered only when `canManageViews` is true (caller's responsibility).
  *
  * - `mode="flat"`: flat tree, direct attributes only (a link/tree is a single checkable entry).
  * - `mode="nested"`: link attributes are expandable branches; descent is lazily fetched per expansion.

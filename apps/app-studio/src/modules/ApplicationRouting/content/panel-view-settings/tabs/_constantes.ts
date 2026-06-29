@@ -17,4 +17,6 @@ export const VIEW_SETTINGS_TABS: readonly ViewSettingsTabConfig[] = SHARED_VIEW_
     labelKey: LABEL_KEY_BY_TAB[key],
 }));
 
-export const EDIT_AVAILABLE_ATTRIBUTES_IN_HEADER_TABS = ['sorts', 'filters'];
+// Tabs that host the admin "available attributes" gear in the shared TabHeader (rather than in a
+// dedicated section like Display). `filters` will join once the filters tab is wired (WIP placeholder).
+export const EDIT_AVAILABLE_ATTRIBUTES_IN_HEADER_TABS: ViewSettingsTab[] = ['sorts'];

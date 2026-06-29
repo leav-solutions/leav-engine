@@ -18,13 +18,13 @@ import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrateg
 import {restrictToParentElement, restrictToVerticalAxis} from '@dnd-kit/modifiers';
 import {ColumnItem} from './ColumnItem';
 import {IDENTITY_COLUMN_ID} from './_constants';
+import {useCurrentView} from '../../store-current-view/useCurrentView';
 import {AvailableAttributesDropdown} from '../../manage-available-attributes/AvailableAttributesDropdown';
 import {section, header, lists, list} from './columnsSettings.module.css';
 import {type CurrentViewColumn} from '../../store-current-view/_types';
 
 export const ColumnsSettings = ({
     search,
-    canEditAdminView,
     visibleColumns,
     invisibleColumns,
     onSearchChange,
@@ -32,7 +32,6 @@ export const ColumnsSettings = ({
     onMoveAttribute,
 }: {
     search: string;
-    canEditAdminView: boolean;
     visibleColumns: CurrentViewColumn[];
     invisibleColumns: CurrentViewColumn[];
     onSearchChange: (search: string) => void;
@@ -41,6 +40,8 @@ export const ColumnsSettings = ({
 }) => {
     const {t} = useTranslation();
     const {lang} = useLang();
+
+    const {canManageViews} = useCurrentView();
 
     const getLabel = (attr: CurrentViewColumn) =>
         attr.attribute.label ? localizedTranslation(attr.attribute.label, lang) : attr.attribute.id;
@@ -68,7 +69,7 @@ export const ColumnsSettings = ({
                 <KitTypography.Text weight="bold" size="fontSize5">
                     {t('view_settings.display.columns.title')}
                 </KitTypography.Text>
-                {canEditAdminView && <AvailableAttributesDropdown mode="flat" />}
+                {canManageViews && <AvailableAttributesDropdown mode="flat" />}
             </header>
             <KitInput
                 placeholder={String(t('view_settings.display.columns.search_placeholder'))}

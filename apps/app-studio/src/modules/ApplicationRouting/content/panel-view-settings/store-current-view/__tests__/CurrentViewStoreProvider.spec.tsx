@@ -16,6 +16,13 @@ jest.mock('../../tabs/tab-catalog/useLastUsedView', () => ({
     useLastUsedView: () => ({lastUsedViewId: undefined, saveLastUsedView: jest.fn()}),
 }));
 
+// Permission is resolved via an isAllowed query; stub the hook so the provider test stays isolated
+// from Apollo. `false` mirrors a non-manager: the default-view draft is never seeded (these tests
+// assert the plain empty state). Manager seeding is covered in CurrentViewSection.spec.
+jest.mock('../useCanManageViews', () => ({
+    useCanManageViews: () => false,
+}));
+
 const mockUseGetViewV2Query = jest.fn();
 jest.mock('../../../../../../__generated__', () => ({
     ...jest.requireActual('../../../../../../__generated__'),

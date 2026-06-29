@@ -17,10 +17,10 @@ const SEEDED_COLUMNS: CurrentViewColumn[] = [
 // Reducer-backed provider so toggling the eye dispatches real actions and re-renders.
 const TabDisplayWithState = ({
     columns = SEEDED_COLUMNS,
-    canEditAdminView = false,
+    canManageViews = false,
 }: {
     columns?: CurrentViewColumn[];
-    canEditAdminView?: boolean;
+    canManageViews?: boolean;
 }) => {
     const seed = {
         id: 'view-1',
@@ -34,14 +34,20 @@ const TabDisplayWithState = ({
     };
     const [state, dispatch] = useReducer(currentViewReducer, {view: seed, savedView: seed});
     return (
-        <CurrentViewContext.Provider value={{...state, isEmptyView: false, dispatch}}>
-            <TabDisplay canEditAdminView={canEditAdminView} />
+        <CurrentViewContext.Provider value={{...state, isEmptyView: false, canManageViews, dispatch}}>
+            <TabDisplay />
         </CurrentViewContext.Provider>
     );
 };
 
 describe('TabDisplay', () => {
     const user = userEvent.setup();
+
+    // The manage_views permission (canManageViews in the current-view context) gates the "available
+    // attributes" gear inside ColumnsSettings.
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
 
     // The display tab renders exactly two lists, in DOM order: visible columns then hidden columns.
     const getVisibleList = () => screen.getAllByRole('list')[0];
@@ -59,8 +65,10 @@ describe('TabDisplay', () => {
         // Empty state = no view in the store (null). The tab no longer shows a KitEmpty placeholder:
         // the (hardcoded) display modes and the locked identity column are always rendered.
         render(
-            <CurrentViewContext.Provider value={{view: null, savedView: null, isEmptyView: true, dispatch: jest.fn()}}>
-                <TabDisplay canEditAdminView={false} />
+            <CurrentViewContext.Provider
+                value={{view: null, savedView: null, isEmptyView: true, canManageViews: false, dispatch: jest.fn()}}
+            >
+                <TabDisplay />
             </CurrentViewContext.Provider>,
         );
 
@@ -72,13 +80,13 @@ describe('TabDisplay', () => {
         expect(within(getVisibleList()).getByText(/columns\.identity$/)).toBeInTheDocument();
     });
 
-    it('shows the admin "manage available attributes" gear only for an admin user', () => {
+    it('shows the "manage available attributes" gear only with the manage_views permission', () => {
         const gearLabel = 'view_settings.display.columns.manage_available';
 
-        const {rerender} = render(<TabDisplayWithState canEditAdminView={false} />);
+        const {rerender} = render(<TabDisplayWithState canManageViews={false} />);
         expect(screen.queryByLabelText(gearLabel)).not.toBeInTheDocument();
 
-        rerender(<TabDisplayWithState canEditAdminView />);
+        rerender(<TabDisplayWithState canManageViews />);
         expect(screen.getByLabelText(gearLabel)).toBeInTheDocument();
     });
 

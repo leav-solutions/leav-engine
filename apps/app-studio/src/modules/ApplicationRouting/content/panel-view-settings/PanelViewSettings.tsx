@@ -1,5 +1,4 @@
 import {type ReactNode, useEffect, useState} from 'react';
-import {useIsAdminUser} from '../../../../config/user/useIsAdminUser';
 import {DEFAULT_VIEW_SETTINGS_TAB_KEY} from '../../../../constants';
 import {CurrentViewSection} from './current-view-section/CurrentViewSection';
 import {PanelViewSettingsSidebar} from './panel-view-settings-sidebar/PanelViewSettingsSidebar';
@@ -21,9 +20,6 @@ export const PanelViewSettings = ({
     currentTab?: ViewSettingsTab;
     onClose: () => void;
 }) => {
-    // Admin = membership in the administrators group (global), not a per-library permission.
-    const canEditAdminView = useIsAdminUser();
-
     const [activeTab, setActiveTab] = useState<ViewSettingsTab>(currentTab ?? DEFAULT_VIEW_SETTINGS_TAB_KEY);
 
     useEffect(() => {
@@ -34,18 +30,9 @@ export const PanelViewSettings = ({
 
     const activeTabMeta = VIEW_SETTINGS_TABS.find(tab => tab.key === activeTab) ?? VIEW_SETTINGS_TABS[0];
 
-    // Only an admin can curate the attributes available in the header gear, and only on tabs that host
-    // that gear in the header (e.g. Sorts) rather than in a dedicated section (Display).
-    const canEditAvailableAttributesInHeader =
-        canEditAdminView &&
-        [
-            'sorts',
-            /*'filters'*/
-        ].includes(activeTab);
-
     const tabsContent: Record<ViewSettingsTab, ReactNode> = {
-        display: <TabDisplay canEditAdminView={canEditAdminView} />,
-        filters: <TabFilters canEditAdminView={canEditAdminView} />,
+        display: <TabDisplay />,
+        filters: <TabFilters />,
         sorts: <TabSorts />,
         catalog: <TabCatalog libraryId={libraryId} />,
     };
@@ -54,11 +41,8 @@ export const PanelViewSettings = ({
         <div className={root}>
             <PanelViewSettingsSidebar activeTab={activeTab} onTabChange={setActiveTab} />
             <div className={rightColumn}>
-                <CurrentViewSection onViewSettingsClose={onClose} canEditAdminView={canEditAdminView} />
-                <TabHeader
-                    tab={activeTabMeta}
-                    canEditAvailableAttributesInHeader={canEditAvailableAttributesInHeader}
-                />
+                <CurrentViewSection onViewSettingsClose={onClose} />
+                <TabHeader tab={activeTabMeta} />
                 <div className={tabContent}>{tabsContent[activeTab]}</div>
             </div>
         </div>

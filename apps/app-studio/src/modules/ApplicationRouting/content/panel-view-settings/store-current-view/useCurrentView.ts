@@ -16,7 +16,7 @@ const displayFingerprint = (view: CurrentView) =>
         : null;
 
 export const useCurrentView = () => {
-    const {view, savedView, isEmptyView, dispatch} = useContext(CurrentViewContext);
+    const {view, savedView, isEmptyView, canManageViews, dispatch} = useContext(CurrentViewContext);
     const {lang} = useLang();
     const {userData} = useUser();
 
@@ -78,6 +78,11 @@ export const useCurrentView = () => {
 
     // Ownership drives the whole owner/non-owner branching of the header.
     const isOwner = view?.created_by?.whoAmI?.id === userData?.userId;
+
+    // Management rights (save/rename/delete/share): the owner, or a user holding the manage_views
+    // permission on a shared view. The override is restricted to shared views — never another user's
+    // private one.
+    const canManageCurrentView = isOwner || (canManageViews && (view?.shared ?? false));
 
     // "Dirty" = the editable label/display/filters/sorts diverged from the last persisted snapshot. `shared`,
     const isDirty = useMemo(() => displayFingerprint(view) !== displayFingerprint(savedView), [view, savedView]);
@@ -141,6 +146,8 @@ export const useCurrentView = () => {
         isEmptyView,
         dispatch,
         isOwner,
+        canManageCurrentView,
+        canManageViews,
         isDirty,
         setViewType,
         toggleVisibility,

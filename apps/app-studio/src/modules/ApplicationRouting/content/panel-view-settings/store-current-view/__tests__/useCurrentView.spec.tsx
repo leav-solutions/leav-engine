@@ -38,9 +38,12 @@ const renderUseCurrentView = (value: {
     savedView: CurrentView;
     dispatch: jest.Mock;
     isEmptyView?: boolean;
+    canManageViews?: boolean;
 }) => {
     const wrapper = ({children}: {children: ReactNode}) => (
-        <CurrentViewContext.Provider value={{isEmptyView: false, ...value}}>{children}</CurrentViewContext.Provider>
+        <CurrentViewContext.Provider value={{isEmptyView: false, canManageViews: false, ...value}}>
+            {children}
+        </CurrentViewContext.Provider>
     );
     return renderHook(() => useCurrentView(), {wrapper});
 };
@@ -57,6 +60,34 @@ describe('useCurrentView', () => {
             const view = makeView({created_by: {id: '999', whoAmI: {id: '999', label: 'Alice'}}});
             const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn()});
             expect(result.current.isOwner).toBe(false);
+        });
+    });
+
+    describe('canManageCurrentView', () => {
+        const otherUser = {id: '999', whoAmI: {id: '999', label: 'Alice'}};
+
+        it('is true for the owner regardless of the manage_views permission', () => {
+            const view = makeView();
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn(), canManageViews: false});
+            expect(result.current.canManageCurrentView).toBe(true);
+        });
+
+        it('is true for a non-owner with manage_views on a shared view', () => {
+            const view = makeView({created_by: otherUser, shared: true});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn(), canManageViews: true});
+            expect(result.current.canManageCurrentView).toBe(true);
+        });
+
+        it('is false for a non-owner with manage_views on a private view', () => {
+            const view = makeView({created_by: otherUser, shared: false});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn(), canManageViews: true});
+            expect(result.current.canManageCurrentView).toBe(false);
+        });
+
+        it('is false for a non-owner without manage_views on a shared view', () => {
+            const view = makeView({created_by: otherUser, shared: true});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn(), canManageViews: false});
+            expect(result.current.canManageCurrentView).toBe(false);
         });
     });
 

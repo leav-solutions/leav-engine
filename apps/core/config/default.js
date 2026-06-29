@@ -144,6 +144,9 @@ module.exports = {
             application: {
                 admin_application: false,
             },
+            library: {
+                manage_views: false, // Managing others' shared views is admin-only by default
+            },
         },
         adminGroup: {
             default: true,

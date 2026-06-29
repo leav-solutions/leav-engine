@@ -17,6 +17,8 @@ import {
     ViewV2Shortcut,
 } from '../../_types/viewsV2';
 import {viewV2UpdateFieldsSchema, viewV2UserFieldsSchema} from './viewV2ZodSchema';
+import {LibraryPermissionsActions} from '../../_types/permissions';
+import {type ILibraryPermissionDomain} from '../permission/libraryPermissionDomain';
 
 export interface IViewV2Domain {
     createViewV2(input: IViewV2CreateInput, ctx: IQueryInfos): Promise<IViewV2>;
@@ -29,6 +31,7 @@ export interface IViewV2Domain {
 export interface IViewV2DomainDeps {
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.tree': ITreeDomain;
+    'core.domain.permission.library': ILibraryPermissionDomain;
     'core.infra.viewV2': IViewV2Repo;
     'core.utils': IUtils;
 }
@@ -36,6 +39,7 @@ export interface IViewV2DomainDeps {
 export default function ({
     'core.domain.helpers.validate': validationHelper,
     'core.domain.tree': treeDomain,
+    'core.domain.permission.library': libraryPermissionDomain,
     'core.infra.viewV2': viewV2Repo,
     'core.utils': utils,
 }: IViewV2DomainDeps): IViewV2Domain {
@@ -53,6 +57,21 @@ export default function ({
             {} as Record<string, {msg: string; vars: Record<string, unknown>}>,
         );
         throw new ValidationError(details, 'Invalid view v2 input');
+    };
+
+    const _canManageView = async (view: IViewV2, ctx: IQueryInfos): Promise<boolean> => {
+        if (view.created_by === ctx.userId) {
+            return true;
+        }
+        if (!view.shared) {
+            // A private view stays manageable by its owner only, regardless of permission.
+            return false;
+        }
+        return libraryPermissionDomain.getLibraryPermission({
+            action: LibraryPermissionsActions.MANAGE_VIEWS,
+            libraryId: view.library,
+            ctx,
+        });
     };
 
     const _validateValuesVersions = async (valuesVersions: IViewV2ValuesVersion, ctx: IQueryInfos): Promise<void> => {
@@ -130,7 +149,7 @@ export default function ({
                 throw new ValidationError({id: Errors.UNKNOWN_VIEW});
             }
 
-            if (existingView.list[0].created_by !== ctx.userId) {
+            if (!(await _canManageView(existingView.list[0], ctx))) {
                 throw new ValidationError({id: Errors.USER_IS_NOT_VIEW_OWNER});
             }
 
@@ -174,7 +193,7 @@ export default function ({
                 throw new ValidationError({id: Errors.UNKNOWN_VIEW});
             }
 
-            if (existingView.list[0].created_by !== ctx.userId) {
+            if (!(await _canManageView(existingView.list[0], ctx))) {
                 throw new ValidationError({id: Errors.USER_IS_NOT_VIEW_OWNER});
             }
 

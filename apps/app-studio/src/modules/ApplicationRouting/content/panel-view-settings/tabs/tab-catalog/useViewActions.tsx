@@ -24,7 +24,7 @@ export const useViewActions = (libraryId: string): IUseViewActionsResult => {
     const {t} = useTranslation();
     const {lang} = useLang();
     const {userData} = useUser();
-    const {view: currentLoadedView} = useCurrentView();
+    const {view: currentLoadedView, canManageViews} = useCurrentView();
     const {deleteView} = useDeleteView();
     const {openConfirmModal} = useConfirmModal();
 
@@ -69,7 +69,7 @@ export const useViewActions = (libraryId: string): IUseViewActionsResult => {
             },
         ];
 
-        if (isOwner) {
+        if (isOwner || (canManageViews && view.shared)) {
             actions.push({
                 key: 'delete',
                 label: String(t('view_settings.delete_view')),

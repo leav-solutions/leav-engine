@@ -961,6 +961,7 @@ export type LibraryPermissions = {
   create_record: Scalars['Boolean']['output'];
   delete_record: Scalars['Boolean']['output'];
   edit_record: Scalars['Boolean']['output'];
+  manage_views: Scalars['Boolean']['output'];
 };
 
 export type LibraryPreviewsSettings = {
@@ -1777,6 +1778,7 @@ export enum PermissionsActions {
   edit_children = 'edit_children',
   edit_record = 'edit_record',
   edit_value = 'edit_value',
+  manage_views = 'manage_views',
   set_value = 'set_value'
 }
 
@@ -2099,6 +2101,7 @@ export type Record = {
   permissions: RecordPermissions;
   properties: Array<RecordProperty>;
   property: Array<GenericValue>;
+  uuid: Scalars['ID']['output'];
   whoAmI: RecordIdentity;
 };
 
@@ -3057,7 +3060,7 @@ export enum ViewTypes {
 
 export type ViewV2 = {
   created_at: Scalars['Int']['output'];
-  created_by: Record;
+  created_by: ViewV2Creator;
   display: ViewV2Display;
   filters: Array<ViewV2Filter>;
   id: Scalars['ID']['output'];
@@ -3079,6 +3082,11 @@ export type ViewV2CreateInput = {
   shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
+};
+
+export type ViewV2Creator = {
+  id: Scalars['ID']['output'];
+  whoAmI: RecordIdentity;
 };
 
 export type ViewV2Display = {
@@ -3295,6 +3303,15 @@ export type GetViewV2QueryVariables = Exact<{
 
 
 export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }> } };
+
+export type IsAllowedQueryVariables = Exact<{
+  type: PermissionTypes;
+  actions: Array<PermissionsActions> | PermissionsActions;
+  applyTo?: InputMaybe<Scalars['ID']['input']>;
+}>;
+
+
+export type IsAllowedQuery = { isAllowed?: Array<{ name: PermissionsActions, allowed?: boolean | null }> | null };
 
 export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }> };
 
@@ -4059,6 +4076,52 @@ export type GetViewV2QueryHookResult = ReturnType<typeof useGetViewV2Query>;
 export type GetViewV2LazyQueryHookResult = ReturnType<typeof useGetViewV2LazyQuery>;
 export type GetViewV2SuspenseQueryHookResult = ReturnType<typeof useGetViewV2SuspenseQuery>;
 export type GetViewV2QueryResult = Apollo.QueryResult<GetViewV2Query, GetViewV2QueryVariables>;
+export const IsAllowedDocument = gql`
+    query IsAllowed($type: PermissionTypes!, $actions: [PermissionsActions!]!, $applyTo: ID) {
+  isAllowed(type: $type, actions: $actions, applyTo: $applyTo) {
+    name
+    allowed
+  }
+}
+    `;
+
+/**
+ * __useIsAllowedQuery__
+ *
+ * To run a query within a React component, call `useIsAllowedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIsAllowedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIsAllowedQuery({
+ *   variables: {
+ *      type: // value for 'type'
+ *      actions: // value for 'actions'
+ *      applyTo: // value for 'applyTo'
+ *   },
+ * });
+ */
+export function useIsAllowedQuery(baseOptions: Apollo.QueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables> & ({ variables: IsAllowedQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<IsAllowedQuery, IsAllowedQueryVariables>(IsAllowedDocument, options);
+      }
+export function useIsAllowedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<IsAllowedQuery, IsAllowedQueryVariables>(IsAllowedDocument, options);
+        }
+// @ts-ignore
+export function useIsAllowedSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables>): Apollo.UseSuspenseQueryResult<IsAllowedQuery, IsAllowedQueryVariables>;
+export function useIsAllowedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables>): Apollo.UseSuspenseQueryResult<IsAllowedQuery | undefined, IsAllowedQueryVariables>;
+export function useIsAllowedSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<IsAllowedQuery, IsAllowedQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<IsAllowedQuery, IsAllowedQueryVariables>(IsAllowedDocument, options);
+        }
+export type IsAllowedQueryHookResult = ReturnType<typeof useIsAllowedQuery>;
+export type IsAllowedLazyQueryHookResult = ReturnType<typeof useIsAllowedLazyQuery>;
+export type IsAllowedSuspenseQueryHookResult = ReturnType<typeof useIsAllowedSuspenseQuery>;
+export type IsAllowedQueryResult = Apollo.QueryResult<IsAllowedQuery, IsAllowedQueryVariables>;
 export const DeleteViewV2Document = gql`
     mutation DeleteViewV2($viewId: ID!) {
   deleteViewV2(viewId: $viewId) {
