@@ -3,6 +3,7 @@ import {useParams} from 'react-router-dom';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {resetPanelViewSettingsInApplication} from './utils/updatePanelViewSettingsInApplication';
+import {getIsViewSettingsVoletActive} from './utils/getIsViewSettingsVoletActive';
 
 /**
  * The view settings volet is unique: a single one exists at a time, bound to the foreground explorer.
@@ -26,7 +27,7 @@ export const useViewSettingsAutoClose = (hasNextLevelPanel: boolean): void => {
     const hasFlapPanel = flapPanelId !== undefined;
     const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId, panelId});
 
-    const isViewSettingsVoletActive = currentPanel?.type === 'explorer' && currentPanel.isViewSettingsActive;
+    const isViewSettingsVoletActive = getIsViewSettingsVoletActive(currentPanel);
 
     const previousHasFlapPanelRef = useRef(hasFlapPanel);
 
