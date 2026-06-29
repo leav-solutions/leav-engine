@@ -28,15 +28,13 @@ function PermissionsTab({tree, readonly}: IPermissionsTabProps): JSX.Element {
                 libraryId,
                 permissionsConf,
             },
-            ...(tree.permissions_conf ?? []).map(
-                (c): TreeNodePermissionsConfInput => ({
-                    libraryId: c.libraryId,
-                    permissionsConf: {
-                        permissionTreeAttributes: c.permissionsConf.permissionTreeAttributes.map(a => a.id),
-                        relation: c.permissionsConf.relation,
-                    },
-                }),
-            ),
+            ...(tree.permissions_conf ?? []).map((c): TreeNodePermissionsConfInput => ({
+                libraryId: c.libraryId,
+                permissionsConf: {
+                    permissionTreeAttributes: c.permissionsConf.permissionTreeAttributes.map(a => a.id),
+                    relation: c.permissionsConf.relation,
+                },
+            })),
         ];
 
         // Dedup array to keep one conf per library

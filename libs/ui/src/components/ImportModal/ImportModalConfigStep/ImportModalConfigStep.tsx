@@ -77,8 +77,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
     const _handleLinkAttributeSelect = async (sheetIndex: number, linkAttribute: string) => {
         const sheet = sheets[sheetIndex];
         const linkAttributeProps = sheet.attributes.find(a => a.id === linkAttribute) as
-            | AttributesByLibAttributeLinkAttributeFragment
-            | AttributesByLibAttributeTreeAttributeFragment;
+            AttributesByLibAttributeLinkAttributeFragment | AttributesByLibAttributeTreeAttributeFragment;
 
         const library =
             linkAttributeProps.type === AttributeType.tree

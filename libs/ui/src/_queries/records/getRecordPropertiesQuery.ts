@@ -79,9 +79,7 @@ export interface IRecordPropertyTree<
 }
 
 export type RecordProperty<T extends RecordPropertyParam = DefaultRecordPropertyParam> =
-    | IRecordPropertyStandard<T>
-    | IRecordPropertyLink<T>
-    | IRecordPropertyTree<T>;
+    IRecordPropertyStandard<T> | IRecordPropertyLink<T> | IRecordPropertyTree<T>;
 
 export type RecordPropertyWhoAmI = Pick<IRecordIdentityWhoAmI, 'id'> & {
     library: Pick<IRecordIdentityWhoAmI['library'], 'id'>;

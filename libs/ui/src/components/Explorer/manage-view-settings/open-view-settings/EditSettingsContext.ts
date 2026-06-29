@@ -7,11 +7,7 @@ interface IActiveSettings {
 }
 
 export type SettingsPanelPages =
-    | 'router-menu'
-    | 'configure-display'
-    | 'sort-items'
-    | 'filter-items'
-    | 'viewList.my-views';
+    'router-menu' | 'configure-display' | 'sort-items' | 'filter-items' | 'viewList.my-views';
 
 export interface IEditSettingsContext {
     setActiveSettings: (params: IActiveSettings) => void;
