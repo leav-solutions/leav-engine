@@ -1,5 +1,5 @@
 import FileSelector from '../../../../shared/FileSelector';
-import React, {type ComponentProps, useEffect, useState} from 'react';
+import {type ComponentProps, useEffect, useState, type KeyboardEvent, type SyntheticEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import {type GET_GLOBAL_SETTINGS_globalSettings} from '../../../../../_gqlTypes/GET_GLOBAL_SETTINGS';
@@ -26,7 +26,7 @@ function CustomizationForm({settings, onSubmit}: ICustomizationFormProps): JSX.E
                   value: app.endpoint,
               }));
 
-    const _handleChangeName = (e: React.SyntheticEvent<HTMLInputElement>) => {
+    const _handleChangeName = (e: SyntheticEvent<HTMLInputElement>) => {
         const target = e.target as HTMLInputElement;
         const val = target.value;
         setName(val);
@@ -44,14 +44,14 @@ function CustomizationForm({settings, onSubmit}: ICustomizationFormProps): JSX.E
             });
         };
 
-    const _handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const _handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             const target = e.target as HTMLInputElement;
             target.blur(); // This will trigger submit
         }
     };
 
-    const _handleSubmit = async (e: React.SyntheticEvent<HTMLInputElement>) => {
+    const _handleSubmit = async (e: SyntheticEvent<HTMLInputElement>) => {
         const target = e.target as HTMLInputElement;
         const val = target.value;
         return onSubmit({[target.name]: val});

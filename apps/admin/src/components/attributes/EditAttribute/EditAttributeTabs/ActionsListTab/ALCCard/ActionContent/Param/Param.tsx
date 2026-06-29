@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState, type FormEvent, type SyntheticEvent} from 'react';
 import {Form, Input, Label, TextArea} from 'semantic-ui-react';
 import {useTranslation} from 'react-i18next';
 import {type IParam, type IParamInput} from '../../../interfaces/interfaces';
@@ -35,7 +35,7 @@ function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps)
 
     //////////////////// SETTING VALUES ON CHANGE
 
-    const _onChange = (event: React.SyntheticEvent<HTMLInputElement> | React.FormEvent<HTMLTextAreaElement>) => {
+    const _onChange = (event: SyntheticEvent<HTMLInputElement> | FormEvent<HTMLTextAreaElement>) => {
         const target = event.target as HTMLInputElement;
         const value =
             param && correspondences[param.type] === 'checkbox' ? target.checked.toString() : target.value.toString();

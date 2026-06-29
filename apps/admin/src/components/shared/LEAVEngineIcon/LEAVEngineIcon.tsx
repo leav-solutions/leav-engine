@@ -1,9 +1,9 @@
 import {APP_BASE_URL} from '../../../constants';
-import React from 'react';
+import {type CSSProperties} from 'react';
 
 interface ILEAVEngineIconProps {
     height: string;
-    style?: React.CSSProperties;
+    style?: CSSProperties;
 }
 
 function LEAVEngineIcon({height, style}: ILEAVEngineIconProps): JSX.Element {

@@ -1,5 +1,5 @@
 import {Formik, type FormikProps} from 'formik';
-import React, {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, type FocusEvent, type KeyboardEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -127,7 +127,7 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
             }
         };
 
-        const _handleBlur = (e: React.FocusEvent) => {
+        const _handleBlur = (e: FocusEvent) => {
             if (!existingForm) {
                 handleBlur(e);
             } else {
@@ -135,7 +135,7 @@ function InfosForm({onSubmit}: IInfosFormProps): JSX.Element {
             }
         };
 
-        const _handleKeyPress = (e: React.KeyboardEvent) => {
+        const _handleKeyPress = (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
                 submitForm();
             }

@@ -1,4 +1,4 @@
-import React from 'react';
+import {type Dispatch, type SetStateAction} from 'react';
 import {useTranslation} from 'react-i18next';
 import {map, type TreeItem} from '@nosferatu500/react-sortable-tree';
 import {Button, ButtonGroup} from 'semantic-ui-react';
@@ -6,7 +6,7 @@ import {type IFlatItem} from '../EmbeddedFieldsTab';
 
 interface IExpandButtonProps {
     flatItems: TreeItem[];
-    setFlatItems: React.Dispatch<React.SetStateAction<IFlatItem[]>>;
+    setFlatItems: Dispatch<SetStateAction<IFlatItem[]>>;
 }
 
 function ExpandButtons({flatItems, setFlatItems: setTreeItems}: IExpandButtonProps): JSX.Element {

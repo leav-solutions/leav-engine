@@ -1,4 +1,4 @@
-import React from 'react';
+import {type ReactNode} from 'react';
 import {Provider} from 'react-redux';
 import configureStore from 'redux-mock-store';
 import {type RootState} from '../reduxStore/store';
@@ -18,7 +18,7 @@ const mockStoreInitialState: RootState = {
 
 interface IMockReduxProps {
     state?: Partial<RootState>;
-    children: React.ReactNode;
+    children: ReactNode;
 }
 
 const mockStore = configureStore();

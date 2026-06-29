@@ -1,4 +1,4 @@
-import React from 'react';
+import {type Dispatch, type SetStateAction} from 'react';
 import {Modal, Breadcrumb, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
@@ -16,7 +16,7 @@ function AltPaths({
     onClose,
 }: {
     altPaths: RecordIdentity_whoAmI[][];
-    onClose: React.Dispatch<React.SetStateAction<boolean>>;
+    onClose: Dispatch<SetStateAction<boolean>>;
 }): JSX.Element {
     return (
         <Modal size="fullscreen" open onClose={() => onClose(false)}>

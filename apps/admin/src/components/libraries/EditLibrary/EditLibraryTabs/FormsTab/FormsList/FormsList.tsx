@@ -1,4 +1,4 @@
-import React from 'react';
+import {type SyntheticEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Checkbox, Grid, Icon, Input, Table} from 'semantic-ui-react';
 import useLang from '../../../../../../hooks/useLang';
@@ -34,7 +34,7 @@ function FormsList({
     const {t} = useTranslation();
     const {permissions} = useUserData();
 
-    const _handleFilterChange = (e: React.SyntheticEvent, d: any) => {
+    const _handleFilterChange = (e: SyntheticEvent, d: any) => {
         // If a checkbox was not checked and is clicked, go back to indeterminate state
         if (d.type === 'checkbox' && filters.system === false && d.checked) {
             d.indeterminate = true;

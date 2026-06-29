@@ -1,5 +1,5 @@
 import useUserData from '../../../hooks/useUserData';
-import React, {useState} from 'react';
+import {useState, type MouseEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate, useLocation} from 'react-router-dom';
 import {Header, Icon, Tab, type TabProps} from 'semantic-ui-react';
@@ -82,7 +82,7 @@ function General(): JSX.Element {
         ),
     );
 
-    const _handleOnTabChange = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, data: TabProps) => {
+    const _handleOnTabChange = (event: MouseEvent<HTMLDivElement>, data: TabProps) => {
         if (data.panes && data.activeIndex !== undefined) {
             setActiveIndex(Number(data.activeIndex.toString()));
             navigate(`#${data.panes[data.activeIndex].key}`);

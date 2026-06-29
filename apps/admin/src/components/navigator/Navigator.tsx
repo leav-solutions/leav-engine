@@ -1,4 +1,4 @@
-import React, {useReducer, useEffect} from 'react';
+import {useReducer, useEffect, type MutableRefObject} from 'react';
 
 import useLang from '../../hooks/useLang';
 import RootSelector from './RootSelector';
@@ -15,7 +15,7 @@ export interface INavigatorProps {
     onSelectionChanged?: SelectionChanged;
     multipleSelection?: boolean;
     selectable?: boolean;
-    getSelectionRef?: React.MutableRefObject<GetSelectionRef | null>;
+    getSelectionRef?: MutableRefObject<GetSelectionRef | null>;
     onEditRecordClick?: EditRecordClick;
 }
 

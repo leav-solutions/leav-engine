@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import React, {type ChangeEvent, useState} from 'react';
+import {type ChangeEvent, useState, type KeyboardEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Input, List} from 'semantic-ui-react';
 import {type GET_ATTRIBUTES_VALUES_LIST_attributes_list} from '../../../../../../../_gqlTypes/GET_ATTRIBUTES_VALUES_LIST';
@@ -62,7 +62,7 @@ function StandardValuesList({values: initialValues, onValuesUpdate, attribute}: 
         onValuesUpdate(valuesToSubmit.map(v => (typeof v === 'object' ? JSON.stringify(v) : v)));
 
     // Save values when pressing "enter"
-    const _handleKeyPress = (e: React.KeyboardEvent) => {
+    const _handleKeyPress = (e: KeyboardEvent) => {
         if (e.key === 'Enter') {
             _submitValues(values);
         }

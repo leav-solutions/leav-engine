@@ -1,4 +1,4 @@
-import React from 'react';
+import {type CSSProperties} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Dimmer, Loader, type SemanticSIZES} from 'semantic-ui-react';
 
@@ -6,7 +6,7 @@ interface ILoadingProps {
     withDimmer?: boolean;
     withLabel?: boolean;
     size?: SemanticSIZES;
-    style?: React.CSSProperties;
+    style?: CSSProperties;
 }
 
 const Loading = ({withDimmer, withLabel = true, size, style}: ILoadingProps): JSX.Element => {

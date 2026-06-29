@@ -1,5 +1,5 @@
 import LibraryIcon from '../../shared/LibraryIcon';
-import React from 'react';
+import {type SyntheticEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Checkbox, Input, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -31,7 +31,7 @@ const LibrariesList = ({
 }: ILibrariesListProps): JSX.Element => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
-    const _handleFilterChange = (e: React.SyntheticEvent, d: any) => {
+    const _handleFilterChange = (e: SyntheticEvent, d: any) => {
         // If a checkbox was not checked and is clicked, go back to indeterminate state
         if (d.type === 'checkbox' && filters.system === false && d.checked) {
             d.indeterminate = true;

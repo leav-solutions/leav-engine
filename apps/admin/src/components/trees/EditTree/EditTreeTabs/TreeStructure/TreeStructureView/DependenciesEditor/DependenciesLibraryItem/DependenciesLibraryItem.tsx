@@ -1,6 +1,6 @@
 import {localizedTranslation} from '@leav/utils';
 import useLang from '../../../../../../../../hooks/useLang';
-import React, {useState} from 'react';
+import {useState, type SyntheticEvent} from 'react';
 import {useDrag, useDrop} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import {Button, Header, Icon} from 'semantic-ui-react';
@@ -68,7 +68,7 @@ function DependenciesLibraryItem({
         setChildrenExpanded(!isChildrenExpanded);
     };
 
-    const _handleRemove = (e: React.SyntheticEvent) => {
+    const _handleRemove = (e: SyntheticEvent) => {
         e.preventDefault();
         e.stopPropagation();
 

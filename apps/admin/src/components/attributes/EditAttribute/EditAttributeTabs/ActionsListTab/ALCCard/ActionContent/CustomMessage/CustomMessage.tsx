@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {type SyntheticEvent, useState} from 'react';
 import {Input, Label} from 'semantic-ui-react';
 
 //////////////////// INTERFACES
@@ -24,7 +24,7 @@ function CustomMessage({
 }: ICustomMessageProps): JSX.Element {
     const [currentValue, setCurrentValue] = useState(customMessage ? customMessage : '');
 
-    const _onChangeCustomMessage = (event: React.SyntheticEvent<HTMLInputElement>) => {
+    const _onChangeCustomMessage = (event: SyntheticEvent<HTMLInputElement>) => {
         const target = event.target as HTMLInputElement;
         const value = target.value.toString();
         setCurrentValue(value);

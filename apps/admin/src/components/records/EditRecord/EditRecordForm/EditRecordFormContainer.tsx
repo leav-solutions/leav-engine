@@ -1,4 +1,4 @@
-import React from 'react';
+import {type SetStateAction} from 'react';
 import {type GET_LIB_BY_ID_libraries_list} from '../../../../_gqlTypes/GET_LIB_BY_ID';
 import {type RecordIdentity_whoAmI} from '../../../../_gqlTypes/RecordIdentity';
 import EditRecordForm from './EditRecordForm';
@@ -6,7 +6,7 @@ import EditRecordForm from './EditRecordForm';
 interface IEditRecordFormProps {
     initialRecordId?: string;
     library: GET_LIB_BY_ID_libraries_list;
-    setRecordIdentity?: (input: React.SetStateAction<RecordIdentity_whoAmI | undefined>) => void;
+    setRecordIdentity?: (input: SetStateAction<RecordIdentity_whoAmI | undefined>) => void;
     onIdentityUpdate?: any;
 }
 

@@ -1,6 +1,6 @@
 import {SearchOutlined} from '@ant-design/icons';
 import {KitInput} from 'aristid-ds';
-import React from 'react';
+import {type ChangeEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 
@@ -17,7 +17,7 @@ const Wrapper = styled.div`
 function ApplicationsSearch({onSearch}: IApplicationsSearchProps): JSX.Element {
     const {t} = useTranslation();
 
-    const _handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const _handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         onSearch(e.target.value);
     };
 

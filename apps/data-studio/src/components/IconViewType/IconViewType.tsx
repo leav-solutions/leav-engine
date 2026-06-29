@@ -1,9 +1,9 @@
 import {AppstoreFilled, CalendarOutlined, MenuOutlined} from '@ant-design/icons';
-import React from 'react';
+import {type CSSProperties} from 'react';
 import {ViewTypes} from '../../_gqlTypes';
 
 interface IIconViewTypeProps {
-    style?: React.CSSProperties;
+    style?: CSSProperties;
     type: ViewTypes;
 }
 

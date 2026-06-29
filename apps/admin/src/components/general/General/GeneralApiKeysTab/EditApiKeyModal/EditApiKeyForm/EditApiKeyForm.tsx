@@ -2,7 +2,7 @@ import {ErrorTypes} from '@leav/utils';
 import FormFieldWrapper from '../../../../../shared/FormFieldWrapper';
 import RecordSelector from '../../../../../shared/RecordSelector';
 import {Formik, type FormikProps} from 'formik';
-import React from 'react';
+import {type FocusEvent, type KeyboardEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon, Message} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -107,7 +107,7 @@ function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading, onClose}: 
             }
         };
 
-        const _handleBlur = (e: React.FocusEvent) => {
+        const _handleBlur = (e: FocusEvent) => {
             if (isNewKey) {
                 handleBlur(e);
             } else {
@@ -122,7 +122,7 @@ function EditApiKeyForm({onSubmit, apiKey, errors, readonly, loading, onClose}: 
         const _getErrorByField = (fieldName: string): string =>
             getFieldError<ApiKeyInput>(fieldName, touched, serverValidationErrors || {}, inputErrors);
 
-        const _handleKeyPress = (e: React.KeyboardEvent) => {
+        const _handleKeyPress = (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
                 submitForm();
             }
