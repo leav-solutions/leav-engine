@@ -1,0 +1,11 @@
+/*
+ * The avatar class is applied globally by TableCell (multiColorTagAvatarClassName), hence :global().
+ * The class is repeated to raise specificity above the design system's default avatar sizing —
+ * same intent as the previous styled-components `&&&`.
+ * TODO: drop the specificity hack once the DS allows avatar size customization.
+ */
+.tagsGroup.tagsGroup.tagsGroup :global(.multi-color-tag-avatar) {
+    height: calc(var(--general-spacing-s) * 1px);
+    width: calc(var(--general-spacing-s) * 1px);
+    border-radius: calc(var(--general-border-radius-xs) * 1px);
+}

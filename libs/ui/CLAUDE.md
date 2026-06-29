@@ -159,3 +159,25 @@ yarn graphql-generate    # Régénère _gqlTypes/index.ts
 > qui reconstruit et publie le package `@leav/ui` consommé par les apps.
 > En local, `app-studio` résout `@leav/ui` vers `src/` (alias `_ui`), donc `tscheck` et les
 > tests passent sans build préalable. Le `yarn build` local ne sert qu'à vérifier le bundle.
+
+---
+
+## Styling — styled-components & CSS Modules
+
+Deux approches coexistent. **styled-components** reste majoritaire ; les **CSS Modules**
+(`*.module.css`) sont supportés et à privilégier pour le nouveau code (alignement avec
+`app-studio`, AMP et xStream, tous en Vite + lightningcss).
+
+- **Import** : toujours en **named import**, classes en **camelCase** —
+  `import {tagsGroup} from './X.module.css'`, jamais `import styles from …`. Le camelCase est
+  requis pour que la classe soit importable par son nom.
+- **Sélecteur global / spécificité** : `:global(.classe)` pour cibler une classe non scopée
+  (ex. posée par le DS) ; répéter la classe locale (`.x.x.x`) pour monter en spécificité —
+  équivalent du `&&&` de styled-components.
+- **Build npm** : `tsc` n'émet pas les `.css`. `scripts/copy-css.mjs` (fin de `yarn build`)
+  recopie `src/**/*.module.css` dans `dist/` à côté du JS compilé, pour que les consommateurs
+  npm (AMP, xStream) les résolvent via leur bundler. En local, `app-studio` bundle directement
+  `libs/ui/src` (alias `_ui`) et ne dépend pas de cette copie.
+- **Typage** : `*.module.css` est déclaré non typé (`src/typings/cssModules.d.ts`).
+  `vite/client` a été retiré des `tsconfig` (son `*.module.css` _default-export-only_ bloquait
+  les named imports) ; `import.meta.env` est typé par `src/typings/viteEnv.d.ts`.

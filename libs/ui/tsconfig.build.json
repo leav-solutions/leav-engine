@@ -7,7 +7,7 @@
         "inlineSources": true,
         "module": "esnext",
         "skipLibCheck": true,
-        "types": ["jest", "@types/jest", "@testing-library/jest-dom", "vite/client"],
+        "types": ["jest", "@types/jest", "@testing-library/jest-dom"],
         "jsx": "react-jsx",
         "resolveJsonModule": true,
         "paths": {
