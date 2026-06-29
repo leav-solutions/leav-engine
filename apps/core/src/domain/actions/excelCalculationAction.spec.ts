@@ -121,16 +121,14 @@ describe('excelCalculationAction', () => {
         });
 
         test('Replace variables with empty result', async () => {
-            mockCalculationsVariable.processVariableString.mockImplementation(
-                async (): Promise<IVariableValue[]> => [
-                    {
-                        payload: '',
-                        raw_payload: '',
-                        recordId: '1',
-                        library: 'meh',
-                    },
-                ],
-            );
+            mockCalculationsVariable.processVariableString.mockImplementation(async (): Promise<IVariableValue[]> => [
+                {
+                    payload: '',
+                    raw_payload: '',
+                    recordId: '1',
+                    library: 'meh',
+                },
+            ]);
 
             const action = _excelCalculationAction.action;
             const res = await action(

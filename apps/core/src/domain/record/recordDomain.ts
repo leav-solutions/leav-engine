@@ -212,24 +212,22 @@ export default function ({
                 );
 
                 if (missingAttributes.length) {
-                    const valuesErrors = missingAttributes.map(
-                        (attribute): ICreateRecordValueError => ({
-                            type: Errors.REQUIRED_ATTRIBUTE,
-                            attribute: attribute.id,
-                            message: utils.translateError(
-                                {
-                                    msg: Errors.REQUIRED_ATTRIBUTE,
-                                    vars: {
-                                        attribute:
-                                            typeof attribute.label === 'string'
-                                                ? attribute.label
-                                                : localizedTranslation(attribute.label, [ctx.lang]) || attribute.id,
-                                    },
+                    const valuesErrors = missingAttributes.map((attribute): ICreateRecordValueError => ({
+                        type: Errors.REQUIRED_ATTRIBUTE,
+                        attribute: attribute.id,
+                        message: utils.translateError(
+                            {
+                                msg: Errors.REQUIRED_ATTRIBUTE,
+                                vars: {
+                                    attribute:
+                                        typeof attribute.label === 'string'
+                                            ? attribute.label
+                                            : localizedTranslation(attribute.label, [ctx.lang]) || attribute.id,
                                 },
-                                ctx.lang,
-                            ),
-                        }),
-                    );
+                            },
+                            ctx.lang,
+                        ),
+                    }));
                     return {
                         record: null,
                         valuesErrors,

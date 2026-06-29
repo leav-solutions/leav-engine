@@ -48,13 +48,13 @@ export interface IActionsListFunctionResult {
 }
 
 type PartialByCondition<TargetType, RequiredValues extends Record<keyof TargetType, boolean>> = {
-    [FieldName in keyof TargetType as RequiredValues[FieldName] extends true
-        ? FieldName
-        : never]: TargetType[FieldName];
+    [
+        FieldName in keyof TargetType as RequiredValues[FieldName] extends true ? FieldName : never
+    ]: TargetType[FieldName];
 } & {
-    [FieldName in keyof TargetType as RequiredValues[FieldName] extends false
-        ? FieldName
-        : never]?: TargetType[FieldName];
+    [
+        FieldName in keyof TargetType as RequiredValues[FieldName] extends false ? FieldName : never
+    ]?: TargetType[FieldName];
 };
 
 /**

@@ -148,12 +148,7 @@ export interface IUIFilterTreeValueList extends Omit<IUIFilterTree, 'attribute' 
 }
 
 export type UIFilter =
-    | IUIFilterStandard
-    | IUIFilterLink
-    | IUIFilterThrough
-    | IUIFilterValueList
-    | IUIFilterTree
-    | IUIFilterSmartFiler;
+    IUIFilterStandard | IUIFilterLink | IUIFilterThrough | IUIFilterValueList | IUIFilterTree | IUIFilterSmartFiler;
 
 export const isUIFilterStandard = (filter: UIFilter): filter is IUIFilterStandard =>
     [AttributeType.simple, AttributeType.advanced].includes(filter.attribute.type);
@@ -230,7 +225,4 @@ export type ValidFieldFilterThrough = Override<
 };
 
 export type ValidFilter =
-    | ValidFieldFilter
-    | ValidFieldFilterThrough
-    | ValidFieldFilterStandardValuesList
-    | ValidFieldFilterLinkValuesList;
+    ValidFieldFilter | ValidFieldFilterThrough | ValidFieldFilterStandardValuesList | ValidFieldFilterLinkValuesList;
