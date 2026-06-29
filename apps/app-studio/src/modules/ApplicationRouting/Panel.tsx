@@ -8,6 +8,7 @@ import {MODAL_EXTRA_RIGHT_PORTAL_ID} from '../../constants';
 import {PanelContent} from './content/PanelContent';
 import {nextLevelRoutes} from './router/routes';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
+import {getIsViewSettingsVoletActive} from './utils/getIsViewSettingsVoletActive';
 import {useViewSettingsAutoClose} from './useViewSettingsAutoClose';
 import {PanelsTabs} from './header/tabs/PanelsTabs';
 import {PanelHeader} from './header/PanelHeader';
@@ -37,7 +38,7 @@ export const Panel: FunctionComponent = () => {
     const hasFlapPanel = flapPanelId !== undefined;
     const isCreationFormPanel = currentPanel.type === 'creationForm';
 
-    const isViewSettingsVoletActive = currentPanel.type === 'explorer' && currentPanel.isViewSettingsActive;
+    const isViewSettingsVoletActive = getIsViewSettingsVoletActive(currentPanel);
     const viewSettingsContainerComponent = modalExtraRightElement ? (
         createPortal(<ViewSettingsContainer />, modalExtraRightElement)
     ) : (
