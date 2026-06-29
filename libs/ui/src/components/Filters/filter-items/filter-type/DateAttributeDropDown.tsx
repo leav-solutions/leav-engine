@@ -57,6 +57,11 @@ const DatePickerOptionsContainerStyledDiv = styled.div`
             cursor: pointer;
             height: 100%;
 
+            & > span {
+                display: inline-flex;
+                gap: calc(var(--general-spacing-xs) * 1px);
+            }
+
             .active-icon {
                 color: var(--general-utilities-main-default);
             }
@@ -75,11 +80,13 @@ const PresetItem: FunctionComponent<{
     title: string;
     onClick: () => void;
 }> = ({filter, condition, title, leftIcon, onClick}) => (
-    <li className={`${filter.condition === condition ? 'active' : ''}`} onClick={onClick}>
-        {leftIcon && <KitAvatar size="xs" shape="square" icon={leftIcon} />}
-        <KitTypography.Text size="fontSize7" weight="regular">
-            {title}
-        </KitTypography.Text>
+    <li className={filter.condition === condition ? 'active' : ''} onClick={onClick}>
+        <span>
+            {leftIcon && <KitAvatar size="xs" shape="square" icon={leftIcon} />}
+            <KitTypography.Text size="fontSize7" weight="regular">
+                {title}
+            </KitTypography.Text>
+        </span>
         {filter.condition === condition && <FontAwesomeIcon icon={faCheck} className="active-icon" />}
     </li>
 );
@@ -100,6 +107,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
             ...filter,
             condition: presetCondition,
             value: null,
+            formattedValue: null,
         });
     };
 
