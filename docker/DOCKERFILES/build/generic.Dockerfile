@@ -6,7 +6,7 @@
 # More info here: https://docs.docker.com/build/building/multi-stage/#differences-between-legacy-builder-and-buildkit
 
 # Create base builder
-FROM node:24.17.0-alpine3.24 AS builder
+FROM node:24.18.0-alpine3.24 AS builder
 ARG APP
 WORKDIR /build
 
@@ -57,7 +57,7 @@ RUN rsync -av \
 # Shared runtime base. Not a build target on its own: the actual final images are
 # `runner` and `runner-preview-generator` below. Kept separate so apk can be purged
 # per leaf (preview-generator still needs apk to install its extra libs).
-FROM node:24.17.0-alpine3.24 AS runner-base
+FROM node:24.18.0-alpine3.24 AS runner-base
 ARG APP
 WORKDIR /app
 
