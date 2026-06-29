@@ -9,6 +9,7 @@ export default defineConfig([
             '**/*.{js,jsx,cjs,mjs}',
             '**/_gqlTypes/**',
             '**/dist/**',
+            '**/dist-types/**',
             '**/plugins/**',
             '**/__generated__/**',
         ],
@@ -21,22 +22,6 @@ export default defineConfig([
                 project: './tsconfig.json',
                 tsconfigRootDir: import.meta.dirname,
             },
-        },
-    },
-    /**
-     * Step 1 of the ESLint 9 / @aristid/eslint-plugin v2 migration:
-     * neutralize new aristid specific rules that would change hundreds of files
-     * => to be deleted progressively in follow-up MRs.
-     */
-    {
-        rules: {
-            '@typescript-eslint/consistent-type-imports': 'off',
-            'import/consistent-type-specifier-style': 'off',
-            'import/no-duplicates': 'off',
-            'import/newline-after-import': 'off',
-            'import/extensions': 'off',
-            'react/jsx-curly-brace-presence': 'off',
-            'no-restricted-imports': 'off',
         },
     },
     /**
@@ -159,7 +144,6 @@ export default defineConfig([
             'no-bitwise': 'error',
             'no-caller': 'error',
             'no-console': 'error',
-            'no-duplicate-imports': 'error',
             'no-eval': 'error',
             'no-extra-bind': 'error',
             'no-fallthrough': 'off',

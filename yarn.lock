@@ -389,9 +389,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aristid/eslint-plugin@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@aristid/eslint-plugin@npm:2.1.0"
+"@aristid/eslint-plugin@npm:2.2.1":
+  version: 2.2.1
+  resolution: "@aristid/eslint-plugin@npm:2.2.1"
   dependencies:
     eslint: "npm:9.39.2"
     eslint-import-resolver-typescript: "npm:4.4.4"
@@ -401,7 +401,7 @@ __metadata:
     eslint-plugin-react-hooks: "npm:7.0.1"
     eslint-plugin-react-refresh: "npm:0.5.0"
     typescript-eslint: "npm:8.54.0"
-  checksum: 10/2a23637fd6bc61464eb4ffb65d366ba96684da26dea8b781e742fce70638df895b3322ec29bd02708f86420e7671f5f38b8b9095d0bf93aa7ef22cd898ad56b1
+  checksum: 10/5d57d70b692b828fc92753fdb05f906fcd07323e7f6caa4d1c56093d11960c5267d7a163cd577f5072d9821b18a9f4c8345a5fce1531d874172ade7ec6edcbb6
   languageName: node
   linkType: hard
 
@@ -18720,7 +18720,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "leav-monorepo@workspace:."
   dependencies:
-    "@aristid/eslint-plugin": "npm:2.1.0"
+    "@aristid/eslint-plugin": "npm:2.2.1"
     "@babel/preset-env": "npm:7.29.7"
     "@commitlint/cli": "npm:19.8.1"
     "@commitlint/config-conventional": "npm:19.8.1"
