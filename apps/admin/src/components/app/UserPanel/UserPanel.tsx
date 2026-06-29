@@ -1,6 +1,5 @@
 import LEAVEngineIcon from '../../shared/LEAVEngineIcon';
 import useAuth from '../../../hooks/useAuth';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon, Menu, Sidebar} from 'semantic-ui-react';
 import LangSwitcher from './LangSwitcher';

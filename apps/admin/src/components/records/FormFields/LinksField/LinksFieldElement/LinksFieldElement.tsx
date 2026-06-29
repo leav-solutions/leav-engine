@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Confirm, Icon, Menu, Table} from 'semantic-ui-react';
 import styled from 'styled-components';

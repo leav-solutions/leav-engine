@@ -1,5 +1,5 @@
 import {type TFunction} from 'i18next';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {Button, Confirm} from 'semantic-ui-react';
 
 interface IModalRemoveEmbeddedFieldProps {

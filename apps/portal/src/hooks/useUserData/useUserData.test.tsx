@@ -1,5 +1,4 @@
 import UserContext from '../../context/UserContext';
-import React from 'react';
 import {mockUser} from '../../_tests/mocks/user';
 import {renderHook} from '../../_tests/testUtils';
 import useUserData from '.';

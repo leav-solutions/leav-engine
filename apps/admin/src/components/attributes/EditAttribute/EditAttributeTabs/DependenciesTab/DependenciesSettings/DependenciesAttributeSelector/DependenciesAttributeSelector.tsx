@@ -3,7 +3,7 @@ import ErrorDisplay from '../../../../../../shared/ErrorDisplay';
 import Loading from '../../../../../../shared/Loading';
 import SimplisticButton from '../../../../../../shared/SimplisticButton';
 import {getAttributesQuery} from '../../../../../../../queries/attributes/getAttributesQuery';
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Icon} from 'semantic-ui-react';
 import {

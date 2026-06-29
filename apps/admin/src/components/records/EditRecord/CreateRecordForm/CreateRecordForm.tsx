@@ -1,5 +1,5 @@
 import {Formik} from 'formik';
-import React, {useEffect, useRef} from 'react';
+import {useEffect, useRef} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Icon} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';

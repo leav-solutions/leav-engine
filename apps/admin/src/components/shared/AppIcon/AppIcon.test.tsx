@@ -1,4 +1,3 @@
-import React from 'react';
 import {render} from '../../../_tests/testUtils';
 import AppIcon from './AppIcon';
 

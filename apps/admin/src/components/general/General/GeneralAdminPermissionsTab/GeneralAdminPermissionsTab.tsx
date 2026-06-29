@@ -1,5 +1,4 @@
 import DefinePermByUserGroupView from '../../../permissions/DefinePermByUserGroupView';
-import React from 'react';
 import {PermissionsActions, PermissionTypes} from '../../../../_gqlTypes';
 import {type IGroupedPermissionsActions} from '../../../../_types/permissions';
 

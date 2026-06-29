@@ -1,6 +1,6 @@
 import {type OnAttributePostSaveFunc} from '../../../EditAttribute';
 import EditAttributeModal from '../../../../EditAttributeModal';
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon, Table} from 'semantic-ui-react';
 import {type GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields} from '../../../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';

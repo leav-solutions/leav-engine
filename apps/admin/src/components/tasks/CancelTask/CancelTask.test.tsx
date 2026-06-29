@@ -1,4 +1,3 @@
-import React from 'react';
 import {act, render, screen} from '../../../_tests/testUtils';
 import CancelTask from './CancelTask';
 import {mockTask} from '../../../__mocks__/task';

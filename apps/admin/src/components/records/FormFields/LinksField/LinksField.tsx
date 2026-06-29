@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {type TreeItem} from '@nosferatu500/react-sortable-tree';
 import {Button, Dropdown, Table} from 'semantic-ui-react';

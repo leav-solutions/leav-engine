@@ -1,4 +1,4 @@
-import React, {type ReactElement} from 'react';
+import {type ReactElement} from 'react';
 import UserContext, {type IUserContext} from '../../components/shared/UserContext/UserContext';
 import {PermissionsActions} from '../../_gqlTypes';
 

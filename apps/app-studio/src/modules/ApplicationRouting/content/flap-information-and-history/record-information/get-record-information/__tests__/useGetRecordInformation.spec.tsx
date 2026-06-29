@@ -1,5 +1,5 @@
 import {renderHook} from '@testing-library/react';
-import React, {type ReactNode} from 'react';
+import {type ReactNode} from 'react';
 import * as GraphQLClient from '../../../../../../../__generated__';
 import {useGetRecordInformation} from '../useGetRecordInformation';
 import {LangContext, type ILangContext, MockedLangContextProvider} from '@leav/ui';

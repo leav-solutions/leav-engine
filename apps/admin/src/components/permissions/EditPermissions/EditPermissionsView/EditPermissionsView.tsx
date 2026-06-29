@@ -1,7 +1,6 @@
 import PermissionsAllowedIcon from '../../../shared/icons/PermissionsAllowedIcon';
 import PermissionsForbiddenIcon from '../../../shared/icons/PermissionsForbiddenIcon';
 import PermissionsInheritIcon from '../../../shared/icons/PermissionsInheritIcon';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, Table} from 'semantic-ui-react';
 import styled from 'styled-components';

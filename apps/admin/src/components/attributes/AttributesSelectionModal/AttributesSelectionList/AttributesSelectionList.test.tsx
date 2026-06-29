@@ -1,4 +1,3 @@
-import React from 'react';
 import {render, screen} from '../../../../_tests/testUtils';
 import {type GET_ATTRIBUTES_attributes_list} from '../../../../_gqlTypes/GET_ATTRIBUTES';
 import {mockAttrSimple} from '../../../../__mocks__/attributes';

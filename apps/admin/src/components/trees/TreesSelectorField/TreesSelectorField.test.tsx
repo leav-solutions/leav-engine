@@ -1,4 +1,3 @@
-import React from 'react';
 import {render, screen} from '../../../_tests/testUtils';
 import {type GET_TREES_trees_list} from '../../../_gqlTypes/GET_TREES';
 import {mockTree} from '../../../__mocks__/trees';

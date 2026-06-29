@@ -1,4 +1,3 @@
-import React from 'react';
 import {Tab, type TabProps} from 'semantic-ui-react';
 import styled from 'styled-components';
 

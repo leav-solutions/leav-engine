@@ -1,4 +1,3 @@
-import React from 'react';
 import {Input, Modal} from 'semantic-ui-react';
 import useLang from '../../../../../../../../../../../../hooks/useLang';
 import {FormBuilderActionTypes} from '../../../../formBuilderReducer/formBuilderReducer';

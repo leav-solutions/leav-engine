@@ -1,4 +1,3 @@
-import React from 'react';
 import LangContext from '../../components/shared/LangContext';
 import {type ILangContext} from '../../components/shared/LangContext/LangContext';
 import {AvailableLanguage} from '../../_gqlTypes';

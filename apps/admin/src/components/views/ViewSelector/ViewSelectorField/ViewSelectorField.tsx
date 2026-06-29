@@ -1,4 +1,3 @@
-import React from 'react';
 import {Form} from 'semantic-ui-react';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils';

@@ -1,5 +1,4 @@
 import PermissionsSettings from '../../../../../../shared/PermissionsSettings';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Tab} from 'semantic-ui-react';
 import styled from 'styled-components';

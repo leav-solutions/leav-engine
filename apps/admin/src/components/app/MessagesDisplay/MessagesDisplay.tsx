@@ -1,5 +1,4 @@
 import useMessages from '../../../hooks/useMessages';
-import React from 'react';
 import {type IMessage} from '../../../reduxStore/messages/messages';
 import styled from 'styled-components';
 import MessageBlock from './MessageBlock';

@@ -1,4 +1,4 @@
-import React, {type SyntheticEvent, useCallback, useEffect, useReducer, useState} from 'react';
+import {type SyntheticEvent, useCallback, useEffect, useReducer, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Confirm, Divider, Form} from 'semantic-ui-react';
 import {

@@ -1,4 +1,3 @@
-import React from 'react';
 import {useDrop} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import {Header} from 'semantic-ui-react';

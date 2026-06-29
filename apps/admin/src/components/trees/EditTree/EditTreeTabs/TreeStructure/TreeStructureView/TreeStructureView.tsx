@@ -1,5 +1,4 @@
 import {type IKeyValue} from '@leav/utils';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, Loader} from 'semantic-ui-react';
 import styled from 'styled-components';

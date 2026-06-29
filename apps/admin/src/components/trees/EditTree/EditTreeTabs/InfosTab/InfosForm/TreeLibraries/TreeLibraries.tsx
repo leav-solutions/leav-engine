@@ -1,4 +1,3 @@
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Checkbox, Grid, Icon, Segment} from 'semantic-ui-react';
 import styled from 'styled-components';

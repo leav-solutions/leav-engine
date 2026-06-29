@@ -1,4 +1,3 @@
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Tab} from 'semantic-ui-react';
 import AttributesList from './AttributesList';

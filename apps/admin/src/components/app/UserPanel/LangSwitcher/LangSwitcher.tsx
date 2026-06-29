@@ -1,5 +1,4 @@
 import useLang from '../../../../hooks/useLang';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';

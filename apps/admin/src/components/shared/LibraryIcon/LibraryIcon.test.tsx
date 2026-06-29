@@ -1,4 +1,3 @@
-import React from 'react';
 import {LibraryBehavior} from '../../../_gqlTypes';
 import {render, screen} from '../../../_tests/testUtils';
 import LibraryIcon from './LibraryIcon';

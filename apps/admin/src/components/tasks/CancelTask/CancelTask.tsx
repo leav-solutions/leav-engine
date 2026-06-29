@@ -1,4 +1,3 @@
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {type GET_TASKS_tasks_list} from '../../../_gqlTypes/GET_TASKS';
 import useUserData from '../../../hooks/useUserData';

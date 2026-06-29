@@ -1,4 +1,3 @@
-import React from 'react';
 import {act, render, screen} from '../../../_tests/testUtils';
 import CustomIcon from './CustomIcon';
 

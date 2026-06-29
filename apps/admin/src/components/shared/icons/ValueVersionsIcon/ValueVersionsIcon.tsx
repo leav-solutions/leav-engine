@@ -1,5 +1,4 @@
 import {type ICustomIconProps} from '../../CustomIcon/CustomIcon';
-import React from 'react';
 import CustomIcon from '../../CustomIcon';
 import IconSvg from './ValueVersionsIcon.svg';
 

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import {useRef, useState} from 'react';
 import {useDrag, useDrop, type XYCoord} from 'react-dnd';
 import {Button, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';

@@ -1,5 +1,4 @@
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import {act, render, screen} from '../../../_tests/testUtils';
 import {mockRecord} from '../../../__mocks__/common/records';
 import RecordSelector from './RecordSelector';

@@ -1,4 +1,4 @@
-import React, {useEffect, useReducer} from 'react';
+import {useEffect, useReducer} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Icon} from 'semantic-ui-react';
 import styled from 'styled-components';

@@ -1,6 +1,5 @@
 import {Formik, type FormikProps} from 'formik';
 import omit from 'lodash/omit';
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Form} from 'semantic-ui-react';
 import styled from 'styled-components';

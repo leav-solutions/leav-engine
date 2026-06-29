@@ -1,6 +1,5 @@
 import DefinePermByUserGroupView from '../../../../permissions/DefinePermByUserGroupView';
 import {useEditApplicationContext} from '../../../../../context/EditApplicationContext';
-import React from 'react';
 import styled from 'styled-components';
 import {PermissionTypes} from '../../../../../_gqlTypes';
 

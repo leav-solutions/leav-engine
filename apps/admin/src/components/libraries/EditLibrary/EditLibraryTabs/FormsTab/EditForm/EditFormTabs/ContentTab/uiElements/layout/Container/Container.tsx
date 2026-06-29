@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import {useRef} from 'react';
 import {useDrop, type XYCoord} from 'react-dnd';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';

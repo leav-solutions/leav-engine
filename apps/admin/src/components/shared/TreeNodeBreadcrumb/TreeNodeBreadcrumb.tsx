@@ -1,4 +1,3 @@
-import React from 'react';
 import {Breadcrumb, type BreadcrumbSectionProps} from 'semantic-ui-react';
 import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import {type ITreeLinkElement} from '../../../_types/records';

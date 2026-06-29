@@ -1,4 +1,3 @@
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Modal} from 'semantic-ui-react';
 import styled from 'styled-components';

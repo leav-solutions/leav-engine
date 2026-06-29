@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {type GET_LIBRARIES_libraries_list} from '../../../../../_gqlTypes/GET_LIBRARIES';
 import Navigator from '../../../../navigator/Navigator';
 import EditRecordModal from '../../../../records/EditRecordModal';

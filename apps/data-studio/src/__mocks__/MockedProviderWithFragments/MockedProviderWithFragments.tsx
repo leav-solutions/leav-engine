@@ -1,6 +1,5 @@
 import {InMemoryCache, type InMemoryCacheConfig} from '@apollo/client';
 import {MockedProvider, type MockedProviderProps} from '@apollo/client/testing';
-import React from 'react';
 
 export interface IMockedProviderWithFragmentsProps extends MockedProviderProps {
     children?: JSX.Element;

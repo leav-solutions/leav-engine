@@ -1,4 +1,3 @@
-import React from 'react';
 import {Divider} from 'semantic-ui-react';
 import {type IFormElementProps} from '../../../_types';
 

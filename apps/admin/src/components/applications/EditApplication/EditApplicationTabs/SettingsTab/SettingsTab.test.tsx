@@ -1,5 +1,4 @@
 import EditApplicationContext from '../../../../../context/EditApplicationContext';
-import React from 'react';
 import {render, screen} from '../../../../../_tests/testUtils';
 import {mockEditApplicationContextValue} from '../../../../../__mocks__/common/applications';
 import SettingsTab from './SettingsTab';

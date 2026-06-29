@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useReducer} from 'react';
+import {useEffect, useMemo, useReducer} from 'react';
 import {Button, Dropdown, Icon, Input, Label, Segment} from 'semantic-ui-react';
 import styles from './FiltersPanel.module.css';
 import {type IListProps} from './MainPanel';

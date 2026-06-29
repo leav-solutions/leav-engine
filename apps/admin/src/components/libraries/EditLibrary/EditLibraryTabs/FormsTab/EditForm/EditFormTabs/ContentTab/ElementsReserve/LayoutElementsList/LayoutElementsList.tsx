@@ -1,4 +1,3 @@
-import React from 'react';
 import {layoutElements} from '../../uiElements';
 import ReserveLayoutElement from './ReserveLayoutElement';
 

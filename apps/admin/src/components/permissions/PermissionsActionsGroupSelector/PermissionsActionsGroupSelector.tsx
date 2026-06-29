@@ -1,4 +1,3 @@
-import React from 'react';
 import {useTranslation} from 'react-i18next';
 import {Header, List, type ListItemProps} from 'semantic-ui-react';
 import styled from 'styled-components';

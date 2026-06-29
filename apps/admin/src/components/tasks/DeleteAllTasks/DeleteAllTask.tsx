@@ -1,4 +1,3 @@
-import React from 'react';
 import useUserData from '../../../hooks/useUserData';
 import {PermissionsActions} from '../../../_gqlTypes';
 import ConfirmedButton from '../../shared/ConfirmedButton';
