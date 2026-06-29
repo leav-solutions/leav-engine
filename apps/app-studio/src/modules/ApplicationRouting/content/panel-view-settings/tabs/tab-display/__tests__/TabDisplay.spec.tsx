@@ -1,14 +1,11 @@
 import {useReducer} from 'react';
 import userEvent from '@testing-library/user-event';
 import {act, render, screen, within} from '_ui/_tests/testUtils';
-import * as UseIsAdminUser from '../../../../../../../config/user/useIsAdminUser';
 import {CurrentViewContext} from '../../../store-current-view/CurrentViewContext';
 import {currentViewReducer} from '../../../store-current-view/currentViewReducer';
 import {type CurrentViewColumn} from '../../../store-current-view/_types';
 import {TabDisplay} from '../TabDisplay';
 import {ViewV2Types} from '../../../../../../../__generated__';
-
-const spyOnUseIsAdminUser = jest.spyOn(UseIsAdminUser, 'useIsAdminUser');
 
 // All seeded columns start hidden, mirroring the previous fake "Attribut 2..7" setup.
 const SEEDED_COLUMNS: CurrentViewColumn[] = [
@@ -18,7 +15,13 @@ const SEEDED_COLUMNS: CurrentViewColumn[] = [
 ];
 
 // Reducer-backed provider so toggling the eye dispatches real actions and re-renders.
-const TabDisplayWithState = ({columns = SEEDED_COLUMNS}: {columns?: CurrentViewColumn[]}) => {
+const TabDisplayWithState = ({
+    columns = SEEDED_COLUMNS,
+    canManageViews = false,
+}: {
+    columns?: CurrentViewColumn[];
+    canManageViews?: boolean;
+}) => {
     const seed = {
         id: 'view-1',
         library: 'my_lib',
@@ -31,7 +34,7 @@ const TabDisplayWithState = ({columns = SEEDED_COLUMNS}: {columns?: CurrentViewC
     };
     const [state, dispatch] = useReducer(currentViewReducer, {view: seed, savedView: seed});
     return (
-        <CurrentViewContext.Provider value={{...state, isEmptyView: false, dispatch}}>
+        <CurrentViewContext.Provider value={{...state, isEmptyView: false, canManageViews, dispatch}}>
             <TabDisplay />
         </CurrentViewContext.Provider>
     );
@@ -40,10 +43,10 @@ const TabDisplayWithState = ({columns = SEEDED_COLUMNS}: {columns?: CurrentViewC
 describe('TabDisplay', () => {
     const user = userEvent.setup();
 
-    // Admin gates the "available attributes" gear (read via useIsAdminUser inside ColumnsSettings).
+    // The manage_views permission (canManageViews in the current-view context) gates the "available
+    // attributes" gear inside ColumnsSettings.
     beforeEach(() => {
         jest.clearAllMocks();
-        spyOnUseIsAdminUser.mockReturnValue(false);
     });
 
     // The display tab renders exactly two lists, in DOM order: visible columns then hidden columns.
@@ -62,7 +65,9 @@ describe('TabDisplay', () => {
         // Empty state = no view in the store (null). The tab no longer shows a KitEmpty placeholder:
         // the (hardcoded) display modes and the locked identity column are always rendered.
         render(
-            <CurrentViewContext.Provider value={{view: null, savedView: null, isEmptyView: true, dispatch: jest.fn()}}>
+            <CurrentViewContext.Provider
+                value={{view: null, savedView: null, isEmptyView: true, canManageViews: false, dispatch: jest.fn()}}
+            >
                 <TabDisplay />
             </CurrentViewContext.Provider>,
         );
@@ -75,15 +80,13 @@ describe('TabDisplay', () => {
         expect(within(getVisibleList()).getByText(/columns\.identity$/)).toBeInTheDocument();
     });
 
-    it('shows the admin "manage available attributes" gear only for an admin user', () => {
+    it('shows the "manage available attributes" gear only with the manage_views permission', () => {
         const gearLabel = 'view_settings.display.columns.manage_available';
 
-        spyOnUseIsAdminUser.mockReturnValue(false);
-        const {rerender} = render(<TabDisplayWithState />);
+        const {rerender} = render(<TabDisplayWithState canManageViews={false} />);
         expect(screen.queryByLabelText(gearLabel)).not.toBeInTheDocument();
 
-        spyOnUseIsAdminUser.mockReturnValue(true);
-        rerender(<TabDisplayWithState />);
+        rerender(<TabDisplayWithState canManageViews />);
         expect(screen.getByLabelText(gearLabel)).toBeInTheDocument();
     });
 

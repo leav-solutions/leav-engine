@@ -765,6 +765,7 @@ export enum PermissionsActions {
   edit_children = 'edit_children',
   edit_record = 'edit_record',
   edit_value = 'edit_value',
+  manage_views = 'manage_views',
   set_value = 'set_value'
 }
 
@@ -1189,6 +1190,7 @@ export type ViewV2CreateInput = {
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
   shared: Scalars['Boolean']['input'];
+  shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };
@@ -1211,9 +1213,17 @@ export type ViewV2FilterInput = {
   values: Array<InputMaybe<Scalars['String']['input']>>;
 };
 
+export enum ViewV2Shortcut {
+  catalog = 'catalog',
+  display = 'display',
+  filters = 'filters',
+  sorts = 'sorts'
+}
+
 export type ViewV2SortInput = {
   attributes: Array<Scalars['ID']['input']>;
   order: SortOrder;
+  pinned: Scalars['Boolean']['input'];
 };
 
 export enum ViewV2Types {
@@ -1230,6 +1240,7 @@ export type ViewV2UpdateInput = {
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
+  shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
   valuesVersions?: InputMaybe<Array<ViewV2ValuesVersionInput>>;
 };

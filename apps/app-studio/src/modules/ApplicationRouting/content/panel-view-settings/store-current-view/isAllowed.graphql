@@ -1,0 +1,6 @@
+query IsAllowed($type: PermissionTypes!, $actions: [PermissionsActions!]!, $applyTo: ID) {
+    isAllowed(type: $type, actions: $actions, applyTo: $applyTo) {
+        name
+        allowed
+    }
+}

@@ -175,6 +175,7 @@
         "create_record": "Create",
         "edit_record": "Edit",
         "delete_record": "Delete",
+        "manage_views": "Manage views",
         "any_record": "Any record",
         "admin_access_libraries": "Access libraries",
         "admin_create_library": "Create library",

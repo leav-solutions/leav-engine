@@ -1,6 +1,5 @@
 import * as leavUi from '@leav/ui';
 import {renderHook} from '_ui/_tests/testUtils';
-import * as UseIsAdminUser from '../../../../../../../config/user/useIsAdminUser';
 import * as UseCurrentView from '../../../store-current-view/useCurrentView';
 import * as UseDeleteView from '../useDeleteView';
 import {type View} from '../useViewCatalog';
@@ -11,7 +10,6 @@ describe('useViewActions', () => {
     const spyOnUseConfirmModal = jest.spyOn(leavUi, 'useConfirmModal');
     const spyOnUseCurrentView = jest.spyOn(UseCurrentView, 'useCurrentView');
     const spyOnUseDeleteView = jest.spyOn(UseDeleteView, 'useDeleteView');
-    const spyOnUseIsAdminUser = jest.spyOn(UseIsAdminUser, 'useIsAdminUser');
 
     const currentUserId = 'user-1';
     const libraryId = 'products';
@@ -36,9 +34,8 @@ describe('useViewActions', () => {
         jest.clearAllMocks();
         spyOnUseUser.mockReturnValue({userData: {userId: currentUserId}} as any);
         spyOnUseConfirmModal.mockReturnValue({openConfirmModal} as any);
-        spyOnUseCurrentView.mockReturnValue({view: {id: loadedViewId}} as any);
+        spyOnUseCurrentView.mockReturnValue({view: {id: loadedViewId}, canManageViews: false} as any);
         spyOnUseDeleteView.mockReturnValue({deleteView, deleteLoading: false} as any);
-        spyOnUseIsAdminUser.mockReturnValue(false);
         deleteView.mockResolvedValue(true);
     });
 
@@ -63,13 +60,13 @@ describe('useViewActions', () => {
             expect(findAction(makeView({created_by: {id: 'someone-else'}}), 'delete')).toBeUndefined();
         });
 
-        it('adds the delete action when an admin views a shared view owned by another user', () => {
-            spyOnUseIsAdminUser.mockReturnValue(true);
+        it('adds the delete action when a views-manager sees a shared view owned by another user', () => {
+            spyOnUseCurrentView.mockReturnValue({view: {id: loadedViewId}, canManageViews: true} as any);
             expect(findAction(makeView({created_by: {id: 'someone-else'}, shared: true}), 'delete')).toBeDefined();
         });
 
-        it('omits the delete action when an admin views a private view owned by another user', () => {
-            spyOnUseIsAdminUser.mockReturnValue(true);
+        it('omits the delete action when a views-manager sees a private view owned by another user', () => {
+            spyOnUseCurrentView.mockReturnValue({view: {id: loadedViewId}, canManageViews: true} as any);
             expect(findAction(makeView({created_by: {id: 'someone-else'}, shared: false}), 'delete')).toBeUndefined();
         });
 

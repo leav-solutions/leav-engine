@@ -35,7 +35,7 @@ const TabSortsWithState = ({sorts = SEEDED_SORTS}: {sorts?: CurrentViewSort[]}) 
     };
     const [state, dispatch] = useReducer(currentViewReducer, {view: seed, savedView: seed});
     return (
-        <CurrentViewContext.Provider value={{...state, isEmptyView: false, dispatch}}>
+        <CurrentViewContext.Provider value={{...state, isEmptyView: false, canManageViews: false, dispatch}}>
             <TabSorts />
         </CurrentViewContext.Provider>
     );

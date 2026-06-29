@@ -1,9 +1,9 @@
 import {type ReactNode, useEffect, useMemo, useReducer, useRef, useState} from 'react';
 import {usePanelEventHandlers, useUser} from '@leav/ui';
 import {useGetViewV2Query} from '../../../../../__generated__';
-import {useIsAdminUser} from '../../../../../config/user/useIsAdminUser';
 import {type AppStudioInternalEvent} from '../../../types';
 import {useLastUsedView} from '../tabs/tab-catalog/useLastUsedView';
+import {useCanManageViews} from './useCanManageViews';
 import {CurrentViewContext} from './CurrentViewContext';
 import {DEFAULT_DRAFT_VIEW_ID} from './_constants';
 import {currentViewReducer, initialCurrentViewState} from './currentViewReducer';
@@ -28,7 +28,7 @@ export const CurrentViewStoreProvider = ({
     children: ReactNode;
 }) => {
     const [{view, savedView}, dispatch] = useReducer(currentViewReducer, initialCurrentViewState);
-    const isAdmin = useIsAdminUser();
+    const canManageViews = useCanManageViews(displayedLibraryId);
     const {userData} = useUser();
 
     // The catalog selection (and save-as) switches the loaded view through this event. The handler only
@@ -77,18 +77,19 @@ export const CurrentViewStoreProvider = ({
         }
     }, [data, isForeignView]);
 
-    // Admin empty state: seed a synthetic, editable draft so the admin can configure a default view
-    // (gear attributes query resolves via `library`, columns/sorts edits apply, isDirty/Reset work)
-    // and preview it live. The `DEFAULT_DRAFT_VIEW_ID` guard avoids clobbering in-progress edits AND
-    // replaces a stale real view still held in the reducer when we fall back to `isEmptyView`.
+    // Views-manager empty state: seed a synthetic, editable draft so the manager can configure a
+    // default view (gear attributes query resolves via `library`, columns/sorts edits apply,
+    // isDirty/Reset work) and preview it live. The `DEFAULT_DRAFT_VIEW_ID` guard avoids clobbering
+    // in-progress edits AND replaces a stale real view still held in the reducer when we fall back to
+    // `isEmptyView`.
     useEffect(() => {
-        if (isEmptyView && isAdmin && displayedLibraryId && view?.id !== DEFAULT_DRAFT_VIEW_ID) {
+        if (isEmptyView && canManageViews && displayedLibraryId && view?.id !== DEFAULT_DRAFT_VIEW_ID) {
             dispatch({
                 type: 'INIT_DEFAULT_VIEW',
                 payload: {library: displayedLibraryId, createdBy: {id: userData?.userId ?? '', label: ''}},
             });
         }
-    }, [isEmptyView, isAdmin, displayedLibraryId, view?.id, userData?.userId]);
+    }, [isEmptyView, canManageViews, displayedLibraryId, view?.id, userData?.userId]);
 
     // The live (possibly unsaved) view, serialized for ExplorerV2's controlled `currentView` prop.
     // Gated on `!isEmptyView` so switching from a valid id to an unresolvable one drops the Explorer
@@ -100,8 +101,8 @@ export const CurrentViewStoreProvider = ({
     );
 
     const value = useMemo(
-        () => ({view, savedView, isEmptyView, dispatch, serializedView}),
-        [view, savedView, isEmptyView, serializedView],
+        () => ({view, savedView, isEmptyView, canManageViews, dispatch, serializedView}),
+        [view, savedView, isEmptyView, canManageViews, serializedView],
     );
 
     return <CurrentViewContext.Provider value={value}>{children}</CurrentViewContext.Provider>;

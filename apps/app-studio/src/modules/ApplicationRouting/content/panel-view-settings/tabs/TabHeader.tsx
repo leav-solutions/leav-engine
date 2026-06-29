@@ -4,7 +4,6 @@ import {KitButton, KitTooltip, KitTypography} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faThumbtack, faThumbtackSlash} from '@fortawesome/free-solid-svg-icons';
 import {ViewV2Shortcut} from '../../../../../__generated__';
-import {useIsAdminUser} from '../../../../../config/user/useIsAdminUser';
 import {useCurrentView} from '../store-current-view/useCurrentView';
 import {AvailableAttributesDropdown} from '../manage-available-attributes/AvailableAttributesDropdown';
 import {EDIT_AVAILABLE_ATTRIBUTES_IN_HEADER_TABS} from './_constantes';
@@ -13,10 +12,10 @@ import {type ViewSettingsTabConfig} from './_types';
 
 export const TabHeader = ({tab}: {tab: ViewSettingsTabConfig}) => {
     const {t} = useTranslation();
-    const {shortcuts, toggleShortcut} = useCurrentView();
+    const {shortcuts, toggleShortcut, canManageViews} = useCurrentView();
 
     const canEditAvailableAttributesInHeader =
-        useIsAdminUser() && EDIT_AVAILABLE_ATTRIBUTES_IN_HEADER_TABS.includes(tab.key);
+        canManageViews && EDIT_AVAILABLE_ATTRIBUTES_IN_HEADER_TABS.includes(tab.key);
     const shortcut = tab.key as ViewV2Shortcut;
     const isPinned = shortcuts.includes(shortcut);
     // `display` is always pinned: it is the API default and the read-side fallback, so its pin cannot be removed.

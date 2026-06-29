@@ -2,7 +2,6 @@ import {useCallback, useContext, useMemo} from 'react';
 import {useLang, useUser} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {type SortOrder, type ViewV2Shortcut, type ViewV2Types} from '../../../../../__generated__';
-import {useIsAdminUser} from '../../../../../config/user/useIsAdminUser';
 import {CurrentViewContext} from './CurrentViewContext';
 import {type AvailableAttribute, type CurrentView, getSortId} from './_types';
 
@@ -17,10 +16,9 @@ const displayFingerprint = (view: CurrentView) =>
         : null;
 
 export const useCurrentView = () => {
-    const {view, savedView, isEmptyView, dispatch} = useContext(CurrentViewContext);
+    const {view, savedView, isEmptyView, canManageViews, dispatch} = useContext(CurrentViewContext);
     const {lang} = useLang();
     const {userData} = useUser();
-    const isAdmin = useIsAdminUser();
 
     const setViewType = useCallback(
         (viewType: ViewV2Types) => dispatch({type: 'SET_VIEW_TYPE', payload: {viewType}}),
@@ -81,9 +79,10 @@ export const useCurrentView = () => {
     // Ownership drives the whole owner/non-owner branching of the header.
     const isOwner = view?.created_by?.whoAmI?.id === userData?.userId;
 
-    // Management rights (save/rename/delete/share): the owner, or an admin on a shared view.
-    // The admin override is restricted to shared views — never another user's private one.
-    const canManageView = isOwner || (isAdmin && (view?.shared ?? false));
+    // Management rights (save/rename/delete/share): the owner, or a user holding the manage_views
+    // permission on a shared view. The override is restricted to shared views — never another user's
+    // private one.
+    const canManageCurrentView = isOwner || (canManageViews && (view?.shared ?? false));
 
     // "Dirty" = the editable label/display/filters/sorts diverged from the last persisted snapshot. `shared`,
     const isDirty = useMemo(() => displayFingerprint(view) !== displayFingerprint(savedView), [view, savedView]);
@@ -147,7 +146,8 @@ export const useCurrentView = () => {
         isEmptyView,
         dispatch,
         isOwner,
-        canManageView,
+        canManageCurrentView,
+        canManageViews,
         isDirty,
         setViewType,
         toggleVisibility,

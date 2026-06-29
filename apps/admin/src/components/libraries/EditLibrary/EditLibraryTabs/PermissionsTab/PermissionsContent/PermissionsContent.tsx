@@ -44,6 +44,7 @@ function PermissionsContent({library, onSubmitSettings, readonly}: IPermissionsC
             PermissionsActions.edit_record,
             PermissionsActions.delete_record,
         ],
+        views: [PermissionsActions.manage_views],
     };
 
     const permsConf = library.permissions_conf || defaultPermsConf;

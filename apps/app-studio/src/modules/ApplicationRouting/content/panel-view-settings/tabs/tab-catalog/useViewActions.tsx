@@ -6,7 +6,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCopy, faTrash} from '@fortawesome/free-solid-svg-icons';
 import {localizedTranslation} from '@leav/utils';
 import {INFO_NOTIFICATION_DURATION} from '_ui/constants';
-import {useIsAdminUser} from '../../../../../../config/user/useIsAdminUser';
 import {useCurrentView} from '../../store-current-view/useCurrentView';
 import {type View} from './useViewCatalog';
 import {useDeleteView} from './useDeleteView';
@@ -25,8 +24,7 @@ export const useViewActions = (libraryId: string): IUseViewActionsResult => {
     const {t} = useTranslation();
     const {lang} = useLang();
     const {userData} = useUser();
-    const isAdmin = useIsAdminUser();
-    const {view: currentLoadedView} = useCurrentView();
+    const {view: currentLoadedView, canManageViews} = useCurrentView();
     const {deleteView} = useDeleteView();
     const {openConfirmModal} = useConfirmModal();
 
@@ -71,7 +69,7 @@ export const useViewActions = (libraryId: string): IUseViewActionsResult => {
             },
         ];
 
-        if (isOwner || (isAdmin && view.shared)) {
+        if (isOwner || (canManageViews && view.shared)) {
             actions.push({
                 key: 'delete',
                 label: String(t('view_settings.delete_view')),

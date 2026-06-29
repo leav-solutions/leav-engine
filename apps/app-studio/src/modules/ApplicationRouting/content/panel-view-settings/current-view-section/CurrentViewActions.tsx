@@ -4,7 +4,6 @@ import {KitBadge, KitButton, KitTooltip} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClone, faRotateLeft, faSave} from '@fortawesome/free-solid-svg-icons';
 import {useLang} from '@leav/ui';
-import {useIsAdminUser} from '../../../../../config/user/useIsAdminUser';
 import {useCurrentView} from '../store-current-view/useCurrentView';
 import {useCurrentViewActions} from './useCurrentViewActions';
 import {ShareControl} from './ShareControl';
@@ -15,8 +14,7 @@ import {actions, actionButtons} from './currentViewSection.module.css';
 export const CurrentViewActions = () => {
     const {t} = useTranslation();
     const {lang} = useLang();
-    const canEditAdminView = useIsAdminUser();
-    const {view, canManageView, isDirty, isEmptyView, resetView} = useCurrentView();
+    const {view, canManageCurrentView, canManageViews, isDirty, isEmptyView, resetView} = useCurrentView();
     const {save, saveLoading, saveAs, saveAsLoading, toggleShared, shareLoading} = useCurrentViewActions();
     const [isSaveAsModalOpen, setIsSaveAsModalOpen] = useState(false);
 
@@ -56,10 +54,9 @@ export const CurrentViewActions = () => {
         <SaveAsViewModal isOpen={isSaveAsModalOpen} onClose={() => setIsSaveAsModalOpen(false)} onSubmit={saveAs} />
     );
 
-    // Default (empty) view state: only an admin can configure the reference view, and only via
     // "Save as" (create a real view from the synthetic draft) + "Reset" (revert to the empty draft).
     if (isEmptyView) {
-        if (!canEditAdminView) {
+        if (!canManageViews) {
             return null;
         }
 
@@ -76,7 +73,7 @@ export const CurrentViewActions = () => {
 
     const hasLabel = (view.label?.[lang[0]] ?? '').trim() !== '';
     const canSave = isDirty && hasLabel;
-    const canShare = canEditAdminView && canManageView;
+    const canShare = canManageViews && canManageCurrentView;
 
     return (
         <div className={actions}>
@@ -86,7 +83,7 @@ export const CurrentViewActions = () => {
                 <SharedByLabel createdByLabel={view.created_by.whoAmI.label} />
             )}
             <div className={actionButtons}>
-                {canManageView && (
+                {canManageCurrentView && (
                     <KitTooltip title={String(t('view_settings.current_view.save'))}>
                         <KitBadge dot={canSave}>
                             <KitButton

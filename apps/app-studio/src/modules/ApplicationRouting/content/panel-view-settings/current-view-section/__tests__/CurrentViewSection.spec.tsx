@@ -2,7 +2,6 @@ import {useReducer} from 'react';
 import userEvent from '@testing-library/user-event';
 import {act, render, screen, within} from '_ui/_tests/testUtils';
 import {ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
-import * as UseIsAdminUser from '../../../../../../config/user/useIsAdminUser';
 import {CurrentViewContext} from '../../store-current-view/CurrentViewContext';
 import {currentViewReducer} from '../../store-current-view/currentViewReducer';
 import {type CurrentView} from '../../store-current-view/_types';
@@ -47,36 +46,38 @@ const Harness = ({
     view,
     savedView,
     isEmptyView = false,
+    canManageViews = false,
 }: {
     view: CurrentView;
     savedView: CurrentView;
     isEmptyView?: boolean;
+    canManageViews?: boolean;
 }) => {
     const [state, dispatch] = useReducer(currentViewReducer, {view, savedView});
     return (
-        <CurrentViewContext.Provider value={{...state, isEmptyView, dispatch}}>
+        <CurrentViewContext.Provider value={{...state, isEmptyView, canManageViews, dispatch}}>
             <CurrentViewSection onViewSettingsClose={onClose} />
         </CurrentViewContext.Provider>
     );
 };
 
-const spyOnUseIsAdminUser = jest.spyOn(UseIsAdminUser, 'useIsAdminUser');
-
 const renderSection = (opts: {
     view: CurrentView;
     savedView?: CurrentView;
     isEmptyView?: boolean;
-    isAdmin?: boolean;
-}) => {
-    if (opts.isAdmin !== undefined) {
-        spyOnUseIsAdminUser.mockReturnValue(opts.isAdmin);
-    }
-    return render(<Harness view={opts.view} savedView={opts.savedView ?? opts.view} isEmptyView={opts.isEmptyView} />);
-};
+    canManageViews?: boolean;
+}) =>
+    render(
+        <Harness
+            view={opts.view}
+            savedView={opts.savedView ?? opts.view}
+            isEmptyView={opts.isEmptyView}
+            canManageViews={opts.canManageViews}
+        />,
+    );
 
 beforeEach(() => {
     jest.clearAllMocks();
-    spyOnUseIsAdminUser.mockReturnValue(false);
 });
 
 describe('CurrentViewSection', () => {
@@ -103,7 +104,7 @@ describe('CurrentViewSection', () => {
             expect(onClose).toHaveBeenCalledTimes(1);
         });
 
-        it('exposes no CRUD action for a non-admin (save/save_as/reset/delete)', () => {
+        it('exposes no CRUD action without the manage_views permission (save/save_as/reset/delete)', () => {
             renderSection({view: null, savedView: null, isEmptyView: true});
 
             for (const action of ['save', 'save_as', 'reset', 'delete']) {
@@ -114,12 +115,12 @@ describe('CurrentViewSection', () => {
         });
     });
 
-    describe('empty (default) view state — admin', () => {
-        // The store seeds a synthetic editable draft for the admin; isEmptyView stays true.
+    describe('empty (default) view state — views-manager', () => {
+        // The store seeds a synthetic editable draft for the views-manager; isEmptyView stays true.
         const draft = makeView({label: {}});
 
         it('exposes only "save as" and "reset", not save/delete/share', () => {
-            renderSection({view: draft, savedView: draft, isEmptyView: true, isAdmin: true});
+            renderSection({view: draft, savedView: draft, isEmptyView: true, canManageViews: true});
 
             expect(
                 screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.save_as`}),
@@ -136,7 +137,7 @@ describe('CurrentViewSection', () => {
         });
 
         it('disables "reset" while the draft is pristine (not dirty)', () => {
-            renderSection({view: draft, savedView: draft, isEmptyView: true, isAdmin: true});
+            renderSection({view: draft, savedView: draft, isEmptyView: true, canManageViews: true});
             expect(screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.reset`})).toBeDisabled();
         });
     });
@@ -248,8 +249,8 @@ describe('CurrentViewSection', () => {
     });
 
     describe('share zone', () => {
-        it('shows the share switch for an owner with admin rights and toggles it', async () => {
-            renderSection({view: makeView({shared: false}), isAdmin: true});
+        it('shows the share switch for an owner with the manage_views permission and toggles it', async () => {
+            renderSection({view: makeView({shared: false}), canManageViews: true});
 
             const shareSwitch = screen.getByRole('switch');
             expect(shareSwitch).not.toBeChecked();
@@ -261,28 +262,24 @@ describe('CurrentViewSection', () => {
             expect(mockToggleShared).toHaveBeenCalledWith(true, expect.anything());
         });
 
-        it('hides the share switch for an owner without admin rights', () => {
-            renderSection({view: makeView(), isAdmin: false});
+        it('hides the share switch for an owner without the manage_views permission', () => {
+            renderSection({view: makeView(), canManageViews: false});
             expect(screen.queryByRole('switch')).not.toBeInTheDocument();
         });
 
         it('shows "shared by" (with the creator display name) and no switch for a non-owner', () => {
-            renderSection({view: makeView({created_by: nonOwner}), isAdmin: true});
+            renderSection({view: makeView({created_by: nonOwner}), canManageViews: true});
             // libs/ui test i18n renders interpolated keys as `key|value` ⇒ asserts the name is passed.
             expect(screen.getByText(/current_view\.shared_by\|Alice/)).toBeInTheDocument();
             expect(screen.queryByRole('switch')).not.toBeInTheDocument();
         });
     });
 
-    describe('admin override on a shared view owned by another user', () => {
-        beforeEach(() => {
-            spyOnUseIsAdminUser.mockReturnValue(true);
-        });
-
+    describe('manage_views override on a shared view owned by another user', () => {
         const sharedViewOfOther = () => makeView({created_by: nonOwner, shared: true});
 
         it('makes the label editable', () => {
-            renderSection({view: sharedViewOfOther()});
+            renderSection({view: sharedViewOfOther(), canManageViews: true});
             expect(screen.getByRole('textbox')).toBeEnabled();
         });
 
@@ -290,17 +287,18 @@ describe('CurrentViewSection', () => {
             renderSection({
                 view: sharedViewOfOther(),
                 savedView: makeView({created_by: nonOwner, shared: true, label: {fr: 'Ma vue'}}),
+                canManageViews: true,
             });
             expect(screen.getByRole('button', {name: `${CURRENT_VIEW_TRANSLATION_PREFIX}.save`})).toBeInTheDocument();
         });
 
         it('shows the share switch (can un-share)', () => {
-            renderSection({view: sharedViewOfOther(), isAdmin: true});
+            renderSection({view: sharedViewOfOther(), canManageViews: true});
             expect(screen.getByRole('switch')).toBeInTheDocument();
         });
 
         it('keeps the label read-only on a private view owned by another user', () => {
-            renderSection({view: makeView({created_by: nonOwner, shared: false})});
+            renderSection({view: makeView({created_by: nonOwner, shared: false}), canManageViews: true});
             expect(screen.getByRole('textbox')).toBeDisabled();
         });
     });

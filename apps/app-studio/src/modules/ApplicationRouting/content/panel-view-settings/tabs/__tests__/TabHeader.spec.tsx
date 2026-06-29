@@ -7,14 +7,14 @@ import {type ViewSettingsTabConfig} from '../_types';
 
 const mockToggleShortcut = jest.fn();
 let mockShortcuts: ViewV2Shortcut[];
-let mockIsAdmin: boolean;
+let mockCanManageViews: boolean;
 
 jest.mock('../../store-current-view/useCurrentView', () => ({
-    useCurrentView: () => ({shortcuts: mockShortcuts, toggleShortcut: mockToggleShortcut}),
-}));
-
-jest.mock('../../../../../../config/user/useIsAdminUser', () => ({
-    useIsAdminUser: () => mockIsAdmin,
+    useCurrentView: () => ({
+        shortcuts: mockShortcuts,
+        toggleShortcut: mockToggleShortcut,
+        canManageViews: mockCanManageViews,
+    }),
 }));
 
 jest.mock('../../manage-available-attributes/AvailableAttributesDropdown', () => ({
@@ -32,7 +32,7 @@ describe('TabHeader', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         mockShortcuts = [ViewV2Shortcut.display];
-        mockIsAdmin = false;
+        mockCanManageViews = false;
     });
 
     it('toggles the shortcut of a non-display tab on click', async () => {
@@ -57,22 +57,22 @@ describe('TabHeader', () => {
         expect(screen.queryByLabelText('view_settings.pin')).not.toBeInTheDocument();
     });
 
-    it('shows the available-attributes gear for an admin on the sorts tab', () => {
-        mockIsAdmin = true;
+    it('shows the available-attributes gear for a views-manager on the sorts tab', () => {
+        mockCanManageViews = true;
         render(<TabHeader tab={sortsTab} />);
 
         expect(screen.getByLabelText(gearLabel)).toBeInTheDocument();
     });
 
-    it('hides the gear for a non-admin on the sorts tab', () => {
-        mockIsAdmin = false;
+    it('hides the gear without the manage_views permission on the sorts tab', () => {
+        mockCanManageViews = false;
         render(<TabHeader tab={sortsTab} />);
 
         expect(screen.queryByLabelText(gearLabel)).not.toBeInTheDocument();
     });
 
-    it('hides the gear for an admin on a tab that does not host it (filters)', () => {
-        mockIsAdmin = true;
+    it('hides the gear for a views-manager on a tab that does not host it (filters)', () => {
+        mockCanManageViews = true;
         render(<TabHeader tab={filtersTab} />);
 
         expect(screen.queryByLabelText(gearLabel)).not.toBeInTheDocument();

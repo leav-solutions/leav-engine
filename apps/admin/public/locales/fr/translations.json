@@ -277,6 +277,7 @@
         "group": {
             "library": "Bibliothèque",
             "entities": "Entités",
+            "views": "Vues",
             "libraries": "Bibliothèques",
             "attributes": "Attributs",
             "tasks": "Tâches",

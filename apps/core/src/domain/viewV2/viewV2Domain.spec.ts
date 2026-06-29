@@ -7,11 +7,22 @@ import {type ToAny} from '../../utils/utils';
 import {SortOrder} from '../../_types/list';
 import {AttributeCondition} from '../../_types/record';
 import {type IViewV2, type IViewV2CreateInput, ViewV2Shortcut, ViewV2Types} from '../../_types/viewsV2';
-import {adminsGroupId} from '../../_constants/users';
+import {type ILibraryPermissionDomain} from '../permission/libraryPermissionDomain';
+
+// The manage_views library permission, denied by default. Owner checks short-circuit before it is
+// consulted; non-owner checks fall through to it, so the default deny makes them throw.
+const mockLibraryPermissionDomainDenied: Mockify<ILibraryPermissionDomain> = {
+    getLibraryPermission: global.__mockPromise(false),
+};
+
+const mockLibraryPermissionDomainGranted: Mockify<ILibraryPermissionDomain> = {
+    getLibraryPermission: global.__mockPromise(true),
+};
 
 const depsBase: ToAny<IViewV2DomainDeps> = {
     'core.domain.helpers.validate': vi.fn(),
     'core.domain.tree': vi.fn(),
+    'core.domain.permission.library': mockLibraryPermissionDomainDenied,
     'core.infra.viewV2': vi.fn(),
     'core.utils': vi.fn(),
 };
@@ -72,8 +83,9 @@ describe('viewV2Domain', () => {
         getViewsOwnedOrSharedV2: global.__mockPromise({list: [{...mockViewV2, shared: false}]}),
     } satisfies Mockify<IViewV2Repo>;
 
-    // An admin who is NOT the owner of mockViewV2 (created_by '1').
-    const mockAdminCtx = {...mockCtx, userId: '42', groupsId: [adminsGroupId]};
+    // A user who is NOT the owner of mockViewV2 (created_by '1'). Their ability to manage the view
+    // is driven entirely by the manage_views permission mock injected per test, not by any group.
+    const mockOtherUserCtx = {...mockCtx, userId: '42'};
 
     const mockValidationHelper: Mockify<IValidateHelper> = {
         validateLibrary: vi.fn(),
@@ -265,27 +277,29 @@ describe('viewV2Domain', () => {
             );
         });
 
-        test('Should allow an admin to update a shared view owned by another user', async () => {
+        test('Should allow a user with the manage_views permission to update a shared view owned by another user', async () => {
             const domain = viewV2Domain({
                 ...depsBase,
                 'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.domain.permission.library': mockLibraryPermissionDomainGranted as ILibraryPermissionDomain,
                 'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
             });
 
-            await domain.updateViewV2({id: mockViewV2.id, label: {fr: 'Edited by admin'}}, mockAdminCtx);
+            await domain.updateViewV2({id: mockViewV2.id, label: {fr: 'Edited by manager'}}, mockOtherUserCtx);
 
             expect(mockViewV2Repo.updateViewV2).toBeCalled();
         });
 
-        test('Should throw if an admin updates a private view owned by another user', async () => {
+        test('Should throw when a user with the manage_views permission updates a private view owned by another user', async () => {
             const domain = viewV2Domain({
                 ...depsBase,
                 'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.domain.permission.library': mockLibraryPermissionDomainGranted as ILibraryPermissionDomain,
                 'core.infra.viewV2': mockViewV2RepoPrivate as IViewV2Repo,
             });
 
             await expect(
-                domain.updateViewV2({id: mockViewV2.id, label: {fr: 'Edited by admin'}}, mockAdminCtx),
+                domain.updateViewV2({id: mockViewV2.id, label: {fr: 'Edited by manager'}}, mockOtherUserCtx),
             ).rejects.toThrow(ValidationError);
             expect(mockViewV2RepoPrivate.updateViewV2).not.toBeCalled();
         });
@@ -410,24 +424,26 @@ describe('viewV2Domain', () => {
             expect(mockViewV2Repo.deleteViewV2).not.toBeCalled();
         });
 
-        test('Should allow an admin to delete a shared view owned by another user', async () => {
+        test('Should allow a user with the manage_views permission to delete a shared view owned by another user', async () => {
             const domain = viewV2Domain({
                 ...depsBase,
+                'core.domain.permission.library': mockLibraryPermissionDomainGranted as ILibraryPermissionDomain,
                 'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
             });
 
-            await domain.deleteViewV2(mockViewV2.id, mockAdminCtx);
+            await domain.deleteViewV2(mockViewV2.id, mockOtherUserCtx);
 
             expect(mockViewV2Repo.deleteViewV2).toBeCalled();
         });
 
-        test('Should throw if an admin deletes a private view owned by another user', async () => {
+        test('Should throw when a user with the manage_views permission deletes a private view owned by another user', async () => {
             const domain = viewV2Domain({
                 ...depsBase,
+                'core.domain.permission.library': mockLibraryPermissionDomainGranted as ILibraryPermissionDomain,
                 'core.infra.viewV2': mockViewV2RepoPrivate as IViewV2Repo,
             });
 
-            await expect(domain.deleteViewV2(mockViewV2.id, mockAdminCtx)).rejects.toThrow(ValidationError);
+            await expect(domain.deleteViewV2(mockViewV2.id, mockOtherUserCtx)).rejects.toThrow(ValidationError);
             expect(mockViewV2RepoPrivate.deleteViewV2).not.toBeCalled();
         });
     });

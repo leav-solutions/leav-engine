@@ -5,12 +5,14 @@ import {adminsGroupId, adminUserId} from '../../../../_constants/users';
 import {RecordFilterCondition, SortOrder, ViewV2Shortcut, ViewV2Types} from '../../_gqlTypes';
 import {
     adminUserSdk,
+    e2eNonAdminGroupId,
     e2eUser,
     getSdkWithUser,
     gqlAddElemToTree,
     gqlCreateRecord,
     guestUserSdk,
     makeGraphQlCall,
+    nonAdminUserSdk,
 } from '../e2eUtils';
 
 describe('ViewsV2', () => {
@@ -330,6 +332,54 @@ describe('ViewsV2', () => {
             it('Should not be able to delete a private viewV2 owned by another user', async () => {
                 const id = await createViewAsGuest(false);
                 await expect(adminUserSdk.DeleteViewV2({viewId: id})).rejects.toThrow(/USER_IS_NOT_VIEW_OWNER/);
+            });
+        });
+
+        // Proves the override is driven by the `manage_views` library permission, not by admin-group
+        // membership: a non-admin user whose group is granted the permission gains the same power.
+        describe('manage_views permission on viewsV2 owned by other users', () => {
+            beforeAll(async () => {
+                // Grant manage_views on the test library to the non-admin user's group.
+                await makeGraphQlCall(`mutation {
+                    savePermission(permission: {
+                        type: library,
+                        applyTo: "${testLibName}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
+                        actions: [{name: manage_views, allowed: true}]
+                    }) { type }
+                }`);
+            });
+
+            afterAll(async () => {
+                await makeGraphQlCall(`mutation {
+                    savePermission(permission: {
+                        type: library,
+                        applyTo: "${testLibName}",
+                        usersGroup: "${e2eNonAdminGroupId()}",
+                        actions: [{name: manage_views, allowed: null}]
+                    }) { type }
+                }`);
+            });
+
+            it('Should let a granted non-admin user edit a shared viewV2 owned by another user', async () => {
+                const id = await createViewAsGuest(true);
+                const {updateViewV2} = await nonAdminUserSdk.UpdateViewV2({
+                    view: {id, label: {en: 'edited_by_manager'}},
+                });
+                expect(updateViewV2.id).toBe(id);
+            });
+
+            it('Should let a granted non-admin user delete a shared viewV2 owned by another user', async () => {
+                const id = await createViewAsGuest(true);
+                const {deleteViewV2} = await nonAdminUserSdk.DeleteViewV2({viewId: id});
+                expect(deleteViewV2.id).toBe(id);
+            });
+
+            it('Should still forbid a granted non-admin user on a private viewV2 owned by another user', async () => {
+                const id = await createViewAsGuest(false);
+                await expect(nonAdminUserSdk.UpdateViewV2({view: {id, label: {en: 'nope'}}})).rejects.toThrow(
+                    /USER_IS_NOT_VIEW_OWNER/,
+                );
             });
         });
     });
