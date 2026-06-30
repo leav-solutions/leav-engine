@@ -1,7 +1,7 @@
 {
     "name": "data-studio",
     "description": "Generic application to manage your data",
-    "version": "1.16.0",
+    "version": "1.17.0",
     "private": true,
     "stableVersion": "0.1.0",
     "scripts": {

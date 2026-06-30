@@ -1,6 +1,6 @@
 {
     "name": "@leav/e2e-test-utils",
-    "version": "1.16.0",
+    "version": "1.17.0",
     "description": "Basic utilities for e2e tests, setup data",
     "main": "./src/index",
     "publishConfig": {
