@@ -28,6 +28,7 @@ import LeavError from '../../errors/LeavError';
 import {ErrorTypes} from '../../_types/errors';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
+import {SystemLibraries} from '../../_constants/systemLibraries';
 
 export interface ISDODomainDeps {
     'core.domain.globalSettings': IGlobalSettingsDomain;
@@ -282,9 +283,9 @@ export default function ({
                 system: {
                     systemId: record.uuid,
                     systemActive: record.active,
-                    systemCreator: record.created_by,
+                    systemCreator: await _getUUIDValue(SystemLibraries.USERS, record.created_by, ctx),
                     systemCreationDate: record.created_at,
-                    systemLastModificator: record.modified_by,
+                    systemLastModificator: await _getUUIDValue(SystemLibraries.USERS, record.modified_by, ctx),
                     systemLastModifiedDate: record.modified_at,
                 },
             },

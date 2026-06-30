@@ -187,6 +187,7 @@ const _createUsersAndGroups = async (coreContainer: AwilixContainer, project: Te
 
     project.provide('nonAdminUser', {
         userId: nonAdminUserRecord.record.id,
+        userUUID: nonAdminUserRecord.record.uuid,
         groupsId: [nonAdminGroupNode.id],
     });
 };

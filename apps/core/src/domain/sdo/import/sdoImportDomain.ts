@@ -24,6 +24,7 @@ import {type ITreeDomain} from '../../tree/treeDomain';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {logger} from '@leav/logger';
 import {IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS} from '../../value/helpers/canSaveRecordValue';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 export interface ISDOImportDomainDeps {
     'core.utils.sdo': ISDOUtils;
@@ -43,7 +44,7 @@ export interface ISDOImportDomain {
 // may be added in plugin config to be configurable, for now only for devs.
 // Or may be better to use specific logger with its one level for modules (her importDomain).
 // https://aristid.atlassian.net/browse/LEAVC-221
-const debugSaveValues = true;
+const debugSaveValues = false;
 
 export default function ({
     'core.utils.sdo': sdoUtils,
@@ -76,7 +77,9 @@ export default function ({
         valuesToSave = valuesToSave.filter(value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute));
 
         if (debugSaveValues) {
-            logger.debug(`SDO Import create values to save to new ${leavLibraryId} record >> `, {valuesToSave});
+            logger.debug(`SDO Import create: new record with uuid=${recordUuid} on library "${leavLibraryId}" >> `, {
+                valuesToSave,
+            });
         }
 
         const res = await recordDomain.createRecord({
@@ -121,7 +124,7 @@ export default function ({
         valuesToSave = valuesToSave.filter(value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute));
 
         if (debugSaveValues) {
-            logger.debug(`SDO Import update values to save on record ${leavLibraryId}/${records[0].id} >> `, {
+            logger.debug(`SDO Import update: values to save on record ${leavLibraryId}/${records[0].uuid} >> `, {
                 valuesToSave,
             });
         }
@@ -149,7 +152,7 @@ export default function ({
                 library: leavLibraryId,
                 filters: [
                     {
-                        field: 'uuid',
+                        field: CommonAttributes.UUID,
                         value: recordUuid,
                         condition: AttributeCondition.EQUAL,
                     },
@@ -180,7 +183,7 @@ export default function ({
                         }
 
                         const filter = {
-                            field: 'uuid',
+                            field: CommonAttributes.UUID,
                             condition: AttributeCondition.EQUAL,
                             value: recordUUID,
                         };

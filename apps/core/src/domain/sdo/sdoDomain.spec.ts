@@ -39,6 +39,24 @@ const mockLinkAttributeRecordFieldValues = [
     },
 ];
 
+const mockRecordSystemData = {
+    uuid: 'record-uuid',
+    active: true,
+    created_by: 'creator-id',
+    created_at: 1717000000,
+    modified_by: 'modificator-id',
+    modified_at: 1717100000,
+};
+
+const expectedSDOSystemContent = {
+    systemId: 'record-uuid',
+    systemActive: true,
+    systemCreator: 'creator-id',
+    systemCreationDate: 1717000000,
+    systemLastModificator: 'modificator-id',
+    systemLastModifiedDate: 1717100000,
+};
+
 const deps: ToAny<ISDODomainDeps> = {
     'core.utils.sdo': mockSDOUtils,
     'core.domain.attribute': mockAttributeDomain,
@@ -187,10 +205,9 @@ describe('sdoDomain', () => {
             jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
             mockSDOUtils.createHash.mockReturnValue('existing-hash');
             mockRecordDomain.find.mockResolvedValueOnce({
-                list: [{id: 'entity123', hash_sdo: 'existing-hash'}],
+                list: [{id: 'entity123', hash_sdo: 'existing-hash', ...mockRecordSystemData}],
             } as unknown as IListWithCursor<IRecord>);
             mockRecordDomain.getRecordFieldValue
-                .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockLinkAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
@@ -230,10 +247,9 @@ describe('sdoDomain', () => {
             jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
             mockSDOUtils.createHash.mockReturnValue('new-hash');
             mockRecordDomain.find.mockResolvedValueOnce({
-                list: [{id: 'entity123', attribute: 'attribute value'}],
+                list: [{id: 'entity123', attribute: 'attribute value', ...mockRecordSystemData}],
             } as unknown as IListWithCursor<IRecord>);
             mockRecordDomain.getRecordFieldValue
-                .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockLinkAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
@@ -252,9 +268,7 @@ describe('sdoDomain', () => {
                 date: expect.any(Number),
                 action: 'CREATE',
                 content: {
-                    system: {
-                        systemId: 'raw_payload',
-                    },
+                    system: expectedSDOSystemContent,
                     simple: 'raw_payload',
                     simple_link: 'id',
                     advanced: ['raw_payload'],
@@ -276,7 +290,7 @@ describe('sdoDomain', () => {
                 },
                 ctx: mockSystemQueryContext,
             });
-            expect(mockRecordDomain.getRecordFieldValue).toHaveBeenCalledTimes(5);
+            expect(mockRecordDomain.getRecordFieldValue).toHaveBeenCalledTimes(4);
             expect(jsonschemaSpy).toHaveBeenCalled();
             expect(mockValueDomain.saveValue).toHaveBeenNthCalledWith(1, {
                 library: mockSDOMapping[mockSDO.name].leavLibraryId,
@@ -293,10 +307,11 @@ describe('sdoDomain', () => {
             jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
             mockSDOUtils.createHash.mockReturnValue('new-hash');
             mockRecordDomain.find.mockResolvedValueOnce({
-                list: [{id: 'entity123', attribute: 'attribute value', hash_sdo: 'existing-hash'}],
+                list: [
+                    {id: 'entity123', attribute: 'attribute value', hash_sdo: 'existing-hash', ...mockRecordSystemData},
+                ],
             } as unknown as IListWithCursor<IRecord>);
             mockRecordDomain.getRecordFieldValue
-                .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockLinkAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
@@ -314,9 +329,7 @@ describe('sdoDomain', () => {
                 name: mockSDO.name,
                 action: 'UPDATE',
                 content: {
-                    system: {
-                        systemId: 'raw_payload',
-                    },
+                    system: expectedSDOSystemContent,
                     simple: 'raw_payload',
                     simple_link: 'id',
                     advanced: ['raw_payload'],
@@ -324,7 +337,7 @@ describe('sdoDomain', () => {
                 },
             });
             expect(mockRecordDomain.find).toHaveBeenCalledTimes(1);
-            expect(mockRecordDomain.getRecordFieldValue).toHaveBeenCalledTimes(5);
+            expect(mockRecordDomain.getRecordFieldValue).toHaveBeenCalledTimes(4);
             expect(jsonschemaSpy).toHaveBeenCalled();
             expect(mockValueDomain.saveValue).toHaveBeenNthCalledWith(1, {
                 library: mockSDOMapping[mockSDO.name].leavLibraryId,
@@ -344,7 +357,7 @@ describe('sdoDomain', () => {
             beforeEach(() => {
                 jsonschemaSpy.mockReturnValue({} as ValidatorResult);
                 mockRecordDomain.find.mockResolvedValue({
-                    list: [{id: 'entity'}],
+                    list: [{id: 'entity', ...mockRecordSystemData}],
                 } as IListWithCursor<IRecord>);
                 mockSDOUtils.createHash.mockReturnValue('new-hash');
             });
@@ -354,11 +367,6 @@ describe('sdoDomain', () => {
                     [sdoMappingName]: {
                         leavLibraryId: libId,
                         sdoAttributes: {
-                            [sdoPathIdentifierUuid]: {
-                                leavAttributeId: 'uuid',
-                                valueRequired: true,
-                                format: 'string' as SDOMappingAttributeFormat,
-                            },
                             [sdoKey]: sdoMapping,
                         },
                     },
@@ -370,9 +378,7 @@ describe('sdoDomain', () => {
                 format: SDOMappingAttributeFormat,
                 expectedValue: unknown,
             ): Promise<void> {
-                mockRecordDomain.getRecordFieldValue
-                    .mockResolvedValueOnce([{raw_payload: 'test-uuid'}] as IStandardValue[])
-                    .mockResolvedValueOnce(value);
+                mockRecordDomain.getRecordFieldValue.mockResolvedValueOnce(value);
                 const mapping = simplifySdoMapping(attributeId, {
                     leavAttributeId: attributeId,
                     valueRequired: false,
@@ -380,7 +386,7 @@ describe('sdoDomain', () => {
                 });
                 expect(await _sdoDomain.getRecordSDO(libId, 'entity', mapping, mockSystemQueryContext)).toMatchObject({
                     content: {
-                        system: {systemId: 'test-uuid'},
+                        system: {systemId: 'record-uuid'},
                         [attributeId]: expectedValue,
                     },
                 });
@@ -603,7 +609,7 @@ describe('sdoDomain', () => {
             mockSDOUtils.createHash.mockReturnValue('new-hash');
             jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
             mockRecordDomain.find.mockResolvedValueOnce({
-                list: [{id: 'entity', attribute: 'attribute value'}],
+                list: [{id: 'entity', attribute: 'attribute value', ...mockRecordSystemData}],
             } as unknown as IListWithCursor<IRecord>);
             mockRecordDomain.getRecordFieldValue.mockImplementation(async ({attributeId}) => {
                 switch (attributeId) {
@@ -670,11 +676,6 @@ describe('sdoDomain', () => {
                 [mockSDO.name]: {
                     ...mockSDOMapping[mockSDO.name],
                     sdoAttributes: {
-                        [sdoPathIdentifierUuid]: {
-                            leavAttributeId: 'uuid',
-                            valueRequired: true,
-                            format: 'string' as SDOMappingAttributeFormat,
-                        },
                         simpleMapping: {
                             leavAttributeId: 'simpleAttribute',
                             valueRequired: true,
@@ -713,9 +714,7 @@ describe('sdoDomain', () => {
                 name: mockSDO.name,
                 action: 'CREATE',
                 content: {
-                    system: {
-                        systemId: 'test-uuid',
-                    },
+                    system: expectedSDOSystemContent,
                     simpleMapping: true,
                     advancedMapping: ['red', 'blue'],
                     simpleLinkMapping: 55,
@@ -729,19 +728,13 @@ describe('sdoDomain', () => {
             mockSDOUtils.createHash.mockReturnValue('new-hash');
             jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
             mockRecordDomain.find.mockResolvedValueOnce({
-                list: [{id: 'entity', attribute: 'attribute value'}],
+                list: [{id: 'entity', attribute: 'attribute value', ...mockRecordSystemData}],
             } as unknown as IListWithCursor<IRecord>);
-            mockRecordDomain.getRecordFieldValue
-                .mockResolvedValueOnce([
-                    {
-                        payload: 'uuid-payload',
-                    },
-                ])
-                .mockResolvedValueOnce([
-                    {
-                        payload: {record: {id: '1000'}},
-                    } as ITreeValue,
-                ]);
+            mockRecordDomain.getRecordFieldValue.mockResolvedValueOnce([
+                {
+                    payload: {record: {id: '1000'}},
+                } as ITreeValue,
+            ]);
 
             _sdoDomain.registerSDOExportMappingFunctions({
                 statusTree: vi.fn().mockResolvedValueOnce({
@@ -758,11 +751,6 @@ describe('sdoDomain', () => {
                 [mockSDO.name]: {
                     ...mockSDOMapping[mockSDO.name],
                     sdoAttributes: {
-                        [sdoPathIdentifierUuid]: {
-                            leavAttributeId: 'uuid',
-                            valueRequired: true,
-                            format: 'string' as SDOMappingAttributeFormat,
-                        },
                         treeMapping: {
                             leavAttributeId: 'treeAttribute',
                             valueRequired: true,
@@ -796,11 +784,10 @@ describe('sdoDomain', () => {
             mockSDOUtils.createHash.mockReturnValue('new-hash');
             jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
             mockRecordDomain.find.mockResolvedValueOnce({
-                list: [{id: 'entity', attribute: 'attribute value'}],
+                list: [{id: 'entity', attribute: 'attribute value', ...mockRecordSystemData}],
             } as unknown as IListWithCursor<IRecord>);
 
             mockRecordDomain.getRecordFieldValue
-                .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockLinkAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
@@ -829,9 +816,7 @@ describe('sdoDomain', () => {
             );
             expect(sdo).toBeDefined();
             expect((sdo as ISDO).content).toEqual({
-                system: {
-                    systemId: 'raw_payload',
-                },
+                system: expectedSDOSystemContent,
                 simple: 'raw_payload',
                 simple_link: 'id',
                 advanced: ['raw_payload'],

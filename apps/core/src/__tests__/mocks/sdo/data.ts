@@ -39,11 +39,6 @@ export const mockSDOMapping: ISDOMapping = {
     ['test']: {
         leavLibraryId: 'leavLibraryId',
         sdoAttributes: {
-            'system.systemId': {
-                leavAttributeId: 'uuid',
-                valueRequired: false,
-                format: 'string',
-            },
             simple: {
                 leavAttributeId: 'simple',
                 valueRequired: false,
