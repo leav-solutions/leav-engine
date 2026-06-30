@@ -1,4 +1,4 @@
-import {SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
+import {RecordFilterCondition, SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
 import {currentViewReducer, initialCurrentViewState, viewReducer} from '../currentViewReducer';
 import {IDENTITY_COLUMN_ID} from '../../tabs/tab-display/_constants';
 import {type CurrentView} from '../_types';
@@ -39,9 +39,20 @@ const makeView = (overrides: Partial<NonNullState> = {}): NonNullState => ({
         ]),
     },
     sorts: [],
+    filters: [],
     shortcuts: [ViewV2Shortcut.display],
     ...overrides,
 });
+
+const makeFilters = (ids: string[], pinned = true): NonNullState['filters'] =>
+    ids.map(id => ({
+        attributes: [{id, label: {en: id.toUpperCase()}}],
+        condition: RecordFilterCondition.EQUAL,
+        values: [],
+        pinned,
+    }));
+
+const filterIds = (view: NonNullState) => view.filters.map(filter => filter.attributes.map(attr => attr.id).join('/'));
 
 const attrIds = (view: NonNullState) => view.display.attributes.map(attr => attr.attribute.id);
 const attrVisible = (view: NonNullState, id: string) =>
@@ -299,6 +310,119 @@ describe('viewReducer (display actions)', () => {
             expect(next.sorts[0].order).toBe(SortOrder.desc);
         });
     });
+
+    describe('MOVE_FILTER', () => {
+        it('reorders filters by their attribute-path id', () => {
+            const view = makeView({filters: makeFilters(['a', 'b', 'c'])});
+            const next = viewReducer(view, {type: 'MOVE_FILTER', payload: {activeId: 'a', overId: 'c'}});
+            expect(filterIds(next)).toEqual(['b', 'c', 'a']);
+        });
+
+        it('is a no-op when active equals over', () => {
+            const view = makeView({filters: makeFilters(['a', 'b'])});
+            const next = viewReducer(view, {type: 'MOVE_FILTER', payload: {activeId: 'a', overId: 'a'}});
+            expect(next).toBe(view);
+        });
+    });
+
+    describe('TOGGLE_FILTER_PINNED', () => {
+        const pinnedOf = (view: NonNullState, id: string) =>
+            view.filters.find(filter => filter.attributes.map(attr => attr.id).join('/') === id)?.pinned;
+
+        it('unpins a pinned filter in place (order unchanged)', () => {
+            const view = makeView({filters: makeFilters(['a', 'b', 'c'])});
+            const next = viewReducer(view, {type: 'TOGGLE_FILTER_PINNED', payload: {id: 'a'}});
+            expect(pinnedOf(next, 'a')).toBe(false);
+            expect(filterIds(next)).toEqual(['a', 'b', 'c']);
+        });
+
+        it('pins an unpinned filter and appends it after the last pinned filter', () => {
+            const view = makeView({filters: [...makeFilters(['a', 'b']), ...makeFilters(['c', 'd'], false)]});
+            const next = viewReducer(view, {type: 'TOGGLE_FILTER_PINNED', payload: {id: 'd'}});
+            expect(pinnedOf(next, 'd')).toBe(true);
+            expect(filterIds(next)).toEqual(['a', 'b', 'd', 'c']);
+        });
+    });
+
+    describe('SET_FILTER_CONFIG', () => {
+        it('updates the condition and values of the targeted filter in place', () => {
+            const view = makeView({filters: makeFilters(['status', 'city'])});
+            const next = viewReducer(view, {
+                type: 'SET_FILTER_CONFIG',
+                payload: {id: 'city', condition: RecordFilterCondition.CONTAINS, values: ['paris']},
+            });
+
+            expect(next.filters[1].condition).toBe(RecordFilterCondition.CONTAINS);
+            expect(next.filters[1].values).toEqual(['paris']);
+            // Untargeted filter is untouched.
+            expect(next.filters[0].condition).toBe(RecordFilterCondition.EQUAL);
+        });
+
+        it('is a no-op when the id is unknown', () => {
+            const view = makeView({filters: makeFilters(['status'])});
+            const next = viewReducer(view, {
+                type: 'SET_FILTER_CONFIG',
+                payload: {id: 'nope', condition: RecordFilterCondition.EQUAL, values: []},
+            });
+            expect(next).toBe(view);
+        });
+
+        // G1 hardening: an idempotent write (same condition + values) must return the SAME view ref so the
+        // wrapper's useReducer bail-out holds and the hub↔spoke value sync can't loop. Mirror of SET_SORT_ORDER.
+        it('returns the same view reference when condition and values are unchanged', () => {
+            const view = makeView({
+                filters: [
+                    {
+                        attributes: [{id: 'status', label: {en: 'STATUS'}}],
+                        condition: RecordFilterCondition.CONTAINS,
+                        values: ['paris'],
+                        pinned: true,
+                    },
+                ],
+            });
+            const next = viewReducer(view, {
+                type: 'SET_FILTER_CONFIG',
+                payload: {id: 'status', condition: RecordFilterCondition.CONTAINS, values: ['paris']},
+            });
+            expect(next).toBe(view);
+        });
+    });
+
+    describe('SET_AVAILABLE_FILTERS', () => {
+        it('keeps still-selected filters (order, pinned, condition, values), appends new ones, drops the rest', () => {
+            const view = makeView({
+                filters: [
+                    {
+                        attributes: [{id: 'status', label: {en: 'STATUS'}}],
+                        condition: RecordFilterCondition.CONTAINS,
+                        values: ['x'],
+                        pinned: true,
+                    },
+                    ...makeFilters(['city'], false),
+                ],
+            });
+
+            const next = viewReducer(view, {
+                type: 'SET_AVAILABLE_FILTERS',
+                payload: {
+                    filters: [
+                        {attributes: [{id: 'status', label: {en: 'STATUS'}}]},
+                        {attributes: [{id: 'price', label: {en: 'PRICE'}}]},
+                    ],
+                },
+            });
+
+            // 'city' deselected → dropped; 'status' kept (condition/values/pinned preserved); 'price' new.
+            expect(filterIds(next)).toEqual(['status', 'price']);
+            expect(next.filters[0].condition).toBe(RecordFilterCondition.CONTAINS);
+            expect(next.filters[0].values).toEqual(['x']);
+            expect(next.filters[0].pinned).toBe(true);
+            // New filter defaults: EQUAL condition, no value, unpinned.
+            expect(next.filters[1].condition).toBe(RecordFilterCondition.EQUAL);
+            expect(next.filters[1].values).toEqual([]);
+            expect(next.filters[1].pinned).toBe(false);
+        });
+    });
 });
 
 // The top-level reducer tracking the {view, savedView} snapshots.
@@ -403,6 +527,18 @@ describe('currentViewReducer (state wrapper)', () => {
         it('is a no-op when there is no view loaded', () => {
             const next = currentViewReducer(initialCurrentViewState, {type: 'TOGGLE_VISIBILITY', payload: {id: 'a'}});
             expect(next).toEqual(initialCurrentViewState);
+        });
+
+        it('preserves the SAME state reference when the delegated action is a no-op', () => {
+            // A no-op delegated action (here SET_FILTER_CONFIG on an unknown id) must not produce a new
+            // state object, otherwise React's useReducer cannot bail out of needless re-renders.
+            const view = makeView({filters: makeFilters(['status'])});
+            const state = {view, savedView: view};
+            const next = currentViewReducer(state, {
+                type: 'SET_FILTER_CONFIG',
+                payload: {id: 'unknown', condition: RecordFilterCondition.EQUAL, values: []},
+            });
+            expect(next).toBe(state);
         });
     });
 });

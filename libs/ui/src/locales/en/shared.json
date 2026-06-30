@@ -679,6 +679,7 @@
         "sort-ascending": "Ascending",
         "sort-descending": "Descending",
         "sorts-empty": "No sort applied",
+        "filters-empty": "No filter available",
         "sort-list": {
             "active": "Active sorts",
             "inactive": "Inactive sorts"

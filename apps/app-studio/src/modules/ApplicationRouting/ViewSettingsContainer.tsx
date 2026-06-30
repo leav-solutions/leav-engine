@@ -2,6 +2,7 @@ import {KitSidePanel} from 'aristid-ds';
 import {useParams} from 'react-router-dom';
 import {usePanelEventHandlers} from '@leav/ui';
 import {PanelViewSettings} from './content/panel-view-settings/PanelViewSettings';
+import {VoletFiltersProvider} from './content/panel-view-settings/store-current-view/VoletFiltersProvider';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {
@@ -56,11 +57,15 @@ export const ViewSettingsContainer = () => {
             useChildrenOnly={true}
             onCloseAfterAnimation={resetViewSettings}
         >
-            <PanelViewSettings
-                libraryId={currentPanel.targetLibraryId}
-                currentTab={currentPanel.selectedTab}
-                onClose={resetViewSettings}
-            />
+            {/* Spoke A: the volet's own filter store, scoped here (descendant of CurrentViewStoreProvider,
+                NOT wrapping the explorer). Mounts only while the volet is open. */}
+            <VoletFiltersProvider>
+                <PanelViewSettings
+                    libraryId={currentPanel.targetLibraryId}
+                    currentTab={currentPanel.selectedTab}
+                    onClose={resetViewSettings}
+                />
+            </VoletFiltersProvider>
         </KitSidePanel>
     );
 };

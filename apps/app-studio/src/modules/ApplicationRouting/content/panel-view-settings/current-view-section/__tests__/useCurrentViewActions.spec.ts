@@ -1,7 +1,7 @@
 import {KitAlert} from 'aristid-ds';
 import {act, renderHook} from '_ui/_tests/testUtils';
 import * as generated from '../../../../../../__generated__';
-import {SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
+import {RecordFilterCondition, SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
 import {useCurrentViewActions} from '../useCurrentViewActions';
 
 const mockUpdate = jest.fn();
@@ -57,6 +57,15 @@ beforeEach(() => {
             {order: SortOrder.asc, pinned: true, attributes: [{id: 'a'}]},
             {order: SortOrder.desc, pinned: false, attributes: [{id: 'campagnes'}, {id: 'thematiques'}]},
         ],
+        filters: [
+            {condition: RecordFilterCondition.EQUAL, values: ['x'], pinned: true, attributes: [{id: 'a'}]},
+            {
+                condition: RecordFilterCondition.CONTAINS,
+                values: [],
+                pinned: false,
+                attributes: [{id: 'campagnes'}, {id: 'thematiques'}],
+            },
+        ],
         shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters],
     };
     mockUpdate.mockResolvedValue({data: {updateViewV2: echoView}});
@@ -78,6 +87,11 @@ const mappedSorts = [
     {attributes: ['campagnes', 'thematiques'], order: SortOrder.desc, pinned: false},
 ];
 
+const mappedFilters = [
+    {attributes: ['a'], condition: RecordFilterCondition.EQUAL, values: ['x'], pinned: true},
+    {attributes: ['campagnes', 'thematiques'], condition: RecordFilterCondition.CONTAINS, values: [], pinned: false},
+];
+
 describe('useCurrentViewActions', () => {
     describe('save', () => {
         it('updates with the full label + mapped display + mapped sorts, echoes LOAD_VIEW and notifies success', async () => {
@@ -95,6 +109,7 @@ describe('useCurrentViewActions', () => {
                             label: {fr: 'V', en: 'V-en'},
                             display: mappedDisplay,
                             sorts: mappedSorts,
+                            filters: mappedFilters,
                             shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters],
                         },
                     },
@@ -119,7 +134,7 @@ describe('useCurrentViewActions', () => {
     });
 
     describe('saveAs', () => {
-        it('creates an independent view (name on every lang, shared false, current sorts, empty filters) and switches to it', async () => {
+        it('creates an independent view (name on every lang, shared false, current sorts + filters) and switches to it', async () => {
             const {result} = renderHook(() => useCurrentViewActions());
 
             await act(async () => {
@@ -134,7 +149,7 @@ describe('useCurrentViewActions', () => {
                             label: {fr: 'Ma copie'}, // MockedLangContextProvider ⇒ lang === ['fr']
                             shared: false,
                             display: mappedDisplay,
-                            filters: [],
+                            filters: mappedFilters,
                             sorts: mappedSorts,
                             shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters],
                         },

@@ -45,6 +45,7 @@ const makeView = (overrides: Partial<NonNullView> = {}): NonNullView => ({
         ],
     },
     sorts: [],
+    filters: [],
     shortcuts: [ViewV2Shortcut.display],
     ...overrides,
 });

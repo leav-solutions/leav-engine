@@ -133,10 +133,12 @@ export const Panel: FunctionComponent = () => {
         </>
     );
 
-    // The current-view store lives here — above the conditionally-rendered volet — so unsaved view
-    // edits survive the volet closing/reopening. Keyed by panel id: switching panels remounts it
-    // (fresh edit session), toggling the volet does not. Only explorer panels with view settings
+    // The current-view store lives here — above the conditionally-rendered volet — so
+    // unsaved view edits survive the volet closing/reopening. Keyed by panel id: switching panels remounts
+    // it (fresh edit session), toggling the volet does not. Only explorer panels with view settings
     // enabled need it; nested explorers (record panels) get their own store via context shadowing.
+    // The volet's own filter store (VoletFiltersProvider) is mounted inside ViewSettingsContainer, NOT
+    // here — ExplorerV2 has its own store fed by the same hub through `currentView` (ADR-006 / LEAVC-810).
     if (currentPanel.type === 'explorer' && application.enableViewSettings) {
         return (
             <CurrentViewStoreProvider

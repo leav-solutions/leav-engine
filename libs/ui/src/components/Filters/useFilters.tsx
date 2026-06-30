@@ -26,6 +26,6 @@ export const useFilters = (pinFilters = false) => {
 
     return {
         filtersProps: filtersToDisplay,
-        filtersData: filtersData.filters,
+        filtersData: filtersData?.filters ?? [],
     };
 };

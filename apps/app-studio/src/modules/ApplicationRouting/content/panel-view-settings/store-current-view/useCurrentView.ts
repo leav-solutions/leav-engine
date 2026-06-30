@@ -1,9 +1,14 @@
 import {useCallback, useContext, useMemo} from 'react';
 import {useLang, useUser} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {type SortOrder, type ViewV2Shortcut, type ViewV2Types} from '../../../../../__generated__';
+import {
+    type RecordFilterCondition,
+    type SortOrder,
+    type ViewV2Shortcut,
+    type ViewV2Types,
+} from '../../../../../__generated__';
 import {CurrentViewContext} from './CurrentViewContext';
-import {type AvailableAttribute, type CurrentView, getSortId} from './_types';
+import {type AvailableAttribute, type CurrentView, getFilterId, getSortId} from './_types';
 
 const displayFingerprint = (view: CurrentView) =>
     view
@@ -11,6 +16,7 @@ const displayFingerprint = (view: CurrentView) =>
               label: view.label,
               display: view.display,
               sorts: view.sorts,
+              filters: view.filters,
               shortcuts: view.shortcuts,
           })
         : null;
@@ -47,6 +53,28 @@ export const useCurrentView = () => {
 
     const toggleSortPinned = useCallback(
         (id: string) => dispatch({type: 'TOGGLE_SORT_PINNED', payload: {id}}),
+        [dispatch],
+    );
+
+    const moveFilter = useCallback(
+        (activeId: string, overId: string) => dispatch({type: 'MOVE_FILTER', payload: {activeId, overId}}),
+        [dispatch],
+    );
+
+    const toggleFilterPinned = useCallback(
+        (id: string) => dispatch({type: 'TOGGLE_FILTER_PINNED', payload: {id}}),
+        [dispatch],
+    );
+
+    const setFilterConfig = useCallback(
+        (id: string, condition: RecordFilterCondition, values: Array<string | null>) =>
+            dispatch({type: 'SET_FILTER_CONFIG', payload: {id, condition, values}}),
+        [dispatch],
+    );
+
+    const setAvailableFilters = useCallback(
+        (filters: Array<{attributes: AvailableAttribute[]}>) =>
+            dispatch({type: 'SET_AVAILABLE_FILTERS', payload: {filters}}),
         [dispatch],
     );
 
@@ -140,6 +168,41 @@ export const useCurrentView = () => {
         [view],
     );
 
+    const filters = useMemo(
+        () =>
+            view?.filters.map(filter => ({
+                id: getFilterId(filter),
+                condition: filter.condition,
+                values: filter.values,
+                pinned: filter.pinned,
+                ids: filter.attributes.map(attribute => attribute.id),
+                // Descent path label, e.g. "Campagnes › Thématiques". A single-attribute filter just
+                // shows that attribute's label.
+                label: filter.attributes
+                    .map(attribute => localizedTranslation(attribute.label ?? {}, lang))
+                    .join(' › '),
+            })) ?? [],
+        [view, lang],
+    );
+
+    // Pinned filters keep the view-defined order (= toolbar order). Unpinned filters are sorted
+    // alphabetically. Mirrors pinnedSorts / unpinnedSorts.
+    const pinnedFilters = useMemo(() => filters.filter(filter => filter.pinned), [filters]);
+
+    const unpinnedFilters = useMemo(
+        () =>
+            filters
+                .filter(filter => !filter.pinned)
+                .slice()
+                .sort((a, b) => a.label.localeCompare(b.label)),
+        [filters],
+    );
+
+    const availableFilterPaths = useMemo(
+        () => view?.filters.map(filter => filter.attributes.map(attribute => attribute.id)) ?? [],
+        [view],
+    );
+
     return {
         view,
         savedView,
@@ -155,6 +218,10 @@ export const useCurrentView = () => {
         moveSort,
         setSortOrder,
         toggleSortPinned,
+        moveFilter,
+        toggleFilterPinned,
+        setFilterConfig,
+        setAvailableFilters,
         setLabel,
         setShared,
         toggleShortcut,
@@ -167,8 +234,12 @@ export const useCurrentView = () => {
         sorts,
         pinnedSorts,
         unpinnedSorts,
+        filters,
+        pinnedFilters,
+        unpinnedFilters,
         shortcuts: view?.shortcuts ?? [],
         availableColumnIds,
         availableSortPaths,
+        availableFilterPaths,
     };
 };

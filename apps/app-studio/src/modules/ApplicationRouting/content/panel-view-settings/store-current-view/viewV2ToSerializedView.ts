@@ -13,9 +13,13 @@ import {IDENTITY_COLUMN_ID} from '../tabs/tab-display/_constants';
  *   sorts on a linked attribute, `campaigns` alone sorts on the linked record identity — see core's
  *   `getAttributesFromField`). A single-attribute sort just yields that attribute id.
  *   A sort with no attribute is skipped — it has no field to sort on.
- * - `filters`: left empty for now — user filters are handled in a follow-up ticket (the viewV2 tabs are
- *   still WIP). Masked (`hidden:true`) pre-filters are NOT added here: they are injected by the caller
- *   into `currentView.filters`.
+ * - `filters`: the PINNED user filters only, in their view-defined order (= toolbar order), in the LEAN
+ *   serializable shape (`{attributes, condition, values, pinned}`). Unpinned filters are configured but
+ *   not applied (mirrors unpinned sorts / hidden display columns). User filters travel through the
+ *   controlled view again — the ADR-006 "filters out of currentView" deviation is CANCELLED (LEAVC-810):
+ *   the lean form is message-ready (an iframe panel can be driven the same way), whereas a full `UIFilter`
+ *   is not serializable. Masked (`hidden:true`) pre-filters are injected SEPARATELY by the caller (e.g.
+ *   PanelAttributeExplorer) into `currentView.filters` and merged into the records request by ExplorerV2.
  * - `shortcuts`: the view-settings tabs exposed as direct shortcuts. The API already defaults this to
  *   `['display']`, the `??` is a defensive fallback.
  */
@@ -30,6 +34,13 @@ export const viewV2ToSerializedView = (view: GetViewV2Query['viewV2']): Serializ
         .filter(sort => sort.pinned)
         .map(sort => ({field: sort.attributes.map(attribute => attribute.id).join('.'), order: sort.order}))
         .filter((sort): sort is {field: string; order: SortOrder} => sort.field !== ''),
-    filters: [],
+    filters: view.filters
+        .filter(filter => filter.pinned)
+        .map(filter => ({
+            attributes: filter.attributes.map(attribute => ({id: attribute.id, label: attribute.label})),
+            condition: filter.condition,
+            values: filter.values,
+            pinned: true,
+        })),
     shortcuts: (view.shortcuts ?? ['display']) as SerializedViewV2['shortcuts'],
 });
