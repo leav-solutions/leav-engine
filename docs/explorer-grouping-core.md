@@ -56,6 +56,23 @@ input RecordsGroupsSortInput {
 - **`listDistinctValues` n'est pas modifié** (reste l'API simple des pickers de filtre).
 - Tri par **compteur** uniquement en v1, bucket nul **toujours en dernier** (cf. ADR-007 open points).
 
+#### Contrat des filtres — identique à la query `records` de l'Explorer
+
+`filters` est **exactement** le `[RecordFilterInput]` que l'Explorer V2 passe déjà à `records`
+(`ExplorerLibraryData` dans `libs/ui/.../_queries/explorerQuery.graphql`) : un **tableau aplati**
+produit par `prepareFiltersForRequest(filters, filtersOperator, valuesList)` — il porte les
+conditions **et** les opérateurs logiques (`AND`/`OR`) et les parenthèses (`OPEN_BRACKET` /
+`CLOSE_BRACKET`) en entrées du tableau. Pas de paramètre `filtersOperator` séparé : l'opérateur est
+déjà aplati dans le tableau. `recordsGroups` réutilisant `findRecordsHelper`, la validation
+d'expression (RPN + parenthèses) et toutes les conditions sont gratuites et **identiques** au mode
+plat — un même jeu de filtres donne les mêmes records, qu'on les compte par groupe ou qu'on les liste.
+
+> ⚠️ **Composition des filtres cumulés (multi-niveaux)** : on **n'append pas** naïvement le filtre
+> d'égalité du parent à un tableau qui contient des `OR`. Il faut **parenthéser** les filtres de la
+> vue avant de les `AND`-er avec l'égalité du groupe :
+> `[OPEN_BRACKET, …filtres vue…, CLOSE_BRACKET, AND, <égalité du groupe>]`.
+> Sinon `[A, OR, B]` + `axisEQ` devient `[A, OR, B, axisEQ]` (faux). Helper à prévoir côté front.
+
 ### 2. `records` — fetch des records d'un groupe (inchangé)
 
 Filtre d'égalité cumulé à ajouter aux filtres de la vue, selon le type d'attribut du niveau :
