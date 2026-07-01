@@ -20,23 +20,28 @@ export interface IOIDCClientService {
     getLogoutUrl: (params: {userId: string | null}) => Promise<string>;
     saveOIDCTokens: (params: {userId: string; tokens: TokenSet}) => Promise<void>;
     checkTokensValidity: (params: {userId: string}) => Promise<void> | never;
+    getValidAccessToken: (params: {userId: string}) => Promise<string>;
     saveOriginalUrl: (params: {originalUrl: string; queryId: string}) => Promise<void>;
     getOriginalUrl: (queryId: string) => Promise<string>;
 }
 
 interface IDeps {
-    'core.infra.oidcClient'?: OidcClient;
-    config?: IConfig;
-    'core.infra.session'?: ISessionRepo;
+    'core.infra.oidcClient': OidcClient;
+    config: IConfig;
+    'core.infra.session': ISessionRepo;
 }
 
 export default function ({
-    'core.infra.oidcClient': oidcClient = null,
-    'core.infra.session': sessionRepo = null,
-    config = null,
-}: IDeps = {}): IOIDCClientService {
+    'core.infra.oidcClient': oidcClient,
+    'core.infra.session': sessionRepo,
+    config,
+}: IDeps): IOIDCClientService {
     const verificationKeysExpirationInMs = ms(config.auth.oidc.verificationKeysExpiration);
     const refreshTokenExpirationInMs = ms(config.auth.refreshTokenExpiration) + 1_000 * 60;
+
+    // Single-flight refresh: dedupe concurrent refreshes for the same user, so a burst of parallel
+    // requests arriving after the access token expired triggers a single refresh call to the IdP.
+    const _refreshPromises = new Map<string, Promise<TokenSet>>();
 
     const _buildAuthVerificationKeysCacheKey = (queryId: string) => `${AUTH_VERIFICATION_KEYS_HEADER}:${queryId}`;
     const _buildOriginalUrlCacheKey = (queryId: string) => `${ORIGINAL_URL_HEADER}:${queryId}`;
@@ -108,6 +113,39 @@ export default function ({
         return sessionRepo.deleteData([_buildTokensCacheKey(userId)]);
     };
 
+    const _refreshTokenSet = (userId: string, tokenSet: TokenSet): Promise<TokenSet> => {
+        const existing = _refreshPromises.get(userId);
+        if (existing) {
+            return existing;
+        }
+
+        const pending = (async () => {
+            try {
+                const newTokenSet = await oidcClient.refresh(tokenSet);
+                // We overwrite rather than delete: in-flight requests (or another core instance)
+                // may still be using the previous token set for a short period of time.
+                await _writeTokensSetByUserId(userId, newTokenSet);
+                return newTokenSet;
+            } finally {
+                _refreshPromises.delete(userId);
+            }
+        })();
+        _refreshPromises.set(userId, pending);
+
+        return pending;
+    };
+
+    // Reads the cached token set and refreshes it if the access token has expired.
+    const _ensureValidTokenSet = async (userId: string): Promise<TokenSet> => {
+        const tokenSet = await _getTokenSetByUserId(userId);
+
+        if (!tokenSet.expired()) {
+            return tokenSet;
+        }
+
+        return _refreshTokenSet(userId, tokenSet);
+    };
+
     const _writeOriginalUrlByQueryId = (queryId: string, originalUrl: string) =>
         sessionRepo.storeData({
             key: _buildOriginalUrlCacheKey(queryId),
@@ -170,18 +208,19 @@ export default function ({
         saveOIDCTokens: ({userId, tokens}) => _writeTokensSetByUserId(userId, tokens),
         checkTokensValidity: async ({userId}) => {
             try {
-                const tokenSet = await _getTokenSetByUserId(userId);
-
-                if (tokenSet.expired()) {
-                    // FIXME: Many successive calls to this function can happen in parallel, we need to refactor to improve this behavior
-                    const newTokenSet = await oidcClient.refresh(tokenSet);
-                    // We do not delete the old token set, as it might be needed for a short period of time
-                    // We had race condition on multiple refresh requests, so we need to make sure that the old token can be used
-                    await _writeTokensSetByUserId(userId, newTokenSet);
-                }
+                await _ensureValidTokenSet(userId);
             } catch {
                 throw new AuthenticationError('OIDC session expired');
             }
+        },
+        getValidAccessToken: async ({userId}) => {
+            const {access_token} = await _ensureValidTokenSet(userId);
+
+            if (!access_token) {
+                throw new AuthenticationError('Unauthorized');
+            }
+
+            return access_token;
         },
         saveOriginalUrl: ({originalUrl, queryId}) => _writeOriginalUrlByQueryId(queryId, originalUrl),
         getOriginalUrl: async queryId => {
