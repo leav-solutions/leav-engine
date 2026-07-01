@@ -24,13 +24,36 @@ treeNodeChildren(treeId, node) { list { id recordCount(library, attribute, filte
         → enfants directs + compteur cumulé par nœud, en 1 round-trip (batché)
 ```
 
+## Axes de regroupement éligibles (V1)
+
+Le backend `recordsGroups` est **agnostique du type d'attribut** : il sait énumérer les groupes
+de n'importe quel attribut (simple, lien, arbre, date…). **On ne câble aucune restriction de type
+dans le core.**
+
+La restriction V1 est **produit/front uniquement** : l'UI n'expose comme **axe de regroupement**
+que les attributs dont l'ensemble des groupes est **borné et curé** :
+
+| Axe éligible V1            | Condition                                                | Groupes                                                                                             |
+| -------------------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| **Arbre**                  | `type === tree`                                          | les nœuds de l'arbre (liste finie et curée par nature)                                              |
+| **Liste de valeurs finie** | `values_list.enable === true && allowFreeEntry !== true` | les valeurs prédéfinies de l'attribut (cf. onglet _Liste de valeurs_ de l'admin, `IValuesListConf`) |
+
+> `allowFreeEntry === true` est **exclu** : la saisie libre rendrait l'ensemble des valeurs non
+> borné, donc le nombre de groupes non maîtrisé (colonnes Kanban ingérables, compteurs peu
+> signifiants). On veut des groupes bornés et pensés métier.
+
+**Pourquoi cette limite ne coûte rien à lever plus tard** : le moteur backend étant déjà générique,
+élargir les axes en v2 (dates, labels libres, liens quelconques…) est un changement **front-only** —
+on élargit le filtre d'axes éligibles dans l'UI, **aucun rework core, aucune migration**. Cf.
+ADR-007 § _Périmètre des axes (V1)_.
+
 ## Surface backend (3 briques)
 
 ### 1. `recordsGroups` — énumération d'un niveau de groupes
 
 ```graphql
 type DistinctValuesList {
-    totalCount: Int!          # nombre total de groupes (avant pagination)
+    totalCount: Int! # nombre total de groupes (avant pagination)
     list: [GenericDistinctValues!]!
 }
 
@@ -38,21 +61,21 @@ extend type Query {
     recordsGroups(
         library: ID!
         attribute: ID!
-        filters: [RecordFilterInput]     # filtres de la vue + filtres d'égalité cumulés des niveaux parents
-        searchQuery: String              # recherche fulltext (compteurs cohérents avec la recherche active)
-        sort: RecordsGroupsSortInput     # tri des GROUPES (par compteur en v1)
-        pagination: Pagination           # pagination des GROUPES (forte cardinalité)
+        filters: [RecordFilterInput] # filtres de la vue + filtres d'égalité cumulés des niveaux parents
+        searchQuery: String # recherche fulltext (compteurs cohérents avec la recherche active)
+        sort: RecordsGroupsSortInput # tri des GROUPES (par compteur en v1)
+        pagination: Pagination # pagination des GROUPES (forte cardinalité)
         version: [ValueVersionInput]
     ): DistinctValuesList!
 }
 
 input RecordsGroupsSortInput {
-    order: SortOrder!   # asc | desc ; défaut desc (plus gros groupes d'abord)
+    order: SortOrder! # asc | desc ; défaut desc (plus gros groupes d'abord)
 }
 ```
 
 - Réutilise le `GenericDistinctValues` (`Standard`/`Link`/`Tree`) et toute l'infra `COLLECT … WITH
-  COUNT` de `listDistinctValues` : bucket nul, permissions, labels lien/arbre, libraries JOIN.
+COUNT` de `listDistinctValues` : bucket nul, permissions, labels lien/arbre, libraries JOIN.
 - **`listDistinctValues` n'est pas modifié** (reste l'API simple des pickers de filtre).
 - Tri par **compteur** uniquement en v1, bucket nul **toujours en dernier** (cf. ADR-007 open points).
 
@@ -77,12 +100,12 @@ plat — un même jeu de filtres donne les mêmes records, qu'on les compte par 
 
 Filtre d'égalité cumulé à ajouter aux filtres de la vue, selon le type d'attribut du niveau :
 
-| Type d'attribut | Filtre du groupe |
-| --------------- | ---------------- |
-| simple | `{field: attr, condition: EQUAL, value}` |
-| lien | `{field: "attr.id", condition: EQUAL, value: <recordId>}` |
+| Type d'attribut           | Filtre du groupe                                                   |
+| ------------------------- | ------------------------------------------------------------------ |
+| simple                    | `{field: attr, condition: EQUAL, value}`                           |
+| lien                      | `{field: "attr.id", condition: EQUAL, value: <recordId>}`          |
 | arbre (nœud + sous-arbre) | `{field: attr, condition: CLASSIFIED_IN, value: <nodeId>, treeId}` |
-| bucket nul | `{field: attr, condition: IS_EMPTY}` |
+| bucket nul                | `{field: attr, condition: IS_EMPTY}`                               |
 
 Pagination = `pagination: {limit, offset}` existante → « charger 10, puis voir plus » = `offset` qui avance.
 
@@ -139,6 +162,6 @@ Axe de type arbre : remplacer l'étape 1 par `treeNodeChildren(tree, root) { lis
 
 - `recordsGroups` simple/lien : compteurs + bucket nul ; `searchQuery` → compteurs cohérents ;
   pagination + tri des groupes ; **invariant** `records(filtre d'égalité du groupe).totalCount ===
-  count` du groupe.
+count` du groupe.
 - `TreeNode.recordCount` : compteur cumulé (nœud + descendants) ; **invariant** `count(parent) ===
-  Σ count(enfants) + bucket SANS CATÉGORIE`.
+Σ count(enfants) + bucket SANS CATÉGORIE`.

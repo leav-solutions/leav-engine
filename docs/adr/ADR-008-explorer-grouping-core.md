@@ -85,6 +85,29 @@ Le **multi-niveaux** est obtenu par récursion **côté consommateur** : déplie
 _n_ rappelle `recordsGroups` sur l'attribut du niveau _n+1_ en cumulant le filtre d'égalité du
 parent ; au dernier niveau, on appelle `records`.
 
+### Périmètre des axes (V1)
+
+Le regroupement **n'est pas réservé aux arbres** : le moteur `recordsGroups` groupe par
+**n'importe quel attribut** (simple, lien, arbre, date…). On refuse de câbler une restriction de
+type dans le core.
+
+La question soulevée en revue — « on pourrait grouper par label, date, ou n'importe quel attribut,
+faut-il limiter, et est-ce coûteux de changer après ? » — se tranche **au niveau produit/front, pas
+backend**. En V1, l'UI n'expose comme **axe** que les attributs à ensemble de groupes **borné et
+curé** :
+
+- attributs de type **arbre** (les groupes = les nœuds) ;
+- attributs portant une **liste de valeurs finie stricte** :
+  `values_list.enable === true && allowFreeEntry !== true` (cf. `IValuesListConf`,
+  `apps/core/src/_types/attribute.ts`).
+
+`allowFreeEntry === true` est exclu : la saisie hors liste rend l'ensemble des valeurs non borné.
+
+**Coût de levée nul côté core** (répond directement à la préoccupation de revue) : le backend étant
+déjà agnostique, élargir les axes en v2 (dates, labels libres, liens quelconques) est un changement
+**front-only** — on relâche le filtre d'axes éligibles dans l'UI, sans toucher au core ni migrer
+quoi que ce soit. Limiter maintenant n'engage donc **aucune dette backend**.
+
 ### Tri des groupes (v1)
 
 `recordsGroups` trie les groupes **par compteur** (`order: ASC | DESC`, défaut `DESC` =
@@ -111,13 +134,13 @@ record, qui n'aurait aucun sens pour l'utilisateur). Cf. _Open points_.
 
 ## Open points
 
-| Sujet | Statut |
-| ----- | ------ |
+| Sujet                                                                                                                                                                                                                                                                 | Statut                 |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
 | Matérialisation de **tous** les recordIds dans `listDistinctValues` avant le `COLLECT` (le domaine charge tous les ids filtrés en mémoire puis les passe à l'infra) — limite de scaling sur très grosses libraries. v2 : pousser le filtrage dans l'AQL du `COLLECT`. | Connu, non bloquant v1 |
-| Tri/`LIMIT` des groupes poussés dans l'AQL des 3 repos (v1 = tri + slice en mémoire dans le domaine, après le `COLLECT`). | v2 perf |
-| Tri des groupes **par libellé** (lien/arbre) — exige résolution `whoAmI` serveur. v1 = tri par compteur uniquement. | v2 |
-| Attribut **multivalué** : un record apparaît dans plusieurs groupes ⇒ Σ compteurs ≠ `totalCount`. À cadrer côté UX (message d'info ou restriction aux mono-valués). | À cadrer |
-| `TreeNode.recordCount` batché aujourd'hui en N counts parallèles dans la fonction de batch ; un `COLLECT` AQL unique par fratrie serait le vrai gain DB. | v2 perf |
+| Tri/`LIMIT` des groupes poussés dans l'AQL des 3 repos (v1 = tri + slice en mémoire dans le domaine, après le `COLLECT`).                                                                                                                                             | v2 perf                |
+| Tri des groupes **par libellé** (lien/arbre) — exige résolution `whoAmI` serveur. v1 = tri par compteur uniquement.                                                                                                                                                   | v2                     |
+| Attribut **multivalué** : un record apparaît dans plusieurs groupes ⇒ Σ compteurs ≠ `totalCount`. À cadrer côté UX (message d'info ou restriction aux mono-valués).                                                                                                   | À cadrer               |
+| `TreeNode.recordCount` batché aujourd'hui en N counts parallèles dans la fonction de batch ; un `COLLECT` AQL unique par fratrie serait le vrai gain DB.                                                                                                              | v2 perf                |
 
 ## Sources
 
