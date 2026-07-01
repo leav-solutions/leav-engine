@@ -383,15 +383,7 @@
             "displayMode": "Mode d'affichage"
         },
         "rte": {
-            "bold": "Gras",
-            "italic": "Italique",
-            "underline": "Souligné",
-            "normal": "Normal",
-            "header1": "Titre 1",
-            "header2": "Titre 2",
-            "header3": "Titre 3",
-            "ul": "Liste",
-            "ol": "Liste numéroté"
+            "markdown_help": "Mise en forme au format Markdown"
         }
     },
     "applications": {

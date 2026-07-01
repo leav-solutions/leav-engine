@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom';
 import {render, screen, waitFor} from '@testing-library/react';
+import {KitApp} from 'aristid-ds';
 import {mockAttrSimple} from '../../../../../../../../../../__mocks__/attributes';
 import MockedProviderWithFragments from '../../../../../../../../../../__mocks__/MockedProviderWithFragments';
 import * as useFormBuilderReducer from '../../formBuilderReducer/hook/useFormBuilderReducer';
@@ -14,8 +15,6 @@ vi.mock('../../../../../../../../../attributes/AttributeSelector', () => ({
         return <div>AttributeSelector</div>;
     },
 }));
-vi.mock('react-rte');
-
 const mockState = {
     ...mockInitialState,
     openSettings: true,
@@ -49,7 +48,11 @@ const renderWithAttributesMock = (children: JSX.Element) => {
         },
     ];
 
-    return render(<MockedProviderWithFragments mocks={mocks}>{children}</MockedProviderWithFragments>);
+    return render(
+        <KitApp>
+            <MockedProviderWithFragments mocks={mocks}>{children}</MockedProviderWithFragments>
+        </KitApp>,
+    );
 };
 
 describe('SettingsEdition', () => {
@@ -193,7 +196,7 @@ describe('SettingsEdition', () => {
         renderWithAttributesMock(<SettingsEdition />);
         await waitFor(() => screen.getByTestId('rte-editor-wrapper'));
 
-        expect(screen.getByTestId('rte-editor-wrapper')).toBeInTheDocument();
+        expect(screen.getByRole('textbox')).toHaveDisplayValue('**Content**');
     });
 
     test('None', async () => {

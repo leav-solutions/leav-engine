@@ -1,16 +1,10 @@
-import {useState} from 'react';
+import {KitInput, KitTypography} from 'aristid-ds';
+import {type ComponentProps} from 'react';
 import {useTranslation} from 'react-i18next';
-import RichTextEditor from 'react-rte';
-import styled from 'styled-components';
 import {useFormBuilderReducer} from '../../../../formBuilderReducer/hook/useFormBuilderReducer';
 import {type ISettingsFieldCommonProps} from '../../../../_types';
 
-const EditorWrapper = styled.div`
-    .rte-editor-toolbar select {
-        padding: 3px 25px 3px 3px;
-        background: transparent;
-    }
-`;
+const MARKDOWN_HELP_URL = 'https://commonmark.org/help/';
 
 function SettingsRTE({fieldName, onChange, disabled}: ISettingsFieldCommonProps): JSX.Element {
     const {t} = useTranslation();
@@ -18,42 +12,24 @@ function SettingsRTE({fieldName, onChange, disabled}: ISettingsFieldCommonProps)
         state: {elementInSettings},
     } = useFormBuilderReducer();
 
-    const [editorState, setEditorState] = useState(
-        RichTextEditor.createValueFromString(String(elementInSettings?.settings?.[fieldName] ?? ''), 'markdown'),
-    );
-
-    const _handleBlur = () => {
-        onChange(fieldName, editorState.toString('markdown'));
+    const _handleChange: ComponentProps<typeof KitInput.TextArea>['onChange'] = event => {
+        onChange(fieldName, event.target.value);
     };
 
     return (
-        <EditorWrapper data-testid="rte-editor-wrapper">
-            <RichTextEditor
-                value={editorState}
-                onChange={setEditorState}
-                // @ts-expect-error onBlur prop type does not match the editor signature
-                onBlur={_handleBlur}
+        <div data-testid="rte-editor-wrapper">
+            <KitInput.TextArea
+                name={fieldName}
+                id={fieldName}
                 disabled={disabled}
-                toolbarConfig={{
-                    display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN', 'HISTORY_BUTTONS'],
-                    INLINE_STYLE_BUTTONS: [
-                        {label: t('forms.rte.bold'), style: 'BOLD'},
-                        {label: t('forms.rte.italic'), style: 'ITALIC'},
-                    ],
-                    BLOCK_TYPE_DROPDOWN: [
-                        {label: t('forms.rte.normal'), style: 'unstyled', className: 'normal_text'},
-                        {label: t('forms.rte.header1'), style: 'header-one'},
-                        {label: t('forms.rte.header2'), style: 'header-two'},
-                        {label: t('forms.rte.header3'), style: 'header-three'},
-                    ],
-                    BLOCK_TYPE_BUTTONS: [
-                        {label: t('forms.rte.ul'), style: 'unordered-list-item'},
-                        {label: t('forms.rte.ol'), style: 'ordered-list-item'},
-                    ],
-                }}
-                toolbarClassName="rte-editor-toolbar"
+                autoSize={{minRows: 4}}
+                value={String(elementInSettings?.settings?.[fieldName] ?? '')}
+                onChange={_handleChange}
             />
-        </EditorWrapper>
+            <KitTypography.Link href={MARKDOWN_HELP_URL} target="_blank" rel="noopener noreferrer">
+                {t('forms.rte.markdown_help')}
+            </KitTypography.Link>
+        </div>
     );
 }
 
