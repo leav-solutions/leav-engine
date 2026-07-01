@@ -269,18 +269,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -360,8 +348,6 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -575,8 +561,6 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -870,6 +854,11 @@ export type RecordUpdateFilterInput = {
   records?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
+/**  Sort of the groups themselves (by count in v1)  */
+export type RecordsGroupsSortInput = {
+  order: SortOrder;
+};
+
 export type RecordsPagination = {
   cursor?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
@@ -961,19 +950,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
-};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1498,6 +1480,31 @@ export type GetRecordByIdTreeValuesPropertyQueryVariables = Exact<{
 
 
 export type GetRecordByIdTreeValuesPropertyQuery = { records: { list: Array<{ id: string, active: boolean, whoAmI: { library: { id: string } }, property: Array<{ id_value?: string | null, payload?: { id: string, record: { id: string, library: { id: string } } } | null }> }> } };
+
+export type RecordsGroupsQueryVariables = Exact<{
+  library: Scalars['ID']['input'];
+  attribute: Scalars['ID']['input'];
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<RecordsGroupsSortInput>;
+  pagination?: InputMaybe<Pagination>;
+}>;
+
+
+export type RecordsGroupsQuery = { recordsGroups: { totalCount: number, list: Array<
+      | { count: number, linkValue?: { id: string } | null }
+      | { count: number, standardValue?: any | null }
+      | { count: number, treeValue?: { id: string } | null }
+    > } };
+
+export type RecordsCountQueryVariables = Exact<{
+  library: Scalars['ID']['input'];
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type RecordsCountQuery = { records: { totalCount?: number | null } };
 
 export type CreateViewV2MutationVariables = Exact<{
   view: ViewV2CreateInput;
@@ -2034,6 +2041,45 @@ export const GetRecordByIdTreeValuesPropertyDocument = gql`
   }
 }
     `;
+export const RecordsGroupsDocument = gql`
+    query RecordsGroups($library: ID!, $attribute: ID!, $filters: [RecordFilterInput], $searchQuery: String, $sort: RecordsGroupsSortInput, $pagination: Pagination) {
+  recordsGroups(
+    library: $library
+    attribute: $attribute
+    filters: $filters
+    searchQuery: $searchQuery
+    sort: $sort
+    pagination: $pagination
+  ) {
+    totalCount
+    list {
+      ... on StandardDistinctValues {
+        standardValue: value
+        count
+      }
+      ... on LinkDistinctValues {
+        linkValue: value {
+          id
+        }
+        count
+      }
+      ... on TreeDistinctValues {
+        treeValue: value {
+          id
+        }
+        count
+      }
+    }
+  }
+}
+    `;
+export const RecordsCountDocument = gql`
+    query RecordsCount($library: ID!, $filters: [RecordFilterInput], $searchQuery: String) {
+  records(library: $library, filters: $filters, searchQuery: $searchQuery) {
+    totalCount
+  }
+}
+    `;
 export const CreateViewV2Document = gql`
     mutation CreateViewV2($view: ViewV2CreateInput!) {
   createViewV2(view: $view) {
@@ -2220,6 +2266,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetRecordByIdTreeValuesProperty(variables: GetRecordByIdTreeValuesPropertyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordByIdTreeValuesPropertyQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecordByIdTreeValuesPropertyQuery>({ document: GetRecordByIdTreeValuesPropertyDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordByIdTreeValuesProperty', 'query', variables);
+    },
+    RecordsGroups(variables: RecordsGroupsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<RecordsGroupsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<RecordsGroupsQuery>({ document: RecordsGroupsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'RecordsGroups', 'query', variables);
+    },
+    RecordsCount(variables: RecordsCountQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<RecordsCountQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<RecordsCountQuery>({ document: RecordsCountDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'RecordsCount', 'query', variables);
     },
     CreateViewV2(variables: CreateViewV2MutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<CreateViewV2Mutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateViewV2Mutation>({ document: CreateViewV2Document, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'CreateViewV2', 'mutation', variables);

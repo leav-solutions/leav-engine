@@ -277,8 +277,20 @@ export default function ({
                         count: Int!
                     }
 
+                    """ One level of groups (paginated), enumerated by recordsGroups """
+                    type DistinctValuesList {
+                        """ Total number of groups, before pagination """
+                        totalCount: Int!
+                        list: [GenericDistinctValues!]!
+                    }
+
+                    """ Sort of the groups themselves (by count in v1) """
+                    input RecordsGroupsSortInput {
+                        order: SortOrder!
+                    }
+
                     extend type Query {
-                        listDistinctValues(                     
+                        listDistinctValues(
                             library: ID!,
                             """ Attribute should be tree or link """
                             attribute: ID!,
@@ -286,6 +298,25 @@ export default function ({
                             recordFilters: [RecordFilterInput],
                             version: [ValueVersionInput],
                         ): [GenericDistinctValues!]
+
+                        """
+                        Enumerate one level of groups (distinct values + count) for an attribute,
+                        paginated and sorted. Fetch the records of a group with the records query,
+                        adding the group's equality filter.
+                        """
+                        recordsGroups(
+                            library: ID!,
+                            attribute: ID!,
+                            """ Filters to apply on records, same filters as for records query """
+                            filters: [RecordFilterInput],
+                            """ Fulltext search, kept consistent with the groups' counts """
+                            searchQuery: String,
+                            """ Sort of the groups (by count in v1, null bucket always last) """
+                            sort: RecordsGroupsSortInput,
+                            """ Pagination of the groups """
+                            pagination: Pagination,
+                            version: [ValueVersionInput],
+                        ): DistinctValuesList!
                     }
 
                     extend type Mutation {
@@ -337,6 +368,35 @@ export default function ({
                             });
 
                             return distinctValues.map(occ => ({...occ, attribute})); // add attribute for GenericDistinctValues.__resolveType
+                        },
+                        async recordsGroups(
+                            _,
+                            {library, attribute, filters, searchQuery, sort, pagination, version},
+                            ctx: IQueryInfos,
+                        ): Promise<{
+                            totalCount: number;
+                            list: Array<{value: IBaseValue; attribute: string; count: number}>;
+                        }> {
+                            const formattedVersion =
+                                Array.isArray(version) && version.length
+                                    ? version.reduce((allVers, vers) => {
+                                          allVers[vers.treeId] = vers.treeNodeId;
+                                          return allVers;
+                                      }, {})
+                                    : null;
+
+                            const {totalCount, list} = await valueDomain.recordsGroups({
+                                libraryId: library,
+                                attributeId: attribute,
+                                recordFilters: filters,
+                                sort,
+                                pagination,
+                                options: {version: formattedVersion, fulltextSearch: searchQuery},
+                                ctx,
+                            });
+
+                            // add attribute on each group for GenericDistinctValues.__resolveType
+                            return {totalCount, list: list.map(occ => ({...occ, attribute}))};
                         },
                     },
                     Mutation: {

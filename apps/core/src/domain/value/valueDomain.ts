@@ -13,6 +13,7 @@ import {type IValueRepo} from '../../infra/value/valueRepo';
 import {type IUtils} from '../../utils/utils';
 import {type ILogger} from '@leav/logger';
 import type * as Config from '../../_types/config';
+import {type IList, type IPaginationParams} from '../../_types/list';
 import {type IRecordFilterLight, type IRecord} from '../../_types/record';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
@@ -32,6 +33,7 @@ import {
     type IValue,
     type IValuesOptions,
     type IDistinctValue,
+    type IRecordsGroupsSort,
 } from '../../_types/value';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
@@ -170,9 +172,27 @@ export interface IValueDomain {
         libraryId: string;
         attributeId: string;
         recordFilters: IRecordFilterLight[];
-        options?: {version?: IValueVersion};
+        options?: {version?: IValueVersion; fulltextSearch?: string};
         ctx: IQueryInfos;
     }): Promise<IDistinctValue>;
+
+    recordsGroups({
+        libraryId,
+        attributeId,
+        recordFilters,
+        sort,
+        pagination,
+        options,
+        ctx,
+    }: {
+        libraryId: string;
+        attributeId: string;
+        recordFilters: IRecordFilterLight[];
+        sort?: IRecordsGroupsSort;
+        pagination?: IPaginationParams;
+        options?: {version?: IValueVersion; fulltextSearch?: string};
+        ctx: IQueryInfos;
+    }): Promise<IList<IDistinctValue[number]>>;
 }
 
 export interface IValueDomainDeps {
@@ -893,7 +913,7 @@ const valueDomain = function ({
 
     const _getRecordFieldValue = getRecordFieldValueHelper;
 
-    return {
+    const valueDomainImpl: IValueDomain = {
         getRecordFieldValue: _getRecordFieldValue,
         getValues: getValuesHelper,
         saveValue,
@@ -1106,6 +1126,7 @@ const valueDomain = function ({
                 params: {
                     library: libraryId,
                     filters: recordFilters,
+                    fulltextSearch: options?.fulltextSearch,
                     options: {version: options?.version},
                     retrieveInactive: false,
                     withCount: false,
@@ -1162,7 +1183,49 @@ const valueDomain = function ({
                 )) || distinctValues
             );
         },
+        async recordsGroups({libraryId, attributeId, recordFilters, sort, pagination, options, ctx}) {
+            // Enumerate one level of groups by reusing the listDistinctValues engine (COLLECT … WITH COUNT,
+            // null bucket, permissions, link/tree labels), then sort and paginate the groups in memory.
+            const groups = await valueDomainImpl.listDistinctValues({
+                libraryId,
+                attributeId,
+                recordFilters,
+                options,
+                ctx,
+            });
+
+            const KEEP_ORDER = 0;
+            const NULL_BUCKET_LAST = 1;
+            const NULL_BUCKET_FIRST = -1;
+            const sortOrder = sort?.order ?? 'desc';
+
+            const sortedGroups = groups.toSorted((groupA, groupB) => {
+                // The null bucket ("no value") is always kept last, whatever the sort order.
+                if (groupA.value === null && groupB.value === null) {
+                    return KEEP_ORDER;
+                }
+                if (groupA.value === null) {
+                    return NULL_BUCKET_LAST;
+                }
+                if (groupB.value === null) {
+                    return NULL_BUCKET_FIRST;
+                }
+                return sortOrder === 'asc' ? groupA.count - groupB.count : groupB.count - groupA.count;
+            });
+
+            const totalCount = sortedGroups.length;
+            // TODO: offset/limit are not guarded against negatives here; a negative offset would
+            // trigger Array.slice's from-the-end semantics and return a wrong window. Same
+            // (unvalidated) pagination behaviour as the rest of the API — not a new issue.
+            const paginatedGroups = pagination
+                ? sortedGroups.slice(pagination.offset, pagination.offset + pagination.limit)
+                : sortedGroups;
+
+            return {totalCount, list: paginatedGroups};
+        },
     };
+
+    return valueDomainImpl;
 };
 
 export default valueDomain;

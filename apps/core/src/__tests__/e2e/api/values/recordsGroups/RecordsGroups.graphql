@@ -1,0 +1,43 @@
+query RecordsGroups(
+    $library: ID!
+    $attribute: ID!
+    $filters: [RecordFilterInput]
+    $searchQuery: String
+    $sort: RecordsGroupsSortInput
+    $pagination: Pagination
+) {
+    recordsGroups(
+        library: $library
+        attribute: $attribute
+        filters: $filters
+        searchQuery: $searchQuery
+        sort: $sort
+        pagination: $pagination
+    ) {
+        totalCount
+        list {
+            ... on StandardDistinctValues {
+                standardValue: value
+                count
+            }
+            ... on LinkDistinctValues {
+                linkValue: value {
+                    id
+                }
+                count
+            }
+            ... on TreeDistinctValues {
+                treeValue: value {
+                    id
+                }
+                count
+            }
+        }
+    }
+}
+
+query RecordsCount($library: ID!, $filters: [RecordFilterInput], $searchQuery: String) {
+    records(library: $library, filters: $filters, searchQuery: $searchQuery) {
+        totalCount
+    }
+}

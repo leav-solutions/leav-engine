@@ -185,3 +185,7 @@ export type IDistinctValue<SimpleValueType extends IBaseValue = IBaseValue> = Ar
     value: SimpleValueType['payload'] | null;
     count: number;
 }>;
+
+export interface IRecordsGroupsSort {
+    order: 'asc' | 'desc';
+}
