@@ -96,7 +96,7 @@ export default function ({
             let val = await recordDomain.getRecordFieldValue({
                 library: findRecordParams.library,
                 record,
-                attributeId: attribute.id,
+                attributePath: attribute.id,
                 options: {
                     forceGetAllValues: true,
                 },

@@ -89,7 +89,7 @@ export default function ({
             let previewValues = await getRecordFieldValueHelper({
                 library: lib.id,
                 record,
-                attributeId: previewAttribute,
+                attributePath: previewAttribute,
                 options: {forceArray: true, version: ctx.version},
                 ctx,
             });
@@ -135,7 +135,7 @@ export default function ({
         const filePreviewsValue = await getRecordFieldValueHelper({
             library: fileLibraryId,
             record: previewRecord,
-            attributeId: previewsAttributeId,
+            attributePath: previewsAttributeId,
             options: {forceArray: true},
             ctx,
         });
@@ -231,7 +231,7 @@ export default function ({
             let labelValues = await getRecordFieldValueHelper({
                 library: lib.id,
                 record,
-                attributeId: conf.label,
+                attributePath: conf.label,
                 options: valuesOptions,
                 ctx,
             });
@@ -293,7 +293,7 @@ export default function ({
             let colorValues = await getRecordFieldValueHelper({
                 library: lib.id,
                 record,
-                attributeId: conf.color,
+                attributePath: conf.color,
                 options: valuesOptions,
                 ctx,
             });
@@ -353,7 +353,7 @@ export default function ({
             let subLabelValues = await getRecordFieldValueHelper({
                 library: lib.id,
                 record,
-                attributeId: conf.subLabel,
+                attributePath: conf.subLabel,
                 options: valuesOptions,
                 ctx,
             });
@@ -410,7 +410,7 @@ export default function ({
         let parentContextValues = await getRecordFieldValueHelper({
             library: lib.id,
             record,
-            attributeId: parentContext,
+            attributePath: parentContext,
             options: valuesOptions,
             ctx,
         });
@@ -460,7 +460,7 @@ export default function ({
                 const treeValues = await getRecordFieldValueHelper({
                     library: lib.id,
                     record,
-                    attributeId: conf.treeColorPreview,
+                    attributePath: conf.treeColorPreview,
                     options: valuesOptions,
                     ctx,
                 });

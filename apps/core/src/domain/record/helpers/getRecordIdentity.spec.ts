@@ -110,41 +110,43 @@ describe('getRecordIdentity', () => {
             },
         };
 
-        const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(({attributeId}) => {
-            if (attributeId === 'label_attr') {
-                return Promise.resolve([{payload: 'Label Value'}]);
-            }
-            if (attributeId === 'color_attr') {
-                return Promise.resolve([{payload: '#123456'}]);
-            }
-            if (attributeId === 'preview_attr') {
-                return Promise.resolve([
-                    {
-                        ...mockStandardValue,
-                        payload: {
-                            ...mockRecord,
-                            previews: {
+        const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi
+            .fn()
+            .mockImplementation(({attributePath: attributeId}) => {
+                if (attributeId === 'label_attr') {
+                    return Promise.resolve([{payload: 'Label Value'}]);
+                }
+                if (attributeId === 'color_attr') {
+                    return Promise.resolve([{payload: '#123456'}]);
+                }
+                if (attributeId === 'preview_attr') {
+                    return Promise.resolve([
+                        {
+                            ...mockStandardValue,
+                            payload: {
+                                ...mockRecord,
+                                previews: {
+                                    small: 'small_fake-image',
+                                    medium: 'medium_fake-image',
+                                    big: 'big_fake-image',
+                                },
+                            },
+                        },
+                    ]);
+                }
+                if (attributeId === 'previews') {
+                    return Promise.resolve([
+                        {
+                            raw_payload: {
                                 small: 'small_fake-image',
                                 medium: 'medium_fake-image',
                                 big: 'big_fake-image',
                             },
                         },
-                    },
-                ]);
-            }
-            if (attributeId === 'previews') {
-                return Promise.resolve([
-                    {
-                        raw_payload: {
-                            small: 'small_fake-image',
-                            medium: 'medium_fake-image',
-                            big: 'big_fake-image',
-                        },
-                    },
-                ]);
-            }
-            return Promise.resolve([]);
-        });
+                    ]);
+                }
+                return Promise.resolve([]);
+            });
 
         const mockAttributeDomain: Mockify<IAttributeDomain> = {
             getAttributeProperties: vi
@@ -230,7 +232,7 @@ describe('getRecordIdentity', () => {
             };
 
             const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
-                vi.fn().mockImplementation(({attributeId}) => {
+                vi.fn().mockImplementation(({attributePath: attributeId}) => {
                     if (attributeId === 'label_attr') {
                         return Promise.resolve([
                             {payload: null},
@@ -283,7 +285,7 @@ describe('getRecordIdentity', () => {
             };
 
             const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
-                vi.fn().mockImplementation(({attributeId}) => {
+                vi.fn().mockImplementation(({attributePath: attributeId}) => {
                     if (attributeId === 'label_attr') {
                         return Promise.resolve([
                             {payload: 'Override Label Value', isInherited: false},
@@ -338,7 +340,7 @@ describe('getRecordIdentity', () => {
             };
 
             const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
-                vi.fn().mockImplementation(({attributeId}) => {
+                vi.fn().mockImplementation(({attributePath: attributeId}) => {
                     if (attributeId === 'subLabel_attr') {
                         return Promise.resolve([
                             {payload: null},
@@ -391,7 +393,7 @@ describe('getRecordIdentity', () => {
             };
 
             const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
-                vi.fn().mockImplementation(({attributeId}) => {
+                vi.fn().mockImplementation(({attributePath: attributeId}) => {
                     if (attributeId === 'subLabel_attr') {
                         return Promise.resolve([
                             {payload: 'Override SubLabel Value', isInherited: false},
@@ -480,7 +482,7 @@ describe('getRecordIdentity', () => {
             };
 
             const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
-                vi.fn().mockImplementation(({attributeId}) => {
+                vi.fn().mockImplementation(({attributePath: attributeId}) => {
                     if (attributeId === 'color_attr') {
                         return Promise.resolve([{payload: null}, {payload: '#ff0000', isInherited: true}]);
                     }
@@ -530,7 +532,7 @@ describe('getRecordIdentity', () => {
             };
 
             const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
-                vi.fn().mockImplementation(({attributeId}) => {
+                vi.fn().mockImplementation(({attributePath: attributeId}) => {
                     if (attributeId === 'color_attr') {
                         return Promise.resolve([
                             {payload: '#ffff00', isInherited: false},
@@ -597,7 +599,7 @@ describe('getRecordIdentity', () => {
             it('should return a string when date range attribute is present and not null', async () => {
                 const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi
                     .fn()
-                    .mockImplementation(({attributeId}) => {
+                    .mockImplementation(({attributePath: attributeId}) => {
                         if (attributeId === 'unused_content') {
                             return Promise.resolve([
                                 {
@@ -638,7 +640,7 @@ describe('getRecordIdentity', () => {
             it('should return null when date range attribute is present but null', async () => {
                 const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi
                     .fn()
-                    .mockImplementation(({attributeId}) => {
+                    .mockImplementation(({attributePath: attributeId}) => {
                         if (attributeId === 'unused_content') {
                             return Promise.resolve([{value: null}]);
                         }
@@ -736,7 +738,7 @@ describe('getRecordIdentity', () => {
 
             const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi
                 .fn()
-                .mockImplementation(({attributeId}) =>
+                .mockImplementation(({attributePath: attributeId}) =>
                     // Simulates ACCESS_ATTRIBUTE denied — returns empty array silently
                     Promise.resolve([]),
                 );
@@ -795,7 +797,7 @@ describe('getRecordIdentity', () => {
             };
 
             const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
-                vi.fn().mockImplementation(({attributeId}) => {
+                vi.fn().mockImplementation(({attributePath: attributeId}) => {
                     if (attributeId === 'parent_link_attr') {
                         return Promise.resolve([{payload: parentRecord}]);
                     }
@@ -892,7 +894,7 @@ describe('getRecordIdentity', () => {
             };
 
             const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
-                vi.fn().mockImplementation(({library, attributeId}) => {
+                vi.fn().mockImplementation(({library, attributePath: attributeId}) => {
                     if (library === 'child_lib' && attributeId === 'parent_link_attr') {
                         return Promise.resolve([{payload: parentRecord}]);
                     }
@@ -1059,7 +1061,7 @@ describe('getRecordIdentity', () => {
             };
 
             const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(
-                vi.fn().mockImplementation(({attributeId}) => {
+                vi.fn().mockImplementation(({attributePath: attributeId}) => {
                     if (attributeId === 'parent_link_attr') {
                         return Promise.resolve([{payload: parentRecord}]);
                     }

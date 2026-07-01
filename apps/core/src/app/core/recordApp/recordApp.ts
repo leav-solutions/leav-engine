@@ -34,6 +34,7 @@ import {type IIndexationManagerApp} from '../indexationManagerApp';
 import {type ICreateRecordParams, type IRecordsQueryVariables} from './_types';
 import {type IFindRecordParams} from '../../../domain/record/_types';
 import {type IAttributeDomain} from '../../../domain/attribute/attributeDomain';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 export type ICoreRecordApp = IGraphqlAppModule;
 
@@ -69,7 +70,7 @@ export default function ({
             return await recordDomain.getRecordFieldValue({
                 library: parent.library,
                 record: parent,
-                attributeId,
+                attributePath: attributeId,
                 options: {
                     version: ctx.version,
                     forceArray: true,
@@ -529,7 +530,7 @@ export default function ({
                             (
                                 await recordDomain.getRecordFieldValue({
                                     record: parent,
-                                    attributeId: 'active',
+                                    attributePath: CommonAttributes.ACTIVE,
                                     library: parent.library,
                                     ctx,
                                 })

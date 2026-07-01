@@ -149,7 +149,7 @@ export default function ({
                                     await valueDomain.getRecordFieldValue({
                                         library: libraryId,
                                         record,
-                                        attributeId,
+                                        attributePath: attributeId,
                                         ctx,
                                     })
                                 )[0] as ITreeValue;

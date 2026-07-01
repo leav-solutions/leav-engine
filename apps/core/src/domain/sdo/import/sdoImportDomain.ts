@@ -357,7 +357,7 @@ export default function ({
             ? await recordDomain.getRecordFieldValue({
                   record,
                   library: record.library,
-                  attributeId: sdoAttr.leavAttributeId,
+                  attributePath: sdoAttr.leavAttributeId,
                   ctx,
               })
             : [];
@@ -425,7 +425,7 @@ export default function ({
             ? await recordDomain.getRecordFieldValue({
                   record,
                   library: record.library,
-                  attributeId: sdoAttr.leavAttributeId,
+                  attributePath: sdoAttr.leavAttributeId,
                   ctx,
               })
             : [];
@@ -520,7 +520,7 @@ export default function ({
             ? ((await recordDomain.getRecordFieldValue({
                   record,
                   library: record.library,
-                  attributeId: sdoAttr.leavAttributeId,
+                  attributePath: sdoAttr.leavAttributeId,
                   ctx,
               })) as ITreeValue[])
             : [];

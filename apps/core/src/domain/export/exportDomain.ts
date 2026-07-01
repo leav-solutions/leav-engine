@@ -146,7 +146,7 @@ export default function ({
         let res = await recordDomain.getRecordFieldValue({
             library: record.library,
             record,
-            attributeId: attribute.id,
+            attributePath: attribute.id,
             ctx,
         });
 
@@ -216,7 +216,7 @@ export default function ({
                 recordDomain.getRecordFieldValue({
                     library: libraryId,
                     record: {id: recordId},
-                    attributeId: nestedAttribute[0],
+                    attributePath: nestedAttribute[0],
                     ctx,
                 }),
             ),

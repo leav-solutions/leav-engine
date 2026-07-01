@@ -5,7 +5,8 @@ import {type GetValuesHelper} from './getValues';
 import {type IRecordRepo} from '../../../infra/record/recordRepo';
 import {type ToAny} from '../../../utils/utils';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {type IValue} from '../../../_types/value';
+import {type IValueVersion, type IValue} from '../../../_types/value';
+import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {mockAttrAdv, mockAttrSimple, mockAttrSimpleLink} from '../../../__tests__/mocks/attribute';
 import {mockRecord} from '../../../__tests__/mocks/record';
 import getRecordFieldValueFactory from './getRecordFieldValue';
@@ -88,7 +89,7 @@ describe('getRecordFieldValue', () => {
             getRecordFieldValue({
                 library: 'test_lib',
                 record: mockRecordWithValues,
-                attributeId: 'unknown_attr',
+                attributePath: 'unknown_attr',
                 ctx,
             }),
         ).rejects.toThrow();
@@ -106,7 +107,7 @@ describe('getRecordFieldValue', () => {
         const values = await getRecordFieldValue({
             library: 'test_lib',
             record: mockRecordWithValues,
-            attributeId: 'simple_attr',
+            attributePath: 'simple_attr',
             ctx,
         });
 
@@ -120,7 +121,7 @@ describe('getRecordFieldValue', () => {
         const values = await getRecordFieldValue({
             library: 'test_lib',
             record,
-            attributeId: 'simple_attr',
+            attributePath: 'simple_attr',
             ctx,
         });
 
@@ -144,7 +145,7 @@ describe('getRecordFieldValue', () => {
         const values = await getRecordFieldValue({
             library: 'test_lib',
             record: mockRecordWithValues,
-            attributeId: 'advanced_attr',
+            attributePath: 'advanced_attr',
             ctx,
         });
 
@@ -165,7 +166,7 @@ describe('getRecordFieldValue', () => {
         const values = await getRecordFieldValue({
             library: 'test_lib',
             record: mockRecordWithValues,
-            attributeId: 'advanced_attr',
+            attributePath: 'advanced_attr',
             ctx,
         });
 
@@ -204,7 +205,7 @@ describe('getRecordFieldValue', () => {
         const values = (await getRecordFieldValue({
             library: 'test_lib',
             record,
-            attributeId: 'link_attr',
+            attributePath: 'link_attr',
             ctx,
         })) as IValue[];
 
@@ -235,7 +236,7 @@ describe('getRecordFieldValue', () => {
         const values = await getRecordFieldValue({
             library: 'test_lib',
             record,
-            attributeId: 'link_attr',
+            attributePath: 'link_attr',
             ctx,
         });
 
@@ -266,11 +267,269 @@ describe('getRecordFieldValue', () => {
         const values = await getRecordFieldValue({
             library: 'test_lib',
             record,
-            attributeId: 'simple_attr',
+            attributePath: 'simple_attr',
             ctx,
         });
 
         expect(mockRunActionsListWithResult).toHaveBeenCalled();
         expect(values[0].payload).toBe('formatted_value');
+    });
+
+    describe('deep attributePath', () => {
+        const linkAttr = {...mockAttrSimpleLink, id: 'link_attr', linked_library: 'users'};
+        const loginAttr = {...mockAttrSimple, id: 'login'};
+
+        const makeDeepAttrDomain = (): IAttributeDomain =>
+            ({
+                getLibraryAttributes: vi.fn(async (library: string) =>
+                    library === 'users' ? [loginAttr] : mockLibraryAttributes,
+                ),
+                getAttributeProperties: vi.fn(async ({id}: {id: string}) => {
+                    if (id === 'link_attr') {
+                        return linkAttr;
+                    }
+                    if (id === 'login') {
+                        return loginAttr;
+                    }
+                    return {...mockAttrSimple, id};
+                }),
+            }) as unknown as IAttributeDomain;
+
+        test('Should traverse a SIMPLE_LINK path and return the terminal attribute values', async () => {
+            const getRecordFieldValue = makeHelper({
+                'core.domain.attribute': makeDeepAttrDomain(),
+                'core.domain.value.helpers.getValues': global.__mockPromise([
+                    {payload: 'john'},
+                ]) as unknown as GetValuesHelper,
+            });
+
+            const record = {...mockRecordWithValues, link_attr: '42'};
+            const values = await getRecordFieldValue({
+                library: 'test_lib',
+                record,
+                attributePath: 'link_attr.login',
+                ctx,
+            });
+
+            expect(values).toHaveLength(1);
+            expect(values[0].payload).toBe('john');
+        });
+
+        test('Should flatten values across a multivalued link', async () => {
+            const getRecordFieldValue = makeHelper({
+                'core.domain.attribute': makeDeepAttrDomain(),
+                'core.domain.value.helpers.getValues': vi.fn(async ({attribute, recordId}) => {
+                    if (attribute === 'link_attr') {
+                        return [{payload: {id: '42'}}, {payload: {id: '43'}}];
+                    }
+                    if (attribute === 'login') {
+                        return [{payload: `login_${recordId}`}];
+                    }
+                    return [];
+                }) as unknown as GetValuesHelper,
+            });
+
+            const values = await getRecordFieldValue({
+                library: 'test_lib',
+                record: mockRecordWithValues,
+                attributePath: 'link_attr.login',
+                ctx,
+            });
+
+            expect(values.map(v => v.payload)).toEqual(['login_42', 'login_43']);
+        });
+
+        test('Should return empty array when permission is denied on an intermediate hop', async () => {
+            const getRecordFieldValue = makeHelper({
+                'core.domain.attribute': makeDeepAttrDomain(),
+                'core.domain.permission.recordAttribute': {
+                    getRecordAttributePermission: vi.fn(async (_action, attributeId) => attributeId !== 'login'),
+                } as unknown as IRecordAttributePermissionDomain,
+                'core.domain.value.helpers.getValues': global.__mockPromise([
+                    {payload: 'john'},
+                ]) as unknown as GetValuesHelper,
+            });
+
+            const record = {...mockRecordWithValues, link_attr: '42'};
+            const values = await getRecordFieldValue({
+                library: 'test_lib',
+                record,
+                attributePath: 'link_attr.login',
+                ctx,
+            });
+
+            expect(values).toEqual([]);
+        });
+
+        test('Should throw when traversing into a non-link, non-extended attribute', async () => {
+            const getRecordFieldValue = makeHelper();
+
+            const record = {...mockRecordWithValues, simple_attr: 'my_value'};
+            await expect(
+                getRecordFieldValue({
+                    library: 'test_lib',
+                    record,
+                    attributePath: 'simple_attr.sub',
+                    ctx,
+                }),
+            ).rejects.toThrow();
+        });
+
+        test('Should navigate sub-fields of an EXTENDED attribute', async () => {
+            const extAttr = {...mockAttrSimple, id: 'ext_attr', format: AttributeFormats.EXTENDED};
+
+            const getRecordFieldValue = makeHelper({
+                'core.domain.attribute': {
+                    getLibraryAttributes: global.__mockPromise([extAttr]),
+                    getAttributeProperties: global.__mockPromise(extAttr),
+                } as unknown as IAttributeDomain,
+            });
+
+            const record = {...mockRecordWithValues, ext_attr: '{"a":{"b":"deep"}}'};
+            const values = await getRecordFieldValue({
+                library: 'test_lib',
+                record,
+                attributePath: 'ext_attr.a.b',
+                ctx,
+            });
+
+            expect(values).toHaveLength(1);
+            expect(values[0].payload).toBe('deep');
+        });
+
+        test('Should navigate "from" / "to" sub-fields of a DATE_RANGE attribute', async () => {
+            const dateRangeAttr = {...mockAttrSimple, id: 'date_range_attr', format: AttributeFormats.DATE_RANGE};
+
+            const getRecordFieldValue = makeHelper({
+                'core.domain.attribute': {
+                    getLibraryAttributes: global.__mockPromise([dateRangeAttr]),
+                    getAttributeProperties: global.__mockPromise(dateRangeAttr),
+                } as unknown as IAttributeDomain,
+            });
+
+            const record = {...mockRecordWithValues, date_range_attr: {from: 'F', to: 'T'}};
+
+            const fromValues = await getRecordFieldValue({
+                library: 'test_lib',
+                record,
+                attributePath: 'date_range_attr.from',
+                ctx,
+            });
+            expect(fromValues).toHaveLength(1);
+            expect(fromValues[0].payload).toBe('F');
+
+            const toValues = await getRecordFieldValue({
+                library: 'test_lib',
+                record,
+                attributePath: 'date_range_attr.to',
+                ctx,
+            });
+            expect(toValues[0].payload).toBe('T');
+        });
+
+        test('Should propagate options (version) through each hop', async () => {
+            const version: IValueVersion = {some_tree: 'node1'};
+            const mockGetValues = vi.fn(async () => [{payload: 'john'}]);
+
+            const getRecordFieldValue = makeHelper({
+                'core.domain.attribute': makeDeepAttrDomain(),
+                'core.domain.value.helpers.getValues': mockGetValues as unknown as GetValuesHelper,
+            });
+
+            const record = {...mockRecordWithValues, link_attr: '42'};
+            await getRecordFieldValue({
+                library: 'test_lib',
+                record,
+                attributePath: 'link_attr.login',
+                options: {version},
+                ctx,
+            });
+
+            expect(mockGetValues).toHaveBeenCalledWith(expect.objectContaining({options: {version}}));
+        });
+
+        const treeAttr = {...mockAttrSimple, id: 'tree_attr', type: AttributeTypes.TREE, linked_tree: 'some_tree'};
+        const labelAttr = {...mockAttrSimple, id: 'label'};
+
+        const makeTreeHelper = (treeValues: IValue[], libraryAttributesByLib: Record<string, unknown[]>) =>
+            makeHelper({
+                'core.domain.attribute': {
+                    getLibraryAttributes: vi.fn(async (library: string) => libraryAttributesByLib[library] ?? []),
+                    getAttributeProperties: vi.fn(async ({id}: {id: string}) =>
+                        id === 'tree_attr' ? treeAttr : labelAttr,
+                    ),
+                } as unknown as IAttributeDomain,
+                'core.domain.value.helpers.getValues': vi.fn(async ({attribute}) => {
+                    if (attribute === 'tree_attr') {
+                        return treeValues;
+                    }
+                    if (attribute === 'label') {
+                        return [{payload: 'tree label'}];
+                    }
+                    return [];
+                }) as unknown as GetValuesHelper,
+            });
+
+        test("Should traverse a TREE path reading the attribute on the node's linked record", async () => {
+            const getRecordFieldValue = makeTreeHelper(
+                [{payload: {id: 'node1', record: {id: 'r1', library: 'tree_lib'}}}],
+                {
+                    test_lib: [treeAttr],
+                    tree_lib: [labelAttr],
+                },
+            );
+
+            const values = await getRecordFieldValue({
+                library: 'test_lib',
+                record: mockRecordWithValues,
+                attributePath: 'tree_attr.label',
+                ctx,
+            });
+
+            expect(values).toHaveLength(1);
+            expect(values[0].payload).toBe('tree label');
+        });
+
+        test('Should return empty array when the node record library does not have the attribute', async () => {
+            const getRecordFieldValue = makeTreeHelper(
+                [{payload: {id: 'node1', record: {id: 'r1', library: 'tree_lib'}}}],
+                {
+                    test_lib: [treeAttr],
+                    tree_lib: [], // library has no 'label' attribute → recursion throws, caught → []
+                },
+            );
+
+            const values = await getRecordFieldValue({
+                library: 'test_lib',
+                record: mockRecordWithValues,
+                attributePath: 'tree_attr.label',
+                ctx,
+            });
+
+            expect(values).toEqual([]);
+        });
+
+        test('Should flatten only readable values across a multivalued tree (mixed libraries)', async () => {
+            const getRecordFieldValue = makeTreeHelper(
+                [
+                    {payload: {id: 'node1', record: {id: 'r1', library: 'tree_lib'}}},
+                    {payload: {id: 'node2', record: {id: 'r2', library: 'other_lib'}}},
+                ],
+                {
+                    test_lib: [treeAttr],
+                    tree_lib: [labelAttr],
+                    other_lib: [], // no 'label' attribute → skipped
+                },
+            );
+
+            const values = await getRecordFieldValue({
+                library: 'test_lib',
+                record: mockRecordWithValues,
+                attributePath: 'tree_attr.label',
+                ctx,
+            });
+
+            expect(values.map(v => v.payload)).toEqual(['tree label']);
+        });
     });
 });

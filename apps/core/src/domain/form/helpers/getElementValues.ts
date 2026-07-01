@@ -28,7 +28,7 @@ export const getElementValues = async (params: {
     try {
         const values = await deps['core.domain.record'].getRecordFieldValue({
             library: libraryId,
-            attributeId: element.settings.attribute,
+            attributePath: element.settings.attribute,
             record: {
                 id: recordId,
                 library: libraryId,
