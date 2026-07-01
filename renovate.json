@@ -4,7 +4,7 @@
     "baseBranchPatterns": ["develop"],
     "prHourlyLimit": 5,
     "dependencyDashboard": true,
-    "ignoreDeps": ["@types/react-rte", "nwsapi"],
+    "ignoreDeps": ["nwsapi"],
     "lockFileMaintenance": {
         "enabled": true
     },
