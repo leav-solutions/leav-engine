@@ -1,10 +1,10 @@
-import {type FunctionComponent, useContext, useEffect} from 'react';
+import {type FunctionComponent, type PropsWithChildren, useContext, useEffect} from 'react';
 import {localizedTranslation} from '@leav/utils';
 import {LangContext} from '@leav/ui';
 import {useGetApplicationDataByEndpointQuery} from '../../../__generated__';
 import {APP_ENDPOINT} from '../../../constants';
 
-export const InitDocumentTitle: FunctionComponent = ({children}) => {
+export const InitDocumentTitle: FunctionComponent<PropsWithChildren> = ({children}) => {
     const {lang} = useContext(LangContext);
 
     const {data: applicationData} = useGetApplicationDataByEndpointQuery({

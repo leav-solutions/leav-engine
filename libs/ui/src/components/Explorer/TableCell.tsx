@@ -183,7 +183,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                                     <KitAvatar
                                         key={index}
                                         label={String(value.linkPayload?.whoAmI.label)}
-                                        src={value.linkPayload?.whoAmI.preview?.small}
+                                        src={value.linkPayload?.whoAmI.preview?.small as string}
                                         color="primary"
                                         secondaryColorInvert
                                     />
@@ -222,7 +222,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                                     <KitAvatar
                                         key={index}
                                         label={String(value.treePayload?.record.whoAmI.label)}
-                                        src={value.treePayload?.record.whoAmI.preview?.small}
+                                        src={value.treePayload?.record.whoAmI.preview?.small as string}
                                         color="primary"
                                         secondaryColorInvert
                                     />

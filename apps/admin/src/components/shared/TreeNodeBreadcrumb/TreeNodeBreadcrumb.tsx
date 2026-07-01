@@ -1,4 +1,4 @@
-import {Breadcrumb, type BreadcrumbSectionProps} from 'semantic-ui-react';
+import {Breadcrumb, type BreadcrumbSectionProps, type SemanticShorthandCollection} from 'semantic-ui-react';
 import {type RecordIdentity_whoAmI} from '../../../_gqlTypes/RecordIdentity';
 import {type ITreeLinkElement} from '../../../_types/records';
 import PathPart from './PathPart';
@@ -42,7 +42,12 @@ function TreeNodeBreadcrumb({element, actions}: ITreeNodeBreadcrumbProps): JSX.E
         });
     }
 
-    return <Breadcrumb sections={breadcrumbSections} icon="right angle" />;
+    return (
+        <Breadcrumb
+            sections={breadcrumbSections as SemanticShorthandCollection<BreadcrumbSectionProps>}
+            icon="right angle"
+        />
+    );
 }
 
 export default TreeNodeBreadcrumb;

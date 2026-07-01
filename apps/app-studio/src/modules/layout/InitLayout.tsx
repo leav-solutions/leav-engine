@@ -1,8 +1,8 @@
-import {type FunctionComponent, useRef} from 'react';
+import {type FunctionComponent, type PropsWithChildren, useRef} from 'react';
 import {Explorer} from '@leav/ui';
 import {RootLayout} from './RootLayout';
 
-export const InitLayout: FunctionComponent = ({children}) => {
+export const InitLayout: FunctionComponent<PropsWithChildren> = ({children}) => {
     const explorerContainerRef = useRef<HTMLDivElement>(null);
 
     return (

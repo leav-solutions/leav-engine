@@ -1,11 +1,11 @@
-import {type FunctionComponent, useCallback, useMemo, useState} from 'react';
+import {type FunctionComponent, type PropsWithChildren, useCallback, useMemo, useState} from 'react';
 import {
     EditRecordModal,
     type IEditRecordModalProps,
 } from '_ui/components/RecordEdition/EditRecordModal/EditRecordModal';
 import {type IEditRecordContextType, EditRecordModalContext} from './EditRecordModalContext';
 
-export const EditRecordModalProvider: FunctionComponent = ({children}) => {
+export const EditRecordModalProvider: FunctionComponent<PropsWithChildren> = ({children}) => {
     const [editRecordModalProps, setEditRecordModalProps] = useState<IEditRecordModalProps | null>(null);
 
     const _onClose = useCallback(() => {

@@ -1,10 +1,10 @@
-import {type FunctionComponent} from 'react';
+import {type FunctionComponent, type PropsWithChildren} from 'react';
 import {generatePath, Navigate, useParams} from 'react-router-dom';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {AbsolutePaths, RelativePaths} from '../router/paths';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 
-export const RedirectCreationFormPanelToPopup: FunctionComponent = ({children}) => {
+export const RedirectCreationFormPanelToPopup: FunctionComponent<PropsWithChildren> = ({children}) => {
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
     const {currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});

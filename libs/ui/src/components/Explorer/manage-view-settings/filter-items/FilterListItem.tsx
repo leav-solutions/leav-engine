@@ -1,4 +1,4 @@
-import {type ComponentProps, type FunctionComponent} from 'react';
+import {type ComponentProps, type FunctionComponent, type PropsWithChildren} from 'react';
 import styled from 'styled-components';
 import {KitButton} from 'aristid-ds';
 import {useSortable} from '@dnd-kit/sortable';
@@ -32,7 +32,7 @@ interface IActiveFilterListItemProps {
     visibilityButtonProps?: Pick<ComponentProps<typeof KitButton>, 'onClick' | 'icon' | 'title'>;
 }
 
-export const FilterListItem: FunctionComponent<IActiveFilterListItemProps> = ({
+export const FilterListItem: FunctionComponent<PropsWithChildren<IActiveFilterListItemProps>> = ({
     attributeId,
     isDraggable,
     visibilityButtonProps,

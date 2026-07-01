@@ -36,7 +36,7 @@ const SelectTreeNodeModal = ({open, tree, onSelect, onClose}: ISelectTreeNodeMod
     }
 
     if (error) {
-        return <p>ERROR {error}</p>;
+        return <p>ERROR {error.message}</p>;
     }
 
     if (!data || !data.trees || !data.trees.list.length) {

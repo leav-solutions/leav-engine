@@ -189,7 +189,7 @@ function FormElementWrapper({element, index, dispatch, state}: IFieldWrapperProp
     }
 
     if (error) {
-        return <div>ERROR {error}</div>;
+        return <div>ERROR {error.message}</div>;
     }
 
     const _handleMouseEnter = () => setHover(true);

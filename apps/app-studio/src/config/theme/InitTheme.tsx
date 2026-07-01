@@ -1,4 +1,4 @@
-import {type FunctionComponent, useContext} from 'react';
+import {type FunctionComponent, type PropsWithChildren, useContext} from 'react';
 import {KitApp, KitModal} from 'aristid-ds';
 import {LangContext} from '@leav/ui';
 import {library} from '@fortawesome/fontawesome-svg-core';
@@ -10,7 +10,7 @@ import './reset.css';
 
 KitModal.setAppElement(document.body);
 
-export const InitTheme: FunctionComponent = ({children}) => {
+export const InitTheme: FunctionComponent<PropsWithChildren> = ({children}) => {
     const {lang} = useContext(LangContext);
 
     // Add icons to the library so they can be used with string notation (for example in the WorkspacesNavigationMenu)
