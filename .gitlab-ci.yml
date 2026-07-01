@@ -1034,13 +1034,6 @@ build-docker-mcp-runtime:
       allow_failure: true # To make job optional in MR pipelines
       when: manual
 
-build-npm-leav-core-types:
-  <<: *build_npm
-  variables:
-    PKG: "@leav/core-types"
-    FOCUS: core
-    PATH_CHANGES: apps/core/**/* # libs/core-types is a projection of apps/core
-
 build-npm-leav-core-publish:
   <<: *build_npm
   variables:
