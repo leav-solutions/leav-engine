@@ -4,6 +4,7 @@ import Joi from 'joi';
 import {ErrorTypes} from '../../_types/errors';
 import LeavError from '../../errors/LeavError';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type ITreeDomain} from '../tree/treeDomain';
 import {type IConfig} from '../../_types/config';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 
@@ -40,12 +41,14 @@ export interface IExportProfileDomain {
 export interface IExportProfileDomainDeps {
     'core.domain.library': ILibraryDomain;
     'core.domain.attribute': IAttributeDomain;
+    'core.domain.tree': ITreeDomain;
     config: IConfig;
 }
 
 export default function ({
     'core.domain.library': libraryDomain,
     'core.domain.attribute': attributeDomain,
+    'core.domain.tree': treeDomain,
     config,
 }: IExportProfileDomainDeps): IExportProfileDomain {
     const columnSchema = Joi.object({
@@ -100,25 +103,55 @@ export default function ({
             );
         }
 
-        // If there are more segments, we need to follow the link
+        // If there are more segments, we need to keep traversing according to the attribute type.
         if (remainingSegments.length > 0) {
-            if (![AttributeTypes.SIMPLE_LINK, AttributeTypes.ADVANCED_LINK].includes(attribute.type)) {
+            // Link: follow the linked library and validate the rest there.
+            if ([AttributeTypes.SIMPLE_LINK, AttributeTypes.ADVANCED_LINK].includes(attribute.type)) {
+                const linkedLibraryId = attribute.linked_library;
+                if (!linkedLibraryId) {
+                    throw new LeavError(
+                        ErrorTypes.CUSTOM_CONFIG_ERROR,
+                        `Export profile column attribute "${fullAttributePath}" is invalid: "${currentSegment}" has no linked library`,
+                    );
+                }
+
+                const linkedLibraryAttributes = await attributeDomain.getLibraryAttributes(linkedLibraryId, ctx);
+                return _validateNestedAttribute(remainingSegments, fullAttributePath, linkedLibraryAttributes, ctx);
+            }
+
+            // Tree: the target library is dynamic (a node can link records from several libraries, and the
+            // path carries no library id — same semantics as getRecordFieldValue). The remaining path is
+            // valid as soon as it resolves in at least one of the tree's libraries.
+            if (attribute.type === AttributeTypes.TREE) {
+                const treeProps = await treeDomain.getTreeProperties(attribute.linked_tree, ctx);
+                const treeLibraryIds = Object.keys(treeProps?.libraries ?? {});
+
+                for (const treeLibraryId of treeLibraryIds) {
+                    const treeLibraryAttributes = await attributeDomain.getLibraryAttributes(treeLibraryId, ctx);
+                    try {
+                        return await _validateNestedAttribute(
+                            remainingSegments,
+                            fullAttributePath,
+                            treeLibraryAttributes,
+                            ctx,
+                        );
+                    } catch {
+                        // Not valid in this library, try the next one linked to the tree.
+                    }
+                }
+
                 throw new LeavError(
                     ErrorTypes.CUSTOM_CONFIG_ERROR,
-                    `Export profile column attribute "${fullAttributePath}" is invalid: "${currentSegment}" is not a link attribute`,
+                    `Export profile column attribute "${fullAttributePath}" is invalid: "${remainingSegments[0]}" not found in any library linked to tree "${attribute.linked_tree}"`,
                 );
             }
 
-            const linkedLibraryId = attribute.linked_library;
-            if (!linkedLibraryId) {
-                throw new LeavError(
-                    ErrorTypes.CUSTOM_CONFIG_ERROR,
-                    `Export profile column attribute "${fullAttributePath}" is invalid: "${currentSegment}" has no linked library`,
-                );
-            }
-
-            const linkedLibraryAttributes = await attributeDomain.getLibraryAttributes(linkedLibraryId, ctx);
-            return _validateNestedAttribute(remainingSegments, fullAttributePath, linkedLibraryAttributes, ctx);
+            // TODO: extended/date_range sub-paths (e.g. "extended_attr.subfield") are resolvable by
+            // getRecordFieldValue but intentionally not accepted here yet - left for a follow-up.
+            throw new LeavError(
+                ErrorTypes.CUSTOM_CONFIG_ERROR,
+                `Export profile column attribute "${fullAttributePath}" is invalid: "${currentSegment}" is not a link or tree attribute`,
+            );
         }
 
         return attribute;

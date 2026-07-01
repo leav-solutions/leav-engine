@@ -8,6 +8,7 @@ import exportProfileDomain, {
 } from './exportProfileDomain';
 import {type IConfig} from '../../_types/config';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type ITreeDomain} from '../tree/treeDomain';
 
 vi.mock('@leav/logger', () => ({
     logger: mockLogger,
@@ -47,9 +48,14 @@ describe('exportProfileDomain', () => {
         getLibraryAttributes: vi.fn(),
     };
 
+    const mockTreeDomain: Mockify<ITreeDomain> = {
+        getTreeProperties: vi.fn(),
+    };
+
     const deps: IExportProfileDomainDeps = {
         'core.domain.library': mockLibraryDomain as ILibraryDomain,
         'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+        'core.domain.tree': mockTreeDomain as ITreeDomain,
         config: {} as IConfig,
     };
     const domain: IExportProfileDomain = exportProfileDomain(deps);
@@ -355,7 +361,78 @@ describe('exportProfileDomain', () => {
                 ]);
 
                 await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
-                    'Export profile column attribute "name.something" is invalid: "name" is not a link attribute',
+                    'Export profile column attribute "name.something" is invalid: "name" is not a link or tree attribute',
+                );
+            });
+
+            it('should validate nested attributes through a tree attribute (any of its libraries)', async () => {
+                const configWithTreeAttr: IExportProfileConfig = {
+                    defaultProfile: 'Profile 1',
+                    profiles: [
+                        {
+                            label: 'Profile 1',
+                            columns: [{columnLabel: 'Group uuid', attribute: 'group_tree.uuid'}],
+                        },
+                    ],
+                };
+
+                mockLibraryDomain.getLibraryProperties.mockResolvedValue({
+                    id: 'test_library',
+                    settings: {export: configWithTreeAttr},
+                });
+
+                mockAttributeDomain.getLibraryAttributes
+                    .mockResolvedValueOnce([
+                        {id: 'group_tree', label: {fr: 'Groupes'}, type: 'tree', linked_tree: 'groups_tree'},
+                    ])
+                    // users_groups library (linked to the tree) has the "uuid" base attribute
+                    .mockResolvedValueOnce([{id: 'uuid', label: {fr: 'UUID'}, type: 'simple'}]);
+
+                mockTreeDomain.getTreeProperties.mockResolvedValue({
+                    id: 'groups_tree',
+                    libraries: {
+                        users_groups: {allowedAtRoot: true, allowMultiplePositions: false, allowedChildren: []},
+                    },
+                });
+
+                const result = await domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx);
+
+                expect(result).toEqual([{columnLabel: 'Group uuid', attribute: 'group_tree.uuid'}]);
+                expect(mockTreeDomain.getTreeProperties).toHaveBeenCalledWith('groups_tree', mockCtx);
+                expect(mockAttributeDomain.getLibraryAttributes).toHaveBeenNthCalledWith(2, 'users_groups', mockCtx);
+            });
+
+            it('should throw when tree sub-attribute exists in none of the tree libraries', async () => {
+                const configWithInvalidTree: IExportProfileConfig = {
+                    defaultProfile: 'Profile 1',
+                    profiles: [
+                        {
+                            label: 'Profile 1',
+                            columns: [{columnLabel: 'Invalid', attribute: 'group_tree.nonexistent'}],
+                        },
+                    ],
+                };
+
+                mockLibraryDomain.getLibraryProperties.mockResolvedValue({
+                    id: 'test_library',
+                    settings: {export: configWithInvalidTree},
+                });
+
+                mockAttributeDomain.getLibraryAttributes
+                    .mockResolvedValueOnce([
+                        {id: 'group_tree', label: {fr: 'Groupes'}, type: 'tree', linked_tree: 'groups_tree'},
+                    ])
+                    .mockResolvedValueOnce([{id: 'uuid', label: {fr: 'UUID'}, type: 'simple'}]);
+
+                mockTreeDomain.getTreeProperties.mockResolvedValue({
+                    id: 'groups_tree',
+                    libraries: {
+                        users_groups: {allowedAtRoot: true, allowMultiplePositions: false, allowedChildren: []},
+                    },
+                });
+
+                await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
+                    'Export profile column attribute "group_tree.nonexistent" is invalid: "nonexistent" not found in any library linked to tree "groups_tree"',
                 );
             });
         });
