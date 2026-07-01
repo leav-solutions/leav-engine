@@ -17,43 +17,50 @@ import {getLibraryByIdQuery} from '_ui/_queries/libraries/getLibraryByIdQuery';
 import {mockLibraryWithDetails} from '_ui/__mocks__/common/library';
 
 let user!: ReturnType<typeof userEvent.setup>;
-const useGetRecordFormMock = jest.fn();
-jest.mock('_ui/hooks/useGetRecordForm', () => () => useGetRecordFormMock());
+// vi.hoisted is required because vi.mock factories are hoisted above these declarations.
+const {useGetRecordFormMock, saveValuesMock, deleteValueMock, useGetRecordValuesQueryMock} = vi.hoisted(() => ({
+    useGetRecordFormMock: vi.fn(),
+    saveValuesMock: vi.fn(),
+    deleteValueMock: vi.fn(),
+    useGetRecordValuesQueryMock: vi.fn(),
+}));
+vi.mock('_ui/hooks/useGetRecordForm', () => ({default: () => useGetRecordFormMock()}));
 
-jest.mock('_ui/hooks/useCanEditRecord', () => ({
+vi.mock('_ui/hooks/useCanEditRecord', () => ({
     useCanEditRecord: () => ({loading: false, canEdit: true, isReadOnly: false}),
 }));
 
-const saveValuesMock = jest.fn();
-jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation.ts', () => () => ({
-    saveValues: saveValuesMock,
+vi.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation.ts', () => ({
+    default: () => ({
+        saveValues: saveValuesMock,
+    }),
 }));
 
-const deleteValueMock = jest.fn();
-jest.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteDeleteValueMutation.ts', () => () => ({
-    deleteValue: deleteValueMock,
+vi.mock('_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteDeleteValueMutation.ts', () => ({
+    default: () => ({
+        deleteValue: deleteValueMock,
+    }),
 }));
 
-const useGetRecordValuesQueryMock = jest.fn();
-jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
+vi.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
     useGetRecordValuesQuery: () => useGetRecordValuesQueryMock(),
 }));
 
-jest.mock('_ui/components/RecordHistory/hooks/useFetchRecordHistory', () => ({
+vi.mock('_ui/components/RecordHistory/hooks/useFetchRecordHistory', () => ({
     useFetchRecordHistory: () => ({
         loading: false,
         inError: false,
         logs: [],
         total: 0,
         hasMore: false,
-        fetchMore: jest.fn(),
+        fetchMore: vi.fn(),
     }),
 }));
 
-jest.spyOn(gqlTypes, 'useGetRecordIdCardQuery').mockReturnValue({
+vi.spyOn(gqlTypes, 'useGetRecordIdCardQuery').mockReturnValue({
     data: undefined,
     loading: false,
-    refetch: jest.fn(),
+    refetch: vi.fn(),
 } as unknown as gqlTypes.GetRecordIdCardQueryResult);
 
 const mocks = [
@@ -113,7 +120,7 @@ const mocks = [
     },
 ];
 
-const useGetRecordUpdatesSubscriptionMock = jest.spyOn(
+const useGetRecordUpdatesSubscriptionMock = vi.spyOn(
     useGetRecordUpdatesSubscription,
     'useGetRecordUpdatesSubscription',
 );
@@ -167,7 +174,7 @@ describe('EditRecordPage', () => {
         useGetRecordValuesQueryMock.mockClear();
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
             loading: false,
-            restart: jest.fn(),
+            restart: vi.fn(),
         });
     });
 
@@ -176,9 +183,9 @@ describe('EditRecordPage', () => {
     });
 
     test('Should render an input component', () => {
-        useGetRecordFormMock.mockReturnValue({loading: false, recordForm: mockRecordForm, refetch: jest.fn()});
+        useGetRecordFormMock.mockReturnValue({loading: false, recordForm: mockRecordForm, refetch: vi.fn()});
         useGetRecordValuesQueryMock.mockReturnValue({});
-        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
+        render(<EditRecordPage library={mockRecord.library.id} onClose={vi.fn()} record={mockRecord} />, {mocks});
 
         expect(screen.getByPlaceholderText('record_edition.placeholder.enter_a_text'));
     });
@@ -200,17 +207,17 @@ describe('EditRecordPage', () => {
         useGetRecordFormMock.mockReturnValue({
             loading: false,
             recordForm: {...mockRecordForm, elements: [simpleElementInput, calculatedElementInput]},
-            refetch: jest.fn(),
+            refetch: vi.fn(),
         });
 
-        const refetchMock = jest.fn();
+        const refetchMock = vi.fn();
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: false,
             data: {[mockRecord.id]: {[mockFormAttributeCompute.id]: calculatedValues('updated calculated')}},
             refetch: refetchMock,
         });
 
-        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
+        render(<EditRecordPage library={mockRecord.library.id} onClose={vi.fn()} record={mockRecord} />, {mocks});
 
         const calculatedInput = screen.getByRole('textbox', {name: 'calculated attribute'});
         const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
@@ -244,17 +251,17 @@ describe('EditRecordPage', () => {
         useGetRecordFormMock.mockReturnValue({
             loading: false,
             recordForm: {...mockRecordForm, elements: [simpleElementInput, calculatedElementInput]},
-            refetch: jest.fn(),
+            refetch: vi.fn(),
         });
 
-        const refetchMock = jest.fn();
+        const refetchMock = vi.fn();
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: false,
             data: null,
             refetch: refetchMock,
         });
 
-        render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
+        render(<EditRecordPage library={mockRecord.library.id} onClose={vi.fn()} record={mockRecord} />, {mocks});
 
         expect(screen.getAllByRole('textbox')).toHaveLength(1);
         expect(screen.queryByRole('textbox', {name: 'calculated attribute'})).not.toBeInTheDocument();
@@ -290,7 +297,7 @@ describe('EditRecordPage', () => {
             useGetRecordValuesQueryMock.mockReturnValue({
                 loading: false,
                 data: {},
-                refetch: jest.fn(),
+                refetch: vi.fn(),
             });
 
             deleteValueMock.mockReturnValue({
@@ -298,7 +305,7 @@ describe('EditRecordPage', () => {
                 error: 'Attribute is required',
             });
 
-            render(<EditRecordPage library={mockRecord.library.id} onClose={jest.fn()} record={mockRecord} />, {mocks});
+            render(<EditRecordPage library={mockRecord.library.id} onClose={vi.fn()} record={mockRecord} />, {mocks});
 
             const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
 
@@ -328,7 +335,7 @@ describe('EditRecordPage', () => {
             useGetRecordValuesQueryMock.mockReturnValue({
                 loading: false,
                 data: {},
-                refetch: jest.fn(),
+                refetch: vi.fn(),
             });
 
             // createRecordMock.mockReturnValue({
@@ -344,12 +351,7 @@ describe('EditRecordPage', () => {
             // });
 
             render(
-                <EditRecordPage
-                    onCreate={jest.fn()}
-                    library={mockRecord.library.id}
-                    onClose={jest.fn()}
-                    record={null}
-                />,
+                <EditRecordPage onCreate={vi.fn()} library={mockRecord.library.id} onClose={vi.fn()} record={null} />,
                 {mocks},
             );
 
@@ -376,13 +378,13 @@ describe('EditRecordPage', () => {
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: false,
             data: null,
-            refetch: jest.fn(),
+            refetch: vi.fn(),
         });
 
         render(
             <EditRecordPage
                 library={mockRecord.library.id}
-                onClose={jest.fn()}
+                onClose={vi.fn()}
                 showSidebar
                 enableSidebar
                 record={mockRecord}

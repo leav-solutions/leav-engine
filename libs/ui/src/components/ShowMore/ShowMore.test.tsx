@@ -6,12 +6,12 @@ const fakeUseIntersectionObserver = {
     isIntersecting: false, // component is not visible by default
 };
 
-jest.mock('@uidotdev/usehooks', () => ({
-    useIntersectionObserver: () => [jest.fn(), fakeUseIntersectionObserver],
+vi.mock('@uidotdev/usehooks', () => ({
+    useIntersectionObserver: () => [vi.fn(), fakeUseIntersectionObserver],
 }));
 
 describe('ShowMore', () => {
-    const fetchMore = jest.fn();
+    const fetchMore = vi.fn();
 
     test('should not display when has no more', async () => {
         render(<ShowMore hasMore={false} fetchMore={fetchMore} />, {});

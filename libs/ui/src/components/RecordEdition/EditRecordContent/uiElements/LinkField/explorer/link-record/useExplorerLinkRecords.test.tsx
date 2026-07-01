@@ -8,9 +8,9 @@ import {APICallStatus, type ISubmitMultipleResult} from '../../../../_types';
 import {type ValueDetailsLinkValueFragment} from '_ui/_gqlTypes';
 import {ErrorTypes} from '@leav/utils';
 
-const mockSetBackendValues = jest.fn();
-const mockSetFields = jest.fn();
-const mockSetFieldValue = jest.fn();
+const mockSetBackendValues = vi.fn();
+const mockSetFields = vi.fn();
+const mockSetFieldValue = vi.fn();
 
 const mockBackendValue = {...mockLinkValue, id_value: 'id_value_link'};
 
@@ -56,9 +56,9 @@ const mockSubmitResError: ISubmitMultipleResult = {
     ],
 };
 
-jest.mock('aristid-ds', () => ({
+vi.mock('aristid-ds', () => ({
     AntForm: {
-        useFormInstance: jest.fn(() => ({
+        useFormInstance: vi.fn(() => ({
             setFieldValue: mockSetFieldValue,
             setFields: mockSetFields,
         })),
@@ -67,7 +67,7 @@ jest.mock('aristid-ds', () => ({
 
 describe('useExplorerLinkRecords', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('should initialize with default values', () => {

@@ -3,12 +3,12 @@ import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {render, screen} from '@testing-library/react';
 import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 
-jest.mock('./TreeNodeItem', () => ({
+vi.mock('./TreeNodeItem', () => ({
     __esModule: true,
     default: () => <div data-testid="tree-node-item">TreeNodeItem</div>,
 }));
 
-const mockRemoveTreeNode = jest.fn();
+const mockRemoveTreeNode = vi.fn();
 
 const createMockBackendValues = (count: number) =>
     Array(count)

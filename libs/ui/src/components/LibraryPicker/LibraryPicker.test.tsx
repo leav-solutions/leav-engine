@@ -8,18 +8,18 @@ window.matchMedia = query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
 });
 
-jest.mock('../EditLibraryModal', () => ({
+vi.mock('../EditLibraryModal', () => ({
     EditLibraryModal: () => <div>EditLibrary</div>,
 }));
 
-jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
+vi.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
 describe('LibraryPicker', () => {
     const mockLibA = {
@@ -74,8 +74,8 @@ describe('LibraryPicker', () => {
     ];
 
     test('Display libraries', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        const mockHandleSubmit = vi.fn();
+        render(<LibraryPicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
         await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 
@@ -85,8 +85,8 @@ describe('LibraryPicker', () => {
     });
 
     test('Can filter list', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        const mockHandleSubmit = vi.fn();
+        render(<LibraryPicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
         await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 
@@ -103,8 +103,8 @@ describe('LibraryPicker', () => {
     });
 
     test('Select elements and submit', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        const mockHandleSubmit = vi.fn();
+        render(<LibraryPicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
         await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 
@@ -136,8 +136,8 @@ describe('LibraryPicker', () => {
     });
 
     test('If not multiple, only one element can be selected', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open multiple={false} />, {mocks});
+        const mockHandleSubmit = vi.fn();
+        render(<LibraryPicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open multiple={false} />, {mocks});
 
         await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 
@@ -152,8 +152,8 @@ describe('LibraryPicker', () => {
     });
 
     test('Can create new library', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        const mockHandleSubmit = vi.fn();
+        render(<LibraryPicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
         await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 
@@ -188,8 +188,8 @@ describe('LibraryPicker', () => {
             },
         ];
 
-        const mockHandleSubmit = jest.fn();
-        render(<LibraryPicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksNotAllowed});
+        const mockHandleSubmit = vi.fn();
+        render(<LibraryPicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksNotAllowed});
 
         await waitFor(() => expect(screen.getByText('libA')).toBeInTheDocument());
 

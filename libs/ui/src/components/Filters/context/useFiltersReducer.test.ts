@@ -11,20 +11,20 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useGetTreeFilters} from './useGetTreeFilters';
 import {type IUIFilterTree, type UIFilter} from '../_types';
 
-jest.mock('_ui/_gqlTypes', () => ({
-    ...jest.requireActual('_ui/_gqlTypes'),
-    useGetViewsListQuery: jest.fn(),
-    useExplorerAttributesQuery: jest.fn(),
+vi.mock('_ui/_gqlTypes', async () => ({
+    ...(await vi.importActual('_ui/_gqlTypes')),
+    useGetViewsListQuery: vi.fn(),
+    useExplorerAttributesQuery: vi.fn(),
 }));
 
-jest.mock('_ui/hooks/useSharedTranslation', () => ({
-    useSharedTranslation: jest.fn(),
+vi.mock('_ui/hooks/useSharedTranslation', () => ({
+    useSharedTranslation: vi.fn(),
 }));
 
-jest.mock('_ui/hooks/useLang/useLang');
+vi.mock('_ui/hooks/useLang/useLang');
 
-jest.mock('./useGetTreeFilters', () => ({
-    useGetTreeFilters: jest.fn(),
+vi.mock('./useGetTreeFilters', () => ({
+    useGetTreeFilters: vi.fn(),
 }));
 
 describe('useFiltersReducer', () => {
@@ -60,32 +60,34 @@ describe('useFiltersReducer', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        (useSharedTranslation as jest.Mock).mockReturnValue({t: jest.fn(key => key)});
-        (useGetTreeFilters as jest.Mock).mockReturnValue({
+        vi.clearAllMocks();
+        vi.mocked(useSharedTranslation).mockReturnValue({
+            t: vi.fn(key => key),
+        } as unknown as ReturnType<typeof useSharedTranslation>);
+        vi.mocked(useGetTreeFilters).mockReturnValue({
             data: {},
             loading: false,
-        });
-        (useGetViewsListQuery as jest.Mock).mockReturnValue({
+        } as unknown as ReturnType<typeof useGetTreeFilters>);
+        vi.mocked(useGetViewsListQuery).mockReturnValue({
             data: undefined,
             loading: false,
-        });
-        (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+        } as unknown as ReturnType<typeof useGetViewsListQuery>);
+        vi.mocked(useExplorerAttributesQuery).mockReturnValue({
             data: undefined,
             loading: false,
-        });
+        } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
     });
 
     describe('Initial state', () => {
         test('should initialize with default values when loading', () => {
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: undefined,
                 loading: true,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: undefined,
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -146,14 +148,14 @@ describe('useFiltersReducer', () => {
 
     describe('View selection', () => {
         test('should use specified viewId when provided', async () => {
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: mockViewData,
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: [mockAttributeData]}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -182,14 +184,14 @@ describe('useFiltersReducer', () => {
                 },
             };
 
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: multipleViewsData,
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: [mockAttributeData]}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -204,14 +206,14 @@ describe('useFiltersReducer', () => {
         });
 
         test('should handle missing view gracefully', async () => {
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: {views: {list: []}},
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: []}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -229,14 +231,14 @@ describe('useFiltersReducer', () => {
 
     describe('Filters handling', () => {
         test('should process view filters when provided', async () => {
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: mockViewData,
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: [mockAttributeData]}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -262,14 +264,14 @@ describe('useFiltersReducer', () => {
                 },
             ];
 
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: mockViewData,
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: [mockAttributeData]}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -302,14 +304,14 @@ describe('useFiltersReducer', () => {
                 },
             ];
 
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: mockViewData,
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: [mockAttributeData]}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -327,14 +329,14 @@ describe('useFiltersReducer', () => {
         });
 
         test('should handle empty filters', async () => {
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: {views: {list: [{id: mockViewId, label: 'View', filters: []}]}},
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: []}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -369,16 +371,16 @@ describe('useFiltersReducer', () => {
                 },
             };
 
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: viewWithMultipleFilters,
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {
                     attributes: {list: [mockAttributeData, {...mockAttributeData, id: 'attr2', label: 'Attribute 2'}]},
                 },
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             renderHook(() =>
                 useFiltersReducer({
@@ -413,14 +415,14 @@ describe('useFiltersReducer', () => {
                 },
             ];
 
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: {views: {list: [{id: mockViewId, label: 'View', filters: []}]}},
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: attributesWithPermissions}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -440,14 +442,14 @@ describe('useFiltersReducer', () => {
         });
 
         test('should skip attributes query when no filters and views are not loading', async () => {
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: {views: {list: [{id: mockViewId, label: 'View', filters: []}]}},
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: undefined,
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             renderHook(() =>
                 useFiltersReducer({
@@ -481,18 +483,18 @@ describe('useFiltersReducer', () => {
         });
 
         test('should wait for tree filters to load before processing', async () => {
-            (useGetTreeFilters as jest.Mock).mockReturnValue({
+            vi.mocked(useGetTreeFilters).mockReturnValue({
                 data: {},
                 loading: true,
-            });
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetTreeFilters>);
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: mockViewData,
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: [mockAttributeData]}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -510,18 +512,18 @@ describe('useFiltersReducer', () => {
                 attr1: [{nodeId: 'node1', libraryId: 'lib1', value: 'val1', label: 'Label 1'}],
             };
 
-            (useGetTreeFilters as jest.Mock).mockReturnValue({
+            vi.mocked(useGetTreeFilters).mockReturnValue({
                 data: mockTreeFiltersData,
                 loading: false,
-            });
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetTreeFilters>);
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: mockViewData,
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: [mockAttributeData]}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -538,14 +540,14 @@ describe('useFiltersReducer', () => {
 
     describe('Loading states', () => {
         test('should not process filters while views are loading', () => {
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: undefined,
                 loading: true,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: undefined,
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -558,18 +560,18 @@ describe('useFiltersReducer', () => {
         });
 
         test('should not process filters while tree filters are loading', () => {
-            (useGetTreeFilters as jest.Mock).mockReturnValue({
+            vi.mocked(useGetTreeFilters).mockReturnValue({
                 data: {},
                 loading: true,
-            });
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetTreeFilters>);
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: mockViewData,
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: [mockAttributeData]}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -582,14 +584,14 @@ describe('useFiltersReducer', () => {
         });
 
         test('should process filters after all loading completes', async () => {
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: mockViewData,
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: [mockAttributeData]}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {result} = renderHook(() =>
                 useFiltersReducer({
@@ -608,14 +610,14 @@ describe('useFiltersReducer', () => {
 
     describe('Library change handling', () => {
         test('should reload when libraryId changes', async () => {
-            (useGetViewsListQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetViewsListQuery).mockReturnValue({
                 data: mockViewData,
                 loading: false,
-            });
-            (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
+            } as unknown as ReturnType<typeof useGetViewsListQuery>);
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
                 data: {attributes: {list: [mockAttributeData]}},
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
             const {rerender} = renderHook(({libraryId, skip}) => useFiltersReducer({libraryId, skip}), {
                 initialProps: {libraryId: mockLibraryId, skip: false},

@@ -7,8 +7,8 @@ import * as gqlTypes from '_ui/_gqlTypes';
 
 let user!: ReturnType<typeof userEvent.setup>;
 
-const editRecordFn = jest.fn();
-jest.mock('../EditRecord', () => ({
+const editRecordFn = vi.fn();
+vi.mock('../EditRecord', () => ({
     EditRecord: ({antdForm, formElementId, isFormCreationMode, onCreate, ...props}) => {
         editRecordFn(props);
         const fields = [{name: 'jeanjau', value: !isFormCreationMode ? 'EditRecord' : 'CreateRecord'}];
@@ -23,7 +23,7 @@ jest.mock('../EditRecord', () => ({
     },
 }));
 
-const mockUseCreateRecordMutation = jest.fn().mockReturnValue({
+const mockUseCreateRecordMutation = vi.fn().mockReturnValue({
     data: {
         createRecord: {
             record: {
@@ -37,7 +37,7 @@ const mockUseCreateRecordMutation = jest.fn().mockReturnValue({
         },
     },
 });
-const mockUsePurgeRecordMutation = jest.fn().mockReturnValue({
+const mockUsePurgeRecordMutation = vi.fn().mockReturnValue({
     data: {
         purgeRecord: {
             record: {
@@ -50,11 +50,11 @@ const mockUsePurgeRecordMutation = jest.fn().mockReturnValue({
 describe('EditRecordPage', () => {
     beforeEach(() => {
         user = userEvent.setup();
-        jest.spyOn(gqlTypes, 'useCreateRecordMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'useCreateRecordMutation').mockImplementation(() => [
             mockUseCreateRecordMutation,
             {loading: false, called: false, client: null, reset: null, error: null},
         ]);
-        jest.spyOn(gqlTypes, 'usePurgeRecordMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'usePurgeRecordMutation').mockImplementation(() => [
             mockUsePurgeRecordMutation,
             {loading: false, called: false, client: null, reset: null, error: null},
         ]);
@@ -62,7 +62,7 @@ describe('EditRecordPage', () => {
 
     describe('create mode', () => {
         test('Display page in create mode', async () => {
-            render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={null} />);
+            render(<EditRecordPage library="test_lib" onClose={vi.fn()} record={null} />);
 
             const createRecord = await screen.findByDisplayValue('CreateRecord');
             expect(createRecord).toBeInTheDocument();
@@ -77,7 +77,7 @@ describe('EditRecordPage', () => {
             render(
                 <EditRecordPage
                     library="test_lib"
-                    onClose={jest.fn()}
+                    onClose={vi.fn()}
                     record={null}
                     submitButtons={['create', 'createAndEdit']}
                 />,
@@ -92,12 +92,7 @@ describe('EditRecordPage', () => {
 
         test('Display page in create mode with "create and edit" button only', async () => {
             render(
-                <EditRecordPage
-                    library="test_lib"
-                    onClose={jest.fn()}
-                    record={null}
-                    submitButtons={['createAndEdit']}
-                />,
+                <EditRecordPage library="test_lib" onClose={vi.fn()} record={null} submitButtons={['createAndEdit']} />,
             );
 
             await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
@@ -108,7 +103,7 @@ describe('EditRecordPage', () => {
         });
 
         test('Should call onClose  if fields are not touched on cancel', async () => {
-            const mockOnClose = jest.fn();
+            const mockOnClose = vi.fn();
             render(<EditRecordPage library="test_lib" onClose={mockOnClose} record={null} />);
 
             await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
@@ -117,7 +112,7 @@ describe('EditRecordPage', () => {
         });
 
         test('Should open modal and call onClose on click on confirm if antd fields are touched', async () => {
-            const mockOnClose = jest.fn();
+            const mockOnClose = vi.fn();
             render(<EditRecordPage library="test_lib" onClose={mockOnClose} record={null} />);
 
             expect(
@@ -139,7 +134,7 @@ describe('EditRecordPage', () => {
 
     describe('edit mode', () => {
         test('Display page in edit mode', async () => {
-            render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} />);
+            render(<EditRecordPage library="test_lib" onClose={vi.fn()} record={mockRecord} />);
 
             expect(screen.getByDisplayValue('EditRecord')).toBeInTheDocument();
             expect(screen.getByText(mockRecord.label)).toBeInTheDocument();
@@ -149,7 +144,7 @@ describe('EditRecordPage', () => {
         });
 
         test('Should display a custom title', async () => {
-            render(<EditRecordPage library="test_lib" onClose={jest.fn()} record={mockRecord} title="Custom title" />);
+            render(<EditRecordPage library="test_lib" onClose={vi.fn()} record={mockRecord} title="Custom title" />);
 
             expect(screen.getByText('Custom title')).toBeInTheDocument();
         });
@@ -158,7 +153,7 @@ describe('EditRecordPage', () => {
             render(
                 <EditRecordPage
                     library="test_lib"
-                    onClose={jest.fn()}
+                    onClose={vi.fn()}
                     record={mockRecord}
                     title="Custom title"
                     showRefreshButton={false}
@@ -169,12 +164,12 @@ describe('EditRecordPage', () => {
         });
 
         test('Refresh form in edit mode after "create and edit"', async () => {
-            const onCreateAndEdit = jest.fn();
-            const onCreate = jest.fn();
+            const onCreateAndEdit = vi.fn();
+            const onCreate = vi.fn();
             render(
                 <EditRecordPage
                     library="test_lib"
-                    onClose={jest.fn()}
+                    onClose={vi.fn()}
                     record={null}
                     submitButtons={['createAndEdit']}
                     onCreate={onCreate}
@@ -199,7 +194,7 @@ describe('EditRecordPage', () => {
         render(
             <EditRecordPage
                 library="test_lib"
-                onClose={jest.fn()}
+                onClose={vi.fn()}
                 record={mockRecord}
                 title="Custom title"
                 showRefreshButton={false}
@@ -216,7 +211,7 @@ describe('EditRecordPage', () => {
                     library="test_lib"
                     creationFormId="creation-form"
                     editionFormId="edition-form"
-                    onClose={jest.fn()}
+                    onClose={vi.fn()}
                     record={null}
                     title="Custom title"
                     showRefreshButton={false}
@@ -238,7 +233,7 @@ describe('EditRecordPage', () => {
                     library="test_lib"
                     creationFormId="creation-form"
                     editionFormId="edition-form"
-                    onClose={jest.fn()}
+                    onClose={vi.fn()}
                     record={mockRecord}
                     title="Custom title"
                     showRefreshButton={false}

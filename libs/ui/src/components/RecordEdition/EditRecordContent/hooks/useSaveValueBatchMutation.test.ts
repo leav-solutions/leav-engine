@@ -8,12 +8,12 @@ import {APICallStatus} from '../_types';
 import useSaveValueBatchMutation from './useExecuteSaveValueBatchMutation';
 
 describe('useSaveValueBatchMutation', () => {
-    const mockApolloCache: Mockify<apolloClient.ApolloCache<any>> = {modify: jest.fn(), identify: jest.fn()};
+    const mockApolloCache: Mockify<apolloClient.ApolloCache<any>> = {modify: vi.fn(), identify: vi.fn()};
     const mockApolloClient: Mockify<apolloClient.ApolloClient<any>> = {
         cache: mockApolloCache as unknown as apolloClient.ApolloCache<any>,
     };
 
-    jest.spyOn(apolloClient, 'useApolloClient').mockImplementation(
+    vi.spyOn(apolloClient, 'useApolloClient').mockImplementation(
         () => mockApolloClient as unknown as apolloClient.ApolloClient<any>,
     );
 
@@ -34,7 +34,7 @@ describe('useSaveValueBatchMutation', () => {
     };
 
     test('If no errors, return values', async () => {
-        jest.spyOn(apolloClient, 'useMutation').mockImplementation(() => [
+        vi.spyOn(apolloClient, 'useMutation').mockImplementation(() => [
             (): Promise<apolloClient.FetchResult<SaveValueBatchMutation>> =>
                 Promise.resolve({
                     data: {
@@ -71,7 +71,7 @@ describe('useSaveValueBatchMutation', () => {
     };
 
     test('If errors and no values, return errors', async () => {
-        jest.spyOn(apolloClient, 'useMutation').mockImplementation(() => [
+        vi.spyOn(apolloClient, 'useMutation').mockImplementation(() => [
             (): Promise<apolloClient.FetchResult<SaveValueBatchMutation>> =>
                 Promise.resolve({
                     data: {
@@ -101,7 +101,7 @@ describe('useSaveValueBatchMutation', () => {
     });
 
     test('If errors and values, return both', async () => {
-        jest.spyOn(apolloClient, 'useMutation').mockImplementation(() => [
+        vi.spyOn(apolloClient, 'useMutation').mockImplementation(() => [
             (): Promise<apolloClient.FetchResult<SaveValueBatchMutation>> =>
                 Promise.resolve({
                     data: {

@@ -459,7 +459,7 @@ describe('CommonFilterItem', () => {
             };
 
             const mockUseGetLibraryAttributesLazyQuery = [
-                jest.fn(),
+                vi.fn(),
                 {
                     loading: false,
                     data: {
@@ -475,7 +475,7 @@ describe('CommonFilterItem', () => {
                 },
             ];
 
-            jest.spyOn(gqlTypes, 'useGetLibraryAttributesLazyQuery').mockReturnValue(
+            vi.spyOn(gqlTypes, 'useGetLibraryAttributesLazyQuery').mockReturnValue(
                 mockUseGetLibraryAttributesLazyQuery as gqlTypes.GetLibraryAttributesLazyQueryHookResult,
             );
 
@@ -563,7 +563,7 @@ describe('CommonFilterItem', () => {
                 },
             };
 
-            jest.spyOn(gqlTypes, 'useTreeDataQueryQuery').mockReturnValue(
+            vi.spyOn(gqlTypes, 'useTreeDataQueryQuery').mockReturnValue(
                 mockUseTreeDataQueryQuery as TreeDataQueryQueryHookResult,
             );
 
@@ -602,8 +602,8 @@ describe('CommonFilterItem', () => {
                 ],
             };
 
-            jest.spyOn(apolloClient, 'useLazyQuery').mockReturnValue([
-                jest.fn().mockResolvedValue({data: mockResultFromChild}),
+            vi.spyOn(apolloClient, 'useLazyQuery').mockReturnValue([
+                vi.fn().mockResolvedValue({data: mockResultFromChild}),
                 {} as ReturnType<typeof apolloClient.useLazyQuery>[1],
             ]);
 

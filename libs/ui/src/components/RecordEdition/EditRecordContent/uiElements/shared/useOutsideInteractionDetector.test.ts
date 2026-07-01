@@ -1,7 +1,9 @@
 import {renderHook} from '@testing-library/react';
 import {useOutsideInteractionDetector} from './useOutsideInteractionDetector';
+import {type Dispatch} from 'react';
 import {
     EditRecordReducerActionsTypes,
+    type IEditRecordReducerActions,
     type IRecordPropertyWithAttribute,
 } from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {EDIT_RECORD_SIDEBAR_ID} from '_ui/constants';
@@ -14,13 +16,13 @@ describe('useOutsideInteractionDetector', () => {
         {id_value: 'backend-value', linkValue: {id: 'test', whoAmI: {id: 'test', library: {id: 'linked_library'}}}},
     ];
 
-    let mockDispatch: jest.Mock;
+    let mockDispatch: ReturnType<typeof vi.fn>;
     let mockActiveAttribute: IRecordPropertyWithAttribute | null;
 
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
-        mockDispatch = jest.fn();
+        mockDispatch = vi.fn();
         mockActiveAttribute = null;
 
         document.body.innerHTML = '';
@@ -32,7 +34,7 @@ describe('useOutsideInteractionDetector', () => {
             useOutsideInteractionDetector({
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
-                dispatch: mockDispatch,
+                dispatch: mockDispatch as unknown as Dispatch<IEditRecordReducerActions>,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-',
@@ -57,7 +59,7 @@ describe('useOutsideInteractionDetector', () => {
             useOutsideInteractionDetector({
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
-                dispatch: mockDispatch,
+                dispatch: mockDispatch as unknown as Dispatch<IEditRecordReducerActions>,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-',
@@ -82,7 +84,7 @@ describe('useOutsideInteractionDetector', () => {
             useOutsideInteractionDetector({
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
-                dispatch: mockDispatch,
+                dispatch: mockDispatch as unknown as Dispatch<IEditRecordReducerActions>,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-',
@@ -110,7 +112,7 @@ describe('useOutsideInteractionDetector', () => {
             useOutsideInteractionDetector({
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
-                dispatch: mockDispatch,
+                dispatch: mockDispatch as unknown as Dispatch<IEditRecordReducerActions>,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-',
@@ -138,7 +140,7 @@ describe('useOutsideInteractionDetector', () => {
             useOutsideInteractionDetector({
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
-                dispatch: mockDispatch,
+                dispatch: mockDispatch as unknown as Dispatch<IEditRecordReducerActions>,
                 backendValues: mockBackendValues,
                 allowedSelectors: ['#allowed-element'],
                 attributePrefix: 'standardfield-',
@@ -162,7 +164,7 @@ describe('useOutsideInteractionDetector', () => {
             useOutsideInteractionDetector({
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
-                dispatch: mockDispatch,
+                dispatch: mockDispatch as unknown as Dispatch<IEditRecordReducerActions>,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-',
@@ -187,7 +189,7 @@ describe('useOutsideInteractionDetector', () => {
             useOutsideInteractionDetector({
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
-                dispatch: mockDispatch,
+                dispatch: mockDispatch as unknown as Dispatch<IEditRecordReducerActions>,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-',
@@ -204,13 +206,13 @@ describe('useOutsideInteractionDetector', () => {
     });
 
     it('should add event listener on mount', () => {
-        const addEventListenerSpy = jest.spyOn(document, 'addEventListener');
+        const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
 
         renderHook(() =>
             useOutsideInteractionDetector({
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
-                dispatch: mockDispatch,
+                dispatch: mockDispatch as unknown as Dispatch<IEditRecordReducerActions>,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-',
@@ -222,13 +224,13 @@ describe('useOutsideInteractionDetector', () => {
     });
 
     it('should remove event listener on unmount', () => {
-        const removeEventListenerSpy = jest.spyOn(document, 'removeEventListener');
+        const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
 
         const {unmount} = renderHook(() =>
             useOutsideInteractionDetector({
                 attribute: mockFormAttribute,
                 activeAttribute: mockActiveAttribute,
-                dispatch: mockDispatch,
+                dispatch: mockDispatch as unknown as Dispatch<IEditRecordReducerActions>,
                 backendValues: mockBackendValues,
                 allowedSelectors: [],
                 attributePrefix: 'standardfield-',

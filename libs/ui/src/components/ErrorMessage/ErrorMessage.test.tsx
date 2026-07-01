@@ -3,7 +3,7 @@ import {act, render, screen, waitFor} from '_ui/_tests/testUtils';
 import ErrorMessage from './ErrorMessage';
 
 describe('ErrorMessage', () => {
-    const _handleClose = jest.fn();
+    const _handleClose = vi.fn();
     test('Display error message', async () => {
         await act(async () => {
             render(<ErrorMessage error="my error" onClose={_handleClose} />);

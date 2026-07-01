@@ -3,17 +3,17 @@ import {mockLibraryWithPreviewsSettings} from '_ui/__mocks__/common/library';
 import {render, screen, waitFor} from '../../../../../_tests/testUtils';
 import EditPreviewsSettingsModal from './EditPreviewsSettingsModal';
 
-jest.mock('../../../../../hooks/useSharedTranslation/useSharedTranslation');
+vi.mock('../../../../../hooks/useSharedTranslation/useSharedTranslation');
 
 describe('EditPreviewsSettingsModal', () => {
     test('Display form', async () => {
-        const mockHandleSubmit = jest.fn();
+        const mockHandleSubmit = vi.fn();
 
         render(
             <EditPreviewsSettingsModal
                 previewsSetting={{...mockLibraryWithPreviewsSettings.previewsSettings[0], system: false}}
                 open
-                onClose={jest.fn()}
+                onClose={vi.fn()}
                 onSubmit={mockHandleSubmit}
             />,
         );
@@ -35,8 +35,8 @@ describe('EditPreviewsSettingsModal', () => {
             <EditPreviewsSettingsModal
                 previewsSetting={{...mockLibraryWithPreviewsSettings.previewsSettings[0], system: false}}
                 open
-                onClose={jest.fn()}
-                onSubmit={jest.fn()}
+                onClose={vi.fn()}
+                onSubmit={vi.fn()}
             />,
         );
 
@@ -57,8 +57,8 @@ describe('EditPreviewsSettingsModal', () => {
             <EditPreviewsSettingsModal
                 previewsSetting={{...mockLibraryWithPreviewsSettings.previewsSettings[0], system: true}}
                 open
-                onClose={jest.fn()}
-                onSubmit={jest.fn()}
+                onClose={vi.fn()}
+                onSubmit={vi.fn()}
             />,
         );
 

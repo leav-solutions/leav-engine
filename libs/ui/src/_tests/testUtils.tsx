@@ -9,6 +9,7 @@ import {
 import {type MockedResponse} from '@apollo/client/testing';
 import {type ReactElement} from 'react';
 import {type queries} from '@testing-library/dom';
+import {vi} from 'vitest';
 import {TestProviders} from './TestProviders';
 
 export interface ICustomRenderOptions extends RenderOptions {
@@ -99,7 +100,7 @@ export {renderHookWithProviders as renderHook};
 export const expectToThrow = (func: () => unknown, error?: JestToErrorArg): void => {
     // Even though the error is caught, it still gets printed to the console
     // so we mock that out to avoid the wall of red text.
-    const spy = jest.spyOn(console, 'error');
+    const spy = vi.spyOn(console, 'error');
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     spy.mockImplementation(() => {});
 
@@ -108,4 +109,4 @@ export const expectToThrow = (func: () => unknown, error?: JestToErrorArg): void
     spy.mockRestore();
 };
 
-type JestToErrorArg = Parameters<jest.Matchers<unknown, () => unknown>['toThrow']>[0];
+type JestToErrorArg = string | RegExp | Error | (new (...args: any[]) => any);

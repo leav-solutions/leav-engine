@@ -4,9 +4,9 @@ import * as gqlTypes from '../../../../_gqlTypes';
 import {render, screen, waitFor} from '../../../../_tests/testUtils';
 import EditLibraryPreviewsSettings from './EditLibraryPreviewsSettings';
 
-jest.mock('../../../../hooks/useSharedTranslation/useSharedTranslation');
+vi.mock('../../../../hooks/useSharedTranslation/useSharedTranslation');
 
-jest.mock('./EditPreviewsSettingsModal', () => ({
+vi.mock('./EditPreviewsSettingsModal', () => ({
     EditPreviewsSettingsModal: () => <div>EditPreviewsSettingsModal</div>,
 }));
 
@@ -50,7 +50,7 @@ describe('EditLibraryPreviewsSettings', () => {
     });
 
     test('Can delete settings', async () => {
-        const mockSaveLibraryMutation = jest.fn().mockReturnValue({
+        const mockSaveLibraryMutation = vi.fn().mockReturnValue({
             data: {
                 saveLibrary: {
                     ...mockLibraryWithPreviewsSettings,
@@ -59,7 +59,7 @@ describe('EditLibraryPreviewsSettings', () => {
             },
         });
 
-        jest.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
             mockSaveLibraryMutation,
             {loading: false, called: true, client: null, reset: null, error: null},
         ]);

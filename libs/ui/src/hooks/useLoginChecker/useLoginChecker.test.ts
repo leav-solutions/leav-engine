@@ -1,10 +1,10 @@
 import {renderHook} from '@testing-library/react';
 import useLoginChecker from './useLoginChecker';
 
-const fetchMock = jest.fn();
+const fetchMock = vi.fn();
 global.fetch = fetchMock;
 
-jest.mock('_ui/constants', () => ({
+vi.mock('_ui/constants', () => ({
     GLOBAL_BASE_URL: '/global-base',
 }));
 

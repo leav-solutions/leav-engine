@@ -8,18 +8,18 @@ window.matchMedia = query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
 });
 
-jest.mock('../EditAttributeModal', () => ({
+vi.mock('../EditAttributeModal', () => ({
     EditAttributeModal: () => <div>EditAttribute</div>,
 }));
 
-jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
+vi.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
 describe('AttributePicker', () => {
     const baseMocks = [
@@ -75,8 +75,8 @@ describe('AttributePicker', () => {
     ];
 
     test('Display attributes', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {
+        const mockHandleSubmit = vi.fn();
+        render(<AttributePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {
             mocks: baseMocks,
         });
 
@@ -111,8 +111,8 @@ describe('AttributePicker', () => {
             },
         ];
 
-        const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksWithFilters});
+        const mockHandleSubmit = vi.fn();
+        render(<AttributePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksWithFilters});
 
         await waitFor(() => {
             expect(screen.getByText('attributeA')).toBeInTheDocument();
@@ -123,9 +123,11 @@ describe('AttributePicker', () => {
         await userEvent.type(screen.getByRole('textbox'), 'attributeA{Enter}');
         expect(screen.getByRole('textbox')).toHaveValue('attributeA');
 
-        expect(screen.getByText('attributeA')).toBeInTheDocument();
-        expect(screen.queryByText('attributeB')).not.toBeInTheDocument();
-        expect(screen.queryByText('attributeC')).not.toBeInTheDocument();
+        await waitFor(() => {
+            expect(screen.getByText('attributeA')).toBeInTheDocument();
+            expect(screen.queryByText('attributeB')).not.toBeInTheDocument();
+            expect(screen.queryByText('attributeC')).not.toBeInTheDocument();
+        });
     });
 
     test('Can sort list', async () => {
@@ -163,8 +165,8 @@ describe('AttributePicker', () => {
             },
         ];
 
-        const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksWithSort});
+        const mockHandleSubmit = vi.fn();
+        render(<AttributePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksWithSort});
 
         await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
         const rows = screen.getAllByRole('row');
@@ -173,15 +175,17 @@ describe('AttributePicker', () => {
         expect(rows[2]).toHaveTextContent('attributeC');
 
         await userEvent.click(screen.getByText('attributes.type'));
-        const newRows = screen.getAllByRole('row');
-        expect(newRows[0]).toHaveTextContent('attributeA');
-        expect(newRows[1]).toHaveTextContent('attributeC');
-        expect(newRows[2]).toHaveTextContent('attributeB');
+        await waitFor(() => {
+            const newRows = screen.getAllByRole('row');
+            expect(newRows[0]).toHaveTextContent('attributeA');
+            expect(newRows[1]).toHaveTextContent('attributeC');
+            expect(newRows[2]).toHaveTextContent('attributeB');
+        });
     });
 
     test('Select elements and submit', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: baseMocks});
+        const mockHandleSubmit = vi.fn();
+        render(<AttributePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks: baseMocks});
 
         await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
         await userEvent.click(screen.getByText('attributeA'));
@@ -211,8 +215,8 @@ describe('AttributePicker', () => {
     });
 
     test('If not multiple, only one element can be selected', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open multiple={false} />, {
+        const mockHandleSubmit = vi.fn();
+        render(<AttributePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open multiple={false} />, {
             mocks: baseMocks,
         });
 
@@ -229,8 +233,8 @@ describe('AttributePicker', () => {
     });
 
     test('Can create new attribute', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks: baseMocks});
+        const mockHandleSubmit = vi.fn();
+        render(<AttributePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks: baseMocks});
 
         await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
         const newAttributeButton = screen.queryByRole('button', {name: /new_attribute/i});
@@ -264,8 +268,8 @@ describe('AttributePicker', () => {
             },
         ];
 
-        const mockHandleSubmit = jest.fn();
-        render(<AttributePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open showCreateButton={false} />, {
+        const mockHandleSubmit = vi.fn();
+        render(<AttributePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open showCreateButton={false} />, {
             mocks: mocksNotAllowed,
         });
 

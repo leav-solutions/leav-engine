@@ -4,23 +4,23 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import RecordSummary from './RecordSummary';
 
 let user!: ReturnType<typeof userEvent.setup>;
-jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary/RecordInformations/RecordInformations', () => ({
+vi.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary/RecordInformations/RecordInformations', () => ({
     RecordInformations: () => <div>Informations</div>,
 }));
 
-const useGetRecordValuesQueryMock = jest.fn();
-jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
+const useGetRecordValuesQueryMock = vi.fn();
+vi.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
     useGetRecordValuesQuery: () => useGetRecordValuesQueryMock(),
 }));
 
-jest.mock('_ui/components/RecordHistory/hooks/useFetchRecordHistory', () => ({
+vi.mock('_ui/components/RecordHistory/hooks/useFetchRecordHistory', () => ({
     useFetchRecordHistory: () => ({
         loading: false,
         inError: false,
         logs: [],
         total: 0,
         hasMore: false,
-        fetchMore: jest.fn(),
+        fetchMore: vi.fn(),
     }),
 }));
 
@@ -30,7 +30,7 @@ describe('RecordSummary', () => {
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: false,
             data: {},
-            refetch: jest.fn(),
+            refetch: vi.fn(),
         });
     });
 
@@ -49,7 +49,7 @@ describe('RecordSummary', () => {
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: true,
             data: {},
-            refetch: jest.fn(),
+            refetch: vi.fn(),
         });
 
         render(<RecordSummary record={mockRecord} />);
@@ -62,7 +62,7 @@ describe('RecordSummary', () => {
             loading: false,
             error: {message: 'error message'},
             data: {},
-            refetch: jest.fn(),
+            refetch: vi.fn(),
         });
 
         render(<RecordSummary record={mockRecord} />);
@@ -72,7 +72,7 @@ describe('RecordSummary', () => {
     });
 
     it('Should refresh on click on refresh button', async () => {
-        const refreshMock = jest.fn();
+        const refreshMock = vi.fn();
         useGetRecordValuesQueryMock.mockReturnValue({
             loading: false,
             error: {message: 'error message'},

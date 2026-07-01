@@ -7,7 +7,6 @@
         "inlineSources": true,
         "module": "esnext",
         "skipLibCheck": true,
-        "types": ["jest", "@types/jest", "@testing-library/jest-dom"],
         "jsx": "react-jsx",
         "resolveJsonModule": true,
         "paths": {

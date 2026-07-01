@@ -28,22 +28,22 @@ const CreateDirectoryMock = 'CreateDirectory';
 const EditRecordModalMock = 'EditRecordModal';
 const LinkRecordModalMock = 'LinkRecordModalMock';
 
-jest.mock('_ui/components/UploadFiles', () => ({
+vi.mock('_ui/components/UploadFiles', () => ({
     UploadFiles: () => <div>{UploadFilesMock}</div>,
 }));
-jest.mock('_ui/components/CreateDirectory', () => ({
+vi.mock('_ui/components/CreateDirectory', () => ({
     CreateDirectory: () => <div>{CreateDirectoryMock}</div>,
 }));
 
-jest.mock('_ui/components/Filters/context/useGetTreeFilters', () => ({
+vi.mock('_ui/components/Filters/context/useGetTreeFilters', () => ({
     useGetTreeFilters: () => ({
         data: {},
         loading: false,
     }),
 }));
 
-const editRecordFn = jest.fn();
-jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
+const editRecordFn = vi.fn();
+vi.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
     EditRecordModal: ({onCreate, onClose, ...props}) => {
         editRecordFn(props);
         return (
@@ -56,7 +56,7 @@ jest.mock('_ui/components/RecordEdition/EditRecordModal', () => ({
     },
 }));
 
-jest.mock('_ui/components/Explorer/link-item/LinkModal', () => ({
+vi.mock('_ui/components/Explorer/link-item/LinkModal', () => ({
     LinkModal: ({onLink}) => (
         <div>
             {LinkRecordModalMock}
@@ -65,16 +65,16 @@ jest.mock('_ui/components/Explorer/link-item/LinkModal', () => ({
     ),
 }));
 
-jest.mock('aristid-ds', () => ({
-    ...jest.requireActual('aristid-ds'),
+vi.mock('aristid-ds', async () => ({
+    ...(await vi.importActual('aristid-ds')),
     KitAlert: {
-        success: jest.fn(),
-        error: jest.fn(),
+        success: vi.fn(),
+        error: vi.fn(),
     },
 }));
 
-jest.mock('@uidotdev/usehooks', () => ({
-    useMeasure: () => [jest.fn(), {height: 100, width: 100}],
+vi.mock('@uidotdev/usehooks', () => ({
+    useMeasure: () => [vi.fn(), {height: 100, width: 100}],
 }));
 
 const simpleMockAttribute = {
@@ -419,7 +419,7 @@ describe('Explorer', () => {
     const mockExplorerLibraryDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
         loading: false,
         called: true,
-        refetch: jest.fn(),
+        refetch: vi.fn(),
         data: {
             records: {
                 totalCount: mockRecords.length,
@@ -431,7 +431,7 @@ describe('Explorer', () => {
     const mockExplorerLibraryCountDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryCountDataQuery> = {
         loading: false,
         called: true,
-        refetch: jest.fn(),
+        refetch: vi.fn(),
         data: {
             records: {
                 totalCount: mockRecords.length,
@@ -453,7 +453,7 @@ describe('Explorer', () => {
     const mockExplorerLinkDataQueryResult: Mockify<typeof gqlTypes.useExplorerLinkDataQuery> = {
         loading: false,
         called: true,
-        refetch: jest.fn(),
+        refetch: vi.fn(),
         data: {
             records: {
                 list: [
@@ -647,12 +647,12 @@ describe('Explorer', () => {
         {
             label: 'Additional action 1',
             icon: <FontAwesomeIcon icon={faStar} />,
-            callback: jest.fn(),
+            callback: vi.fn(),
         },
         {
             label: 'Additional action 2',
             icon: <FontAwesomeIcon icon={faCheck} />,
-            callback: jest.fn(),
+            callback: vi.fn(),
         },
     ];
     const [customPrimaryAction1, customPrimaryAction2] = customPrimaryActions;
@@ -740,7 +740,7 @@ describe('Explorer', () => {
         },
     };
 
-    let spyUseExplorerLibraryDataQuery: jest.SpyInstance;
+    let spyUseExplorerLibraryDataQuery: ReturnType<typeof vi.spyOn>;
 
     const libraryEntrypoint: IEntrypointLibrary = {
         type: 'library',
@@ -847,71 +847,69 @@ describe('Explorer', () => {
         },
     };
 
-    const useGetRecordUpdatesSubscriptionMock = jest.spyOn(
+    const useGetRecordUpdatesSubscriptionMock = vi.spyOn(
         useGetRecordUpdatesSubscription,
         'useGetRecordUpdatesSubscription',
     );
 
     let user: ReturnType<typeof userEvent.setup>;
-    let useColumnWidthSpy: jest.SpyInstance | undefined;
+    let useColumnWidthSpy: ReturnType<typeof vi.spyOn> | undefined;
 
     beforeEach(() => {
-        const fetch = jest.fn();
+        const fetch = vi.fn();
 
-        spyUseExplorerLibraryDataQuery = jest
+        spyUseExplorerLibraryDataQuery = vi
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
             .mockImplementation(() => mockExplorerLibraryDataQueryResult as gqlTypes.ExplorerLibraryDataQueryResult);
 
-        jest.spyOn(gqlTypes, 'useExplorerLibraryCountDataQuery').mockImplementation(
+        vi.spyOn(gqlTypes, 'useExplorerLibraryCountDataQuery').mockImplementation(
             () => mockExplorerLibraryCountDataQueryResult as gqlTypes.ExplorerLibraryCountDataQueryHookResult,
         );
 
-        jest.spyOn(gqlTypes, 'useExplorerLibraryDataLazyQuery').mockImplementation(
+        vi.spyOn(gqlTypes, 'useExplorerLibraryDataLazyQuery').mockImplementation(
             () => [fetch] as unknown as gqlTypes.ExplorerLibraryDataLazyQueryHookResult,
         );
 
-        jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
+        vi.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
             () => mockExplorerLinkDataQueryResult as gqlTypes.ExplorerLinkDataQueryResult,
         );
 
-        jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+        vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
             () => mockStandardLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
         );
 
-        jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
+        vi.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
             () => mockExplorerAttributesQueryResult as gqlTypes.ExplorerAttributesQueryResult,
         );
 
-        jest.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
+        vi.spyOn(gqlTypes, 'useExplorerAttributesLazyQuery').mockImplementation(
             () =>
                 [() => mockExplorerAttributesQueryResult] as unknown as gqlTypes.ExplorerAttributesLazyQueryHookResult,
         );
 
-        jest.spyOn(gqlTypes, 'useGetViewsListQuery').mockReturnValue(
-            mockViewsResult as gqlTypes.GetViewsListQueryResult,
-        );
+        vi.spyOn(gqlTypes, 'useGetViewsListQuery').mockReturnValue(mockViewsResult as gqlTypes.GetViewsListQueryResult);
 
-        jest.spyOn(gqlTypes, 'useGetAttributesByLibWithPermissionsQuery').mockReturnValue(
+        vi.spyOn(gqlTypes, 'useGetAttributesByLibWithPermissionsQuery').mockReturnValue(
             mockAttributesByLibResult as gqlTypes.GetAttributesByLibWithPermissionsQueryResult,
         );
 
-        jest.spyOn(gqlTypes, 'useMeQuery').mockReturnValue(mockMeResult as gqlTypes.MeQueryResult);
+        vi.spyOn(gqlTypes, 'useMeQuery').mockReturnValue(mockMeResult as gqlTypes.MeQueryResult);
 
-        jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockReturnValue(
+        vi.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockReturnValue(
             mockGetLibraryByIdQueryResult as gqlTypes.GetLibraryByIdQueryResult,
         );
 
-        jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue(
+        vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue(
             mockMassEditableAttributesQueryResult as gqlTypes.MassEditableAttributesQueryResult,
         );
 
         // TODO: useless except for remove logs warning `No more mocked`
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
             loading: false,
-            restart: jest.fn(),
+            restart: vi.fn(),
         });
 
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         user = userEvent.setup();
     });
 
@@ -1126,7 +1124,7 @@ describe('Explorer', () => {
         });
 
         test('should display the selection checkboxes when defaultCallbacks.item.select is provided', () => {
-            const onSelect = jest.fn();
+            const onSelect = vi.fn();
 
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1340,7 +1338,7 @@ describe('Explorer', () => {
     });
 
     test('Should be able to deactivate a record with default actions', async () => {
-        const mockDeactivateMutation = jest.fn().mockResolvedValue({
+        const mockDeactivateMutation = vi.fn().mockResolvedValue({
             data: {
                 deactivateRecords: [
                     {
@@ -1351,12 +1349,12 @@ describe('Explorer', () => {
             },
         });
 
-        jest.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(() => [
             mockDeactivateMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()},
+            {loading: false, called: false, client: {} as any, reset: vi.fn()},
         ]);
 
-        const onRemove = jest.fn();
+        const onRemove = vi.fn();
 
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1390,18 +1388,18 @@ describe('Explorer', () => {
     });
 
     test('Should display an error when deactivation returns an error', async () => {
-        const mockDeactivateMutation = jest.fn().mockResolvedValue({
+        const mockDeactivateMutation = vi.fn().mockResolvedValue({
             data: {
                 deactivateRecords: [],
             },
         });
 
-        jest.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(() => [
             mockDeactivateMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()},
+            {loading: false, called: false, client: {} as any, reset: vi.fn()},
         ]);
 
-        const onRemove = jest.fn();
+        const onRemove = vi.fn();
 
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1438,7 +1436,7 @@ describe('Explorer', () => {
             },
         });
 
-        const mockActivateMutation = jest.fn().mockResolvedValue({
+        const mockActivateMutation = vi.fn().mockResolvedValue({
             data: {
                 activateRecords: [
                     {
@@ -1449,12 +1447,12 @@ describe('Explorer', () => {
             },
         });
 
-        jest.spyOn(gqlTypes, 'useActivateRecordsMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'useActivateRecordsMutation').mockImplementation(() => [
             mockActivateMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()},
+            {loading: false, called: false, client: {} as any, reset: vi.fn()},
         ]);
 
-        const onRemove = jest.fn();
+        const onRemove = vi.fn();
 
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1474,7 +1472,7 @@ describe('Explorer', () => {
     });
 
     test('Should be able to delete a linked record with default actions', async () => {
-        const mockDeleteValueMutation = jest.fn().mockReturnValue({
+        const mockDeleteValueMutation = vi.fn().mockReturnValue({
             data: {
                 deleteValue: [
                     {
@@ -1485,19 +1483,19 @@ describe('Explorer', () => {
             },
         });
 
-        jest.spyOn(gqlTypes, 'useDeleteValueMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'useDeleteValueMutation').mockImplementation(() => [
             mockDeleteValueMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()},
+            {loading: false, called: false, client: {} as any, reset: vi.fn()},
         ]);
 
-        useColumnWidthSpy = jest.spyOn(useColumnWidth, 'useColumnWidth').mockReturnValue({
+        useColumnWidthSpy = vi.spyOn(useColumnWidth, 'useColumnWidth').mockReturnValue({
             ref: {current: null},
             getFieldColumnWidth: () => 500,
             columnWidth: 500,
             actionsColumnHeaderWidth: 464,
         });
 
-        const onRemove = jest.fn();
+        const onRemove = vi.fn();
 
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1523,7 +1521,7 @@ describe('Explorer', () => {
     });
 
     test('Should call defaultCallbacks.item.select when a checkbox is clicked', async () => {
-        const onSelect = jest.fn();
+        const onSelect = vi.fn();
 
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -1577,7 +1575,7 @@ describe('Explorer', () => {
             const customAction = {
                 icon: <FontAwesomeIcon icon={faCog} />,
                 label: 'Custom action',
-                callback: jest.fn(),
+                callback: vi.fn(),
             } satisfies IItemAction;
 
             render(
@@ -1597,22 +1595,22 @@ describe('Explorer', () => {
                 {
                     label: 'Test 1',
                     icon: <FontAwesomeIcon icon={faStar} />,
-                    callback: jest.fn(),
+                    callback: vi.fn(),
                 },
                 {
                     label: 'Test 2',
                     icon: <FontAwesomeIcon icon={faCheck} />,
-                    callback: jest.fn(),
+                    callback: vi.fn(),
                 },
                 {
                     label: 'Test 3',
                     icon: <FontAwesomeIcon icon={faEdit} />,
-                    callback: jest.fn(),
+                    callback: vi.fn(),
                 },
                 {
                     label: 'Test 4',
                     icon: <FontAwesomeIcon icon={faTrash} />,
-                    callback: jest.fn(),
+                    callback: vi.fn(),
                 },
             ] satisfies IItemAction[];
 
@@ -1655,7 +1653,7 @@ describe('Explorer', () => {
                 icon: <FontAwesomeIcon icon={faCog} />,
                 label: 'Custom action',
                 useItemActionOnRowClick: true,
-                callback: jest.fn(),
+                callback: vi.fn(),
             } satisfies IItemAction;
 
             render(
@@ -1674,23 +1672,23 @@ describe('Explorer', () => {
                 {
                     label: 'Test 1',
                     icon: <FontAwesomeIcon icon={faStar} />,
-                    callback: jest.fn(),
+                    callback: vi.fn(),
                     useItemActionOnRowClick: true,
                 },
                 {
                     label: 'Test 2',
                     icon: <FontAwesomeIcon icon={faCheck} />,
-                    callback: jest.fn(),
+                    callback: vi.fn(),
                 },
                 {
                     label: 'Test 3',
                     icon: <FontAwesomeIcon icon={faEdit} />,
-                    callback: jest.fn(),
+                    callback: vi.fn(),
                 },
                 {
                     label: 'Test 4',
                     icon: <FontAwesomeIcon icon={faTrash} />,
-                    callback: jest.fn(),
+                    callback: vi.fn(),
                 },
             ] satisfies IItemAction[];
 
@@ -1782,7 +1780,7 @@ describe('Explorer', () => {
             test('should not display the primary actions button if link library data is empty and user permission for create_record on linked library is set to false', () => {
                 spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
 
-                jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+                vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
                     () =>
                         ({
                             loading: false,
@@ -1834,7 +1832,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new file when library has files behavior', async () => {
-            jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
                 () => mockFilesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
             );
             render(
@@ -1849,7 +1847,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new directory when library has directories behavior', async () => {
-            jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
                 () => mockDirectoriesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
             );
             render(
@@ -1864,7 +1862,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new record when library has standard behavior', async () => {
-            const onCreate = jest.fn();
+            const onCreate = vi.fn();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
@@ -1881,10 +1879,10 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new record when library has join behavior', async () => {
-            jest.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
                 () => mockJoinLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
             );
-            const onCreate = jest.fn();
+            const onCreate = vi.fn();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
@@ -1952,8 +1950,8 @@ describe('Explorer', () => {
         });
 
         test('should not try to link created record if entrypoint is not a link', async () => {
-            const saveValues = jest.fn();
-            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
+            const saveValues = vi.fn();
+            vi.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
                 loading: false,
                 saveValues,
             });
@@ -1976,12 +1974,15 @@ describe('Explorer', () => {
 
         test('Should be able to link a new record', async () => {
             const saveValuesResult = 'saveValuesResult';
-            const saveValues = jest.fn<any, any>(async () => saveValuesResult);
-            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(() => ({
-                loading: false,
-                saveValues,
-            }));
-            const onCreate = jest.fn();
+            const saveValues = vi.fn(async () => saveValuesResult);
+            vi.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(
+                () =>
+                    ({
+                        loading: false,
+                        saveValues,
+                    }) as unknown as ReturnType<typeof useExecuteSaveValueBatchMutation.default>,
+            );
+            const onCreate = vi.fn();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer entrypoint={linkEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />
@@ -2012,13 +2013,16 @@ describe('Explorer', () => {
         });
 
         test('Should be able to link a new record from Explorer ref', async () => {
-            const onCreate = jest.fn();
+            const onCreate = vi.fn();
             const saveValuesResult = 'saveValuesResult';
-            const saveValues = jest.fn<any, any>(async () => saveValuesResult);
-            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(() => ({
-                loading: false,
-                saveValues,
-            }));
+            const saveValues = vi.fn(async () => saveValuesResult);
+            vi.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(
+                () =>
+                    ({
+                        loading: false,
+                        saveValues,
+                    }) as unknown as ReturnType<typeof useExecuteSaveValueBatchMutation.default>,
+            );
 
             const explorerRef = createRef<IExplorerRef>();
             render(
@@ -2052,9 +2056,9 @@ describe('Explorer', () => {
         });
 
         test('Should be able to link existing record', async () => {
-            const saveValues = jest.fn();
-            const onLink = jest.fn();
-            jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
+            const saveValues = vi.fn();
+            const onLink = vi.fn();
+            vi.spyOn(useExecuteSaveValueBatchMutation, 'default').mockReturnValue({
                 loading: false,
                 saveValues,
             });
@@ -2172,7 +2176,7 @@ describe('Explorer', () => {
                 },
             },
         };
-        const spy = jest
+        const spy = vi
             .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
             .mockImplementation(
                 ({variables}) =>
@@ -2258,7 +2262,7 @@ describe('Explorer', () => {
         };
 
         test('should handle filters for the request and for the display', async () => {
-            const spy = jest
+            const spy = vi
                 .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
                 .mockImplementation(
                     ({variables}) =>
@@ -2321,7 +2325,7 @@ describe('Explorer', () => {
         });
 
         test('Should handle filters for the request and for the display with OR operator', async () => {
-            const spy = jest
+            const spy = vi
                 .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
                 .mockImplementation(
                     ({variables}) =>
@@ -2402,7 +2406,7 @@ describe('Explorer', () => {
         });
 
         test('should handle filters with empty values flag', async () => {
-            const spy = jest
+            const spy = vi
                 .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
                 .mockImplementation(
                     ({variables}) =>
@@ -2469,7 +2473,7 @@ describe('Explorer', () => {
 
     describe('Entrypoint type link', () => {
         test('Should display the list of linked records and call action', async () => {
-            const actionCallback = jest.fn();
+            const actionCallback = vi.fn();
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                     <Explorer
@@ -2531,7 +2535,7 @@ describe('Explorer', () => {
                 label: 'test mass action',
                 deselectAll: true,
                 icon: <FontAwesomeIcon icon={faStar} />,
-                callback: jest.fn(),
+                callback: vi.fn(),
             };
             // WHEN the component is rendered
             render(
@@ -2607,7 +2611,7 @@ describe('Explorer', () => {
                 label: 'test mass action',
                 deselectAll: true,
                 icon: <FontAwesomeIcon icon={faStar} />,
-                callback: jest.fn(),
+                callback: vi.fn(),
             };
             // WHEN the component is rendered without pagination (20 items default page size > 2 mock records)
             render(
@@ -2691,7 +2695,7 @@ describe('Explorer', () => {
                 label: 'test mass action',
                 deselectAll: true,
                 icon: <FontAwesomeIcon icon={faStar} />,
-                callback: jest.fn(),
+                callback: vi.fn(),
             };
             // WHEN the component is rendered with some filter and sort and pagination (1 item on 2 pages)
             render(
@@ -2815,7 +2819,7 @@ describe('Explorer', () => {
                 label: 'test mass action',
                 deselectAll: true,
                 icon: <FontAwesomeIcon icon={faStar} />,
-                callback: jest.fn(),
+                callback: vi.fn(),
             };
             // WHEN the component renders with 2 pages of one record, with filter and sort
             render(
@@ -2955,11 +2959,11 @@ describe('Explorer', () => {
 
         it('should deactivate massively for simple library (manual selection with only one page)', async () => {
             // GIVEN a mocked deactivate record mutation
-            const mockOnUseDeactivateRecordsMutation = jest.fn(() => ({data: {deactivateRecords: []}}));
-            jest.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(
+            const mockOnUseDeactivateRecordsMutation = vi.fn(() => ({data: {deactivateRecords: []}}));
+            vi.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(
                 () => [mockOnUseDeactivateRecordsMutation, {}] as any,
             );
-            const onDeactivate = jest.fn();
+            const onDeactivate = vi.fn();
             // WHEN the component is rendered
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -3028,11 +3032,11 @@ describe('Explorer', () => {
         // For an unknown reason, the success alert from last test is still present in the next test and makes it fail
         it.skip('should unlink massively for link entrypoint (manual selection with only one page)', async () => {
             // GIVEN a mocked deactivate record mutation
-            const mockOnUseDeactivateRecordsMutation = jest.fn(() => ({data: {deactivateRecords: []}}));
-            jest.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(
+            const mockOnUseDeactivateRecordsMutation = vi.fn(() => ({data: {deactivateRecords: []}}));
+            vi.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(
                 () => [mockOnUseDeactivateRecordsMutation, {}] as any,
             );
-            const onDeactivate = jest.fn();
+            const onDeactivate = vi.fn();
             // WHEN the component is rendered
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -3151,7 +3155,7 @@ describe('Explorer', () => {
             > = {
                 loading: false,
                 called: true,
-                refetch: jest.fn(),
+                refetch: vi.fn(),
                 data: {
                     records: {
                         totalCount: mockRecords.length,
@@ -3159,7 +3163,7 @@ describe('Explorer', () => {
                     },
                 },
             };
-            jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
                 () => mockExplorerLibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerLibraryDataQueryResult,
             );
 
@@ -3194,7 +3198,7 @@ describe('Explorer', () => {
             > = {
                 loading: false,
                 called: true,
-                refetch: jest.fn(),
+                refetch: vi.fn(),
                 data: {
                     records: {
                         totalCount: mockRecords.length,
@@ -3209,7 +3213,7 @@ describe('Explorer', () => {
                     },
                 },
             };
-            jest.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
                 () => mockExplorerLibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerLibraryDataQueryResult,
             );
 
@@ -3273,7 +3277,7 @@ describe('Explorer', () => {
         });
 
         test('Should not display the columns for attributes the user does not have access to', async () => {
-            jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
                 () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult,
             );
 
@@ -3303,11 +3307,11 @@ describe('Explorer', () => {
         });
 
         test('Should not display filter for attributes the user does not have access to', async () => {
-            jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
                 () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult,
             );
 
-            const spyUseAttributeDetailsData = jest
+            const spyUseAttributeDetailsData = vi
                 .spyOn(attributeDetailsModule, 'useAttributeDetailsData')
                 .mockReturnValue({
                     // Only attributes the user has access to
@@ -3328,7 +3332,7 @@ describe('Explorer', () => {
                     isLoading: false,
                 } as any);
 
-            jest.spyOn(console, 'warn').mockImplementationOnce(() => jest.fn());
+            vi.spyOn(console, 'warn').mockImplementationOnce(() => vi.fn());
 
             render(
                 <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
@@ -3445,7 +3449,7 @@ describe('Explorer', () => {
         });
 
         test('Should not display sorts for attributes the user does not have access to', async () => {
-            jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
                 () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult,
             );
 
@@ -3499,7 +3503,7 @@ describe('Explorer', () => {
             const mockExplorerLinkDataQueryEmptyResult: Mockify<typeof gqlTypes.useExplorerLinkDataQuery> = {
                 loading: false,
                 called: true,
-                refetch: jest.fn(),
+                refetch: vi.fn(),
                 data: {
                     records: {
                         list: [
@@ -3518,7 +3522,7 @@ describe('Explorer', () => {
                 },
             };
 
-            jest.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
                 () => mockExplorerLinkDataQueryEmptyResult as gqlTypes.ExplorerLinkDataQueryResult,
             );
 

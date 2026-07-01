@@ -15,7 +15,7 @@ function MockedUserContextProvider({children}) {
                 color: '#000000',
             },
         },
-        setUserData: jest.fn(),
+        setUserData: () => undefined,
     };
 
     return <UserContext.Provider value={mockUserCtx}>{children}</UserContext.Provider>;

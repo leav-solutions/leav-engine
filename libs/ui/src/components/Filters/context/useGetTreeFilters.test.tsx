@@ -3,19 +3,19 @@ import {renderHook, waitFor} from '@testing-library/react';
 import {useGetLibraryByIdQuery} from '_ui/_gqlTypes';
 import {useGetTreeFilters} from './useGetTreeFilters';
 
-jest.mock('@apollo/client', () => ({
-    ...jest.requireActual('@apollo/client'),
-    useLazyQuery: jest.fn(),
+vi.mock('@apollo/client', async () => ({
+    ...(await vi.importActual('@apollo/client')),
+    useLazyQuery: vi.fn(),
 }));
 
-jest.mock('_ui/_gqlTypes', () => ({
-    ...jest.requireActual('_ui/_gqlTypes'),
-    useGetLibraryByIdQuery: jest.fn(),
+vi.mock('_ui/_gqlTypes', async () => ({
+    ...(await vi.importActual('_ui/_gqlTypes')),
+    useGetLibraryByIdQuery: vi.fn(),
 }));
 
 describe('useGetTreeFilters', () => {
     const mockLibraryId = 'test-library-id';
-    const mockLoadTreeContent = jest.fn();
+    const mockLoadTreeContent = vi.fn();
 
     const mockLibraryData = {
         libraries: {
@@ -97,16 +97,19 @@ describe('useGetTreeFilters', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        (useLazyQuery as jest.Mock).mockReturnValue([mockLoadTreeContent, {}]);
+        vi.clearAllMocks();
+        vi.mocked(useLazyQuery).mockReturnValue([
+            mockLoadTreeContent,
+            {} as unknown as ReturnType<typeof useLazyQuery>[1],
+        ]);
     });
 
     describe('Initial state', () => {
         test('should return empty filters and loading true initially', () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: undefined,
                 loading: true,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             const {result} = renderHook(() =>
                 useGetTreeFilters({
@@ -122,10 +125,10 @@ describe('useGetTreeFilters', () => {
 
     describe('Skip behavior', () => {
         test('should not fetch data when skip is true', () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: mockLibraryData,
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             renderHook(() =>
                 useGetTreeFilters({
@@ -138,10 +141,10 @@ describe('useGetTreeFilters', () => {
         });
 
         test('should not fetch data when libraryId is empty', () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: undefined,
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             renderHook(() =>
                 useGetTreeFilters({
@@ -154,10 +157,10 @@ describe('useGetTreeFilters', () => {
         });
 
         test('should not fetch data when library is still loading', () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: undefined,
                 loading: true,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             renderHook(() =>
                 useGetTreeFilters({
@@ -172,10 +175,10 @@ describe('useGetTreeFilters', () => {
 
     describe('Fetching tree filters', () => {
         test('should fetch and transform tree filters correctly', async () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: mockLibraryData,
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             mockLoadTreeContent.mockResolvedValueOnce(mockTreeResponse1).mockResolvedValueOnce(mockTreeResponse2);
 
@@ -231,10 +234,10 @@ describe('useGetTreeFilters', () => {
         });
 
         test('should filter out records without accessRecordByDefaultPermission', async () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: mockLibraryData,
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             mockLoadTreeContent
                 .mockResolvedValueOnce(mockTreeResponse1)
@@ -256,7 +259,7 @@ describe('useGetTreeFilters', () => {
         });
 
         test('should traverse nested children and flatten accessible nodes', async () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: {
                     libraries: {
                         list: [
@@ -271,7 +274,7 @@ describe('useGetTreeFilters', () => {
                     },
                 },
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             mockLoadTreeContent.mockResolvedValueOnce({
                 data: {
@@ -318,7 +321,7 @@ describe('useGetTreeFilters', () => {
         });
 
         test('should handle empty tree attributes', async () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: {
                     libraries: {
                         list: [
@@ -333,7 +336,7 @@ describe('useGetTreeFilters', () => {
                     },
                 },
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             const {result} = renderHook(() =>
                 useGetTreeFilters({
@@ -351,7 +354,7 @@ describe('useGetTreeFilters', () => {
         });
 
         test('should handle missing permissions_conf', async () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: {
                     libraries: {
                         list: [
@@ -364,7 +367,7 @@ describe('useGetTreeFilters', () => {
                     },
                 },
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             const {result} = renderHook(() =>
                 useGetTreeFilters({
@@ -381,10 +384,10 @@ describe('useGetTreeFilters', () => {
         });
 
         test('should handle empty tree content', async () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: mockLibraryData,
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             mockLoadTreeContent
                 .mockResolvedValueOnce({data: {treeContent: []}})
@@ -407,10 +410,10 @@ describe('useGetTreeFilters', () => {
 
     describe('Re-fetching on dependency change', () => {
         test('should re-fetch when libraryId changes', async () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: mockLibraryData,
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             mockLoadTreeContent.mockResolvedValue(mockTreeResponse1);
 
@@ -422,7 +425,7 @@ describe('useGetTreeFilters', () => {
                 expect(mockLoadTreeContent).toHaveBeenCalledTimes(2);
             });
 
-            jest.clearAllMocks();
+            vi.clearAllMocks();
 
             rerender({libraryId: 'new-library-id', skip: false});
 
@@ -432,10 +435,10 @@ describe('useGetTreeFilters', () => {
         });
 
         test('should re-fetch when skip changes from true to false', async () => {
-            (useGetLibraryByIdQuery as jest.Mock).mockReturnValue({
+            vi.mocked(useGetLibraryByIdQuery).mockReturnValue({
                 data: mockLibraryData,
                 loading: false,
-            });
+            } as unknown as ReturnType<typeof useGetLibraryByIdQuery>);
 
             mockLoadTreeContent.mockResolvedValue(mockTreeResponse1);
 

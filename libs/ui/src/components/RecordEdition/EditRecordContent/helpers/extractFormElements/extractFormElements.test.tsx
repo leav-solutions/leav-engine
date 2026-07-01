@@ -6,13 +6,11 @@ import StandardField from '../../uiElements/StandardField';
 import {extractFormElements} from './extractFormElements';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
-jest.mock(
-    '../../uiElements/StandardField',
-    () =>
-        function MockStandardField() {
-            return <div>StandardField</div>;
-        },
-);
+vi.mock('../../uiElements/StandardField', () => ({
+    default: function MockStandardField() {
+        return <div>StandardField</div>;
+    },
+}));
 
 describe('extractFormElements', () => {
     test('Return form elements grouped by container', async () => {

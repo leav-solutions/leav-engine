@@ -7,7 +7,7 @@ import {fireEvent, render, screen, waitFor} from '../../_tests/testUtils';
 import EditLibraryModal from './EditLibraryModal';
 import {act} from '@testing-library/react';
 
-jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
+vi.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
 describe('EditLibraryModal', () => {
     const mockResultIsAllowed: Mockify<typeof gqlTypes.useIsAllowedQuery> = {
@@ -30,7 +30,7 @@ describe('EditLibraryModal', () => {
         },
         called: true,
     };
-    jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
+    vi.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
         () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>,
     );
 
@@ -56,33 +56,33 @@ describe('EditLibraryModal', () => {
     describe('Create library', () => {
         test('Create new library', async () => {
             const user = userEvent.setup();
-            const mockCheckLibraryExistenceLazyQuery = jest.fn().mockReturnValue({
+            const mockCheckLibraryExistenceLazyQuery = vi.fn().mockReturnValue({
                 data: {
                     libraries: {
                         totalCount: 0,
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useCheckLibraryExistenceLazyQuery').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useCheckLibraryExistenceLazyQuery').mockImplementation(() => [
                 mockCheckLibraryExistenceLazyQuery,
                 null,
             ]);
 
-            const mockSaveLibraryMutation = jest.fn().mockReturnValue({
+            const mockSaveLibraryMutation = vi.fn().mockReturnValue({
                 data: {
                     saveLibrary: {
                         ...mockLibraryWithDetails,
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
                 mockSaveLibraryMutation,
                 {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
-            const mockOnPostCreate = jest.fn();
+            const mockOnPostCreate = vi.fn();
 
-            render(<EditLibraryModal open onPostCreate={mockOnPostCreate} onClose={jest.fn()} />);
+            render(<EditLibraryModal open onPostCreate={mockOnPostCreate} onClose={vi.fn()} />);
 
             const inputs = await screen.findAllByRole('textbox', {name: /label|id/i});
             const labelFr = inputs[0];
@@ -124,19 +124,19 @@ describe('EditLibraryModal', () => {
 
         test('Display an error if ID is already used', async () => {
             const user = userEvent.setup();
-            const mockCheckLibraryExistenceLazyQuery = jest.fn().mockReturnValue({
+            const mockCheckLibraryExistenceLazyQuery = vi.fn().mockReturnValue({
                 data: {
                     libraries: {
                         totalCount: 1,
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useCheckLibraryExistenceLazyQuery').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useCheckLibraryExistenceLazyQuery').mockImplementation(() => [
                 mockCheckLibraryExistenceLazyQuery,
                 null,
             ]);
 
-            render(<EditLibraryModal open onPostCreate={jest.fn()} onClose={jest.fn()} />);
+            render(<EditLibraryModal open onPostCreate={vi.fn()} onClose={vi.fn()} />);
 
             const idInput = screen.getByRole('textbox', {name: /id/i});
             await user.type(idInput, 'my_id');
@@ -154,10 +154,8 @@ describe('EditLibraryModal', () => {
 
     describe('Edit existing library', () => {
         test('Display edit form for existing library', async () => {
-            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
-                () => mockResultGetLibById as QueryResult,
-            );
-            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={jest.fn()} />);
+            vi.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(() => mockResultGetLibById as QueryResult);
+            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={vi.fn()} />);
 
             expect(screen.getByRole('textbox', {name: /id/})).toBeDisabled();
             expect(screen.getByRole('combobox', {name: /behavior/})).toBeDisabled();
@@ -169,22 +167,20 @@ describe('EditLibraryModal', () => {
 
         test('Submit field on blur', async () => {
             const user = userEvent.setup();
-            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
-                () => mockResultGetLibById as QueryResult,
-            );
-            const mockSaveLibraryMutation = jest.fn().mockReturnValue({
+            vi.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(() => mockResultGetLibById as QueryResult);
+            const mockSaveLibraryMutation = vi.fn().mockReturnValue({
                 data: {
                     saveLibrary: {
                         ...mockLibraryWithDetails,
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
                 mockSaveLibraryMutation,
                 {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
-            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={jest.fn()} />);
+            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={vi.fn()} />);
 
             const labelFrInput = screen.getByRole('textbox', {name: 'label_fr'});
             expect(labelFrInput).not.toBeDisabled();
@@ -210,22 +206,20 @@ describe('EditLibraryModal', () => {
 
         test('Submit select field on change', async () => {
             const user = userEvent.setup();
-            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
-                () => mockResultGetLibById as QueryResult,
-            );
-            const mockSaveLibraryMutation = jest.fn().mockReturnValue({
+            vi.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(() => mockResultGetLibById as QueryResult);
+            const mockSaveLibraryMutation = vi.fn().mockReturnValue({
                 data: {
                     saveLibrary: {
                         ...mockLibraryWithDetails,
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
                 mockSaveLibraryMutation,
                 {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
-            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={jest.fn()} />);
+            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={vi.fn()} />);
 
             const labelSelect = screen.getByRole('combobox', {name: /label/});
             expect(labelSelect).not.toBeDisabled();
@@ -263,10 +257,8 @@ describe('EditLibraryModal', () => {
     describe('Delete library', () => {
         test('Can delete library', async () => {
             const user = userEvent.setup();
-            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
-                () => mockResultGetLibById as QueryResult,
-            );
-            const mockDeleteLibraryMutation = jest.fn().mockReturnValue({
+            vi.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(() => mockResultGetLibById as QueryResult);
+            const mockDeleteLibraryMutation = vi.fn().mockReturnValue({
                 data: {
                     deleteLibrary: {
                         __typename: 'Library',
@@ -274,12 +266,12 @@ describe('EditLibraryModal', () => {
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useDeleteLibraryMutation').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useDeleteLibraryMutation').mockImplementation(() => [
                 mockDeleteLibraryMutation,
                 {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
-            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={jest.fn()} />);
+            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={vi.fn()} />);
 
             await user.click(screen.getByRole('button', {name: /delete/i}));
             await user.click(screen.getByRole('button', {name: /submit/i})); // confirm
@@ -315,7 +307,7 @@ describe('EditLibraryModal', () => {
                 },
                 called: true,
             };
-            jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
                 () =>
                     mockResultIsAllowedForbidden as QueryResult<
                         gqlTypes.IsAllowedQuery,
@@ -323,10 +315,8 @@ describe('EditLibraryModal', () => {
                     >,
             );
 
-            jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
-                () => mockResultGetLibById as QueryResult,
-            );
-            const mockDeleteLibraryMutation = jest.fn().mockReturnValue({
+            vi.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(() => mockResultGetLibById as QueryResult);
+            const mockDeleteLibraryMutation = vi.fn().mockReturnValue({
                 data: {
                     deleteLibrary: {
                         __typename: 'Library',
@@ -334,12 +324,12 @@ describe('EditLibraryModal', () => {
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useDeleteLibraryMutation').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useDeleteLibraryMutation').mockImplementation(() => [
                 mockDeleteLibraryMutation,
                 {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
-            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={jest.fn()} />);
+            render(<EditLibraryModal libraryId={mockLibraryWithDetails.id} open onClose={vi.fn()} />);
 
             expect(screen.queryByRole('button', {name: /delete/i})).not.toBeInTheDocument();
         });

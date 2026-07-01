@@ -6,9 +6,9 @@ import {mockTreeWithDetails} from '_ui/__mocks__/common/tree';
 import {act, fireEvent, render, screen, waitFor, within} from '../../_tests/testUtils';
 import EditTreeModal from './EditTreeModal';
 
-jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
+vi.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
-jest.mock('../LibraryPicker', () => ({
+vi.mock('../LibraryPicker', () => ({
     LibraryPicker: () => <div>LibraryPicker</div>,
 }));
 
@@ -33,7 +33,7 @@ describe('EditTreeModal', () => {
         },
         called: true,
     };
-    jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
+    vi.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
         () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>,
     );
 
@@ -52,33 +52,33 @@ describe('EditTreeModal', () => {
     describe('Create tree', () => {
         test('Create new tree', async () => {
             const user = userEvent.setup();
-            const mockCheckTreeExistenceLazyQuery = jest.fn().mockReturnValue({
+            const mockCheckTreeExistenceLazyQuery = vi.fn().mockReturnValue({
                 data: {
                     trees: {
                         totalCount: 0,
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useCheckTreeExistenceLazyQuery').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useCheckTreeExistenceLazyQuery').mockImplementation(() => [
                 mockCheckTreeExistenceLazyQuery,
                 null,
             ]);
 
-            const mockSaveTreeMutation = jest.fn().mockReturnValue({
+            const mockSaveTreeMutation = vi.fn().mockReturnValue({
                 data: {
                     saveTree: {
                         ...mockTreeWithDetails,
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
                 mockSaveTreeMutation,
                 {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
-            const mockOnPostCreate = jest.fn();
+            const mockOnPostCreate = vi.fn();
 
-            render(<EditTreeModal open onPostCreate={mockOnPostCreate} onClose={jest.fn()} />);
+            render(<EditTreeModal open onPostCreate={mockOnPostCreate} onClose={vi.fn()} />);
 
             const inputs = screen.getAllByRole('textbox', {name: /label|id/i});
             const labelFr = inputs[0];
@@ -123,19 +123,19 @@ describe('EditTreeModal', () => {
 
         test('Display an error if ID is already used', async () => {
             const user = userEvent.setup();
-            const mockCheckTreeExistenceLazyQuery = jest.fn().mockReturnValue({
+            const mockCheckTreeExistenceLazyQuery = vi.fn().mockReturnValue({
                 data: {
                     trees: {
                         totalCount: 1,
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useCheckTreeExistenceLazyQuery').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useCheckTreeExistenceLazyQuery').mockImplementation(() => [
                 mockCheckTreeExistenceLazyQuery,
                 null,
             ]);
 
-            render(<EditTreeModal open onPostCreate={jest.fn()} onClose={jest.fn()} />);
+            render(<EditTreeModal open onPostCreate={vi.fn()} onClose={vi.fn()} />);
 
             const idInput = screen.getByRole('textbox', {name: /id/i});
             await user.type(idInput, 'my_id');
@@ -153,10 +153,10 @@ describe('EditTreeModal', () => {
 
     describe('Edit existing tree', () => {
         test('Display edit form for existing tree', async () => {
-            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
                 () => mockQueryResultGetTreeById as QueryResult,
             );
-            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
+            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={vi.fn()} />);
 
             expect(screen.getByRole('textbox', {name: /id/})).toBeDisabled();
             expect(screen.queryByRole('button', {name: /submit/i})).not.toBeInTheDocument();
@@ -164,22 +164,22 @@ describe('EditTreeModal', () => {
 
         test('Submit field on blur', async () => {
             const user = userEvent.setup();
-            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
                 () => mockQueryResultGetTreeById as QueryResult,
             );
-            const mockSaveTreeMutation = jest.fn().mockReturnValue({
+            const mockSaveTreeMutation = vi.fn().mockReturnValue({
                 data: {
                     saveTree: {
                         ...mockTreeWithDetails,
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
                 mockSaveTreeMutation,
                 {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
-            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
+            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={vi.fn()} />);
 
             const labelFrInput = screen.getByRole('textbox', {name: 'label_fr'});
             expect(labelFrInput).not.toBeDisabled();
@@ -248,21 +248,21 @@ describe('EditTreeModal', () => {
                     },
                 },
             };
-            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(() => mockJestResultNoLibs as QueryResult);
+            vi.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(() => mockJestResultNoLibs as QueryResult);
 
-            const mockSaveTreeMutation = jest.fn().mockReturnValue({
+            const mockSaveTreeMutation = vi.fn().mockReturnValue({
                 data: {
                     saveTree: {
                         ...treeWithLibs,
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
                 mockSaveTreeMutation,
                 {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
-            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
+            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={vi.fn()} />);
 
             const listItems = await screen.findAllByRole('listitem');
             expect(listItems).toHaveLength(2);
@@ -318,10 +318,10 @@ describe('EditTreeModal', () => {
         });
 
         test('Can add libraries', async () => {
-            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
                 () => mockQueryResultGetTreeById as QueryResult,
             );
-            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
+            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={vi.fn()} />);
 
             await userEvent.click(screen.getByRole('button', {name: /add_libraries/i}));
 
@@ -371,21 +371,21 @@ describe('EditTreeModal', () => {
                     },
                 },
             };
-            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(() => mockJestResultWithLibs as QueryResult);
+            vi.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(() => mockJestResultWithLibs as QueryResult);
 
-            const mockSaveTreeMutation = jest.fn().mockReturnValue({
+            const mockSaveTreeMutation = vi.fn().mockReturnValue({
                 data: {
                     saveTree: {
                         ...treeWithLibs,
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useSaveTreeMutation').mockImplementation(() => [
                 mockSaveTreeMutation,
                 {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
-            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
+            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={vi.fn()} />);
 
             const listItems = await screen.findAllByRole('listitem');
             expect(listItems).toHaveLength(2);
@@ -421,10 +421,10 @@ describe('EditTreeModal', () => {
     describe('Delete tree', () => {
         test('Can delete tree', async () => {
             const user = userEvent.setup();
-            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
                 () => mockQueryResultGetTreeById as QueryResult,
             );
-            const mockDeleteTreeMutation = jest.fn().mockReturnValue({
+            const mockDeleteTreeMutation = vi.fn().mockReturnValue({
                 data: {
                     deleteTree: {
                         __typename: 'Tree',
@@ -432,12 +432,12 @@ describe('EditTreeModal', () => {
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useDeleteTreeMutation').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useDeleteTreeMutation').mockImplementation(() => [
                 mockDeleteTreeMutation,
                 {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
-            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
+            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={vi.fn()} />);
 
             await user.click(screen.getByRole('button', {name: /trees\.delete/i}));
             await user.click(screen.getByRole('button', {name: /submit/i})); // confirm
@@ -477,7 +477,7 @@ describe('EditTreeModal', () => {
                 },
                 called: true,
             };
-            jest.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useIsAllowedQuery').mockImplementation(
                 () =>
                     mockResultIsAllowedForbidden as QueryResult<
                         gqlTypes.IsAllowedQuery,
@@ -485,10 +485,10 @@ describe('EditTreeModal', () => {
                     >,
             );
 
-            jest.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
+            vi.spyOn(gqlTypes, 'useGetTreeByIdQuery').mockImplementation(
                 () => mockQueryResultGetTreeById as QueryResult,
             );
-            const mockDeleteTreeMutation = jest.fn().mockReturnValue({
+            const mockDeleteTreeMutation = vi.fn().mockReturnValue({
                 data: {
                     deleteTree: {
                         __typename: 'Tree',
@@ -496,12 +496,12 @@ describe('EditTreeModal', () => {
                     },
                 },
             });
-            jest.spyOn(gqlTypes, 'useDeleteTreeMutation').mockImplementation(() => [
+            vi.spyOn(gqlTypes, 'useDeleteTreeMutation').mockImplementation(() => [
                 mockDeleteTreeMutation,
                 {loading: false, called: false, client: null, reset: null, error: null},
             ]);
 
-            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={jest.fn()} />);
+            render(<EditTreeModal treeId={mockTreeWithDetails.id} open onClose={vi.fn()} />);
 
             expect(screen.queryByRole('button', {name: /trees\.delete/i})).not.toBeInTheDocument();
         });

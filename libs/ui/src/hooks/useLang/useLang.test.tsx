@@ -19,7 +19,7 @@ describe('useLang', () => {
 
     test('Throw if no context provided', async () => {
         const errorLogger = console.error;
-        console.error = jest.fn();
+        console.error = vi.fn();
         try {
             renderHook(() => useLang());
         } catch (e) {

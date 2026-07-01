@@ -1,3 +1,5 @@
+import {vi} from 'vitest';
+
 export const useConfirmModal = () => ({
-    openConfirmModal: jest.fn(),
+    openConfirmModal: vi.fn(),
 });

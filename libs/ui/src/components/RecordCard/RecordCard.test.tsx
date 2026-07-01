@@ -6,7 +6,7 @@ import {type IRecordIdentityWhoAmI} from '../../types/records';
 import {act, render, screen} from '../../_tests/testUtils';
 import RecordCard from './RecordCard';
 
-jest.mock('../EntityPreview', () => ({
+vi.mock('../EntityPreview', () => ({
     EntityPreview: () => <div>EntityPreview</div>,
 }));
 

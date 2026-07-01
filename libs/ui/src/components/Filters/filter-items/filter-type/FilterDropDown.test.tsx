@@ -5,8 +5,8 @@ import {AttributeFormat, AttributeType, RecordFilterCondition} from '_ui/_gqlTyp
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 // Mock the useSharedTranslation hook
-jest.mock('_ui/hooks/useSharedTranslation', () => ({
-    useSharedTranslation: jest.fn(),
+vi.mock('_ui/hooks/useSharedTranslation', () => ({
+    useSharedTranslation: vi.fn(),
 }));
 
 describe('FilterDropDown', () => {
@@ -24,17 +24,17 @@ describe('FilterDropDown', () => {
     };
 
     // Mock translation function
-    const mockT = jest.fn(key => key);
+    const mockT = vi.fn(key => key);
 
     beforeEach(() => {
         // Reset mocks before each test
-        jest.clearAllMocks();
+        vi.clearAllMocks();
 
         // Setup translation mock
-        (useSharedTranslation as jest.Mock).mockReturnValue({
+        vi.mocked(useSharedTranslation).mockReturnValue({
             t: mockT,
             i18n: {language: 'en'},
-        });
+        } as unknown as ReturnType<typeof useSharedTranslation>);
     });
 
     test('should not show delete button when canRemove is false', async () => {

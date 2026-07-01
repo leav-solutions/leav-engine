@@ -5,28 +5,28 @@ import {useManageTreeNodeSelection} from './useManageTreeNodeSelection';
 import userEvent from '@testing-library/user-event';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 
-const mockSetFieldValue = jest.fn();
-const mockSetFields = jest.fn();
-const mockSetBackendValues = jest.fn();
-const mockOnValueSubmit = jest.fn();
-const mockOnValueDelete = jest.fn();
-const mockOnDeleteMultipleValues = jest.fn();
+const mockSetFieldValue = vi.fn();
+const mockSetFields = vi.fn();
+const mockSetBackendValues = vi.fn();
+const mockOnValueSubmit = vi.fn();
+const mockOnValueDelete = vi.fn();
+const mockOnDeleteMultipleValues = vi.fn();
 
-jest.mock('aristid-ds', () => ({
+vi.mock('aristid-ds', () => ({
     AntForm: {
-        useFormInstance: jest.fn(() => ({
+        useFormInstance: vi.fn(() => ({
             setFieldValue: mockSetFieldValue,
             setFields: mockSetFields,
         })),
-        useWatch: jest.fn(),
+        useWatch: vi.fn(),
     },
 }));
 
-jest.mock('_ui/hooks/useSharedTranslation', () => ({
-    useSharedTranslation: jest.fn(),
+vi.mock('_ui/hooks/useSharedTranslation', () => ({
+    useSharedTranslation: vi.fn(),
 }));
 
-jest.mock('./SelectTreeNodeModal', () => ({
+vi.mock('./SelectTreeNodeModal', () => ({
     SelectTreeNodeModal: ({onConfirm, onClose}) => (
         <div data-testid="select-tree-node-modal">
             <button data-testid="confirm-selection" onClick={() => onConfirm(mockSelectedNodeOnConfirm)}>
@@ -39,7 +39,7 @@ jest.mock('./SelectTreeNodeModal', () => ({
     ),
 }));
 
-jest.mock('../../shared/DeleteAllValuesButton', () => ({
+vi.mock('../../shared/DeleteAllValuesButton', () => ({
     DeleteAllValuesButton: ({handleDelete, disabled, danger, children}) => (
         <button
             data-testid="delete-all-button"
@@ -163,8 +163,10 @@ describe('useManageTreeNodeSelection', () => {
         user = userEvent.setup();
         mockSelectedNodeOnConfirm = [mockSelectedNode1, mockSelectedNode2];
 
-        (useSharedTranslation as jest.Mock).mockReturnValue({t: jest.fn(key => key)});
-        jest.clearAllMocks();
+        vi.mocked(useSharedTranslation).mockReturnValue({
+            t: vi.fn(key => key),
+        } as unknown as ReturnType<typeof useSharedTranslation>);
+        vi.clearAllMocks();
     });
 
     it('should open and close modal', async () => {

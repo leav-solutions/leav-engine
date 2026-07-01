@@ -1,5 +1,7 @@
+import {vi} from 'vitest';
+
 export default function useSaveValueMutation() {
     return {
-        saveValue: jest.fn(),
+        saveValue: vi.fn(),
     };
 }

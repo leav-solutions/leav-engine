@@ -8,7 +8,7 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeSimple} from '_ui/__mocks__/common/tree';
 import UploadFiles from './UploadFiles';
 
-jest.mock('_ui/components/SelectTreeNode', () => ({
+vi.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNode: () => <div>SelectTreeNode</div>,
 }));
 
@@ -79,7 +79,7 @@ describe('UploadFiles', () => {
     ];
 
     test('Should display upload modal on first step', async () => {
-        render(<UploadFiles libraryId="files" onClose={jest.fn()} />, {mocks: commonMocks});
+        render(<UploadFiles libraryId="files" onClose={vi.fn()} />, {mocks: commonMocks});
 
         expect(screen.getByTestId('upload-modal')).toBeInTheDocument();
         expect(screen.getByTestId('select-tree-node')).toBeInTheDocument();
@@ -87,7 +87,7 @@ describe('UploadFiles', () => {
     });
 
     test('Should be on step 2 with default selected key', async () => {
-        render(<UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={jest.fn()} />, {
+        render(<UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={vi.fn()} />, {
             mocks: commonMocks,
         });
 
@@ -108,8 +108,8 @@ describe('UploadFiles', () => {
                 upload: [{uid: 'uid', record: {__typename: 'RecordLib', id: '1', whoAmI: mockRecord}}],
             },
         };
-        jest.spyOn(gqlTypes, 'useUploadMutation').mockImplementation(options => {
-            const runUploadMock = jest.fn().mockImplementation(async () => {
+        vi.spyOn(gqlTypes, 'useUploadMutation').mockImplementation(options => {
+            const runUploadMock = vi.fn().mockImplementation(async () => {
                 options?.onCompleted?.(uploadResult.data);
                 return uploadResult;
             });
@@ -135,7 +135,7 @@ describe('UploadFiles', () => {
             },
         ];
 
-        render(<UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={jest.fn()} />, {mocks});
+        render(<UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={vi.fn()} />, {mocks});
 
         fireEvent.drop(screen.getByTestId('dragger'), {
             dataTransfer: {

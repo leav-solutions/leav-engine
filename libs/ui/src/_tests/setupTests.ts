@@ -2,7 +2,7 @@
 // allows you to do things like:
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 
 const originalConsoleError = console.error;
 console.error = (...args: unknown[]) => {
@@ -26,15 +26,19 @@ window.matchMedia = query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
 });
 
-jest.mock('_ui/hooks/useSharedTranslation');
-jest.mock('_ui/_utils/isDevEnv');
+vi.mock('_ui/hooks/useSharedTranslation');
+// Some components import the hook through its deep path instead of the directory index, so the
+// directory-level mock above does not intercept them. Mock the deep path too (both resolve to the
+// same manual mock in __mocks__).
+vi.mock('_ui/hooks/useSharedTranslation/useSharedTranslation');
+vi.mock('_ui/_utils/isDevEnv');
 
 Object.defineProperty(globalThis, 'crypto', {
     value: webcrypto,

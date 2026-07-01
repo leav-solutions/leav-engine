@@ -4,12 +4,12 @@ import {getVersionableAttributesByLibraryQuery} from '../../_queries/attributes/
 import {act, render, screen, waitFor} from '../../_tests/testUtils';
 import ValuesVersionConfigurator from './ValuesVersionConfigurator';
 
-jest.mock('_ui/components/SelectTreeNodeModalOld', () => ({
+vi.mock('_ui/components/SelectTreeNodeModalOld', () => ({
     SelectTreeNodeModalOld: () => <div>SelectTreeNodeModalOld</div>,
 }));
 
 describe('VersionsPanel', () => {
-    beforeEach(() => jest.clearAllMocks());
+    beforeEach(() => vi.clearAllMocks());
 
     test('Display version trees', async () => {
         const mocks = [
@@ -35,7 +35,7 @@ describe('VersionsPanel', () => {
                     readOnly={false}
                     libraryId="test_lib"
                     selectedVersion={null}
-                    onVersionChange={jest.fn()}
+                    onVersionChange={vi.fn()}
                 />,
                 {
                     mocks,
@@ -78,7 +78,7 @@ describe('VersionsPanel', () => {
                     readOnly
                     libraryId="test_lib"
                     selectedVersion={null}
-                    onVersionChange={jest.fn()}
+                    onVersionChange={vi.fn()}
                 />,
                 {
                     mocks,

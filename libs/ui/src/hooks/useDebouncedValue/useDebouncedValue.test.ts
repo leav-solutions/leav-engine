@@ -3,12 +3,12 @@ import {useDebouncedValue} from './useDebouncedValue';
 
 describe('useDebouncedValue', () => {
     beforeEach(() => {
-        jest.useFakeTimers();
+        vi.useFakeTimers();
     });
 
     afterEach(() => {
-        jest.clearAllTimers();
-        jest.useRealTimers();
+        vi.clearAllTimers();
+        vi.useRealTimers();
     });
 
     test('should return the initial value', () => {
@@ -31,7 +31,7 @@ describe('useDebouncedValue', () => {
         expect(result.current).toBe('initial');
 
         act(() => {
-            jest.advanceTimersByTime(500);
+            vi.advanceTimersByTime(500);
         });
 
         expect(result.current).toBe('updated');
@@ -49,12 +49,12 @@ describe('useDebouncedValue', () => {
         expect(result.current).toBe('initial');
 
         act(() => {
-            jest.advanceTimersByTime(250);
+            vi.advanceTimersByTime(250);
             rerender({value: 'new', delay: 500});
         });
 
         act(() => {
-            jest.advanceTimersByTime(500);
+            vi.advanceTimersByTime(500);
         });
 
         expect(result.current).toBe('new');

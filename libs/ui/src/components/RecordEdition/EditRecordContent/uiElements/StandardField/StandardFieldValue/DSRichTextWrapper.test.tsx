@@ -55,8 +55,8 @@ describe('DSRichTextWrapper', () => {
         tiptapCleanup();
     });
 
-    const mockHandleSubmit = jest.fn();
-    const mockOnChange = jest.fn();
+    const mockHandleSubmit = vi.fn();
+    const mockOnChange = vi.fn();
 
     let user!: ReturnType<typeof userEvent.setup>;
 

@@ -6,12 +6,12 @@ const LOADER_MIN_DURATION_MS = 300;
 
 describe('useDelayedLoading', () => {
     beforeEach(() => {
-        jest.useFakeTimers();
+        vi.useFakeTimers();
     });
 
     afterEach(() => {
-        jest.clearAllTimers();
-        jest.useRealTimers();
+        vi.clearAllTimers();
+        vi.useRealTimers();
     });
 
     describe('when loading resolves before showDelay', () => {
@@ -21,7 +21,7 @@ describe('useDelayedLoading', () => {
             });
 
             act(() => {
-                jest.advanceTimersByTime(LOADER_SHOW_DELAY_MS - 50);
+                vi.advanceTimersByTime(LOADER_SHOW_DELAY_MS - 50);
             });
 
             act(() => {
@@ -29,7 +29,7 @@ describe('useDelayedLoading', () => {
             });
 
             act(() => {
-                jest.advanceTimersByTime(LOADER_SHOW_DELAY_MS + LOADER_MIN_DURATION_MS);
+                vi.advanceTimersByTime(LOADER_SHOW_DELAY_MS + LOADER_MIN_DURATION_MS);
             });
 
             expect(result.current).toBe(false);
@@ -41,7 +41,7 @@ describe('useDelayedLoading', () => {
             const {result} = renderHook(() => useDelayedLoading(true));
 
             act(() => {
-                jest.advanceTimersByTime(LOADER_SHOW_DELAY_MS - 1);
+                vi.advanceTimersByTime(LOADER_SHOW_DELAY_MS - 1);
             });
 
             expect(result.current).toBe(false);
@@ -51,7 +51,7 @@ describe('useDelayedLoading', () => {
             const {result} = renderHook(() => useDelayedLoading(true));
 
             act(() => {
-                jest.advanceTimersByTime(LOADER_SHOW_DELAY_MS);
+                vi.advanceTimersByTime(LOADER_SHOW_DELAY_MS);
             });
 
             expect(result.current).toBe(true);
@@ -65,7 +65,7 @@ describe('useDelayedLoading', () => {
             const elapsedBeforeResolve = LOADER_SHOW_DELAY_MS + 50;
 
             act(() => {
-                jest.advanceTimersByTime(elapsedBeforeResolve);
+                vi.advanceTimersByTime(elapsedBeforeResolve);
             });
 
             act(() => {
@@ -75,13 +75,13 @@ describe('useDelayedLoading', () => {
             expect(result.current).toBe(true);
 
             act(() => {
-                jest.advanceTimersByTime(LOADER_SHOW_DELAY_MS + LOADER_MIN_DURATION_MS - elapsedBeforeResolve - 1);
+                vi.advanceTimersByTime(LOADER_SHOW_DELAY_MS + LOADER_MIN_DURATION_MS - elapsedBeforeResolve - 1);
             });
 
             expect(result.current).toBe(true);
 
             act(() => {
-                jest.advanceTimersByTime(1);
+                vi.advanceTimersByTime(1);
             });
 
             expect(result.current).toBe(false);
@@ -93,7 +93,7 @@ describe('useDelayedLoading', () => {
             const {result} = renderHook(() => useDelayedLoading(true));
 
             act(() => {
-                jest.advanceTimersByTime(LOADER_SHOW_DELAY_MS);
+                vi.advanceTimersByTime(LOADER_SHOW_DELAY_MS);
             });
 
             expect(result.current).toBe(true);
@@ -105,7 +105,7 @@ describe('useDelayedLoading', () => {
             });
 
             act(() => {
-                jest.advanceTimersByTime(LOADER_SHOW_DELAY_MS + LOADER_MIN_DURATION_MS + 100);
+                vi.advanceTimersByTime(LOADER_SHOW_DELAY_MS + LOADER_MIN_DURATION_MS + 100);
             });
 
             act(() => {

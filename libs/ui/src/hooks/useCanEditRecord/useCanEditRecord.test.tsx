@@ -33,7 +33,7 @@ describe('useCanEditRecord', () => {
             },
             called: true,
         };
-        const spy = jest
+        const spy = vi
             .spyOn(gqlTypes, 'useIsAllowedQuery')
             .mockImplementation(
                 () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>,
@@ -77,7 +77,7 @@ describe('useCanEditRecord', () => {
             },
             called: true,
         };
-        const spy = jest
+        const spy = vi
             .spyOn(gqlTypes, 'useIsAllowedQuery')
             .mockImplementation(
                 () => mockResultIsAllowed as QueryResult<gqlTypes.IsAllowedQuery, gqlTypes.IsAllowedQueryVariables>,
@@ -124,7 +124,7 @@ describe('useCanEditRecord', () => {
             },
             called: true,
         };
-        const spy = jest
+        const spy = vi
             .spyOn(gqlTypes, 'useGetLibraryPermissionsQuery')
             .mockImplementation(
                 () =>
@@ -167,7 +167,7 @@ describe('useCanEditRecord', () => {
             },
             called: true,
         };
-        const spy = jest
+        const spy = vi
             .spyOn(gqlTypes, 'useGetLibraryPermissionsQuery')
             .mockImplementation(
                 () =>

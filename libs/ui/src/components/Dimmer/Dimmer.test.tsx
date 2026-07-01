@@ -4,7 +4,7 @@ import Dimmer from './Dimmer';
 
 describe('Dimmer', () => {
     test('Render dimmer, handle onclick', async () => {
-        const _handleClick = jest.fn();
+        const _handleClick = vi.fn();
 
         render(<Dimmer onClick={_handleClick} />);
 

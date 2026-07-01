@@ -10,23 +10,22 @@ import {Form} from 'antd';
 import {getLibraryByIdQuery} from '_ui/_queries/libraries/getLibraryByIdQuery';
 import * as gqlTypes from '_ui/_gqlTypes';
 
-jest.spyOn(gqlTypes, 'useGetRecordIdCardQuery').mockReturnValue({
+vi.spyOn(gqlTypes, 'useGetRecordIdCardQuery').mockReturnValue({
     data: undefined,
     loading: false,
-    refetch: jest.fn(),
+    refetch: vi.fn(),
 } as unknown as gqlTypes.GetRecordIdCardQueryResult);
 
-const editRecordContentFn = jest.fn();
-jest.mock(
-    '../EditRecordContent',
-    () =>
-        function EditRecordContent(props) {
-            editRecordContentFn(props);
-            return <div>EditRecordContent</div>;
-        },
-);
+// vi.hoisted is required because the vi.mock factory below is hoisted above this declaration.
+const {editRecordContentFn} = vi.hoisted(() => ({editRecordContentFn: vi.fn()}));
+vi.mock('../EditRecordContent', () => ({
+    default: function EditRecordContent(props) {
+        editRecordContentFn(props);
+        return <div>EditRecordContent</div>;
+    },
+}));
 
-jest.mock('hooks/useCanEditRecord/useCanEditRecord', () => ({
+vi.mock('_ui/hooks/useCanEditRecord', () => ({
     useCanEditRecord: (): IUseCanEditRecordHook => ({loading: false, canEdit: true, isReadOnly: false}),
 }));
 

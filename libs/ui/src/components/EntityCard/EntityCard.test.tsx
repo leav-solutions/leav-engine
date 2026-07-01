@@ -34,9 +34,7 @@ describe('EntityCard', () => {
     test('Can hide color', async () => {
         render(<EntityCard entity={mockEntity} withColor={false} />);
 
-        expect(screen.getByTestId('entity-card')).not.toHaveStyle({
-            borderLeft: `5px solid ${mockEntity.color}`,
-        });
+        expect(screen.getByTestId('entity-card')).not.toHaveStyleRule('border-left', `5px solid ${mockEntity.color}`);
     });
 
     test('Display initials if no preview supplied', async () => {

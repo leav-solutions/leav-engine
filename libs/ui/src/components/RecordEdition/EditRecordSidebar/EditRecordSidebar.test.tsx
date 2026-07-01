@@ -6,41 +6,39 @@ import {EditRecordReducerContext, type IEditRecordReducerContext} from '../editR
 import EditRecordSidebar from './EditRecordSidebar';
 import {type IUseGetRecordColumnsValuesQueryHook} from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 
-jest.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary/RecordInformations/RecordInformations', () => ({
+vi.mock('_ui/components/RecordEdition/EditRecordSidebar/RecordSummary/RecordInformations/RecordInformations', () => ({
     RecordInformations: () => <div>Informations</div>,
 }));
 
-jest.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
+vi.mock('_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery', () => ({
     useGetRecordValuesQuery: (): Partial<IUseGetRecordColumnsValuesQueryHook> => ({
         loading: false,
         data: {},
-        refetch: jest.fn(),
+        refetch: vi.fn(),
     }),
 }));
 
-jest.mock('_ui/components/RecordHistory/hooks/useFetchRecordHistory', () => ({
+vi.mock('_ui/components/RecordHistory/hooks/useFetchRecordHistory', () => ({
     useFetchRecordHistory: () => ({
         loading: false,
         inError: false,
         logs: [],
         total: 0,
         hasMore: false,
-        fetchMore: jest.fn(),
+        fetchMore: vi.fn(),
     }),
 }));
 
-jest.mock(
-    '_ui/components/RecordEdition/EditRecordContent/uiElements/StandardField',
-    () =>
-        function StandardField() {
-            return <div>StandardField</div>;
-        },
-);
+vi.mock('_ui/components/RecordEdition/EditRecordContent/uiElements/StandardField', () => ({
+    default: function StandardField() {
+        return <div>StandardField</div>;
+    },
+}));
 
 describe('EditRecordSidebar', () => {
     const mockReducer: IEditRecordReducerContext = {
         state: {...initialState, record: mockRecord},
-        dispatch: jest.fn(),
+        dispatch: vi.fn(),
     };
     const mockReducerWithValue: IEditRecordReducerContext = {
         ...mockReducer,
