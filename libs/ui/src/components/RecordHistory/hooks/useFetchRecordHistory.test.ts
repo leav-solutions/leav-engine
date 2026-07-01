@@ -6,10 +6,10 @@ import {RECORD_HISTORY_LOGS_FIRST_PAGE, RECORD_HISTORY_LOGS_PAGE, useFetchRecord
 import {getRecordHistoryQuery} from '../_queries/recordHistoryQuery';
 
 describe('useFetchRecordHistory', () => {
-    const useQuerySpy = jest.spyOn(ApolloClient, 'useQuery');
+    const useQuerySpy = vi.spyOn(ApolloClient, 'useQuery');
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const buildFakeLogs = ({limit, offset}: {limit: number; offset: number}) => {
@@ -45,7 +45,7 @@ describe('useFetchRecordHistory', () => {
         };
 
         // for next calls/pages
-        const refetchMock = jest.fn().mockImplementation((variables: gqlTypes.GetRecordHistoryQueryVariables) => {
+        const refetchMock = vi.fn().mockImplementation((variables: gqlTypes.GetRecordHistoryQueryVariables) => {
             useQuerySpy.mockReturnValue(
                 useGetRecordHistoryQueryReturnValueFct({
                     pagination: variables.pagination,

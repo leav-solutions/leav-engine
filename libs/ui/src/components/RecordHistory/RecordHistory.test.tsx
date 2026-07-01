@@ -3,20 +3,20 @@ import {render, screen} from '_ui/_tests/testUtils';
 import RecordHistory from './RecordHistory';
 import {type LogEntry} from './_types';
 
-const useFetchRecordHistoryMock = jest.fn();
-jest.mock('./hooks/useFetchRecordHistory', () => ({
+const useFetchRecordHistoryMock = vi.fn();
+vi.mock('./hooks/useFetchRecordHistory', () => ({
     useFetchRecordHistory: (...args) => useFetchRecordHistoryMock(...args),
 }));
 
-jest.mock('./RecordHistoryLogEntry', () => ({
+vi.mock('./RecordHistoryLogEntry', () => ({
     RecordHistoryLogEntry: () => <div data-testid="log-entry">log</div>,
 }));
 
-jest.mock('./RecordHistoryGoUpButton', () => ({
+vi.mock('./RecordHistoryGoUpButton', () => ({
     RecordHistoryGoUpButton: ({children}) => <div>{children}</div>,
 }));
 
-jest.mock('../ShowMore', () => ({
+vi.mock('../ShowMore', () => ({
     ShowMore: () => <div data-testid="show-more" />,
 }));
 

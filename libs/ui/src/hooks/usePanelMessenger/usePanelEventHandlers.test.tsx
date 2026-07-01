@@ -4,15 +4,15 @@ import {LangContext} from '_ui/contexts';
 import {PanelMessengerProvider, usePanelEventHandlers} from '_ui/hooks';
 
 const wrapper = ({children}: {children: ReactNode}) => (
-    <LangContext.Provider value={{lang: ['fr'], availableLangs: ['fr', 'en'], defaultLang: 'fr', setLang: jest.fn()}}>
+    <LangContext.Provider value={{lang: ['fr'], availableLangs: ['fr', 'en'], defaultLang: 'fr', setLang: vi.fn()}}>
         <PanelMessengerProvider>{children}</PanelMessengerProvider>
     </LangContext.Provider>
 );
 
 describe('usePanelEventHandlers', () => {
     it('calls the matching handler with the message data when dispatch is called', async () => {
-        const onViewSettingsChanged = jest.fn();
-        const onFiltersChanged = jest.fn();
+        const onViewSettingsChanged = vi.fn();
+        const onFiltersChanged = vi.fn();
 
         const {result} = renderHook(
             () =>
@@ -33,8 +33,8 @@ describe('usePanelEventHandlers', () => {
     });
 
     it('calls all handlers registered for the same event type', async () => {
-        const firstHandler = jest.fn();
-        const secondHandler = jest.fn();
+        const firstHandler = vi.fn();
+        const secondHandler = vi.fn();
 
         const {result} = renderHook(
             () => {
@@ -54,7 +54,7 @@ describe('usePanelEventHandlers', () => {
     });
 
     it('unregisters all handlers on unmount', async () => {
-        const onViewSettingsChanged = jest.fn();
+        const onViewSettingsChanged = vi.fn();
 
         const {result, unmount} = renderHook(
             () => usePanelEventHandlers({'view-settings-changed': onViewSettingsChanged}),

@@ -8,7 +8,7 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeSimple} from '_ui/__mocks__/common/tree';
 import CreateDirectory from './CreateDirectory';
 
-jest.mock('_ui/components/SelectTreeNode', () => ({
+vi.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNode: () => <div>SelectTreeNode</div>,
 }));
 
@@ -55,7 +55,7 @@ describe('UploadFiles', () => {
     ];
 
     test('Should display create directory modal on first step', async () => {
-        render(<CreateDirectory libraryId="files_directories" onClose={jest.fn()} />, {mocks: commonMocks});
+        render(<CreateDirectory libraryId="files_directories" onClose={vi.fn()} />, {mocks: commonMocks});
 
         expect(screen.getByTestId('create-directory-modal')).toBeInTheDocument();
         expect(screen.getByTestId('select-tree-node')).toBeInTheDocument();
@@ -64,11 +64,7 @@ describe('UploadFiles', () => {
 
     test('Should be on step 2 with default selected key', async () => {
         render(
-            <CreateDirectory
-                defaultSelectedKey="files_directories"
-                libraryId="files_directories"
-                onClose={jest.fn()}
-            />,
+            <CreateDirectory defaultSelectedKey="files_directories" libraryId="files_directories" onClose={vi.fn()} />,
             {mocks: commonMocks},
         );
 
@@ -154,7 +150,7 @@ describe('UploadFiles', () => {
             },
         ];
 
-        render(<CreateDirectory defaultSelectedKey="files_tree" libraryId="files_directories" onClose={jest.fn()} />, {
+        render(<CreateDirectory defaultSelectedKey="files_tree" libraryId="files_directories" onClose={vi.fn()} />, {
             mocks,
         });
 
@@ -247,7 +243,7 @@ describe('UploadFiles', () => {
             },
         ];
 
-        render(<CreateDirectory defaultSelectedKey="files_tree" libraryId="files_directories" onClose={jest.fn()} />, {
+        render(<CreateDirectory defaultSelectedKey="files_tree" libraryId="files_directories" onClose={vi.fn()} />, {
             mocks,
         });
 

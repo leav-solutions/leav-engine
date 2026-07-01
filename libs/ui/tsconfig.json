@@ -1,17 +1,13 @@
 {
-    "extends": "../../tsconfig.json",
+    "files": [],
+    "references": [{"path": "./tsconfig.build.json"}, {"path": "./tsconfig.spec.json"}],
     "compilerOptions": {
-        "outDir": "dist",
-        "rootDir": "./src",
-        "composite": true,
-        "module": "esnext",
-        "skipLibCheck": true,
-        "types": ["jest", "@types/jest", "@testing-library/jest-dom"],
+        // jsx is read by esbuild/Vite when consumers (app-studio, data-studio, AMP, xStream) bundle
+        // @leav/ui from src via the @leav/ui / _ui alias. Without it esbuild falls back to the classic
+        // JSX runtime and components that don't import React crash at runtime with "React is not defined".
         "jsx": "react-jsx",
-        "resolveJsonModule": true,
         "paths": {
             "_ui/*": ["./src/*"]
         }
-    },
-    "include": ["src", "src/**/*.json"]
+    }
 }

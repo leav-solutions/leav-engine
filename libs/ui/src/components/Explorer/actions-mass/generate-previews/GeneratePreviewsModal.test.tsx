@@ -52,11 +52,11 @@ beforeAll(() => {
 });
 
 describe('GeneratePreviewsModal', () => {
-    const mockOnClose = jest.fn();
-    const mockOnConfirm = jest.fn();
+    const mockOnClose = vi.fn();
+    const mockOnConfirm = vi.fn();
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     test('should render tree with preview sizes when data is loaded', async () => {

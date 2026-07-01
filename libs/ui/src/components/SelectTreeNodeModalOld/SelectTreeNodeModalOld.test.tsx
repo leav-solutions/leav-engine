@@ -3,17 +3,17 @@ import {render, screen} from '../../_tests/testUtils';
 import {SelectTreeNodeModalOld} from './SelectTreeNodeModalOld';
 import ReactModal from 'react-modal';
 
-jest.mock('_ui/components/SelectTreeNode', () => ({
+vi.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNode: () => <div>SelectTreeNode</div>,
 }));
 
 describe('SelectTreeNodeModalOld', () => {
     test('Should modal with SelectTreeNode inside', async () => {
-        const onSubmit = jest.fn();
+        const onSubmit = vi.fn();
 
         ReactModal.setAppElement(document.createElement('div'));
 
-        render(<SelectTreeNodeModalOld treeId="treeId" isVisible onSubmit={onSubmit} onClose={jest.fn()} />);
+        render(<SelectTreeNodeModalOld treeId="treeId" isVisible onSubmit={onSubmit} onClose={vi.fn()} />);
 
         expect(screen.getByText('SelectTreeNode')).toBeVisible();
 

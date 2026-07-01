@@ -34,13 +34,16 @@ describe('useReplaceLinkMassAction', () => {
         };
 
         const saveValuesResult = 'saveValuesResult';
-        const saveValues = jest.fn<any, any>(async () => saveValuesResult);
-        jest.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(() => ({
-            loading: false,
-            saveValues,
-        }));
+        const saveValues = vi.fn(async () => saveValuesResult);
+        vi.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(
+            () =>
+                ({
+                    loading: false,
+                    saveValues,
+                }) as unknown as ReturnType<typeof useExecuteSaveValueBatchMutation.default>,
+        );
 
-        const onReplace = jest.fn();
+        const onReplace = vi.fn();
 
         const {
             result: {

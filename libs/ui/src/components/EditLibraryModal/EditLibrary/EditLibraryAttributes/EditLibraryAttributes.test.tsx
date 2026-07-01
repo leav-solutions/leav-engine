@@ -7,12 +7,12 @@ import * as gqlTypes from '../../../../_gqlTypes';
 import {render, screen, waitFor} from '../../../../_tests/testUtils';
 import EditLibraryAttributes from './EditLibraryAttributes';
 
-jest.mock('../../../../hooks/useSharedTranslation/useSharedTranslation');
+vi.mock('../../../../hooks/useSharedTranslation/useSharedTranslation');
 
-jest.mock('antd', () => ({
-    ...jest.requireActual('antd'),
+vi.mock('antd', async () => ({
+    ...(await vi.importActual('antd')),
     message: {
-        error: jest.fn(),
+        error: vi.fn(),
     },
 }));
 
@@ -65,19 +65,19 @@ describe('EditLibraryAttributes', () => {
 
     test('Render list of attributes', async () => {
         const user = userEvent.setup();
-        const mockSaveLibraryMutation = jest.fn().mockReturnValue({
+        const mockSaveLibraryMutation = vi.fn().mockReturnValue({
             data: {
                 saveLibrary: {
                     ...mockLibraryWithDetails,
                 },
             },
         });
-        jest.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'useSaveLibraryMutation').mockImplementation(() => [
             mockSaveLibraryMutation,
             {loading: false, called: false, client: null, reset: null, error: null},
         ]);
 
-        jest.spyOn(gqlTypes, 'useGetAttributesQuery').mockImplementation(() => mockGetAttributesQuery as QueryResult);
+        vi.spyOn(gqlTypes, 'useGetAttributesQuery').mockImplementation(() => mockGetAttributesQuery as QueryResult);
 
         render(<EditLibraryAttributes library={mockLibrary} />);
 
@@ -99,7 +99,7 @@ describe('EditLibraryAttributes', () => {
     });
 
     test('If not allowed, cannot delete an attribute', async () => {
-        jest.spyOn(gqlTypes, 'useGetAttributesQuery').mockImplementation(() => mockGetAttributesQuery as QueryResult);
+        vi.spyOn(gqlTypes, 'useGetAttributesQuery').mockImplementation(() => mockGetAttributesQuery as QueryResult);
         render(
             <EditLibraryAttributes
                 library={{

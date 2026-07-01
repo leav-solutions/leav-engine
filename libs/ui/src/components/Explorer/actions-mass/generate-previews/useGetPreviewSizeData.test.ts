@@ -57,7 +57,7 @@ describe('useGetPreviewSizesData', () => {
     ];
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     test('should return loading state initially', () => {

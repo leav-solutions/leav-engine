@@ -93,19 +93,19 @@ describe('Integration tests about managing view settings feature', () => {
         label: {en: 'My view'},
     });
 
-    const mockSaveViewMutation = jest.fn().mockImplementation(data => ({
+    const mockSaveViewMutation = vi.fn().mockImplementation(data => ({
         data: {
             saveView: viewMutation(data),
         },
     }));
 
-    const mockUpdateViewMutation = jest.fn().mockImplementation(data => ({
+    const mockUpdateViewMutation = vi.fn().mockImplementation(data => ({
         data: {
             updateView: viewMutation(data),
         },
     }));
 
-    const mockDeleteViewMutation = jest.fn().mockImplementation(data => ({
+    const mockDeleteViewMutation = vi.fn().mockImplementation(data => ({
         data: {
             deleteView: viewMutation(data),
         },
@@ -203,38 +203,38 @@ describe('Integration tests about managing view settings feature', () => {
         },
     };
 
-    let getViewsListSpy: jest.SpyInstance;
+    let getViewsListSpy: ReturnType<typeof vi.spyOn>;
     beforeAll(() => {
-        jest.spyOn(gqlTypes, 'useGetAttributesByLibWithPermissionsQuery').mockReturnValue(
+        vi.spyOn(gqlTypes, 'useGetAttributesByLibWithPermissionsQuery').mockReturnValue(
             mockAttributesByLibResult as gqlTypes.GetAttributesByLibWithPermissionsQueryResult,
         );
 
-        getViewsListSpy = jest
+        getViewsListSpy = vi
             .spyOn(gqlTypes, 'useGetViewsListQuery')
             .mockReturnValue(mockViewsResult as gqlTypes.GetViewsListQueryResult);
 
-        jest.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockReturnValue(
+        vi.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockReturnValue(
             mockExplorerAttributesQuery as gqlTypes.ExplorerAttributesQueryResult,
         );
 
-        jest.spyOn(gqlTypes, 'useSaveViewMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'useSaveViewMutation').mockImplementation(() => [
             mockSaveViewMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()},
+            {loading: false, called: false, client: {} as any, reset: vi.fn()},
         ]);
 
-        jest.spyOn(gqlTypes, 'useUpdateViewMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'useUpdateViewMutation').mockImplementation(() => [
             mockUpdateViewMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()},
+            {loading: false, called: false, client: {} as any, reset: vi.fn()},
         ]);
 
-        jest.spyOn(gqlTypes, 'useDeleteViewMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'useDeleteViewMutation').mockImplementation(() => [
             mockDeleteViewMutation,
-            {loading: false, called: false, client: {} as any, reset: jest.fn()},
+            {loading: false, called: false, client: {} as any, reset: vi.fn()},
         ]);
 
-        jest.spyOn(gqlTypes, 'useMeQuery').mockImplementation(() => mockMeResult as gqlTypes.MeQueryResult);
+        vi.spyOn(gqlTypes, 'useMeQuery').mockImplementation(() => mockMeResult as gqlTypes.MeQueryResult);
 
-        jest.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
+        vi.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(
             () => mockGetLibraryByIdQuery as gqlTypes.GetLibraryByIdQueryResult,
         );
     });

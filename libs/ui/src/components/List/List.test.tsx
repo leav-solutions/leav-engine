@@ -18,7 +18,7 @@ describe('List', () => {
     });
 
     test('Can select elements', async () => {
-        const onSelect = jest.fn();
+        const onSelect = vi.fn();
 
         render(<List dataSource={['Item A', 'Item B']} selectable selectedItems={[]} onSelectionChange={onSelect} />);
 
@@ -35,7 +35,7 @@ describe('List', () => {
     });
 
     test('Automatically check selected elements', async () => {
-        const onSelect = jest.fn();
+        const onSelect = vi.fn();
 
         render(
             <List

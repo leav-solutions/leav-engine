@@ -9,7 +9,7 @@ const recordFilters = [];
 describe('useTreeNodesCandidates', () => {
     describe('initial loading state', () => {
         it('should return loading=true and empty candidateNodes', () => {
-            jest.spyOn(gqlTypes, 'useTreeAttributeRemappingQuery').mockReturnValue({
+            vi.spyOn(gqlTypes, 'useTreeAttributeRemappingQuery').mockReturnValue({
                 data: undefined,
                 loading: true,
             } as gqlTypes.TreeAttributeRemappingQueryResult);
@@ -25,7 +25,7 @@ describe('useTreeNodesCandidates', () => {
 
     describe('when query returns nodes', () => {
         it('should return only nodes present in the selection with their occurrence count and resolved allowed values', () => {
-            jest.spyOn(gqlTypes, 'useTreeAttributeRemappingQuery').mockReturnValue({
+            vi.spyOn(gqlTypes, 'useTreeAttributeRemappingQuery').mockReturnValue({
                 data: {
                     listDistinctValues: [{count: 3, treeNode: {id: 'node_1'}}],
                     attributes: {
@@ -67,7 +67,7 @@ describe('useTreeNodesCandidates', () => {
         });
 
         it('should add a null candidateNode with allowed targets defined by the null tree_values entry', () => {
-            jest.spyOn(gqlTypes, 'useTreeAttributeRemappingQuery').mockReturnValue({
+            vi.spyOn(gqlTypes, 'useTreeAttributeRemappingQuery').mockReturnValue({
                 data: {
                     listDistinctValues: [{count: 5, treeNode: null}],
                     attributes: {
@@ -116,7 +116,7 @@ describe('useTreeNodesCandidates', () => {
         });
 
         it('should return all remappable nodes as allowedDependentValues when allowedDependentValues is null (no restriction)', () => {
-            jest.spyOn(gqlTypes, 'useTreeAttributeRemappingQuery').mockReturnValue({
+            vi.spyOn(gqlTypes, 'useTreeAttributeRemappingQuery').mockReturnValue({
                 data: {
                     listDistinctValues: [{count: 3, treeNode: {id: 'node_1'}}],
                     attributes: {
@@ -157,7 +157,7 @@ describe('useTreeNodesCandidates', () => {
         });
 
         it('should return empty allowedDependentValues for the null candidateNode when the null tree_values entry has no allowed transitions', () => {
-            jest.spyOn(gqlTypes, 'useTreeAttributeRemappingQuery').mockReturnValue({
+            vi.spyOn(gqlTypes, 'useTreeAttributeRemappingQuery').mockReturnValue({
                 data: {
                     listDistinctValues: [{count: 5, treeNode: null}],
                     attributes: {

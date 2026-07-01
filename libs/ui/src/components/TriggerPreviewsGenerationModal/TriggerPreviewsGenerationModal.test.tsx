@@ -75,7 +75,7 @@ describe('TriggerPreviewsGenerationModal', () => {
             },
         ];
 
-        render(<TriggerPreviewsGenerationModal libraryId="files" recordIds={['123456']} onClose={jest.fn()} />, {
+        render(<TriggerPreviewsGenerationModal libraryId="files" recordIds={['123456']} onClose={vi.fn()} />, {
             mocks,
         });
 
@@ -135,7 +135,7 @@ describe('TriggerPreviewsGenerationModal', () => {
             },
         ];
 
-        render(<TriggerPreviewsGenerationModal libraryId="files" recordIds={['123456']} onClose={jest.fn()} />, {
+        render(<TriggerPreviewsGenerationModal libraryId="files" recordIds={['123456']} onClose={vi.fn()} />, {
             mocks,
         });
 

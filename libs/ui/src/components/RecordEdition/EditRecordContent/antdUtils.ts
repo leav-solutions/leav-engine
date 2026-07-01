@@ -88,7 +88,9 @@ export const getAntdFormInitialValues = (recordForm: IRecordForm) =>
         }
 
         if (isRecordFormElementsValueLinkValues(values, attribute)) {
-            acc[attribute.id] = values.map(val => val?.linkValue?.id ?? undefined);
+            acc[attribute.id] = values
+                .map(val => val?.linkValue?.id)
+                .filter((id): id is NonNullable<typeof id> => id != null);
             return acc;
         }
 

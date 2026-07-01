@@ -6,7 +6,7 @@ import {SelectTreeNode} from './SelectTreeNode';
 
 describe('SelectTreeNode', () => {
     afterAll(() => {
-        jest.restoreAllMocks();
+        vi.restoreAllMocks();
     });
 
     test('Render tree and navigate', async () => {
@@ -47,7 +47,7 @@ describe('SelectTreeNode', () => {
             },
         ];
 
-        jest.spyOn(gqlTypes, 'useTreeDataQueryQuery').mockReturnValue({
+        vi.spyOn(gqlTypes, 'useTreeDataQueryQuery').mockReturnValue({
             data: {
                 trees: {
                     list: [{id: 'treeId', label: {fr: 'Tree Label'}}],
@@ -58,8 +58,8 @@ describe('SelectTreeNode', () => {
             error: null,
         } as gqlTypes.TreeDataQueryQueryHookResult);
 
-        jest.spyOn(apolloClient, 'useLazyQuery').mockReturnValue([
-            jest.fn().mockResolvedValue({
+        vi.spyOn(apolloClient, 'useLazyQuery').mockReturnValue([
+            vi.fn().mockResolvedValue({
                 data: {
                     treeContent: mockTreeContent,
                 },
@@ -67,7 +67,7 @@ describe('SelectTreeNode', () => {
             {} as apolloClient.QueryResult,
         ] as unknown as ReturnType<typeof apolloClient.useLazyQuery>);
 
-        render(<SelectTreeNode treeId="treeId" onSelect={jest.fn()} />);
+        render(<SelectTreeNode treeId="treeId" onSelect={vi.fn()} />);
 
         await waitFor(() => screen.getByText('Tree Label'));
         expect(screen.getByText('Tree Label')).toBeInTheDocument();

@@ -7,8 +7,10 @@ import {AttributeFormat, AttributeType} from '_ui/_gqlTypes';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {type RecordFormElementAttribute, type RecordFormElementsValueStandardValue} from '_ui/hooks/useGetRecordForm';
 
-jest.mock('dayjs', () => ({
-    unix: jest.fn(t => t),
+vi.mock('dayjs', () => ({
+    default: {
+        unix: vi.fn(t => t),
+    },
 }));
 
 describe('getAntdDisplayedValue', () => {
@@ -108,6 +110,8 @@ describe('getAntdFormInitialValues', () => {
             });
         });
 
+        // An empty link attribute must initialize as an empty field (no phantom slot), so getAntdFormInitialValues
+        // filters out values with no linkValue id. Otherwise the empty slot risks being saved as a ghost link value.
         test('Should initialize antd form with empty array for links when linkValue is not set', async () => {
             const linkAttributeId = 'linkAttributeId';
             const linkElement = {

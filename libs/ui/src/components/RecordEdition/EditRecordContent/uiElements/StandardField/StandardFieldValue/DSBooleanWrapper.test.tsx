@@ -47,8 +47,8 @@ const readonly = true;
 
 describe('DSBooleanWrapper', () => {
     let user!: ReturnType<typeof userEvent.setup>;
-    const mockHandleSubmit = jest.fn();
-    const mockOnChange = jest.fn();
+    const mockHandleSubmit = vi.fn();
+    const mockOnChange = vi.fn();
 
     beforeEach(() => {
         user = userEvent.setup({});

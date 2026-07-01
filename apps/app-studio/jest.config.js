@@ -38,6 +38,9 @@ module.exports = {
     ],
     moduleNameMapper: {
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy', // Ignore module.css written by devs and all stylesheet from libs (ex: FontAwesome stylesheet)
+        // Transitional: @leav/ui test helpers (consumed from source) import 'vitest', which crashes
+        // under Jest's require(). Resolve it to a Jest-backed shim. Drop once app-studio runs on Vitest.
+        '^vitest$': '<rootDir>/tests/vitestShim.ts',
         '^@leav/(.*)$': '<rootDir>/../../libs/$1/src',
         '^_ui/(.*)': '<rootDir>/../../libs/ui/src/$1',
     },

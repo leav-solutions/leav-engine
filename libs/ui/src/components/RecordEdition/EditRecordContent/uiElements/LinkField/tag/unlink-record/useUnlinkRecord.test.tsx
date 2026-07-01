@@ -4,16 +4,16 @@ import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {mockLinkValue} from '_ui/__mocks__/common/form';
 import {APICallStatus} from '../../../../_types';
 
-const mockOnValueDelete = jest.fn();
-const mockSetBackendValues = jest.fn();
-const mockSetFields = jest.fn();
-const mockKitModalConfirm = jest.fn();
+const mockOnValueDelete = vi.fn();
+const mockSetBackendValues = vi.fn();
+const mockSetFields = vi.fn();
+const mockKitModalConfirm = vi.fn();
 
 const mockBackendValue = {...mockLinkValue, id_value: 'existing_id_value'};
 
-jest.mock('aristid-ds', () => ({
+vi.mock('aristid-ds', () => ({
     AntForm: {
-        useFormInstance: jest.fn(() => ({
+        useFormInstance: vi.fn(() => ({
             setFields: mockSetFields,
         })),
     },
@@ -35,7 +35,7 @@ const defaultProps = {
 
 describe('useUnlinkRecord', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('canUnlinkRecord', () => {

@@ -7,7 +7,7 @@ import EditRecordContent from './EditRecordContent';
 import {Form} from 'antd';
 import {type ComponentProps, type FunctionComponent} from 'react';
 
-jest.mock('./uiElements/StandardField', () => () => <div>StandardField</div>);
+vi.mock('./uiElements/StandardField', () => ({default: () => <div>StandardField</div>}));
 
 const EditRecordContentWithForm: FunctionComponent<
     Omit<ComponentProps<typeof EditRecordContent>, 'antdForm'>
@@ -77,15 +77,15 @@ describe('EditRecordContent', () => {
     ];
 
     afterAll(() => {
-        jest.restoreAllMocks();
+        vi.restoreAllMocks();
     });
 
     test('Display skeleton while loading', async () => {
-        jest.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
+        vi.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
             loading: true,
             error: null,
             recordForm: null,
-            refetch: jest.fn(),
+            refetch: vi.fn(),
         }));
 
         render(
@@ -93,10 +93,10 @@ describe('EditRecordContent', () => {
                 record={mockRecord}
                 isFormCreationMode={false}
                 library={mockRecord.library.id}
-                onRecordSubmit={jest.fn()}
-                onValueDelete={jest.fn()}
-                onValueSubmit={jest.fn()}
-                onDeleteMultipleValues={jest.fn()}
+                onRecordSubmit={vi.fn()}
+                onValueDelete={vi.fn()}
+                onValueSubmit={vi.fn()}
+                onDeleteMultipleValues={vi.fn()}
                 readonly={false}
             />,
             {
@@ -108,7 +108,7 @@ describe('EditRecordContent', () => {
     });
 
     test('Render form after loading', async () => {
-        jest.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
+        vi.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
             loading: false,
             error: null,
             recordForm: {
@@ -120,7 +120,7 @@ describe('EditRecordContent', () => {
                 elements: mockRecordForm.elements,
                 sidePanel: mockRecordForm.sidePanel,
             },
-            refetch: jest.fn(),
+            refetch: vi.fn(),
         }));
 
         render(
@@ -128,10 +128,10 @@ describe('EditRecordContent', () => {
                 record={mockRecord}
                 isFormCreationMode={false}
                 library={mockRecord.library.id}
-                onRecordSubmit={jest.fn()}
-                onValueDelete={jest.fn()}
-                onValueSubmit={jest.fn()}
-                onDeleteMultipleValues={jest.fn()}
+                onRecordSubmit={vi.fn()}
+                onValueDelete={vi.fn()}
+                onValueSubmit={vi.fn()}
+                onDeleteMultipleValues={vi.fn()}
                 readonly={false}
             />,
             {
@@ -144,11 +144,11 @@ describe('EditRecordContent', () => {
     });
 
     test('Render with custom formId', async () => {
-        const spy = jest.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
+        const spy = vi.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
             loading: true,
             error: null,
             recordForm: null,
-            refetch: jest.fn(),
+            refetch: vi.fn(),
         }));
 
         render(
@@ -157,10 +157,10 @@ describe('EditRecordContent', () => {
                 formId="test"
                 isFormCreationMode={false}
                 library={mockRecord.library.id}
-                onRecordSubmit={jest.fn()}
-                onValueDelete={jest.fn()}
-                onValueSubmit={jest.fn()}
-                onDeleteMultipleValues={jest.fn()}
+                onRecordSubmit={vi.fn()}
+                onValueDelete={vi.fn()}
+                onValueSubmit={vi.fn()}
+                onDeleteMultipleValues={vi.fn()}
                 readonly={false}
             />,
             {

@@ -19,46 +19,44 @@ import {type RecordFormAttributeTreeAttributeFragment} from '_ui/_gqlTypes';
 import * as useEditRecordReducer from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 
 const mockInitialState = {...initialState};
-const mockedUseFormInstance = AntForm.useFormInstance as jest.MockedFunction<typeof AntForm.useFormInstance>;
-const mockedTreeNodeList = TreeNodeList as jest.MockedFunction<typeof TreeNodeList>;
-const mockedUseManageTreeNodeSelection = useManageTreeNodeSelection as jest.MockedFunction<
-    typeof useManageTreeNodeSelection
->;
-const mockedComputeCalculatedFlags = computeCalculatedFlags as jest.MockedFunction<typeof computeCalculatedFlags>;
-const mockedComputeInheritedFlags = computeInheritedFlags as jest.MockedFunction<typeof computeInheritedFlags>;
+const mockedUseFormInstance = vi.mocked(AntForm.useFormInstance);
+const mockedTreeNodeList = vi.mocked(TreeNodeList);
+const mockedUseManageTreeNodeSelection = vi.mocked(useManageTreeNodeSelection);
+const mockedComputeCalculatedFlags = vi.mocked(computeCalculatedFlags);
+const mockedComputeInheritedFlags = vi.mocked(computeInheritedFlags);
 
-jest.mock('./display-tree-node/TreeNodeList', () => ({
-    TreeNodeList: jest.fn(),
+vi.mock('./display-tree-node/TreeNodeList', () => ({
+    TreeNodeList: vi.fn(),
 }));
 
-jest.mock('./manage-tree-node-selection/useManageTreeNodeSelection', () => ({
-    useManageTreeNodeSelection: jest.fn(),
+vi.mock('./manage-tree-node-selection/useManageTreeNodeSelection', () => ({
+    useManageTreeNodeSelection: vi.fn(),
 }));
 
-jest.mock('../shared/calculatedInheritedFlags', () => ({
-    computeCalculatedFlags: jest.fn(),
-    computeInheritedFlags: jest.fn(),
+vi.mock('../shared/calculatedInheritedFlags', () => ({
+    computeCalculatedFlags: vi.fn(),
+    computeInheritedFlags: vi.fn(),
 }));
 
-jest.mock('../shared/useOutsideInteractionDetector', () => ({
-    useOutsideInteractionDetector: jest.fn(),
+vi.mock('../shared/useOutsideInteractionDetector', () => ({
+    useOutsideInteractionDetector: vi.fn(),
 }));
 
-jest.mock('aristid-ds', () => ({
-    ...jest.requireActual('aristid-ds'),
+vi.mock('aristid-ds', async () => ({
+    ...(await vi.importActual('aristid-ds')),
     AntForm: {
         Item: ({children, noStyle, ...props}: any) => (
             <div data-testid="form-item" {...props}>
                 {children}
             </div>
         ),
-        useFormInstance: jest.fn(),
+        useFormInstance: vi.fn(),
     },
 }));
 
-jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+vi.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
     state: mockInitialState,
-    dispatch: jest.fn(),
+    dispatch: vi.fn(),
 }));
 
 describe('TreeField', () => {
@@ -76,9 +74,9 @@ describe('TreeField', () => {
         },
         readonly: false,
         isCreationForm: false,
-        onValueSubmit: jest.fn(),
-        onValueDelete: jest.fn(),
-        onDeleteMultipleValues: jest.fn(),
+        onValueSubmit: vi.fn(),
+        onValueDelete: vi.fn(),
+        onDeleteMultipleValues: vi.fn(),
         metadataEdit: false,
     };
 
@@ -103,12 +101,12 @@ describe('TreeField', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
 
         Object.assign(mockInitialState, initialState);
 
         mockedUseFormInstance.mockReturnValue({
-            getFieldError: jest.fn().mockReturnValue([]),
+            getFieldError: vi.fn().mockReturnValue([]),
         } as unknown as FormInstance);
 
         mockedComputeCalculatedFlags.mockReturnValue(calculatedFlagsWithoutCalculatedValue);
@@ -117,8 +115,8 @@ describe('TreeField', () => {
         mockedTreeNodeList.mockReturnValue(<div data-testid="tree-node-list">Tree Node List</div>);
 
         mockedUseManageTreeNodeSelection.mockReturnValue({
-            openModal: jest.fn(),
-            removeTreeNode: jest.fn(),
+            openModal: vi.fn(),
+            removeTreeNode: vi.fn(),
             actionButtonLabel: 'Select Tree Node',
             SelectTreeNodeModal: <div data-testid="select-tree-node-modal">Select Tree Node Modal</div>,
             RemoveAllTreeNodes: <div data-testid="remove-all-tree-nodes">Remove All Tree Nodes</div>,
@@ -193,7 +191,7 @@ describe('TreeField', () => {
 
     it('should call useManageTreeNodeSelection with isFieldInError to true', () => {
         mockedUseFormInstance.mockReturnValue({
-            getFieldError: jest.fn().mockReturnValue(['Test error']),
+            getFieldError: vi.fn().mockReturnValue(['Test error']),
         } as unknown as FormInstance);
 
         render(

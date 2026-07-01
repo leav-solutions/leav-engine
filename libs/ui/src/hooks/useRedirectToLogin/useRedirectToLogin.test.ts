@@ -2,7 +2,7 @@ import {renderHook} from '@testing-library/react';
 import useRedirectToLogin from './useRedirectToLogin';
 
 let isDevEnvMock: boolean;
-jest.mock('_ui/_utils/isDevEnv', () => ({
+vi.mock('_ui/_utils/isDevEnv', () => ({
     isDevEnv: () => isDevEnvMock,
 }));
 
@@ -10,8 +10,8 @@ describe('useRedirectToLogin', () => {
     describe('redirectToLogin', () => {
         it('Should redirect to login app isDevEnv are true', async () => {
             const {result} = renderHook(() => useRedirectToLogin());
-            const reloadMock = jest.fn(() => 'reloadResult');
-            const replaceMock = jest.fn(() => 'replaceResult');
+            const reloadMock = vi.fn(() => 'reloadResult');
+            const replaceMock = vi.fn(() => 'replaceResult');
             delete window.location;
             window.location = {
                 reload: reloadMock,

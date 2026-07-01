@@ -31,16 +31,16 @@ const notReadonly = false;
 const readonly = true;
 
 describe('<DSListSelect />', () => {
-    const handleSubmitMock = jest.fn();
+    const handleSubmitMock = vi.fn();
 
-    const mockSaveAttributeMutation = jest.fn().mockReturnValue({
+    const mockSaveAttributeMutation = vi.fn().mockReturnValue({
         data: {
             saveAttribute: {
                 ...mockAttributeWithDetails,
             },
         },
     });
-    jest.spyOn(gqlTypes, 'useSaveAttributeMutation').mockImplementation(() => [
+    vi.spyOn(gqlTypes, 'useSaveAttributeMutation').mockImplementation(() => [
         mockSaveAttributeMutation,
         {loading: false, called: false, client: null, reset: null, error: null},
     ]);
@@ -243,9 +243,9 @@ describe('<DSListSelect />', () => {
         });
 
         it('should display the option and create it with list update', async () => {
-            const mockEditRecordDispatch = jest.fn();
+            const mockEditRecordDispatch = vi.fn();
             const editRecordState = {};
-            jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+            vi.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
                 state: editRecordState as IEditRecordReducerState,
                 dispatch: mockEditRecordDispatch,
             }));

@@ -26,7 +26,7 @@ describe('FloatingMenu', () => {
     });
 
     test('Display actions with icon', async () => {
-        const _handleClick = jest.fn();
+        const _handleClick = vi.fn();
 
         const mockActions: FloatingMenuAction[] = [
             {
@@ -62,7 +62,7 @@ describe('FloatingMenu', () => {
             {
                 title: 'moreActionA',
                 icon: <DeleteOutlined />,
-                onClick: jest.fn(),
+                onClick: vi.fn(),
             },
         ];
 

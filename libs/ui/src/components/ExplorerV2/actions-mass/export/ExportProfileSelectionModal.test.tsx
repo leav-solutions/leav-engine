@@ -10,8 +10,8 @@ beforeAll(() => {
 });
 
 describe('ExportProfileSelectionModal', () => {
-    const mockOnClose = jest.fn();
-    const mockOnConfirm = jest.fn();
+    const mockOnClose = vi.fn();
+    const mockOnConfirm = vi.fn();
     const libraryId = 'test_library';
 
     const validExportProfiles = {
@@ -49,7 +49,7 @@ describe('ExportProfileSelectionModal', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     test('should render modal with profiles', async () => {

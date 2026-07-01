@@ -17,7 +17,7 @@ const setup = (shortcuts: ViewSettingsShortcuts[]) =>
             isEnabled: true,
             view: makeView(shortcuts),
             open: true,
-            onViewSettingsShortcutClick: jest.fn(),
+            onViewSettingsShortcutClick: vi.fn(),
         }),
     );
 

@@ -1,0 +1,17 @@
+{
+    "extends": "./tsconfig.build.json",
+    "compilerOptions": {
+        "outDir": "dist-spec",
+        "composite": true,
+        "types": ["vitest/globals", "@testing-library/jest-dom", "node", "vite/client"]
+    },
+    "references": [{"path": "./tsconfig.build.json"}],
+    "include": [
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/**/_tests/**/*",
+        "src/**/__mocks__/**/*",
+        "setupTests.ts"
+    ],
+    "exclude": []
+}

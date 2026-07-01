@@ -8,7 +8,7 @@ const attributeId = 'attr_1';
 describe('useMassEditableAttributes', () => {
     describe('when libraryId is empty', () => {
         it('should skip the query and return an empty array', () => {
-            jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
+            vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
                 data: undefined,
                 loading: false,
             } as unknown as gqlTypes.MassEditableAttributesQueryResult);
@@ -22,7 +22,7 @@ describe('useMassEditableAttributes', () => {
 
     describe('when query returns no data', () => {
         it('should return an empty array', () => {
-            jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
+            vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
                 data: undefined,
                 loading: false,
             } as unknown as gqlTypes.MassEditableAttributesQueryResult);
@@ -35,7 +35,7 @@ describe('useMassEditableAttributes', () => {
 
     describe('when attribute has no dependency or tree fields', () => {
         it('should return the attribute with empty dependencies and hasEmptyDependency=true', () => {
-            jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
+            vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
                 data: {
                     attributes: {
                         list: [{id: attributeId, label: {fr: 'Attribut 1'}}],
@@ -62,7 +62,7 @@ describe('useMassEditableAttributes', () => {
     describe('when attribute has permissions_conf_dependent_values', () => {
         describe('with a single dependency matching the attribute id', () => {
             it('should set isSimpleWorkflow=true', () => {
-                jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
+                vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
                     data: {
                         attributes: {
                             list: [
@@ -100,7 +100,7 @@ describe('useMassEditableAttributes', () => {
 
         describe('with two dependencies and one matching the attribute id', () => {
             it('should set isMonoDependencyWorkflow=true', () => {
-                jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
+                vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
                     data: {
                         attributes: {
                             list: [
@@ -138,7 +138,7 @@ describe('useMassEditableAttributes', () => {
 
         describe('with a dependency whose linked_tree has more than one library', () => {
             it('should not include it in dependencies', () => {
-                jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
+                vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
                     data: {
                         attributes: {
                             list: [
@@ -197,7 +197,7 @@ describe('useMassEditableAttributes', () => {
             }) as unknown as gqlTypes.MassEditableAttributesQueryResult;
 
         it('should include an attribute with no dependency (hasEmptyDependency)', () => {
-            jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
+            vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue({
                 data: {
                     attributes: {
                         list: [{id: attributeId, label: {fr: 'Attribut 1'}}],
@@ -212,7 +212,7 @@ describe('useMassEditableAttributes', () => {
         });
 
         it('should include an attribute with a single dependency matching itself (isSimpleWorkflow)', () => {
-            jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue(
+            vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue(
                 mockAttributeWithDeps([{id: attributeId}]),
             );
 
@@ -222,7 +222,7 @@ describe('useMassEditableAttributes', () => {
         });
 
         it('should include an attribute with two dependencies where one matches itself (isMonoDependencyWorkflow)', () => {
-            jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue(
+            vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue(
                 mockAttributeWithDeps([{id: attributeId}, {id: 'attr_2'}]),
             );
 
@@ -232,7 +232,7 @@ describe('useMassEditableAttributes', () => {
         });
 
         it('should exclude an attribute with more than two dependencies', () => {
-            jest.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue(
+            vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue(
                 mockAttributeWithDeps([{id: 'attr_2'}, {id: 'attr_3'}, {id: 'attr_4'}]),
             );
 

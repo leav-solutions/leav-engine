@@ -4,15 +4,17 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {type GetRecordColumnsValuesRecord} from '_ui/_queries/records/getRecordColumnsValues';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
-jest.mock('_ui/hooks/useSharedTranslation', () => ({
-    useSharedTranslation: jest.fn(),
+vi.mock('_ui/hooks/useSharedTranslation', () => ({
+    useSharedTranslation: vi.fn(),
 }));
 
-jest.mock('_ui/hooks/useLang/useLang');
+vi.mock('_ui/hooks/useLang/useLang');
 
 describe('useRecordInformations', () => {
     beforeEach(() => {
-        (useSharedTranslation as jest.Mock).mockReturnValue({t: jest.fn(key => key)});
+        vi.mocked(useSharedTranslation).mockReturnValue({
+            t: vi.fn(key => key),
+        } as unknown as ReturnType<typeof useSharedTranslation>);
     });
 
     it('should return record id and library name', () => {

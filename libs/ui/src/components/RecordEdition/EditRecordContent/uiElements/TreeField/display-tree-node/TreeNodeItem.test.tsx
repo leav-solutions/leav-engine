@@ -4,7 +4,7 @@ import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm'
 import userEvent from '@testing-library/user-event';
 
 describe('TreeNodeItem', () => {
-    const mockOnClickToDelete = jest.fn();
+    const mockOnClickToDelete = vi.fn();
 
     const label = 'Node Label';
     const ancestors = [

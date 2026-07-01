@@ -3,16 +3,16 @@ import {type Message} from './types';
 
 describe('MessageHandlers', () => {
     describe('getExposedMethods', () => {
-        const dispatchMock = jest.fn();
+        const dispatchMock = vi.fn();
         const fakeTime = 1748350849872;
-        jest.spyOn(Date, 'now').mockReturnValue(fakeTime);
+        vi.spyOn(Date, 'now').mockReturnValue(fakeTime);
 
         beforeEach(() => {
             dispatchMock.mockClear();
         });
 
         it('Should provide these methods', async () => {
-            const providedMethods = getExposedMethods({current: null}, jest.fn());
+            const providedMethods = getExposedMethods({current: null}, vi.fn());
 
             expect(providedMethods).toEqual({
                 showModalConfirm: expect.any(Function),
@@ -32,7 +32,7 @@ describe('MessageHandlers', () => {
         });
 
         it('Should expose method showModalConfirm which dispatch to parent and store callback', async () => {
-            const data: any = {someField: 'someValue', someCallback: jest.fn()};
+            const data: any = {someField: 'someValue', someCallback: vi.fn()};
             const callbacksStore = {current: {}};
 
             const {showModalConfirm} = getExposedMethods(callbacksStore, dispatchMock);
@@ -52,7 +52,7 @@ describe('MessageHandlers', () => {
         });
 
         it('Should expose method showAlert which dispatch to parent and store callback', async () => {
-            const data: any = {someField: 'someValue', someCallback: jest.fn()};
+            const data: any = {someField: 'someValue', someCallback: vi.fn()};
             const callbacksStore = {current: {}};
 
             const {showAlert} = getExposedMethods(callbacksStore, dispatchMock);
@@ -72,7 +72,7 @@ describe('MessageHandlers', () => {
         });
 
         it('Should expose method showNotification which dispatch to parent and store callback', async () => {
-            const data: any = {someField: 'someValue', someCallback: jest.fn()};
+            const data: any = {someField: 'someValue', someCallback: vi.fn()};
             const callbacksStore = {current: {}};
 
             const {showNotification} = getExposedMethods(callbacksStore, dispatchMock);
@@ -124,7 +124,7 @@ describe('MessageHandlers', () => {
         });
 
         it('Should store the onClose callback passed to navigateToPanel and send it as an override', async () => {
-            const onClose = jest.fn();
+            const onClose = vi.fn();
             const data: any = {someField: 'someValue', onClose};
             const callbacksStore = {current: {}};
 
@@ -166,8 +166,8 @@ describe('MessageHandlers', () => {
     });
 
     describe('initClientHandlers', () => {
-        const callCbMock = jest.fn();
-        const dispatchMock = jest.fn();
+        const callCbMock = vi.fn();
+        const dispatchMock = vi.fn();
         const callbacksStore = {current: {}};
 
         beforeEach(() => {
@@ -176,7 +176,7 @@ describe('MessageHandlers', () => {
         });
 
         it('should call onExplorerViewChanged when receiving explorer-view-changed', () => {
-            const onExplorerViewChanged = jest.fn();
+            const onExplorerViewChanged = vi.fn();
             const handlers = initClientHandlers(callCbMock, {handlers: {onExplorerViewChanged}}, callbacksStore);
 
             handlers(
@@ -190,7 +190,7 @@ describe('MessageHandlers', () => {
         });
 
         it('should call onViewConfigUpdate when receiving view-config-update', () => {
-            const onViewConfigUpdate = jest.fn();
+            const onViewConfigUpdate = vi.fn();
             const handlers = initClientHandlers(callCbMock, {handlers: {onViewConfigUpdate}}, callbacksStore);
 
             handlers(

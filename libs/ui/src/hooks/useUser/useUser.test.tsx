@@ -13,7 +13,7 @@ describe('useUser', () => {
 
     test('Throw if no context provided', async () => {
         const errorLogger = console.error;
-        console.error = jest.fn();
+        console.error = vi.fn();
         try {
             renderHook(() => useUser());
         } catch (e) {

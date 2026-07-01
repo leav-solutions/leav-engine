@@ -10,7 +10,7 @@ const setup = (initialProps: HookProps) => renderHook(props => useNotifyFiltersC
 
 describe('useNotifyFiltersChange', () => {
     test('does not emit while loading', () => {
-        const onFiltersChange = jest.fn();
+        const onFiltersChange = vi.fn();
         const {rerender} = setup({isLoading: true, filters: emptyFilters, filtersOperator: 'AND', onFiltersChange});
 
         rerender({isLoading: true, filters: [], filtersOperator: 'OR', onFiltersChange});
@@ -19,7 +19,7 @@ describe('useNotifyFiltersChange', () => {
     });
 
     test('skips the first emission once loading completes (initial view, not a user change)', () => {
-        const onFiltersChange = jest.fn();
+        const onFiltersChange = vi.fn();
         const {rerender} = setup({isLoading: true, filters: emptyFilters, filtersOperator: 'AND', onFiltersChange});
 
         rerender({isLoading: false, filters: emptyFilters, filtersOperator: 'AND', onFiltersChange});
@@ -28,7 +28,7 @@ describe('useNotifyFiltersChange', () => {
     });
 
     test('emits on subsequent filters changes', () => {
-        const onFiltersChange = jest.fn();
+        const onFiltersChange = vi.fn();
         const {rerender} = setup({isLoading: false, filters: emptyFilters, filtersOperator: 'AND', onFiltersChange});
 
         // The first stable render is swallowed by the initial-emission guard.

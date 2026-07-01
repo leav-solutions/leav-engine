@@ -2,7 +2,7 @@ import {render, screen} from '../../_tests/testUtils';
 import {SimpleErrorBoundary} from './SimpleErrorBoundary';
 
 let isDevEnvMock: boolean;
-jest.mock('_ui/_utils/isDevEnv', () => ({
+vi.mock('_ui/_utils/isDevEnv', () => ({
     isDevEnv: () => isDevEnvMock,
 }));
 
@@ -14,7 +14,7 @@ describe('SimpleErrorBoundary', () => {
     };
 
     beforeEach(() => {
-        consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => null);
+        consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => null);
     });
     afterEach(() => {
         consoleSpy.mockRestore();

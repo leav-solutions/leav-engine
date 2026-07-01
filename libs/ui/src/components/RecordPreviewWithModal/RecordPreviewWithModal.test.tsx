@@ -6,7 +6,8 @@ import RecordPreviewWithModal from './RecordPreviewWithModal';
 
 const fileModalLabel = 'FileModal';
 
-jest.mock('_ui/components/RecordPreviewWithModal/FileModal', () => () => <div>{fileModalLabel}</div>);
+// The factory is hoisted above module scope, so the label is inlined here instead of referencing fileModalLabel.
+vi.mock('_ui/components/RecordPreviewWithModal/FileModal', () => ({default: () => <div>FileModal</div>}));
 
 describe('RecordPreviewWithModal', () => {
     describe('With preview', () => {

@@ -51,11 +51,9 @@ describe('StandardField', () => {
             },
         ],
     };
-    const mockHandleSubmit: SubmitValueFunc = jest.fn().mockReturnValue(mockSubmitRes);
-    const mockHandleDelete: DeleteValueFunc = jest.fn().mockReturnValue({status: APICallStatus.SUCCESS});
-    const mockHandleMultipleValues: DeleteMultipleValuesFunc = jest
-        .fn()
-        .mockReturnValue({status: APICallStatus.SUCCESS});
+    const mockHandleSubmit: SubmitValueFunc = vi.fn().mockReturnValue(mockSubmitRes);
+    const mockHandleDelete: DeleteValueFunc = vi.fn().mockReturnValue({status: APICallStatus.SUCCESS});
+    const mockHandleMultipleValues: DeleteMultipleValuesFunc = vi.fn().mockReturnValue({status: APICallStatus.SUCCESS});
 
     const baseProps = {
         isCreationForm: false,
@@ -65,16 +63,16 @@ describe('StandardField', () => {
         onDeleteMultipleValues: mockHandleMultipleValues,
     };
 
-    const mockEditRecordDispatch = jest.fn();
-    const mockEditRecordInitialState = jest.fn();
+    const mockEditRecordDispatch = vi.fn();
+    const mockEditRecordInitialState = vi.fn();
 
-    jest.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
+    vi.spyOn(useEditRecordReducer, 'useEditRecordReducer').mockImplementation(() => ({
         state: initialState,
         dispatch: mockEditRecordDispatch,
     }));
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('Mono value attribute', () => {

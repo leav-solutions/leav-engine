@@ -14,7 +14,7 @@ import {
 import {render, screen} from '../../../../_tests/testUtils';
 
 describe('Breadcrumb', () => {
-    const dispatchMock = jest.fn();
+    const dispatchMock = vi.fn();
 
     const mockReducer: IEditRecordReducerContext = {
         state: {...initialState, record: mockRecord},

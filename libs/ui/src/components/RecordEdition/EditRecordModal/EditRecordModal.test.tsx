@@ -8,8 +8,8 @@ import * as gqlTypes from '_ui/_gqlTypes';
 
 let user!: ReturnType<typeof userEvent.setup>;
 
-const editRecordFn = jest.fn();
-jest.mock('../EditRecord', () => ({
+const editRecordFn = vi.fn();
+vi.mock('../EditRecord', () => ({
     EditRecord: ({antdForm, formElementId, isFormCreationMode, onCreate, ...props}) => {
         editRecordFn(props);
         const fields = [{name: 'leonbloum', value: !isFormCreationMode ? 'EditRecord' : 'CreateRecord'}];
@@ -25,14 +25,14 @@ jest.mock('../EditRecord', () => ({
 }));
 
 describe('EditRecordModal', () => {
-    let mockUseCreateRecordMutation = jest.fn();
-    let mockUsePurgeRecordMutation = jest.fn();
+    let mockUseCreateRecordMutation = vi.fn();
+    let mockUsePurgeRecordMutation = vi.fn();
 
     beforeEach(() => {
         user = userEvent.setup();
         ReactModal.setAppElement(document.createElement('div'));
 
-        mockUseCreateRecordMutation = jest.fn().mockReturnValue({
+        mockUseCreateRecordMutation = vi.fn().mockReturnValue({
             data: {
                 createRecord: {
                     record: {
@@ -46,7 +46,7 @@ describe('EditRecordModal', () => {
                 },
             },
         });
-        mockUsePurgeRecordMutation = jest.fn().mockReturnValue({
+        mockUsePurgeRecordMutation = vi.fn().mockReturnValue({
             data: {
                 purgeRecord: {
                     record: {
@@ -55,11 +55,11 @@ describe('EditRecordModal', () => {
                 },
             },
         });
-        jest.spyOn(gqlTypes, 'useCreateRecordMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'useCreateRecordMutation').mockImplementation(() => [
             mockUseCreateRecordMutation,
             {loading: false, called: false, client: null, reset: null, error: null},
         ]);
-        jest.spyOn(gqlTypes, 'usePurgeRecordMutation').mockImplementation(() => [
+        vi.spyOn(gqlTypes, 'usePurgeRecordMutation').mockImplementation(() => [
             mockUsePurgeRecordMutation,
             {loading: false, called: false, client: null, reset: null, error: null},
         ]);
@@ -71,7 +71,7 @@ describe('EditRecordModal', () => {
 
     describe('create mode', () => {
         test('Display modal in create mode', async () => {
-            render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={null} />);
+            render(<EditRecordModal open library="test_lib" onClose={vi.fn()} record={null} />);
 
             const createRecord = await screen.findByDisplayValue('CreateRecord');
             expect(createRecord).toBeInTheDocument();
@@ -85,7 +85,7 @@ describe('EditRecordModal', () => {
                 <EditRecordModal
                     open
                     library="test_lib"
-                    onClose={jest.fn()}
+                    onClose={vi.fn()}
                     record={null}
                     submitButtons={['create', 'createAndEdit']}
                 />,
@@ -102,7 +102,7 @@ describe('EditRecordModal', () => {
                 <EditRecordModal
                     open
                     library="test_lib"
-                    onClose={jest.fn()}
+                    onClose={vi.fn()}
                     record={null}
                     submitButtons={['createAndEdit']}
                 />,
@@ -115,7 +115,7 @@ describe('EditRecordModal', () => {
         });
 
         test('Should call onClose on click on cancel if antd fields are not touched', async () => {
-            const mockOnClose = jest.fn();
+            const mockOnClose = vi.fn();
             render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={null} />);
 
             await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
@@ -124,7 +124,7 @@ describe('EditRecordModal', () => {
         });
 
         test('Should call purgeRecord on cancel creation', async () => {
-            const mockOnClose = jest.fn();
+            const mockOnClose = vi.fn();
             render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={null} />);
 
             await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
@@ -134,7 +134,7 @@ describe('EditRecordModal', () => {
         });
 
         test('Should call onClose if some fields are touched on confirm', async () => {
-            const mockOnClose = jest.fn();
+            const mockOnClose = vi.fn();
             render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={null} />);
 
             expect(
@@ -153,13 +153,13 @@ describe('EditRecordModal', () => {
         });
 
         test('Should call createRecord if modal is opened', async () => {
-            render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={null} />);
+            render(<EditRecordModal open library="test_lib" onClose={vi.fn()} record={null} />);
 
             await waitFor(() => expect(mockUseCreateRecordMutation).toHaveBeenCalled());
         });
 
         test('Should not call createRecord if modal is not opened', async () => {
-            render(<EditRecordModal open={false} library="test_lib" onClose={jest.fn()} record={null} />);
+            render(<EditRecordModal open={false} library="test_lib" onClose={vi.fn()} record={null} />);
 
             expect(mockUseCreateRecordMutation).not.toHaveBeenCalled();
         });
@@ -167,7 +167,7 @@ describe('EditRecordModal', () => {
 
     describe('edit mode', () => {
         test('Display modal in edit mode', async () => {
-            render(<EditRecordModal open library="test_lib" onClose={jest.fn()} record={mockRecord} />);
+            render(<EditRecordModal open library="test_lib" onClose={vi.fn()} record={mockRecord} />);
 
             expect(screen.getByDisplayValue('EditRecord')).toBeInTheDocument();
             expect(screen.getByRole('button', {name: /close/, hidden: true})).toBeInTheDocument();
@@ -175,13 +175,13 @@ describe('EditRecordModal', () => {
         });
 
         test('Refresh form in edit mode after "create and edit"', async () => {
-            const onCreateAndEdit = jest.fn();
-            const onCreate = jest.fn();
+            const onCreateAndEdit = vi.fn();
+            const onCreate = vi.fn();
             render(
                 <EditRecordModal
                     open
                     library="test_lib"
-                    onClose={jest.fn()}
+                    onClose={vi.fn()}
                     record={null}
                     submitButtons={['createAndEdit']}
                     onCreate={onCreate}
@@ -201,7 +201,7 @@ describe('EditRecordModal', () => {
         });
 
         test('Should not open modal on click on close', async () => {
-            const mockOnClose = jest.fn();
+            const mockOnClose = vi.fn();
             render(<EditRecordModal open library="test_lib" onClose={mockOnClose} record={mockRecord} />);
 
             expect(
@@ -224,7 +224,7 @@ describe('EditRecordModal', () => {
                     creationFormId="creation-form"
                     editionFormId="edition-form"
                     library="test_lib"
-                    onClose={jest.fn()}
+                    onClose={vi.fn()}
                     record={null}
                     submitButtons={['createAndEdit']}
                 />,
@@ -246,7 +246,7 @@ describe('EditRecordModal', () => {
                     creationFormId="creation-form"
                     editionFormId="edition-form"
                     library="test_lib"
-                    onClose={jest.fn()}
+                    onClose={vi.fn()}
                     record={{id: '123456', library: {id: 'test_lib'}}}
                     submitButtons={['createAndEdit']}
                 />,

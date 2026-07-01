@@ -8,7 +8,7 @@ const massSelectionFilters = [];
 
 describe('useDependencyValues', () => {
     it('should return loading=true and empty list when query has no data', () => {
-        jest.spyOn(gqlTypes, 'useValuesOccurrencesForDependencyQuery').mockReturnValue({
+        vi.spyOn(gqlTypes, 'useValuesOccurrencesForDependencyQuery').mockReturnValue({
             data: undefined,
             loading: true,
         } as gqlTypes.ValuesOccurrencesForDependencyQueryResult);
@@ -22,7 +22,7 @@ describe('useDependencyValues', () => {
     });
 
     it('should map a non-null treeNode to an EQUAL dependency filter with its node data', () => {
-        jest.spyOn(gqlTypes, 'useValuesOccurrencesForDependencyQuery').mockReturnValue({
+        vi.spyOn(gqlTypes, 'useValuesOccurrencesForDependencyQuery').mockReturnValue({
             data: {
                 listDistinctValues: [{treeNode: {id: 'node_1', record: {id: 'rec_1', whoAmI: {label: 'Node 1'}}}}],
             },
@@ -51,7 +51,7 @@ describe('useDependencyValues', () => {
     });
 
     it('should wrap massSelectionFilters in brackets combined with AND when provided', () => {
-        jest.spyOn(gqlTypes, 'useValuesOccurrencesForDependencyQuery').mockReturnValue({
+        vi.spyOn(gqlTypes, 'useValuesOccurrencesForDependencyQuery').mockReturnValue({
             data: {
                 listDistinctValues: [{treeNode: {id: 'node_1', record: {id: 'rec_1', whoAmI: {label: 'Node 1'}}}}],
             },
@@ -74,7 +74,7 @@ describe('useDependencyValues', () => {
     });
 
     it('should map a null treeNode to an IS_EMPTY filter with the translation label', () => {
-        jest.spyOn(gqlTypes, 'useValuesOccurrencesForDependencyQuery').mockReturnValue({
+        vi.spyOn(gqlTypes, 'useValuesOccurrencesForDependencyQuery').mockReturnValue({
             data: {listDistinctValues: [{treeNode: null}]},
             loading: false,
         } as unknown as gqlTypes.ValuesOccurrencesForDependencyQueryResult);

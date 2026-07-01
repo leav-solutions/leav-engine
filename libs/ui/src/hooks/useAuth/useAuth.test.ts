@@ -1,16 +1,16 @@
 import useAuth from './useAuth';
 import {renderHook} from '_ui/_tests/testUtils';
 
-const fetchMock = jest.fn();
+const fetchMock = vi.fn();
 global.fetch = fetchMock;
 
-jest.mock('_ui/constants', () => ({
+vi.mock('_ui/constants', () => ({
     GLOBAL_BASE_URL: '/global-base',
 }));
 
 describe('useAuth', () => {
     const {location} = window;
-    const mockLocation: Location = {...location, reload: jest.fn(), assign: jest.fn()};
+    const mockLocation: Location = {...location, reload: vi.fn(), assign: vi.fn()};
 
     beforeAll(() => {
         Object.defineProperty(window, 'location', {
@@ -21,7 +21,7 @@ describe('useAuth', () => {
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     afterAll(() => {
@@ -36,7 +36,7 @@ describe('useAuth', () => {
     it('should reload page on empty logout', async () => {
         const {result} = renderHook(() => useAuth());
         fetchMock.mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({}),
+            json: vi.fn().mockResolvedValueOnce({}),
         });
 
         await result.current.logout();
@@ -51,7 +51,7 @@ describe('useAuth', () => {
     it('Should go to redirectUrl if present in response logout', async () => {
         const {result} = renderHook(() => useAuth());
         fetchMock.mockResolvedValueOnce({
-            json: jest.fn().mockResolvedValueOnce({
+            json: vi.fn().mockResolvedValueOnce({
                 redirectUrl: 'redirectUrl',
             }),
         });

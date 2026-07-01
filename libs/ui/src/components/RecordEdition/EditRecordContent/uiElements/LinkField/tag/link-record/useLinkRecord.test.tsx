@@ -5,15 +5,15 @@ import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {mockLinkValue} from '_ui/__mocks__/common/form';
 import {APICallStatus} from '../../../../_types';
 
-const mockOnValueSubmit = jest.fn();
-const mockSetBackendValues = jest.fn();
-const mockSetFields = jest.fn();
+const mockOnValueSubmit = vi.fn();
+const mockSetBackendValues = vi.fn();
+const mockSetFields = vi.fn();
 
 const mockBackendValue = {...mockLinkValue, id_value: 'existing_id_value'};
 
-jest.mock('aristid-ds', () => ({
+vi.mock('aristid-ds', () => ({
     AntForm: {
-        useFormInstance: jest.fn(() => ({
+        useFormInstance: vi.fn(() => ({
             setFields: mockSetFields,
         })),
     },
@@ -25,7 +25,7 @@ jest.mock('aristid-ds', () => ({
     KitTooltip: ({children, title}: any) => <div data-tooltip={title}>{children}</div>,
 }));
 
-jest.mock('_ui/components/SelectRecordForLinkModal', () => ({
+vi.mock('_ui/components/SelectRecordForLinkModal', () => ({
     SelectRecordForLinkModal: ({onSelectionCompleted, open}: any) =>
         open ? (
             <div data-testid="select-record-modal">
@@ -47,7 +47,7 @@ jest.mock('_ui/components/SelectRecordForLinkModal', () => ({
         ) : null,
 }));
 
-jest.mock('../../../TreeField/manage-tree-node-selection/SelectTreeNodeModal', () => ({
+vi.mock('../../../TreeField/manage-tree-node-selection/SelectTreeNodeModal', () => ({
     SelectTreeNodeModal: ({onConfirm, open}: any) =>
         open ? (
             <div data-testid="select-tree-node-modal">
@@ -77,7 +77,7 @@ const LinkRecordButtonWrapper = (props: typeof defaultProps) => {
 
 describe('useLinkRecord', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('LinkRecordButton visibility', () => {

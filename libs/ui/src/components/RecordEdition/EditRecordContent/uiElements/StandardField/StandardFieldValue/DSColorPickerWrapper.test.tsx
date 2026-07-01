@@ -49,9 +49,9 @@ const inheritedFlagsWithInheritedValue: InheritedFlags = {
 const notReadonly = false;
 
 describe('DSColorPickerWrapper', () => {
-    const mockHandleSubmit = jest.fn();
-    const mockOnChange = jest.fn();
-    const mockHandleBlur = jest.fn();
+    const mockHandleSubmit = vi.fn();
+    const mockOnChange = vi.fn();
+    const mockHandleBlur = vi.fn();
 
     let user!: ReturnType<typeof userEvent.setup>;
 

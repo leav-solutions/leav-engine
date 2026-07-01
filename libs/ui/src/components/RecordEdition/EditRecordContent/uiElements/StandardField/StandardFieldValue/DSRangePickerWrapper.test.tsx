@@ -59,9 +59,9 @@ const notReadonly = false;
 const readonly = true;
 
 describe('DSRangePickerWrapper', () => {
-    const mockOnChange = jest.fn();
-    const mockHandleSubmit = jest.fn();
-    const mockHandleBlur = jest.fn();
+    const mockOnChange = vi.fn();
+    const mockHandleSubmit = vi.fn();
+    const mockHandleBlur = vi.fn();
     let user!: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {

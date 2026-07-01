@@ -1,5 +1,7 @@
+import {vi} from 'vitest';
+
 export default function useDeleteValueMutation() {
     return {
-        deleteValue: jest.fn(),
+        deleteValue: vi.fn(),
     };
 }

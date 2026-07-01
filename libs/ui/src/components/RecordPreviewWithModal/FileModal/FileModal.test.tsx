@@ -52,7 +52,7 @@ describe('FileModal', () => {
                 result: {data: {records: {list: [mockFileData]}}},
             },
         ];
-        render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+        render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={vi.fn()} />, {
             mocks,
         });
 
@@ -76,7 +76,7 @@ describe('FileModal', () => {
                     result: {data: {records: {list: [mockFileData]}}},
                 },
             ];
-            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={vi.fn()} />, {
                 mocks,
             });
 
@@ -110,7 +110,7 @@ describe('FileModal', () => {
                     },
                 },
             ];
-            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={vi.fn()} />, {
                 mocks,
             });
 
@@ -129,7 +129,7 @@ describe('FileModal', () => {
                     result: {data: {records: {list: [mockFileData]}}},
                 },
             ];
-            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={vi.fn()} />, {
                 mocks,
                 currentApp: {...mockApplication, settings: {showTransparency: true}},
             });
@@ -166,7 +166,7 @@ describe('FileModal', () => {
                     },
                 },
             ];
-            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={vi.fn()} />, {
                 mocks,
             });
 
@@ -197,7 +197,7 @@ describe('FileModal', () => {
                     },
                 },
             ];
-            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={vi.fn()} />, {
                 mocks,
             });
 
@@ -224,7 +224,7 @@ describe('FileModal', () => {
                     },
                 },
             ];
-            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={vi.fn()} />, {
                 mocks,
             });
 
@@ -255,7 +255,7 @@ describe('FileModal', () => {
                     },
                 },
             ];
-            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={vi.fn()} />, {
                 mocks,
             });
 
@@ -282,7 +282,7 @@ describe('FileModal', () => {
                     },
                 },
             ];
-            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={vi.fn()} />, {
                 mocks,
             });
 
@@ -314,7 +314,7 @@ describe('FileModal', () => {
                 },
             ];
 
-            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={vi.fn()} />, {
                 mocks,
             });
 
@@ -341,7 +341,7 @@ describe('FileModal', () => {
                     },
                 },
             ];
-            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={jest.fn()} />, {
+            render(<FileModal fileId={mockRecord.id} libraryId="files" open onClose={vi.fn()} />, {
                 mocks,
             });
 

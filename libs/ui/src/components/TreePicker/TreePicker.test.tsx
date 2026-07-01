@@ -8,18 +8,18 @@ window.matchMedia = query => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
 });
 
-jest.mock('../EditTreeModal', () => ({
+vi.mock('../EditTreeModal', () => ({
     EditTreeModal: () => <div>EditTree</div>,
 }));
 
-jest.mock('../../hooks/useSharedTranslation/useSharedTranslation');
+vi.mock('../../hooks/useSharedTranslation/useSharedTranslation');
 
 describe('TreePicker', () => {
     const mockTreeA = {
@@ -74,8 +74,8 @@ describe('TreePicker', () => {
     ];
 
     test('Display trees', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        const mockHandleSubmit = vi.fn();
+        render(<TreePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
@@ -85,8 +85,8 @@ describe('TreePicker', () => {
     });
 
     test('Can filter list', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        const mockHandleSubmit = vi.fn();
+        render(<TreePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
@@ -103,8 +103,8 @@ describe('TreePicker', () => {
     });
 
     test('Select elements and submit', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        const mockHandleSubmit = vi.fn();
+        render(<TreePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
@@ -137,8 +137,8 @@ describe('TreePicker', () => {
     });
 
     test('If not multiple, only one element can be selected', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open multiple={false} />, {mocks});
+        const mockHandleSubmit = vi.fn();
+        render(<TreePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open multiple={false} />, {mocks});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
@@ -155,8 +155,8 @@ describe('TreePicker', () => {
     });
 
     test('Can create new tree', async () => {
-        const mockHandleSubmit = jest.fn();
-        render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
+        const mockHandleSubmit = vi.fn();
+        render(<TreePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
         await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
 
@@ -191,8 +191,8 @@ describe('TreePicker', () => {
             },
         ];
 
-        const mockHandleSubmit = jest.fn();
-        render(<TreePicker onClose={jest.fn()} onSubmit={mockHandleSubmit} open />, {
+        const mockHandleSubmit = vi.fn();
+        render(<TreePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {
             mocks: mocksNotAllowed,
         });
 

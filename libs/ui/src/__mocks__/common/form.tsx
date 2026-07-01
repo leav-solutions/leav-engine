@@ -10,6 +10,7 @@ import {type IRecordForm, type RecordFormElementsValueTreeValue} from '_ui/hooks
 import {AttributeFormat, AttributeType, FormElementTypes, LibraryBehavior} from '_ui/_gqlTypes';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {type FormElement, type IFormElementProps} from '../../components/RecordEdition/EditRecordContent/_types';
+import {vi} from 'vitest';
 import {type IRecordPropertyTree} from '../../_queries/records/getRecordPropertiesQuery';
 import {mockAttributeSimple, mockFormAttribute} from './attribute';
 import {mockModifier} from './value';
@@ -307,9 +308,9 @@ export const mockFormElementTabs: FormElement<IFormTabsSettings> = {
 };
 
 export const mockCommonFormElementProps: Partial<IFormElementProps<any>> = {
-    onValueDelete: jest.fn(),
-    onValueSubmit: jest.fn(),
-    onDeleteMultipleValues: jest.fn(),
+    onValueDelete: vi.fn(),
+    onValueSubmit: vi.fn(),
+    onDeleteMultipleValues: vi.fn(),
 };
 
 export const mockRecordForm: IRecordForm = {
