@@ -16,6 +16,7 @@ export interface ISDO {
             systemCreationDate: number;
             systemLastModificator: string;
             systemLastModifiedDate: number;
+            systemLabel: string;
             [attributePath: string]: unknown;
         };
         [attributePath: string]: unknown;

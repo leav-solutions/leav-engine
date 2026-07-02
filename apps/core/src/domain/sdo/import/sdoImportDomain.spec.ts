@@ -1374,6 +1374,7 @@ describe('importDomain', () => {
                     systemCreationDate: Date.now(),
                     systemLastModificator: 'modificator_id',
                     systemLastModifiedDate: Date.now(),
+                    systemLabel: 'mock label',
                 },
                 ...content,
             },

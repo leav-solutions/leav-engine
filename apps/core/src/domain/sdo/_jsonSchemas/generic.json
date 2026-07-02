@@ -16,7 +16,8 @@
                 "systemCreator",
                 "systemCreationDate",
                 "systemLastModificator",
-                "systemLastModifiedDate"
+                "systemLastModifiedDate",
+                "systemLabel"
             ],
             "properties": {
                 "systemId": {
@@ -36,6 +37,9 @@
                 },
                 "systemLastModifiedDate": {
                     "type": ["number", "null"]
+                },
+                "systemLabel": {
+                    "type": ["string", "null"]
                 }
             }
         },

@@ -1385,7 +1385,7 @@ export type GetRecordByUuidQueryVariables = Exact<{
 }>;
 
 
-export type GetRecordByUuidQuery = { records: { list: Array<{ id: string, uuid: string, active: boolean, created_at: number, modified_at: number, created_by: Array<{ payload?: { id: string } | null }>, modified_by: Array<{ payload?: { id: string } | null }> }> } };
+export type GetRecordByUuidQuery = { records: { list: Array<{ id: string, uuid: string, active: boolean, created_at: number, modified_at: number, created_by: Array<{ payload?: { id: string } | null }>, modified_by: Array<{ payload?: { id: string } | null }>, whoAmI: { label?: string | null } }> } };
 
 export type SaveTreeMutationVariables = Exact<{
   tree: TreeInput;
@@ -1834,6 +1834,9 @@ export const GetRecordByUuidDocument = gql`
             id
           }
         }
+      }
+      whoAmI {
+        label
       }
       created_at
       modified_at

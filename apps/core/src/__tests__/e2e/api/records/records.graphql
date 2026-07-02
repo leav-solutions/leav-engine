@@ -59,6 +59,9 @@ query GetRecordByUUID($libraryId: ID!, $recordUUID: String!, $retrieveInactive: 
                     }
                 }
             }
+            whoAmI {
+                label
+            }
             created_at
             modified_at
         }

@@ -19,6 +19,7 @@ export const mockSDO: ISDO = {
             systemCreationDate: Date.now(),
             systemLastModificator: 'modificator_id',
             systemLastModifiedDate: Date.now(),
+            systemLabel: 'mock label',
         },
         simple: '123',
         simple_link: '1',

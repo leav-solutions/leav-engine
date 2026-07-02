@@ -14,6 +14,7 @@ describe('sdo (utils)', () => {
                 systemCreationDate: 1717675756,
                 systemLastModificator: '12',
                 systemLastModifiedDate: 1717675756,
+                systemLabel: 'my label',
             },
             info: {
                 startDate: 1609243200,
@@ -32,7 +33,7 @@ describe('sdo (utils)', () => {
             content: sdoContent,
         };
         it('[+] should create a hash from SDO content, idempotent depending on content only', () => {
-            expect(_sdoUtils.createHash(sdoForHash)).toBe('61183ef78ab554e072453eb4cc53109a');
+            expect(_sdoUtils.createHash(sdoForHash)).toBe('96a2947f9d26a91cea27ee9f2f898d96');
             expect(_sdoUtils.createHash(sdoForHash)).toBe(_sdoUtils.createHash(sdoForHash));
             expect(_sdoUtils.createHash(sdoForHash)).toBe(
                 _sdoUtils.createHash({
@@ -71,6 +72,7 @@ describe('sdo (utils)', () => {
                             systemCreationDate: 1717675756,
                             systemLastModificator: '12',
                             systemLastModifiedDate: 1717675756,
+                            systemLabel: 'my label',
                             test: 'test',
                         },
                     },

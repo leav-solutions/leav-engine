@@ -1,5 +1,5 @@
 import {type ToAny} from '../../utils/utils';
-import {AttributeCondition, type IRecord} from '../../_types/record';
+import {AttributeCondition, type IRecord, type IRecordIdentity} from '../../_types/record';
 import jsonschema, {type ValidatorResult} from 'jsonschema';
 import sdoDomain, {hashSDOAttributeId, type ISDODomain, type ISDODomainDeps} from './sdoDomain';
 import {mockSDO, mockSDOMapping, sdoGlobalSettings} from '../../__tests__/mocks/sdo/data';
@@ -55,6 +55,7 @@ const expectedSDOSystemContent = {
     systemCreationDate: 1717000000,
     systemLastModificator: 'modificator-id',
     systemLastModifiedDate: 1717100000,
+    systemLabel: 'record-label',
 };
 
 const deps: ToAny<ISDODomainDeps> = {
@@ -92,6 +93,9 @@ describe('sdoDomain', () => {
         mockRecordDomain.find.mockResolvedValue({list: []} as IListWithCursor<IRecord>);
         mockSDOUtils.tmpRecordIdToUuid.mockImplementation((recordId: string) => recordId);
         mockRecordRepo.getRecord.mockImplementation(async ({recordId}) => ({uuid: recordId}));
+        mockRecordDomain.getRecordIdentity.mockResolvedValue({
+            getLabel: vi.fn().mockResolvedValue('record-label'),
+        } as unknown as IRecordIdentity);
         _sdoDomain = sdoDomain(deps);
     });
 
@@ -116,6 +120,7 @@ describe('sdoDomain', () => {
                         systemCreationDate: Date.now(),
                         systemLastModificator: 'modificator_id',
                         systemLastModifiedDate: Date.now(),
+                        systemLabel: 'my label',
                     },
                     info: {},
                 }),

@@ -274,6 +274,8 @@ export default function ({
         attributes: IAttribute[],
         ctx: IQueryInfos,
     ): Promise<ISDO> => {
+        const recordIdentity = await recordDomain.getRecordIdentity(record, ctx);
+
         const sdo: ISDO = {
             dataModelRelease: 'dataModelRelease', // TODO: tmp value
             name: sdoLibraryId,
@@ -287,6 +289,7 @@ export default function ({
                     systemCreationDate: record.created_at,
                     systemLastModificator: await _getUUIDValue(SystemLibraries.USERS, record.modified_by, ctx),
                     systemLastModifiedDate: record.modified_at,
+                    systemLabel: await recordIdentity.getLabel?.(),
                 },
             },
         };

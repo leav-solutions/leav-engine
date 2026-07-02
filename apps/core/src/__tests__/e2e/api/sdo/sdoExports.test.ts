@@ -20,6 +20,7 @@ describe('SDO Exports', () => {
                 id: SDO_EXPORTS_LIBRARY_ID,
                 label: {fr: 'Test SDO', en: 'Test SDO'},
                 attributes: ['hash_sdo', 'label'],
+                recordIdentityConf: {label: 'id'},
             },
         });
 
@@ -55,8 +56,11 @@ describe('SDO Exports', () => {
         );
 
     test('create a record triggers a CREATE export message', async () => {
-        const {createRecord} = await nonAdminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
-        const recordUUID = createRecord.record!.uuid;
+        const {createRecord} = await nonAdminUserSdk.CreateRecord({
+            library: SDO_EXPORTS_LIBRARY_ID,
+        });
+
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
         const nonAdminUserUUID = e2eNonAdminUser().userUUID;
 
         const msg = await waitForSdo(recordUUID);
@@ -73,7 +77,7 @@ describe('SDO Exports', () => {
                     systemCreationDate: expect.any(Number),
                     systemLastModifiedDate: expect.any(Number),
                     systemSdoHash: null,
-                    systemLabel: null,
+                    systemLabel: recordId,
                     systemCreator: nonAdminUserUUID,
                     systemLastModificator: nonAdminUserUUID,
                 },
