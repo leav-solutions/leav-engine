@@ -129,7 +129,13 @@ describe('useControlledFilterStore', () => {
 
         await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
         expect(onChange).toHaveBeenCalledWith([
-            {attributes: [{id: 'status'}], condition: RecordFilterCondition.EQUAL, values: ['paris'], pinned: true},
+            {
+                attributes: [{id: 'status'}],
+                condition: RecordFilterCondition.EQUAL,
+                values: ['paris'],
+                pinned: true,
+                withEmptyValues: false,
+            },
         ]);
     });
 
@@ -219,5 +225,107 @@ describe('useControlledFilterStore', () => {
         await waitFor(() => expect(result.current.filtersData.filters).toHaveLength(1));
         // The tree filter is seeded empty (userNodes null) → excluded from the lean projection → no emit.
         expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it('adopts a withEmptyValues flip pushed by the hub on a tree (RESET_VIEW / other spoke) keeping its nodes', async () => {
+        const treeLean = (values: string[], withEmptyValues: boolean): SerializedFilter => ({
+            attributes: [{id: 'category'}],
+            condition: RecordFilterCondition.EQUAL,
+            values,
+            pinned: true,
+            withEmptyValues,
+        });
+        const {result, rerender} = renderHook(
+            ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib'}),
+            {initialProps: {leanFilters: [treeLean(['rec1'], true)]}},
+        );
+
+        await waitFor(() => {
+            const tree = result.current.filtersData.filters[0] as IUIFilterTree;
+            expect(tree.value).toEqual(['rec1']);
+            expect(tree.withEmptyValues).toBe(true);
+        });
+
+        // Hub reverts "non défini" to false WITHOUT changing the selected nodes (same recordIds) — the
+        // SEED merge won't re-run (no structural/resolution change), so ADOPT must carry the flag.
+        rerender({leanFilters: [treeLean(['rec1'], false)]});
+
+        await waitFor(() =>
+            expect((result.current.filtersData.filters[0] as IUIFilterTree).withEmptyValues).toBe(false),
+        );
+        const tree = result.current.filtersData.filters[0] as IUIFilterTree;
+        // The node selection is preserved (only the flag changed).
+        expect(tree.userNodes).toEqual([{nodeId: 'node-rec1', libraryId: 'tree_lib'}]);
+    });
+
+    it('RESET_FILTER on a tree restores the SAVED nodes, not the live edited ones', async () => {
+        const treeLean = (values: string[]): SerializedFilter => ({
+            attributes: [{id: 'category'}],
+            condition: RecordFilterCondition.EQUAL,
+            values,
+            pinned: true,
+        });
+        // Saved view has the tree filtering on rec1.
+        const {result, rerender} = renderHook(
+            ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib'}),
+            {initialProps: {leanFilters: [treeLean(['rec1'])]}},
+        );
+        await waitFor(() => expect((result.current.filtersData.filters[0] as IUIFilterTree).value).toEqual(['rec1']));
+
+        // User picks a different node (rec2) → the edit round-trips through the hub (new lean value). This is
+        // a value change, NOT structural, so the saved (rec1) resolution stays pinned as the reset target.
+        rerender({leanFilters: [treeLean(['rec2'])]});
+        await waitFor(() => expect((result.current.filtersData.filters[0] as IUIFilterTree).value).toEqual(['rec2']));
+
+        // Reset from the filter dropdown → back to the SAVED node (rec1), not the current rec2.
+        act(() => {
+            result.current.dispatch({type: FiltersActionTypes.RESET_FILTER, payload: {id: 'category'}});
+        });
+
+        await waitFor(() => expect((result.current.filtersData.filters[0] as IUIFilterTree).value).toEqual(['rec1']));
+        const tree = result.current.filtersData.filters[0] as IUIFilterTree;
+        expect(tree.userNodes).toEqual([{nodeId: 'node-rec1', libraryId: 'tree_lib'}]);
+    });
+
+    it('seeds withEmptyValues from the lean filters', async () => {
+        const {result} = renderHook(() =>
+            useControlledFilterStore({
+                leanFilters: [{...leanStatus(['active']), withEmptyValues: true}],
+                libraryId: 'lib',
+            }),
+        );
+
+        await waitFor(() => expect(result.current.filtersData.filters).toHaveLength(1));
+        expect((result.current.filtersData.filters[0] as UIFilter).withEmptyValues).toBe(true);
+    });
+
+    it('emits a tree filter that has ONLY withEmptyValues (no user selection) instead of skipping it', async () => {
+        const onChange = jest.fn();
+        const {result} = renderHook(() =>
+            useControlledFilterStore({
+                leanFilters: [
+                    {attributes: [{id: 'category'}], condition: RecordFilterCondition.EQUAL, values: [], pinned: true},
+                ],
+                libraryId: 'lib',
+                onChange,
+            }),
+        );
+
+        await waitFor(() => expect(result.current.filtersData.filters).toHaveLength(1));
+        const [tree] = result.current.filtersData.filters as IUIFilterTree[];
+
+        // User checks "non défini" on a tree with no node selection → the filter is now meaningful and
+        // must round-trip to the hub (previously value-less trees were dropped from the projection).
+        act(() => {
+            result.current.dispatch({
+                type: FiltersActionTypes.CHANGE_FILTER_CONFIG,
+                payload: {...tree, withEmptyValues: true} as UIFilter,
+            });
+        });
+
+        await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
+        expect(onChange).toHaveBeenCalledWith([
+            expect.objectContaining({attributes: [{id: 'category'}], withEmptyValues: true}),
+        ]);
     });
 });

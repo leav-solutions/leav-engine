@@ -56,22 +56,22 @@ view.filters (stocké)                         UIFilter[]                       
 
 ## Les pièces
 
-| Fichier                                   | Rôle                                                                                                         |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `_types.ts`                               | `UIFilter` (union) + ses sous-types + tous les type-guards (`isUIFilterTree`, `isUIFilterValueList`…)        |
-| `context/filtersReducer.ts`               | Reducer pur : `ADD_FILTER`, `CHANGE_FILTER_CONFIG`, `RESET_FILTER`, `MOVE_FILTER`, `REMOVE_FILTER`, `RESET`… |
-| `context/useFiltersReducer.tsx`           | Branche le reducer aux queries (vues + attributs + arbres) et **seed** l'état via `RESET`                    |
-| `context/filtersContext.tsx`              | `FiltersContext` (`{filtersData, dispatch}`)                                                                 |
-| `FiltersProvider.tsx`                     | Provider clé-en-main : `useFiltersReducer` + `FiltersContext.Provider`                                       |
-| `useFiltersContext.ts` / `useFilters.tsx` | Accès au contexte ; `useFilters` projette les filtres **non `hidden`** en props d'affichage                  |
-| `useTransformFilters.tsx`                 | `toValidFilters` / `toUIFilters` (conversions stocké ↔ UIFilter)                                             |
-| `prepareFiltersForRequest.ts`             | `UIFilter[]` → `RecordFilterInput[]` (la query records)                                                      |
-| `filter-items/CommonFilterItem.tsx`       | **La chip `KitFilter` éditable** : label + valeurs formatées + `FilterDropDown`                              |
-| `filter-items/filter-type/*`              | Un dropdown d'édition par type/format (Text, Numeric, Date, Boolean, Link, Tree, ValueList, Smart…)          |
-| `context/useGetTreeFilters.tsx`           | Charge les **valeurs par défaut d'arbres** liées aux permissions contextuelles (`view-by-default`)           |
+| Fichier                                   | Rôle                                                                                                                                                                                 |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `_types.ts`                               | `UIFilter` (union) + ses sous-types + tous les type-guards (`isUIFilterTree`, `isUIFilterValueList`…)                                                                                |
+| `context/filtersReducer.ts`               | Reducer pur : `ADD_FILTER`, `CHANGE_FILTER_CONFIG`, `RESET_FILTER`, `MOVE_FILTER`, `REMOVE_FILTER`, `RESET`…                                                                         |
+| `context/useFiltersReducer.tsx`           | Branche le reducer aux queries (vues + attributs + arbres) et **seed** l'état via `RESET`                                                                                            |
+| `context/filtersContext.tsx`              | `FiltersContext` (`{filtersData, dispatch}`)                                                                                                                                         |
+| `FiltersProvider.tsx`                     | Provider clé-en-main : `useFiltersReducer` + `FiltersContext.Provider`                                                                                                               |
+| `useFiltersContext.ts` / `useFilters.tsx` | Accès au contexte ; `useFilters` projette les filtres **non `hidden`** en props d'affichage                                                                                          |
+| `useTransformFilters.tsx`                 | `toValidFilters` / `toUIFilters` (conversions stocké ↔ UIFilter)                                                                                                                     |
+| `prepareFiltersForRequest.ts`             | `UIFilter[]` → `RecordFilterInput[]` (la query records)                                                                                                                              |
+| `filter-items/CommonFilterItem.tsx`       | **La chip `KitFilter` éditable** : label + valeurs formatées + `FilterDropDown`                                                                                                      |
+| `filter-items/filter-type/*`              | Un dropdown d'édition par type/format (Text, Numeric, Date, Boolean, Link, Tree, ValueList, Smart…)                                                                                  |
+| `context/useGetTreeFilters.tsx`           | Charge les **valeurs par défaut d'arbres** liées aux permissions contextuelles (`view-by-default`)                                                                                   |
 | `useViewFiltersConverter.tsx`             | Pont **ViewV2** : `{attributes,condition,values}` stocké → `UIFilter` (id stable = chemin d'attribut) ; exporte aussi `uiFilterToConfig` (UIFilter → `{id, condition, values}` lean) |
-| `useResolveTreeFilterNodes.tsx`           | **ViewV2** : résout des `recordIds` arbre stockés → `{nodeId, libraryId, label}` (rechargement)              |
-| `useControlledFilterStore.tsx`            | **ViewV2** : store interne d'un spoke hub & spoke (ExplorerV2 ou volet) — see ci-dessous                     |
+| `useResolveTreeFilterNodes.tsx`           | **ViewV2** : résout des `recordIds` arbre stockés → `{nodeId, libraryId, label}` (rechargement)                                                                                      |
+| `useControlledFilterStore.tsx`            | **ViewV2** : store interne d'un spoke hub & spoke (ExplorerV2 ou volet) — see ci-dessous                                                                                             |
 
 ---
 
@@ -99,10 +99,10 @@ par spoke, alimenté depuis le hub lean (`currentView.filters`). Utiliser `useCo
 
 ```tsx
 const {filtersData, dispatch} = useControlledFilterStore({
-    leanFilters,   // SerializedFilter[] non-hidden venant de currentView.filters
+    leanFilters, // SerializedFilter[] non-hidden venant de currentView.filters
     libraryId,
     viewId,
-    onChange,      // (filters: SerializedFilter[]) => void — émis sur édition/suppression (echo-suppressed)
+    onChange, // (filters: SerializedFilter[]) => void — émis sur édition/suppression (echo-suppressed)
 });
 // Exposer via FiltersContext.Provider pour CommonFilterItem
 ```
@@ -115,11 +115,19 @@ un no-op ou converge en un tour) :
    re-seed le store en préservant les sélections vivantes par id. Un tree vivant dont la valeur diffère
    du seed adopte la valeur du hub (seul chemin d'adoption pour les trees).
 2. **ADOPT** (hub → store, valeur seulement) : quand une valeur change sur l'_autre_ spoke sans
-   changement structurel, `CHANGE_FILTER_CONFIG` réconcilie le store. Les trees ne passent pas par ici
-   (ils passent par SEED).
+   changement structurel, `CHANGE_FILTER_CONFIG` réconcilie le store. La **sélection de nœuds** d'un tree
+   ne passe pas par ici (elle a besoin de la résolution → SEED), **mais** son flag `withEmptyValues` — sans
+   résolution — **est adopté ici** (posé sur le filtre existant sans toucher aux nœuds) : sinon un changement
+   de "non défini" venu du hub (RESET_VIEW, édition sur l'autre spoke) n'atteindrait jamais ce store.
 3. **EMIT** (store → hub) : quand la projection lean du store diverge de `lastSyncedLeanRef`
    _et_ du hub, un `onChange(lean[])` est émis une seule fois. `lastSyncedLeanRef` (clé sur les valeurs,
    pas l'identité objet) supprime les échos : une valeur poussée par le hub n'est jamais re-émise.
+
+> 🔁 **`initialFilters` (cible de `RESET_FILTER`)** est **stable** : reconstruit uniquement sur changement
+> **structurel** (jamais sur une édition de valeur, qui rebaseline-rait à tort). Pour les arbres, les nœuds
+> "initiaux" sont résolus séparément des recordIds **sauvegardés** (`useResolveTreeFilterNodes` sur un
+> snapshot pré-édition, cache-hit), car une édition d'arbre déclenche un reseed via `resolvedById`. Sans ça,
+> "Réinitialiser" restaurerait les nœuds courants, pas les nœuds sauvegardés.
 
 > ℹ️ Ce hook remplace le Cas 3 legacy (voir ci-dessous). Ne pas mélanger les deux dans le même composant.
 
@@ -148,7 +156,11 @@ Points à connaître avant de toucher à ce fichier :
 - **Multi-valeurs** (valuesList, smartFilter, arbre) : génère un groupe `OPEN_BRACKET … OR … CLOSE_BRACKET`
   (ou `AND` si condition `NOT_EQUAL`). Cf. `_generateConditionsFromMultipleValues`.
 - **`withEmptyValues` ("Non défini")** : enveloppe la condition dans `(condition OR <field> IS_EMPTY)`
-  via `_addEmptyCondition`. C'est **live-only** : non persistable dans une vue (pas de flag de stockage).
+  via `_addEmptyCondition`. **Persisté** (LEAVC-810) : porté par la forme lean (`SerializedFilter.withEmptyValues`),
+  par le filtre stocké de la vue et par le core (`IViewV2Filter.withEmptyValues`, GraphQL `Boolean` nullable
+  pour rétro-compat). Survit donc au pin/unpin et à un save/reload de vue. Côté ViewV2, un arbre **sans**
+  sélection de nœuds mais avec `withEmptyValues` **n'est plus skippé** de la projection lean (sinon un filtre
+  "non défini" seul serait perdu).
 - **Lien + valuesList** : on filtre sur l'id du record lié → le `field` reçoit un suffixe `.id`.
 - **Through** : `field` devient `link.subField`, condition = `subCondition`.
 - **Date / Boolean** : transformations spécifiques (`date` recalée à midi, `boolean=false` → `NOT_EQUAL true`).

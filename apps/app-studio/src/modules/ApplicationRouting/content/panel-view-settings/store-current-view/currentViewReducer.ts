@@ -240,7 +240,7 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
         // Edits the condition+value of a single filter (from the volet editor OR a write-back from the
         // FilterToolBar). Mirrors SET_SORT_ORDER: locate by `getFilterId`, splice the new config in place.
         case 'SET_FILTER_CONFIG': {
-            const {id, condition, values} = action.payload;
+            const {id, condition, values, withEmptyValues} = action.payload;
             const index = view.filters.findIndex(filter => getFilterId(filter) === id);
 
             if (index === -1) {
@@ -248,19 +248,23 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
             }
 
             const current = view.filters[index];
-            // G1 hardening: an idempotent write (same condition + values) must return the SAME view ref so
-            // the wrapper's useReducer bail-out holds — otherwise `toSpliced` allocates a fresh array even
-            // for a no-op write (unlike SET_SORT_ORDER, which already guards), and the hub↔spoke value sync
-            // could loop. Mirror of the SET_SORT_ORDER equality guard.
+            // G1 hardening: an idempotent write (same condition + values + withEmptyValues) must return the
+            // SAME view ref so the wrapper's useReducer bail-out holds — otherwise `toSpliced` allocates a
+            // fresh array even for a no-op write (unlike SET_SORT_ORDER, which already guards), and the
+            // hub↔spoke value sync could loop. Mirror of the SET_SORT_ORDER equality guard.
             if (
                 current.condition === condition &&
+                !!current.withEmptyValues === !!withEmptyValues &&
                 current.values.length === values.length &&
                 current.values.every((value, valueIndex) => value === values[valueIndex])
             ) {
                 return view;
             }
 
-            return {...view, filters: view.filters.toSpliced(index, 1, {...current, condition, values})};
+            return {
+                ...view,
+                filters: view.filters.toSpliced(index, 1, {...current, condition, values, withEmptyValues}),
+            };
         }
         // Admin gear: the desired set of attribute paths available as filters. Reconcile against the
         // current list (keyed by `getFilterId`): keep still-selected filters as-is (preserving order,
@@ -280,6 +284,7 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
                     condition: DEFAULT_FILTER_CONDITION,
                     values: [],
                     pinned: false,
+                    withEmptyValues: false,
                 }));
 
             return {...view, filters: [...kept, ...added]};

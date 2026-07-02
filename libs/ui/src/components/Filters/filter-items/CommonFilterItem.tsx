@@ -77,6 +77,7 @@ export interface ICommonFilterProps {
     isPinned?: boolean;
     disabled?: boolean;
     readonly?: boolean;
+    className?: string;
 }
 
 const isActiveAttribute = (filter: UIFilter): filter is IUIFilterStandard =>
@@ -89,6 +90,7 @@ export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
     isPinned = false,
     readonly = false,
     disabled,
+    className,
 }) => {
     const {t} = useSharedTranslation();
 
@@ -106,6 +108,7 @@ export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
 
     return (
         <FilterStyled
+            className={className}
             disabled={disabled}
             readonly={readonly}
             expandable={!readonly}

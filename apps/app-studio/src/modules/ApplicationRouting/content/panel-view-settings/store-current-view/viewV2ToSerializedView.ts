@@ -41,6 +41,7 @@ export const viewV2ToSerializedView = (view: GetViewV2Query['viewV2']): Serializ
             condition: filter.condition,
             values: filter.values,
             pinned: true,
+            withEmptyValues: filter.withEmptyValues ?? false,
         })),
     shortcuts: (view.shortcuts ?? ['display']) as SerializedViewV2['shortcuts'],
 });

@@ -61,7 +61,15 @@ export type CurrentViewAction =
     | {type: 'TOGGLE_SORT_PINNED'; payload: {id: string}}
     | {type: 'MOVE_FILTER'; payload: {activeId: string; overId: string}}
     | {type: 'TOGGLE_FILTER_PINNED'; payload: {id: string}}
-    | {type: 'SET_FILTER_CONFIG'; payload: {id: string; condition: RecordFilterCondition; values: Array<string | null>}}
+    | {
+          type: 'SET_FILTER_CONFIG';
+          payload: {
+              id: string;
+              condition: RecordFilterCondition;
+              values: Array<string | null>;
+              withEmptyValues?: boolean;
+          };
+      }
     | {type: 'TOGGLE_SHORTCUT'; payload: {shortcut: ViewV2Shortcut}}
     | {type: 'SET_AVAILABLE_COLUMNS'; payload: {attributes: AvailableAttribute[]}}
     | {type: 'SET_AVAILABLE_SORTS'; payload: {sorts: Array<{attributes: AvailableAttribute[]}>}}

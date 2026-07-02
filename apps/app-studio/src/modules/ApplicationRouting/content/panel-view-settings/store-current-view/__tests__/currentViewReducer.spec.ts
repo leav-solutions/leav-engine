@@ -386,6 +386,36 @@ describe('viewReducer (display actions)', () => {
             });
             expect(next).toBe(view);
         });
+
+        it('persists withEmptyValues on the targeted filter', () => {
+            const view = makeView({filters: makeFilters(['status'])});
+            const next = viewReducer(view, {
+                type: 'SET_FILTER_CONFIG',
+                payload: {id: 'status', condition: RecordFilterCondition.EQUAL, values: [], withEmptyValues: true},
+            });
+            expect(next.filters[0].withEmptyValues).toBe(true);
+        });
+
+        // G1 also covers withEmptyValues: toggling it is a real change, so the view ref must NOT be preserved.
+        it('returns a new view reference when only withEmptyValues changes', () => {
+            const view = makeView({
+                filters: [
+                    {
+                        attributes: [{id: 'status', label: {en: 'STATUS'}}],
+                        condition: RecordFilterCondition.EQUAL,
+                        values: [],
+                        pinned: true,
+                        withEmptyValues: false,
+                    },
+                ],
+            });
+            const next = viewReducer(view, {
+                type: 'SET_FILTER_CONFIG',
+                payload: {id: 'status', condition: RecordFilterCondition.EQUAL, values: [], withEmptyValues: true},
+            });
+            expect(next).not.toBe(view);
+            expect(next.filters[0].withEmptyValues).toBe(true);
+        });
     });
 
     describe('SET_AVAILABLE_FILTERS', () => {
@@ -417,10 +447,11 @@ describe('viewReducer (display actions)', () => {
             expect(next.filters[0].condition).toBe(RecordFilterCondition.CONTAINS);
             expect(next.filters[0].values).toEqual(['x']);
             expect(next.filters[0].pinned).toBe(true);
-            // New filter defaults: EQUAL condition, no value, unpinned.
+            // New filter defaults: EQUAL condition, no value, unpinned, withEmptyValues off.
             expect(next.filters[1].condition).toBe(RecordFilterCondition.EQUAL);
             expect(next.filters[1].values).toEqual([]);
             expect(next.filters[1].pinned).toBe(false);
+            expect(next.filters[1].withEmptyValues).toBe(false);
         });
     });
 });

@@ -19,7 +19,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useCurrentView} from '../../store-current-view/useCurrentView';
 import {sanitize} from '../tab-display/_constants';
 import {FilterItem} from './FilterItem';
-import {tab, search as searchClass, lists, list, emptyBox} from './tabFilters.module.css';
+import {tab, search as searchClass, lists, list, filterChip, emptyBox} from './tabFilters.module.css';
 
 /**
  * Filters tab. Structure (available/pinned/order, search, DnD) is read from the current-view store
@@ -72,22 +72,23 @@ export const TabFilters = () => {
 
     // Pinned → live editor from the shared store (real CommonFilterItem dispatch). Fallback to a label
     // chip while the store is still seeding the filter.
-    const renderPinnedEditor = (filter: (typeof filters)[number]) => {
+    const renderPinnedFilter = (filter: (typeof filters)[number]) => {
         const uiFilter = storeFilterById.get(filter.id);
         if (!uiFilter) {
             return <KitTypography.Text size="fontSize7">{filter.label}</KitTypography.Text>;
         }
-        return <CommonFilterItem filter={uiFilter} isPinned />;
+        return <CommonFilterItem filter={uiFilter} isPinned className={filterChip} />;
     };
 
-    // Unpinned → read-only label + stored value (editing happens once pinned).
-    const renderUnpinnedReadonly = (filter: (typeof filters)[number]) => {
-        const value = filter.values.filter((entry): entry is string => entry !== null && entry !== '').join(', ');
-        return (
-            <KitTypography.Text size="fontSize7">
-                {value ? `${filter.label}: ${value}` : filter.label}
-            </KitTypography.Text>
-        );
+    // Unpinned → read-only CommonFilterItem from the shared store (dropdown disabled via `disabled`), so
+    // it displays the same rich value formatting as the pinned editor (tree labels, "non défini", dates).
+    // Fallback to a label chip while the store is still seeding the filter.
+    const renderUnpinnedFilter = (filter: (typeof filters)[number]) => {
+        const uiFilter = storeFilterById.get(filter.id);
+        if (!uiFilter) {
+            return <KitTypography.Text size="fontSize7">{filter.label}</KitTypography.Text>;
+        }
+        return <CommonFilterItem filter={uiFilter} disabled className={filterChip} />;
     };
 
     if (filters.length === 0) {
@@ -128,7 +129,7 @@ export const TabFilters = () => {
                                         pinned
                                         onTogglePinned={() => toggleFilterPinned(filter.id)}
                                     >
-                                        {renderPinnedEditor(filter)}
+                                        {renderPinnedFilter(filter)}
                                     </FilterItem>
                                 ))}
                             </ul>
@@ -146,7 +147,7 @@ export const TabFilters = () => {
                                 draggable={false}
                                 onTogglePinned={() => toggleFilterPinned(filter.id)}
                             >
-                                {renderUnpinnedReadonly(filter)}
+                                {renderUnpinnedFilter(filter)}
                             </FilterItem>
                         ))}
                     </ul>

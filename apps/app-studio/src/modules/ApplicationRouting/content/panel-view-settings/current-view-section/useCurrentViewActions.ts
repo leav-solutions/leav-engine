@@ -41,6 +41,7 @@ const mapFilters = (filters: ViewFilters) =>
         condition: filter.condition,
         values: filter.values,
         pinned: filter.pinned,
+        withEmptyValues: filter.withEmptyValues ?? false,
     }));
 
 export const useCurrentViewActions = () => {

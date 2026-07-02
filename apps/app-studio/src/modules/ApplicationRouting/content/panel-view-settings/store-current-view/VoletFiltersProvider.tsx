@@ -16,16 +16,19 @@ const DEFAULT_FILTER_CONDITION = RecordFilterCondition.EQUAL;
 export const VoletFiltersProvider = ({children}: {children: ReactNode}) => {
     const {view, setFilterConfig} = useCurrentView();
 
-    const pinnedLeanFilters = useMemo<SerializedFilter[]>(
+    // Seed the store with ALL view filters (pinned AND unpinned): the Filters tab renders the pinned ones
+    // in the editable `CommonFilterItem` and the unpinned ones in a read-only `CommonFilterItem` — both
+    // need a fully-built `UIFilter` from this store. `setFilterConfig` is pin-agnostic (it never flips
+    // `pinned`), so seeding unpinned filters can't alter their pin state.
+    const leanFilters = useMemo<SerializedFilter[]>(
         () =>
-            (view?.filters ?? [])
-                .filter(filter => filter.pinned)
-                .map(filter => ({
-                    attributes: filter.attributes.map(attribute => ({id: attribute.id, label: attribute.label})),
-                    condition: filter.condition,
-                    values: filter.values,
-                    pinned: true,
-                })),
+            (view?.filters ?? []).map(filter => ({
+                attributes: filter.attributes.map(attribute => ({id: attribute.id, label: attribute.label})),
+                condition: filter.condition,
+                values: filter.values,
+                pinned: filter.pinned,
+                withEmptyValues: filter.withEmptyValues ?? false,
+            })),
         [view],
     );
 
@@ -36,14 +39,19 @@ export const VoletFiltersProvider = ({children}: {children: ReactNode}) => {
         (filters: SerializedFilter[]) => {
             filters.forEach(filter => {
                 const id = filter.attributes.map(attribute => attribute.id).join('/');
-                setFilterConfig(id, filter.condition ?? DEFAULT_FILTER_CONDITION, filter.values);
+                setFilterConfig(
+                    id,
+                    filter.condition ?? DEFAULT_FILTER_CONDITION,
+                    filter.values,
+                    filter.withEmptyValues,
+                );
             });
         },
         [setFilterConfig],
     );
 
     const {filtersData, dispatch} = useControlledFilterStore({
-        leanFilters: pinnedLeanFilters,
+        leanFilters,
         libraryId: view?.library ?? null,
         viewId: view?.id ?? null,
         onChange: handleChange,

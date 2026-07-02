@@ -84,6 +84,7 @@ export type SerializedFilter = {
     values: Array<string | null>;
     pinned?: boolean;
     hidden?: false;
+    withEmptyValues?: boolean;
 };
 
 /**

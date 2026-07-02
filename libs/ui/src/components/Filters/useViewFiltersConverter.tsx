@@ -13,6 +13,7 @@ export interface IViewFilterToConvert {
     attributes: Array<{id: string}>;
     condition: RecordFilterCondition | null;
     values: Array<string | null>;
+    withEmptyValues?: boolean;
 }
 
 /** Stable id of a filter = its attribute path ids joined by '/', matching app-studio's `getFilterId`. */
@@ -57,13 +58,14 @@ const getUIFilterValues = (filter: UIFilter): Array<string | null> => {
  */
 export const uiFilterToConfig = (
     filter: UIFilter,
-): {id: string; condition: RecordFilterCondition; values: Array<string | null>} => {
+): {id: string; condition: RecordFilterCondition; values: Array<string | null>; withEmptyValues?: boolean} => {
     const condition = isUIFilterThrough(filter) ? filter.subCondition : filter.condition;
 
     return {
         id: getUIFilterPathKey(filter),
         condition: (condition as RecordFilterCondition) ?? RecordFilterCondition.EQUAL,
         values: getUIFilterValues(filter),
+        withEmptyValues: filter.withEmptyValues,
     };
 };
 
@@ -122,7 +124,11 @@ export const useViewFiltersConverter = (viewFilters: IViewFilterToConvert[]) => 
                 return null;
             }
 
-            const converted = {...uiFilter, id: getPathKey(filter.attributes)} as UIFilter;
+            const converted = {
+                ...uiFilter,
+                id: getPathKey(filter.attributes),
+                withEmptyValues: filter.withEmptyValues ?? false,
+            } as UIFilter;
 
             // TREE filters are seeded EMPTY: a stored tree value is a set of record ids that must be
             // resolved to `{nodeId, libraryId}` user-selections before it can be applied (and the dropdown

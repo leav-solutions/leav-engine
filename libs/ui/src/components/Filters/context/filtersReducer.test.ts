@@ -361,6 +361,45 @@ describe('ViewSettings Reducer', () => {
                 },
             ]);
         });
+
+        test('Reset a tree filter clears withEmptyValues, formattedValue and the node selection', () => {
+            const state = filtersReducer(
+                {
+                    ...filtersInitialState,
+                    filters: [
+                        {
+                            id: 'tree-id',
+                            attribute: attributeDataTree,
+                            field: 'tree',
+                            condition: RecordFilterCondition.EQUAL,
+                            value: ['rec1'],
+                            nodes: [{nodeId: 'node1', libraryId: 'lib'}],
+                            userNodes: [{nodeId: 'node1', libraryId: 'lib'}],
+                            userFormattedValue: ['Node 1'],
+                            formattedValue: ['Node 1'],
+                            withEmptyValues: true,
+                            includeHiddenOptions: true,
+                        },
+                    ],
+                },
+                {
+                    type: FiltersActionTypes.RESET_FILTER,
+                    payload: {id: 'tree-id'},
+                },
+            );
+
+            expect(state.filters[0]).toMatchObject({
+                id: 'tree-id',
+                condition: null,
+                value: null,
+                nodes: null,
+                userNodes: null,
+                userFormattedValue: null,
+                formattedValue: null,
+                withEmptyValues: false,
+                includeHiddenOptions: false,
+            });
+        });
     });
 
     test(`Action ${FiltersActionTypes.REMOVE_FILTER} test`, () => {

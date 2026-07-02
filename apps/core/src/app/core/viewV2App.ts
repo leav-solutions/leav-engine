@@ -90,6 +90,7 @@ export default function ({
                         attributes: [Attribute!]!,
                         values: [String]!,
                         condition: RecordFilterCondition!,
+                        withEmptyValues: Boolean,
                     }
 
                     input ViewV2FilterInput {
@@ -97,6 +98,7 @@ export default function ({
                         attributes: [ID!]!,
                         values: [String]!,
                         condition: RecordFilterCondition!,
+                        withEmptyValues: Boolean,
                     }
 
                     type ViewV2Sort {

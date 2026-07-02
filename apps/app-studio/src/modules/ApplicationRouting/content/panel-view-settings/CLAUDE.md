@@ -27,10 +27,10 @@ header `CurrentViewSection`.
 
 `LOAD_VIEW`, `RESET_VIEW`, `MARK_SAVED`, `SET_LABEL`, `SET_SHARED`, `SET_VIEW_TYPE`,
 `TOGGLE_VISIBILITY`, `MOVE_ATTRIBUTE`, **`MOVE_SORT`**, **`SET_SORT_ORDER`**,
-**`MOVE_FILTER`**, **`TOGGLE_FILTER_PINNED`**, **`SET_FILTER_CONFIG`** (condition+valeurs d'un filtre ;
-dispatché soit par `VoletFiltersProvider` (édition volet), soit par `useViewSettingsProps.onFiltersChange`
+**`MOVE_FILTER`**, **`TOGGLE_FILTER_PINNED`**, **`SET_FILTER_CONFIG`** (condition+valeurs **+ `withEmptyValues`**
+d'un filtre ; dispatché soit par `VoletFiltersProvider` (édition volet), soit par `useViewSettingsProps.onFiltersChange`
 (édition/suppression depuis la `FilterToolBar` d'ExplorerV2) → persistance/`isDirty`. **Durci G1** : renvoie
-le **même state** si condition+valeurs inchangées, pour que la synchro hub↔spoke ne boucle pas),
+le **même state** si condition+valeurs+`withEmptyValues` inchangés, pour que la synchro hub↔spoke ne boucle pas),
 **`SET_AVAILABLE_COLUMNS`**, **`SET_AVAILABLE_SORTS`**, **`SET_AVAILABLE_FILTERS`** (roue admin).
 
 - `LOAD_VIEW` **sème les deux snapshots** (chargement initial + écho serveur après save/save-as).
@@ -98,16 +98,17 @@ Convertit la `ViewV2` GraphQL en `SerializedView` (contrat consommé par la prop
   `getAttributesFromField`) : `campagnes.label` trie sur un attribut lié, `campagnes` seul trie sur
   l'identité de l'enregistrement lié. Un tri mono-attribut donne juste l'id de l'attribut.
 - **`filters`** : les filtres utilisateur **épinglés**, dans l'ordre de la vue (= ordre toolbar), en forme
-  **lean** sérialisable (`{attributes, condition, values, pinned}`). Non-épinglés exclus (comme les tris
-  non épinglés). Les filtres user **retransitent par `currentView`** — la **déviation ADR-006 « filtres
+  **lean** sérialisable (`{attributes, condition, values, pinned, withEmptyValues}`). Non-épinglés exclus
+  (comme les tris non épinglés). Les filtres user **retransitent par `currentView`** — la **déviation ADR-006 « filtres
   hors de currentView » est annulée** (voir `## Filtres : hub & spoke`). Les pré-filtres masqués
   `hidden:true` (ex. pré-filtre de liaison) restent injectés **séparément** par l'appelant dans
   `currentView.filters` comme filtres **pleins** et fusionnés à la requête par ExplorerV2 (jamais affichés).
 - **`shortcuts`** : onglets du volet exposés en boutons-raccourcis (`display | filters | sorts |
 catalog`), recopiés tels quels avec fallback `['display']` (LEAVC-892). L'ordre d'affichage est
   imposé côté ExplorerV2 (ordre canonique), pas par cette liste.
-- Fragment `viewV2Fragment.graphql` récupère désormais `sorts { attributes {id label} order }` et
-  `shortcuts`.
+- Fragment `viewV2Fragment.graphql` récupère désormais `sorts { attributes {id label} order }`,
+  `shortcuts` et `filters { … withEmptyValues }` (le flag "non défini", persisté côté core
+  `IViewV2Filter.withEmptyValues` — `Boolean` nullable pour rétro-compat, cf. LEAVC-810).
 
 **Câblage** : `panel-explorer/useViewSettingsProps.ts` lit le store et fournit `currentView` +
 les callbacks `viewSettings` à `ExplorerV2` (monté dans `PanelLibraryExplorer.tsx`).
@@ -174,8 +175,15 @@ hub↔spoke est no-op ou converge en un tour :
   merge arbre **compare les recordIds** (pas l'identité d'objet) : il préserve une sélection live de
   **même valeur**, mais **adopte** un seed résolu de **valeur différente** poussé par le hub (édition
   depuis l'autre spoke — sans cette comparaison, un arbre déjà sélectionné n'adoptait jamais la nouvelle
-  valeur du volet, LEAVC-810). Les arbres **sautent l'effet ADOPT** (synchrone) et passent **uniquement**
-  par ce chemin SEED + résolution. Vue **non dirty** au load (ref keyé sur la **valeur** lean).
+  valeur du volet, LEAVC-810). La **sélection de nœuds** d'un arbre saute l'effet ADOPT et passe **uniquement**
+  par ce chemin SEED + résolution ; en revanche son flag **`withEmptyValues`** (sans résolution) **est adopté**
+  par l'effet ADOPT — sinon un `RESET_VIEW` ou une édition "non défini" sur l'autre spoke ne se propagerait pas
+  à l'arbre. Vue **non dirty** au load (ref keyé sur la **valeur** lean).
+- **Reset d'un arbre** : `initialFilters` (cible de `RESET_FILTER` du dropdown) est **stable** — reconstruit
+  seulement sur changement structurel, jamais sur une édition de valeur. Une édition d'arbre déclenche un
+  reseed (via `resolvedById`) qui, naïvement, écraserait `initialFilters` avec la sélection courante ; on
+  résout donc les recordIds **sauvegardés** séparément (snapshot pré-édition, cache-hit) pour que
+  "Réinitialiser" restaure les nœuds **sauvegardés** (idem la valeur d'un filtre standard), pas les courants.
 
 > ⏳ **Différé** (avec le câblage iframe) : push réel `view-settings-update` hôte→iframe + émission
 > `explorer-view-changed`, et lean-ification du pré-filtre `hidden`. L'architecture est déjà message-ready.

@@ -67,8 +67,8 @@ export const useCurrentView = () => {
     );
 
     const setFilterConfig = useCallback(
-        (id: string, condition: RecordFilterCondition, values: Array<string | null>) =>
-            dispatch({type: 'SET_FILTER_CONFIG', payload: {id, condition, values}}),
+        (id: string, condition: RecordFilterCondition, values: Array<string | null>, withEmptyValues?: boolean) =>
+            dispatch({type: 'SET_FILTER_CONFIG', payload: {id, condition, values, withEmptyValues}}),
         [dispatch],
     );
 

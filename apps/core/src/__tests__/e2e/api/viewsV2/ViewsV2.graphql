@@ -36,6 +36,7 @@ query GetViewsV2($library: ID!) {
                 }
                 values
                 condition
+                withEmptyValues
             }
             sorts {
                 pinned

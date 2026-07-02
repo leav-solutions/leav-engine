@@ -3,7 +3,7 @@ import {type RecordFilterCondition} from '_ui/_gqlTypes';
 import {type SerializedFilter} from '../ExplorerV2/_types';
 import {FiltersActionTypes, filtersReducer} from './context/filtersReducer';
 import {filtersInitialState} from './context/filtersInitialState';
-import {isUIFilterTree, type UIFilter} from './_types';
+import {isUIFilterTree, type IUIFilterTree, type UIFilter} from './_types';
 import {uiFilterToConfig, useViewFiltersConverter} from './useViewFiltersConverter';
 import {type ITreeFilterToResolve, useResolveTreeFilterNodes} from './useResolveTreeFilterNodes';
 
@@ -15,13 +15,18 @@ const leanFilterId = (attributes: Array<{id: string}>): string => attributes.map
 interface ILeanEntry {
     condition: RecordFilterCondition;
     values: Array<string | null>;
+    withEmptyValues?: boolean;
 }
 
 const valuesEqual = (a: Array<string | null>, b: Array<string | null>) =>
     a.length === b.length && a.every((value, index) => value === b[index]);
 
 const leanEntryEqual = (a: ILeanEntry | undefined, b: ILeanEntry | undefined): boolean =>
-    !!a && !!b && a.condition === b.condition && valuesEqual(a.values, b.values);
+    !!a &&
+    !!b &&
+    a.condition === b.condition &&
+    !!a.withEmptyValues === !!b.withEmptyValues &&
+    valuesEqual(a.values, b.values);
 
 const projectionsEqual = (a: Map<string, ILeanEntry>, b: Map<string, ILeanEntry>): boolean => {
     if (a.size !== b.size) {
@@ -44,11 +49,11 @@ const projectionsEqual = (a: Map<string, ILeanEntry>, b: Map<string, ILeanEntry>
 const projectLean = (filters: UIFilter[]): Map<string, ILeanEntry> => {
     const projection = new Map<string, ILeanEntry>();
     filters.forEach(filter => {
-        if (isUIFilterTree(filter) && filter.userNodes == null) {
+        if (isUIFilterTree(filter) && filter.userNodes == null && !filter.withEmptyValues) {
             return;
         }
-        const {id, condition, values} = uiFilterToConfig(filter);
-        projection.set(id, {condition, values});
+        const {id, condition, values, withEmptyValues} = uiFilterToConfig(filter);
+        projection.set(id, {condition, values, withEmptyValues});
     });
     return projection;
 };
@@ -56,14 +61,15 @@ const projectLean = (filters: UIFilter[]): Map<string, ILeanEntry> => {
 /** Lean, serializable emission shape (the message-ready `SerializedFilter[]` handed to `onChange`). */
 const toLeanFilters = (filters: UIFilter[]): SerializedFilter[] =>
     filters
-        .filter(filter => !(isUIFilterTree(filter) && filter.userNodes == null))
+        .filter(filter => !(isUIFilterTree(filter) && filter.userNodes == null && !filter.withEmptyValues))
         .map(filter => {
-            const {id, condition, values} = uiFilterToConfig(filter);
+            const {id, condition, values, withEmptyValues} = uiFilterToConfig(filter);
             return {
                 attributes: id.split('/').map(attributeId => ({id: attributeId})),
                 condition,
                 values,
                 pinned: true,
+                withEmptyValues,
             } satisfies SerializedFilter;
         });
 
@@ -181,6 +187,26 @@ export const useControlledFilterStore = ({
     // though `seedFilters` is a fresh array every render.
     const hubValueSignature = useMemo(() => JSON.stringify([...projectLean(seedFilters)]), [seedFilters]);
 
+    // SAVED (pre-edit) tree selections — the reset target for a tree filter. `treeFiltersToResolve` tracks
+    // the LIVE hub recordIds (they change as the user edits), so we snapshot it per structural / metadata
+    // change (never on a value edit) and resolve THOSE ids separately. Same tree → cache hit, so no real
+    // extra fetch. Without it, editing tree nodes would overwrite `initialFilters` (a tree edit changes
+    // `resolvedById` → reseeds), and "Réinitialiser" would restore the current nodes, not the saved ones.
+    const savedTreeFiltersToResolve = useMemo(
+        () => treeFiltersToResolve,
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [structuralSignature, attributesDataById],
+    );
+    const {resolvedById: savedResolvedById} = useResolveTreeFilterNodes(savedTreeFiltersToResolve, libraryId);
+    const savedResolvedByIdRef = useRef(savedResolvedById);
+    savedResolvedByIdRef.current = savedResolvedById;
+
+    // The stable RESET_FILTER target, preserved across reseeds: rebuilt only on a STRUCTURAL change so a
+    // value edit never rebaselines it (a tree edit reseeds the whole store — this must not turn a standard
+    // filter's "initial" into its edited value either).
+    const initialFiltersRef = useRef<UIFilter[]>([]);
+    const prevStructuralRef = useRef<string | null>(null);
+
     // 1. SEED / reseed on structural (or metadata / tree-resolution) change, merge-preserving live filter
     //    objects by id. For trees, a genuine live user selection (`userNodes` set) is preserved; otherwise
     //    the (possibly just-resolved) seed wins so a reloaded tree filter upgrades from empty to resolved.
@@ -223,6 +249,35 @@ export const useControlledFilterStore = ({
             }
             return existing;
         });
+        // Build the stable RESET target (`initialFilters`). Rebuild fully on a structural change (fresh
+        // baseline / rebaseline on pin-unpin); otherwise PRESERVE it, only (re)filling each tree's nodes
+        // from the SAVED resolution (which is edit-stable) so a tree reset restores its SAVED nodes and a
+        // standard reset restores its SAVED value — even after a co-located tree edit forced a reseed.
+        const isStructuralChange = prevStructuralRef.current !== structuralSignature;
+        prevStructuralRef.current = structuralSignature;
+        const previousInitialById = new Map(initialFiltersRef.current.map(filter => [filter.id, filter]));
+        const buildTreeInitial = (base: IUIFilterTree): IUIFilterTree => {
+            const saved = savedResolvedByIdRef.current[base.id] ?? [];
+            if (saved.length === 0) {
+                return {...base, value: null, nodes: null, userNodes: null, userFormattedValue: null};
+            }
+            const nodes = saved.map(node => ({nodeId: node.nodeId, libraryId: node.libraryId}));
+            return {
+                ...base,
+                value: saved.map(node => node.recordId),
+                nodes,
+                userNodes: nodes,
+                userFormattedValue: saved.map(node => node.label),
+            };
+        };
+        const initialFilters = seedFiltersRef.current.map(seed => {
+            const previous = previousInitialById.get(seed.id);
+            if (isStructuralChange || !previous) {
+                return isUIFilterTree(seed) ? buildTreeInitial(seed) : seed;
+            }
+            return isUIFilterTree(previous) ? buildTreeInitial(previous) : previous;
+        });
+        initialFiltersRef.current = initialFilters;
         dispatch({
             type: FiltersActionTypes.RESET,
             payload: {
@@ -230,7 +285,7 @@ export const useControlledFilterStore = ({
                 libraryId: libraryId ?? null,
                 viewId: viewId ?? null,
                 filters: merged,
-                initialFilters: merged,
+                initialFilters,
                 attributesDataById,
                 loading: false,
             },
@@ -239,19 +294,32 @@ export const useControlledFilterStore = ({
         // ref now would make EMIT (running this same commit on the stale, still-old store) see a phantom
         // divergence and emit. EMIT owns the ref and recognises the seed as an echo via the hub comparison.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [structuralSignature, attributesDataById, loading, resolvedById]);
+    }, [structuralSignature, attributesDataById, loading, resolvedById, savedResolvedById]);
 
-    // 2. ADOPT external value changes (hub → store) WITHOUT a structural change: a non-tree value edited
-    //    on the other spoke arrives through the hub; reconcile it so this surface shows it too. Trees are
-    //    adopted via the SEED merge (resolvedById), never here. EMIT re-syncs the ref once the store lands.
+    // 2. ADOPT external value changes (hub → store) WITHOUT a structural change: a value edited on the
+    //    other spoke (or a RESET_VIEW) arrives through the hub; reconcile it so this surface shows it too.
+    //    A tree's NODE selection is adopted via the SEED merge (it needs resolvedById) — adopting an
+    //    unresolved seed here could clobber a live selection. But `withEmptyValues` is a resolution-free
+    //    flag, so we DO adopt it here (onto the existing store filter, never touching its nodes): otherwise
+    //    a hub change that only flips "non défini" (RESET_VIEW, other-spoke edit) never reaches this store.
     useEffect(() => {
         if (loading) {
             return;
         }
         const hubProjection = projectLean(seedFiltersRef.current);
-        const storeIds = new Set((filtersDataRef.current.filters as UIFilter[]).map(filter => filter.id));
+        const storeById = new Map((filtersDataRef.current.filters as UIFilter[]).map(filter => [filter.id, filter]));
         seedFiltersRef.current.forEach(seed => {
-            if (isUIFilterTree(seed) || !storeIds.has(seed.id)) {
+            const existing = storeById.get(seed.id);
+            if (!existing) {
+                return;
+            }
+            if (isUIFilterTree(seed)) {
+                if (!!existing.withEmptyValues !== !!seed.withEmptyValues) {
+                    dispatch({
+                        type: FiltersActionTypes.CHANGE_FILTER_CONFIG,
+                        payload: {...existing, withEmptyValues: seed.withEmptyValues},
+                    });
+                }
                 return;
             }
             if (!leanEntryEqual(hubProjection.get(seed.id), lastSyncedLeanRef.current.get(seed.id))) {

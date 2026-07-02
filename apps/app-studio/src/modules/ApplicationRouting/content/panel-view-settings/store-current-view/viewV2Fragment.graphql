@@ -41,6 +41,7 @@ fragment AppStudioViewSettingsView on ViewV2 {
         condition
         values
         pinned
+        withEmptyValues
     }
     shortcuts
 }

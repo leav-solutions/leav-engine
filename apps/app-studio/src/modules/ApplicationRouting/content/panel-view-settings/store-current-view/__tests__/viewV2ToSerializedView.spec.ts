@@ -118,6 +118,7 @@ describe('viewV2ToSerializedView', () => {
                 condition: 'CONTAINS',
                 values: ['Noël'],
                 pinned: true,
+                withEmptyValues: false,
             },
         ]);
     });
@@ -133,7 +134,13 @@ describe('viewV2ToSerializedView', () => {
         );
 
         expect(result.filters).toEqual([
-            {attributes: [{id: 'kind', label: {}}], condition: 'EQUAL', values: ['b'], pinned: true},
+            {
+                attributes: [{id: 'kind', label: {}}],
+                condition: 'EQUAL',
+                values: ['b'],
+                pinned: true,
+                withEmptyValues: false,
+            },
         ]);
     });
 

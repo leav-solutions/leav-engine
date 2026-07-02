@@ -42,7 +42,12 @@ export const useViewSettingsProps = (): {
             );
             filters.forEach(filter => {
                 const id = filter.attributes.map(attribute => attribute.id).join('/');
-                setFilterConfig(id, filter.condition ?? RecordFilterCondition.EQUAL, filter.values);
+                setFilterConfig(
+                    id,
+                    filter.condition ?? RecordFilterCondition.EQUAL,
+                    filter.values,
+                    filter.withEmptyValues,
+                );
             });
             pinnedFilters.forEach(pinnedFilter => {
                 if (!incomingIds.has(pinnedFilter.id)) {

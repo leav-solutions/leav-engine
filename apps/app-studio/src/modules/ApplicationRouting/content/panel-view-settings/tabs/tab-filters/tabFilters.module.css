@@ -27,6 +27,41 @@
     overflow-y: auto;
 }
 
+/*
+ * KitFilter (behind CommonFilterItem) is capped at max-width: 200px and its label at
+ * max-width: min-content by design. The filter chip must instead be able to fill the row when it
+ * needs the space, so we lift those caps. The doubled selector (.filterChip.filterChip) raises
+ * specificity above the DS root rule without relying on stylesheet order or !important. Mirrors
+ * tab-sorts' .sortFilter.
+ */
+.filterChip.filterChip {
+    display: flex;
+    min-width: 0;
+    max-width: none;
+}
+
+/*
+ * Both the label and the value are capped at max-width: min-content by the DS, which truncates them
+ * even when the row has room. Let the label take the remaining space (ellipsis as a last resort) and
+ * let the value size to its content so it is never truncated.
+ */
+.filterChip :global(.kit-filter-label) {
+    /* min-width: 0 lets the flex item shrink below its content width so the ellipsis kicks in
+       instead of pushing the chip past the panel (which caused horizontal scroll). */
+    min-width: 0;
+    max-width: none;
+    /* The DS centers the chip text; left-align so short labels read naturally in the list. */
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.filterChip :global(.kit-filter-value) {
+    flex: 0 0 auto;
+    max-width: none;
+}
+
 .emptyBox {
     display: flex;
     align-items: center;

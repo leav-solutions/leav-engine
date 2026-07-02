@@ -43,6 +43,7 @@ describe('ViewsV2', () => {
                             attributes: ['label'],
                             values: ['Test'],
                             condition: RecordFilterCondition.EQUAL,
+                            withEmptyValues: true,
                         },
                     ],
                     sorts: [{pinned: false, attributes: ['created_at'], order: SortOrder.asc}],
@@ -75,6 +76,7 @@ describe('ViewsV2', () => {
                     attributes: [expect.objectContaining({id: 'label'})],
                     values: ['Test'],
                     condition: RecordFilterCondition.EQUAL,
+                    withEmptyValues: true,
                 },
             ]);
             expect(createdView.sorts).toEqual([
