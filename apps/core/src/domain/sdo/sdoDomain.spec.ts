@@ -23,6 +23,7 @@ import {
     type ISDO,
 } from '../../_types/sdo';
 import {EventAction} from '@leav/utils';
+import {SdoAttributes} from '../../_constants/systemAttributes';
 import {mockSDOUtils} from '../../__tests__/mocks/sdo/domains';
 import {type IGlobalSettings} from '../../_types/globalSettings';
 
@@ -66,6 +67,7 @@ const deps: ToAny<ISDODomainDeps> = {
     'core.domain.eventsManager': mockEventsManagerDomain,
     'core.domain.value': mockValueDomain,
     'core.infra.record': mockRecordRepo,
+    config: {sdo: {clientId: 'leav-client', applicationName: 'leav'}},
 };
 
 const jsonschemaSpy = vi.spyOn(jsonschema, 'validate');
@@ -675,7 +677,13 @@ describe('sdoDomain', () => {
             );
             expect(sdo).toBeDefined();
             expect((sdo as ISDO).content).toEqual({
-                system: expectedSDOSystemContent,
+                system: {
+                    ...expectedSDOSystemContent,
+                    applicationIds: {leav: 'entity'},
+                    // No stored creator clientId → falls back to config.sdo.clientId
+                    systemCreatorClientId: 'leav-client',
+                    systemLastModificatorClientId: 'leav-client',
+                },
                 simple: 'raw_payload',
                 simple_link: 'id',
                 advanced: ['raw_payload'],

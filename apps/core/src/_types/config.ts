@@ -54,6 +54,14 @@ export interface IConfig {
 
 export interface ISdo {
     amqp: Options.Connect;
+    /**
+     * AMP application clientId (like cm-galec-fr-staging), export in SDO export
+     */
+    clientId: string;
+    /**
+     * Application name, like campaigns-manager or amp, used for system.applicationIds in SDO export
+     */
+    applicationName: string;
     import: {
         enable: boolean;
         prefetch?: number;

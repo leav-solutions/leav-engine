@@ -1,4 +1,4 @@
-import {CommonAttributes} from '../../_constants/systemAttributes';
+import {CommonAttributes, SdoAttributes} from '../../_constants/systemAttributes';
 import fs from 'fs/promises';
 import path from 'path';
 import jsonschema from 'jsonschema';
@@ -28,6 +28,7 @@ import LeavError from '../../errors/LeavError';
 import {ErrorTypes} from '../../_types/errors';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
+import {type IConfig} from '../../_types/config';
 import {SystemLibraries} from '../../_constants/systemLibraries';
 
 export interface ISDODomainDeps {
@@ -38,6 +39,7 @@ export interface ISDODomainDeps {
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.value': IValueDomain;
     'core.infra.record': IRecordRepo;
+    config: IConfig;
 }
 
 export interface ISDODomain {
@@ -74,6 +76,7 @@ export default function ({
     'core.domain.eventsManager': eventsManager,
     'core.domain.value': valueDomain,
     'core.infra.record': recordRepo,
+    config,
 }: ISDODomainDeps): ISDODomain {
     const exportMappingFunctions: Map<string, ISDOMappingFunction> = new Map();
 
@@ -109,6 +112,16 @@ export default function ({
         }
 
         return sdoGlobalSettings;
+    };
+
+    const _getStoredValue = async (
+        library: string,
+        record: IRecord,
+        attributePath: string,
+        ctx: IQueryInfos,
+    ): Promise<string | null> => {
+        const values = await recordDomain.getRecordFieldValue({library, record, attributePath, ctx});
+        return ((values?.[0] as IStandardValue)?.raw_payload as string) ?? null;
     };
 
     const _getUUIDValue = async (libraryId: string, recordId: string, ctx: IQueryInfos): Promise<string | null> =>
@@ -257,11 +270,34 @@ export default function ({
     ): Promise<ISDO> => {
         const recordIdentity = await recordDomain.getRecordIdentity(record, ctx);
 
+        // Application-traceability values stored on the record (TEXT attributes; only read when the
+        // library actually carries them — legacy/system libraries may not).
+        const leavLibraryId = sdoMappingLibrary.leavLibraryId;
+        const hasAttribute = (attributeId: string): boolean => attributes.some(attr => attr.id === attributeId);
+        const [creatorClientId, storedApplicationIds] = await Promise.all([
+            hasAttribute(SdoAttributes.CREATOR_CLIENT_ID)
+                ? _getStoredValue(leavLibraryId, record, SdoAttributes.CREATOR_CLIENT_ID, ctx)
+                : null,
+            hasAttribute(SdoAttributes.APPLICATION_IDS)
+                ? _getStoredValue(leavLibraryId, record, SdoAttributes.APPLICATION_IDS, ctx)
+                : null,
+        ]);
+
+        let legacyApplicationIds: Record<string, unknown> = {};
+        if (storedApplicationIds) {
+            try {
+                legacyApplicationIds = JSON.parse(storedApplicationIds);
+            } catch {
+                logger.warn(`[SDO] Invalid JSON in ${SdoAttributes.APPLICATION_IDS} for record ${record.id}`);
+            }
+        }
+
         const sdo: ISDO = {
             dataModelRelease: 'dataModelRelease', // TODO: tmp value
             name: sdoLibraryId,
             date: Date.now(),
             action,
+            clientId: config.sdo.clientId,
             content: {
                 system: {
                     systemId: record.uuid,
@@ -271,6 +307,10 @@ export default function ({
                     systemLastModificator: await _getUUIDValue(SystemLibraries.USERS, record.modified_by, ctx),
                     systemLastModifiedDate: record.modified_at,
                     systemLabel: await recordIdentity.getLabel?.(),
+                    applicationIds: {...legacyApplicationIds, [config.sdo.applicationName]: record.id},
+                    systemCreatorClientId: creatorClientId ?? config.sdo.clientId ?? null,
+                    // Last modificator app is the one generating this export: computed on the fly, not stored.
+                    systemLastModificatorClientId: config.sdo.clientId,
                 },
             },
         };

@@ -75,6 +75,12 @@ export enum DiscussionCommentsAttributes {
     THREAD = 'discussion_comments_thread',
 }
 
+// SDO application-tracability attributes, present on every library (see BASE_ATTRIBUTES).
+export enum SdoAttributes {
+    APPLICATION_IDS = 'sdo_application_ids', // TEXT holding a JSON string: legacy internal ids per application
+    CREATOR_CLIENT_ID = 'sdo_creator_client_id', // TEXT: clientId of the application that created the record
+}
+
 // Suffixes used to build the per-library preview attribute names, e.g. `${SystemLibrary.FILES}_previews`.
 export const PREVIEWS_ATTRIBUTE_SUFFIX = 'previews';
 export const PREVIEWS_STATUS_ATTRIBUTE_SUFFIX = 'previews_status';
@@ -90,6 +96,8 @@ export const BASE_ATTRIBUTES: string[] = [
     CommonAttributes.CREATED_AT,
     CommonAttributes.ACTIVE,
     CommonAttributes.DISCUSSION_THREADS,
+    SdoAttributes.APPLICATION_IDS,
+    SdoAttributes.CREATOR_CLIENT_ID,
 ];
 
 // Default values seeded into the status_types library.

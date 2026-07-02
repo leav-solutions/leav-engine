@@ -80,6 +80,7 @@ describe('SDO Exports', () => {
             dataModelRelease: 'dataModelRelease',
             date: expect.any(Number),
             action: 'CREATE',
+            clientId: conf.sdo.clientId,
             content: {
                 system: {
                     systemId: recordUUID,
@@ -89,6 +90,11 @@ describe('SDO Exports', () => {
                     systemLabel: recordId,
                     systemCreator: nonAdminUserUUID,
                     systemLastModificator: nonAdminUserUUID,
+                    // Application traceability (LEAVC-871): clientId from config, applicationIds carries leav's own entry
+                    applicationIds: {[conf.sdo.applicationName]: recordId},
+                    // No stored creator clientId on a freshly created record → falls back to config.sdo.clientId
+                    systemCreatorClientId: conf.sdo.clientId,
+                    systemLastModificatorClientId: conf.sdo.clientId,
                 },
             },
         });

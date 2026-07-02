@@ -1,6 +1,11 @@
 import {SystemLibraries} from '../../../../_constants/systemLibraries';
 import {SystemTrees} from '../../../../_constants/systemTrees';
-import {CommonAttributes, FilesAttributes, UsersAttributes} from '../../../../_constants/systemAttributes';
+import {
+    CommonAttributes,
+    FilesAttributes,
+    SdoAttributes,
+    UsersAttributes,
+} from '../../../../_constants/systemAttributes';
 import {type IAttributeForRepo} from '../../../attribute/attributeRepo';
 import {ActionsListEvents} from '../../../../_types/actionsList';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
@@ -456,5 +461,30 @@ export const systemAttributes: IAttributeForRepo[] = [
             ],
         },
         readonly: false,
+    },
+    /** SDO application-traceability attributes */
+    {
+        ...commonAttributeData,
+        id: SdoAttributes.APPLICATION_IDS,
+        type: AttributeTypes.SIMPLE,
+        format: AttributeFormats.TEXT,
+        label: {fr: 'IDs applicatifs SDO', en: 'SDO application IDs'},
+        description: {
+            fr: 'IDs internes par application (JSON)',
+            en: 'Internal ids per application (JSON)',
+        },
+        readonly: true,
+    },
+    {
+        ...commonAttributeData,
+        id: SdoAttributes.CREATOR_CLIENT_ID,
+        type: AttributeTypes.SIMPLE,
+        format: AttributeFormats.TEXT,
+        label: {fr: 'ClientId créateur SDO', en: 'SDO creator clientId'},
+        description: {
+            fr: "Identifiant de l'application créatrice de l'élément",
+            en: 'ClientId of the application that created the record',
+        },
+        readonly: true,
     },
 ];

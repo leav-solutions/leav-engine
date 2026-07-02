@@ -8,6 +8,7 @@ export interface ISDO {
     name: string; // library
     date: number;
     action: SDOAction;
+    clientId?: string; // emitting application (AMP norm), from config.sdo.clientId
     content: {
         system: {
             systemId: string;
@@ -17,6 +18,9 @@ export interface ISDO {
             systemLastModificator: string;
             systemLastModifiedDate: number;
             systemLabel: string;
+            applicationIds?: Record<string, unknown>; // internal ids per application
+            systemCreatorClientId?: string | null; // application that created the record
+            systemLastModificatorClientId?: string | null; // application generating this export (computed, not stored)
             [attributePath: string]: unknown;
         };
         [attributePath: string]: unknown;
