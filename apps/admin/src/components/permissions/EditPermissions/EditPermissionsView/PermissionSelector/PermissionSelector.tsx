@@ -40,7 +40,6 @@ function PermissionSelector({
     const bgColor = value !== null ? bgColors[inputVal] : hexToRgba(bgColors[permValToInputVal(inheritValue)], 40);
 
     const Wrapper = as;
-    Wrapper.displayName = 'Wrapper';
 
     const _handleChange = async (e: React.ChangeEvent, data: InputOnChangeData) => {
         setIsLoading(true);

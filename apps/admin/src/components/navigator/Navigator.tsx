@@ -1,5 +1,4 @@
 import {useReducer, useEffect, type MutableRefObject} from 'react';
-
 import useLang from '../../hooks/useLang';
 import RootSelector from './RootSelector';
 import MainPanel from './MainPanel';
@@ -27,16 +26,22 @@ function Navigator(props: INavigatorProps): JSX.Element {
         lang,
         selectedRoot: props.restrictToRoots && props.restrictToRoots.length === 1 ? props.restrictToRoots[0] : null,
     });
+
     useEffect(() => {
         if (props.getSelectionRef) {
+            // Assigning to .current is the intended usage; the immutability rule can't tell it
+            // apart from a prop mutation since the ref isn't created via useRef here.
+            // eslint-disable-next-line react-hooks/immutability
             props.getSelectionRef.current = () => state.selection;
         }
     }, [props.getSelectionRef, state.selection]);
+
     const rootSelected = (root: string) =>
         dispatch({
             type: ActionTypes.SET_SELECTED_ROOT,
             data: root,
         });
+
     return state.selectedRoot ? (
         <MainPanel state={state} dispatch={dispatch} />
     ) : (

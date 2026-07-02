@@ -69,7 +69,7 @@ const EditPermissionsView = ({
                 </Table.Header>
                 <Table.Body>
                     {actions.map(a => {
-                        if (typeof permissionsByName[a.name] === undefined) {
+                        if (typeof permissionsByName[a.name] === 'undefined') {
                             return null;
                         }
 

@@ -12,7 +12,7 @@ import {useGetSubmitButtons} from '../hooks/useGetSubmitButtons';
 import {useForm} from 'antd/lib/form/Form';
 import {useCreateCancelConfirm} from '../hooks/useCreateCancelConfirm';
 import {EDIT_RECORD_MODAL_HEADER_CONTAINER_BUTTONS} from '../constants';
-import {useGetInitialRecordValues} from '../EditRecordPage/getInitialRecordValues';
+import {getInitialRecordValues} from '../EditRecordPage/getInitialRecordValues';
 import {ErrorComponent} from '../EditRecordPage/ErrorComponent';
 
 export interface IEditRecordModalProps {
@@ -112,7 +112,7 @@ export const EditRecordModal: FunctionComponent<IEditRecordModalProps> = ({
 
     useEffect(() => {
         const createRecordFunction = async () => {
-            const values = useGetInitialRecordValues();
+            const values = getInitialRecordValues();
             const {data} = await createRecord({
                 variables: {
                     library,

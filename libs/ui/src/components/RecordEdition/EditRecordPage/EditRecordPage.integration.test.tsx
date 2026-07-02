@@ -18,13 +18,13 @@ import {mockLibraryWithDetails} from '_ui/__mocks__/common/library';
 
 let user!: ReturnType<typeof userEvent.setup>;
 // vi.hoisted is required because vi.mock factories are hoisted above these declarations.
-const {useGetRecordFormMock, saveValuesMock, deleteValueMock, useGetRecordValuesQueryMock} = vi.hoisted(() => ({
-    useGetRecordFormMock: vi.fn(),
+const {getRecordFormMock, saveValuesMock, deleteValueMock, useGetRecordValuesQueryMock} = vi.hoisted(() => ({
+    getRecordFormMock: vi.fn(),
     saveValuesMock: vi.fn(),
     deleteValueMock: vi.fn(),
     useGetRecordValuesQueryMock: vi.fn(),
 }));
-vi.mock('_ui/hooks/useGetRecordForm', () => ({default: () => useGetRecordFormMock()}));
+vi.mock('_ui/hooks/useGetRecordForm', () => ({default: () => getRecordFormMock()}));
 
 vi.mock('_ui/hooks/useCanEditRecord', () => ({
     useCanEditRecord: () => ({loading: false, canEdit: true, isReadOnly: false}),
@@ -170,7 +170,7 @@ describe('EditRecordPage', () => {
             ],
         });
         deleteValueMock.mockClear();
-        useGetRecordFormMock.mockClear();
+        getRecordFormMock.mockClear();
         useGetRecordValuesQueryMock.mockClear();
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
             loading: false,
@@ -183,7 +183,7 @@ describe('EditRecordPage', () => {
     });
 
     test('Should render an input component', () => {
-        useGetRecordFormMock.mockReturnValue({loading: false, recordForm: mockRecordForm, refetch: vi.fn()});
+        getRecordFormMock.mockReturnValue({loading: false, recordForm: mockRecordForm, refetch: vi.fn()});
         useGetRecordValuesQueryMock.mockReturnValue({});
         render(<EditRecordPage library={mockRecord.library.id} onClose={vi.fn()} record={mockRecord} />, {mocks});
 
@@ -204,7 +204,7 @@ describe('EditRecordPage', () => {
             settings: [{key: 'label', value: {fr: 'calculated attribute'}}],
         };
 
-        useGetRecordFormMock.mockReturnValue({
+        getRecordFormMock.mockReturnValue({
             loading: false,
             recordForm: {...mockRecordForm, elements: [simpleElementInput, calculatedElementInput]},
             refetch: vi.fn(),
@@ -248,7 +248,7 @@ describe('EditRecordPage', () => {
             valueError: true,
         };
 
-        useGetRecordFormMock.mockReturnValue({
+        getRecordFormMock.mockReturnValue({
             loading: false,
             recordForm: {...mockRecordForm, elements: [simpleElementInput, calculatedElementInput]},
             refetch: vi.fn(),
@@ -289,7 +289,7 @@ describe('EditRecordPage', () => {
                 settings: [{key: 'label', value: {fr: 'simple attribute'}}],
             };
 
-            useGetRecordFormMock.mockReturnValue({
+            getRecordFormMock.mockReturnValue({
                 loading: false,
                 recordForm: {...mockRecordForm, elements: [simpleElementInput]},
             });
@@ -327,7 +327,7 @@ describe('EditRecordPage', () => {
                 settings: [{key: 'label', value: {fr: 'multiple attribute'}}],
             };
 
-            useGetRecordFormMock.mockReturnValue({
+            getRecordFormMock.mockReturnValue({
                 loading: false,
                 recordForm: {...mockRecordForm, elements: [simpleElementMultipleInput]},
             });
@@ -370,7 +370,7 @@ describe('EditRecordPage', () => {
             settings: [{key: 'label', value: {fr: 'simple attribute'}}],
         };
 
-        useGetRecordFormMock.mockReturnValue({
+        getRecordFormMock.mockReturnValue({
             loading: false,
             recordForm: {...mockRecordForm, elements: [simpleElementInput]},
         });

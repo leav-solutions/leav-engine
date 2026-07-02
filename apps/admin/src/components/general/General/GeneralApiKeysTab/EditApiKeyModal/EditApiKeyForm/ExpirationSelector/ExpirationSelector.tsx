@@ -54,7 +54,7 @@ function ExpirationSelector({onChange, label, value, ...dropdownProps}: Dropdown
         },
     ];
 
-    const hasExpired = value && Number(value) < Date.now() / 1000;
+    const hasExpired = value && Number(value) < now.unix();
 
     return (
         <>

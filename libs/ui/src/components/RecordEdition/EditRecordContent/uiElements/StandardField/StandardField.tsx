@@ -77,12 +77,12 @@ const KitAddValueButton = styled(KitButton)`
     margin-bottom: 3px;
 `;
 
-const StandardField: FunctionComponent<
-    IFormElementProps<IRequiredFieldsSettings, RecordFormElementsValueStandardValue> & {
-        antdForm?: FormInstance;
-        computedValues?: GetRecordColumnsValuesRecord<IRecordColumnValueStandard>;
-    }
-> = ({
+type StandardFieldProps = IFormElementProps<IRequiredFieldsSettings, RecordFormElementsValueStandardValue> & {
+    antdForm?: FormInstance;
+    computedValues?: GetRecordColumnsValuesRecord<IRecordColumnValueStandard>;
+};
+
+const StandardFieldContent: FunctionComponent<StandardFieldProps> = ({
     element,
     computedValues,
     isFormCreationMode,
@@ -104,20 +104,16 @@ const StandardField: FunctionComponent<
 
     const {attribute} = element;
 
+    const {state, dispatch} = useEditRecordReducer();
+
+    const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
+
     useEffect(() => {
         if (computedValues && computedValues[attribute.id] && Array.isArray(computedValues[attribute.id])) {
             setBackendValues(computedValues[attribute.id]);
             antdForm.setFieldValue(attribute.id, getAntdDisplayedValue(computedValues[attribute.id], attribute));
         }
     }, [computedValues]);
-
-    if (!attribute) {
-        return <ErrorDisplay message={t('record_edition.missing_attribute')} />;
-    }
-
-    const {state, dispatch} = useEditRecordReducer();
-
-    const [backendValues, setBackendValues] = useState<RecordFormElementsValueStandardValue[]>(element.values);
 
     const calculatedFlags = computeCalculatedFlags(backendValues);
     const inheritedFlags = computeInheritedFlags(backendValues);
@@ -441,6 +437,16 @@ const StandardField: FunctionComponent<
             </KitInputWrapperStyled>
         </Wrapper>
     );
+};
+
+const StandardField: FunctionComponent<StandardFieldProps> = props => {
+    const {t} = useSharedTranslation();
+
+    if (!props.element.attribute) {
+        return <ErrorDisplay message={t('record_edition.missing_attribute')} />;
+    }
+
+    return <StandardFieldContent {...props} />;
 };
 
 export default StandardField;

@@ -1,6 +1,6 @@
-import {act} from 'react-dom/test-utils';
 import {LibraryBehavior} from '../../_gqlTypes';
-import {render} from '../../_tests/testUtils';
+import {act, renderHook} from '../../_tests/testUtils';
+import {TestProviders} from '../../_tests/TestProviders';
 import {mockLibraryPermissions} from '../../__mocks__/common/library';
 import {type IActiveLibrary} from '../../graphQL/queries/cache/activeLibrary/getActiveLibraryQuery';
 import {initialActiveLibrary, useActiveLibrary} from './useActiveLibrary';
@@ -16,38 +16,20 @@ describe('useActiveLibrary', () => {
     };
 
     test('should get empty library if no activeLibrary set', async () => {
-        let givenActiveLibrary: any;
+        const {result} = renderHook(() => useActiveLibrary(), {wrapper: TestProviders});
+        const [activeLibrary] = result.current;
 
-        const ComponentUsingInfo = () => {
-            const [activeLibrary] = useActiveLibrary();
-
-            givenActiveLibrary = activeLibrary;
-            return <></>;
-        };
-
-        await act(async () => {
-            render(<ComponentUsingInfo />);
-        });
-
-        expect(givenActiveLibrary).toEqual(initialActiveLibrary);
+        expect(activeLibrary).toEqual(initialActiveLibrary);
     });
 
     test('should get activeLibrary', async () => {
-        let givenActiveLibrary;
-
-        const ComponentUsingInfo = () => {
-            const [activeLibrary, updateActiveLibrary] = useActiveLibrary();
-
-            updateActiveLibrary(mockActiveLibrary);
-
-            givenActiveLibrary = activeLibrary;
-            return <></>;
-        };
+        const {result} = renderHook(() => useActiveLibrary(), {wrapper: TestProviders});
+        const [, updateActiveLibrary] = result.current;
 
         await act(async () => {
-            render(<ComponentUsingInfo />);
+            updateActiveLibrary(mockActiveLibrary);
         });
 
-        expect(givenActiveLibrary).toEqual(mockActiveLibrary);
+        expect(result.current[0]).toEqual(mockActiveLibrary);
     });
 });

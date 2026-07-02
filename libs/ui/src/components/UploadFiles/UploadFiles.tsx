@@ -307,7 +307,7 @@ function UploadFiles({
             });
         });
 
-    const PathTitle = () => {
+    const renderPathTitle = () => {
         const title = selectedNode
             ? selectedDir
                 ? `${selectedDir?.path}/${selectedDir?.name}`.replace('./', '')
@@ -319,7 +319,7 @@ function UploadFiles({
 
     const steps = [
         {
-            title: <PathTitle />,
+            title: renderPathTitle(),
             content: (
                 <div
                     data-testid="select-tree-node"

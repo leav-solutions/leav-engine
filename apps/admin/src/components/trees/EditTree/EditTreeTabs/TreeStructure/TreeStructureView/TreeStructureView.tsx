@@ -47,29 +47,33 @@ function TreeStructureView({tree, readOnly, onChange, loading}: ITreeStructureVi
     }, {} as IKeyValue<SAVE_TREE_saveTree_libraries_settings>);
 
     const _handleLibraryMove = (libraryId: string, parentFrom: string, parentTo: string) => {
+        const newDeps = {...deps};
+
         // Add library to its parent (or root)
         // If removing library, parentTo is null
         if (parentTo === ROOT_ID) {
-            deps[libraryId] = {...deps[libraryId], allowedAtRoot: true};
+            newDeps[libraryId] = {...newDeps[libraryId], allowedAtRoot: true};
         } else if (parentTo) {
-            deps[parentTo] = {
-                ...deps[parentTo],
-                allowedChildren: [...deps[parentTo].allowedChildren, libraryId].filter(id => id !== ALLOW_ALL_ID),
+            newDeps[parentTo] = {
+                ...newDeps[parentTo],
+                allowedChildren: [...newDeps[parentTo].allowedChildren, libraryId].filter(id => id !== ALLOW_ALL_ID),
             };
         }
 
         // Remove library from its previous parent (or root)
         // If coming from libraries list, parentFrom is null
         if (parentFrom === ROOT_ID) {
-            deps[libraryId] = {...deps[libraryId], allowedAtRoot: false};
+            newDeps[libraryId] = {...newDeps[libraryId], allowedAtRoot: false};
         } else if (parentFrom) {
-            deps[parentFrom] = {
-                ...deps[parentFrom],
-                allowedChildren: deps[parentFrom].allowedChildren.filter(id => id !== libraryId && id !== ALLOW_ALL_ID),
+            newDeps[parentFrom] = {
+                ...newDeps[parentFrom],
+                allowedChildren: newDeps[parentFrom].allowedChildren.filter(
+                    id => id !== libraryId && id !== ALLOW_ALL_ID,
+                ),
             };
         }
 
-        onChange(deps);
+        onChange(newDeps);
     };
 
     return (

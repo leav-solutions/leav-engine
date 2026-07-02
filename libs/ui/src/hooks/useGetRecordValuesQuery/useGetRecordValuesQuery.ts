@@ -77,7 +77,7 @@ export const useGetRecordValuesQuery = (
     // @ts-expect-error returned shape does not match the query result type
     return {
         ...query,
-        loading: query.loading || typeof queryData === undefined,
+        loading: query.loading || typeof queryData === 'undefined',
         data: queryData,
         refetch: customRefetch as (
             variables?: Partial<IGetRecordColumnsValuesVariables>,

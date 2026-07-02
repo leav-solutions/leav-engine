@@ -16,7 +16,7 @@ import {createPortal} from 'react-dom';
 import {SUBMIT_BUTTONS_PORTAL} from '_ui/constants';
 import {ErrorBoundary} from '_ui/components/ErrorBoundary';
 import {ErrorComponent} from './ErrorComponent';
-import {useGetInitialRecordValues} from './getInitialRecordValues';
+import {getInitialRecordValues} from './getInitialRecordValues';
 
 interface IEditRecordPageProps {
     record: RecordIdentityFragment['whoAmI'] | null;
@@ -98,7 +98,7 @@ export const EditRecordPage: FunctionComponent<IEditRecordPageProps> = ({
 
     useEffect(() => {
         const createRecordFunction = async () => {
-            const values = useGetInitialRecordValues();
+            const values = getInitialRecordValues();
             const {data} = await createRecord({
                 variables: {
                     library,

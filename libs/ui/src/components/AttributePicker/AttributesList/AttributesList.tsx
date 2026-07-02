@@ -182,10 +182,6 @@ function AttributesList({
         setFilters(newFilters);
     };
 
-    if (error || isAllowedQueryResult.error) {
-        return <ErrorDisplay message={error?.message || isAllowedQueryResult?.error?.message} />;
-    }
-
     const columns: TableColumnsType<ListAttributeType> = [
         {
             title: t('attributes.attribute'),
@@ -279,6 +275,10 @@ function AttributesList({
             inputRef.current.focus();
         }
     }, [inputRef]);
+
+    if (error || isAllowedQueryResult.error) {
+        return <ErrorDisplay message={error?.message || isAllowedQueryResult?.error?.message} />;
+    }
 
     const tableHeader = (
         <HeaderWrapper>

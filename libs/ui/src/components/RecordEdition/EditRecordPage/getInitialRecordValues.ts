@@ -9,7 +9,7 @@ const removeFromQueryParams = (paramToRemove: string) => {
     }
 };
 
-export const useGetInitialRecordValues = () => {
+export const getInitialRecordValues = () => {
     const searchParams = new URLSearchParams(location.search);
     const decodedParams = decodeURIComponent(searchParams.get(INITIAL_VALUES_QUERY_PARAMS) ?? '{}');
     let initialValues = null;

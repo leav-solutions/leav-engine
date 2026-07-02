@@ -48,11 +48,12 @@ const LibLabel = styled.div`
 `;
 
 function RecordCard({record, withLibrary = true, withPreview = true}: IRecordCardProps): JSX.Element {
+    const {lang} = useLang();
+
     if (!record) {
         return null;
     }
 
-    const {lang} = useLang();
     const libLabel = record.library.label ? localizedTranslation(record.library.label, lang) : record.library.id;
     return (
         <Wrapper recordColor={record.color} className="ui fluid">

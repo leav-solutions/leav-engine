@@ -49,6 +49,15 @@ export const useMassActions = ({
     const {t} = useSharedTranslation();
     const [isInactive, setIsInactive] = useState(false);
 
+    const _setSelectedKeys = useCallback(
+        (keys: MassSelection) =>
+            dispatch({
+                type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
+                payload: keys,
+            }),
+        [dispatch],
+    );
+
     useEffect(() => {
         setIsInactive(filters.filter(f => f.field === 'active')?.[0]?.value === 'false');
     }, [filters]);
@@ -191,15 +200,6 @@ export const useMassActions = ({
                 </KitSpace>
             </KitCheckbox>
         </KitDropDown>
-    );
-
-    const _setSelectedKeys = useCallback(
-        (keys: MassSelection) =>
-            dispatch({
-                type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                payload: keys,
-            }),
-        [dispatch],
     );
 
     return {

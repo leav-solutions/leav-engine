@@ -1,4 +1,4 @@
-import {type CSSProperties, useMemo} from 'react';
+import {type CSSProperties} from 'react';
 import {Image} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {getInvertColor, stringToColor} from '../../../utils/utils';
@@ -66,13 +66,10 @@ function RecordPreview({label, color, image, style}: IRecordPreviewProps): JSX.E
     const bgColor = color || stringToColor(label);
     const fontColor = getInvertColor(bgColor);
 
-    return useMemo(
-        () => (
-            <GeneratedPreview className="initial" $bgColor={bgColor} $fontColor={fontColor} style={style}>
-                {initials}
-            </GeneratedPreview>
-        ),
-        [initials, bgColor, fontColor, style],
+    return (
+        <GeneratedPreview className="initial" $bgColor={bgColor} $fontColor={fontColor} style={style}>
+            {initials}
+        </GeneratedPreview>
     );
 }
 

@@ -46,8 +46,8 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
     const {sheets} = state;
 
     const _changeSheetProperty = (sheetIndex: number, values: Partial<ISheet>) => {
-        sheets[sheetIndex] = {...sheets[sheetIndex], ...values};
-        dispatch({type: ImportReducerActionTypes.SET_SHEETS, sheets: [...sheets]});
+        const newSheets = sheets.map((sheet, index) => (index === sheetIndex ? {...sheet, ...values} : sheet));
+        dispatch({type: ImportReducerActionTypes.SET_SHEETS, sheets: newSheets});
     };
 
     const _handleLibrarySelect = async (sheetIndex: number, lib: string) => {

@@ -177,6 +177,8 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
         },
     });
 
+    const all = t('navigator.display_all');
+
     useEffect(() => {
         if (!data) {
             return;
@@ -197,8 +199,6 @@ function ListLoader({selectedRootQuery, filters, dispatch, offset, limit}) {
     if (!data) {
         return <p data-testid="error">No data</p>;
     }
-
-    const all = t('navigator.display_all');
 
     return null;
 }
