@@ -1,4 +1,4 @@
-import {forwardRef, type ReactNode, useImperativeHandle, useMemo} from 'react';
+import {forwardRef, type ReactNode, useId, useImperativeHandle} from 'react';
 import {createPortal} from 'react-dom';
 import {KitEmpty, KitSnackBarProvider, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
@@ -323,7 +323,8 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const _isSelectionDisable = disableSelection || (isLink && !isMultivalue && totalCountFiltered > 0);
 
-        const massActionSnackbarId = useMemo(() => `${SNACKBAR_MASS_ID}_${Date.now()}`, []);
+        const generatedId = useId().replace(/:/g, '');
+        const massActionSnackbarId = `${SNACKBAR_MASS_ID}_${generatedId}`;
 
         const {setSelectedKeys, selectAllButton} = useMassActions({
             isEnabled:

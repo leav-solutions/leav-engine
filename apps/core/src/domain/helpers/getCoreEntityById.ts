@@ -56,6 +56,7 @@ export default function ({
                     break;
                 case 'view':
                     result = await viewRepo.getViews({filters: {id: entityId}, strictFilters: true}, ctx);
+                    break;
                 case 'versionProfile':
                     result = await versionProfileRepo.getVersionProfiles({
                         params: {filters: {id: entityId}, strictFilters: true},

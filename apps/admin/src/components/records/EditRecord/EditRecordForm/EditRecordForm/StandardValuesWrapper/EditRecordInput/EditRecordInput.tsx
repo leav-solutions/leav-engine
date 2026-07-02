@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Form, Input} from 'semantic-ui-react';
 import styled from 'styled-components';
@@ -51,13 +51,13 @@ function EditRecordInput({
 }: IEditRecordInputProps): JSX.Element {
     const {t} = useTranslation();
     const [editing, setEditing] = useState(false);
-    let blurTimeoutRef;
+    const blurTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
 
     useEffect(() => () => {
         // Clear timeout created on blur to avoid warnings about updating state on unmounted components
-        if (blurTimeoutRef) {
+        if (blurTimeoutRef.current) {
             setEditing(false); // Force editing to false in case to make sure we don't stay with editing = true
-            clearTimeout(blurTimeoutRef);
+            clearTimeout(blurTimeoutRef.current);
         }
     });
 
@@ -98,7 +98,7 @@ function EditRecordInput({
         // the blur event messes around with the buttons and it's hard to know if we clicked on a button.
         // Things would be easier if Firefox filled relatedTarget on the event as expected, but it's not
         // TODO: find a better solution!
-        blurTimeoutRef = setTimeout(() => setEditing(false), 150);
+        blurTimeoutRef.current = setTimeout(() => setEditing(false), 150);
     };
 
     return (

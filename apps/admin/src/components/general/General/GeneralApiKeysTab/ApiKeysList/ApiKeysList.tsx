@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import Loading from '../../../../shared/Loading';
 import RecordCard from '../../../../shared/RecordCard';
 import React from 'react';
@@ -29,6 +30,8 @@ function ApiKeysList({
     const _handleFilterChange = (e, d) => {
         onFiltersUpdate({...filters, [d.name]: d.value});
     };
+
+    const nowInSeconds = dayjs().unix();
 
     return (
         <Table selectable striped>
@@ -69,7 +72,7 @@ function ApiKeysList({
                             onRowClick(key);
                         };
 
-                        const isExpired = key.expiresAt !== null && key.expiresAt < Date.now() / 1000;
+                        const isExpired = key.expiresAt !== null && key.expiresAt < nowInSeconds;
 
                         return (
                             <Table.Row key={key.id} onClick={onClick}>

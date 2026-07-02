@@ -1,41 +1,24 @@
-import {act, render} from '../../_tests/testUtils';
+import {act, renderHook} from '../../_tests/testUtils';
+import {TestProviders} from '../../_tests/TestProviders';
 import {mockActiveTree} from '../../__mocks__/common/activeTree';
 import {useActiveTree} from './useActiveTree';
 
 describe('useActiveTree', () => {
     test('should get undefined if no activeTree set', async () => {
-        let givenActiveTree;
+        const {result} = renderHook(() => useActiveTree(), {wrapper: TestProviders});
+        const [activeTree] = result.current;
 
-        const ComponentUsingInfo = () => {
-            const [activeTree] = useActiveTree();
-
-            givenActiveTree = activeTree;
-            return <></>;
-        };
-
-        await act(async () => {
-            render(<ComponentUsingInfo />);
-        });
-
-        expect(givenActiveTree).toEqual(undefined);
+        expect(activeTree).toEqual(undefined);
     });
 
     test('should get activeTree', async () => {
-        let givenActiveTree: any;
-
-        const ComponentUsingInfo = () => {
-            const [activeTree, updateActiveTree] = useActiveTree();
-
-            updateActiveTree(mockActiveTree);
-
-            givenActiveTree = activeTree;
-            return <></>;
-        };
+        const {result} = renderHook(() => useActiveTree(), {wrapper: TestProviders});
+        const [, updateActiveTree] = result.current;
 
         await act(async () => {
-            render(<ComponentUsingInfo />);
+            updateActiveTree(mockActiveTree);
         });
 
-        expect(givenActiveTree).toEqual(mockActiveTree);
+        expect(result.current[0]).toEqual(mockActiveTree);
     });
 });

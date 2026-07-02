@@ -44,7 +44,7 @@ export default function useGetPreparedFileData(libraryId: string, fileId: string
 
     return {
         error,
-        loading: loading || (!loading && typeof fileData === undefined),
+        loading: loading || (!loading && typeof fileData === 'undefined'),
         fileData,
     };
 }
