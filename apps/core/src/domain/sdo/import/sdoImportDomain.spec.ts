@@ -18,7 +18,7 @@ import {type ITreeLibrarySettings} from '../../../_types/tree';
 import {type ILinkValue, type IStandardValue, type ITreeValue} from '../../../_types/value';
 import {type ISaveBatchValueResult} from '../../value/valueDomain';
 import {type ICreateRecordResult} from '../../record/_types';
-import {CommonAttributes} from '../../../_constants/systemAttributes';
+import {CommonAttributes, SdoAttributes} from '../../../_constants/systemAttributes';
 
 const deps: ToAny<ISDOImportDomainDeps> = {
     'core.domain.sdo.export': mockExportDomain,
@@ -161,6 +161,50 @@ describe('importDomain', () => {
                 },
                 ctx: mockSystemQueryContext,
             });
+        });
+
+        it('[+] should save SDO system.applicationIds into the sdo_application_ids attribute', async () => {
+            mockRecordDomain.find.mockResolvedValue({list: [{id: 'existing record'}]} as IListWithCursor<IRecord>);
+            mockAttributeDomain.getAttributeProperties.mockResolvedValue({type: AttributeTypes.SIMPLE});
+
+            const sdo = simplifiedMockSdo({[mockSDOMapping.test.sdoAttributes.simple.leavAttributeId]: '12'});
+            sdo.content.system.applicationIds = {omnipublish: 2000, leav: 'record123'};
+
+            await _importDomain.update(sdo, mockSystemQueryContext);
+
+            expect(mockValueDomain.saveValueBatch).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    values: expect.arrayContaining([
+                        {
+                            id_value: null,
+                            attribute: SdoAttributes.APPLICATION_IDS,
+                            payload: JSON.stringify({omnipublish: 2000, leav: 'record123'}),
+                        },
+                    ]),
+                }),
+            );
+        });
+
+        it('[+] should save SDO system.systemCreatorClientId into the sdo_creator_client_id attribute', async () => {
+            mockRecordDomain.find.mockResolvedValue({list: [{id: 'existing record'}]} as IListWithCursor<IRecord>);
+            mockAttributeDomain.getAttributeProperties.mockResolvedValue({type: AttributeTypes.SIMPLE});
+
+            const sdo = simplifiedMockSdo({[mockSDOMapping.test.sdoAttributes.simple.leavAttributeId]: '12'});
+            sdo.content.system.systemCreatorClientId = 'omp-client';
+
+            await _importDomain.update(sdo, mockSystemQueryContext);
+
+            expect(mockValueDomain.saveValueBatch).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    values: expect.arrayContaining([
+                        {
+                            id_value: null,
+                            attribute: SdoAttributes.CREATOR_CLIENT_ID,
+                            payload: 'omp-client',
+                        },
+                    ]),
+                }),
+            );
         });
 
         it('[-] should throw if saveValueBatch returns error', async () => {

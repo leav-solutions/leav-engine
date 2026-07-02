@@ -5,6 +5,7 @@ import {type IConfig} from '../../../../_types/config';
 import {adminUserSdk} from '../e2eUtils';
 import {SDO_IMPORTS_LIBRARY_ID, SDO_TEST_ATTRIBUTE_ID, sdoGlobalSettings} from './sdoConfig';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes';
+import {SdoAttributes} from '../../../../_constants/systemAttributes';
 
 export const formatDate = (date: string) => (new Date(date).getTime() / 1000).toString();
 
@@ -71,6 +72,8 @@ describe('SDO Imports', () => {
                         systemLastModificator: editorUUID,
                         systemLabel: 'PAC 2027 Import V1',
                         systemSdoHash: 'hashPAC2027ImportV1',
+                        applicationIds: {omnipublish: 2000},
+                        systemCreatorClientId: 'omp-creator-client',
                     },
                     identifier: {},
                     info: {value: 'mock_value'},
@@ -104,6 +107,25 @@ describe('SDO Imports', () => {
                     ).records.list[0].property[0].payload;
 
                     expect(infoValuePayload).toBe('mock_value');
+
+                    // LEAVC-871: applicationIds & creator clientId are persisted from the SDO on import
+                    const applicationIdsPayload = (
+                        await adminUserSdk.GetRecordByIdStandardValuesProperty({
+                            libraryId: SDO_IMPORTS_LIBRARY_ID,
+                            recordId: record.id,
+                            attributeId: SdoAttributes.APPLICATION_IDS,
+                        })
+                    ).records.list[0].property[0].payload;
+                    expect(applicationIdsPayload).toBe(JSON.stringify({omnipublish: 2000}));
+
+                    const creatorClientIdPayload = (
+                        await adminUserSdk.GetRecordByIdStandardValuesProperty({
+                            libraryId: SDO_IMPORTS_LIBRARY_ID,
+                            recordId: record.id,
+                            attributeId: SdoAttributes.CREATOR_CLIENT_ID,
+                        })
+                    ).records.list[0].property[0].payload;
+                    expect(creatorClientIdPayload).toBe('omp-creator-client');
                 },
                 {timeout: 5000, interval: 1000},
             );
@@ -183,6 +205,8 @@ describe('SDO Imports', () => {
                         systemLastModificator: editorUUID,
                         systemLabel: 'new_label_1',
                         systemSdoHash: 'hashPAC2027ImportV1',
+                        applicationIds: {omnipublish: 3000},
+                        systemCreatorClientId: 'omp-creator-client-update',
                     },
                     identifier: {},
                     info: {value: 'updated_value'},
@@ -202,6 +226,25 @@ describe('SDO Imports', () => {
                     ).records.list[0].property[0].payload;
 
                     expect(infoValuePayload).toBe('updated_value');
+
+                    // LEAVC-871: applicationIds & creator clientId are persisted from the SDO on import update
+                    const applicationIdsPayload = (
+                        await adminUserSdk.GetRecordByIdStandardValuesProperty({
+                            libraryId: SDO_IMPORTS_LIBRARY_ID,
+                            recordId,
+                            attributeId: SdoAttributes.APPLICATION_IDS,
+                        })
+                    ).records.list[0].property[0].payload;
+                    expect(applicationIdsPayload).toBe(JSON.stringify({omnipublish: 3000}));
+
+                    const creatorClientIdPayload = (
+                        await adminUserSdk.GetRecordByIdStandardValuesProperty({
+                            libraryId: SDO_IMPORTS_LIBRARY_ID,
+                            recordId,
+                            attributeId: SdoAttributes.CREATOR_CLIENT_ID,
+                        })
+                    ).records.list[0].property[0].payload;
+                    expect(creatorClientIdPayload).toBe('omp-creator-client-update');
 
                     const recordData = (
                         await adminUserSdk.GetRecordByUUID({
