@@ -27,7 +27,6 @@ export const mockSDOUtils: Mockify<ISDOUtils> = {
     hasSDOLibrary: vi.fn(),
     hasSDOAttribute: vi.fn(),
     getSDOLibrary: vi.fn(),
-    getLibraryUUIDAttributeID: vi.fn(),
     createHash: vi.fn(),
     getRecordUUIDFromSDO: vi.fn(),
     tmpRecordIdToUuid: vi.fn(),

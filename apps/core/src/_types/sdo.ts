@@ -9,7 +9,16 @@ export interface ISDO {
     date: number;
     action: SDOAction;
     content: {
-        system: {systemId: string; [attributePath: string]: unknown};
+        system: {
+            systemId: string;
+            systemActive: boolean;
+            systemCreator: string;
+            systemCreationDate: number;
+            systemLastModificator: string;
+            systemLastModifiedDate: number;
+            systemLabel: string;
+            [attributePath: string]: unknown;
+        };
         [attributePath: string]: unknown;
     };
 }
@@ -42,7 +51,6 @@ export interface ISDOMappingAttribute {
 export interface ISDOMappingLibrary {
     leavLibraryId: string;
     sdoAttributes: {
-        [sdoPathIdentifierUuid]: ISDOMappingAttribute;
         [sdoAttributePath: string]: ISDOMappingAttribute;
     };
 }

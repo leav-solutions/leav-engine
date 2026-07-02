@@ -14,6 +14,12 @@ export const mockSDO: ISDO = {
     content: {
         system: {
             systemId: '1',
+            systemActive: true,
+            systemCreator: 'created_id',
+            systemCreationDate: Date.now(),
+            systemLastModificator: 'modificator_id',
+            systemLastModifiedDate: Date.now(),
+            systemLabel: 'mock label',
         },
         simple: '123',
         simple_link: '1',
@@ -34,11 +40,6 @@ export const mockSDOMapping: ISDOMapping = {
     ['test']: {
         leavLibraryId: 'leavLibraryId',
         sdoAttributes: {
-            'system.systemId': {
-                leavAttributeId: 'uuid',
-                valueRequired: false,
-                format: 'string',
-            },
             simple: {
                 leavAttributeId: 'simple',
                 valueRequired: false,

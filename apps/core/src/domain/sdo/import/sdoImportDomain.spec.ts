@@ -13,11 +13,12 @@ import {
 import {Operator, type IRecord} from '../../../_types/record';
 import {type IListWithCursor} from '../../../_types/list';
 import {AttributeTypes} from '../../../_types/attribute';
-import {sdoPathIdentifierUuid, type ISDOMapping, type ISDO} from '../../../_types/sdo';
+import {type ISDOMapping, type ISDO} from '../../../_types/sdo';
 import {type ITreeLibrarySettings} from '../../../_types/tree';
 import {type ILinkValue, type IStandardValue, type ITreeValue} from '../../../_types/value';
 import {type ISaveBatchValueResult} from '../../value/valueDomain';
 import {type ICreateRecordResult} from '../../record/_types';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 const deps: ToAny<ISDOImportDomainDeps> = {
     'core.domain.sdo.export': mockExportDomain,
@@ -51,14 +52,9 @@ const _mockSDOMapping: ISDOMapping = {
     },
     [libIdForLink]: {
         leavLibraryId: libIdForLink,
-        sdoAttributes: {
-            [sdoPathIdentifierUuid]: {leavAttributeId: 'uuid', valueRequired: true, format: 'string'},
-        },
+        sdoAttributes: {},
     },
 } satisfies ISDOMapping;
-
-const uuidNameLibTest = _mockSDOMapping.test.sdoAttributes[sdoPathIdentifierUuid].leavAttributeId;
-const uuidNameLibIdForLink = _mockSDOMapping[libIdForLink].sdoAttributes[sdoPathIdentifierUuid].leavAttributeId;
 
 describe('importDomain', () => {
     beforeEach(() => {
@@ -83,7 +79,7 @@ describe('importDomain', () => {
                     filters: [
                         {
                             condition: 'EQUAL',
-                            field: uuidNameLibTest,
+                            field: CommonAttributes.UUID,
                             value: mockSDO.content.system.systemId,
                         },
                     ],
@@ -157,7 +153,7 @@ describe('importDomain', () => {
                     filters: [
                         {
                             condition: 'EQUAL',
-                            field: uuidNameLibTest,
+                            field: CommonAttributes.UUID,
                             value: mockSDO.content.system.systemId,
                         },
                     ],
@@ -195,9 +191,7 @@ describe('importDomain', () => {
             describe('simple', () => {
                 const attributeName = mockSDOMapping.test.sdoAttributes.simple.leavAttributeId;
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributeProperties
-                        .mockResolvedValueOnce({type: AttributeTypes.SIMPLE}) // first call for systemId
-                        .mockResolvedValueOnce({type: AttributeTypes.SIMPLE});
+                    mockAttributeDomain.getAttributeProperties.mockResolvedValueOnce({type: AttributeTypes.SIMPLE});
                 });
 
                 it('[+] Set text value', async () => {
@@ -280,12 +274,10 @@ describe('importDomain', () => {
             describe('simple link', () => {
                 const attributeName = _mockSDOMapping.test.sdoAttributes.simple_link.leavAttributeId;
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributeProperties
-                        .mockResolvedValueOnce({type: AttributeTypes.SIMPLE}) // first call for systemId
-                        .mockResolvedValueOnce({
-                            type: AttributeTypes.SIMPLE_LINK,
-                            linked_library: libIdForLink,
-                        });
+                    mockAttributeDomain.getAttributeProperties.mockResolvedValueOnce({
+                        type: AttributeTypes.SIMPLE_LINK,
+                        linked_library: libIdForLink,
+                    });
                 });
 
                 it('[+] Set with found linked record', async () => {
@@ -302,7 +294,7 @@ describe('importDomain', () => {
                                 filters: [
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '42',
                                     },
                                 ],
@@ -355,7 +347,7 @@ describe('importDomain', () => {
                                 filters: [
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '42',
                                     },
                                 ],
@@ -370,11 +362,9 @@ describe('importDomain', () => {
             describe('advanced mono valued', () => {
                 const attributeName = _mockSDOMapping.test.sdoAttributes.advanced.leavAttributeId;
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributeProperties
-                        .mockResolvedValueOnce({type: AttributeTypes.SIMPLE}) // first call for systemId
-                        .mockResolvedValueOnce({
-                            type: AttributeTypes.ADVANCED,
-                        });
+                    mockAttributeDomain.getAttributeProperties.mockResolvedValueOnce({
+                        type: AttributeTypes.ADVANCED,
+                    });
                 });
 
                 it('[+] Set text value, not existing values', async () => {
@@ -496,12 +486,10 @@ describe('importDomain', () => {
             describe('advanced multi valued', () => {
                 const attributeName = _mockSDOMapping.test.sdoAttributes.advanced.leavAttributeId;
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributeProperties
-                        .mockResolvedValueOnce({type: AttributeTypes.SIMPLE}) // first call for systemId
-                        .mockResolvedValueOnce({
-                            type: AttributeTypes.ADVANCED,
-                            multiple_values: true,
-                        });
+                    mockAttributeDomain.getAttributeProperties.mockResolvedValueOnce({
+                        type: AttributeTypes.ADVANCED,
+                        multiple_values: true,
+                    });
                 });
 
                 it('[+] Set text values, not existing values', async () => {
@@ -670,12 +658,10 @@ describe('importDomain', () => {
                 const attributeName = _mockSDOMapping.test.sdoAttributes.advanced_link.leavAttributeId;
 
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributeProperties
-                        .mockResolvedValueOnce({type: AttributeTypes.SIMPLE}) // first call for systemId
-                        .mockResolvedValueOnce({
-                            type: AttributeTypes.ADVANCED_LINK,
-                            linked_library: libIdForLink,
-                        });
+                    mockAttributeDomain.getAttributeProperties.mockResolvedValueOnce({
+                        type: AttributeTypes.ADVANCED_LINK,
+                        linked_library: libIdForLink,
+                    });
                 });
 
                 it('[+] Set with found linked record, not existing values', async () => {
@@ -693,7 +679,7 @@ describe('importDomain', () => {
                                 filters: [
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '42',
                                     },
                                 ],
@@ -732,7 +718,7 @@ describe('importDomain', () => {
                                 filters: [
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '42',
                                     },
                                 ],
@@ -808,13 +794,11 @@ describe('importDomain', () => {
             describe('advanced link multi valued', () => {
                 const attributeName = _mockSDOMapping.test.sdoAttributes.advanced_link.leavAttributeId;
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributeProperties
-                        .mockResolvedValueOnce({type: AttributeTypes.SIMPLE}) // first call for systemId
-                        .mockResolvedValueOnce({
-                            type: AttributeTypes.ADVANCED_LINK,
-                            linked_library: libIdForLink,
-                            multiple_values: true,
-                        });
+                    mockAttributeDomain.getAttributeProperties.mockResolvedValueOnce({
+                        type: AttributeTypes.ADVANCED_LINK,
+                        linked_library: libIdForLink,
+                        multiple_values: true,
+                    });
                 });
 
                 it('[+] Set with found linked records, not existing values', async () => {
@@ -835,13 +819,13 @@ describe('importDomain', () => {
                                 filters: [
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '42',
                                     },
                                     {operator: Operator.OR},
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '43',
                                     },
                                 ],
@@ -888,13 +872,13 @@ describe('importDomain', () => {
                                 filters: [
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '42',
                                     },
                                     {operator: Operator.OR},
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '43',
                                     },
                                 ],
@@ -998,12 +982,10 @@ describe('importDomain', () => {
             describe('tree mono valued', () => {
                 const attributeName = _mockSDOMapping.test.sdoAttributes.tree_mono.leavAttributeId;
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributeProperties
-                        .mockResolvedValueOnce({type: AttributeTypes.SIMPLE}) // first call for systemId
-                        .mockResolvedValueOnce({
-                            type: AttributeTypes.TREE,
-                            linked_tree: treeIdForLink,
-                        });
+                    mockAttributeDomain.getAttributeProperties.mockResolvedValueOnce({
+                        type: AttributeTypes.TREE,
+                        linked_tree: treeIdForLink,
+                    });
                     mockTreeDomain.getTreeProperties.mockResolvedValue({
                         libraries: {[libIdForLink]: {} as ITreeLibrarySettings},
                     });
@@ -1025,7 +1007,7 @@ describe('importDomain', () => {
                                 filters: [
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '42',
                                     },
                                 ],
@@ -1074,7 +1056,7 @@ describe('importDomain', () => {
                                 filters: [
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '42',
                                     },
                                 ],
@@ -1175,7 +1157,7 @@ describe('importDomain', () => {
                                 filters: [
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '42',
                                     },
                                 ],
@@ -1199,13 +1181,11 @@ describe('importDomain', () => {
             describe('tree multi valued', () => {
                 const attributeName = _mockSDOMapping.test.sdoAttributes.tree_multiple.leavAttributeId;
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributeProperties
-                        .mockResolvedValueOnce({type: AttributeTypes.SIMPLE}) // first call for systemId
-                        .mockResolvedValueOnce({
-                            type: AttributeTypes.TREE,
-                            linked_tree: treeIdForLink,
-                            multiple_values: true,
-                        });
+                    mockAttributeDomain.getAttributeProperties.mockResolvedValueOnce({
+                        type: AttributeTypes.TREE,
+                        linked_tree: treeIdForLink,
+                        multiple_values: true,
+                    });
                     mockTreeDomain.getTreeProperties.mockResolvedValue({
                         libraries: {[libIdForLink]: {} as ITreeLibrarySettings},
                     });
@@ -1230,13 +1210,13 @@ describe('importDomain', () => {
                                 filters: [
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '42',
                                     },
                                     {operator: Operator.OR},
                                     {
                                         condition: 'EQUAL',
-                                        field: uuidNameLibIdForLink,
+                                        field: CommonAttributes.UUID,
                                         value: '43',
                                     },
                                 ],
@@ -1389,6 +1369,12 @@ describe('importDomain', () => {
             content: {
                 system: {
                     systemId: '1',
+                    systemActive: true,
+                    systemCreator: 'created_id',
+                    systemCreationDate: Date.now(),
+                    systemLastModificator: 'modificator_id',
+                    systemLastModifiedDate: Date.now(),
+                    systemLabel: 'mock label',
                 },
                 ...content,
             },

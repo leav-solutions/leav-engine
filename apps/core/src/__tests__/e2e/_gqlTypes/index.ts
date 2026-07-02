@@ -269,18 +269,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -360,8 +348,6 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -575,8 +561,6 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -961,19 +945,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
-};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1408,7 +1385,7 @@ export type GetRecordByUuidQueryVariables = Exact<{
 }>;
 
 
-export type GetRecordByUuidQuery = { records: { list: Array<{ id: string, uuid: string, active: boolean }> } };
+export type GetRecordByUuidQuery = { records: { list: Array<{ id: string, uuid: string, active: boolean, created_at: number, modified_at: number, created_by: Array<{ payload?: { id: string } | null }>, modified_by: Array<{ payload?: { id: string } | null }>, whoAmI: { label?: string | null } }> } };
 
 export type SaveTreeMutationVariables = Exact<{
   tree: TreeInput;
@@ -1844,6 +1821,25 @@ export const GetRecordByUuidDocument = gql`
       id
       uuid
       active
+      created_by: property(attribute: "created_by") {
+        ... on LinkValue {
+          payload {
+            id
+          }
+        }
+      }
+      modified_by: property(attribute: "modified_by") {
+        ... on LinkValue {
+          payload {
+            id
+          }
+        }
+      }
+      whoAmI {
+        label
+      }
+      created_at
+      modified_at
     }
   }
 }

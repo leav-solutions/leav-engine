@@ -24,16 +24,19 @@ import {type ISaveValue} from '../../../_types/value';
 
 export interface IE2EUser {
     userId: string;
+    userUUID?: string;
     getAuthToken: () => Promise<string>;
 }
 
 export interface IE2EUserParams {
     userId: string;
+    userUUID?: string;
     groupsId: string[];
 }
 
-export const e2eUser = ({userId, groupsId}: IE2EUserParams): IE2EUser => ({
+export const e2eUser = ({userId, groupsId, userUUID}: IE2EUserParams): IE2EUser => ({
     userId,
+    userUUID,
     getAuthToken: async () => {
         const conf = await getConfig();
 

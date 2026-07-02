@@ -28,6 +28,7 @@ import LeavError from '../../errors/LeavError';
 import {ErrorTypes} from '../../_types/errors';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
+import {SystemLibraries} from '../../_constants/systemLibraries';
 
 export interface ISDODomainDeps {
     'core.domain.globalSettings': IGlobalSettingsDomain;
@@ -273,12 +274,24 @@ export default function ({
         attributes: IAttribute[],
         ctx: IQueryInfos,
     ): Promise<ISDO> => {
+        const recordIdentity = await recordDomain.getRecordIdentity(record, ctx);
+
         const sdo: ISDO = {
             dataModelRelease: 'dataModelRelease', // TODO: tmp value
             name: sdoLibraryId,
             date: Date.now(),
             action,
-            content: {system: {systemId: ''}},
+            content: {
+                system: {
+                    systemId: record.uuid,
+                    systemActive: record.active,
+                    systemCreator: await _getUUIDValue(SystemLibraries.USERS, record.created_by, ctx),
+                    systemCreationDate: record.created_at,
+                    systemLastModificator: await _getUUIDValue(SystemLibraries.USERS, record.modified_by, ctx),
+                    systemLastModifiedDate: record.modified_at,
+                    systemLabel: await recordIdentity.getLabel?.(),
+                },
+            },
         };
 
         await Promise.all(

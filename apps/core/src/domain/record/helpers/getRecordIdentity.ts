@@ -205,10 +205,15 @@ export default function ({
         return cacheService.memoize({key: cacheKey, func: _execute, storeNulls: true, ctx});
     };
 
-    const _getLabel = async (record: IRecord, visitedLibraries: string[] = [], ctx: IQueryInfos): Promise<string> => {
+    const _getLabel = async (
+        record: IRecord,
+        visitedLibraries: string[] = [],
+        ctx: IQueryInfos,
+    ): Promise<string | null> => {
         if (!record) {
             return null;
         }
+
         visitedLibraries.push(record.library);
 
         const lib = await validateHelper.validateLibrary(record.library, ctx);
@@ -219,6 +224,7 @@ export default function ({
         };
 
         let label: string = null;
+
         if (conf.label) {
             const labelAttributeProps = await attributeDomain.getAttributeProperties({id: conf.label, ctx});
 

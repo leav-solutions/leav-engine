@@ -1,5 +1,5 @@
 import {type ISDO} from '../../../../_types/sdo';
-import {adminUserSdk} from '../e2eUtils';
+import {adminUserSdk, e2eNonAdminUser, nonAdminUserSdk} from '../e2eUtils';
 import {RabbitMqClient} from './rabbitMQUtils';
 import {SDO_EXPORT_TIMER, sdoGlobalSettings, SDO_EXPORTS_LIBRARY_ID} from './sdoConfig';
 import {getConfig} from '../../../../config';
@@ -20,6 +20,7 @@ describe('SDO Exports', () => {
                 id: SDO_EXPORTS_LIBRARY_ID,
                 label: {fr: 'Test SDO', en: 'Test SDO'},
                 attributes: ['hash_sdo', 'label'],
+                recordIdentityConf: {label: 'id'},
             },
         });
 
@@ -55,8 +56,12 @@ describe('SDO Exports', () => {
         );
 
     test('create a record triggers a CREATE export message', async () => {
-        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
-        const recordUUID = createRecord.record!.uuid;
+        const {createRecord} = await nonAdminUserSdk.CreateRecord({
+            library: SDO_EXPORTS_LIBRARY_ID,
+        });
+
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
+        const nonAdminUserUUID = e2eNonAdminUser().userUUID;
 
         const msg = await waitForSdo(recordUUID);
 
@@ -72,7 +77,9 @@ describe('SDO Exports', () => {
                     systemCreationDate: expect.any(Number),
                     systemLastModifiedDate: expect.any(Number),
                     systemSdoHash: null,
-                    systemLabel: null,
+                    systemLabel: recordId,
+                    systemCreator: nonAdminUserUUID,
+                    systemLastModificator: nonAdminUserUUID,
                 },
             },
         });

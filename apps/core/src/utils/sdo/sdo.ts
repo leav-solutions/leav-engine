@@ -8,7 +8,6 @@ export interface ISDOUtils {
     hasSDOLibrary: (mapping: ISDOMapping, leavLibraryId: string) => boolean;
     hasSDOAttribute: (sdoLibrary: ISDOMappingLibrary, attribute: string) => boolean;
     getSDOLibrary: (sdoLibrary: ISDOMapping, leavLibraryId: string) => ISDOMappingLibrary;
-    getLibraryUUIDAttributeID: (mapping: ISDOMapping, leavLibraryId: string) => string;
     getRecordUUIDFromSDO: (sdo: ISDO) => string;
     tmpRecordIdToUuid: (recordId: string) => string;
     createHash: (sdo: ISDO) => string;
@@ -37,23 +36,13 @@ export default function (): ISDOUtils {
     const hasSDOAttribute = (sdoLibrary: ISDOMappingLibrary, attribute: string): boolean =>
         Object.values(sdoLibrary.sdoAttributes ?? {}).some(({leavAttributeId}) => leavAttributeId === attribute);
 
-    const getLibraryUUIDAttributeID = (mapping: ISDOMapping, leavLibraryId: string): string => {
-        const libraryMapping = getLibraryMapping(mapping, leavLibraryId);
-        if (!libraryMapping) {
-            throw new Error(`Library mapping ${leavLibraryId} not found`);
-        }
-        const uuidMapping = libraryMapping.sdoAttributes[sdoPathIdentifierUuid];
-        if (!uuidMapping) {
-            throw new Error(`UUID Attribute mapping not found for library ${leavLibraryId}`);
-        }
-        return uuidMapping.leavAttributeId;
-    };
-
     const getRecordUUIDFromSDO = (sdo: ISDO): string => {
         const recordUuid = _.get(sdo.content, sdoPathIdentifierUuid);
+
         if (!recordUuid || typeof recordUuid !== 'string') {
             throw new Error('Record UUID not found in SDO content');
         }
+
         return recordUuid;
     };
 
@@ -68,7 +57,6 @@ export default function (): ISDOUtils {
         hasSDOLibrary,
         hasSDOAttribute,
         getSDOLibrary,
-        getLibraryUUIDAttributeID,
         getRecordUUIDFromSDO,
         tmpRecordIdToUuid,
         createHash,

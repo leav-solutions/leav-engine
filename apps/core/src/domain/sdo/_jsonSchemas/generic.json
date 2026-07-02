@@ -10,7 +10,15 @@
         },
         "system": {
             "type": "object",
-            "required": ["systemId"],
+            "required": [
+                "systemId",
+                "systemActive",
+                "systemCreator",
+                "systemCreationDate",
+                "systemLastModificator",
+                "systemLastModifiedDate",
+                "systemLabel"
+            ],
             "properties": {
                 "systemId": {
                     "type": ["string", "null"]
@@ -29,6 +37,9 @@
                 },
                 "systemLastModifiedDate": {
                     "type": ["number", "null"]
+                },
+                "systemLabel": {
+                    "type": ["string", "null"]
                 }
             }
         },

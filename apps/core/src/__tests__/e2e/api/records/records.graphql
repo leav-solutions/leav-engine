@@ -45,6 +45,25 @@ query GetRecordByUUID($libraryId: ID!, $recordUUID: String!, $retrieveInactive: 
             id
             uuid
             active
+            created_by: property(attribute: "created_by") {
+                ... on LinkValue {
+                    payload {
+                        id
+                    }
+                }
+            }
+            modified_by: property(attribute: "modified_by") {
+                ... on LinkValue {
+                    payload {
+                        id
+                    }
+                }
+            }
+            whoAmI {
+                label
+            }
+            created_at
+            modified_at
         }
     }
 }

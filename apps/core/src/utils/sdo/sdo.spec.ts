@@ -7,10 +7,14 @@ describe('sdo (utils)', () => {
     describe('createHash', () => {
         const sdoContent = {
             system: {
+                test: 'test',
                 systemId: '95',
                 systemActive: false,
                 systemCreator: '12',
                 systemCreationDate: 1717675756,
+                systemLastModificator: '12',
+                systemLastModifiedDate: 1717675756,
+                systemLabel: 'my label',
             },
             info: {
                 startDate: 1609243200,
@@ -29,7 +33,7 @@ describe('sdo (utils)', () => {
             content: sdoContent,
         };
         it('[+] should create a hash from SDO content, idempotent depending on content only', () => {
-            expect(_sdoUtils.createHash(sdoForHash)).toBe('65c5971a3f057caf5d3f06e86ee64258');
+            expect(_sdoUtils.createHash(sdoForHash)).toBe('96a2947f9d26a91cea27ee9f2f898d96');
             expect(_sdoUtils.createHash(sdoForHash)).toBe(_sdoUtils.createHash(sdoForHash));
             expect(_sdoUtils.createHash(sdoForHash)).toBe(
                 _sdoUtils.createHash({
@@ -38,7 +42,8 @@ describe('sdo (utils)', () => {
                 }),
             );
         });
-        it('[-] should create same hash for diff SDO content', () => {
+
+        it('[-] should not create same hash for diff SDO content', () => {
             expect(_sdoUtils.createHash(sdoForHash)).not.toBe(
                 _sdoUtils.createHash({
                     ...sdoForHash,
@@ -60,11 +65,15 @@ describe('sdo (utils)', () => {
                     content: {
                         ...sdoContent,
                         system: {
-                            // same values !
-                            systemCreationDate: 1717675756,
+                            // same values as sdoContent.system but not same order
+                            systemId: '95',
                             systemActive: false,
                             systemCreator: '12',
-                            systemId: '95',
+                            systemCreationDate: 1717675756,
+                            systemLastModificator: '12',
+                            systemLastModifiedDate: 1717675756,
+                            systemLabel: 'my label',
+                            test: 'test',
                         },
                     },
                 }),

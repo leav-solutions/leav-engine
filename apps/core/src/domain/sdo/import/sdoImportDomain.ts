@@ -24,6 +24,7 @@ import {type ITreeDomain} from '../../tree/treeDomain';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {logger} from '@leav/logger';
 import {IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS} from '../../value/helpers/canSaveRecordValue';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 export interface ISDOImportDomainDeps {
     'core.utils.sdo': ISDOUtils;
@@ -43,7 +44,7 @@ export interface ISDOImportDomain {
 // may be added in plugin config to be configurable, for now only for devs.
 // Or may be better to use specific logger with its one level for modules (her importDomain).
 // https://aristid.atlassian.net/browse/LEAVC-221
-const debugSaveValues = true;
+const debugSaveValues = false;
 
 export default function ({
     'core.utils.sdo': sdoUtils,
@@ -56,38 +57,37 @@ export default function ({
     const create = async (sdo: ISDO, ctx: IQueryInfos) => {
         const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(ctx);
         const leavLibraryId = sdoUtils.getLeavLibraryId(sdoGlobalSettings.mapping, sdo);
-        const libraryUuidAttributeId = sdoUtils.getLibraryUUIDAttributeID(sdoGlobalSettings.mapping, leavLibraryId);
         const sdoLibrary = sdoUtils.getSDOLibrary(sdoGlobalSettings.mapping, leavLibraryId);
 
         const recordUuid = sdoUtils.getRecordUUIDFromSDO(sdo);
-        const records = await _findRecords(leavLibraryId, libraryUuidAttributeId, recordUuid, ctx);
+        const records = await _findRecords(leavLibraryId, recordUuid, ctx);
 
         // If we find a record, it's already created, so we skip it
         if (records.length) {
             logger.debug(
                 `Record with uuid "${recordUuid}" on library "${leavLibraryId}" already exists, import create skipped`,
             );
+
             return;
         }
 
         let valuesToSave = await _mapRecordValuesFromSDO(sdo, sdoLibrary, ctx);
 
-        const isActive = valuesToSave.find(value => value.attribute === 'active')?.payload as boolean | undefined;
-
         // filter out immutable core system attributes to avoid create record failure
-        valuesToSave = valuesToSave.filter(
-            value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute) && value.attribute !== 'active',
-        );
+        valuesToSave = valuesToSave.filter(value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute));
 
         if (debugSaveValues) {
-            logger.debug(`SDO Import create values to save to new ${leavLibraryId} record >> `, {valuesToSave});
+            logger.debug(`SDO Import create: new record with uuid=${recordUuid} on library "${leavLibraryId}" >> `, {
+                valuesToSave,
+            });
         }
 
         const res = await recordDomain.createRecord({
             library: leavLibraryId,
             values: valuesToSave,
             verifyRequiredAttributes: true,
-            skipActivate: !isActive,
+            skipActivate: !sdo.content.system.systemActive,
+            uuid: sdo.content.system.systemId,
             ctx,
         });
 
@@ -107,11 +107,10 @@ export default function ({
     const update = async (sdo: ISDO, ctx: IQueryInfos) => {
         const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(ctx);
         const leavLibraryId = sdoUtils.getLeavLibraryId(sdoGlobalSettings.mapping, sdo);
-        const libraryUuidAttributeId = sdoUtils.getLibraryUUIDAttributeID(sdoGlobalSettings.mapping, leavLibraryId);
         const sdoLibrary = sdoUtils.getSDOLibrary(sdoGlobalSettings.mapping, leavLibraryId);
 
         const recordUuid = sdoUtils.getRecordUUIDFromSDO(sdo);
-        const records = await _findRecords(leavLibraryId, libraryUuidAttributeId, recordUuid, ctx);
+        const records = await _findRecords(leavLibraryId, recordUuid, ctx);
 
         if (!records?.length) {
             throw new Error(
@@ -125,7 +124,7 @@ export default function ({
         valuesToSave = valuesToSave.filter(value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute));
 
         if (debugSaveValues) {
-            logger.debug(`SDO Import update values to save on record ${leavLibraryId}/${records[0].id} >> `, {
+            logger.debug(`SDO Import update: values to save on record ${leavLibraryId}/${records[0].uuid} >> `, {
                 valuesToSave,
             });
         }
@@ -147,18 +146,13 @@ export default function ({
         }
     };
 
-    const _findRecords = async (
-        leavLibraryId: string,
-        libraryUuidAttributeId: string,
-        recordUuid: string,
-        ctx: IQueryInfos,
-    ) => {
+    const _findRecords = async (leavLibraryId: string, recordUuid: string, ctx: IQueryInfos) => {
         const {list: records} = await recordDomain.find({
             params: {
                 library: leavLibraryId,
                 filters: [
                     {
-                        field: libraryUuidAttributeId,
+                        field: CommonAttributes.UUID,
                         value: recordUuid,
                         condition: AttributeCondition.EQUAL,
                     },
@@ -179,8 +173,6 @@ export default function ({
         if (recordsUUID.length === 0) {
             return [];
         }
-        const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(ctx);
-        const libraryUuidAttributeId = sdoUtils.getLibraryUUIDAttributeID(sdoGlobalSettings.mapping, libraryId);
         const recordsId = (
             await recordDomain.find({
                 params: {
@@ -191,7 +183,7 @@ export default function ({
                         }
 
                         const filter = {
-                            field: libraryUuidAttributeId,
+                            field: CommonAttributes.UUID,
                             condition: AttributeCondition.EQUAL,
                             value: recordUUID,
                         };
