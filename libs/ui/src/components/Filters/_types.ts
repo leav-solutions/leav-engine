@@ -180,6 +180,15 @@ export const isUIFilterWithSmartFilter = (filter: UIFilter): filter is IUIFilter
     (isUIFilterStandard(filter) || isUIFilterLink(filter) || isUIFilterThrough(filter)) &&
     filter.attribute.smartFilter?.enable;
 
+/**
+ * A smart filter on a LINK attribute (no `through`): its values are linked record ids, so the records
+ * query must target `<field>.id` (like a values-list link). A `through` smart filter is an
+ * `IUIFilterThrough` (its `.id` is already baked into `subField`) and a standard smart filter carries
+ * plain text values — neither is matched here.
+ */
+export const isUIFilterLinkWithSmartFilter = (filter: UIFilter): filter is IUIFilterSmartFiler =>
+    isUIFilterLink(filter) && !!filter.attribute.smartFilter?.enable;
+
 const isValueList = (filter: UIFilter): filter is UIFilter & {attribute: {valuesList: {enabled: true}}} =>
     !!filter.attribute?.valuesList && filter.attribute?.valuesList.enable;
 

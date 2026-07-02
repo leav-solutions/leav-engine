@@ -2,7 +2,13 @@ import {useCallback, useMemo} from 'react';
 import {RecordFilterCondition, useExplorerAttributesQuery} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type AttributesById, useTransformFilters} from './useTransformFilters';
-import {isUIFilterThrough, isUIFilterTree, type IUIFilterTree, type UIFilter} from './_types';
+import {
+    isUIFilterThrough,
+    isUIFilterTree,
+    isUIFilterWithSmartFilter,
+    type IUIFilterTree,
+    type UIFilter,
+} from './_types';
 
 /**
  * Minimal shape of a stored ViewV2 filter needed to rebuild a `UIFilter`. `attributes` is the descent
@@ -124,11 +130,11 @@ export const useViewFiltersConverter = (viewFilters: IViewFilterToConvert[]) => 
                 return null;
             }
 
-            const converted = {
+            const converted: UIFilter = {
                 ...uiFilter,
                 id: getPathKey(filter.attributes),
                 withEmptyValues: filter.withEmptyValues ?? false,
-            } as UIFilter;
+            };
 
             // TREE filters are seeded EMPTY: a stored tree value is a set of record ids that must be
             // resolved to `{nodeId, libraryId}` user-selections before it can be applied (and the dropdown
@@ -149,8 +155,12 @@ export const useViewFiltersConverter = (viewFilters: IViewFilterToConvert[]) => 
             }
 
             // toUIFilters only restores the first stored value. For array-typed filters (values list,
-            // smart filter) re-inject the FULL stored array so multi-value filters round-trip.
-            if (Array.isArray(converted.value)) {
+            // smart filter) re-inject the FULL stored array so multi-value filters round-trip. A smart
+            // filter on a LINK/STANDARD attribute is typed by toUIFilters as a scalar-valued filter (its
+            // `value` is a plain string), so `Array.isArray` alone misses it — guard on the smart-filter
+            // predicate too. Otherwise the scalar reaches prepareFiltersForRequest, which iterates it as
+            // an array (`value.forEach`) and throws "value.forEach is not a function".
+            if (Array.isArray(converted.value) || isUIFilterWithSmartFilter(converted)) {
                 converted.value = (filter.values ?? []).filter((value): value is string => value !== null);
             }
 

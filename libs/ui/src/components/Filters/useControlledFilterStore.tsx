@@ -3,9 +3,10 @@ import {type RecordFilterCondition} from '_ui/_gqlTypes';
 import {type SerializedFilter} from '../ExplorerV2/_types';
 import {FiltersActionTypes, filtersReducer} from './context/filtersReducer';
 import {filtersInitialState} from './context/filtersInitialState';
-import {isUIFilterTree, type IUIFilterTree, type UIFilter} from './_types';
+import {isUIFilterTree, isUIFilterWithSmartFilter, type IUIFilterTree, type UIFilter} from './_types';
 import {uiFilterToConfig, useViewFiltersConverter} from './useViewFiltersConverter';
 import {type ITreeFilterToResolve, useResolveTreeFilterNodes} from './useResolveTreeFilterNodes';
+import {type ISmartFilterToResolve, useResolveSmartFilterLabels} from './useResolveSmartFilterLabels';
 
 const noop = () => undefined;
 
@@ -137,6 +138,30 @@ export const useControlledFilterStore = ({
     );
 
     const {resolvedById} = useResolveTreeFilterNodes(treeFiltersToResolve, libraryId);
+
+    // Pinned SMART filters with values need their labels resolved (value ids → labels) to display: the
+    // lean hub carries only ids, so a value adopted from the other spoke or seeded from a saved view has
+    // no formattedValue. Keyed on (id, attributeId) only — the label query is context-independent, so it
+    // is stable across value edits (unlike the tree resolution, which keys on the selected recordIds).
+    const smartFiltersToResolve = useMemo<ISmartFilterToResolve[]>(
+        () =>
+            leanFilters.flatMap(filter => {
+                const attributeId = filter.attributes[0]?.id;
+                const attribute = attributeId ? attributesDataById[attributeId] : undefined;
+                const isSmartFilter =
+                    !!attribute &&
+                    'smart_filter' in attribute &&
+                    !!(attribute as {smart_filter?: {enable?: boolean}}).smart_filter?.enable;
+                const hasValue = (filter.values ?? []).some(value => !!value);
+                if (!isSmartFilter || !attributeId || !hasValue) {
+                    return [];
+                }
+                return [{id: leanFilterId(filter.attributes), attributeId}];
+            }),
+        [leanFilters, attributesDataById],
+    );
+
+    const {labelsById: smartLabelsById} = useResolveSmartFilterLabels(smartFiltersToResolve, libraryId);
 
     // Enrich the converted (empty) tree filters with their resolved nodes so they apply + display.
     const seedFilters = useMemo<UIFilter[]>(
@@ -347,6 +372,35 @@ export const useControlledFilterStore = ({
         onChangeRef.current?.(toLeanFilters(store));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filtersData.filters]);
+
+    // 4. LABEL a smart filter (display only): the lean hub carries value ids but no labels, so a value
+    //    seeded from a saved view or adopted from the other spoke lands with a stale/empty formattedValue
+    //    (the toolbar⇄volet chip desync). Once the labels resolve, patch each smart filter's
+    //    formattedValue to match its current value ids. formattedValue is NOT part of the lean projection,
+    //    so this dispatch never shifts `projectLean` → EMIT sees no divergence and never emits (no loop).
+    useEffect(() => {
+        (filtersData.filters as UIFilter[]).forEach(filter => {
+            if (!isUIFilterWithSmartFilter(filter)) {
+                return;
+            }
+            const labels = smartLabelsById[filter.id];
+            if (!labels) {
+                return;
+            }
+            const values = Array.isArray(filter.value) ? filter.value : filter.value != null ? [filter.value] : [];
+            const nextFormatted = values.map(value => labels[value] ?? value);
+            const current = filter.formattedValue ?? [];
+            const unchanged =
+                nextFormatted.length === current.length &&
+                nextFormatted.every((label, index) => label === current[index]);
+            if (!unchanged) {
+                dispatch({
+                    type: FiltersActionTypes.CHANGE_FILTER_CONFIG,
+                    payload: {...filter, formattedValue: nextFormatted},
+                });
+            }
+        });
+    }, [smartLabelsById, filtersData.filters]);
 
     return {filtersData, dispatch};
 };

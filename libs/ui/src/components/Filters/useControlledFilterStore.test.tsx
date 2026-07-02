@@ -3,22 +3,43 @@ import {AttributeFormat, AttributeType, RecordFilterCondition, useExplorerAttrib
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FiltersActionTypes} from './context/filtersReducer';
 import {useControlledFilterStore} from './useControlledFilterStore';
-import {type IUIFilterTree, type UIFilter} from './_types';
+import {type IUIFilterSmartFiler, type IUIFilterTree, type UIFilter} from './_types';
 import {type SerializedFilter} from '../ExplorerV2/_types';
 
-jest.mock('_ui/_gqlTypes', () => ({
-    ...jest.requireActual('_ui/_gqlTypes'),
-    useExplorerAttributesQuery: jest.fn(),
+vi.mock('_ui/_gqlTypes', async () => ({
+    ...(await vi.importActual('_ui/_gqlTypes')),
+    useExplorerAttributesQuery: vi.fn(),
 }));
 
-jest.mock('_ui/hooks/useSharedTranslation', () => ({useSharedTranslation: jest.fn()}));
-jest.mock('_ui/hooks/useLang/useLang');
+vi.mock('_ui/hooks/useSharedTranslation', () => ({useSharedTranslation: vi.fn()}));
+vi.mock('_ui/hooks/useLang/useLang');
 
 // Tree resolution is exercised at the ExplorerV2 / live-stack level; here it is stubbed (no Apollo). It
 // resolves each pending tree filter's recordIds → nodes, and MUST return a referentially-stable object
 // per input signature (the real hook keeps it in useState) — a fresh object each render would flip the
 // SEED effect's `resolvedById` dep and loop.
-jest.mock('./useResolveTreeFilterNodes', () => {
+// Smart-filter label resolution (value ids → labels) is exercised against the live stack; here it is
+// stubbed. It returns a fixed value→label map per smart filter, cached per input signature so a fresh
+// object every render doesn't flip the reconciliation effect's dep and loop.
+vi.mock('./useResolveSmartFilterLabels', () => {
+    const labelByValue: Record<string, string> = {t1: 'Toussaint', t2: "Loisirs d'extérieur", t3: 'Bricolage'};
+    const cache = new Map<string, {labelsById: Record<string, Record<string, string>>; loading: boolean}>();
+    return {
+        useResolveSmartFilterLabels: (smartFilters: Array<{id: string}>) => {
+            const signature = JSON.stringify(smartFilters.map(filter => filter.id));
+            if (!cache.has(signature)) {
+                const labelsById: Record<string, Record<string, string>> = {};
+                smartFilters.forEach(filter => {
+                    labelsById[filter.id] = labelByValue;
+                });
+                cache.set(signature, {labelsById, loading: false});
+            }
+            return cache.get(signature);
+        },
+    };
+});
+
+vi.mock('./useResolveTreeFilterNodes', () => {
     const cache = new Map<string, {resolvedById: Record<string, unknown>; loading: boolean}>();
     return {
         useResolveTreeFilterNodes: (treeFilters: Array<{id: string; recordIds: string[]}>) => {
@@ -59,6 +80,27 @@ const TREE_ATTRIBUTE = {
     linked_tree: {id: 'categories_tree'},
 };
 
+// A LINK attribute with smart_filter enabled: toUIFilters types it as a scalar-valued IUIFilterLink, but
+// isUIFilterWithSmartFilter reclassifies it as a smart filter (array-valued). The ViewV2 converter must
+// re-inject the FULL stored array so it round-trips as string[] (a scalar crashes prepareFiltersForRequest).
+const SMART_LINK_ATTRIBUTE = {
+    id: 'campaign_type',
+    label: {fr: 'Type de campagne'},
+    type: AttributeType.advanced_link,
+    format: null,
+    multiple_values: true,
+    permissions: {access_attribute: true},
+    linked_library: {id: 'campaign_types'},
+    smart_filter: {enable: true},
+};
+
+const leanSmart = (values: Array<string | null>, condition = RecordFilterCondition.EQUAL): SerializedFilter => ({
+    attributes: [{id: 'campaign_type'}],
+    condition,
+    values,
+    pinned: true,
+});
+
 const leanStatus = (values: Array<string | null>, condition = RecordFilterCondition.EQUAL): SerializedFilter => ({
     attributes: [{id: 'status'}],
     condition,
@@ -68,12 +110,14 @@ const leanStatus = (values: Array<string | null>, condition = RecordFilterCondit
 
 describe('useControlledFilterStore', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
-        (useSharedTranslation as jest.Mock).mockReturnValue({t: (key: string) => key});
-        (useExplorerAttributesQuery as jest.Mock).mockReturnValue({
-            data: {attributes: {list: [STATUS_ATTRIBUTE, TREE_ATTRIBUTE]}},
+        vi.clearAllMocks();
+        vi.mocked(useSharedTranslation).mockReturnValue({
+            t: (key: string) => key,
+        } as unknown as ReturnType<typeof useSharedTranslation>);
+        vi.mocked(useExplorerAttributesQuery).mockReturnValue({
+            data: {attributes: {list: [STATUS_ATTRIBUTE, TREE_ATTRIBUTE, SMART_LINK_ATTRIBUTE]}},
             loading: false,
-        });
+        } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
     });
 
     it('seeds the lean filters into the store as full UIFilters', async () => {
@@ -88,7 +132,7 @@ describe('useControlledFilterStore', () => {
     });
 
     it('does NOT emit onChange when seeding (echo-suppressed)', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const {result} = renderHook(() =>
             useControlledFilterStore({leanFilters: [leanStatus(['active'])], libraryId: 'lib', onChange}),
         );
@@ -98,7 +142,7 @@ describe('useControlledFilterStore', () => {
     });
 
     it('does NOT re-emit when the SAME lean filters are pushed again (echo)', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const {result, rerender} = renderHook(
             ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib', onChange}),
             {initialProps: {leanFilters: [leanStatus(['active'])]}},
@@ -112,7 +156,7 @@ describe('useControlledFilterStore', () => {
     });
 
     it('emits the whole lean set ONCE on a local edit', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const {result} = renderHook(() =>
             useControlledFilterStore({leanFilters: [leanStatus(['active'])], libraryId: 'lib', onChange}),
         );
@@ -140,7 +184,7 @@ describe('useControlledFilterStore', () => {
     });
 
     it('adopts an external value change coming from the hub WITHOUT emitting', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const {result, rerender} = renderHook(
             ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib', onChange}),
             {initialProps: {leanFilters: [leanStatus(['active'])]}},
@@ -157,7 +201,7 @@ describe('useControlledFilterStore', () => {
     });
 
     it('adopts a TREE value pushed by the hub (recordIds → resolved nodes), like the volet→explorer flow', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const treeLean = (values: string[]): SerializedFilter => ({
             attributes: [{id: 'category'}],
             condition: RecordFilterCondition.EQUAL,
@@ -211,7 +255,7 @@ describe('useControlledFilterStore', () => {
     });
 
     it('excludes a tree filter with no user selection from the projection (no spurious emit)', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const {result} = renderHook(() =>
             useControlledFilterStore({
                 leanFilters: [
@@ -287,6 +331,62 @@ describe('useControlledFilterStore', () => {
         expect(tree.userNodes).toEqual([{nodeId: 'node-rec1', libraryId: 'tree_lib'}]);
     });
 
+    it('seeds a smart-filter link with the FULL stored value array (LEAVC-810 — no scalar crash)', async () => {
+        // Regression: toUIFilters restores only the first value as a SCALAR IUIFilterLink; without the
+        // smart-filter re-injection the store would hold `value: 't1'` and prepareFiltersForRequest would
+        // throw "value.forEach is not a function".
+        const {result} = renderHook(() =>
+            useControlledFilterStore({leanFilters: [leanSmart(['t1', 't2', 't3'])], libraryId: 'lib'}),
+        );
+
+        await waitFor(() => expect(result.current.filtersData.filters).toHaveLength(1));
+        const [filter] = result.current.filtersData.filters as UIFilter[];
+        expect(filter.value).toEqual(['t1', 't2', 't3']);
+    });
+
+    it('resolves smart-filter LABELS (formattedValue) so the chip stays in sync across spokes', async () => {
+        // The lean hub carries value ids only; without label resolution the receiving spoke's chip shows
+        // a stale/empty formattedValue while the value updates (the reported toolbar⇄volet desync).
+        const {result, rerender} = renderHook(
+            ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib'}),
+            {initialProps: {leanFilters: [leanSmart(['t1'])]}},
+        );
+
+        await waitFor(() =>
+            expect((result.current.filtersData.filters[0] as IUIFilterSmartFiler).formattedValue).toEqual([
+                'Toussaint',
+            ]),
+        );
+
+        // The other spoke adds a second value → only the id arrives through the hub; the label must be
+        // resolved locally so the chip shows both, not the stale single value.
+        rerender({leanFilters: [leanSmart(['t1', 't2'])]});
+
+        await waitFor(() =>
+            expect((result.current.filtersData.filters[0] as IUIFilterSmartFiler).formattedValue).toEqual([
+                'Toussaint',
+                "Loisirs d'extérieur",
+            ]),
+        );
+    });
+
+    it('adopts a smart-filter value pushed by the hub as an ARRAY (volet → explorer)', async () => {
+        const onChange = vi.fn();
+        const {result, rerender} = renderHook(
+            ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib', onChange}),
+            {initialProps: {leanFilters: [leanSmart(['t1'])]}},
+        );
+        await waitFor(() => expect((result.current.filtersData.filters[0] as UIFilter).value).toEqual(['t1']));
+
+        // The other spoke (the volet) selected a second value → it arrives through the hub. The ADOPT
+        // dispatch must carry an ARRAY, not the scalar seed, so the explorer's data query can be built.
+        rerender({leanFilters: [leanSmart(['t1', 't2'])]});
+
+        await waitFor(() => expect((result.current.filtersData.filters[0] as UIFilter).value).toEqual(['t1', 't2']));
+        // Adoption is a hub→store sync → no echo back to the host.
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
     it('seeds withEmptyValues from the lean filters', async () => {
         const {result} = renderHook(() =>
             useControlledFilterStore({
@@ -300,7 +400,7 @@ describe('useControlledFilterStore', () => {
     });
 
     it('emits a tree filter that has ONLY withEmptyValues (no user selection) instead of skipping it', async () => {
-        const onChange = jest.fn();
+        const onChange = vi.fn();
         const {result} = renderHook(() =>
             useControlledFilterStore({
                 leanFilters: [

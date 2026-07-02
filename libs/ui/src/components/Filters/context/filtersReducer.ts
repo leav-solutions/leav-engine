@@ -276,8 +276,7 @@ const changeFilterConfig: Reducer<IUIFiltersActionChangeFilterConfig> = (state, 
             // Restore initial value/nodes so the filter keeps its viewByDefault values
             if (Array.isArray(treePayload.value) && treePayload.value.length === 0) {
                 const initialFilter = state.initialFilters.find(({id}) => id === filter.id) as
-                    | IUIFilterTree
-                    | undefined;
+                    IUIFilterTree | undefined;
                 return {
                     ...filter,
                     ...payload,

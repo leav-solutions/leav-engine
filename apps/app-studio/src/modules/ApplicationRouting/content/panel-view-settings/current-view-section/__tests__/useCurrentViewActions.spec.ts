@@ -88,8 +88,14 @@ const mappedSorts = [
 ];
 
 const mappedFilters = [
-    {attributes: ['a'], condition: RecordFilterCondition.EQUAL, values: ['x'], pinned: true},
-    {attributes: ['campagnes', 'thematiques'], condition: RecordFilterCondition.CONTAINS, values: [], pinned: false},
+    {attributes: ['a'], condition: RecordFilterCondition.EQUAL, values: ['x'], pinned: true, withEmptyValues: false},
+    {
+        attributes: ['campagnes', 'thematiques'],
+        condition: RecordFilterCondition.CONTAINS,
+        values: [],
+        pinned: false,
+        withEmptyValues: false,
+    },
 ];
 
 describe('useCurrentViewActions', () => {

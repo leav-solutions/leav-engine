@@ -2173,7 +2173,7 @@ describe('Explorer', () => {
         // unit level. Here we assert the lean round-trip: a lean filter produces a plain (un-wrapped)
         // condition in the request.
         test('seeds a lean filter into the records request as a plain condition', async () => {
-            const spy = jest
+            const spy = vi
                 .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
                 .mockImplementation(
                     ({variables}) =>
@@ -2221,7 +2221,7 @@ describe('Explorer', () => {
         // (d) Seeding the controlled filters is NOT a user edit → the host must never be notified, or the
         // view would read as dirty on load. The store's echo-suppression (lastSyncedLeanRef) guarantees it.
         test('does not emit onFiltersChange when seeding the controlled filters (echo-suppressed)', async () => {
-            const onFiltersChange = jest.fn();
+            const onFiltersChange = vi.fn();
             render(
                 <ExplorerV2
                     entrypoint={{type: 'library', libraryId: 'campaigns'}}
@@ -2249,7 +2249,7 @@ describe('Explorer', () => {
 
         // (f) Standalone usage (no host callback): the store still seeds and feeds the records request.
         test('seeds and queries records with no onFiltersChange callback (standalone)', () => {
-            const spy = jest
+            const spy = vi
                 .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
                 .mockImplementation(
                     ({variables}) =>

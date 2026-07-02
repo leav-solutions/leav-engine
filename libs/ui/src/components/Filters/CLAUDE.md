@@ -154,14 +154,28 @@ Points à connaître avant de toucher à ce fichier :
 - **Filtrage des filtres vides** : un filtre sans valeur est _écarté_, **sauf** si sa condition est une
   "no-value condition" (`nullValueConditions` : `IS_EMPTY`, `IS_NOT_EMPTY`, `TODAY`…) ou `withEmptyValues`.
 - **Multi-valeurs** (valuesList, smartFilter, arbre) : génère un groupe `OPEN_BRACKET … OR … CLOSE_BRACKET`
-  (ou `AND` si condition `NOT_EQUAL`). Cf. `_generateConditionsFromMultipleValues`.
+  (ou `AND` si condition `NOT_EQUAL`). Cf. `_generateConditionsFromMultipleValues`. La `value` d'un smart
+  filter est **toujours** un `string[]` (`IUIFilterSmartFiler`) ; `_generateConditionsFromMultipleValues`
+  normalise défensivement un scalaire égaré (un smart filter sur lien est typé `IUIFilterLink` par
+  `toUIFilters`, donc `value` peut arriver en `string` sans la réinjection de `useViewFiltersConverter`).
 - **`withEmptyValues` ("Non défini")** : enveloppe la condition dans `(condition OR <field> IS_EMPTY)`
   via `_addEmptyCondition`. **Persisté** (LEAVC-810) : porté par la forme lean (`SerializedFilter.withEmptyValues`),
   par le filtre stocké de la vue et par le core (`IViewV2Filter.withEmptyValues`, GraphQL `Boolean` nullable
   pour rétro-compat). Survit donc au pin/unpin et à un save/reload de vue. Côté ViewV2, un arbre **sans**
   sélection de nœuds mais avec `withEmptyValues` **n'est plus skippé** de la projection lean (sinon un filtre
   "non défini" seul serait perdu).
-- **Lien + valuesList** : on filtre sur l'id du record lié → le `field` reçoit un suffixe `.id`.
+- **Lien + valuesList / smart filter** : la valeur sélectionnée est l'**id du record lié** → le `field`
+  reçoit un suffixe `.id` (`isUIFilterLinkWithValueList` / `isUIFilterLinkWithSmartFilter`). Un champ de lien
+  **nu** filtrerait sur l'identité/label du record, pas son id (0 résultat). `addFilter` (reducer) ajoute
+  déjà ce `.id` à l'ajout, mais un aller-retour ViewV2 le perd (le chemin stocké supprime les segments
+  `id`), d'où la réapplication ici — le point de passage unique de la query.
+- **Smart filter avec `through`** : la valeur est atteinte via un **sous-attribut du record lié**
+  (`smart_filter.through`, ex. `structure_items` → `structure_items_thematic`), donc le champ est
+  `<attribut>.<through>.id`. Ce chemin est dérivé de la **métadonnée d'attribut** (pas du champ stocké),
+  donc correct que l'aller-retour ViewV2 ait gardé le segment `through` (reclassé en through) ou l'ait
+  perdu (smart filter de lien nu). Sans ça, un smart filter through venu d'une vue filtre sur
+  `<attribut>.id` avec un id de la cible du through → 0 résultat, alors que les compteurs du dropdown
+  (calculés côté core en traversant le through) restent bons.
 - **Through** : `field` devient `link.subField`, condition = `subCondition`.
 - **Date / Boolean** : transformations spécifiques (`date` recalée à midi, `boolean=false` → `NOT_EQUAL true`).
 

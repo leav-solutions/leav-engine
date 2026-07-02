@@ -21,7 +21,7 @@ export const useFilters = (pinFilters = false) => {
                           isPinned: pinFilters,
                       }))
                 : [],
-        [filtersData],
+        [filtersData, pinFilters],
     );
 
     return {
