@@ -224,7 +224,7 @@ export default function ({
                     const fieldValues = await recordDomain.getRecordFieldValue({
                         library: leavLibraryId,
                         record,
-                        attributeId: attr.leavAttributeId,
+                        attributePath: attr.leavAttributeId,
                         ctx,
                     });
 

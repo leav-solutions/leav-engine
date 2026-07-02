@@ -648,7 +648,7 @@ describe('formDomain', () => {
 
         test('Retrieve fields by dependency value', async () => {
             const mockRecordDomainHandleDeps: Mockify<IRecordDomain> = {
-                getRecordFieldValue: vi.fn().mockImplementation(async ({attributeId}) => {
+                getRecordFieldValue: vi.fn().mockImplementation(async ({attributePath: attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
                             return {payload: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
@@ -724,7 +724,7 @@ describe('formDomain', () => {
 
         test('Retrieve fields by dependency value, applying inheritance', async () => {
             const mockRecordDomainHandleDeps: Mockify<IRecordDomain> = {
-                getRecordFieldValue: vi.fn().mockImplementation(async ({attributeId}) => {
+                getRecordFieldValue: vi.fn().mockImplementation(async ({attributePath: attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
                             return {payload: {id: '987654', record: {id: '123456', library: 'dep_lib'}}};
@@ -804,7 +804,7 @@ describe('formDomain', () => {
 
         test('Remove fields not visible and their container if empty', async () => {
             const mockRecordDomainHandleDeps: Mockify<IRecordDomain> = {
-                getRecordFieldValue: vi.fn().mockImplementation(async ({attributeId}) => {
+                getRecordFieldValue: vi.fn().mockImplementation(async ({attributePath: attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
                             return {payload: {record: {id: '123456', library: 'dep_lib'}}};
@@ -898,7 +898,7 @@ describe('formDomain', () => {
 
         test('Handle tabs with not visible fields', async () => {
             const mockRecordDomainHandleDeps: Mockify<IRecordDomain> = {
-                getRecordFieldValue: vi.fn().mockImplementation(async ({attributeId}) => {
+                getRecordFieldValue: vi.fn().mockImplementation(async ({attributePath: attributeId}) => {
                     switch (attributeId) {
                         case 'dep_attribute':
                             return {payload: {record: {id: '123456', library: 'dep_lib'}}};

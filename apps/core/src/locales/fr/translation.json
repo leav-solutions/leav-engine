@@ -37,6 +37,7 @@
         "INVALID_ATTRIBUTE_FILTER_FORMAT": "Un filtre sur un attribut doit avoir une condition, un champ et une valeur",
         "INVALID_ATTRIBUTE_FOR_LIBRARY": "L'attribut {{attribute}} n'est pas utilisé par la bibliothèque {{library}}",
         "INVALID_ATTRIBUTES": "Attributs non valides: {{attributes}}",
+        "INVALID_NESTED_ATTRIBUTE_PATH": "L'attribut {{attribute}} n'est pas un lien ou un attribut étendu, impossible d'accéder aux sous-attributs",
         "INVALID_DATE_RANGE": "La date de début doit être inférieur à la date de fin",
         "INVALID_EMAIL": "Email non valide",
         "INVALID_ENDPOINT_FORMAT": "Format de chemin non valide",

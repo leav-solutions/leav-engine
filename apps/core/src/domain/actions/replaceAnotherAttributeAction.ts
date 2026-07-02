@@ -33,7 +33,7 @@ export default function ({
                 const linkValues: ILinkValue[] = await valueDomain.getRecordFieldValue({
                     library: record.library,
                     record,
-                    attributeId: attributeProps.id,
+                    attributePath: attributeProps.id,
                     ctx,
                 });
                 return (
@@ -51,7 +51,7 @@ export default function ({
                 const treeValues: ITreeValue[] = (await valueDomain.getRecordFieldValue({
                     library: record.library,
                     record,
-                    attributeId: attributeProps.id,
+                    attributePath: attributeProps.id,
                     ctx,
                 })) as ITreeValue[];
                 return (

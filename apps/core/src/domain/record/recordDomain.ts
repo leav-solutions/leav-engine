@@ -87,13 +87,13 @@ export interface IRecordDomain {
     getRecordFieldValue({
         library,
         record,
-        attributeId,
+        attributePath,
         options,
         ctx,
     }: {
         library: string;
         record: IRecord;
-        attributeId: string;
+        attributePath: string;
         options?: IValuesOptions;
         ctx: IQueryInfos;
     }): Promise<IValue[]>;
@@ -193,7 +193,7 @@ export default function ({
                         const values = await this.getRecordFieldValue({
                             library,
                             record: {id: recordId, library},
-                            attributeId: attr.id ?? '',
+                            attributePath: attr.id,
                             ctx,
                         });
                         if (values?.length) {

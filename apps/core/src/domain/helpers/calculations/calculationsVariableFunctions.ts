@@ -99,7 +99,7 @@ export default function ({
                     ...(isTreeNodePayload
                         ? {library: payload.record.library, record: payload.record}
                         : {library, record: {id: recordId, library}}),
-                    attributeId: attributeKey,
+                    attributePath: attributeKey,
                     ctx: context,
                 });
 

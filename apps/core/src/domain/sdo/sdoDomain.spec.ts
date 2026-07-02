@@ -616,8 +616,8 @@ describe('sdoDomain', () => {
             mockRecordDomain.find.mockResolvedValueOnce({
                 list: [{id: 'entity', attribute: 'attribute value', ...mockRecordSystemData}],
             } as unknown as IListWithCursor<IRecord>);
-            mockRecordDomain.getRecordFieldValue.mockImplementation(async ({attributeId}) => {
-                switch (attributeId) {
+            mockRecordDomain.getRecordFieldValue.mockImplementation(async ({attributePath}) => {
+                switch (attributePath) {
                     case uuidAttribute.id:
                         return [
                             {
@@ -664,7 +664,7 @@ describe('sdoDomain', () => {
                             } as ITreeValue,
                         ];
                 }
-                throw new Error(`Unknown attributeId ${attributeId}`);
+                throw new Error(`Unknown attributeId ${attributePath}`);
             });
             mockAttributeDomain.getAttributes.mockResolvedValueOnce({
                 list: [

@@ -76,45 +76,45 @@ describe('exportDomain', () => {
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_label',
+                    attributePath: 'bikes_label',
                     returnValue: [{payload: 'bikeLabel'}],
                 },
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_activity',
+                    attributePath: 'bikes_activity',
                     returnValue: [{payload: {id: 'activityId'}}],
                 },
                 {
                     library: 'activities',
                     recordId: 'activityId',
-                    attributeId: 'activities_label',
+                    attributePath: 'activities_label',
                     returnValue: [{payload: 'activityLabel'}],
                 },
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_visual',
+                    attributePath: 'bikes_visual',
                     returnValue: [{payload: {id: 'fileId'}}],
                 },
                 {
                     library: 'files',
                     recordId: 'fileId',
-                    attributeId: 'files_previews',
+                    attributePath: 'files_previews',
                     returnValue: [{payload: JSON.stringify({medium: '/path/to/preview'})}],
                 },
-                {library: 'bikes', recordId: 'bikeId', attributeId: 'no_value', returnValue: []},
+                {library: 'bikes', recordId: 'bikeId', attributePath: 'no_value', returnValue: []},
                 {
                     library: 'shops',
                     recordId: 'shopId',
-                    attributeId: 'shops_label',
+                    attributePath: 'shops_label',
                     returnValue: [{payload: 'shopLabel'}],
                 },
             ];
 
-            fieldValues.forEach(({library, recordId, attributeId, returnValue}) =>
+            fieldValues.forEach(({library, recordId, attributePath, returnValue}) =>
                 when(mockRecordDomain.getRecordFieldValue)
-                    .calledWith({library, record: {id: recordId}, attributeId, ctx: mockCtx})
+                    .calledWith({library, record: {id: recordId}, attributePath, ctx: mockCtx})
                     .mockReturnValue(returnValue),
             );
 
@@ -186,45 +186,45 @@ describe('exportDomain', () => {
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_label',
+                    attributePath: 'bikes_label',
                     returnValue: [{payload: 'bikeLabel'}],
                 },
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_activity',
+                    attributePath: 'bikes_activity',
                     returnValue: [{payload: {id: 'activityId'}}],
                 },
                 {
                     library: 'activities',
                     recordId: 'activityId',
-                    attributeId: 'activities_label',
+                    attributePath: 'activities_label',
                     returnValue: [{payload: 'activityLabel'}],
                 },
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_visual',
+                    attributePath: 'bikes_visual',
                     returnValue: [{payload: {id: 'fileId'}}],
                 },
                 {
                     library: 'files',
                     recordId: 'fileId',
-                    attributeId: 'files_previews',
+                    attributePath: 'files_previews',
                     returnValue: [{payload: JSON.stringify({medium: '/path/to/preview'})}],
                 },
-                {library: 'bikes', recordId: 'bikeId', attributeId: 'no_value', returnValue: []},
+                {library: 'bikes', recordId: 'bikeId', attributePath: 'no_value', returnValue: []},
                 {
                     library: 'shops',
                     recordId: 'shopId',
-                    attributeId: 'shops_label',
+                    attributePath: 'shops_label',
                     returnValue: [{payload: 'shopLabel'}],
                 },
             ];
 
-            fieldValues.forEach(({library, recordId, attributeId, returnValue}) =>
+            fieldValues.forEach(({library, recordId, attributePath, returnValue}) =>
                 when(mockRecordDomain.getRecordFieldValue)
-                    .calledWith({library, record: {id: recordId}, attributeId, ctx: mockCtx})
+                    .calledWith({library, record: {id: recordId}, attributePath, ctx: mockCtx})
                     .mockReturnValue(returnValue),
             );
 
@@ -290,38 +290,38 @@ describe('exportDomain', () => {
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_sizes',
+                    attributePath: 'bikes_sizes',
                     returnValue: [{payload: 'S'}, {payload: 'M'}, {payload: 'L'}, {payload: 'XL'}],
                 },
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_shops',
+                    attributePath: 'bikes_shops',
                     returnValue: [{payload: {id: 'shopId'}}, {payload: {id: 'shopId2'}}],
                 },
                 {
                     library: 'shops',
                     recordId: 'shopId',
-                    attributeId: 'shops_label',
+                    attributePath: 'shops_label',
                     returnValue: [{payload: 'shopLabel'}],
                 },
                 {
                     library: 'shops',
                     recordId: 'shopId2',
-                    attributeId: 'shops_label',
+                    attributePath: 'shops_label',
                     returnValue: [{payload: 'shopLabel2'}],
                 },
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_colors',
+                    attributePath: 'bikes_colors',
                     returnValue: [],
                 },
             ];
 
-            fieldValues.forEach(({library, recordId, attributeId, returnValue}) =>
+            fieldValues.forEach(({library, recordId, attributePath, returnValue}) =>
                 when(mockRecordDomain.getRecordFieldValue)
-                    .calledWith({library, record: {id: recordId}, attributeId, ctx: mockCtx})
+                    .calledWith({library, record: {id: recordId}, attributePath, ctx: mockCtx})
                     .mockReturnValue(returnValue),
             );
 
@@ -383,7 +383,7 @@ describe('exportDomain', () => {
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_sizes',
+                    attributePath: 'bikes_sizes',
                     returnValue: [
                         {payload: 'Size S', raw_payload: 'S'},
                         {payload: 'Size M', raw_payload: 'M'},
@@ -394,32 +394,32 @@ describe('exportDomain', () => {
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_shops',
+                    attributePath: 'bikes_shops',
                     returnValue: [{payload: {id: 'shopId'}}, {payload: {id: 'shopId2'}}],
                 },
                 {
                     library: 'shops',
                     recordId: 'shopId',
-                    attributeId: 'shops_label',
+                    attributePath: 'shops_label',
                     returnValue: [{payload: 'Welcome to shopLabel', raw_payload: 'shopLabel'}],
                 },
                 {
                     library: 'shops',
                     recordId: 'shopId2',
-                    attributeId: 'shops_label',
+                    attributePath: 'shops_label',
                     returnValue: [{payload: 'Welcome to shopLabel2', raw_payload: 'shopLabel2'}],
                 },
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributeId: 'bikes_color',
+                    attributePath: 'bikes_color',
                     returnValue: [{payload: 'Color: blue', raw_payload: 'blue'}],
                 },
             ];
 
-            fieldValues.forEach(({library, recordId, attributeId, returnValue}) =>
+            fieldValues.forEach(({library, recordId, attributePath, returnValue}) =>
                 when(mockRecordDomain.getRecordFieldValue)
-                    .calledWith({library, record: {id: recordId}, attributeId, ctx: mockCtx})
+                    .calledWith({library, record: {id: recordId}, attributePath, ctx: mockCtx})
                     .mockReturnValue(returnValue),
             );
 

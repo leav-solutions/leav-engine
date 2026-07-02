@@ -270,7 +270,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libSource,
                 record,
-                attributeId: STANDARD_MONO_ATTR,
+                attributePath: STANDARD_MONO_ATTR,
                 ctx,
             });
             expect(values[0].payload).toBe('hello');
@@ -290,7 +290,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libSource,
                 record,
-                attributeId: STANDARD_MONO_ATTR,
+                attributePath: STANDARD_MONO_ATTR,
                 ctx,
             });
             expect(values[0].payload).toBe('updated');
@@ -340,7 +340,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libSource,
                 record,
-                attributeId: STANDARD_MULTI_ATTR,
+                attributePath: STANDARD_MULTI_ATTR,
                 ctx,
             });
             expect(values.map(v => v.payload).sort()).toEqual(['B', 'C']);
@@ -355,7 +355,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libSource,
                 record,
-                attributeId: STANDARD_MULTI_ATTR,
+                attributePath: STANDARD_MULTI_ATTR,
                 ctx,
             });
             expect(values).toHaveLength(1);
@@ -386,7 +386,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libSource,
                 record,
-                attributeId: STANDARD_MULTI_ATTR,
+                attributePath: STANDARD_MULTI_ATTR,
                 ctx,
             });
             expect(values.map(v => v.payload).sort()).toEqual(['A', 'B', 'C']);
@@ -403,7 +403,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libSource,
                 record,
-                attributeId: LINK_MONO_ATTR,
+                attributePath: LINK_MONO_ATTR,
                 ctx,
             });
             expect(values[0].payload).toMatchObject({id: targetRecord1.id});
@@ -418,7 +418,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libSource,
                 record,
-                attributeId: LINK_MONO_ATTR,
+                attributePath: LINK_MONO_ATTR,
                 ctx,
             });
             expect(values[0].payload).toMatchObject({id: targetRecord2.id});
@@ -444,7 +444,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libSource,
                 record,
-                attributeId: LINK_MULTI_ATTR,
+                attributePath: LINK_MULTI_ATTR,
                 ctx,
             });
             expect(values).toHaveLength(1);
@@ -460,7 +460,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libSource,
                 record,
-                attributeId: LINK_MULTI_ATTR,
+                attributePath: LINK_MULTI_ATTR,
                 ctx,
             });
             expect(values).toHaveLength(1);
@@ -478,7 +478,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libSource,
                 record,
-                attributeId: LINK_MULTI_ATTR,
+                attributePath: LINK_MULTI_ATTR,
                 ctx,
             });
             expect(values).toHaveLength(2);
@@ -494,7 +494,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libSource,
                 record,
-                attributeId: LINK_MULTI_ATTR,
+                attributePath: LINK_MULTI_ATTR,
                 ctx,
             });
             expect(values).toHaveLength(1);
@@ -526,7 +526,7 @@ describe('modifyAttributeAction', () => {
             const values = await valueDomain.getRecordFieldValue({
                 library: libTarget,
                 record: targetRecord1,
-                attributeId: TARGET_ATTR,
+                attributePath: TARGET_ATTR,
                 ctx,
             });
             expect(values[0].payload).toBe('traversed');

@@ -28,7 +28,7 @@ export const mustIncludeElement = async (
     const recordDepValue = recordId
         ? await recordDomain.getRecordFieldValue({
               library: libraryId,
-              attributeId: element.dependencyValue.attribute,
+              attributePath: element.dependencyValue.attribute,
               record: {
                   id: recordId,
                   library: libraryId,

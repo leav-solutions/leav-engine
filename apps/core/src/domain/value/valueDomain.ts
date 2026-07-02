@@ -155,7 +155,7 @@ export interface IValueDomain {
     getRecordFieldValue(params: {
         library: string;
         record: IRecord;
-        attributeId: string;
+        attributePath: string;
         options?: IValuesOptions;
         ctx: IQueryInfos;
     }): Promise<IValue[]>;

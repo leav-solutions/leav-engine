@@ -4,12 +4,18 @@ import {type IRecordAttributePermissionDomain} from '../../permission/recordAttr
 import {type GetValuesHelper} from './getValues';
 import {type IRecordRepo} from '../../../infra/record/recordRepo';
 import {ActionsListEvents} from '../../../_types/actionsList';
-import {AttributeTypes, type IAttribute} from '../../../_types/attribute';
+import {AttributeFormats, AttributeTypes, type IAttribute} from '../../../_types/attribute';
 import {Errors} from '../../../_types/errors';
 import {RecordAttributePermissionsActions} from '../../../_types/permissions';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IRecord} from '../../../_types/record';
-import {type IStandardValue, type IValue, type IValuesOptions} from '../../../_types/value';
+import {
+    type ILinkValue,
+    type IStandardValue,
+    type ITreeValue,
+    type IValue,
+    type IValuesOptions,
+} from '../../../_types/value';
 import ValidationError from '../../../errors/ValidationError';
 import {type FormatValueHelper} from './formatValue';
 import {type RunActionsListHelper} from './runActionsList';
@@ -17,7 +23,11 @@ import {type RunActionsListHelper} from './runActionsList';
 export type GetRecordFieldValueHelper = (params: {
     library: string;
     record: IRecord;
-    attributeId: string;
+    /**
+     * Attribute to read, optionally as a dotted path to traverse links and extended attributes.
+     * Ex: `"created_by"`, `"created_by.login"`, `"bikes_shop.shops_label"`.
+     */
+    attributePath: string;
     options?: IValuesOptions;
     ctx: IQueryInfos;
 }) => Promise<IValue[]>;
@@ -89,7 +99,7 @@ export default function ({
         }
     };
 
-    return async ({library, record, attributeId, options, ctx}) => {
+    const _assertAttributeInLibrary = async (attributeId: string, library: string, ctx: IQueryInfos): Promise<void> => {
         const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
 
         if (!libraryAttributes.map(a => a.id).includes(attributeId)) {
@@ -97,75 +107,71 @@ export default function ({
                 [attributeId]: {msg: Errors.INVALID_ATTRIBUTE_FOR_LIBRARY, vars: {attribute: attributeId, library}},
             });
         }
+    };
 
-        const perm = await recordAttributePermissionDomain.getRecordAttributePermission(
+    const _hasReadPermission = (attributeId: string, library: string, recordId: string, ctx: IQueryInfos) =>
+        recordAttributePermissionDomain.getRecordAttributePermission(
             RecordAttributePermissionsActions.ACCESS_ATTRIBUTE,
             attributeId,
             library,
-            record.id,
+            recordId,
             ctx,
         );
 
-        if (!perm) {
-            return [];
-        }
+    // Format a single value and compute its metadata fields (running their GET_VALUE actions).
+    const _formatValueWithMetadata = async (
+        value: IValue,
+        attribute: IAttribute,
+        library: string,
+        ctx: IQueryInfos,
+    ): Promise<IValue> => {
+        const formattedValue = await formatValueHelper({attribute, value, ctx});
 
-        const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
-        let values = await _extractRecordValue(record, attrProps, library, options, ctx);
+        if (attribute.metadata_fields && formattedValue.metadata) {
+            for (const metadataField of attribute.metadata_fields) {
+                if (!formattedValue.metadata[metadataField]) {
+                    continue;
+                }
 
-        if (values.length === 0) {
-            values = [
-                {
-                    payload: null,
-                },
-            ];
-        }
+                const metadataAttributeProps = await attributeDomain.getAttributeProperties({id: metadataField, ctx});
 
-        let formattedValues = await Promise.all(
-            values.map(async v => {
-                const formattedValue = await formatValueHelper({
-                    attribute: attrProps,
-                    value: v,
+                const computedMetadata = await runActionsListHelper({
+                    listName: ActionsListEvents.GET_VALUE,
+                    attribute: metadataAttributeProps,
+                    library,
+                    values: [formattedValue.metadata[metadataField] as IStandardValue],
                     ctx,
                 });
 
-                if (attrProps.metadata_fields && formattedValue.metadata) {
-                    for (const metadataField of attrProps.metadata_fields) {
-                        if (!formattedValue.metadata[metadataField]) {
-                            continue;
-                        }
+                formattedValue.metadata[metadataField] = computedMetadata[0];
+            }
+        }
 
-                        const metadataAttributeProps = await attributeDomain.getAttributeProperties({
-                            id: metadataField,
-                            ctx,
-                        });
+        return formattedValue;
+    };
 
-                        const computedMetadata = await runActionsListHelper({
-                            listName: ActionsListEvents.GET_VALUE,
-                            attribute: metadataAttributeProps,
-                            library,
-                            values: [formattedValue.metadata[metadataField] as IStandardValue],
-                            ctx,
-                        });
+    // Resolve, format and clean the values of a single attribute (one path segment).
+    const _resolveSegmentValues = async (
+        record: IRecord,
+        attribute: IAttribute,
+        library: string,
+        options: IValuesOptions,
+        ctx: IQueryInfos,
+    ): Promise<IValue[]> => {
+        let values = await _extractRecordValue(record, attribute, library, options, ctx);
 
-                        formattedValue.metadata[metadataField] = computedMetadata[0];
-                    }
-                }
+        if (values.length === 0) {
+            values = [{payload: null}];
+        }
 
-                return formattedValue;
-            }),
+        const formattedValues = await Promise.all(
+            values.map(value => _formatValueWithMetadata(value, attribute, library, ctx)),
         );
 
         // sort of flatMap cause _formatValue can return multiple values for 1 input val (think heritage)
-        formattedValues = formattedValues.reduce((acc, v) => {
+        const flattenedValues = formattedValues.reduce((acc, v) => {
             if (Array.isArray(v.payload)) {
-                acc = [
-                    ...acc,
-                    ...v.payload.map(vpart => ({
-                        value: vpart,
-                        attribute: v.attribute,
-                    })),
-                ];
+                acc = [...acc, ...v.payload.map(vpart => ({value: vpart, attribute: v.attribute}))];
             } else {
                 acc.push(v);
             }
@@ -173,8 +179,124 @@ export default function ({
         }, []);
 
         // remove null values
-        formattedValues = formattedValues.filter(v => v.payload !== null && typeof v.payload !== 'undefined');
-
-        return formattedValues;
+        return flattenedValues.filter(v => v.payload !== null && typeof v.payload !== 'undefined');
     };
+
+    // Follow every linked record of a link attribute and keep traversing the remaining path.
+    const _traverseLink = async (
+        values: ILinkValue[],
+        linkedLibrary: string,
+        remainingPath: string,
+        options: IValuesOptions,
+        ctx: IQueryInfos,
+    ): Promise<IValue[]> => {
+        const nestedValues = await Promise.all(
+            values.map(v => {
+                const linkedRecordId = v.payload?.id;
+                if (!linkedRecordId) {
+                    return [];
+                }
+
+                return getRecordFieldValue({
+                    library: linkedLibrary,
+                    record: {id: linkedRecordId, library: linkedLibrary},
+                    attributePath: remainingPath,
+                    options,
+                    ctx,
+                });
+            }),
+        );
+
+        return nestedValues.flat();
+    };
+
+    // Read the remaining path directly on the record linked by each tree node. A node can reference
+    // records from different libraries; a record whose library does not define the attribute yields nothing.
+    const _traverseTree = async (
+        values: ITreeValue[],
+        remainingPath: string,
+        options: IValuesOptions,
+        ctx: IQueryInfos,
+    ): Promise<IValue[]> => {
+        const nestedValues = await Promise.all(
+            values.map(async v => {
+                const linkedRecord = v.payload?.record;
+                if (!linkedRecord?.id) {
+                    return [];
+                }
+
+                try {
+                    return await getRecordFieldValue({
+                        library: linkedRecord.library,
+                        record: {id: linkedRecord.id, library: linkedRecord.library},
+                        attributePath: remainingPath,
+                        options,
+                        ctx,
+                    });
+                } catch {
+                    // The linked record's library may not define this attribute → skip it.
+                    return [];
+                }
+            }),
+        );
+
+        return nestedValues.flat();
+    };
+
+    // Navigate the remaining path inside the payload object (extended sub-fields, or `.from` / `.to`
+    // for date ranges).
+    const _navigateSubFields = (values: IValue[], subSegments: string[]): IValue[] =>
+        values
+            .map(v => {
+                const parsed = typeof v.payload === 'string' ? JSON.parse(v.payload) : v.payload;
+                const subValue = subSegments.reduce((acc, segment) => acc?.[segment], parsed);
+                return {...v, payload: subValue ?? null};
+            })
+            .filter(v => v.payload !== null && typeof v.payload !== 'undefined');
+
+    const getRecordFieldValue: GetRecordFieldValueHelper = async ({library, record, attributePath, options, ctx}) => {
+        const segments = attributePath.split('.');
+        const attributeId = segments[0];
+
+        await _assertAttributeInLibrary(attributeId, library, ctx);
+
+        if (!(await _hasReadPermission(attributeId, library, record.id, ctx))) {
+            return [];
+        }
+
+        const attrProps = await attributeDomain.getAttributeProperties({id: attributeId, ctx});
+        const currentValues = await _resolveSegmentValues(record, attrProps, library, options, ctx);
+
+        // Terminal segment: return the values of the current attribute as-is.
+        if (segments.length === 1) {
+            return currentValues;
+        }
+
+        const remainingSegments = segments.slice(1);
+
+        if (attrProps.type === AttributeTypes.SIMPLE_LINK || attrProps.type === AttributeTypes.ADVANCED_LINK) {
+            return _traverseLink(
+                currentValues as ILinkValue[],
+                attrProps.linked_library,
+                remainingSegments.join('.'),
+                options,
+                ctx,
+            );
+        }
+
+        if (attrProps.type === AttributeTypes.TREE) {
+            return _traverseTree(currentValues as ITreeValue[], remainingSegments.join('.'), options, ctx);
+        }
+
+        if (attrProps.format === AttributeFormats.EXTENDED || attrProps.format === AttributeFormats.DATE_RANGE) {
+            return _navigateSubFields(currentValues, remainingSegments);
+        }
+
+        // Any other type cannot be traversed further.
+        throw new ValidationError({
+            [attributeId]: {msg: Errors.INVALID_NESTED_ATTRIBUTE_PATH, vars: {attribute: attributeId}},
+        });
+    };
+
+    return getRecordFieldValue;
 }

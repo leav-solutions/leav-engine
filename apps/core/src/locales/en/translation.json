@@ -37,6 +37,7 @@
         "INVALID_ATTRIBUTE_FILTER_FORMAT": "Attribute filter must have condition, field and value",
         "INVALID_ATTRIBUTE_FOR_LIBRARY": "Attribute {{attribute}} is not used by library {{library}}",
         "INVALID_ATTRIBUTES": "Invalid attributes: {{attributes}}",
+        "INVALID_NESTED_ATTRIBUTE_PATH": "Attribute {{attribute}} is not a link or extended attribute, cannot access sub-attributes",
         "INVALID_DATE_RANGE": "Start date must be less than end date",
         "INVALID_EMAIL": "Invalid email",
         "INVALID_ENDPOINT_FORMAT": "Invalid endpoint format",
