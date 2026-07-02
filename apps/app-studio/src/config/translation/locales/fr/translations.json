@@ -126,6 +126,12 @@
             "pin": "Épingler",
             "unpin": "Détacher"
         },
+        "filters": {
+            "manage_available": "Gérer les attributs disponibles",
+            "search_placeholder": "Rechercher...",
+            "pin": "Épingler",
+            "unpin": "Détacher"
+        },
         "available_attributes": {
             "title": "Attributs disponibles",
             "subtitle": "Sélectionnez les attributs que vous voulez rendre disponibles pour les utilisateurs",

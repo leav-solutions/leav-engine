@@ -12,6 +12,7 @@ const makeView = (overrides: Partial<ViewV2> = {}): ViewV2 => ({
     created_by: {id: '123', whoAmI: {id: '123', label: 'Moi'}},
     display: {type: ViewV2Types.list, attributes: []},
     sorts: [],
+    filters: [],
     shortcuts: [ViewV2Shortcut.display],
     ...overrides,
 });
@@ -91,10 +92,69 @@ describe('viewV2ToSerializedView', () => {
         expect(result.sort).toEqual([{field: 'date', order: SortOrder.desc}]);
     });
 
-    it('returns empty filters (handled in a follow-up ticket)', () => {
-        const result = viewV2ToSerializedView(makeView());
+    it('serializes pinned user filters in the lean form (attributes path + condition + values + pinned)', () => {
+        const result = viewV2ToSerializedView(
+            makeView({
+                filters: [
+                    {
+                        attributes: [
+                            {id: 'campaigns', label: {fr: 'Campagnes'}},
+                            {id: 'label', label: {fr: 'Libellé'}},
+                        ],
+                        condition: 'CONTAINS',
+                        values: ['Noël'],
+                        pinned: true,
+                    },
+                ] as never,
+            }),
+        );
 
-        expect(result.filters).toEqual([]);
+        expect(result.filters).toEqual([
+            {
+                attributes: [
+                    {id: 'campaigns', label: {fr: 'Campagnes'}},
+                    {id: 'label', label: {fr: 'Libellé'}},
+                ],
+                condition: 'CONTAINS',
+                values: ['Noël'],
+                pinned: true,
+                withEmptyValues: false,
+            },
+        ]);
+    });
+
+    it('excludes unpinned filters (configured but not applied, like unpinned sorts)', () => {
+        const result = viewV2ToSerializedView(
+            makeView({
+                filters: [
+                    {attributes: [{id: 'status', label: {}}], condition: 'EQUAL', values: ['a'], pinned: false},
+                    {attributes: [{id: 'kind', label: {}}], condition: 'EQUAL', values: ['b'], pinned: true},
+                ] as never,
+            }),
+        );
+
+        expect(result.filters).toEqual([
+            {
+                attributes: [{id: 'kind', label: {}}],
+                condition: 'EQUAL',
+                values: ['b'],
+                pinned: true,
+                withEmptyValues: false,
+            },
+        ]);
+    });
+
+    it('emits a JSON-serializable shape (no GraphQL fragment fields)', () => {
+        const result = viewV2ToSerializedView(
+            makeView({
+                filters: [
+                    {attributes: [{id: 'status', label: {}}], condition: 'EQUAL', values: ['a'], pinned: true},
+                ] as never,
+            }),
+        );
+
+        // Round-trips through JSON unchanged → safe to transport across an iframe (LEAVC-810).
+        expect(JSON.parse(JSON.stringify(result.filters))).toEqual(result.filters);
     });
 
     it('maps the view shortcuts', () => {

@@ -1,8 +1,16 @@
 import {arrayMove} from '@dnd-kit/sortable';
-import {SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../__generated__';
+import {RecordFilterCondition, SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../__generated__';
 import {IDENTITY_COLUMN_ID} from '../tabs/tab-display/_constants';
 import {DEFAULT_DRAFT_VIEW_ID} from './_constants';
-import {type CurrentViewAction, type CurrentView, type ICurrentViewState, getSortId} from './_types';
+import {type CurrentViewAction, type CurrentView, type ICurrentViewState, getFilterId, getSortId} from './_types';
+
+/**
+ * A freshly made-available filter has no value yet. `condition` is `RecordFilterCondition!` server-side
+ * (it cannot be null), so we seed it with a neutral `EQUAL`: with an empty value list it filters
+ * nothing (prepareFiltersForRequest skips value-less EQUAL filters), and the user picks the real
+ * condition when they edit the value. Mirrors `SortOrder.asc` being the default for a new sort.
+ */
+const DEFAULT_FILTER_CONDITION = RecordFilterCondition.EQUAL;
 
 export const initialCurrentViewState: ICurrentViewState = {view: null, savedView: null};
 
@@ -23,6 +31,7 @@ export const createDefaultView = (
     created_by: {id: createdBy.id, whoAmI: {id: createdBy.id, label: createdBy.label}},
     display: {type: ViewV2Types.list, attributes: []},
     sorts: [],
+    filters: [],
 });
 
 /**
@@ -187,6 +196,99 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
 
             return {...view, sorts: [...kept, ...added]};
         }
+        // Mirror of MOVE_SORT for filters. The pinned filters array order IS the order in which the
+        // filter chips appear in the ExplorerV2 FilterToolBar.
+        case 'MOVE_FILTER': {
+            const {activeId, overId} = action.payload;
+
+            if (activeId === overId) {
+                return view;
+            }
+
+            const from = view.filters.findIndex(filter => getFilterId(filter) === activeId);
+            const to = view.filters.findIndex(filter => getFilterId(filter) === overId);
+
+            if (from === -1 || to === -1 || from === to) {
+                return view;
+            }
+
+            return {...view, filters: arrayMove(view.filters, from, to)};
+        }
+        // Mirror of TOGGLE_SORT_PINNED. Pinning moves the filter just after the last pinned one (its
+        // toolbar position); unpinning flips the flag in place (the unpinned list is re-sorted alpha).
+        case 'TOGGLE_FILTER_PINNED': {
+            const {id} = action.payload;
+            const index = view.filters.findIndex(filter => getFilterId(filter) === id);
+
+            if (index === -1) {
+                return view;
+            }
+
+            const target = view.filters[index];
+
+            if (target.pinned) {
+                const filters = view.filters.toSpliced(index, 1, {...target, pinned: false});
+                return {...view, filters};
+            }
+
+            const withoutTarget = view.filters.filter((_, i) => i !== index);
+            const lastPinnedPos = withoutTarget.findLastIndex(filter => filter.pinned);
+            const filters = withoutTarget.toSpliced(lastPinnedPos + 1, 0, {...target, pinned: true});
+
+            return {...view, filters};
+        }
+        // Edits the condition+value of a single filter (from the volet editor OR a write-back from the
+        // FilterToolBar). Mirrors SET_SORT_ORDER: locate by `getFilterId`, splice the new config in place.
+        case 'SET_FILTER_CONFIG': {
+            const {id, condition, values, withEmptyValues} = action.payload;
+            const index = view.filters.findIndex(filter => getFilterId(filter) === id);
+
+            if (index === -1) {
+                return view;
+            }
+
+            const current = view.filters[index];
+            // G1 hardening: an idempotent write (same condition + values + withEmptyValues) must return the
+            // SAME view ref so the wrapper's useReducer bail-out holds — otherwise `toSpliced` allocates a
+            // fresh array even for a no-op write (unlike SET_SORT_ORDER, which already guards), and the
+            // hub↔spoke value sync could loop. Mirror of the SET_SORT_ORDER equality guard.
+            if (
+                current.condition === condition &&
+                !!current.withEmptyValues === !!withEmptyValues &&
+                current.values.length === values.length &&
+                current.values.every((value, valueIndex) => value === values[valueIndex])
+            ) {
+                return view;
+            }
+
+            return {
+                ...view,
+                filters: view.filters.toSpliced(index, 1, {...current, condition, values, withEmptyValues}),
+            };
+        }
+        // Admin gear: the desired set of attribute paths available as filters. Reconcile against the
+        // current list (keyed by `getFilterId`): keep still-selected filters as-is (preserving order,
+        // pinned, condition and values), append newly-selected paths (EQUAL/empty by default), drop
+        // deselected ones. Mirror of SET_AVAILABLE_SORTS.
+        case 'SET_AVAILABLE_FILTERS': {
+            const {filters} = action.payload;
+            const pathKey = (path: {attributes: (typeof filters)[number]['attributes']}) =>
+                path.attributes.map(attribute => attribute.id).join('/');
+            const desiredKeys = new Set(filters.map(pathKey));
+            const kept = view.filters.filter(filter => desiredKeys.has(getFilterId(filter)));
+            const keptKeys = new Set(kept.map(getFilterId));
+            const added = filters
+                .filter(path => !keptKeys.has(pathKey(path)))
+                .map(path => ({
+                    attributes: path.attributes,
+                    condition: DEFAULT_FILTER_CONDITION,
+                    values: [],
+                    pinned: false,
+                    withEmptyValues: false,
+                }));
+
+            return {...view, filters: [...kept, ...added]};
+        }
         default:
             return view;
     }
@@ -232,8 +334,14 @@ export const currentViewReducer = (state: ICurrentViewState, action: CurrentView
                 view: {...state.view, shared: action.payload.shared},
                 savedView: state.savedView ? {...state.savedView, shared: action.payload.shared} : state.savedView,
             };
-        default:
-            return {...state, view: viewReducer(state.view, action)};
+        default: {
+            const nextView = viewReducer(state.view, action);
+            // Preserve the state reference when the sub-reducer is a no-op (e.g. an idempotent
+            // SYNC_FILTERS_FROM_EXPLORER whose values already match): returning a fresh `{...state}`
+            // would defeat React's useReducer bail-out and, paired with ExplorerV2 re-emitting
+            // onFiltersChange every render, loop indefinitely (Maximum update depth exceeded).
+            return nextView === state.view ? state : {...state, view: nextView};
+        }
     }
 };
 

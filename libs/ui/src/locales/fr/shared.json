@@ -686,6 +686,7 @@
         "sort-ascending": "Ascendant",
         "sort-descending": "Descendant",
         "sorts-empty": "Aucun tri appliqué",
+        "filters-empty": "Aucun filtre disponible",
         "available-attributes": "Autres propriétés disponibles",
         "coming-soon": "À venir",
         "show": "Afficher",

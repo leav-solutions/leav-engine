@@ -34,24 +34,45 @@ import {
     nodeBadge,
 } from './availableAttributesDropdown.module.css';
 
-const MANAGE_LABEL_KEY: Record<AvailableAttributesMode, string> = {
-    flat: 'view_settings.display.columns.manage_available',
-    nested: 'view_settings.sorts.manage_available',
+/**
+ * Which facet the gear curates. `columns` uses the flat tree; `sorts`/`filters` use the nested
+ * (multi-level) tree. Drives which selection the gear reads and which reconcile action it dispatches.
+ */
+export type AvailableAttributesFacet = 'columns' | 'sorts' | 'filters';
+
+const MANAGE_LABEL_KEY: Record<AvailableAttributesFacet, string> = {
+    columns: 'view_settings.display.columns.manage_available',
+    sorts: 'view_settings.sorts.manage_available',
+    filters: 'view_settings.filters.manage_available',
 };
 
 /**
  * Views-manager gear: a checkable tree of the library's attributes letting a manager curate which
  * attributes are "available" in a facet (= membership in `view.display.attributes` for columns /
- * `view.sorts` for sorts). Rendered only when `canManageViews` is true (caller's responsibility).
+ * `view.sorts` for sorts / `view.filters` for filters). Rendered only when `canManageViews` is true
+ * (caller's responsibility).
  *
- * - `mode="flat"`: flat tree, direct attributes only (a link/tree is a single checkable entry).
- * - `mode="nested"`: link attributes are expandable branches; descent is lazily fetched per expansion.
+ * The single `facet` prop drives everything: which selection is read, which reconcile action is
+ * dispatched on check, the button label, AND the tree shape (`mode`, derived below):
+ * - `columns` → flat tree (direct attributes only; a link/tree is a single checkable entry).
+ * - `sorts` / `filters` → nested tree (link attributes are expandable branches, descent fetched lazily).
  */
-export const AvailableAttributesDropdown = ({mode}: {mode: AvailableAttributesMode}) => {
+export const AvailableAttributesDropdown = ({facet}: {facet: AvailableAttributesFacet}) => {
     const {t} = useTranslation();
     const {lang} = useLang();
-    const {view, availableColumnIds, availableSortPaths, setAvailableColumns, setAvailableSorts} = useCurrentView();
+    const {
+        view,
+        availableColumnIds,
+        availableSortPaths,
+        availableFilterPaths,
+        setAvailableColumns,
+        setAvailableSorts,
+        setAvailableFilters,
+    } = useCurrentView();
     const libraryId = view?.library;
+
+    // Tree shape is a function of the facet: columns are flat, sorts/filters descend through links.
+    const mode: AvailableAttributesMode = facet === 'columns' ? 'flat' : 'nested';
 
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState('');
@@ -71,12 +92,22 @@ export const AvailableAttributesDropdown = ({mode}: {mode: AvailableAttributesMo
 
     // Seed the lookup from the current selection (labels come from the view itself).
     useEffect(() => {
-        if (mode === 'flat') {
-            view?.display.attributes.forEach(column => pathIndex.current.set(column.attribute.id, [column.attribute]));
-        } else {
-            view?.sorts.forEach(sort => pathIndex.current.set(getNodeKey(sort.attributes), sort.attributes));
+        switch (facet) {
+            case 'columns':
+                view?.display.attributes.forEach(column =>
+                    pathIndex.current.set(column.attribute.id, [column.attribute]),
+                );
+                break;
+            case 'sorts':
+                view?.sorts.forEach(sort => pathIndex.current.set(getNodeKey(sort.attributes), sort.attributes));
+                break;
+            case 'filters':
+                view?.filters.forEach(filter =>
+                    pathIndex.current.set(getNodeKey(filter.attributes), filter.attributes),
+                );
+                break;
         }
-    }, [view, mode]);
+    }, [view, facet]);
 
     // The library whose top level is already in `treeData`. Closing the dropdown skips the query, so
     // `data` goes undefined; reopening must NOT rebuild the top level from scratch, otherwise every
@@ -108,7 +139,8 @@ export const AvailableAttributesDropdown = ({mode}: {mode: AvailableAttributesMo
         setTreeData(previous => attachChildren(previous, node.key, children));
     };
 
-    const checkedKeys = mode === 'flat' ? availableColumnIds : availableSortPaths.map(path => path.join('/'));
+    const availablePaths = facet === 'filters' ? availableFilterPaths : availableSortPaths;
+    const checkedKeys = facet === 'columns' ? availableColumnIds : availablePaths.map(path => path.join('/'));
 
     const handleCheck = (checked: Key[] | {checked: Key[]; halfChecked: Key[]}) => {
         const keys = Array.isArray(checked) ? checked : checked.checked;
@@ -116,15 +148,21 @@ export const AvailableAttributesDropdown = ({mode}: {mode: AvailableAttributesMo
             .map(key => pathIndex.current.get(String(key)))
             .filter((path): path is AvailableAttribute[] => Boolean(path));
 
-        if (mode === 'flat') {
-            // A column path is a single attribute (flat tree).
-            setAvailableColumns(paths.map(path => path[path.length - 1]));
-        } else {
-            setAvailableSorts(paths.map(path => ({attributes: path})));
+        switch (facet) {
+            case 'columns':
+                // A column path is a single attribute (flat tree).
+                setAvailableColumns(paths.map(path => path[path.length - 1]));
+                break;
+            case 'sorts':
+                setAvailableSorts(paths.map(path => ({attributes: path})));
+                break;
+            case 'filters':
+                setAvailableFilters(paths.map(path => ({attributes: path})));
+                break;
         }
     };
 
-    const buttonLabel = String(t(MANAGE_LABEL_KEY[mode]));
+    const buttonLabel = String(t(MANAGE_LABEL_KEY[facet]));
 
     // Client-side search over the loaded tree; matched branches are auto-expanded so nested hits show.
     const sanitizedSearch = sanitize(searchValue.trim());

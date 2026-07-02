@@ -249,6 +249,8 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
                     nodes: null,
                     userNodes: null,
                     userFormattedValue: null,
+                    formattedValue: null,
+                    withEmptyValues: false,
                     includeHiddenOptions: false,
                 };
             }

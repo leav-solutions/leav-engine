@@ -6,7 +6,7 @@ import {VIEW_SETTINGS_TABS} from './tabs/_constantes';
 import {type ViewSettingsTab} from '../../types';
 import {TabCatalog} from './tabs/tab-catalog/TabCatalog';
 import {TabDisplay} from './tabs/tab-display/TabDisplay';
-import {TabFilters} from './tabs/TabFilters';
+import {TabFilters} from './tabs/tab-filters/TabFilters';
 import {TabHeader} from './tabs/TabHeader';
 import {TabSorts} from './tabs/tab-sorts/TabSorts';
 import {root, rightColumn, tabContent} from './panelViewSettings.module.css';

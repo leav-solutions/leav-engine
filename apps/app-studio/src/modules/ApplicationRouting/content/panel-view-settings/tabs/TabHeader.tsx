@@ -27,7 +27,9 @@ export const TabHeader = ({tab}: {tab: ViewSettingsTabConfig}) => {
             <KitTypography.Text weight="bold" size="fontSize5" className={title}>
                 {t(tab.labelKey)}
             </KitTypography.Text>
-            {canEditAvailableAttributesInHeader && <AvailableAttributesDropdown mode="nested" />}
+            {canEditAvailableAttributesInHeader && (
+                <AvailableAttributesDropdown facet={tab.key as 'sorts' | 'filters'} />
+            )}
             {!isPinLocked && (
                 <KitTooltip title={pinLabel}>
                     <KitButton

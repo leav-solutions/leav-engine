@@ -29,6 +29,7 @@ const makeView = (overrides: Partial<NonNullView> = {}): NonNullView => ({
     created_by: {id: '123', whoAmI: {id: '123', label: 'Moi'}},
     display: {type: ViewV2Types.list, attributes: []},
     sorts: [],
+    filters: [],
     shortcuts: [ViewV2Shortcut.display],
     ...overrides,
 });

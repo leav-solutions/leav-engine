@@ -18,15 +18,15 @@ jest.mock('../../store-current-view/useCurrentView', () => ({
 }));
 
 jest.mock('../../manage-available-attributes/AvailableAttributesDropdown', () => ({
-    AvailableAttributesDropdown: ({mode}: {mode: string}) => <button aria-label={`gear-${mode}`} />,
+    AvailableAttributesDropdown: ({facet}: {facet: string}) => <button aria-label={`gear-${facet}`} />,
 }));
 
 const filtersTab: ViewSettingsTabConfig = {key: 'filters', labelKey: 'view_settings.tab.filters', icon: faFilter};
 const displayTab: ViewSettingsTabConfig = {key: 'display', labelKey: 'view_settings.tab.display', icon: faList};
 const sortsTab: ViewSettingsTabConfig = {key: 'sorts', labelKey: 'view_settings.tab.sorts', icon: faList};
 
-// TabHeader renders the gear in "nested" mode (see the stub above).
-const gearLabel = 'gear-nested';
+// TabHeader passes `facet={tab.key}` to the gear (see the stub above): gear-sorts / gear-filters.
+const gearLabel = (facet: string) => `gear-${facet}`;
 
 describe('TabHeader', () => {
     beforeEach(() => {
@@ -57,24 +57,32 @@ describe('TabHeader', () => {
         expect(screen.queryByLabelText('view_settings.pin')).not.toBeInTheDocument();
     });
 
-    it('shows the available-attributes gear for a views-manager on the sorts tab', () => {
+    it('shows the available-attributes gear (facet=sorts) for a views-manager on the sorts tab', () => {
         mockCanManageViews = true;
         render(<TabHeader tab={sortsTab} />);
 
-        expect(screen.getByLabelText(gearLabel)).toBeInTheDocument();
+        expect(screen.getByLabelText(gearLabel('sorts'))).toBeInTheDocument();
     });
 
     it('hides the gear without the manage_views permission on the sorts tab', () => {
         mockCanManageViews = false;
         render(<TabHeader tab={sortsTab} />);
 
-        expect(screen.queryByLabelText(gearLabel)).not.toBeInTheDocument();
+        expect(screen.queryByLabelText(gearLabel('sorts'))).not.toBeInTheDocument();
     });
 
-    it('hides the gear for a views-manager on a tab that does not host it (filters)', () => {
+    it('shows the available-attributes gear (facet=filters) for a views-manager on the filters tab', () => {
         mockCanManageViews = true;
         render(<TabHeader tab={filtersTab} />);
 
-        expect(screen.queryByLabelText(gearLabel)).not.toBeInTheDocument();
+        expect(screen.getByLabelText(gearLabel('filters'))).toBeInTheDocument();
+    });
+
+    it('hides the gear for a views-manager on a tab that does not host it (display)', () => {
+        mockCanManageViews = true;
+        render(<TabHeader tab={displayTab} />);
+
+        expect(screen.queryByLabelText(gearLabel('sorts'))).not.toBeInTheDocument();
+        expect(screen.queryByLabelText(gearLabel('filters'))).not.toBeInTheDocument();
     });
 });

@@ -69,7 +69,7 @@ export const ColumnsSettings = ({
                 <KitTypography.Text weight="bold" size="fontSize5">
                     {t('view_settings.display.columns.title')}
                 </KitTypography.Text>
-                {canManageViews && <AvailableAttributesDropdown mode="flat" />}
+                {canManageViews && <AvailableAttributesDropdown facet="columns" />}
             </header>
             <KitInput
                 placeholder={String(t('view_settings.display.columns.search_placeholder'))}

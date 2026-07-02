@@ -31,6 +31,7 @@ const TabSortsWithState = ({sorts = SEEDED_SORTS}: {sorts?: CurrentViewSort[]}) 
         created_by: {id: '123', whoAmI: {id: '123', label: 'Me'}},
         display: {type: ViewV2Types.list, attributes: []},
         sorts,
+        filters: [],
         shortcuts: [],
     };
     const [state, dispatch] = useReducer(currentViewReducer, {view: seed, savedView: seed});

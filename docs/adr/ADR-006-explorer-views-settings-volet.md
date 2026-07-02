@@ -13,6 +13,17 @@ Accepted
 > in-place view-settings path were dropped. Decisions #1–#5, Consequences and Open points below
 > reflect the shipped architecture.
 
+> **Revision 30/06/2026 (LEAVC-810) — user filters shipped through the controlled view.** User filters
+> travel through `currentView.filters` in a **lean serializable form** (`SerializedFilter` =
+> `{attributes, condition, values, pinned}`; a full `UIFilter` embeds non-serializable GraphQL data). No
+> shared filter context (decision #2): **hub & spoke** — `CurrentViewStore` is the hub, the volet
+> (`VoletFiltersProvider`) and ExplorerV2's internal store are two decoupled spokes that each rebuild a
+> rich `UIFilter` store from the lean hub via the shared `useControlledFilterStore` and write back only
+> lean. The #3 write-back is implemented: edits/removals flow via `onFiltersChange` (echo-suppressed),
+> reconciled into the hub by `useViewSettingsProps` (`useNotifyFiltersChange` removed). Transport is still
+> **native** React (messenger wiring for iframes deferred, but the lean contract is message-ready). Closes
+> the "User filters in the volet" open point.
+
 ## Context
 
 Currently, when a user lands on an Explorer in a business app (e.g. Campaigns Manager), a view
@@ -202,13 +213,13 @@ choice — see open points (injectable sub-panels are out of scope for this vers
 
 ## Open points
 
-| Subject                                                    | Status                                                                                                                |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| Feature flag activation                                    | Implemented as `enableViewSettings` (Application schema); to remove at the end of the EPIC                            |
-| Admin/user permission check                                | Direct GraphQL call on `libraryId` from `PanelViewSettings` (`getPermissionEditViewOnLibrary.graphql`)                |
-| View persistence endpoint (GraphQL or REST)                | To confirm                                                                                                            |
-| User filters in the volet / `onFiltersChange` write-back   | Explorer→outside notification done (`useNotifyFiltersChange`); writing changes back into `currentView` deferred — WIP |
-| Multi-attribute sort & filters in `viewV2ToSerializedView` | `sort`/`filters` left empty for now — viewV2 tabs WIP, follow-up tickets                                              |
-| Injectable sub-panels (Planning/Cadrage)                   | Out of scope — strategy not yet settled                                                                               |
-| AMP compatibility (not on app-studio)                      | Blocking for AMP → app-studio migration — to validate w/ Sam                                                          |
-| Shared view scope                                          | Currently global; per-group sharing planned for a later version                                                       |
+| Subject                                                    | Status                                                                                                                                                                                                   |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Feature flag activation                                    | Implemented as `enableViewSettings` (Application schema); to remove at the end of the EPIC                                                                                                               |
+| Admin/user permission check                                | Direct GraphQL call on `libraryId` from `PanelViewSettings` (`getPermissionEditViewOnLibrary.graphql`)                                                                                                   |
+| View persistence endpoint (GraphQL or REST)                | To confirm                                                                                                                                                                                               |
+| User filters in the volet / `onFiltersChange` write-back   | **Done (LEAVC-810)** — hub & spoke via `useControlledFilterStore`; lean filters in `currentView`; `onFiltersChange` reconciled into the hub. Real iframe postMessage push deferred (see 30/06 revision). |
+| Multi-attribute sort & filters in `viewV2ToSerializedView` | Shipped: pinned `sort` (LEAVC-851) and pinned lean `filters` (LEAVC-810) are serialized                                                                                                                  |
+| Injectable sub-panels (Planning/Cadrage)                   | Out of scope — strategy not yet settled                                                                                                                                                                  |
+| AMP compatibility (not on app-studio)                      | Blocking for AMP → app-studio migration — to validate w/ Sam                                                                                                                                             |
+| Shared view scope                                          | Currently global; per-group sharing planned for a later version                                                                                                                                          |

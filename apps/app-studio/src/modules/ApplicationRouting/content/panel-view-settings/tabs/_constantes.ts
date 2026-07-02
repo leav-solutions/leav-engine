@@ -18,5 +18,5 @@ export const VIEW_SETTINGS_TABS: readonly ViewSettingsTabConfig[] = SHARED_VIEW_
 }));
 
 // Tabs that host the admin "available attributes" gear in the shared TabHeader (rather than in a
-// dedicated section like Display). `filters` will join once the filters tab is wired (WIP placeholder).
-export const EDIT_AVAILABLE_ATTRIBUTES_IN_HEADER_TABS: ViewSettingsTab[] = ['sorts'];
+// dedicated section like Display). Both Sorts and Filters use the nested (multi-level) gear.
+export const EDIT_AVAILABLE_ATTRIBUTES_IN_HEADER_TABS: ViewSettingsTab[] = ['sorts', 'filters'];

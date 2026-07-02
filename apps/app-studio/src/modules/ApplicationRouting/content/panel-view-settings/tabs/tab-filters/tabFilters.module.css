@@ -1,0 +1,76 @@
+.tab {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-s) * 1px);
+    height: 100%;
+    min-height: 0;
+}
+
+/* The search input filters both the pinned and the unpinned lists by attribute label. */
+.search {
+    flex: 0 0 auto;
+}
+
+/* Mirrors tab-sorts' .lists: the pinned list, the divider and the unpinned list share one
+   small-gap grid container so the separator is not surrounded by oversized spacing. */
+.lists {
+    display: grid;
+    gap: calc(var(--general-spacing-s) * 1px);
+    overflow-y: auto;
+}
+
+.list {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    color: var(--general-utilities-text-primary);
+    overflow-y: auto;
+}
+
+/*
+ * KitFilter (behind CommonFilterItem) is capped at max-width: 200px and its label at
+ * max-width: min-content by design. The filter chip must instead be able to fill the row when it
+ * needs the space, so we lift those caps. The doubled selector (.filterChip.filterChip) raises
+ * specificity above the DS root rule without relying on stylesheet order or !important. Mirrors
+ * tab-sorts' .sortFilter.
+ */
+.filterChip.filterChip {
+    display: flex;
+    min-width: 0;
+    max-width: none;
+}
+
+/*
+ * Both the label and the value are capped at max-width: min-content by the DS, which truncates them
+ * even when the row has room. Let the label take the remaining space (ellipsis as a last resort) and
+ * let the value size to its content so it is never truncated.
+ */
+.filterChip :global(.kit-filter-label) {
+    /* min-width: 0 lets the flex item shrink below its content width so the ellipsis kicks in
+       instead of pushing the chip past the panel (which caused horizontal scroll). */
+    min-width: 0;
+    max-width: none;
+    /* The DS centers the chip text; left-align so short labels read naturally in the list. */
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.filterChip :global(.kit-filter-value) {
+    flex: 0 0 auto;
+    max-width: none;
+}
+
+.emptyBox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--general-colors-neutral-grey-400);
+    text-align: center;
+    padding: calc(var(--general-spacing-m) * 1px) 0;
+
+    :global(.ant-typography) {
+        color: var(--general-colors-neutral-grey-400);
+    }
+}

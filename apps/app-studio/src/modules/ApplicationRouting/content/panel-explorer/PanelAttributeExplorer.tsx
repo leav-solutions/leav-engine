@@ -122,11 +122,12 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
         },
     });
 
-    // The link pre-filter restricts the explorer to records linked to the parent record. It is
-    // `hidden`: applied to the requests but never shown in the filters UI.
+    // The link pre-filter restricts the explorer to records linked to the parent record. It is a FULL
+    // (`hidden: true`) through-filter — NOT lean-ified: it is injected by the host and consumed as-is by
+    // ExplorerV2's request (the discriminated `HiddenFullFilter` arm of `SerializedView.filters`).
     const linkPreFilter = {
         id: 'filter_to_linked_records',
-        hidden: true,
+        hidden: true as const,
         field: attributeSource,
         subField: 'id',
         attribute: {

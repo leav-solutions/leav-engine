@@ -126,6 +126,12 @@
             "pin": "Pin",
             "unpin": "Unpin"
         },
+        "filters": {
+            "manage_available": "Manage available attributes",
+            "search_placeholder": "Search...",
+            "pin": "Pin",
+            "unpin": "Unpin"
+        },
         "available_attributes": {
             "title": "Available attributes",
             "subtitle": "Select the attributes you want to make available to users",

@@ -22,6 +22,7 @@ const viewV2FilterSchema = z.object({
     attributes: z.array(z.string()).min(1),
     values: z.array(z.string().nullable()),
     condition: z.union([z.enum(AttributeCondition), z.enum(TreeCondition)]),
+    withEmptyValues: z.boolean().optional(),
 });
 
 const viewV2SortSchema = z.object({

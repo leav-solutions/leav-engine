@@ -34,6 +34,8 @@ export interface IViewV2Filter {
     attributes: string[];
     values: Array<string | null>;
     condition: AttributeCondition | TreeCondition;
+    // Optional (nullable in GraphQL) for backward compatibility with views stored before the field existed.
+    withEmptyValues?: boolean;
 }
 
 export interface IViewV2Sort {

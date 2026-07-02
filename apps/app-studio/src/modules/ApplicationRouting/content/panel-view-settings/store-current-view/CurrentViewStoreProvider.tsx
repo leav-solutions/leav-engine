@@ -94,7 +94,8 @@ export const CurrentViewStoreProvider = ({
     // The live (possibly unsaved) view, serialized for ExplorerV2's controlled `currentView` prop.
     // Gated on `!isEmptyView` so switching from a valid id to an unresolvable one drops the Explorer
     // back to its empty view instead of re-showing the previous view still held in the reducer — but
-    // the admin's synthetic default draft IS serialized so its edits preview live.
+    // the admin's synthetic default draft IS serialized so its edits preview live. The pinned user
+    // filters ARE serialized here (lean form) and travel through `currentView` (ADR-006 / LEAVC-810).
     const serializedView = useMemo(
         () => (view && (!isEmptyView || view.id === DEFAULT_DRAFT_VIEW_ID) ? viewV2ToSerializedView(view) : undefined),
         [view, isEmptyView],

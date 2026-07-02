@@ -16,6 +16,7 @@ import {type AppStudioInternalEvent} from '../../../types';
 
 type ViewDisplay = NonNullable<CurrentView>['display'];
 type ViewSorts = NonNullable<CurrentView>['sorts'];
+type ViewFilters = NonNullable<CurrentView>['filters'];
 
 const mapDisplay = (display: ViewDisplay) => ({
     type: display.type,
@@ -30,6 +31,17 @@ const mapSorts = (sorts: ViewSorts) =>
         attributes: sort.attributes.map(attribute => attribute.id),
         order: sort.order,
         pinned: sort.pinned,
+    }));
+
+// `ViewV2FilterInput` carries the attribute path as bare ids; condition+values hold the persisted
+// filter config. Mirror of `mapSorts`.
+const mapFilters = (filters: ViewFilters) =>
+    filters.map(filter => ({
+        attributes: filter.attributes.map(attribute => attribute.id),
+        condition: filter.condition,
+        values: filter.values,
+        pinned: filter.pinned,
+        withEmptyValues: filter.withEmptyValues ?? false,
     }));
 
 export const useCurrentViewActions = () => {
@@ -70,6 +82,7 @@ export const useCurrentViewActions = () => {
                         label: view.label,
                         display: mapDisplay(view.display),
                         sorts: mapSorts(view.sorts),
+                        filters: mapFilters(view.filters),
                         shortcuts: view.shortcuts,
                     },
                 },
@@ -108,7 +121,7 @@ export const useCurrentViewActions = () => {
                         label: Object.fromEntries(lang.map(language => [language, name])),
                         shared: false,
                         display: mapDisplay(view.display),
-                        filters: [],
+                        filters: mapFilters(view.filters),
                         sorts: mapSorts(view.sorts),
                         shortcuts: view.shortcuts,
                     },

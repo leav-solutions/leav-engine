@@ -15,6 +15,7 @@ import {
     type IUIFilterValueList,
     type FiltersOperator,
     isUIFilterLinkWithValueList,
+    isUIFilterLinkWithSmartFilter,
     isUIFilterWithSmartFilter,
     type IUIFilterSmartFiler,
 } from './_types';
@@ -97,10 +98,13 @@ const _addValuesListForFilters = (valuesList: string[]): RecordFilterInput[] => 
 const _generateConditionsFromMultipleValues = (
     filter: IUIFilterTree | IUIFilterValueList | IUIFilterSmartFiler,
 ): RecordFilterInput[] => {
-    const value = filter.value;
+    // `value` is contractually `string[]` for tree / values-list / smart filters, but a smart filter on a
+    // link/standard attribute can be seeded (toUIFilters) with a scalar string. Normalize so we never call
+    // `.forEach` on a non-array (would throw "value.forEach is not a function").
+    const value = Array.isArray(filter.value) ? filter.value : filter.value == null ? [] : [filter.value];
     const nodes = isUIFilterTree(filter) ? filter.nodes : undefined;
 
-    if (!value || value.length === 0) {
+    if (value.length === 0) {
         return [];
     }
     const filtersWithOperators: RecordFilterInput[] = [];
@@ -217,8 +221,23 @@ export const prepareFiltersForRequest = (
                         ? `${filter.field}.${filter.subField}`
                         : filter.field;
 
-                // When a link attribute has a values list, we must filter on the linked record id
-                if (isUIFilterLinkWithValueList(filter) && typeof field === 'string' && !field.endsWith('.id')) {
+                // A smart filter with a `through` reaches its values on a sub-attribute of the linked
+                // record, so the query must target `<attribute>.<through>.id` (e.g.
+                // campaigns_structure_items.structure_items_thematic.id). `through` is attribute metadata,
+                // so we derive the path from it — correct whether the stored filter kept the through
+                // segment (reclassified as a through filter) or dropped it (a plain link smart filter).
+                // This mirrors the addFilter reducer, which builds the same path for a freshly-added filter.
+                if (isUIFilterWithSmartFilter(filter) && filter.attribute.smartFilter?.through) {
+                    field = `${filter.attribute.id}.${filter.attribute.smartFilter.through.id}.id`;
+                } else if (
+                    // A link values-list / through-less smart filter → the value is the linked record id,
+                    // so filter on `<field>.id` (a bare link field filters on the record's identity, not
+                    // its id — returning nothing). addFilter appends `.id` on add, but a ViewV2 round-trip
+                    // strips it (the stored path drops `.id` segments), so we re-apply it here.
+                    (isUIFilterLinkWithValueList(filter) || isUIFilterLinkWithSmartFilter(filter)) &&
+                    typeof field === 'string' &&
+                    !field.endsWith('.id')
+                ) {
                     field = `${field}.id`;
                 }
 

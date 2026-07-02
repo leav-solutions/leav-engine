@@ -33,5 +33,15 @@ fragment AppStudioViewSettingsView on ViewV2 {
         order
         pinned
     }
+    filters {
+        attributes {
+            id
+            label
+        }
+        condition
+        values
+        pinned
+        withEmptyValues
+    }
     shortcuts
 }

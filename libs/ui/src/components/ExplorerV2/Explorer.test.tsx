@@ -934,16 +934,10 @@ describe('Explorer', () => {
                     currentView={{
                         filters: [
                             {
-                                id: '',
-                                attribute: {
-                                    id: '',
-                                    format: simpleMockAttribute.format,
-                                    label: simpleMockAttribute.label.fr,
-                                    type: simpleMockAttribute.type,
-                                },
-                                field: simpleMockAttribute.id,
+                                attributes: [{id: simpleMockAttribute.id}],
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Christmas',
+                                values: ['Christmas'],
+                                pinned: true,
                             },
                         ],
                     }}
@@ -959,30 +953,26 @@ describe('Explorer', () => {
                     showFilters
                     currentView={{
                         filters: [
+                            // Masked pre-filter: stays a FULL `hidden` filter (not lean) → never shown.
                             {
-                                id: '',
+                                id: 'hidden_filter',
                                 attribute: {
-                                    id: '',
+                                    id: simpleMockAttribute.id,
                                     format: simpleMockAttribute.format,
                                     label: simpleMockAttribute.label.fr,
                                     type: simpleMockAttribute.type,
                                 },
-                                hidden: true,
+                                hidden: true as const,
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas',
                             },
+                            // Lean user filter → shown.
                             {
-                                id: '',
-                                attribute: {
-                                    id: '',
-                                    format: booleanMockAttribute.format,
-                                    label: booleanMockAttribute.label.fr,
-                                    type: booleanMockAttribute.type,
-                                },
-                                field: booleanMockAttribute.id,
+                                attributes: [{id: booleanMockAttribute.id}],
                                 condition: gqlTypes.RecordFilterCondition.EQUAL,
-                                value: 'true',
+                                values: ['true'],
+                                pinned: true,
                             },
                         ],
                     }}
@@ -1000,16 +990,10 @@ describe('Explorer', () => {
                     currentView={{
                         filters: [
                             {
-                                id: '',
-                                attribute: {
-                                    id: simpleMockAttribute.id,
-                                    format: simpleMockAttribute.format,
-                                    label: simpleMockAttribute.label.fr,
-                                    type: simpleMockAttribute.type,
-                                },
-                                field: simpleMockAttribute.id,
+                                attributes: [{id: simpleMockAttribute.id}],
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Christmas',
+                                values: ['Christmas'],
+                                pinned: true,
                             },
                         ],
                     }}
@@ -2081,16 +2065,10 @@ describe('Explorer', () => {
                     currentView={{
                         filters: [
                             {
-                                id: '',
-                                attribute: {
-                                    id: 'simple_attribute',
-                                    format: simpleMockAttribute.format,
-                                    label: simpleMockAttribute.label.fr,
-                                    type: simpleMockAttribute.type,
-                                },
-                                field: simpleMockAttribute.id,
+                                attributes: [{id: simpleMockAttribute.id}],
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Christmas',
+                                values: ['Christmas'],
+                                pinned: true,
                             },
                         ],
                         sort: [
@@ -2142,28 +2120,16 @@ describe('Explorer', () => {
                         filtersOperator: 'OR',
                         filters: [
                             {
-                                id: '',
-                                attribute: {
-                                    id: '',
-                                    format: simpleMockAttribute.format,
-                                    label: simpleMockAttribute.label.fr,
-                                    type: simpleMockAttribute.type,
-                                },
-                                field: simpleMockAttribute.id,
+                                attributes: [{id: simpleMockAttribute.id}],
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Christmas',
+                                values: ['Christmas'],
+                                pinned: true,
                             },
                             {
-                                id: '',
-                                attribute: {
-                                    id: '',
-                                    format: simpleMockAttribute.format,
-                                    label: simpleMockAttribute.label.fr,
-                                    type: simpleMockAttribute.type,
-                                },
-                                field: simpleMockAttribute.id,
+                                attributes: [{id: simpleRichTextMockAttribute.id}],
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Test',
+                                values: ['Test'],
+                                pinned: true,
                             },
                         ],
                         sort: [
@@ -2191,7 +2157,7 @@ describe('Explorer', () => {
                             },
                             {operator: 'OR'},
                             {
-                                field: simpleMockAttribute.id,
+                                field: simpleRichTextMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Test',
                             },
@@ -2201,7 +2167,12 @@ describe('Explorer', () => {
             );
         });
 
-        test('should handle filters with empty values flag', async () => {
+        // NOTE: the `withEmptyValues` ("Non défini") flag is LIVE-ONLY — it cannot be seeded through the
+        // controlled view (the lean `SerializedFilter` carries no such flag; it is set transiently via the
+        // tree/value dropdown). Its IS_EMPTY query wrapping is covered at the `prepareFiltersForRequest`
+        // unit level. Here we assert the lean round-trip: a lean filter produces a plain (un-wrapped)
+        // condition in the request.
+        test('seeds a lean filter into the records request as a plain condition', async () => {
             const spy = vi
                 .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
                 .mockImplementation(
@@ -2218,17 +2189,10 @@ describe('Explorer', () => {
                     currentView={{
                         filters: [
                             {
-                                id: '',
-                                attribute: {
-                                    id: 'simple_attribute',
-                                    format: simpleMockAttribute.format,
-                                    label: simpleMockAttribute.label.fr,
-                                    type: simpleMockAttribute.type,
-                                },
-                                field: simpleMockAttribute.id,
+                                attributes: [{id: simpleMockAttribute.id}],
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Christmas',
-                                withEmptyValues: true,
+                                values: ['Christmas'],
+                                pinned: true,
                             },
                         ],
                     }}
@@ -2239,24 +2203,91 @@ describe('Explorer', () => {
             expect(toolbar).toBeVisible();
             expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
 
-            // Verify the query was called with the correct filters including IS_EMPTY condition
             expect(spy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: expect.objectContaining({
                         filters: [
-                            {operator: gqlTypes.RecordFilterOperator.OPEN_BRACKET},
                             {
                                 field: simpleMockAttribute.id,
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
                                 value: 'Christmas',
                             },
-                            {operator: gqlTypes.RecordFilterOperator.OR},
+                        ],
+                    }),
+                }),
+            );
+        });
+
+        // (d) Seeding the controlled filters is NOT a user edit → the host must never be notified, or the
+        // view would read as dirty on load. The store's echo-suppression (lastSyncedLeanRef) guarantees it.
+        test('does not emit onFiltersChange when seeding the controlled filters (echo-suppressed)', async () => {
+            const onFiltersChange = vi.fn();
+            render(
+                <ExplorerV2
+                    entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                    showFilters
+                    currentView={{
+                        filters: [
+                            {
+                                attributes: [{id: simpleMockAttribute.id}],
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                values: ['Christmas'],
+                                pinned: true,
+                            },
+                        ],
+                    }}
+                    defaultCallbacks={{viewSettings: {onFiltersChange}}}
+                />,
+            );
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
+            // Let any pending effects settle, then assert no spurious emission.
+            await waitFor(() => expect(toolbar).toBeVisible());
+            expect(onFiltersChange).not.toHaveBeenCalled();
+        });
+
+        // (f) Standalone usage (no host callback): the store still seeds and feeds the records request.
+        test('seeds and queries records with no onFiltersChange callback (standalone)', () => {
+            const spy = vi
+                .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+                .mockImplementation(
+                    ({variables}) =>
+                        (Array.isArray(variables?.filters) && variables.filters.length
+                            ? mockExplorerLibraryDataQueryResultWithFilters
+                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult,
+                );
+
+            expect(() =>
+                render(
+                    <ExplorerV2
+                        entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                        showFilters
+                        currentView={{
+                            filters: [
+                                {
+                                    attributes: [{id: simpleMockAttribute.id}],
+                                    condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                    values: ['Christmas'],
+                                    pinned: true,
+                                },
+                            ],
+                        }}
+                    />,
+                ),
+            ).not.toThrow();
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
+            expect(spy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining({
+                        filters: [
                             {
                                 field: simpleMockAttribute.id,
-                                condition: gqlTypes.RecordFilterCondition.IS_EMPTY,
-                                value: null,
+                                condition: gqlTypes.RecordFilterCondition.CONTAINS,
+                                value: 'Christmas',
                             },
-                            {operator: gqlTypes.RecordFilterOperator.CLOSE_BRACKET},
                         ],
                     }),
                 }),
@@ -2493,16 +2524,10 @@ describe('Explorer', () => {
                     currentView={{
                         filters: [
                             {
-                                id: '',
-                                attribute: {
-                                    id: '',
-                                    format: simpleMockAttribute.format,
-                                    label: simpleMockAttribute.label.fr,
-                                    type: simpleColorMockAttribute.type,
-                                },
-                                field: simpleMockAttribute.id,
+                                attributes: [{id: simpleMockAttribute.id}],
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Christmas',
+                                values: ['Christmas'],
+                                pinned: true,
                             },
                         ],
                         sort: [
@@ -2614,16 +2639,10 @@ describe('Explorer', () => {
                     currentView={{
                         filters: [
                             {
-                                id: '',
-                                attribute: {
-                                    id: '',
-                                    format: simpleMockAttribute.format,
-                                    label: simpleMockAttribute.label.fr,
-                                    type: simpleMockAttribute.type,
-                                },
-                                field: simpleMockAttribute.id,
+                                attributes: [{id: simpleMockAttribute.id}],
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Christmas',
+                                values: ['Christmas'],
+                                pinned: true,
                             },
                         ],
                         sort: [
@@ -3090,28 +3109,18 @@ describe('Explorer', () => {
                         attributesIds: [simpleMockAttribute.id, simpleColorMockAttribute.id, booleanMockAttribute.id],
                         filters: [
                             {
-                                id: '123',
-                                attribute: {
-                                    id: '123',
-                                    format: simpleMockAttribute.format,
-                                    label: simpleMockAttribute.label.fr,
-                                    type: simpleMockAttribute.type,
-                                },
-                                field: simpleMockAttribute.id,
+                                attributes: [{id: simpleMockAttribute.id}],
                                 condition: gqlTypes.RecordFilterCondition.CONTAINS,
-                                value: 'Christmas',
+                                values: ['Christmas'],
+                                pinned: true,
                             },
+                            // booleanMockAttribute has access_attribute:false in the permissions mock →
+                            // the converter drops it (warns) → not shown in the toolbar.
                             {
-                                id: '456',
-                                attribute: {
-                                    id: '456',
-                                    format: booleanMockAttribute.format,
-                                    label: booleanMockAttribute.label.fr,
-                                    type: booleanMockAttribute.type,
-                                },
-                                field: booleanMockAttribute.id,
+                                attributes: [{id: booleanMockAttribute.id}],
                                 condition: gqlTypes.RecordFilterCondition.EQUAL,
-                                value: 'true',
+                                values: ['true'],
+                                pinned: true,
                             },
                         ],
                     }}
@@ -3415,77 +3424,6 @@ describe('Explorer', () => {
                     variables: expect.objectContaining(expectedFiltersWithValuesList),
                 }),
             );
-        });
-    });
-
-    describe('onFiltersChange callback', () => {
-        const initialFilter = {
-            id: 'filter-1',
-            attribute: {
-                id: simpleMockAttribute.id,
-                format: simpleMockAttribute.format,
-                label: simpleMockAttribute.label.fr,
-                type: simpleMockAttribute.type,
-            },
-            field: simpleMockAttribute.id,
-            condition: gqlTypes.RecordFilterCondition.CONTAINS,
-            value: 'test',
-        };
-
-        const mockAttributeDetails = {
-            attributeDetailsById: {
-                [simpleMockAttribute.id]: {
-                    id: simpleMockAttribute.id,
-                    type: simpleMockAttribute.type,
-                    format: simpleMockAttribute.format,
-                    label: simpleMockAttribute.label.fr,
-                },
-            },
-            isLoading: false,
-            onSearchChanged: vi.fn(),
-            searchFilteredColumnsIds: [simpleMockAttribute.id],
-        };
-
-        test('is not called on initial render', () => {
-            const onFiltersChange = vi.fn();
-
-            render(
-                <ExplorerV2
-                    entrypoint={{type: 'library', libraryId: 'campaigns'}}
-                    defaultMassActions={[]}
-                    defaultCallbacks={{viewSettings: {onFiltersChange}}}
-                />,
-            );
-
-            expect(onFiltersChange).not.toHaveBeenCalled();
-        });
-
-        // TODO: la suppression d'un filtre depuis la toolbar (et la gestion des filtres en général)
-        // sera traitée dans un autre ticket. La logique du hook useNotifyFiltersChange est déjà
-        // couverte par useNotifyFiltersChange.test.tsx.
-        test.skip('is called with current filters when a filter is removed from the toolbar', async () => {
-            const onFiltersChange = vi.fn();
-
-            vi.spyOn(attributeDetailsModule, 'useAttributeDetailsData').mockReturnValue(mockAttributeDetails as any);
-
-            render(
-                <ExplorerV2
-                    entrypoint={{type: 'library', libraryId: 'campaigns'}}
-                    showFilters
-                    defaultMassActions={[]}
-                    currentView={{filters: [initialFilter]}}
-                    defaultCallbacks={{viewSettings: {onFiltersChange}}}
-                />,
-            );
-
-            await user.click(screen.getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)}));
-            await user.click(await screen.findByRole('button', {name: /global\.delete/}));
-
-            await waitFor(() => {
-                expect(onFiltersChange).toHaveBeenCalledWith(
-                    expect.objectContaining({filters: [], filtersOperator: 'AND'}),
-                );
-            });
         });
     });
 

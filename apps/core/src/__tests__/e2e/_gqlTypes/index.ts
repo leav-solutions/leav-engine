@@ -754,6 +754,7 @@ export enum PermissionsActions {
   edit_children = 'edit_children',
   edit_record = 'edit_record',
   edit_value = 'edit_value',
+  manage_views = 'manage_views',
   set_value = 'set_value'
 }
 
@@ -1199,6 +1200,7 @@ export type ViewV2FilterInput = {
   condition: RecordFilterCondition;
   pinned: Scalars['Boolean']['input'];
   values: Array<InputMaybe<Scalars['String']['input']>>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum ViewV2Shortcut {
@@ -1506,7 +1508,7 @@ export type GetViewsV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, attributes: Array<{ id: string }> }>, sorts: Array<{ pinned: boolean, order: SortOrder, attributes: Array<{ id: string }> }> }> } };
+export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, withEmptyValues?: boolean | null, attributes: Array<{ id: string }> }>, sorts: Array<{ pinned: boolean, order: SortOrder, attributes: Array<{ id: string }> }> }> } };
 
 export type GetViewV2QueryVariables = Exact<{
   viewId: Scalars['ID']['input'];
@@ -2049,6 +2051,7 @@ export const GetViewsV2Document = gql`
         }
         values
         condition
+        withEmptyValues
       }
       sorts {
         pinned
