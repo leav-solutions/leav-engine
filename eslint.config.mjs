@@ -9,6 +9,7 @@ export default defineConfig([
             '**/*.{js,jsx,cjs,mjs}',
             '**/_gqlTypes/**',
             '**/dist/**',
+            '**/dist-spec/**',
             '**/dist-types/**',
             '**/plugins/**',
             '**/__generated__/**',
@@ -54,13 +55,8 @@ export default defineConfig([
             'jsx-a11y/media-has-caption': 'off',
             'jsx-a11y/iframe-has-title': 'off',
             // react-hooks v7 (incl. the new React Compiler rules)
-            'react-hooks/rules-of-hooks': 'off',
             'react-hooks/preserve-manual-memoization': 'off',
             'react-hooks/refs': 'off',
-            'react-hooks/immutability': 'off',
-            'react-hooks/purity': 'off',
-            'react-hooks/globals': 'off',
-            'react-hooks/static-components': 'off',
         },
     },
     /**
@@ -143,7 +139,6 @@ export default defineConfig([
             'no-console': 'error',
             'no-eval': 'error',
             'no-extra-bind': 'error',
-            'no-fallthrough': 'off',
             'no-irregular-whitespace': 'off',
             'no-new-func': 'error',
             'no-new-wrappers': 'error',
@@ -158,7 +153,6 @@ export default defineConfig([
             'one-var': ['error', 'never'],
             'prefer-object-spread': 'error',
             radix: 'error',
-            'valid-typeof': 'off',
             // Downgraded to warn for the migration: react-refresh 0.5.0 is stricter
             // Restore to 'error' after cleanup.
             'react-refresh/only-export-components': [
