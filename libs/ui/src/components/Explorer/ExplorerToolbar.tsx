@@ -44,6 +44,7 @@ export const ExplorerToolbar: FunctionComponent<{
     canRemoveFilters: boolean;
     selectAllButton: ReactNode | null;
     viewSettingsLoading: boolean;
+    children?: ReactNode;
 }> = ({
     isMassSelectionAll,
     showFilters,

@@ -24,7 +24,7 @@ export const RecordIdCard: FunctionComponent<{
         data?.whoAmI?.preview?.small || data?.whoAmI?.label
             ? {
                   shape: 'square',
-                  src: data?.whoAmI?.preview?.small,
+                  src: data?.whoAmI?.preview?.small as string,
                   label: data?.whoAmI?.label,
                   size: avatarSize,
               }

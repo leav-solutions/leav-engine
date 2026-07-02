@@ -1,4 +1,4 @@
-import {type FunctionComponent, useEffect, useState} from 'react';
+import {type FunctionComponent, type PropsWithChildren, useEffect, useState} from 'react';
 import {type $ZodIssue} from 'zod/v4/core';
 import {useTranslation} from 'react-i18next';
 import {ErrorDisplay, Loading, usePanelEventHandlers} from '@leav/ui';
@@ -9,7 +9,7 @@ import {APP_ENDPOINT} from '../../../constants';
 import {ApplicationSettingsContext} from './ApplicationSettingsContext';
 import {updatePanelViewSettingsInApplication} from '../../../modules/ApplicationRouting/utils/updatePanelViewSettingsInApplication';
 
-export const InitApplicationSettingProvider: FunctionComponent = ({children}) => {
+export const InitApplicationSettingProvider: FunctionComponent<PropsWithChildren> = ({children}) => {
     const {t} = useTranslation();
 
     const {

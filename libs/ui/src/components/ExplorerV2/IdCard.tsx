@@ -13,7 +13,7 @@ export const IdCard: FunctionComponent<IIdCardProps> = ({item}) => {
     const avatarProps: IKitAvatar = {label: itemLabel};
 
     if (preview) {
-        avatarProps.src = preview.small;
+        avatarProps.src = preview.small as string;
     }
 
     return (

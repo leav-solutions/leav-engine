@@ -16,7 +16,7 @@ function AttributesList(): JSX.Element {
     }
 
     if (error) {
-        return <div className="error">ERROR {error}</div>;
+        return <div className="error">ERROR {error.message}</div>;
     }
 
     return (

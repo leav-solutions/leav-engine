@@ -1,9 +1,9 @@
 import {useGetUserIdentityQuery} from '../../__generated__';
 import {type IUserContext, UserContext} from '@leav/ui';
-import {type FunctionComponent, useEffect, useMemo} from 'react';
+import {type FunctionComponent, type PropsWithChildren, useEffect, useMemo} from 'react';
 import {matomo} from '../../services/analytics';
 
-export const InitUser: FunctionComponent = ({children}) => {
+export const InitUser: FunctionComponent<PropsWithChildren> = ({children}) => {
     const {data: userData, error, loading} = useGetUserIdentityQuery();
 
     useEffect(() => {

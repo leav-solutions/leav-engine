@@ -45,6 +45,7 @@ export const ExplorerToolbar: FunctionComponent<{
     selectAllButton: ReactNode | null;
     viewSettingsLoading: boolean;
     onSortClick?: () => void;
+    children?: ReactNode;
 }> = ({
     isMassSelectionAll,
     showFilters,

@@ -14,14 +14,14 @@ import {onError} from '@apollo/link-error';
 import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {createUploadLink} from 'apollo-upload-client';
 import {CloseCode, createClient} from 'graphql-ws';
-import {type FunctionComponent} from 'react';
+import {type FunctionComponent, type PropsWithChildren} from 'react';
 import {useTranslation} from 'react-i18next';
 import {addInfo} from '../../../reduxStore/infos';
 import {useAppDispatch} from '../../../reduxStore/store';
 import {type IInfo, InfoChannel, InfoType} from '../../../_types/types';
 import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../../constants';
 
-const ApolloHandler: FunctionComponent = ({children}) => {
+const ApolloHandler: FunctionComponent<PropsWithChildren> = ({children}) => {
     const {t, i18n} = useTranslation();
     const dispatch = useAppDispatch();
     const {checkAuthOrRedirectToLogin} = useRedirectToLogin();

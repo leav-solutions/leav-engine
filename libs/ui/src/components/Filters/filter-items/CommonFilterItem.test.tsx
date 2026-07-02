@@ -4,7 +4,7 @@ import {CommonFilterItem} from './CommonFilterItem';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {AttributeType, RecordFilterCondition, type TreeDataQueryQueryHookResult} from '_ui/_gqlTypes';
 import {AttributeConditionFilter} from '_ui/types';
-import {type FunctionComponent, useReducer} from 'react';
+import {type FunctionComponent, type PropsWithChildren, useReducer} from 'react';
 import dayjs from 'dayjs';
 import {conditionsByFormat} from '../filter-items/filter-type/useConditionOptionsByType';
 import userEvent from '@testing-library/user-event';
@@ -20,7 +20,10 @@ const getAllConditionOptions = (base: ReturnType<typeof render>['baseElement']) 
 
 const filtersReducer = filtersReducerBase(null);
 
-const MockFiltersContextProvider: FunctionComponent<{viewMock: IUIFiltersState}> = ({viewMock, children}) => {
+const MockFiltersContextProvider: FunctionComponent<PropsWithChildren<{viewMock: IUIFiltersState}>> = ({
+    viewMock,
+    children,
+}) => {
     const [filtersData, dispatch] = useReducer(filtersReducer, viewMock);
     return <FiltersContext.Provider value={{filtersData, dispatch}}>{children}</FiltersContext.Provider>;
 };

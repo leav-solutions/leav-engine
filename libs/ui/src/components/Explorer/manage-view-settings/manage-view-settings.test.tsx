@@ -1,4 +1,4 @@
-import {type FunctionComponent} from 'react';
+import {type FunctionComponent, type PropsWithChildren} from 'react';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {type Mockify} from '_ui/__mocks__/utils';
@@ -32,15 +32,16 @@ const MockOpenEditSettings: FunctionComponent = () => {
     );
 };
 
-const MockViewSettingsContextProvider: FunctionComponent<{defaultSettings?: DefaultViewSettings}> = ({
-    defaultSettings,
-    children,
-}) => {
+const MockViewSettingsContextProvider: FunctionComponent<
+    PropsWithChildren<{defaultSettings?: DefaultViewSettings}>
+> = ({defaultSettings, children}) => {
     const {view, dispatch} = useViewSettingsReducer({type: 'library', libraryId: 'my_lib'}, defaultSettings, false);
     return <ViewSettingsContext.Provider value={{view, dispatch}}>{children}</ViewSettingsContext.Provider>;
 };
 
-const MockFilterscontextProvider: FunctionComponent<{defaultSettings?: DefaultViewSettings}> = ({children}) => {
+const MockFilterscontextProvider: FunctionComponent<PropsWithChildren<{defaultSettings?: DefaultViewSettings}>> = ({
+    children,
+}) => {
     const {filtersData, dispatch} = useFiltersReducer({libraryId: 'my_lib', skip: false});
     return <FiltersContext.Provider value={{filtersData, dispatch}}>{children}</FiltersContext.Provider>;
 };

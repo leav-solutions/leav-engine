@@ -1,4 +1,4 @@
-import {type FunctionComponent, useCallback, useEffect, useRef, useState} from 'react';
+import {type FunctionComponent, type PropsWithChildren, useCallback, useEffect, useRef, useState} from 'react';
 import {useMatch, useNavigate, useParams} from 'react-router-dom';
 import cn from 'classnames';
 import {Explorer, SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
@@ -27,7 +27,7 @@ import {consumePanelCloseCallback} from './utils/panelCloseCallbacks';
 
 const MODAL_FULLSCREEN_INDEX = 998;
 
-export const PanelContainer: FunctionComponent = ({children}) => {
+export const PanelContainer: FunctionComponent<PropsWithChildren> = ({children}) => {
     const [modalExtraRightElement, setModalExtraRightElement] = useState<HTMLElement>();
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =

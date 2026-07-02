@@ -1,4 +1,4 @@
-import {type FunctionComponent, useEffect, useState} from 'react';
+import {type FunctionComponent, type PropsWithChildren, useEffect, useState} from 'react';
 import {LangContext, Loading, useAppLang as useGetDefaultLang} from '@leav/ui';
 import {initI18n, i18n} from './initI18n';
 import {useGetLanguagesQuery} from '../../__generated__';
@@ -7,7 +7,7 @@ import 'dayjs/locale/en';
 import 'dayjs/locale/fr';
 import {getLanguageRadical, userLanguage} from './utils';
 
-export const InitTranslation: FunctionComponent = ({children}) => {
+export const InitTranslation: FunctionComponent<PropsWithChildren> = ({children}) => {
     const {data: availableLangs, loading: langsLoading, error: langsError} = useGetLanguagesQuery();
     const {lang, loading, error} = useGetDefaultLang();
 

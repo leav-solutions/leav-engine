@@ -16,11 +16,11 @@ import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {message} from 'antd';
 import fetch from 'cross-fetch';
 import {CloseCode, createClient} from 'graphql-ws';
-import {type FunctionComponent, useMemo} from 'react';
+import {type FunctionComponent, type PropsWithChildren, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
 import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
 
-const ApolloHandler: FunctionComponent = ({children}) => {
+const ApolloHandler: FunctionComponent<PropsWithChildren> = ({children}) => {
     const {t} = useTranslation();
     const {checkAuthOrRedirectToLogin} = useRedirectToLogin();
 

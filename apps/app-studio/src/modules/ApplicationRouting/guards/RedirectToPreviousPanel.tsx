@@ -1,10 +1,10 @@
-import {type FunctionComponent} from 'react';
+import {type FunctionComponent, type PropsWithChildren} from 'react';
 import {Navigate, useParams} from 'react-router-dom';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {RelativePaths} from '../router/paths';
 
-export const RedirectToPreviousPanel: FunctionComponent = ({children}) => {
+export const RedirectToPreviousPanel: FunctionComponent<PropsWithChildren> = ({children}) => {
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
         useParams();

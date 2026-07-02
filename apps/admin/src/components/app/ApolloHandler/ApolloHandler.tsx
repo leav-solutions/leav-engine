@@ -17,7 +17,7 @@ import {getMainDefinition} from '@apollo/client/utilities';
 import fetch from 'cross-fetch';
 import {CloseCode, createClient} from 'graphql-ws';
 import useRedirectToLogin from '../../../hooks/useRedirectToLogin';
-import {type FunctionComponent} from 'react';
+import {type FunctionComponent, type PropsWithChildren} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
 import {endMutation, startMutation} from '../../../reduxStore/mutationsWatcher/mutationsWatcher';
@@ -30,7 +30,7 @@ const gqlPossibleTypes: PossibleTypesMap = {
     GenericValue: ['Value', 'LinkValue', 'TreeValue'],
 };
 
-const ApolloHandler: FunctionComponent = ({children}) => {
+const ApolloHandler: FunctionComponent<PropsWithChildren> = ({children}) => {
     const dispatch = useDispatch();
     const {t, i18n} = useTranslation();
     const {checkAuthOrRedirectToLogin} = useRedirectToLogin();
