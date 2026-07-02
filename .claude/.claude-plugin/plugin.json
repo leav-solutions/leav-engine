@@ -1,0 +1,14 @@
+{
+    "name": "leav-tools",
+    "displayName": "ARiSTiD LEAV Tools",
+    "version": "1.0.0",
+    "description": "Skills Claude Code pour les workflows LEAV.",
+    "author": {
+        "name": "ARiSTiD Dev"
+    },
+    "homepage": "https://gitlab.aristid.com/dev/leav/leav",
+    "repository": "https://gitlab.aristid.com/dev/leav/leav",
+    "license": "UNLICENSED",
+    "keywords": ["aristid", "leav"],
+    "skills": "./skills/"
+}
