@@ -69,6 +69,7 @@ export const iframePanelSchema = z.object({
         .object({
             width: z.string().optional(),
             height: z.string().optional(),
+            shouldCloseOnOverlayClick: z.boolean().optional(),
         })
         .optional(),
 });

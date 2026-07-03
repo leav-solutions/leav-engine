@@ -97,6 +97,7 @@ export const PanelContainer: FunctionComponent<PropsWithChildren> = ({children})
             : {};
         const popupProps = {
             useChildrenOnly: undefined,
+            shouldCloseOnOverlayClick: true,
             width: isCreationFormPanel ? 'revert-layer' : '70vw', // Use revert-layer to inherit the width from the popupCreationOverlay (as modal use html with style attribute)
             height: isCreationFormPanel ? 'revert-layer' : '70vh', // Use revert-layer to inherit the height from the popupCreationOverlay (as modal use html with style attribute)
         };
@@ -104,6 +105,8 @@ export const PanelContainer: FunctionComponent<PropsWithChildren> = ({children})
         if (currentPanel.type === 'custom' && currentPanel.popupProps) {
             popupProps.width = currentPanel.popupProps.width ?? popupProps.width;
             popupProps.height = currentPanel.popupProps.height ?? popupProps.height;
+            popupProps.shouldCloseOnOverlayClick =
+                currentPanel.popupProps.shouldCloseOnOverlayClick ?? popupProps.shouldCloseOnOverlayClick;
             popupProps.useChildrenOnly = currentPanel.isSelfContaining ?? undefined;
         }
 
@@ -111,7 +114,8 @@ export const PanelContainer: FunctionComponent<PropsWithChildren> = ({children})
         return (
             <KitModal
                 isOpen
-                showCloseIcon={!hasPanelInFullpageAfterPopup}
+                // shouldCloseOnOverlayClick has no effect if showCloseIcon = true
+                showCloseIcon={!hasPanelInFullpageAfterPopup && popupProps.shouldCloseOnOverlayClick}
                 className={cn({
                     [centerPopup]: isPanelInPopup,
                     [centerPopupForCreationForm]: isCreationFormPanel,
