@@ -6,8 +6,11 @@ concepts below — read this first.
 
 ## How to authenticate
 
-Every API call needs the user's **apiKey** — the same key they use in the LEAV UI. It scopes
-permissions and attributes every action to that user, so always require it.
+Authentication is handled by the runtime, not by you: the user's **apiKey** — the same key they use
+in the LEAV UI — is validated once per request from the connection's `Authorization` header and
+forwarded to LEAV automatically. It scopes permissions and attributes every action to that user.
+You do **not** pass an apiKey as a tool argument, and you must **not** ask the user for one: if a
+call is rejected for authentication, the key is missing or invalid in their client configuration.
 
 ## Static vs dynamic schema
 

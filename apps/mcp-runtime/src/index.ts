@@ -17,6 +17,7 @@ import {
     graphqlSchemaGuideToolName,
     schemaGuideHandler,
 } from './tools/schemaGuide';
+import {createApiKeyValidator, createAuthMiddleware} from './auth/apiKeyAuth';
 
 const PORT = Number(process.env.PORT ?? 3000);
 const CORE_URL = process.env.CORE_URL;
@@ -31,11 +32,19 @@ const app = express();
 // express.json() parses the request body — required for MCP POST messages
 app.use(express.json());
 
+// Every /mcp request must carry a valid LEAV apiKey as `Authorization: ApiKey <apiKey>`.
+// The key is validated against core (reusing core's own auth) before any MCP handling, and the
+// validated key is stashed on res.locals for the per-request tool handlers to forward to core.
+const authenticate = createAuthMiddleware(createApiKeyValidator(CORE_URL));
+
 // MCP endpoint — handles both POST (tool calls) and GET (SSE event stream for notifications)
 // One new McpServer + transport pair is created per request: this is intentional.
 // Stateless design means any K8s pod can handle any request without shared session state.
 // The cost is negligible: McpServer is just a JavaScript object with a tool registry.
-app.all('/mcp', async (req: Request, res: Response) => {
+app.all('/mcp', authenticate, async (req: Request, res: Response) => {
+    // Guaranteed present by the authenticate middleware above.
+    const apiKey = res.locals.apiKey as string;
+
     logger.debug('MCP request received', {
         method: req.method,
         // JSON-RPC method (e.g. tools/call, tools/list) — only present on POST bodies
@@ -70,13 +79,13 @@ app.all('/mcp', async (req: Request, res: Response) => {
     server.registerTool(
         graphqlQueryToolName,
         {description: graphqlQueryToolDescription, inputSchema: graphqlInputSchema},
-        createGraphqlHandler(CORE_URL),
+        createGraphqlHandler(CORE_URL, apiKey),
     );
 
     server.registerTool(
         graphqlMutationToolName,
         {description: graphqlMutationToolDescription, inputSchema: graphqlInputSchema},
-        createGraphqlHandler(CORE_URL),
+        createGraphqlHandler(CORE_URL, apiKey),
     );
 
     try {
