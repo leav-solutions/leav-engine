@@ -34,17 +34,11 @@ export default defineConfig([
             // eslint / typescript-eslint recommended
             '@typescript-eslint/no-unused-vars': 'off',
             '@typescript-eslint/no-empty-object-type': 'off',
-            '@typescript-eslint/no-unnecessary-type-constraint': 'off',
             'no-extra-boolean-cast': 'off',
             'no-case-declarations': 'off',
             'no-async-promise-executor': 'off',
-            'no-useless-escape': 'off',
-            'no-constant-binary-expression': 'off',
-            'no-unsafe-optional-chaining': 'off',
             // react recommended
-            'react/jsx-key': 'off',
             'react/jsx-no-target-blank': 'off',
-            'react/no-children-prop': 'off',
             // jsx-a11y recommended
             'jsx-a11y/no-autofocus': 'off',
             'jsx-a11y/click-events-have-key-events': 'off',
@@ -123,7 +117,6 @@ export default defineConfig([
             '@typescript-eslint/no-empty-function': 'error',
             '@typescript-eslint/no-explicit-any': 'off',
             '@typescript-eslint/no-namespace': ['error', {allowDeclarations: true}],
-            '@typescript-eslint/no-require-imports': 'off',
             '@typescript-eslint/prefer-for-of': 'error',
             '@typescript-eslint/prefer-function-type': 'error',
             '@typescript-eslint/return-await': 'error',
@@ -139,7 +132,6 @@ export default defineConfig([
             'no-console': 'error',
             'no-eval': 'error',
             'no-extra-bind': 'error',
-            'no-irregular-whitespace': 'off',
             'no-new-func': 'error',
             'no-new-wrappers': 'error',
             '@typescript-eslint/no-redeclare': ['error'],
