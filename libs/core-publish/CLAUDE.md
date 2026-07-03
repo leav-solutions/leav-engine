@@ -5,8 +5,6 @@
 > ⚠️ Ce package **n'est pas utilisé dans le monorepo lui-même**. Il est uniquement
 > consommé par des repos externes (plugins tiers du core).
 
-Une fois adopté, ce paquet remplacera `@leav/core-types`.
-
 ## Publication CI (GitLab)
 
 Publié automatiquement sur le **registre npm GitLab** (`@leav/core-publish`), comme les autres libs
@@ -83,4 +81,4 @@ Lancé par `yarn sync-deps`, et automatiquement à la fin de `generate` (donc au
 
 ## Pourquoi un gros paquet avec les libs ?
 
-Il est possible de publier le core et les libs indépendamment. Cependant il faut alors répondre aux problématiques évoquées dans [la doc npm-publishing du POC poc-release](https://gitlab.aristid.com/dev/leav/pocs/poc-release/-/blob/develop/docs/npm-publishing.md) (pin des deps `workspace:` au publish). N'étant pour le moment pas convaincu par la solution proposée, il est plus rapide de débloquer le sujet des plugins xstream dans le yarn workspace ([LEAVC-812](https://aristid.atlassian.net/browse/LEAVC-812)) en s'inspirant de `@leav/core-types` (un seul gros paquet embarquant les libs).
+Il est possible de publier le core et les libs indépendamment. Cependant il faut alors répondre aux problématiques évoquées dans [la doc npm-publishing du POC poc-release](https://gitlab.aristid.com/dev/leav/pocs/poc-release/-/blob/develop/docs/npm-publishing.md) (pin des deps `workspace:` au publish). N'étant pour le moment pas convaincu par la solution proposée, il est plus rapide de débloquer le sujet des plugins xstream dans le yarn workspace ([LEAVC-812](https://aristid.atlassian.net/browse/LEAVC-812)) en s'inspirant de feu `@leav/core-types` (un seul gros paquet embarquant les libs).
