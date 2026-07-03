@@ -282,21 +282,21 @@ module.exports = {
     sdo: {
         amqp: {
             protocol: 'amqp',
-            hostname: process.env.SDO_AMQP_HOST,
-            username: process.env.SDO_AMQP_USERNAME,
-            password: process.env.SDO_AMQP_PWD,
-            port: process.env.SDO_AMQP_PORT || '5672',
+            hostname: process.env.SDO_AMQP_HOST || process.env.AMQP_HOST,
+            username: process.env.SDO_AMQP_USERNAME || process.env.AMQP_USERNAME,
+            password: process.env.SDO_AMQP_PWD || process.env.AMQP_PWD,
+            port: process.env.SDO_AMQP_PORT || process.env.AMQP_PORT || '5672',
         },
         import: {
             enable: envToBool(process.env.SDO_IMPORT_ENABLE, false),
             prefetch: envToNumber(process.env.SDO_IMPORT_PREFETCH, 1),
-            queue: process.env.SDO_IMPORT_QUEUE,
-            exchange: process.env.SDO_IMPORT_EXCHANGE,
+            queue: process.env.SDO_IMPORT_QUEUE || process.env.INSTANCE_ID + '_sdo_import',
+            exchange: process.env.SDO_IMPORT_EXCHANGE || process.env.INSTANCE_ID + '_sdo',
         },
         export: {
             enable: envToBool(process.env.SDO_EXPORT_ENABLE, false),
             dataEventsQueue: process.env.SDO_EXPORT_DATA_EVENTS_QUEUE || 'sdo_data_events_queue',
-            exchange: process.env.SDO_EXPORT_EXCHANGE,
+            exchange: process.env.SDO_EXPORT_EXCHANGE || process.env.INSTANCE_ID + '_sdo',
             type: process.env.SDO_EXPORT_EXCHANGE_TYPE || 'fanout',
         },
     },
