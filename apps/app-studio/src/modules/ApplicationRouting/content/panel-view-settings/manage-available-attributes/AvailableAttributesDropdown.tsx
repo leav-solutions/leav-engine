@@ -72,7 +72,10 @@ export const AvailableAttributesDropdown = ({facet}: {facet: AvailableAttributes
     const libraryId = view?.library;
 
     // Tree shape is a function of the facet: columns are flat, sorts/filters descend through links.
-    const mode: AvailableAttributesMode = facet === 'columns' ? 'flat' : 'nested';
+    // const mode: AvailableAttributesMode = facet === 'columns' ? 'flat' : 'nested';
+
+    // TODO: The dropdown is currently flat because PO's are not ready for nested. When they are, use the above line and remove this hard-coded override.
+    const mode: AvailableAttributesMode = 'flat';
 
     const [open, setOpen] = useState(false);
     const [searchValue, setSearchValue] = useState('');
@@ -225,11 +228,12 @@ export const AvailableAttributesDropdown = ({facet}: {facet: AvailableAttributes
                                     expandedKeys={treeExpandedKeys}
                                     onExpand={setExpandedKeys}
                                     titleRender={node => renderNodeTitle(node as unknown as IAttributeTreeNode)}
-                                    loadData={
-                                        mode === 'nested'
-                                            ? node => onLoadData(node as unknown as IAttributeTreeNode)
-                                            : undefined
-                                    }
+                                    // TODO: To uncomment when nested mode is re-enabled.
+                                    // loadData={
+                                    //     mode === 'nested'
+                                    //         ? node => onLoadData(node as unknown as IAttributeTreeNode)
+                                    //         : undefined
+                                    // }
                                     onCheck={handleCheck}
                                 />
                             )}
