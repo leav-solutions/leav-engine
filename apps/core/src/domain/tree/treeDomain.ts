@@ -282,7 +282,7 @@ export default function ({
             .filter(l => !!l.permissions_conf)
             .filter(library => {
                 let isUsingAttributes = false;
-                for (const attrs of library.permissions_conf?.permissionTreeAttributes) {
+                for (const attrs of library.permissions_conf.permissionTreeAttributes) {
                     isUsingAttributes = !!attributes.filter(a => attrs.includes(a.id)).length || isUsingAttributes;
                 }
                 return isUsingAttributes;
@@ -308,7 +308,7 @@ export default function ({
             .filter(a => !!a.permissions_conf)
             .filter(attribute => {
                 let isUsingAttributes = false;
-                for (const attrs of attribute.permissions_conf?.permissionTreeAttributes) {
+                for (const attrs of attribute.permissions_conf.permissionTreeAttributes) {
                     isUsingAttributes = !!attributes.filter(a => attrs.includes(a.id)).length || isUsingAttributes;
                 }
                 return isUsingAttributes;

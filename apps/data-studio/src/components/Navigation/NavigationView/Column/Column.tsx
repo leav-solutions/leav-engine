@@ -129,8 +129,9 @@ const Column = ({treeId, treeElement, depth, isActive: columnActive}: IColumnPro
                 treeElement={treeElement}
                 isActive={columnActive}
                 isDetail={showDetails}
-                children={children}
-            />
+            >
+                {children}
+            </HeaderColumnNavigation>
             {error && <ErrorDisplay message={error.message} />}
             {canDisplayContent && showDetails && (
                 <DetailNavigation

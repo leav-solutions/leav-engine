@@ -219,7 +219,7 @@ export const systemAttributes: IAttributeForRepo[] = [
                             name: 'regex',
                             // prettier-ignore
                             // Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-                            value: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})',
+                            value: '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})',
                         },
                     ],
                 },

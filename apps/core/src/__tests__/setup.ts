@@ -1,8 +1,10 @@
 import {loadLocalesForDayjs} from '../utils/configureDayjs';
 
-loadLocalesForDayjs({
-    available: ['en', 'fr'],
-    default: 'en',
+beforeAll(async () => {
+    await loadLocalesForDayjs({
+        available: ['en', 'fr'],
+        default: 'en',
+    });
 });
 
 process.on('unhandledRejection', (reason: Error | any, promise: Promise<any>) => {

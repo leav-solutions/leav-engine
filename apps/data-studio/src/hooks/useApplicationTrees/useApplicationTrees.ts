@@ -29,7 +29,7 @@ export const useApplicationTrees = (params: IUseApplicationTreesParams = {}): IU
         },
     });
 
-    let trees = data?.trees.list ? [...data?.trees.list] : [];
+    let trees = data?.trees.list ? [...data.trees.list] : [];
     const treesOrder = currentApp?.settings?.treesOrder ?? [];
     const treesCount = trees.length;
 

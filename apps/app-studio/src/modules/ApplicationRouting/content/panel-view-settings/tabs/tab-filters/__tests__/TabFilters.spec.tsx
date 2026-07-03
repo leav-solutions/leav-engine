@@ -12,12 +12,12 @@ import {TabFilters} from '../TabFilters';
 // to the (real) FiltersContext, so we can assert pinned filters are edited through the SHARED store.
 jest.mock('@leav/ui', () => {
     const actual = jest.requireActual('@leav/ui');
-    const React = require('react');
+    const {useContext} = jest.requireActual('react');
 
     return {
         ...actual,
         CommonFilterItem: ({filter}: {filter: {id: string; condition: unknown; value: unknown}}) => {
-            const {dispatch} = React.useContext(actual.FiltersContext);
+            const {dispatch} = useContext(actual.FiltersContext);
             return (
                 <button
                     aria-label={`edit-${filter.id}`}

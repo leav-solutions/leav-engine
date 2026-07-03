@@ -21,7 +21,7 @@ export const HistoryBeforeAfterComparator = ({historyData}: HistoryBeforeAfterCo
     return (
         <div className={historyBeforeAfterComparatorContainer}>
             {fields.map(({labelKey, value}) => (
-                <div className={historyBeforeAfterComparatorBlock}>
+                <div key={labelKey} className={historyBeforeAfterComparatorBlock}>
                     <KitTypography.Text size="fontSize5" weight="bold">
                         {t(labelKey)}
                     </KitTypography.Text>

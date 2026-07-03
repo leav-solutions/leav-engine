@@ -94,7 +94,7 @@ export default function ({
             const appsFolders = await readdir(appRootFolder);
 
             return appsFolders
-                .filter(item => !/(^|\/)\.[^\/\.]/g.test(item))
+                .filter(item => !/(^|\/)\.[^/.]/g.test(item))
                 .reduce(async (accProm, appFolder) => {
                     const acc = await accProm;
                     const appPath = path.resolve(appRootFolder, appFolder);

@@ -1249,7 +1249,7 @@ export default function ({
                     // Extract mapping, keyIndex and keyToIndex from all columns comments
                     for (const [index, comm] of comments.entries()) {
                         const commArgs = extractArgsFromString(comm);
-                        mapping.push(String(commArgs.id) ?? null);
+                        mapping.push(commArgs.id != null ? String(commArgs.id) : null);
 
                         if (commArgs.key) {
                             keyIndex = index;

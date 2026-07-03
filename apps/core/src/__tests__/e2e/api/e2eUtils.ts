@@ -1,4 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
+import {createReadStream} from 'fs';
 import WebSocket from 'ws';
 import {GraphQLClient} from 'graphql-request';
 import {inject} from 'vitest';
@@ -153,7 +154,7 @@ export async function importFileGraphQlCall(query: string, filePath: string, she
         const form = new FormData();
         form.append('operations', JSON.stringify(operations));
         form.append('map', JSON.stringify(map));
-        form.append('0', require('fs').createReadStream(filePath));
+        form.append('0', createReadStream(filePath));
 
         const headers = {
             Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${token}`,
@@ -466,7 +467,7 @@ export async function gqlSaveVersionProfile(profileId: string, label: string, tr
  * Convert object to JSON, escaping quotes to be able to use it in a graphql query
  **/
 export function toCleanJSON(obj: {}): string {
-    return JSON.stringify(obj).replace(/[\""]/g, '\\"');
+    return JSON.stringify(obj).replace(/["]/g, '\\"');
 }
 
 export async function makeWebSocketGraphQlCall(options?: {user: IE2EUser}): Promise<GraphqlWsClient> {

@@ -363,7 +363,7 @@ export default function ({
                     // Try to locate a file at given path. If not found, serve root path of the app,
                     // considering it will be handled it client-side (e.g. SPAs)
                     const newPath =
-                        req.path.replace(new RegExp(`^\/${utils.getFullApplicationEndpoint(endpoint)}`), '') || '/';
+                        req.path.replace(new RegExp(`^/${utils.getFullApplicationEndpoint(endpoint)}`), '') || '/';
 
                     const doesPathExists = await _doesFileExist(appFolder, newPath);
                     req.url = doesPathExists ? newPath : '/';

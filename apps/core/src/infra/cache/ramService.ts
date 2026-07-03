@@ -4,7 +4,7 @@ import {type RedisClientType} from './redis';
 import {type RedisArgument} from 'redis';
 
 export default function (redisClient: RedisClientType): ICacheService {
-    const WILDCARD_REGEX = /[\*\?\[\]]/;
+    const WILDCARD_REGEX = /[*?[\]]/;
 
     const deleteBatchSize = 1000;
     const scanBatchSize = 1000;
