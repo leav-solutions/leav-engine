@@ -66,7 +66,7 @@ function GeneralApiKeysTab(): JSX.Element {
                 loading={loading}
                 onFiltersUpdate={_handleFiltersUpdate}
                 onRowClick={_handleRowClick}
-                actions={[<DeleteApiKeyButton />]}
+                actions={[<DeleteApiKeyButton key="delete" />]}
             />
             {editingState.isEditing && <EditApiKeyModal apiKey={editingState.apiKey} onClose={_handleEditModalClose} />}
         </>

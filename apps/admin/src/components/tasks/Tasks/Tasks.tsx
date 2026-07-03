@@ -132,7 +132,7 @@ const Tasks = (): JSX.Element => {
                         striped
                         actionsBtn={task =>
                             task.status !== TaskStatus.PENDING_CANCEL
-                                ? [<CancelTask onCancel={onCancel} task={task} />]
+                                ? [<CancelTask key="cancel" onCancel={onCancel} task={task} />]
                                 : []
                         }
                         loading={loading || !inProgressTasks}
@@ -172,7 +172,7 @@ const Tasks = (): JSX.Element => {
                                       />,
                                   ]
                                 : []),
-                            <DeleteTask onDelete={_onDelete} task={task} />,
+                            <DeleteTask key="delete" onDelete={_onDelete} task={task} />,
                         ]}
                         loading={loading || !completedTasks}
                         tasks={completedTasks}

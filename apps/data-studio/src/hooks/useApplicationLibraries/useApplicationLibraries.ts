@@ -36,7 +36,7 @@ export const useApplicationLibraries = (params: IUseApplicationLibrariesParams =
         },
     );
 
-    let libraries = data?.libraries.list ? [...data?.libraries.list] : [];
+    let libraries = data?.libraries.list ? [...data.libraries.list] : [];
     const librariesOrder = currentApp?.settings?.librariesOrder ?? [];
     const librariesCount = libraries.length;
 

@@ -15,7 +15,7 @@ export default async (config: IConfig): Promise<i18n> => {
         },
     });
 
-    loadLocalesForDayjs(config.lang);
+    await loadLocalesForDayjs(config.lang);
 
     return i18next;
 };

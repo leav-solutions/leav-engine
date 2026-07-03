@@ -9,7 +9,7 @@ const _slugifyPath = (path: string): string =>
         .trim()
         .normalize('NFD') // split accents and base letter
         .replace(/[\u0300-\u036f]/g, '') // remove all previously split accents to leave only base letters
-        .replace(/[^a-zA-Z0-9\-_\/\.]/g, '_') // keep only letters, numbers, underscores, dashes, points and slashes
+        .replace(/[^a-zA-Z0-9\-_/.]/g, '_') // keep only letters, numbers, underscores, dashes, points and slashes
         .replace(/_{2,}/g, '_'); // replace all __, ___, ... with a single _
 const _getRedisKey = (path: string): string => {
     const prefix = 'automate_scan';

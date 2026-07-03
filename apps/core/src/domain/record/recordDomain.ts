@@ -609,7 +609,7 @@ export default function ({
                         if (!valuesErrorsByRecordId.has(recordId)) {
                             valuesErrorsByRecordId.set(recordId, []);
                         }
-                        valuesErrorsByRecordId.get(recordId).push(...value[0].payload?.valuesErrors);
+                        valuesErrorsByRecordId.get(recordId).push(...value[0].payload.valuesErrors);
                         return;
                     }
                     if (!valuesByRecordId.has(recordId)) {

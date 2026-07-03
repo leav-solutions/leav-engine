@@ -85,7 +85,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                     // Extract mapping, keyIndex and keyToIndex from all columns comments
                     for (const [index, comm] of comments.entries()) {
                         const commArgs = extractArgsFromString(comm);
-                        sMapping.push(String(commArgs.id) ?? null);
+                        sMapping.push(commArgs.id != null ? String(commArgs.id) : null);
 
                         if (commArgs.key) {
                             sKeyColumnIndex = index;

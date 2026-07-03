@@ -86,7 +86,7 @@ export const RecordHistoryLogEntry: FunctionComponent<IRecordHistoryLogEntryProp
             );
 
             return diffs.map(diff => (
-                <KitSpace size="xxs" direction="horizontal" wrap>
+                <KitSpace key={diff.path} size="xxs" direction="horizontal" wrap>
                     {getExtendedAttributeLabels(
                         diff.path,
                         (attribute as RecordHistoryLogAttributeStandardAttributeFragment)

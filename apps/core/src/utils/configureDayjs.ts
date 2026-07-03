@@ -9,13 +9,15 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(LocalizedFormat);
 
-export function loadLocalesForDayjs(langConfig: ILang) {
-    langConfig.available.forEach(lang => {
-        try {
-            require(`dayjs/locale/${lang}`);
-        } catch {
-            logger.warn(`Locale ${lang} not found for dayjs, fallback to default locale`);
-        }
-    });
+export async function loadLocalesForDayjs(langConfig: ILang) {
+    await Promise.all(
+        langConfig.available.map(async lang => {
+            try {
+                await import(`dayjs/locale/${lang}`);
+            } catch {
+                logger.warn(`Locale ${lang} not found for dayjs, fallback to default locale`);
+            }
+        }),
+    );
     dayjs.locale(langConfig.default);
 }

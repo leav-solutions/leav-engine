@@ -24,7 +24,7 @@ export default function () {
 
         const str = progress({
             length: size,
-            time: 100 /* ms */,
+            time: 100 /* ms */,
         });
 
         await new Promise((resolve, reject) => {

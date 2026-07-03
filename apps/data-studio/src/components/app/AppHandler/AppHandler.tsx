@@ -148,10 +148,10 @@ function AppHandler(): JSX.Element {
     };
 
     const recoveryButtons = [
-        <Button onClick={_handleRefresh} type="primary" icon={<ReloadOutlined />}>
+        <Button key="refresh" onClick={_handleRefresh} type="primary" icon={<ReloadOutlined />}>
             {t('global.refresh_page')}
         </Button>,
-        <Button onClick={_handleGoBack} type="primary" icon={<HomeOutlined />}>
+        <Button key="go-back" onClick={_handleGoBack} type="primary" icon={<HomeOutlined />}>
             {t('global.go_back_home')}
         </Button>,
     ];

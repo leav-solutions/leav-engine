@@ -27,7 +27,7 @@ describe('ErrorBoundary', () => {
             isDevEnvMock = false;
         });
         test('Should display recovery buttons', async () => {
-            const buttons = [<Button>refresh</Button>, <Button>go_back</Button>];
+            const buttons = [<Button key="refresh">refresh</Button>, <Button key="go_back">go_back</Button>];
 
             render(
                 <ErrorBoundary recoveryButtons={buttons}>
@@ -60,7 +60,7 @@ describe('ErrorBoundary', () => {
             isDevEnvMock = true;
         });
         test('Should display proper error message with recovery buttons', async () => {
-            const buttons = [<Button>refresh</Button>, <Button>go_back</Button>];
+            const buttons = [<Button key="refresh">refresh</Button>, <Button key="go_back">go_back</Button>];
 
             render(
                 <ErrorBoundary recoveryButtons={buttons}>
