@@ -10849,7 +10849,7 @@ __metadata:
     lodash: "npm:4.18.1"
     prettier: "npm:3.9.4"
     redis: "npm:5.12.1"
-    tsx: "npm:4.22.4"
+    tsx: "npm:4.23.0"
     typescript: "npm:5.9.3"
     vitest: "npm:4.1.9"
   languageName: unknown
@@ -12429,7 +12429,7 @@ __metadata:
     prettier: "npm:3.9.4"
     progress-stream: "npm:2.0.0"
     redis: "npm:5.12.1"
-    tsx: "npm:4.22.4"
+    tsx: "npm:4.23.0"
     typescript: "npm:5.9.3"
     vitest: "npm:4.1.9"
     ws: "npm:8.21.0"
@@ -19167,7 +19167,7 @@ __metadata:
     "@types/node": "npm:24.13.2"
     express: "npm:4.22.2"
     prettier: "npm:3.9.4"
-    tsx: "npm:4.22.4"
+    tsx: "npm:4.23.0"
     typescript: "npm:5.9.3"
     vitest: "npm:4.1.9"
     zod: "npm:4.3.6"
@@ -20705,7 +20705,7 @@ __metadata:
     amqplib: "npm:2.0.1"
     fast-xml-parser: "npm:5.9.3"
     prettier: "npm:3.9.4"
-    tsx: "npm:4.22.4"
+    tsx: "npm:4.23.0"
     typescript: "npm:5.9.3"
     vitest: "npm:4.1.9"
   languageName: unknown
@@ -23695,7 +23695,7 @@ __metadata:
     graphql-tag: "npm:2.12.7"
     joi: "npm:18.2.3"
     prettier: "npm:3.9.4"
-    tsx: "npm:4.22.4"
+    tsx: "npm:4.23.0"
     typescript: "npm:5.9.3"
     vitest: "npm:4.1.9"
     walk: "npm:2.3.15"
@@ -24155,9 +24155,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:4.22.4":
-  version: 4.22.4
-  resolution: "tsx@npm:4.22.4"
+"tsx@npm:4.23.0":
+  version: 4.23.0
+  resolution: "tsx@npm:4.23.0"
   dependencies:
     esbuild: "npm:~0.28.0"
     fsevents: "npm:~2.3.3"
@@ -24166,7 +24166,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10/9d6e7e9d1158eb84327d822720a2053bcfd972f8988e4789041bac5a767fc394ef302b1ff7e1d3dfbee391a0b03bd3dbb02cd302387729baf1dc7b9dce93b3ba
+  checksum: 10/66f8b85ea0593da3267ac15ddf5a24b0283373a7e00a57445fab871d779ca1fa240fa6eb4839fb57eedad7b314a34f4ff70889e9786d2829993f14b3f7b7f209
   languageName: node
   linkType: hard
 
