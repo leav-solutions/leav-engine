@@ -104,21 +104,27 @@ plat — un même jeu de filtres donne les mêmes records, qu'on les compte par 
 
 Filtre d'égalité cumulé à ajouter aux filtres de la vue, selon le type d'attribut du niveau :
 
-| Type d'attribut | Filtre du groupe                                                                     |
-| --------------- | ------------------------------------------------------------------------------------ |
-| simple          | `{field: attr, condition: EQUAL, value}`                                             |
-| lien            | `{field: "attr.id", condition: EQUAL, value: <recordId>}`                            |
-| arbre (nœud)    | égalité sur le nœud de l'attribut arbre — **format à confirmer** (cf. ⚠️ ci-dessous) |
-| bucket nul      | `{field: attr, condition: IS_EMPTY}`                                                 |
+| Type d'attribut | Filtre du groupe                                                                              |
+| --------------- | --------------------------------------------------------------------------------------------- |
+| simple          | `{field: attr, condition: EQUAL, value}`                                                      |
+| lien            | `{field: "attr.id", condition: EQUAL, value: <recordId>}`                                     |
+| arbre (nœud)    | `{field: "attr.<libraryDuNœud>.id", condition: EQUAL, value: <record id du nœud>}` (cf. note) |
+| bucket nul      | `{field: attr, condition: IS_EMPTY}`                                                          |
 
-> ⚠️ **Axe arbre — `CLASSIFIED_IN` ne convient pas** (vérifié empiriquement sur l'arbre système
-> `users_groups` / attribut `user_groups`) : `records(users, [{field: user_groups, condition:
-CLASSIFIED_IN, treeId: users_groups, value: <node>}])` renvoie **0**, car `CLASSIFIED_IN` filtre
-> `r._id IN {records du sous-arbre}` (appartenance **propre** du record à l'arbre), **sans passer par
-> l'attribut**. `EQUAL value: <nodeId>` renvoie aussi 0 sur ce même jeu de données, alors que
-> `recordsGroups(users, user_groups)` compte correctement par nœud (Administrators = 21). Donc le
-> filtre exact pour fetcher les records d'un **groupe arbre** (records dont l'attribut arbre pointe
-> sur un nœud donné) reste **à déterminer** — c'est un point ouvert de la brique front, pas du core.
+> **Axe arbre — filtre confirmé** (vérifié sur l'arbre système `users_groups` / attribut
+> `user_groups`). On matche l'attribut arbre par un **chemin à 3 segments** `<attr>.<libraryDuNœud>.id`
+> avec `EQUAL` sur le **record id du nœud** :
+> `records(users, [{field: "user_groups.users_groups.id", condition: EQUAL, value: "1"}])` → **21**
+> (= le compteur d'Administrators de `recordsGroups`). À retenir :
+>
+> - Le `field` **nu** (`user_groups`) ou à **2 segments** (`user_groups.id`) **ne marche pas** (valeur
+>   vide / AQL invalide). Le chemin traverse l'attribut → record du nœud → sous-attribut (`id`,
+>   `label`…) ; `id` = record id du nœud (`NODE_RECORD_ID_FIELD`).
+> - Segment du milieu = la **library du nœud** (un arbre peut mélanger des libraries → prendre celle
+>   du nœud courant, pas une constante). La brique 1 la fournit : `recordsGroups` renvoie
+>   `value.record.id` + `value.record.whoAmI.library.id`.
+> - `CLASSIFIED_IN` reste **inadapté** ici : il filtre `r._id IN {records du sous-arbre}`
+>   (appartenance **propre** du record à l'arbre), sans passer par l'attribut (→ 0).
 
 Pagination = `pagination: {limit, offset}` existante → « charger 10, puis voir plus » = `offset` qui avance.
 
@@ -167,7 +173,7 @@ Axe de type arbre : l'étape 1 reste `recordsGroups(library, attributArbre)` (gr
 2. au dépliage d'un groupe G de niveau n :
    - niveau intermédiaire : recordsGroups(library, attribute: niveau(n+1), filters: [<vue>, <égalité de G>])
    - dernier niveau : records(library, filters: [<vue>, <égalité de G>], pagination)   → records + "voir plus"
-3. niveau de type arbre : `recordsGroups(library, attributArbre)` → compteurs par nœud exact ; structure via `treeNodeChildren` ; cumul nœud+descendants **sommé côté front**. (Fetch des records d'un nœud arbre : filtre d'égalité `tree` **à confirmer**, cf. ⚠️ § Surface backend.)
+3. niveau de type arbre : `recordsGroups(library, attributArbre)` → compteurs par nœud exact ; structure via `treeNodeChildren` ; cumul nœud+descendants **sommé côté front**. Fetch des records d'un nœud : `records(library, [{field: "attr.<record.library>.id", condition: EQUAL, value: <record.id>}])` (cf. § Surface backend).
 ```
 
 ## Fichiers (`apps/core`)
