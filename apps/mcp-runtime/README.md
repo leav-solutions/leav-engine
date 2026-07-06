@@ -26,7 +26,8 @@ future OAuth flow. A middleware validates the key against the LEAV core (a minim
 reusing core's own auth) and rejects the request with `401` if the key is missing, invalid or
 expired. The validated key is then forwarded as `?key=xxx` to core on every tool call, so every
 action is scoped to the user's own permissions and produces a traceable audit trail — no shared
-service account. The key is **not** a tool input: the agent never sees or handles it.
+service account. Tool inputs are limited to the GraphQL `query` and `variables`; the credential
+travels only in the connection header, so the agent never handles it.
 
 ## Running locally
 
@@ -135,8 +136,9 @@ instance.
 | `query`     | string | yes      | GraphQL query or mutation |
 | `variables` | object | no       | Query variables           |
 
-> The `apiKey` is **not** a tool input — it is authenticated once per request via the
-> `Authorization: ApiKey <apiKey>` header (see [Auth](#architecture)) and forwarded to core internally.
+> Tool inputs are `query` and `variables` only. Authentication is per-request via the
+> `Authorization: ApiKey <apiKey>` header (see [Auth](#architecture)); the runtime forwards the
+> validated key to core.
 
 > `rest` and `trpc` tools are planned (LEAVC-888) and will be registered in `src/index.ts`.
 
