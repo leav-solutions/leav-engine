@@ -227,6 +227,18 @@ docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e
 > ⚠️ Pas de `yarn build` global — chaque app/lib se build individuellement depuis son dossier.
 > Les libs doivent être buildées et leur dossier `dist/` commité pour être consommées par les autres apps.
 
+> 🎭 **e2e front** : le job CI `e2e-playwright` est `manual` + `allow_failure` en MR (donc jamais
+> lancé automatiquement, et son échec n'apparaît pas dans le vert du pipeline). **Le déclencher
+> manuellement dès qu'une MR touche le front** : `libs/ui/**` (runtime _ou_ build/tsconfig — bundlé
+> dans tous les fronts), un front `apps/*`, la config de build/bundle front, ou `yarn.lock`. Le
+> piège classique est la MR qui paraît « test-only » ou « build-only » : c'est justement là que le
+> bundle peut casser sans qu'aucun test unitaire ne le voie.
+>
+> ⛓️ Avant de lancer `e2e-playwright`, il faut d'abord lancer **et attendre** le job
+> `build-docker-core [amd64]` : c'est l'image qu'il produit qui sert à exécuter les tests e2e. Un
+> job ne pouvant pas en déclencher un autre en CI, cet enchaînement est **manuel** : on lance
+> `build-docker-core [amd64]`, on attend sa fin, puis on lance `e2e-playwright`.
+
 ---
 
 ## Conventions de code
