@@ -6,6 +6,12 @@ Date: 30/06/2026
 
 Proposed
 
+> **Révision 2026-07-01** — La brique `TreeNode.recordCount` (initialement prévue) est **abandonnée**
+> après vérification empirique : `CLASSIFIED_IN` compte l'appartenance propre du record à l'arbre
+> (`r._id IN {sous-arbre}`) et **ne passe pas par un attribut arbre**. L'axe arbre est donc servi par
+> la brique 1 (`recordsGroups`) + un **cumul côté front**. Surface backend V1 = **`recordsGroups`
+> seul**. Voir _Decision_ § « option écartée » et _Consequences_.
+
 ## Context
 
 Deux chantiers Explorer V2 convergent vers un même besoin — le **regroupement** des records par
@@ -31,9 +37,9 @@ Le core fournit déjà trois primitives pertinentes :
 - `records` (`recordApp.ts`) : recherche paginée (offset + cursor), tri, `searchQuery` fulltext,
   `withCount`, filtres `EQUAL`/`IS_EMPTY`/`CLASSIFIED_IN`. **Complète** pour fetcher les records
   d'un groupe via un filtre d'égalité — aucun manque.
-- `treeNodeChildren` (`treeApp.ts`) : enfants directs d'un nœud, paginés. **Manque** : le
-  compteur cumulé de records par nœud (aujourd'hui = une requête `records(CLASSIFIED_IN)` par
-  nœud, soit N round-trips au dépliage).
+- `treeNodeChildren` (`treeApp.ts`) : enfants directs d'un nœud, paginés — fournit la **structure**
+  de l'arbre au front. Les compteurs par nœud viennent de `recordsGroups` (cf. Decision), le cumul
+  est sommé côté front.
 
 Il faut décider **quelle surface backend** offrir pour servir les deux consommateurs sans dupliquer
 la machinerie ni sur-concevoir.
@@ -61,29 +67,48 @@ la machinerie ni sur-concevoir.
 ## Decision
 
 **On expose un moteur d'énumération de groupes mono-niveau, et la composition (multi-niveaux +
-records par groupe) est faite par le consommateur.** Concrètement, trois briques :
+records par groupe + hiérarchie d'arbre) est faite par le consommateur.** Concrètement, **deux
+briques** :
 
 1. **Nouveau resolver `recordsGroups`** (énumération d'un niveau de groupes). Il prend
    `library`, `attribute`, `filters`, `searchQuery`, un tri et une pagination **des groupes**, et
    renvoie `{totalCount, list: [GenericDistinctValues!]}`. Il **réutilise l'infra `COLLECT`
-   existante** de `listDistinctValues` (et son traitement du bucket nul / JOIN / permissions) — on
+   existante** de `listDistinctValues` (bucket nul / JOIN / permissions / labels lien/arbre) — on
    ne touche pas à `listDistinctValues`, qui reste l'API simple consommée ailleurs (pickers de
-   filtres). On évite ainsi un breaking change sur son type de retour et on garde deux contrats
-   distincts et lisibles.
+   filtres). Pour un **attribut arbre**, il renvoie les groupes = nœuds pointés + compteur **par
+   nœud exact** (`TreeDistinctValues`).
 
 2. **`records` inchangé** pour fetcher les records d'un groupe : le consommateur ajoute un filtre
-   d'égalité cumulé (`{field: attr, condition: EQUAL, value}` pour simple, `{field: "attr.id", …}`
-   pour un lien, `{field: attr, condition: CLASSIFIED_IN, value: nodeId, treeId}` pour un arbre,
-   `{field: attr, condition: IS_EMPTY}` pour le bucket nul) et pagine avec l'offset/limit existant.
-   C'est exactement le « 10 puis voir plus » sans aucun code backend.
-
-3. **Nouveau champ `TreeNode.recordCount`** (compteur cumulé par nœud), **batché par DataLoader**
-   sur la durée de la requête, pour que `treeNodeChildren { list { recordCount(...) } }` ramène
-   tous les compteurs d'une fratrie en **un seul** round-trip au lieu de N.
+   d'égalité cumulé — `{field: attr, condition: EQUAL, value}` (simple), `{field: "attr.id", …}`
+   (lien), `{field: attr, condition: IS_EMPTY}` (bucket nul) — et pagine avec l'offset/limit
+   existant. C'est exactement le « 10 puis voir plus » sans aucun code backend.
 
 Le **multi-niveaux** est obtenu par récursion **côté consommateur** : déplier un groupe de niveau
 _n_ rappelle `recordsGroups` sur l'attribut du niveau _n+1_ en cumulant le filtre d'égalité du
 parent ; au dernier niveau, on appelle `records`.
+
+L'**axe arbre** (regroupement par attribut arbre → liste de valeurs) est servi **entièrement par la
+brique 1** : `recordsGroups(library, attributArbre)` donne les compteurs **par nœud**, et le **cumul
+par nœud** (nœud + descendants) est **calculé côté front** en sommant sur le sous-arbre déplié (le
+front a la structure via `treeNodeChildren`).
+
+### Option écartée : un champ `TreeNode.recordCount` backend
+
+Initialement, une 3ᵉ brique était prévue : `TreeNode.recordCount(library, attribute, filters)`,
+batché DataLoader, donnant le compteur cumulé par nœud via `records(CLASSIFIED_IN)`. **Écartée après
+vérification empirique** (arbre système `users_groups` / attribut `user_groups`) :
+
+- `records(users, [{field: user_groups, condition: CLASSIFIED_IN, treeId: users_groups, value: <node>}])`
+  renvoie **0** — `CLASSIFIED_IN` filtre `r._id IN {records du sous-arbre}` (appartenance **propre**
+  du record à l'arbre) et **ignore l'attribut**. Il ne convient donc que si les records de la
+  library **sont eux-mêmes les nœuds** (fichiers/dossiers, arbre auto-référencé), pas pour un
+  attribut arbre pointant vers une liste de valeurs — le cas réel (AMONT-1102).
+- `recordsGroups(users, user_groups)` compte pourtant correctement par nœud (Administrators = 21).
+  Le mécanisme de comptage par nœud d'attribut arbre **existe déjà** (brique 1).
+- Un `recordCount` correct aurait exigé une logique attribut-aware (expansion du sous-arbre + filtre
+  « attribut ∈ nœuds »), dont même le filtre d'égalité de base sur un nœud d'attribut arbre n'est pas
+  établi (`EQUAL value: <nodeId>` renvoie 0 sur ce jeu de données). Coût/risque élevés pour un cumul
+  que le front fait déjà en sommant les compteurs exacts de la brique 1.
 
 ### Périmètre des axes (V1)
 
@@ -118,9 +143,9 @@ record, qui n'aurait aucun sens pour l'utilisateur). Cf. _Open points_.
 
 ## Consequences
 
-- La surface backend nouvelle se réduit à **un resolver** (`recordsGroups`) + **un champ**
-  (`TreeNode.recordCount`) + **un paramètre optionnel** (`searchQuery` dans la méthode domaine
-  `listDistinctValues`, réutilisée par `recordsGroups`). Tout le reste est de la composition.
+- La surface backend nouvelle se réduit à **un resolver** (`recordsGroups`) + **un paramètre
+  optionnel** (`searchQuery` dans la méthode domaine `listDistinctValues`, réutilisée par
+  `recordsGroups`). Tout le reste est de la composition.
 - Le fetch des records d'un groupe emprunte le **même chemin** que le mode plat → tri, pagination,
   permissions et recherche sont garantis cohérents, sans code dédié.
 - Les deux consommateurs partagent le même backend : le kanban appelle `recordsGroups` une fois
@@ -128,19 +153,21 @@ record, qui n'aurait aucun sens pour l'utilisateur). Cf. _Open points_.
   stratégie à l'autre.
 - **Cohérence recherche/compteurs** : `searchQuery` est plombé jusqu'à `findRecordsHelper`, donc
   les compteurs de groupes respectent une recherche active (incohérence corrigée vs aujourd'hui).
-- L'arbre ne nécessite **aucun** nouveau resolver de groupe : il se compose via
-  `treeNodeChildren` (structure) + `TreeNode.recordCount` (compteur cumulé) + `records`
-  (`CLASSIFIED_IN`).
+- L'arbre ne nécessite **aucun** nouveau champ backend : compteurs **par nœud** via `recordsGroups`,
+  **structure** via `treeNodeChildren`, **cumul** (nœud + descendants) sommé **côté front**. Point
+  ouvert : le filtre exact pour fetcher les records d'un nœud d'attribut arbre reste à déterminer
+  (ni `CLASSIFIED_IN` ni `EQUAL <nodeId>` ne matchent — cf. § option écartée).
 
 ## Open points
 
-| Sujet                                                                                                                                                                                                                                                                 | Statut                 |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
-| Matérialisation de **tous** les recordIds dans `listDistinctValues` avant le `COLLECT` (le domaine charge tous les ids filtrés en mémoire puis les passe à l'infra) — limite de scaling sur très grosses libraries. v2 : pousser le filtrage dans l'AQL du `COLLECT`. | Connu, non bloquant v1 |
-| Tri/`LIMIT` des groupes poussés dans l'AQL des 3 repos (v1 = tri + slice en mémoire dans le domaine, après le `COLLECT`).                                                                                                                                             | v2 perf                |
-| Tri des groupes **par libellé** (lien/arbre) — exige résolution `whoAmI` serveur. v1 = tri par compteur uniquement.                                                                                                                                                   | v2                     |
-| Attribut **multivalué** : un record apparaît dans plusieurs groupes ⇒ Σ compteurs ≠ `totalCount`. À cadrer côté UX (message d'info ou restriction aux mono-valués).                                                                                                   | À cadrer               |
-| `TreeNode.recordCount` batché aujourd'hui en N counts parallèles dans la fonction de batch ; un `COLLECT` AQL unique par fratrie serait le vrai gain DB.                                                                                                              | v2 perf                |
+| Sujet                                                                                                                                                                                                                                                                        | Statut                 |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| Matérialisation de **tous** les recordIds dans `listDistinctValues` avant le `COLLECT` (le domaine charge tous les ids filtrés en mémoire puis les passe à l'infra) — limite de scaling sur très grosses libraries. v2 : pousser le filtrage dans l'AQL du `COLLECT`.        | Connu, non bloquant v1 |
+| Tri/`LIMIT` des groupes poussés dans l'AQL des 3 repos (v1 = tri + slice en mémoire dans le domaine, après le `COLLECT`).                                                                                                                                                    | v2 perf                |
+| Tri des groupes **par libellé** (lien/arbre) — exige résolution `whoAmI` serveur. v1 = tri par compteur uniquement.                                                                                                                                                          | v2                     |
+| Attribut **multivalué** : un record apparaît dans plusieurs groupes ⇒ Σ compteurs ≠ `totalCount`. À cadrer côté UX (message d'info ou restriction aux mono-valués).                                                                                                          | À cadrer               |
+| **Fetch des records d'un nœud d'attribut arbre** : le filtre d'égalité exact reste à déterminer (`CLASSIFIED_IN` compte l'appartenance propre du record, `EQUAL <nodeId>` renvoie 0 sur `users_groups`). Bloquant pour le « voir les records » d'un groupe arbre côté front. | À creuser (front)      |
+| **Cumul front sur attribut multivalué** : sommer les compteurs exacts d'un nœud + descendants peut double-compter un record présent sur un parent **et** un descendant (ou dans plusieurs groupes). À cadrer côté UX.                                                        | À cadrer               |
 
 ## Sources
 

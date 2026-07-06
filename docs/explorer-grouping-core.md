@@ -14,15 +14,19 @@ Le backend offre un **moteur d'énumération de groupes mono-niveau**. Tout le r
 consommateur à partir de primitives existantes. Voir ADR-007 pour le pourquoi.
 
 ```
-recordsGroups(library, attribute, filters, searchQuery, sort, pagination)   ← NOUVEAU
+recordsGroups(library, attribute, filters, searchQuery, sort, pagination)   ← NOUVEAU (seule surface backend)
         → { totalCount, list: [{ value, count }] }   (1 niveau de groupes, paginé/trié)
 
 records(library, filters: [...cumulés, <égalité du groupe>], pagination)    ← EXISTANT, inchangé
         → { totalCount, list }   (les records d'un groupe : "10 puis voir plus")
-
-treeNodeChildren(treeId, node) { list { id recordCount(library, attribute, filters) } }  ← recordCount NOUVEAU
-        → enfants directs + compteur cumulé par nœud, en 1 round-trip (batché)
 ```
+
+> **Axe arbre** : `recordsGroups(library, attributArbre)` renvoie directement les groupes = nœuds
+> pointés par l'attribut, avec le compteur **par nœud exact** (via `listDistinctValues`, cf. type
+> `TreeDistinctValues`). Le compteur **cumulé** (nœud + descendants) pour l'affichage arborescent est
+> calculé **côté front** en sommant les compteurs exacts sur le sous-arbre déplié (le front a la
+> structure via `treeNodeChildren`). Voir § _Axe arbre — cumul côté front_ pour le pourquoi (pas de
+> champ backend dédié).
 
 ## Axes de regroupement éligibles (V1)
 
@@ -47,7 +51,7 @@ que les attributs dont l'ensemble des groupes est **borné et curé** :
 on élargit le filtre d'axes éligibles dans l'UI, **aucun rework core, aucune migration**. Cf.
 ADR-007 § _Périmètre des axes (V1)_.
 
-## Surface backend (3 briques)
+## Surface backend (2 briques)
 
 ### 1. `recordsGroups` — énumération d'un niveau de groupes
 
@@ -100,29 +104,48 @@ plat — un même jeu de filtres donne les mêmes records, qu'on les compte par 
 
 Filtre d'égalité cumulé à ajouter aux filtres de la vue, selon le type d'attribut du niveau :
 
-| Type d'attribut           | Filtre du groupe                                                   |
-| ------------------------- | ------------------------------------------------------------------ |
-| simple                    | `{field: attr, condition: EQUAL, value}`                           |
-| lien                      | `{field: "attr.id", condition: EQUAL, value: <recordId>}`          |
-| arbre (nœud + sous-arbre) | `{field: attr, condition: CLASSIFIED_IN, value: <nodeId>, treeId}` |
-| bucket nul                | `{field: attr, condition: IS_EMPTY}`                               |
+| Type d'attribut | Filtre du groupe                                                                     |
+| --------------- | ------------------------------------------------------------------------------------ |
+| simple          | `{field: attr, condition: EQUAL, value}`                                             |
+| lien            | `{field: "attr.id", condition: EQUAL, value: <recordId>}`                            |
+| arbre (nœud)    | égalité sur le nœud de l'attribut arbre — **format à confirmer** (cf. ⚠️ ci-dessous) |
+| bucket nul      | `{field: attr, condition: IS_EMPTY}`                                                 |
+
+> ⚠️ **Axe arbre — `CLASSIFIED_IN` ne convient pas** (vérifié empiriquement sur l'arbre système
+> `users_groups` / attribut `user_groups`) : `records(users, [{field: user_groups, condition:
+CLASSIFIED_IN, treeId: users_groups, value: <node>}])` renvoie **0**, car `CLASSIFIED_IN` filtre
+> `r._id IN {records du sous-arbre}` (appartenance **propre** du record à l'arbre), **sans passer par
+> l'attribut**. `EQUAL value: <nodeId>` renvoie aussi 0 sur ce même jeu de données, alors que
+> `recordsGroups(users, user_groups)` compte correctement par nœud (Administrators = 21). Donc le
+> filtre exact pour fetcher les records d'un **groupe arbre** (records dont l'attribut arbre pointe
+> sur un nœud donné) reste **à déterminer** — c'est un point ouvert de la brique front, pas du core.
 
 Pagination = `pagination: {limit, offset}` existante → « charger 10, puis voir plus » = `offset` qui avance.
 
-### 3. `TreeNode.recordCount` — compteur cumulé par nœud (batché)
+## Axe arbre — cumul côté front (pas de champ backend dédié)
 
-```graphql
-type TreeNode {
-    # …
-    recordCount(library: ID!, attribute: ID!, filters: [RecordFilterInput]): Int
-}
-```
+> **Décision (2026-07-01)** : un champ `TreeNode.recordCount` backend a été **envisagé puis
+> abandonné**. Motif ci-dessous. L'axe arbre est entièrement servi par la **brique 1**.
 
-- Compte les records de `library` dont l'attribut arbre `attribute` est **classé dans ce nœud ou
-  ses descendants** (`CLASSIFIED_IN`), en cumulant les `filters` fournis.
-- **Batché par DataLoader** sur la durée de la requête : `treeNodeChildren { list { recordCount } }`
-  ramène tous les compteurs d'une fratrie en **un seul** round-trip (au lieu de N requêtes `records`).
-- Bucket « SANS CATÉGORIE » (records sur le nœud exact, hors enfants) = `count(nœud) − Σ count(enfants)`.
+**Ce qui marche** : `recordsGroups(library, attributArbre)` renvoie les groupes = nœuds pointés par
+l'attribut, avec le compteur **par nœud exact** (type `TreeDistinctValues { value: TreeNode, count }`).
+Vérifié : `recordsGroups(users, user_groups)` → Administrators = 21, Files admins = 6, etc.
+
+**Cumul par nœud** (nœud + descendants, pour l'affichage arborescent) = **calcul front** : le front
+possède la structure de l'arbre (`treeNodeChildren`) et les compteurs exacts par nœud
+(`recordsGroups`) → il **somme** les compteurs exacts sur le sous-arbre qu'il déplie.
+
+**Pourquoi pas un `recordCount` backend via `CLASSIFIED_IN`** : `CLASSIFIED_IN` compte l'appartenance
+**propre** du record à l'arbre (`r._id IN {records du sous-arbre}`), **sans passer par l'attribut** —
+il ne compte donc pas une library L regroupée par un attribut arbre pointant vers une liste de
+valeurs (renvoie 0, cf. ⚠️ section précédente). Un `recordCount` correct aurait dû réécrire une
+logique attribut-aware (expansion du sous-arbre + filtre « attribut ∈ nœuds »), dont le filtre de
+base n'est même pas établi — coût/risque élevés pour ce que le cumul front fait déjà.
+
+> ⚠️ **Multivalué** : un attribut arbre peut être multivalué (ex. `user_groups`). Un record dans
+> plusieurs nœuds compte dans chacun ⇒ **Σ compteurs ≠ records distincts**, et le cumul front peut
+> double-compter un record présent sur un parent **et** un descendant. À cadrer côté UX (cf. ADR-007
+> open points).
 
 ## Recettes de consommation
 
@@ -135,7 +158,7 @@ type TreeNode {
 3. "voir plus" colonne : même requête, offset += 10
 ```
 
-Axe de type arbre : remplacer l'étape 1 par `treeNodeChildren(tree, root) { list { id recordCount(library, attribute) } }`.
+Axe de type arbre : l'étape 1 reste `recordsGroups(library, attributArbre)` (groupes = nœuds + compteurs **par nœud exact**). Le compteur **cumulé** par nœud est sommé **côté front** sur le sous-arbre (structure via `treeNodeChildren`).
 
 ### Table (N niveaux, lazy) — chantier MR 2182
 
@@ -144,24 +167,23 @@ Axe de type arbre : remplacer l'étape 1 par `treeNodeChildren(tree, root) { lis
 2. au dépliage d'un groupe G de niveau n :
    - niveau intermédiaire : recordsGroups(library, attribute: niveau(n+1), filters: [<vue>, <égalité de G>])
    - dernier niveau : records(library, filters: [<vue>, <égalité de G>], pagination)   → records + "voir plus"
-3. niveau de type arbre : treeNodeChildren + recordCount (lazy par nœud), records via CLASSIFIED_IN
+3. niveau de type arbre : `recordsGroups(library, attributArbre)` → compteurs par nœud exact ; structure via `treeNodeChildren` ; cumul nœud+descendants **sommé côté front**. (Fetch des records d'un nœud arbre : filtre d'égalité `tree` **à confirmer**, cf. ⚠️ § Surface backend.)
 ```
 
 ## Fichiers (`apps/core`)
 
 - **app** : `src/app/core/valueApp.ts` (`recordsGroups` SDL + resolver, `DistinctValuesList`,
-  `RecordsGroupsSortInput`) ; `src/app/core/treeApp/treeApp.ts` (`TreeNode.recordCount` SDL + resolver).
+  `RecordsGroupsSortInput`).
 - **domain** : `src/domain/value/valueDomain.ts` (méthode `recordsGroups` + `searchQuery` ajouté à
-  `listDistinctValues`) ; `src/domain/tree/treeDomain.ts` (helper de comptage si nécessaire).
+  `listDistinctValues`).
 - **infra** : aucun nouveau repo — réutilise `attribute*Repo.listDistinctValues` et `recordRepo.find`.
 - **types** : `src/_types/value.ts` (params `recordsGroups`).
-- **tests E2E** : `src/__tests__/e2e/api/values/recordsGroups.test.ts`,
-  `src/__tests__/e2e/api/trees/treeNodeRecordCount.test.ts`.
+- **tests E2E** : `src/__tests__/e2e/api/values/recordsGroups/recordsGroups.test.ts`.
 
 ## Tests E2E (cas passants)
 
 - `recordsGroups` simple/lien : compteurs + bucket nul ; `searchQuery` → compteurs cohérents ;
   pagination + tri des groupes ; **invariant** `records(filtre d'égalité du groupe).totalCount ===
 count` du groupe.
-- `TreeNode.recordCount` : compteur cumulé (nœud + descendants) ; **invariant** `count(parent) ===
-Σ count(enfants) + bucket SANS CATÉGORIE`.
+- Axe arbre : `recordsGroups(library, attributArbre)` → compteurs **par nœud** (type
+  `TreeDistinctValues`). Le cumul étant calculé côté front, il n'y a pas de test backend de cumul.
