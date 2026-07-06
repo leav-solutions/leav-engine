@@ -1,5 +1,4 @@
 // Kept in a separate file from the Provider component to satisfy the
-// react-refresh/only-export-components ESLint rule (Context is not a component).
 import {createContext} from 'react';
 import {
     type AddInternalEventHandler,

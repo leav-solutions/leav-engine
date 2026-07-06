@@ -145,12 +145,6 @@ export default defineConfig([
             'one-var': ['error', 'never'],
             'prefer-object-spread': 'error',
             radix: 'error',
-            // Downgraded to warn for the migration: react-refresh 0.5.0 is stricter
-            // Restore to 'error' after cleanup.
-            'react-refresh/only-export-components': [
-                'warn',
-                {allowConstantExport: true}, // recommended for Vite
-            ],
         },
     },
     {

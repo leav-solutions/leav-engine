@@ -12,7 +12,7 @@ import {useFormBuilderReducer} from '../../../formBuilderReducer/hook/useFormBui
 import {type IFormElement, type IFormElementProps, TabsDirection, UIElementTypes} from '../../../_types';
 import EditTabLabelModal from './EditTabLabelModal';
 
-export const CompactMenuItem = styled(Menu.Item)`
+const CompactMenuItem = styled(Menu.Item)`
     &&&& {
         padding: 0 1rem;
     }
