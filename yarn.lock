@@ -8850,15 +8850,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest-when@npm:3.5.5":
-  version: 3.5.5
-  resolution: "@types/jest-when@npm:3.5.5"
-  dependencies:
-    "@types/jest": "npm:*"
-  checksum: 10/816c1ed5554182c43261d23c2902506c316bc0368f2ea1e632a0a93d05d8f6f2918afa6a406c2f5fdd4d277e042b8d2ba797993dc3c2fd2d5f53cda946696772
-  languageName: node
-  linkType: hard
-
 "@types/jest@npm:*, @types/jest@npm:30.0.0":
   version: 30.0.0
   resolution: "@types/jest@npm:30.0.0"
@@ -12376,7 +12367,6 @@ __metadata:
     "@types/compression": "npm:1.8.1"
     "@types/debug": "npm:0.0.31"
     "@types/graphql-upload": "npm:16.0.7"
-    "@types/jest-when": "npm:3.5.5"
     "@types/jexl": "npm:2.3.4"
     "@types/jsonwebtoken": "npm:9.0.10"
     "@types/lodash": "npm:4.17.24"
@@ -12414,7 +12404,6 @@ __metadata:
     hyperformula: "npm:3.3.0"
     i18next: "npm:22.5.1"
     i18next-fs-backend: "npm:2.6.6"
-    jest-when: "npm:3.7.0"
     jexl-extended: "npm:1.4.2"
     joi: "npm:18.2.3"
     jsonparse: "npm:1.3.1"
@@ -17795,15 +17784,6 @@ __metadata:
     jest-util: "npm:^29.7.0"
     string-length: "npm:^4.0.1"
   checksum: 10/4f616e0345676631a7034b1d94971aaa719f0cd4a6041be2aa299be437ea047afd4fe05c48873b7963f5687a2f6c7cbf51244be8b14e313b97bfe32b1e127e55
-  languageName: node
-  linkType: hard
-
-"jest-when@npm:3.7.0":
-  version: 3.7.0
-  resolution: "jest-when@npm:3.7.0"
-  peerDependencies:
-    jest: ">= 25"
-  checksum: 10/b5b88d077ed467aab220c71c885dbc5f448604f06e68f761ce9f479c99bb74e0dbf553d1cc980751d88401b034a578e1c44eec5e4095743b7586f02bb7c6313d
   languageName: node
   linkType: hard
 
