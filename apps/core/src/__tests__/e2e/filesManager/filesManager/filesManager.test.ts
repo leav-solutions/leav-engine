@@ -72,219 +72,228 @@ describe('Files manager', () => {
             }
         });
 
-        test('create file', async done => {
-            expect.assertions(5);
+        test('create file', () =>
+            new Promise<void>(async done => {
+                expect.assertions(5);
 
-            await fs.promises.writeFile(workFile, '');
+                await fs.promises.writeFile(workFile, '');
 
-            setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const res = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
                     ]) { list {id library {id}} } }`,
-                );
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list.length).toBe(1);
-                expect(res.data.data[library].list[0].library.id).toEqual(library);
+                    );
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[library].list.length).toBe(1);
+                    expect(res.data.data[library].list[0].library.id).toEqual(library);
 
-                expect(await fileExists(baseFile)).toBeTruthy();
-                done();
-            }, 1500);
-        });
+                    expect(await fileExists(baseFile)).toBeTruthy();
+                    done();
+                }, 1500);
+            }));
 
-        test('create dir', async done => {
-            expect.assertions(5);
-            await fs.promises.mkdir(workDir);
+        test('create dir', () =>
+            new Promise<void>(async done => {
+                expect.assertions(5);
+                await fs.promises.mkdir(workDir);
 
-            setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const res = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newDirName}"}
                     ]) { list {id library {id}} } }`,
-                );
+                    );
 
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list).toHaveLength(1);
-                expect(res.data.data[library].list[0].library.id).toEqual(library + '_directories');
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[library].list).toHaveLength(1);
+                    expect(res.data.data[library].list[0].library.id).toEqual(library + '_directories');
 
-                expect(await fileExists(workDir)).toBeTruthy();
-                done();
-            }, 1500);
-        });
+                    expect(await fileExists(workDir)).toBeTruthy();
+                    done();
+                }, 1500);
+            }));
 
-        test('update file', async done => {
-            expect.assertions(3);
-            await fs.promises.writeFile(baseFile, 'new content');
+        test('update file', () =>
+            new Promise<void>(async done => {
+                expect.assertions(3);
+                await fs.promises.writeFile(baseFile, 'new content');
 
-            setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const res = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
                     ]) { list {id} } }`,
-                );
+                    );
 
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list).toHaveLength(1);
-                done();
-            }, 1500);
-        });
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[library].list).toHaveLength(1);
+                    done();
+                }, 1500);
+            }));
 
-        test('move in a folder', async done => {
-            expect.assertions(3);
-            await fs.promises.rename(baseFile, fileInBaseDir);
+        test('move in a folder', () =>
+            new Promise<void>(async done => {
+                expect.assertions(3);
+                await fs.promises.rename(baseFile, fileInBaseDir);
 
-            setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const res = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
                     ]) { list {id} } }`,
-                );
+                    );
 
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list).toHaveLength(1);
-                done();
-            }, 1500);
-        });
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[library].list).toHaveLength(1);
+                    done();
+                }, 1500);
+            }));
 
-        test('rename file', async done => {
-            expect.assertions(3);
-            await fs.promises.rename(baseFile, workFile);
+        test('rename file', () =>
+            new Promise<void>(async done => {
+                expect.assertions(3);
+                await fs.promises.rename(baseFile, workFile);
 
-            setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const res = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
                     ]) { list {id} } }`,
-                );
+                    );
 
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list).toHaveLength(1);
-                done();
-            }, 1500);
-        });
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[library].list).toHaveLength(1);
+                    done();
+                }, 1500);
+            }));
 
-        test('overwrite file', async done => {
-            expect.assertions(6);
-            await fs.promises.writeFile(workFile, '');
-            await fs.promises.rename(workFile, baseFile);
+        test('overwrite file', () =>
+            new Promise<void>(async done => {
+                expect.assertions(6);
+                await fs.promises.writeFile(workFile, '');
+                await fs.promises.rename(workFile, baseFile);
 
-            setTimeout(async () => {
-                const res1 = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const res1 = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
                     ]) { list {id} } }`,
-                );
+                    );
 
-                const res2 = await makeGraphQlCall(
-                    `{ files(filters: [
+                    const res2 = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${newFileName}"}
                     ]) { list {id} } }`,
-                );
+                    );
 
-                expect(res1.data.errors).toBeUndefined();
-                expect(res2.data.errors).toBeUndefined();
-                expect(res1.status).toBe(200);
-                expect(res2.status).toBe(200);
-                expect(res1.data.data[library].list).toHaveLength(1);
-                expect(res2.data.data[library].list).toHaveLength(0);
-                done();
-            }, 1500);
-        });
+                    expect(res1.data.errors).toBeUndefined();
+                    expect(res2.data.errors).toBeUndefined();
+                    expect(res1.status).toBe(200);
+                    expect(res2.status).toBe(200);
+                    expect(res1.data.data[library].list).toHaveLength(1);
+                    expect(res2.data.data[library].list).toHaveLength(0);
+                    done();
+                }, 1500);
+            }));
 
-        test('move folder with file inside', async done => {
-            expect.assertions(3);
-            await fs.promises.rename(baseFile, fileInBaseDir);
-            await fs.promises.rename(baseDir, workDir);
+        test('move folder with file inside', () =>
+            new Promise<void>(async done => {
+                expect.assertions(3);
+                await fs.promises.rename(baseFile, fileInBaseDir);
+                await fs.promises.rename(baseDir, workDir);
 
-            setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const res = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, newDirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
                     ]) { list {id} } }`,
-                );
+                    );
 
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list).toHaveLength(1);
-                done();
-            }, 1500);
-        });
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[library].list).toHaveLength(1);
+                    done();
+                }, 1500);
+            }));
 
-        test('move folder with file inside into other folder', async done => {
-            expect.assertions(7);
-            await fs.promises.mkdir(workDir);
-            await fs.promises.writeFile(fileInWorkDir, '');
-            await fs.promises.rename(baseFile, fileInBaseDir);
-            await fs.promises.rename(workDir, `${baseDir}/${newDirName}`);
+        test('move folder with file inside into other folder', () =>
+            new Promise<void>(async done => {
+                expect.assertions(7);
+                await fs.promises.mkdir(workDir);
+                await fs.promises.writeFile(fileInWorkDir, '');
+                await fs.promises.rename(baseFile, fileInBaseDir);
+                await fs.promises.rename(workDir, `${baseDir}/${newDirName}`);
 
-            setTimeout(async () => {
-                const dirRecordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const dirRecordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
                     ]) { list {id} } }`,
-                );
+                    );
 
-                const fileRecordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                    const fileRecordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${join(filePath, dirName, newDirName)}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
                     ]) { list {id} } }`,
-                );
+                    );
 
-                expect(dirRecordsFind.data.errors).toBeUndefined();
-                expect(fileRecordsFind.data.errors).toBeUndefined();
-                expect(dirRecordsFind.status).toBe(200);
-                expect(fileRecordsFind.status).toBe(200);
-                expect(dirRecordsFind.data.data[library].list).toHaveLength(1);
-                expect(fileRecordsFind.data.data[library].list).toHaveLength(1);
-                expect(await fileExists(join(rootPath, filePath, dirName, newDirName))).toBeTruthy();
-                done();
-            }, 1500);
-        });
+                    expect(dirRecordsFind.data.errors).toBeUndefined();
+                    expect(fileRecordsFind.data.errors).toBeUndefined();
+                    expect(dirRecordsFind.status).toBe(200);
+                    expect(fileRecordsFind.status).toBe(200);
+                    expect(dirRecordsFind.data.data[library].list).toHaveLength(1);
+                    expect(fileRecordsFind.data.data[library].list).toHaveLength(1);
+                    expect(await fileExists(join(rootPath, filePath, dirName, newDirName))).toBeTruthy();
+                    done();
+                }, 1500);
+            }));
 
-        test('remove file', async done => {
-            expect.assertions(3);
-            await fs.promises.unlink(baseFile);
+        test('remove file', () =>
+            new Promise<void>(async done => {
+                expect.assertions(3);
+                await fs.promises.unlink(baseFile);
 
-            setTimeout(async () => {
-                const res = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const res = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName}"}
                     ]) { list {id} } }`,
-                );
+                    );
 
-                expect(res.data.errors).toBeUndefined();
-                expect(res.status).toBe(200);
-                expect(res.data.data[library].list).toHaveLength(0);
-                done();
-            }, 1500);
-        });
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.status).toBe(200);
+                    expect(res.data.data[library].list).toHaveLength(0);
+                    done();
+                }, 1500);
+            }));
     });
 
     describe('FilesManager with real files', () => {
@@ -303,328 +312,338 @@ describe('Files manager', () => {
             }
         });
 
-        test('create jpg with clipping path', async done => {
-            expect.assertions(7);
-            const jpgClippingPath = `${pathToTestsFile}/clippingPath.jpg`;
-            await fs.promises.copyFile(jpgClippingPath, `${file}.jpg`);
+        test('create jpg with clipping path', () =>
+            new Promise<void>(async done => {
+                expect.assertions(7);
+                const jpgClippingPath = `${pathToTestsFile}/clippingPath.jpg`;
+                await fs.promises.copyFile(jpgClippingPath, `${file}.jpg`);
 
-            setTimeout(async () => {
-                const recordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const recordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.jpg'}"}
                     ]) { list {id previews previews_status} } }`,
-                );
+                    );
 
-                expect(recordsFind.data.data[library].list).toHaveLength(1);
+                    expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-                recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews,
-                );
-                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status,
-                );
-                for (const preview in recordsFind.data.data[library].list[0].previews) {
-                    if (preview !== 'pages') {
-                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
-                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    recordsFind.data.data[library].list[0].previews = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews,
+                    );
+                    recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews_status,
+                    );
+                    for (const preview in recordsFind.data.data[library].list[0].previews) {
+                        if (preview !== 'pages') {
+                            expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                            expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                        }
                     }
-                }
 
-                done();
-            }, 5000);
-        });
+                    done();
+                }, 5000);
+            }));
 
-        test('create jpg with rbg colorspace', async done => {
-            expect.assertions(7);
-            const jpgRgbColorspace = `${pathToTestsFile}/rgb.jpg`;
-            await fs.promises.copyFile(jpgRgbColorspace, `${file}.jpg`);
+        test('create jpg with rbg colorspace', () =>
+            new Promise<void>(async done => {
+                expect.assertions(7);
+                const jpgRgbColorspace = `${pathToTestsFile}/rgb.jpg`;
+                await fs.promises.copyFile(jpgRgbColorspace, `${file}.jpg`);
 
-            setTimeout(async () => {
-                const recordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const recordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.jpg'}"}
                     ]) { list {id previews previews_status} } }`,
-                );
+                    );
 
-                expect(recordsFind.data.data[library].list).toHaveLength(1);
+                    expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-                recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews,
-                );
-                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status,
-                );
-                for (const preview in recordsFind.data.data[library].list[0].previews) {
-                    if (preview !== 'pages') {
-                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
-                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    recordsFind.data.data[library].list[0].previews = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews,
+                    );
+                    recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews_status,
+                    );
+                    for (const preview in recordsFind.data.data[library].list[0].previews) {
+                        if (preview !== 'pages') {
+                            expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                            expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                        }
                     }
-                }
 
-                done();
-            }, 5000);
-        });
+                    done();
+                }, 5000);
+            }));
 
-        test('create psd with clipping path', async done => {
-            expect.assertions(7);
-            const jpgRgbColorspace = `${pathToTestsFile}/clippingPath.psd`;
-            await fs.promises.copyFile(jpgRgbColorspace, `${file}.psd`);
+        test('create psd with clipping path', () =>
+            new Promise<void>(async done => {
+                expect.assertions(7);
+                const jpgRgbColorspace = `${pathToTestsFile}/clippingPath.psd`;
+                await fs.promises.copyFile(jpgRgbColorspace, `${file}.psd`);
 
-            setTimeout(async () => {
-                const recordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const recordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.psd'}"}
                     ]) { list {id previews previews_status} } }`,
-                );
+                    );
 
-                expect(recordsFind.data.data[library].list).toHaveLength(1);
+                    expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-                recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews,
-                );
-                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status,
-                );
-                for (const preview in recordsFind.data.data[library].list[0].previews) {
-                    if (preview !== 'pages') {
-                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
-                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    recordsFind.data.data[library].list[0].previews = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews,
+                    );
+                    recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews_status,
+                    );
+                    for (const preview in recordsFind.data.data[library].list[0].previews) {
+                        if (preview !== 'pages') {
+                            expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                            expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                        }
                     }
-                }
 
-                done();
-            }, 5000);
-        });
+                    done();
+                }, 5000);
+            }));
 
-        test('create psd with no clipping path', async done => {
-            expect.assertions(7);
-            const jpgRgbColorspace = `${pathToTestsFile}/noClippingPath.psd`;
-            await fs.promises.copyFile(jpgRgbColorspace, `${file}.psd`);
+        test('create psd with no clipping path', () =>
+            new Promise<void>(async done => {
+                expect.assertions(7);
+                const jpgRgbColorspace = `${pathToTestsFile}/noClippingPath.psd`;
+                await fs.promises.copyFile(jpgRgbColorspace, `${file}.psd`);
 
-            setTimeout(async () => {
-                const recordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const recordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.psd'}"}
                     ]) { list {id previews previews_status} } }`,
-                );
+                    );
 
-                expect(recordsFind.data.data[library].list).toHaveLength(1);
+                    expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-                recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews,
-                );
-                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status,
-                );
-                for (const preview in recordsFind.data.data[library].list[0].previews) {
-                    if (preview !== 'pages') {
-                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
-                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    recordsFind.data.data[library].list[0].previews = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews,
+                    );
+                    recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews_status,
+                    );
+                    for (const preview in recordsFind.data.data[library].list[0].previews) {
+                        if (preview !== 'pages') {
+                            expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                            expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                        }
                     }
-                }
 
-                done();
-            }, 5000);
-        });
+                    done();
+                }, 5000);
+            }));
 
-        test('create pdf with pages', async done => {
-            expect.assertions(9);
-            const jpgRgbColorspace = `${pathToTestsFile}/multiPages.pdf`;
-            await fs.promises.copyFile(jpgRgbColorspace, `${file}.pdf`);
+        test('create pdf with pages', () =>
+            new Promise<void>(async done => {
+                expect.assertions(9);
+                const jpgRgbColorspace = `${pathToTestsFile}/multiPages.pdf`;
+                await fs.promises.copyFile(jpgRgbColorspace, `${file}.pdf`);
 
-            setTimeout(async () => {
-                const recordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const recordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.pdf'}"}
                     ]) { list {id previews previews_status} } }`,
-                );
+                    );
 
-                expect(recordsFind.data.data[library].list).toHaveLength(1);
+                    expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-                recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews,
-                );
-                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status,
-                );
-                for (const preview in recordsFind.data.data[library].list[0].previews) {
-                    if (recordsFind.data.data[library].list[0].previews[preview]) {
-                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
-                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    recordsFind.data.data[library].list[0].previews = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews,
+                    );
+                    recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews_status,
+                    );
+                    for (const preview in recordsFind.data.data[library].list[0].previews) {
+                        if (recordsFind.data.data[library].list[0].previews[preview]) {
+                            expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                            expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                        }
                     }
-                }
 
-                done();
-            }, 5000);
-        });
+                    done();
+                }, 5000);
+            }));
 
-        test('create odp', async done => {
-            expect.assertions(9);
-            const jpgRgbColorspace = `${pathToTestsFile}/odp.odp`;
-            await fs.promises.copyFile(jpgRgbColorspace, `${file}.odp`);
+        test('create odp', () =>
+            new Promise<void>(async done => {
+                expect.assertions(9);
+                const jpgRgbColorspace = `${pathToTestsFile}/odp.odp`;
+                await fs.promises.copyFile(jpgRgbColorspace, `${file}.odp`);
 
-            setTimeout(async () => {
-                const recordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const recordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.odp'}"}
                     ]) { list {id previews previews_status} } }`,
-                );
+                    );
 
-                expect(recordsFind.data.data[library].list).toHaveLength(1);
+                    expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-                recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews,
-                );
-                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status,
-                );
-                for (const preview in recordsFind.data.data[library].list[0].previews) {
-                    if (recordsFind.data.data[library].list[0].previews[preview]) {
-                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
-                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    recordsFind.data.data[library].list[0].previews = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews,
+                    );
+                    recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews_status,
+                    );
+                    for (const preview in recordsFind.data.data[library].list[0].previews) {
+                        if (recordsFind.data.data[library].list[0].previews[preview]) {
+                            expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                            expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                        }
                     }
-                }
 
-                done();
-            }, 5000);
-        });
+                    done();
+                }, 5000);
+            }));
 
-        test('create pptx', async done => {
-            expect.assertions(9);
-            const jpgRgbColorspace = `${pathToTestsFile}/pptx.pptx`;
-            await fs.promises.copyFile(jpgRgbColorspace, `${file}.pptx`);
+        test('create pptx', () =>
+            new Promise<void>(async done => {
+                expect.assertions(9);
+                const jpgRgbColorspace = `${pathToTestsFile}/pptx.pptx`;
+                await fs.promises.copyFile(jpgRgbColorspace, `${file}.pptx`);
 
-            setTimeout(async () => {
-                const recordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const recordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.pptx'}"}
                     ]) { list {id previews previews_status} } }`,
-                );
+                    );
 
-                expect(recordsFind.data.data[library].list).toHaveLength(1);
+                    expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-                recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews,
-                );
-                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status,
-                );
-                for (const preview in recordsFind.data.data[library].list[0].previews) {
-                    if (recordsFind.data.data[library].list[0].previews[preview]) {
-                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
-                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    recordsFind.data.data[library].list[0].previews = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews,
+                    );
+                    recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews_status,
+                    );
+                    for (const preview in recordsFind.data.data[library].list[0].previews) {
+                        if (recordsFind.data.data[library].list[0].previews[preview]) {
+                            expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                            expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                        }
                     }
-                }
 
-                done();
-            }, 5000);
-        });
+                    done();
+                }, 5000);
+            }));
 
-        test('create docx', async done => {
-            expect.assertions(9);
-            const jpgRgbColorspace = `${pathToTestsFile}/docx.docx`;
-            await fs.promises.copyFile(jpgRgbColorspace, `${file}.docx`);
+        test('create docx', () =>
+            new Promise<void>(async done => {
+                expect.assertions(9);
+                const jpgRgbColorspace = `${pathToTestsFile}/docx.docx`;
+                await fs.promises.copyFile(jpgRgbColorspace, `${file}.docx`);
 
-            setTimeout(async () => {
-                const recordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const recordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.docx'}"}
                     ]) { list {id previews previews_status} } }`,
-                );
+                    );
 
-                expect(recordsFind.data.data[library].list).toHaveLength(1);
+                    expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-                recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews,
-                );
-                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status,
-                );
-                for (const preview in recordsFind.data.data[library].list[0].previews) {
-                    if (recordsFind.data.data[library].list[0].previews[preview]) {
-                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
-                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    recordsFind.data.data[library].list[0].previews = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews,
+                    );
+                    recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews_status,
+                    );
+                    for (const preview in recordsFind.data.data[library].list[0].previews) {
+                        if (recordsFind.data.data[library].list[0].previews[preview]) {
+                            expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                            expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                        }
                     }
-                }
 
-                done();
-            }, 5000);
-        });
+                    done();
+                }, 5000);
+            }));
 
-        test('create eps', async done => {
-            expect.assertions(7);
-            const jpgRgbColorspace = `${pathToTestsFile}/eps.eps`;
-            await fs.promises.copyFile(jpgRgbColorspace, `${file}.eps`);
+        test('create eps', () =>
+            new Promise<void>(async done => {
+                expect.assertions(7);
+                const jpgRgbColorspace = `${pathToTestsFile}/eps.eps`;
+                await fs.promises.copyFile(jpgRgbColorspace, `${file}.eps`);
 
-            setTimeout(async () => {
-                const recordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const recordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.eps'}"}
                     ]) { list {id previews previews_status} } }`,
-                );
+                    );
 
-                expect(recordsFind.data.data[library].list).toHaveLength(1);
-                for (const preview in recordsFind.data.data[library].list[0].previews) {
-                    if (preview !== 'pages') {
-                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
-                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    expect(recordsFind.data.data[library].list).toHaveLength(1);
+                    for (const preview in recordsFind.data.data[library].list[0].previews) {
+                        if (preview !== 'pages') {
+                            expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                            expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                        }
                     }
-                }
 
-                done();
-            }, 5000);
-        });
+                    done();
+                }, 5000);
+            }));
 
-        test('create mp4 video', async done => {
-            expect.assertions(7);
-            const jpgRgbColorspace = `${pathToTestsFile}/mp4.mp4`;
-            await fs.promises.copyFile(jpgRgbColorspace, `${file}.mp4`);
+        test('create mp4 video', () =>
+            new Promise<void>(async done => {
+                expect.assertions(7);
+                const jpgRgbColorspace = `${pathToTestsFile}/mp4.mp4`;
+                await fs.promises.copyFile(jpgRgbColorspace, `${file}.mp4`);
 
-            setTimeout(async () => {
-                const recordsFind = await makeGraphQlCall(
-                    `{ files(filters: [
+                setTimeout(async () => {
+                    const recordsFind = await makeGraphQlCall(
+                        `{ files(filters: [
                         {field: "${FilesAttributes.FILE_PATH}", value: "${filePath}"},
                         {operator: ${Operator.AND}},
                         {field: "${FilesAttributes.FILE_NAME}", value: "${fileName + '.mp4'}"}
                     ]) { list {id previews previews_status} } }`,
-                );
+                    );
 
-                expect(recordsFind.data.data[library].list).toHaveLength(1);
+                    expect(recordsFind.data.data[library].list).toHaveLength(1);
 
-                recordsFind.data.data[library].list[0].previews = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews,
-                );
-                recordsFind.data.data[library].list[0].previews_status = JSON.parse(
-                    recordsFind.data.data[library].list[0].previews_status,
-                );
-                for (const preview in recordsFind.data.data[library].list[0].previews) {
-                    if (preview !== 'pages') {
-                        expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
-                        expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                    recordsFind.data.data[library].list[0].previews = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews,
+                    );
+                    recordsFind.data.data[library].list[0].previews_status = JSON.parse(
+                        recordsFind.data.data[library].list[0].previews_status,
+                    );
+                    for (const preview in recordsFind.data.data[library].list[0].previews) {
+                        if (preview !== 'pages') {
+                            expect(recordsFind.data.data[library].list[0].previews_status[preview].status).toEqual(0);
+                            expect(recordsFind.data.data[library].list[0].previews[preview]).not.toBe('');
+                        }
                     }
-                }
 
-                done();
-            }, 5000);
-        });
+                    done();
+                }, 5000);
+            }));
     });
 });
 

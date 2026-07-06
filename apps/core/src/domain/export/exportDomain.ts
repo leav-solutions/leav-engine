@@ -8,7 +8,7 @@ import {type IRecordDomain} from '../record/recordDomain';
 import {type ITasksManagerDomain} from '../tasksManager/tasksManagerDomain';
 import ExcelJS from 'exceljs';
 import {type i18n} from 'i18next';
-import {pick, set} from 'lodash';
+import {pick} from 'lodash';
 import path from 'path';
 import {type IUtils} from '../../utils/utils';
 import * as crypto from 'node:crypto';
@@ -20,7 +20,6 @@ import {type IRecordFilterLight} from '../../_types/record';
 import {type ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {type IValue} from '../../_types/value';
 import {type IValidateHelper} from '../helpers/validate';
-import {getValuesToDisplay} from '../../utils/helpers/getValuesToDisplay';
 import LeavError from '../../errors/LeavError';
 import {type INotificationDomain} from '../notification/notificationDomain';
 import {type IExportProfileDomain} from './exportProfileDomain';
@@ -34,18 +33,6 @@ export interface IExportParams {
 
 export interface IExportDomain {
     exportExcel(params: IExportParams, task?: ITaskFuncParams): Promise<string>;
-    exportData(
-        mapping: IExportMapping,
-        elements: Array<{[libraryId: string]: string}>,
-        ctx: IQueryInfos,
-    ): Promise<Array<{[key: string]: any}>>;
-}
-
-export interface IExportMapping {
-    [key: string]: {
-        attribute: string;
-        rawValue?: boolean;
-    };
 }
 
 export interface IExportDomainDeps {
@@ -137,52 +124,6 @@ export default function ({
         return values;
     };
 
-    const _getMappingKeysByLibrary = (mapping: IExportMapping): Record<string, string[]> =>
-        Object.entries(mapping).reduce((acc, [key, value]) => {
-            const libraryId = value.attribute.split('.')[0];
-            (acc[libraryId] ??= []).push(key);
-            return acc;
-        }, {});
-
-    const _getInDepthValue = async (
-        libraryId: string,
-        recordId: string,
-        nestedAttribute: string[],
-        ctx: IQueryInfos,
-        rawValue: boolean = false,
-    ): Promise<string> => {
-        // The deep traversal (links + extended sub-fields) is delegated to getRecordFieldValue.
-        const fieldValues = await recordDomain.getRecordFieldValue({
-            library: libraryId,
-            record: {id: recordId},
-            attributePath: nestedAttribute.join('.'),
-            ctx,
-        });
-
-        const displayedValues = await Promise.all(
-            getValuesToDisplay(fieldValues).map(async fieldValue => {
-                const payload =
-                    (rawValue && 'raw_payload' in fieldValue ? fieldValue.raw_payload : fieldValue.payload) ?? '';
-
-                // Date range payloads are exported as "from - to"
-                if (payload && typeof payload === 'object' && fieldValue.attribute) {
-                    const attributeProps = await attributeDomain.getAttributeProperties({
-                        id: fieldValue.attribute,
-                        ctx,
-                    });
-
-                    if (attributeProps.format === AttributeFormats.DATE_RANGE) {
-                        return `${payload.from} - ${payload.to}`;
-                    }
-                }
-
-                return payload;
-            }),
-        );
-
-        return displayedValues.join(',');
-    };
-
     const _extractAttributesAndColumnsFromProfile = async (
         profile: string | undefined,
         library: string,
@@ -203,40 +144,6 @@ export default function ({
     };
 
     return {
-        async exportData(
-            mapping: IExportMapping,
-            recordsToExport: Array<{[libraryId: string]: string}>,
-            ctx: IQueryInfos,
-        ): Promise<Array<{[key: string]: any}>> {
-            const mappingKeysByLibrary = _getMappingKeysByLibrary(mapping);
-
-            const getMappingRecordValues = async (keys: string[], libraryId: string, recordId: string) =>
-                keys.reduce(async (acc, key) => {
-                    const nestedAttributes = mapping[key].attribute.split('.').slice(1); // first element is the library id, we delete it
-                    const value = await _getInDepthValue(
-                        libraryId,
-                        recordId,
-                        nestedAttributes,
-                        ctx,
-                        mapping[key].rawValue,
-                    );
-                    return set(await acc, key, value);
-                }, Promise.resolve({}));
-
-            return Promise.all(
-                recordsToExport.map(e =>
-                    Object.entries(e).reduce(
-                        async (acc, [libraryId, recordId]) => ({
-                            ...(await acc),
-                            ...(mappingKeysByLibrary[libraryId] &&
-                                (await getMappingRecordValues(mappingKeysByLibrary[libraryId], libraryId, recordId))),
-                        }),
-                        Promise.resolve({}),
-                    ),
-                ),
-            );
-        },
-
         async exportExcel(params: IExportParams, task?: ITaskFuncParams): Promise<string> {
             const {library, profile, filters, ctx} = params;
 
