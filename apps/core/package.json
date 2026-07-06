@@ -77,7 +77,7 @@
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
         "@opentelemetry/api": "1.9.1",
-        "@opentelemetry/auto-instrumentations-node": "0.77.0",
+        "@opentelemetry/auto-instrumentations-node": "0.78.0",
         "@opentelemetry/sdk-metrics": "2.7.1",
         "@opentelemetry/sdk-node": "0.218.0",
         "@rjsf/utils": "6.5.3",
