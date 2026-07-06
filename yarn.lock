@@ -5163,7 +5163,7 @@ __metadata:
     react-markdown: "npm:5.0.3"
     react-router-dom: "npm:6.30.4"
     styled-components: "npm:6.0.8"
-    tsc-alias: "npm:1.8.17"
+    tsc-alias: "npm:1.9.0"
     typescript: "npm:5.9.3"
     vite: "npm:7.3.6"
     vitest: "npm:4.1.9"
@@ -24098,9 +24098,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsc-alias@npm:1.8.17":
-  version: 1.8.17
-  resolution: "tsc-alias@npm:1.8.17"
+"tsc-alias@npm:1.9.0":
+  version: 1.9.0
+  resolution: "tsc-alias@npm:1.9.0"
   dependencies:
     chokidar: "npm:^3.5.3"
     commander: "npm:^9.0.0"
@@ -24111,7 +24111,7 @@ __metadata:
     plimit-lit: "npm:^1.2.6"
   bin:
     tsc-alias: dist/bin/index.js
-  checksum: 10/8f8694fbba0e2c0e27a0ddb97c275abdb121ce063d68a1edf010df5ee5bec56564ad45227e0788ad45a46b705d272c827ef949e7c16428c1ce79c1cdd8b44837
+  checksum: 10/7016e5a3f576d20ce0803570557a5606cbba24e07969b349736637d5cfd1afaf73f809d601b1d67f127e63adc6a76a901d4c86b229700de4d8c8961e0f66122f
   languageName: node
   linkType: hard
 
