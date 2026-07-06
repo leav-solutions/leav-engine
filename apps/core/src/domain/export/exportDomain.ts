@@ -16,7 +16,7 @@ import type * as Config from '../../_types/config';
 import {AttributeFormats, AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {Errors, ErrorTypes} from '../../_types/errors';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {type IRecord, type IRecordFilterLight} from '../../_types/record';
+import {type IRecordFilterLight} from '../../_types/record';
 import {type ITaskFuncParams, TaskPriority, TaskType} from '../../_types/tasksManager';
 import {type IValue} from '../../_types/value';
 import {type IValidateHelper} from '../helpers/validate';
@@ -137,64 +137,6 @@ export default function ({
         return values;
     };
 
-    const _extractRecordFieldValue = async (
-        record: IRecord,
-        attribute: IAttribute,
-        asRecord: boolean,
-        ctx: IQueryInfos,
-    ): Promise<IRecord | IRecord[] | IValue | IValue[] | null> => {
-        let res = await recordDomain.getRecordFieldValue({
-            library: record.library,
-            record,
-            attributePath: attribute.id,
-            ctx,
-        });
-
-        if (res !== null && asRecord) {
-            if (attribute.type === AttributeTypes.TREE) {
-                res = res.map(e => e.payload.record);
-            } else if (
-                attribute.type === AttributeTypes.SIMPLE_LINK ||
-                attribute.type === AttributeTypes.ADVANCED_LINK
-            ) {
-                res = res.map(e => e.payload);
-            }
-        }
-
-        return res;
-    };
-
-    const _getRecFieldValue = async (
-        elements: Array<IValue | IValue[]> | Array<IRecord | IRecord[]>,
-        attributes: string[],
-        ctx: IQueryInfos,
-    ): Promise<Array<IValue | IValue[]>> => {
-        if (!attributes.length) {
-            return elements;
-        }
-
-        const attributeProps = await attributeDomain.getAttributeProperties({id: attributes[0], ctx});
-
-        const values = [];
-        for (const elem of elements) {
-            if (Array.isArray(elem)) {
-                for (const e of elem) {
-                    const value = await _extractRecordFieldValue(e, attributeProps, attributes.length > 1, ctx);
-                    if (value !== null) {
-                        values.push(value);
-                    }
-                }
-            } else {
-                const value = await _extractRecordFieldValue(elem, attributeProps, attributes.length > 1, ctx);
-                if (value !== null) {
-                    values.push(value);
-                }
-            }
-        }
-
-        return _getRecFieldValue(values, attributes.slice(1), ctx);
-    };
-
     const _getMappingKeysByLibrary = (mapping: IExportMapping): Record<string, string[]> =>
         Object.entries(mapping).reduce((acc, [key, value]) => {
             const libraryId = value.attribute.split('.')[0];
@@ -204,57 +146,41 @@ export default function ({
 
     const _getInDepthValue = async (
         libraryId: string,
-        recordIds: string[],
+        recordId: string,
         nestedAttribute: string[],
         ctx: IQueryInfos,
         rawValue: boolean = false,
     ): Promise<string> => {
-        const attributeProps = await attributeDomain.getAttributeProperties({id: nestedAttribute[0], ctx});
+        // The deep traversal (links + extended sub-fields) is delegated to getRecordFieldValue.
+        const fieldValues = await recordDomain.getRecordFieldValue({
+            library: libraryId,
+            record: {id: recordId},
+            attributePath: nestedAttribute.join('.'),
+            ctx,
+        });
 
-        const recordsFieldValues = await Promise.all(
-            recordIds.map(recordId =>
-                recordDomain.getRecordFieldValue({
-                    library: libraryId,
-                    record: {id: recordId},
-                    attributePath: nestedAttribute[0],
-                    ctx,
-                }),
-            ),
+        const displayedValues = await Promise.all(
+            getValuesToDisplay(fieldValues).map(async fieldValue => {
+                const payload =
+                    (rawValue && 'raw_payload' in fieldValue ? fieldValue.raw_payload : fieldValue.payload) ?? '';
+
+                // Date range payloads are exported as "from - to"
+                if (payload && typeof payload === 'object' && fieldValue.attribute) {
+                    const attributeProps = await attributeDomain.getAttributeProperties({
+                        id: fieldValue.attribute,
+                        ctx,
+                    });
+
+                    if (attributeProps.format === AttributeFormats.DATE_RANGE) {
+                        return `${payload.from} - ${payload.to}`;
+                    }
+                }
+
+                return payload;
+            }),
         );
 
-        let values = recordsFieldValues.flatMap(recordFieldValues =>
-            getValuesToDisplay(recordFieldValues).map(
-                recordFieldValue =>
-                    (rawValue && 'raw_payload' in recordFieldValue
-                        ? recordFieldValue.raw_payload
-                        : recordFieldValue.payload) ?? '',
-            ),
-        );
-
-        if (utils.isLinkAttribute(attributeProps)) {
-            return _getInDepthValue(
-                attributeProps.linked_library,
-                values.map(({id}) => id),
-                nestedAttribute.slice(1),
-                ctx,
-                rawValue,
-            );
-        } else if (nestedAttribute.length > 1) {
-            if (attributeProps.format === AttributeFormats.EXTENDED) {
-                values = values.map(value =>
-                    nestedAttribute.slice(1).reduce((acc, attr) => acc[attr], JSON.parse(value)),
-                );
-            } else {
-                throw new LeavError(
-                    ErrorTypes.VALIDATION_ERROR,
-                    `Attribute "${attributeProps.id}" is not an extended or a link attribute, cannot access sub-attributes`,
-                );
-            }
-        } else if (attributeProps.format === AttributeFormats.DATE_RANGE) {
-            values = values.map(value => `${value.from} - ${value.to}`);
-        }
-
-        return values.join(',');
+        return displayedValues.join(',');
     };
 
     const _extractAttributesAndColumnsFromProfile = async (
@@ -289,7 +215,7 @@ export default function ({
                     const nestedAttributes = mapping[key].attribute.split('.').slice(1); // first element is the library id, we delete it
                     const value = await _getInDepthValue(
                         libraryId,
-                        [recordId],
+                        recordId,
                         nestedAttributes,
                         ctx,
                         mapping[key].rawValue,
@@ -457,7 +383,12 @@ export default function ({
 
                         try {
                             // get values of full path attribute
-                            const fieldValues = await _getRecFieldValue([record], attr, ctx);
+                            const fieldValues = await recordDomain.getRecordFieldValue({
+                                library,
+                                record,
+                                attributePath: attrKey,
+                                ctx,
+                            });
 
                             // get record label or id if last attribute of full path is a link or tree type
                             const attributeProps = await attributeDomain.getAttributeProperties({
@@ -465,11 +396,7 @@ export default function ({
                                 ctx,
                             });
 
-                            const value = await _getFormattedValues(
-                                attributeProps,
-                                fieldValues.flat(Infinity) as IValue[],
-                                ctx,
-                            );
+                            const value = await _getFormattedValues(attributeProps, fieldValues, ctx);
 
                             // set value(s) and concat them if there are several
                             subset[attrKey] = value.map(v => v.payload).join(' | ');

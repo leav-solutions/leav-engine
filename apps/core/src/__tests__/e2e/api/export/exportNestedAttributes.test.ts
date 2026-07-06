@@ -78,6 +78,20 @@ describe('Export Nested Attributes', () => {
                                 ],
                             },
                             {
+                                label: 'through_tree_attribute',
+                                columns: [
+                                    {columnLabel: 'Event Name', attribute: 'event_name'},
+                                    {columnLabel: "Creator's Group Label", attribute: 'created_by.user_groups'},
+                                ],
+                            },
+                            {
+                                label: 'through_tree_attribute_label',
+                                columns: [
+                                    {columnLabel: 'Event Name', attribute: 'event_name'},
+                                    {columnLabel: "Creator's Group Label", attribute: 'created_by.user_groups.label'},
+                                ],
+                            },
+                            {
                                 label: 'with_creator_of_creator_wrong_attribute',
                                 columns: [
                                     {columnLabel: 'Event Name', attribute: 'event_name'},
@@ -108,17 +122,20 @@ describe('Export Nested Attributes', () => {
         await gqlSaveValue('event_name', eventLibName, eventId2, 'Team Meeting');
     });
 
+    async function exportToExcelGetData(library: string, profile: string): Promise<string[][][]> {
+        const exportTaskId = (await makeGraphQlCall(`query { export(library: "${library}", profile: "${profile}") }`))
+            .data.data.export;
+
+        const task = await waitForTaskCompletedWithStatus(exportTaskId, TaskStatus.DONE);
+
+        const filepath = task.link.url;
+        const buffer = await getFileDataBuffer(filepath);
+        return getExcelData(buffer);
+    }
+
     describe('default behavior (link attribute without dot notation)', () => {
         test('should export using recordIdentityConf.label for created_by link', async () => {
-            const exportTaskId = (
-                await makeGraphQlCall(`query { export(library: "${eventLibName}", profile: "default") }`)
-            ).data.data.export;
-
-            const task = await waitForTaskCompletedWithStatus(exportTaskId, TaskStatus.DONE);
-
-            const filepath = task.link.url;
-            const buffer = await getFileDataBuffer(filepath);
-            const excelData = await getExcelData(buffer);
+            const excelData = await exportToExcelGetData(eventLibName, 'default');
 
             // created_by will show the label of the creator
             // excelData[0][0] is the first row (header with display labels)
@@ -140,15 +157,7 @@ describe('Export Nested Attributes', () => {
 
     describe('nested simple attributes (one level - created_by user info)', () => {
         test('should export specific attributes from created_by user', async () => {
-            const exportTaskId = (
-                await makeGraphQlCall(`query { export(library: "${eventLibName}", profile: "with_user_info") }`)
-            ).data.data.export;
-
-            const task = await waitForTaskCompletedWithStatus(exportTaskId, TaskStatus.DONE);
-
-            const filepath = task.link.url;
-            const buffer = await getFileDataBuffer(filepath);
-            const excelData = await getExcelData(buffer);
+            const excelData = await exportToExcelGetData(eventLibName, 'with_user_info');
 
             // Should contain event name and creator email (created_by points to system users)
             expect(excelData[0].length).toBeGreaterThan(0);
@@ -177,17 +186,7 @@ describe('Export Nested Attributes', () => {
 
     describe('nested link attributes (two levels - created_by.created_by)', () => {
         test('should export attributes from creator of creator (2 levels deep)', async () => {
-            const exportTaskId = (
-                await makeGraphQlCall(
-                    `query { export(library: "${eventLibName}", profile: "with_creator_of_creator") }`,
-                )
-            ).data.data.export;
-
-            const task = await waitForTaskCompletedWithStatus(exportTaskId, TaskStatus.DONE);
-
-            const filepath = task.link.url;
-            const buffer = await getFileDataBuffer(filepath);
-            const excelData = await getExcelData(buffer);
+            const excelData = await exportToExcelGetData(eventLibName, 'with_creator_of_creator');
 
             // Should navigate 2 levels deep: event.created_by.created_by
             // Note: created_by points to system users which have 'email' attribute
@@ -217,17 +216,7 @@ describe('Export Nested Attributes', () => {
 
     describe('nested link attributes without specific attribute (label)', () => {
         test('should export label from chained link without specifying attribute', async () => {
-            const exportTaskId = (
-                await makeGraphQlCall(
-                    `query { export(library: "${eventLibName}", profile: "with_creator_of_creator_label") }`,
-                )
-            ).data.data.export;
-
-            const task = await waitForTaskCompletedWithStatus(exportTaskId, TaskStatus.DONE);
-
-            const filepath = task.link.url;
-            const buffer = await getFileDataBuffer(filepath);
-            const excelData = await getExcelData(buffer);
+            const excelData = await exportToExcelGetData(eventLibName, 'with_creator_of_creator_label');
 
             // Should navigate 2 levels deep: event.created_by.created_by
             // And return the label of the user, not "[object Object]"
@@ -252,6 +241,40 @@ describe('Export Nested Attributes', () => {
             // Ensure it's not "[object Object]"
             expect(excelData[0][3][1]).not.toBe('[object Object]');
         });
+    });
+
+    test('nested tree attributes without specific attribute (label)', async () => {
+        const excelData = await exportToExcelGetData(eventLibName, 'through_tree_attribute');
+
+        // Should navigate 2 levels deep: event.created_by.created_by
+        // And return the label of the user, not "[object Object]"
+        expect(excelData[0].length).toBeGreaterThan(0);
+        expect(excelData[0][0]).toEqual(
+            expect.arrayContaining([
+                expect.stringContaining('Event Name'),
+                expect.stringContaining("Creator's Group Label"),
+            ]),
+        );
+
+        expect(excelData[0][2]).toEqual(['Team Meeting', 'non-admin']);
+        expect(excelData[0][3]).toEqual(['Product Launch 2025', '']);
+    });
+
+    test('nested tree attributes with specific attribute (label)', async () => {
+        const excelData = await exportToExcelGetData(eventLibName, 'through_tree_attribute_label');
+
+        // Should navigate 2 levels deep: event.created_by.created_by
+        // And return the label of the user, not "[object Object]"
+        expect(excelData[0].length).toBeGreaterThan(0);
+        expect(excelData[0][0]).toEqual(
+            expect.arrayContaining([
+                expect.stringContaining('Event Name'),
+                expect.stringContaining("Creator's Group Label"),
+            ]),
+        );
+
+        expect(excelData[0][2]).toEqual(['Team Meeting', 'non-admin']);
+        expect(excelData[0][3]).toEqual(['Product Launch 2025', '']);
     });
 
     describe('library has exportProfiles', () => {
@@ -285,7 +308,7 @@ describe('Export Nested Attributes', () => {
             expect(exportProfilesConfig).toBeDefined();
 
             expect(exportProfilesConfig?.defaultProfile).toBe('default');
-            expect(exportProfilesConfig?.profiles.length).toBe(5);
+            expect(exportProfilesConfig?.profiles.length).toBe(7);
         });
 
         test('should have correct export profile columns configuration', async () => {

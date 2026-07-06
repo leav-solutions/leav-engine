@@ -82,26 +82,14 @@ describe('exportDomain', () => {
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributePath: 'bikes_activity',
-                    returnValue: [{payload: {id: 'activityId'}}],
-                },
-                {
-                    library: 'activities',
-                    recordId: 'activityId',
-                    attributePath: 'activities_label',
+                    attributePath: 'bikes_activity.activities_label',
                     returnValue: [{payload: 'activityLabel'}],
                 },
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributePath: 'bikes_visual',
-                    returnValue: [{payload: {id: 'fileId'}}],
-                },
-                {
-                    library: 'files',
-                    recordId: 'fileId',
-                    attributePath: 'files_previews',
-                    returnValue: [{payload: JSON.stringify({medium: '/path/to/preview'})}],
+                    attributePath: 'bikes_visual.files_previews.medium',
+                    returnValue: [{payload: '/path/to/preview'}],
                 },
                 {library: 'bikes', recordId: 'bikeId', attributePath: 'no_value', returnValue: []},
                 {
@@ -192,26 +180,14 @@ describe('exportDomain', () => {
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributePath: 'bikes_activity',
-                    returnValue: [{payload: {id: 'activityId'}}],
-                },
-                {
-                    library: 'activities',
-                    recordId: 'activityId',
-                    attributePath: 'activities_label',
+                    attributePath: 'bikes_activity.activities_label',
                     returnValue: [{payload: 'activityLabel'}],
                 },
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributePath: 'bikes_visual',
-                    returnValue: [{payload: {id: 'fileId'}}],
-                },
-                {
-                    library: 'files',
-                    recordId: 'fileId',
-                    attributePath: 'files_previews',
-                    returnValue: [{payload: JSON.stringify({medium: '/path/to/preview'})}],
+                    attributePath: 'bikes_visual.files_previews.medium',
+                    returnValue: [{payload: '/path/to/preview'}],
                 },
                 {library: 'bikes', recordId: 'bikeId', attributePath: 'no_value', returnValue: []},
                 {
@@ -296,20 +272,8 @@ describe('exportDomain', () => {
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributePath: 'bikes_shops',
-                    returnValue: [{payload: {id: 'shopId'}}, {payload: {id: 'shopId2'}}],
-                },
-                {
-                    library: 'shops',
-                    recordId: 'shopId',
-                    attributePath: 'shops_label',
-                    returnValue: [{payload: 'shopLabel'}],
-                },
-                {
-                    library: 'shops',
-                    recordId: 'shopId2',
-                    attributePath: 'shops_label',
-                    returnValue: [{payload: 'shopLabel2'}],
+                    attributePath: 'bikes_shops.shops_label',
+                    returnValue: [{payload: 'shopLabel'}, {payload: 'shopLabel2'}],
                 },
                 {
                     library: 'bikes',
@@ -394,20 +358,11 @@ describe('exportDomain', () => {
                 {
                     library: 'bikes',
                     recordId: 'bikeId',
-                    attributePath: 'bikes_shops',
-                    returnValue: [{payload: {id: 'shopId'}}, {payload: {id: 'shopId2'}}],
-                },
-                {
-                    library: 'shops',
-                    recordId: 'shopId',
-                    attributePath: 'shops_label',
-                    returnValue: [{payload: 'Welcome to shopLabel', raw_payload: 'shopLabel'}],
-                },
-                {
-                    library: 'shops',
-                    recordId: 'shopId2',
-                    attributePath: 'shops_label',
-                    returnValue: [{payload: 'Welcome to shopLabel2', raw_payload: 'shopLabel2'}],
+                    attributePath: 'bikes_shops.shops_label',
+                    returnValue: [
+                        {payload: 'Welcome to shopLabel', raw_payload: 'shopLabel'},
+                        {payload: 'Welcome to shopLabel2', raw_payload: 'shopLabel2'},
+                    ],
                 },
                 {
                     library: 'bikes',
@@ -437,6 +392,71 @@ describe('exportDomain', () => {
                     raw_link_multivalues: 'shopLabel,shopLabel2',
                     raw_multivalues: 'S,M,L,XL',
                     raw_value: 'blue',
+                },
+            ]);
+        });
+
+        it('should format a date_range payload as "from - to" based on the attribute format, not the payload shape', async () => {
+            const mapping = {
+                validity: {attribute: 'bikes.validity_period'},
+                extended_from_to: {attribute: 'bikes.custom_fields'},
+            };
+
+            const mockAttributeDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: vi.fn(),
+            };
+
+            const attributeProperties = {
+                validity_period: {format: AttributeFormats.DATE_RANGE},
+                // An extended attribute whose resolved payload happens to contain from/to keys unrelated
+                // to a date range - it must NOT be formatted as "from - to".
+                custom_fields: {format: AttributeFormats.EXTENDED},
+            };
+
+            Object.entries(attributeProperties).forEach(([id, returnValue]) =>
+                when(mockAttributeDomain.getAttributeProperties)
+                    .calledWith({id, ctx: mockCtx})
+                    .mockReturnValue({id, ...returnValue}),
+            );
+
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                getRecordFieldValue: vi.fn(),
+            };
+
+            const fieldValues = [
+                {
+                    library: 'bikes',
+                    recordId: 'bikeId',
+                    attributePath: 'validity_period',
+                    returnValue: [{payload: {from: '2024-01-01', to: '2024-12-31'}, attribute: 'validity_period'}],
+                },
+                {
+                    library: 'bikes',
+                    recordId: 'bikeId',
+                    attributePath: 'custom_fields',
+                    returnValue: [{payload: {from: 'Paris', to: 'Lyon'}, attribute: 'custom_fields'}],
+                },
+            ];
+
+            fieldValues.forEach(({library, recordId, attributePath, returnValue}) =>
+                when(mockRecordDomain.getRecordFieldValue)
+                    .calledWith({library, record: {id: recordId}, attributePath, ctx: mockCtx})
+                    .mockReturnValue(returnValue),
+            );
+
+            const domain = exportDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+                'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
+            });
+
+            const data = await domain.exportData(mapping, [{bikes: 'bikeId'}], mockCtx);
+
+            expect(data).toEqual([
+                {
+                    validity: '2024-01-01 - 2024-12-31',
+                    // Not a date_range attribute, so no "from - to" formatting is applied
+                    extended_from_to: '[object Object]',
                 },
             ]);
         });

@@ -185,3 +185,4 @@ docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e:api
 
 - Tests unitaires : `*.spec.ts` colocalisés avec la source
 - Tests intégration/e2e : `src/__tests__/`
+- Ajoute les variables d’environnement LOG_SILENT=0 LOG_LEVEL=silly pour avoir plus d'info de debug.
