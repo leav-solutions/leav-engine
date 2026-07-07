@@ -20,9 +20,9 @@ describe('createGraphqlHandler', () => {
     });
 
     describe('when executing a query', () => {
-        it('should POST to CORE_URL/graphql with key as query param', async () => {
-            const handler = createGraphqlHandler(CORE_URL);
-            await handler({query: QUERY, apiKey: API_KEY});
+        it('should POST to CORE_URL/graphql with the injected key as query param', async () => {
+            const handler = createGraphqlHandler(CORE_URL, API_KEY);
+            await handler({query: QUERY});
 
             expect(mockFetch).toHaveBeenCalledWith(
                 `${CORE_URL}/graphql?key=${API_KEY}`,
@@ -31,8 +31,8 @@ describe('createGraphqlHandler', () => {
         });
 
         it('should send query and variables in the request body', async () => {
-            const handler = createGraphqlHandler(CORE_URL);
-            await handler({query: QUERY, variables: VARIABLES, apiKey: API_KEY});
+            const handler = createGraphqlHandler(CORE_URL, API_KEY);
+            await handler({query: QUERY, variables: VARIABLES});
 
             expect(mockFetch).toHaveBeenCalledWith(
                 expect.any(String),
@@ -43,8 +43,8 @@ describe('createGraphqlHandler', () => {
         });
 
         it('should return the response as MCP text content', async () => {
-            const handler = createGraphqlHandler(CORE_URL);
-            const result = await handler({query: QUERY, apiKey: API_KEY});
+            const handler = createGraphqlHandler(CORE_URL, API_KEY);
+            const result = await handler({query: QUERY});
 
             expect(result).toEqual({
                 content: [{type: 'text', text: JSON.stringify(GRAPHQL_RESPONSE, null, 2)}],
@@ -53,9 +53,9 @@ describe('createGraphqlHandler', () => {
     });
 
     describe('when executing a mutation', () => {
-        it('should POST to CORE_URL/graphql with key as query param', async () => {
-            const handler = createGraphqlHandler(CORE_URL);
-            await handler({query: MUTATION, apiKey: API_KEY});
+        it('should POST to CORE_URL/graphql with the injected key as query param', async () => {
+            const handler = createGraphqlHandler(CORE_URL, API_KEY);
+            await handler({query: MUTATION});
 
             expect(mockFetch).toHaveBeenCalledWith(
                 `${CORE_URL}/graphql?key=${API_KEY}`,
@@ -64,8 +64,8 @@ describe('createGraphqlHandler', () => {
         });
 
         it('should send mutation and variables in the request body', async () => {
-            const handler = createGraphqlHandler(CORE_URL);
-            await handler({query: MUTATION, variables: VARIABLES, apiKey: API_KEY});
+            const handler = createGraphqlHandler(CORE_URL, API_KEY);
+            await handler({query: MUTATION, variables: VARIABLES});
 
             expect(mockFetch).toHaveBeenCalledWith(
                 expect.any(String),

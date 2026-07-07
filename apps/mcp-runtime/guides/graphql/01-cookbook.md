@@ -1,9 +1,8 @@
 # LEAV core GraphQL — cookbook
 
 Ready-to-use queries and mutations for the **generic, stable** part of the LEAV GraphQL API,
-identical on every instance. Read the LEAV data-model guide first (apiKey, `payload`,
-`SystemTranslation`, behaviors, attribute types/formats, static vs dynamic schema) — it is not
-repeated here.
+identical on every instance. Read the LEAV data-model guide first (`payload`, `SystemTranslation`,
+behaviors, attribute types/formats, static vs dynamic schema) — it is not repeated here.
 
 ## GraphQL golden rules
 

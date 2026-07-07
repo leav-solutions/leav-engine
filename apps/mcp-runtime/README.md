@@ -19,7 +19,15 @@ LEAV core  (GraphQL, REST, tRPC)
 
 **Stateless design:** each MCP request creates a fresh server instance. No session state is stored in memory, so any K8s pod can handle any request.
 
-**Auth:** the user provides their personal LEAV `apiKey` as a tool input. It is forwarded as `?key=xxx` to the LEAV core. This scopes every action to the user's own permissions and produces a traceable audit trail — no shared service account.
+**Auth:** every request to `/mcp` must carry the user's personal LEAV `apiKey` as an
+`Authorization: ApiKey <apiKey>` header. A custom `ApiKey` scheme is used rather than `Bearer`: a
+LEAV apiKey is not an OAuth 2.0 access token, and the MCP spec reserves `Authorization: Bearer` for a
+future OAuth flow. A middleware validates the key against the LEAV core (a minimal `me` query —
+reusing core's own auth) and rejects the request with `401` if the key is missing, invalid or
+expired. The validated key is then forwarded as `?key=xxx` to core on every tool call, so every
+action is scoped to the user's own permissions and produces a traceable audit trail — no shared
+service account. Tool inputs are limited to the GraphQL `query` and `variables`; the credential
+travels only in the connection header, so the agent never handles it.
 
 ## Running locally
 
@@ -55,6 +63,7 @@ curl http://localhost:44444/health
 curl -X POST http://mcp.leav.localhost/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
+  -H "Authorization: ApiKey <your-leav-apiKey>" \
   -d '{
     "jsonrpc": "2.0",
     "id": 1,
@@ -74,7 +83,8 @@ The server responds with its capabilities and the list of available tools.
 **Claude Code CLI:**
 
 ```bash
-claude mcp add leav-runtime --transport http http://mcp.leav.localhost/mcp
+claude mcp add leav-runtime --transport http http://mcp.leav.localhost/mcp \
+  --header "Authorization: ApiKey <your-leav-apiKey>"
 ```
 
 Add `--scope user` to make it available across all your projects.
@@ -87,7 +97,10 @@ Then restart your Claude Code session — MCP servers are loaded at startup.
 {
     "mcpServers": {
         "leav-runtime": {
-            "url": "http://mcp.leav.localhost/mcp"
+            "url": "http://mcp.leav.localhost/mcp",
+            "headers": {
+                "Authorization": "ApiKey <your-leav-apiKey>"
+            }
         }
     }
 }
@@ -118,11 +131,14 @@ that file to keep the examples accurate.
 Execute a read-only query (`graphql_query`) or a mutation (`graphql_mutation`) against the LEAV
 instance.
 
-| Input       | Type   | Required | Description                                   |
-| ----------- | ------ | -------- | --------------------------------------------- |
-| `query`     | string | yes      | GraphQL query or mutation                     |
-| `variables` | object | no       | Query variables                               |
-| `apiKey`    | string | yes      | LEAV API key (scopes permissions to the user) |
+| Input       | Type   | Required | Description               |
+| ----------- | ------ | -------- | ------------------------- |
+| `query`     | string | yes      | GraphQL query or mutation |
+| `variables` | object | no       | Query variables           |
+
+> Tool inputs are `query` and `variables` only. Authentication is per-request via the
+> `Authorization: ApiKey <apiKey>` header (see [Auth](#architecture)); the runtime forwards the
+> validated key to core.
 
 > `rest` and `trpc` tools are planned (LEAVC-888) and will be registered in `src/index.ts`.
 
