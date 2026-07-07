@@ -1,6 +1,6 @@
-import {CheckOutlined, CloseOutlined, SendOutlined} from '@ant-design/icons';
-import {Alert, Form, Space, Spin} from 'antd';
-import {KitButton, KitInput, KitTypography} from 'aristid-ds';
+import {SendOutlined} from '@ant-design/icons';
+import {Form} from 'antd';
+import {KitAlert, KitButton, KitInput, KitSpace, KitTypography} from 'aristid-ds';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
@@ -56,10 +56,9 @@ const ForgotPasswordForm = ({
                 </Form.Item>
                 {loading && (
                     <Form.Item>
-                        <Alert
+                        <KitAlert
                             message={t('forgotPassword.loading.header')}
                             description={t('forgotPassword.loading.text')}
-                            icon={<Spin />}
                             type="warning"
                             showIcon
                         />
@@ -67,26 +66,16 @@ const ForgotPasswordForm = ({
                 )}
                 {forgotPasswordError && (
                     <Form.Item>
-                        <Alert
-                            message={forgotPasswordError}
-                            type="error"
-                            showIcon
-                            icon={<CloseOutlined style={{fontSize: '1.5em'}} />}
-                        />
+                        <KitAlert message={forgotPasswordError} type="error" showIcon />
                     </Form.Item>
                 )}
                 {forgotPasswordSuccess && (
                     <Form.Item>
-                        <Alert
-                            message={forgotPasswordSuccess}
-                            type="success"
-                            showIcon
-                            icon={<CheckOutlined style={{fontSize: '1.5em'}} />}
-                        />
+                        <KitAlert message={forgotPasswordSuccess} type="success" showIcon />
                     </Form.Item>
                 )}
                 {!loading && (
-                    <Space wrap style={{float: 'right'}} direction="horizontal">
+                    <KitSpace wrap style={{float: 'right'}} direction="horizontal">
                         <Form.Item>
                             <KitButton onClick={_handleCancel} type="primary" block>
                                 {t('forgotPassword.cancel')}
@@ -97,7 +86,7 @@ const ForgotPasswordForm = ({
                                 {t('forgotPassword.submit')}
                             </KitButton>
                         </Form.Item>
-                    </Space>
+                    </KitSpace>
                 )}
             </Form>
         </>
