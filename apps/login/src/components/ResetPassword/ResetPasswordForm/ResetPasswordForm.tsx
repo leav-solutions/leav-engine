@@ -1,6 +1,5 @@
-import {CloseOutlined} from '@ant-design/icons';
-import {Alert, Card, Form, Spin} from 'antd';
-import {KitButton, KitInput, KitTypography} from 'aristid-ds';
+import {Card, Form} from 'antd';
+import {KitAlert, KitButton, KitInput, KitTypography} from 'aristid-ds';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
@@ -79,10 +78,9 @@ const ResetPasswordForm = ({onSubmit, loading, resetPasswordError}: IResetPasswo
                 </Form.Item>
                 {loading && (
                     <Form.Item>
-                        <Alert
+                        <KitAlert
                             message={t('resetPassword.loading.header')}
                             description={t('resetPassword.loading.text')}
-                            icon={<Spin />}
                             type="warning"
                             showIcon
                         />
@@ -90,12 +88,7 @@ const ResetPasswordForm = ({onSubmit, loading, resetPasswordError}: IResetPasswo
                 )}
                 {resetPasswordError && (
                     <Form.Item>
-                        <Alert
-                            message={resetPasswordError}
-                            type="error"
-                            showIcon
-                            icon={<CloseOutlined style={{fontSize: '1.5em'}} />}
-                        />
+                        <KitAlert message={resetPasswordError} type="error" showIcon />
                     </Form.Item>
                 )}
                 {!loading && (

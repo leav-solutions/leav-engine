@@ -1,6 +1,6 @@
-import {CloseOutlined, LockOutlined, UserOutlined} from '@ant-design/icons';
-import {Alert, Form, Spin} from 'antd';
-import {KitButton, KitInput} from 'aristid-ds';
+import {LockOutlined, UserOutlined} from '@ant-design/icons';
+import {Form} from 'antd';
+import {KitAlert, KitButton, KitInput} from 'aristid-ds';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useNavigate} from 'react-router-dom';
@@ -54,10 +54,9 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
             </Form.Item>
             {loading && (
                 <Form.Item>
-                    <Alert
+                    <KitAlert
                         message={t('login.loading.header')}
                         description={t('login.loading.text')}
-                        icon={<Spin />}
                         type="warning"
                         showIcon
                     />
@@ -65,12 +64,7 @@ const LoginForm = ({onSubmit, loading, loginError}: ILoginFormProps): JSX.Elemen
             )}
             {loginError && (
                 <Form.Item>
-                    <Alert
-                        message={loginError}
-                        type="error"
-                        showIcon
-                        icon={<CloseOutlined style={{fontSize: '1.5em'}} />}
-                    />
+                    <KitAlert message={loginError} type="error" showIcon />
                 </Form.Item>
             )}
             {!loading && (
