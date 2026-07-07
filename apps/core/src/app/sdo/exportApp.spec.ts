@@ -60,7 +60,7 @@ describe('exportApp', () => {
 
             await exportApp(depsBase).onDataEvent(msg);
 
-            expect(mockExportDomain.isSDODataEvent).not.toHaveBeenCalled();
+            expect(mockExportDomain.getSDODataEvent).not.toHaveBeenCalled();
             expect(mockExportDomain.process).not.toHaveBeenCalled();
             expect((await mockRabbitMQService.getLeavDataEventChannel()).ack).toHaveBeenCalledWith(msg);
         });
@@ -73,7 +73,7 @@ describe('exportApp', () => {
 
             await exportApp(depsBase).onDataEvent(mockDataEventMessage);
 
-            expect(mockExportDomain.isSDODataEvent).not.toHaveBeenCalled();
+            expect(mockExportDomain.getSDODataEvent).not.toHaveBeenCalled();
             expect(mockExportDomain.process).not.toHaveBeenCalled();
             expect((await mockRabbitMQService.getLeavDataEventChannel()).ack).toHaveBeenCalledWith(
                 mockDataEventMessage,
@@ -81,11 +81,11 @@ describe('exportApp', () => {
         });
 
         it('[+] Should skip processing if data is not SDO relevant', async () => {
-            mockExportDomain.isSDODataEvent.mockResolvedValueOnce(false);
+            mockExportDomain.getSDODataEvent.mockResolvedValueOnce(null);
 
             await exportApp(depsBase).onDataEvent(mockDataEventMessage);
 
-            expect(mockExportDomain.isSDODataEvent).toHaveBeenCalledWith(mockDataEvent, sdoGlobalSettings.mapping);
+            expect(mockExportDomain.getSDODataEvent).toHaveBeenCalledWith(mockDataEvent, sdoGlobalSettings.mapping);
             expect(mockExportDomain.process).not.toHaveBeenCalled();
             expect((await mockRabbitMQService.getLeavDataEventChannel()).ack).toHaveBeenCalledWith(
                 mockDataEventMessage,
@@ -93,7 +93,7 @@ describe('exportApp', () => {
         });
 
         it('[+] Should process SDO when event is valid', async () => {
-            mockExportDomain.isSDODataEvent.mockResolvedValueOnce(true);
+            mockExportDomain.getSDODataEvent.mockResolvedValueOnce('CREATE');
             mockExportDomain.process.mockImplementation(async (_data, _timer, callback) => {
                 await callback('libId', 'recId');
             });
@@ -105,23 +105,37 @@ describe('exportApp', () => {
                 'libId',
                 'recId',
                 sdoGlobalSettings.mapping,
+                'CREATE',
                 mockSystemQueryContext,
             );
+            // sending the SDO (including hash checking/persisting and logging) is delegated
+            // to sdoExportDomain.sendSDO - covered by sdoExportDomain.spec.ts
             expect(mockExportDomain.sendSDO).toHaveBeenCalledWith('libId', 'recId', mockSDO);
             expect((await mockRabbitMQService.getLeavDataEventChannel()).ack).toHaveBeenCalledWith(
                 mockDataEventMessage,
             );
-            expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.SDO_LOG_EXPORT_RECORD,
-                record: {id: 'recId', libraryId: 'libId'},
-                sdo: mockSDO,
-                ctx: mockSystemQueryContext,
+        });
+
+        it('[-] Should nack the message if sendSDO fails', async () => {
+            mockExportDomain.getSDODataEvent.mockResolvedValueOnce('CREATE');
+            mockExportDomain.process.mockImplementation(async (_data, _timer, callback) => {
+                await callback('libId', 'recId');
             });
+            mockSdoDomain.getRecordSDO.mockResolvedValueOnce(mockSDO);
+            mockExportDomain.sendSDO.mockRejectedValueOnce(new Error('publish failed'));
+
+            await exportApp(depsBase).onDataEvent(mockDataEventMessage);
+
+            expect((await mockRabbitMQService.getLeavDataEventChannel()).nack).toHaveBeenCalledWith(
+                mockDataEventMessage,
+                false,
+                false,
+            );
         });
 
         it('[-] Should catch and log error inside process callback', async () => {
             const error = new Error('Process callback error');
-            mockExportDomain.isSDODataEvent.mockResolvedValueOnce(true);
+            mockExportDomain.getSDODataEvent.mockResolvedValueOnce('CREATE');
             mockSdoDomain.getRecordSDO.mockRejectedValueOnce(error);
             mockExportDomain.process.mockImplementation(async (_data, _timer, callback) => {
                 await callback('libId', 'recId');
@@ -151,7 +165,7 @@ describe('exportApp', () => {
                 record: {id: 'recId', library: 'lib'},
             });
 
-            mockExportDomain.isSDODataEvent.mockResolvedValueOnce(true);
+            mockExportDomain.getSDODataEvent.mockResolvedValueOnce('CREATE');
             mockSdoDomain.getRecordSDO.mockRejectedValueOnce(error);
             mockExportDomain.process.mockImplementation(async (_data, _timer, callback) => {
                 await callback('libId', 'recId');

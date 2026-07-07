@@ -1,4 +1,3 @@
-import Crypto from 'crypto';
 import _ from 'lodash';
 import {type ISDO, sdoPathIdentifierUuid, type ISDOMapping, type ISDOMappingLibrary} from '../../_types/sdo';
 
@@ -10,7 +9,6 @@ export interface ISDOUtils {
     getSDOLibrary: (sdoLibrary: ISDOMapping, leavLibraryId: string) => ISDOMappingLibrary;
     getRecordUUIDFromSDO: (sdo: ISDO) => string;
     tmpRecordIdToUuid: (recordId: string) => string;
-    createHash: (sdo: ISDO) => string;
 }
 
 export default function (): ISDOUtils {
@@ -49,8 +47,6 @@ export default function (): ISDOUtils {
     // TODO replace by a real uuid in record inside leav when ready
     const tmpRecordIdToUuid = (recordId: string): string => `${recordId}`;
 
-    const createHash = (sdo: ISDO) => Crypto.createHash('md5').update(JSON.stringify(sdo.content)).digest('hex');
-
     return {
         getLibraryMapping,
         getLeavLibraryId,
@@ -59,6 +55,5 @@ export default function (): ISDOUtils {
         getSDOLibrary,
         getRecordUUIDFromSDO,
         tmpRecordIdToUuid,
-        createHash,
     };
 }

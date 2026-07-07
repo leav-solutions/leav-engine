@@ -108,22 +108,6 @@ const _createRequiredDirectories = async conf => {
     }
 };
 
-const _createHashSDOAttribute = async (coreContainer: AwilixContainer) => {
-    const attributeDomain: IAttributeDomain = coreContainer.cradle['core.domain.attribute'];
-    const getSystemQueryContext: GetSystemQueryContext = coreContainer.cradle['core.utils.getSystemQueryContext'];
-    const systemCtx = getSystemQueryContext();
-
-    await attributeDomain.saveAttribute({
-        attrData: {
-            id: 'hash_sdo',
-            type: AttributeTypes.SIMPLE,
-            format: AttributeFormats.TEXT,
-            label: {fr: 'Hash SDO', en: 'SDO Hash'},
-        },
-        ctx: systemCtx,
-    });
-};
-
 const _createUsersAndGroups = async (coreContainer: AwilixContainer, project: TestProject) => {
     const recordDomain: IRecordDomain = coreContainer.cradle['core.domain.record'];
     const treeDomain: ITreeDomain = coreContainer.cradle['core.domain.tree'];
@@ -221,8 +205,6 @@ export async function setup(project: TestProject) {
         await sdo.init();
 
         await _createUsersAndGroups(coreContainer, project);
-
-        await _createHashSDOAttribute(coreContainer); // to be removed when hash_sdo attribute is no longer used.
     } catch (e) {
         console.error(e);
         console.error(e.stack);

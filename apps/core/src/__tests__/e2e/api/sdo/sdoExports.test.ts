@@ -1,9 +1,10 @@
 import {type ISDO} from '../../../../_types/sdo';
 import {adminUserSdk, e2eNonAdminUser, nonAdminUserSdk} from '../e2eUtils';
 import {RabbitMqClient} from './rabbitMQUtils';
-import {SDO_EXPORT_TIMER, sdoGlobalSettings, SDO_EXPORTS_LIBRARY_ID} from './sdoConfig';
+import {SDO_EXPORT_TIMER, sdoGlobalSettings, SDO_EXPORTS_LIBRARY_ID, SDO_EXPORTS_TEST_ATTRIBUTE_ID} from './sdoConfig';
 import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
+import {AttributeFormat, AttributeType} from '../../_gqlTypes';
 
 const rabbitmqClient = new RabbitMqClient();
 
@@ -15,11 +16,20 @@ describe('SDO Exports', () => {
     beforeAll(async () => {
         conf = await getConfig();
 
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_EXPORTS_TEST_ATTRIBUTE_ID,
+                type: AttributeType.simple,
+                format: AttributeFormat.text,
+                label: {fr: 'SDO export test value', en: 'SDO export test value'},
+            },
+        });
+
         await adminUserSdk.SaveLibrary({
             library: {
                 id: SDO_EXPORTS_LIBRARY_ID,
                 label: {fr: 'Test SDO', en: 'Test SDO'},
-                attributes: ['hash_sdo', 'label'],
+                attributes: [SDO_EXPORTS_TEST_ATTRIBUTE_ID],
                 recordIdentityConf: {label: 'id'},
             },
         });
@@ -76,13 +86,61 @@ describe('SDO Exports', () => {
                     systemActive: true,
                     systemCreationDate: expect.any(Number),
                     systemLastModifiedDate: expect.any(Number),
-                    systemSdoHash: null,
                     systemLabel: recordId,
                     systemCreator: nonAdminUserUUID,
                     systemLastModificator: nonAdminUserUUID,
                 },
             },
         });
+    });
+
+    test('updating the mapped attribute triggers an UPDATE export message with the new content', async () => {
+        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+        await waitForSdo(recordUUID); // wait for the CREATE export before triggering an update
+
+        await adminUserSdk.SaveValue({
+            libraryId: SDO_EXPORTS_LIBRARY_ID,
+            recordId,
+            attributeId: SDO_EXPORTS_TEST_ATTRIBUTE_ID,
+            value: {payload: 'v1'},
+        });
+
+        const msg = await waitForSdo(recordUUID);
+
+        expect(msg).toMatchObject({
+            name: SDO_EXPORTS_LIBRARY_ID,
+            action: 'UPDATE',
+            content: {
+                system: {systemId: recordUUID},
+                info: {value: 'v1'},
+            },
+        });
+    });
+
+    test('saving the same attribute value again does not trigger a new export (content unchanged)', async () => {
+        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+        await waitForSdo(recordUUID); // CREATE export
+
+        await adminUserSdk.SaveValue({
+            libraryId: SDO_EXPORTS_LIBRARY_ID,
+            recordId,
+            attributeId: SDO_EXPORTS_TEST_ATTRIBUTE_ID,
+            value: {payload: 'v1'},
+        });
+        await waitForSdo(recordUUID); // first UPDATE export, content now has info.value === 'v1'
+
+        await adminUserSdk.SaveValue({
+            libraryId: SDO_EXPORTS_LIBRARY_ID,
+            recordId,
+            attributeId: SDO_EXPORTS_TEST_ATTRIBUTE_ID,
+            value: {payload: 'v1'},
+        });
+
+        await expect(waitForSdo(recordUUID, SDO_EXPORT_TIMER * 4)).rejects.toThrow();
     });
 
     // TODO: Voir quoi faire dans le cas d'un DELETE_RECORD (différent d'une desactivation)

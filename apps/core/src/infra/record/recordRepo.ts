@@ -413,7 +413,7 @@ export default function ({
             deletedRecord.library = deletedRecord._id.split('/')[0];
             deletedRecord.old = dbUtils.cleanup(deletedRecord.old);
 
-            return dbUtils.cleanup(deletedRecord);
+            return dbUtils.cleanup(deletedRecord.old);
         },
         async updateRecord({libraryId, recordData, ctx}) {
             const collection = dbService.db.collection<IRecord>(libraryId);

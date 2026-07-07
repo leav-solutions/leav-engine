@@ -47,8 +47,9 @@ export interface ISDODomain {
         leavLibraryId: string,
         recordId: string,
         sdoGlobalSettingsMapping: ISDOMapping,
+        sdoAction: SDOAction,
         ctx: IQueryInfos,
-    ): Promise<ISDO | void>;
+    ): Promise<ISDO>;
     sendLog({
         action,
         record,
@@ -64,8 +65,6 @@ export interface ISDODomain {
     }): Promise<void>;
     registerSDOExportMappingFunctions: (mappingFunctions: ISDOMappingFunctions) => void;
 }
-
-export const hashSDOAttributeId = 'hash_sdo';
 
 export default function ({
     'core.domain.record': recordDomain,
@@ -125,8 +124,9 @@ export default function ({
         leavLibraryId: string,
         recordId: string,
         sdoMapping: ISDOMapping,
+        sdoAction: SDOAction,
         ctx: IQueryInfos,
-    ): Promise<ISDO | void> => {
+    ): Promise<ISDO> => {
         // Find record in database
         const recordFilter = [
             {
@@ -135,6 +135,7 @@ export default function ({
                 condition: AttributeCondition.EQUAL,
             },
         ];
+
         const res = await recordDomain.find({
             params: {library: leavLibraryId, filters: recordFilter, retrieveInactive: true},
             ctx,
@@ -232,10 +233,8 @@ export default function ({
                 }),
         );
 
-        const action = record.hash_sdo == null ? 'CREATE' : 'UPDATE';
-
         // Create sdo object
-        const sdo = await _createSDO(record, action, sdoMappingLibrary, sdoLibraryId, attributes, ctx);
+        const sdo = await _createSDO(record, sdoAction, sdoMappingLibrary, sdoLibraryId, attributes, ctx);
 
         // validate SDO (json schema)
         try {
@@ -244,24 +243,6 @@ export default function ({
             logger.error(`getRecordSDO JSON Schema validation error for ${leavLibraryId}/${recordId}: ${error.stack}`);
             throw error;
         }
-
-        const hashSdo = sdoUtils.createHash(sdo);
-
-        if (hashSdo === record.hash_sdo) {
-            logger.debug(`[SDO] Same hash ${hashSdo} for ${recordId} in ${leavLibraryId}`);
-            return;
-        }
-
-        // Register current hash_sdo in recordù
-        await valueDomain.saveValue({
-            library: leavLibraryId,
-            recordId,
-            attribute: hashSDOAttributeId,
-            value: {
-                payload: hashSdo,
-            },
-            ctx,
-        });
 
         return sdo;
     };
