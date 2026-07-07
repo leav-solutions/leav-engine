@@ -4,9 +4,9 @@ import Joi from 'joi';
 import {ErrorTypes} from '../../_types/errors';
 import LeavError from '../../errors/LeavError';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
-import {type ITreeDomain} from '../tree/treeDomain';
+import {type GetAttributeByPath} from '../attribute/helpers/getAttributeByPath';
 import {type IConfig} from '../../_types/config';
-import {AttributeTypes, type IAttribute} from '../../_types/attribute';
+import {type IAttribute} from '../../_types/attribute';
 
 export interface IExportProfileColumn {
     columnLabel: string;
@@ -41,14 +41,14 @@ export interface IExportProfileDomain {
 export interface IExportProfileDomainDeps {
     'core.domain.library': ILibraryDomain;
     'core.domain.attribute': IAttributeDomain;
-    'core.domain.tree': ITreeDomain;
+    'core.domain.attribute.helpers.getAttributeByPath': GetAttributeByPath;
     config: IConfig;
 }
 
 export default function ({
     'core.domain.library': libraryDomain,
     'core.domain.attribute': attributeDomain,
-    'core.domain.tree': treeDomain,
+    'core.domain.attribute.helpers.getAttributeByPath': getAttributeByPath,
     config,
 }: IExportProfileDomainDeps): IExportProfileDomain {
     const columnSchema = Joi.object({
@@ -82,83 +82,8 @@ export default function ({
         return true;
     };
 
-    /**
-     * Recursively validate nested attributes (e.g., "link_attr.nested_link.final_attr")
-     * Follows link attributes to their linked libraries and validates each segment
-     */
-    const _validateNestedAttribute = async (
-        attributeSegments: string[],
-        fullAttributePath: string,
-        libraryAttributes: IAttribute[],
-        ctx: IQueryInfos,
-    ): Promise<IAttribute> => {
-        const [currentSegment, ...remainingSegments] = attributeSegments;
-
-        const attribute = libraryAttributes.find(attr => attr.id === currentSegment);
-
-        if (!attribute) {
-            throw new LeavError(
-                ErrorTypes.CUSTOM_CONFIG_ERROR,
-                `Export profile column attribute "${fullAttributePath}" does not exist in the library (attribute "${currentSegment}" not found)`,
-            );
-        }
-
-        // If there are more segments, we need to keep traversing according to the attribute type.
-        if (remainingSegments.length > 0) {
-            // Link: follow the linked library and validate the rest there.
-            if ([AttributeTypes.SIMPLE_LINK, AttributeTypes.ADVANCED_LINK].includes(attribute.type)) {
-                const linkedLibraryId = attribute.linked_library;
-                if (!linkedLibraryId) {
-                    throw new LeavError(
-                        ErrorTypes.CUSTOM_CONFIG_ERROR,
-                        `Export profile column attribute "${fullAttributePath}" is invalid: "${currentSegment}" has no linked library`,
-                    );
-                }
-
-                const linkedLibraryAttributes = await attributeDomain.getLibraryAttributes(linkedLibraryId, ctx);
-                return _validateNestedAttribute(remainingSegments, fullAttributePath, linkedLibraryAttributes, ctx);
-            }
-
-            // Tree: the target library is dynamic (a node can link records from several libraries, and the
-            // path carries no library id — same semantics as getRecordFieldValue). The remaining path is
-            // valid as soon as it resolves in at least one of the tree's libraries.
-            if (attribute.type === AttributeTypes.TREE) {
-                const treeProps = await treeDomain.getTreeProperties(attribute.linked_tree, ctx);
-                const treeLibraryIds = Object.keys(treeProps?.libraries ?? {});
-
-                for (const treeLibraryId of treeLibraryIds) {
-                    const treeLibraryAttributes = await attributeDomain.getLibraryAttributes(treeLibraryId, ctx);
-                    try {
-                        return await _validateNestedAttribute(
-                            remainingSegments,
-                            fullAttributePath,
-                            treeLibraryAttributes,
-                            ctx,
-                        );
-                    } catch {
-                        // Not valid in this library, try the next one linked to the tree.
-                    }
-                }
-
-                throw new LeavError(
-                    ErrorTypes.CUSTOM_CONFIG_ERROR,
-                    `Export profile column attribute "${fullAttributePath}" is invalid: "${remainingSegments[0]}" not found in any library linked to tree "${attribute.linked_tree}"`,
-                );
-            }
-
-            // TODO: extended/date_range sub-paths (e.g. "extended_attr.subfield") are resolvable by
-            // getRecordFieldValue but intentionally not accepted here yet - left for a follow-up.
-            throw new LeavError(
-                ErrorTypes.CUSTOM_CONFIG_ERROR,
-                `Export profile column attribute "${fullAttributePath}" is invalid: "${currentSegment}" is not a link or tree attribute`,
-            );
-        }
-
-        return attribute;
-    };
-
     const _validateAndCompleteExportProfile =
-        (libraryAttributes: IAttribute[], ctx: IQueryInfos) =>
+        (libraryId: string, libraryAttributes: IAttribute[], ctx: IQueryInfos) =>
         async (exportProfile: IExportProfile): Promise<IExportProfile> => {
             const isValid = profileSchema.validate(exportProfile);
             if (isValid.error) {
@@ -176,7 +101,20 @@ export default function ({
                     }
 
                     const attributeSegments = column.attribute.split('.');
-                    await _validateNestedAttribute(attributeSegments, column.attribute, libraryAttributes, ctx);
+
+                    try {
+                        await getAttributeByPath({libraryId, attributePath: column.attribute, ctx});
+                    } catch (e) {
+                        // getAttributeByPath is a generic, export-agnostic module (VALIDATION_ERROR) ; here,
+                        // in the context of export profiles, an invalid attribute path is a config error.
+                        if (e instanceof LeavError) {
+                            throw new LeavError(
+                                ErrorTypes.CUSTOM_CONFIG_ERROR,
+                                `Export profile column attribute "${column.attribute}": ${e.message}`,
+                            );
+                        }
+                        throw e;
+                    }
 
                     if (column.columnLabel) {
                         return column;
@@ -234,7 +172,7 @@ export default function ({
             }
 
             const libraryAttributes = await attributeDomain.getLibraryAttributes(libraryId, ctx);
-            const validateExportProfile = _validateAndCompleteExportProfile(libraryAttributes, ctx);
+            const validateExportProfile = _validateAndCompleteExportProfile(libraryId, libraryAttributes, ctx);
 
             const validatedProfiles = await Promise.all(
                 exportProfile.profiles.map(async profile => {
@@ -267,7 +205,7 @@ export default function ({
                 profiles.find(p => p.label === exportProfilesConfig.defaultProfile) ?? profiles[0];
 
             const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
-            await _validateAndCompleteExportProfile(libraryAttributes, ctx)(defaultOrFirstProfile);
+            await _validateAndCompleteExportProfile(library, libraryAttributes, ctx)(defaultOrFirstProfile);
 
             // If we have no profil selected, send back the defaultProfile
             if (!profile) {
