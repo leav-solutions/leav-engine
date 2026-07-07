@@ -4,6 +4,7 @@ import {useApplicationSettingsContext} from '../../../../../config/application-i
 import {RelativePaths} from '../../../router/paths';
 import {type Application} from '../../../types';
 import {registerPanelCloseCallback} from '../../../utils/panelCloseCallbacks';
+import {registerThreadActionCallbacks} from '../../../stores/threadActionCallbacks';
 
 export const REDIRECT_URL_QUERY_PARAM = 'redirectUrl';
 export const INIIAL_VALUES_QUERY_PARAMS = 'formInitialValues';
@@ -22,7 +23,7 @@ export const useNavigateToPanel = (): {
     navigateToPanel: IUsePanelMessengerOptions['handlers']['onNavigateToPanel'];
 } => {
     const navigate = useNavigate();
-    const {where: currentWhere} = useParams();
+    const {workspaceId, panelId: currentPanelId, recordId: currentRecordId, where: currentWhere} = useParams();
 
     const [application] = useApplicationSettingsContext();
 
@@ -40,6 +41,9 @@ export const useNavigateToPanel = (): {
             flapPanelId,
             queryParams,
             onClose,
+            onCommentSubmitted,
+            onCommentMentionAdded,
+            onDiscussionStatusChanged,
         }) => {
             const recordPanelId = getWithFallback(panelId, {libraryId, application});
 
@@ -50,6 +54,13 @@ export const useNavigateToPanel = (): {
 
             if (onClose) {
                 registerPanelCloseCallback({recordId, where, recordPanelId}, onClose);
+            }
+
+            if (onCommentSubmitted || onCommentMentionAdded || onDiscussionStatusChanged) {
+                registerThreadActionCallbacks(
+                    {where},
+                    {onCommentSubmitted, onCommentMentionAdded, onDiscussionStatusChanged},
+                );
             }
 
             const shouldOpenFlap =
