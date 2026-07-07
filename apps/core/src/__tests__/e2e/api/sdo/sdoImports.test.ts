@@ -131,6 +131,64 @@ describe('SDO Imports', () => {
             );
         });
 
+        test('ignores a mapping entry whose leavAttributeId is a path (modified_by.email)', async () => {
+            const creationDateSec = Math.round(Date.now() / 1000); // in seconds
+
+            const uuid = crypto.randomUUID();
+            const editorUUID = crypto.randomUUID();
+
+            const sdoToEmit: ISDO = {
+                name: SDO_IMPORTS_LIBRARY_ID,
+                dataModelRelease: 'dataModelRelease',
+                date: creationDateSec,
+                action: 'CREATE',
+                content: {
+                    system: {
+                        systemId: uuid,
+                        systemActive: true,
+                        systemCreationDate: creationDateSec,
+                        systemLastModifiedDate: creationDateSec,
+                        systemCreator: editorUUID,
+                        systemLastModificator: editorUUID,
+                        systemLabel: 'PAC 2027 Import V1',
+                        systemSdoHash: 'hashPAC2027ImportV1',
+                    },
+                    identifier: {},
+                    info: {value: 'mock_value', editorEmail: 'someone@example.com'},
+                },
+            };
+
+            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.import.exchange, sdoToEmit);
+
+            await vi.waitFor(
+                async () => {
+                    const record = (
+                        await adminUserSdk.GetRecordByUUID({
+                            libraryId: SDO_IMPORTS_LIBRARY_ID,
+                            recordUUID: uuid,
+                            retrieveInactive: false,
+                        })
+                    ).records.list[0];
+
+                    // The record is created normally; the path-mapped "editorEmail" field is silently
+                    // ignored (no writable attribute to resolve it to), it never fails the import.
+                    expect(record.uuid).toBe(uuid);
+                    expect(record.active).toBe(true);
+
+                    const infoValuePayload = (
+                        await adminUserSdk.GetRecordByIdStandardValuesProperty({
+                            libraryId: SDO_IMPORTS_LIBRARY_ID,
+                            recordId: record.id,
+                            attributeId: SDO_TEST_ATTRIBUTE_ID,
+                        })
+                    ).records.list[0].property[0].payload;
+
+                    expect(infoValuePayload).toBe('mock_value');
+                },
+                {timeout: 5000, interval: 1000},
+            );
+        });
+
         test('receive an create message should create an inactive record', async () => {
             const creationDateSec = Math.round(Date.now() / 1000); // in seconds
 

@@ -48,6 +48,11 @@ const _mockSDOMapping: ISDOMapping = {
                 valueRequired: false,
                 format: 'array',
             },
+            pathMapping: {
+                leavAttributeId: 'simple_link.something',
+                valueRequired: false,
+                format: 'string',
+            },
         },
     },
     [libIdForLink]: {
@@ -103,6 +108,26 @@ describe('importDomain', () => {
             ).resolves.not.toThrow();
             expect(mockRecordDomain.find).toHaveBeenCalledTimes(1);
             expect(mockRecordDomain.createRecord).toHaveBeenCalledTimes(1);
+        });
+
+        it('[+] should ignore a mapping entry whose leavAttributeId is a path', async () => {
+            mockRecordDomain.find.mockResolvedValue({list: []} as IListWithCursor<IRecord>);
+            mockRecordDomain.createRecord.mockResolvedValue({});
+            mockAttributeDomain.getAttributeProperties.mockResolvedValue({type: AttributeTypes.SIMPLE});
+
+            await expect(
+                _importDomain.create(
+                    simplifiedMockSdo({
+                        [mockSDOMapping.test.sdoAttributes.simple.leavAttributeId]: '12',
+                        pathMapping: 'should be ignored',
+                    }),
+                    mockSystemQueryContext,
+                ),
+            ).resolves.not.toThrow();
+
+            expect(mockRecordDomain.createRecord).toHaveBeenCalledTimes(1);
+            const savedValues = mockRecordDomain.createRecord.mock.calls[0][0].values;
+            expect(savedValues.some(v => v.attribute === 'simple_link.something')).toBe(false);
         });
 
         it('[-] should throw if createRecord returns error', async () => {

@@ -4,7 +4,6 @@ import jsonschema, {type ValidatorResult} from 'jsonschema';
 import sdoDomain, {type ISDODomain, type ISDODomainDeps} from './sdoDomain';
 import {mockSDO, mockSDOMapping, sdoGlobalSettings} from '../../__tests__/mocks/sdo/data';
 import {
-    mockAttributeDomain,
     mockEventsManagerDomain,
     mockGlobalSettingsDomain,
     mockRecordDomain,
@@ -59,9 +58,11 @@ const expectedSDOSystemContent = {
     systemLabel: 'record-label',
 };
 
+const mockGetAttributeByPath = vi.fn();
+
 const deps: ToAny<ISDODomainDeps> = {
     'core.utils.sdo': mockSDOUtils,
-    'core.domain.attribute': mockAttributeDomain,
+    'core.domain.attribute.helpers.getAttributeByPath': mockGetAttributeByPath,
     'core.domain.record': mockRecordDomain,
     'core.domain.globalSettings': mockGlobalSettingsDomain,
     'core.domain.eventsManager': mockEventsManagerDomain,
@@ -170,12 +171,12 @@ describe('sdoDomain', () => {
                     payload: 'attribute value',
                 },
             ]);
-            mockAttributeDomain.getAttributes.mockResolvedValueOnce({
-                list: [
+            mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                [
                     {id: 'wrong', type: AttributeTypes.SIMPLE},
                     {id: 'uuid', type: AttributeTypes.SIMPLE},
-                ],
-            } as IList<IAttribute>);
+                ].find(a => a.id === attributePath),
+            );
 
             const wrongSchemaMapping = {
                 campaign: {
@@ -255,9 +256,11 @@ describe('sdoDomain', () => {
 
             describe('simple attribute', () => {
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributes.mockResolvedValue({
-                        list: [uuidAttribute, {id: attributeId, type: AttributeTypes.SIMPLE}],
-                    } as IList<IAttribute>);
+                    mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                        [uuidAttribute, {id: attributeId, type: AttributeTypes.SIMPLE}].find(
+                            a => a.id === attributePath,
+                        ),
+                    );
                 });
 
                 it('should set string', async () => {
@@ -286,9 +289,11 @@ describe('sdoDomain', () => {
 
             describe('advanced mono attribute', () => {
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributes.mockResolvedValue({
-                        list: [uuidAttribute, {id: attributeId, type: AttributeTypes.ADVANCED}],
-                    } as IList<IAttribute>);
+                    mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                        [uuidAttribute, {id: attributeId, type: AttributeTypes.ADVANCED}].find(
+                            a => a.id === attributePath,
+                        ),
+                    );
                 });
 
                 it('should set string', async () => {
@@ -319,9 +324,11 @@ describe('sdoDomain', () => {
 
             describe('advanced multiple attribute', () => {
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributes.mockResolvedValue({
-                        list: [uuidAttribute, {id: attributeId, type: AttributeTypes.ADVANCED, multiple_values: true}],
-                    } as IList<IAttribute>);
+                    mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                        [uuidAttribute, {id: attributeId, type: AttributeTypes.ADVANCED, multiple_values: true}].find(
+                            a => a.id === attributePath,
+                        ),
+                    );
                 });
 
                 it('should set array string one element', async () => {
@@ -367,9 +374,11 @@ describe('sdoDomain', () => {
 
             describe('simple link attribute', () => {
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributes.mockResolvedValue({
-                        list: [uuidAttribute, {id: attributeId, type: AttributeTypes.SIMPLE_LINK}],
-                    } as IList<IAttribute>);
+                    mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                        [uuidAttribute, {id: attributeId, type: AttributeTypes.SIMPLE_LINK}].find(
+                            a => a.id === attributePath,
+                        ),
+                    );
                 });
 
                 it('should set with record uuid string', async () => {
@@ -383,9 +392,11 @@ describe('sdoDomain', () => {
 
             describe('advanced link mono attribute', () => {
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributes.mockResolvedValue({
-                        list: [uuidAttribute, {id: attributeId, type: AttributeTypes.ADVANCED_LINK}],
-                    } as IList<IAttribute>);
+                    mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                        [uuidAttribute, {id: attributeId, type: AttributeTypes.ADVANCED_LINK}].find(
+                            a => a.id === attributePath,
+                        ),
+                    );
                 });
 
                 it('should set with record uuid string', async () => {
@@ -401,12 +412,12 @@ describe('sdoDomain', () => {
 
             describe('advanced link multiple attribute', () => {
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributes.mockResolvedValue({
-                        list: [
+                    mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                        [
                             uuidAttribute,
                             {id: attributeId, type: AttributeTypes.ADVANCED_LINK, multiple_values: true},
-                        ],
-                    } as IList<IAttribute>);
+                        ].find(a => a.id === attributePath),
+                    );
                 });
 
                 it('should set array record uuid one element', async () => {
@@ -427,9 +438,9 @@ describe('sdoDomain', () => {
 
             describe('tree mono attribute', () => {
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributes.mockResolvedValue({
-                        list: [uuidAttribute, {id: attributeId, type: AttributeTypes.TREE}],
-                    } as IList<IAttribute>);
+                    mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                        [uuidAttribute, {id: attributeId, type: AttributeTypes.TREE}].find(a => a.id === attributePath),
+                    );
                 });
 
                 it('should set with record uuid string', async () => {
@@ -443,9 +454,11 @@ describe('sdoDomain', () => {
 
             describe('tree multiple attribute', () => {
                 beforeEach(() => {
-                    mockAttributeDomain.getAttributes.mockResolvedValue({
-                        list: [uuidAttribute, {id: attributeId, type: AttributeTypes.TREE, multiple_values: true}],
-                    } as IList<IAttribute>);
+                    mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                        [uuidAttribute, {id: attributeId, type: AttributeTypes.TREE, multiple_values: true}].find(
+                            a => a.id === attributePath,
+                        ),
+                    );
                 });
 
                 it('should set array record uuid one element', async () => {
@@ -521,16 +534,16 @@ describe('sdoDomain', () => {
                 }
                 throw new Error(`Unknown attributeId ${attributePath}`);
             });
-            mockAttributeDomain.getAttributes.mockResolvedValueOnce({
-                list: [
+            mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                [
                     uuidAttribute,
                     {id: 'simpleAttribute', type: AttributeTypes.SIMPLE},
                     {id: 'advancedAttribute', type: AttributeTypes.ADVANCED, multiple_values: true},
                     {id: 'simpleLinkAttribute', type: AttributeTypes.SIMPLE_LINK},
                     {id: 'advancedLinkAttribute', type: AttributeTypes.ADVANCED_LINK, multiple_values: true},
                     {id: 'treeAttribute', type: AttributeTypes.TREE, multiple_values: true},
-                ],
-            } as IList<IAttribute>);
+                ].find(a => a.id === attributePath),
+            );
 
             const simpleLinkSchemaMapping: ISDOMapping = {
                 [mockSDO.name]: {
@@ -603,9 +616,11 @@ describe('sdoDomain', () => {
                 }),
             });
 
-            mockAttributeDomain.getAttributes.mockResolvedValueOnce({
-                list: [uuidAttribute, {id: 'treeAttribute', type: AttributeTypes.TREE, linked_tree: 'my_status_tree'}],
-            } as IList<IAttribute>);
+            mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                [uuidAttribute, {id: 'treeAttribute', type: AttributeTypes.TREE, linked_tree: 'my_status_tree'}].find(
+                    a => a.id === attributePath,
+                ),
+            );
 
             const simpleLinkSchemaMapping: ISDOMapping = {
                 [mockSDO.name]: {
@@ -652,7 +667,9 @@ describe('sdoDomain', () => {
                 .mockResolvedValueOnce(mockLinkAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockStandardAttributeRecordFieldValues)
                 .mockResolvedValueOnce(mockLinkAttributeRecordFieldValues);
-            mockAttributeDomain.getAttributes.mockResolvedValueOnce(mockSDORecordAttributes);
+            mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                mockSDORecordAttributes.list.find(a => a.id === attributePath),
+            );
 
             const sdoUnknownSchemaMapping: ISDOMapping = {
                 [mockSDO.name]: {
@@ -697,9 +714,7 @@ describe('sdoDomain', () => {
                 list: [{id: 'entity', attribute: 'attribute value'}],
             } as unknown as IListWithCursor<IRecord>);
 
-            mockAttributeDomain.getAttributes.mockResolvedValueOnce({
-                list: [],
-            } as IList<IAttribute>);
+            mockGetAttributeByPath.mockRejectedValue(new Error('unknown attribute'));
 
             const sdoUnknownSchemaMapping = {
                 [mockSDO.name]: {

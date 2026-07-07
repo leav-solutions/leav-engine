@@ -21,7 +21,7 @@ import {type IGlobalSettingsDomain} from '../globalSettings/globalSettingsDomain
 import {AttributeCondition, type IRecord} from '../../_types/record';
 import {type IRecordDomain} from '../record/recordDomain';
 import {type ISDOUtils} from '../../utils/sdo/sdo';
-import {type IAttributeDomain} from '../attribute/attributeDomain';
+import {type GetAttributeByPath} from '../attribute/helpers/getAttributeByPath';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type IValueDomain} from '../value/valueDomain';
 import LeavError from '../../errors/LeavError';
@@ -35,7 +35,7 @@ export interface ISDODomainDeps {
     'core.domain.globalSettings': IGlobalSettingsDomain;
     'core.domain.record': IRecordDomain;
     'core.utils.sdo': ISDOUtils;
-    'core.domain.attribute': IAttributeDomain;
+    'core.domain.attribute.helpers.getAttributeByPath': GetAttributeByPath;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.value': IValueDomain;
     'core.infra.record': IRecordRepo;
@@ -71,7 +71,7 @@ export interface ISDODomain {
 export default function ({
     'core.domain.record': recordDomain,
     'core.utils.sdo': sdoUtils,
-    'core.domain.attribute': attributeDomain,
+    'core.domain.attribute.helpers.getAttributeByPath': getAttributeByPath,
     'core.domain.globalSettings': globalSettingsDomain,
     'core.domain.eventsManager': eventsManager,
     'core.domain.value': valueDomain,
@@ -170,18 +170,6 @@ export default function ({
             }
         }
 
-        const attributes =
-            (
-                await attributeDomain.getAttributes({
-                    params: {
-                        filters: {
-                            libraries: [leavLibraryId],
-                        },
-                    },
-                    ctx,
-                })
-            )?.list || [];
-
         const mapRecordAttributeValue = async (values: IValue[], attributeProperty: IAttribute): Promise<unknown> => {
             switch (attributeProperty.type) {
                 case AttributeTypes.SIMPLE:
@@ -223,17 +211,27 @@ export default function ({
             }
         };
 
+        const attributesByLeavAttributeId = new Map<string, IAttribute>();
+
         await Promise.all(
             Object.values(sdoMappingLibrary.sdoAttributes)
                 .filter(attr => attr.leavAttributeId !== '')
                 .map(async attr => {
-                    const attributeProperty = attributes.find(a => a.id === attr.leavAttributeId);
-                    if (!attributeProperty) {
+                    let attributeProperty: IAttribute;
+                    try {
+                        attributeProperty = await getAttributeByPath({
+                            libraryId: leavLibraryId,
+                            attributePath: attr.leavAttributeId,
+                            ctx,
+                        });
+                    } catch (e) {
                         throw new LeavError(
                             ErrorTypes.INTERNAL_ERROR,
-                            `attribute ${attr.leavAttributeId} not found in LEAV`,
+                            `attribute ${attr.leavAttributeId} not found in LEAV: ${e.message}`,
                         );
                     }
+
+                    attributesByLeavAttributeId.set(attr.leavAttributeId, attributeProperty);
 
                     const fieldValues = await recordDomain.getRecordFieldValue({
                         library: leavLibraryId,
@@ -247,7 +245,14 @@ export default function ({
         );
 
         // Create sdo object
-        const sdo = await _createSDO(record, sdoAction, sdoMappingLibrary, sdoLibraryId, attributes, ctx);
+        const sdo = await _createSDO(
+            record,
+            sdoAction,
+            sdoMappingLibrary,
+            sdoLibraryId,
+            attributesByLeavAttributeId,
+            ctx,
+        );
 
         // validate SDO (json schema)
         try {
@@ -265,7 +270,7 @@ export default function ({
         action: SDOAction,
         sdoMappingLibrary: ISDOMappingLibrary,
         sdoLibraryId: string,
-        attributes: IAttribute[],
+        attributesByLeavAttributeId: Map<string, IAttribute>,
         ctx: IQueryInfos,
     ): Promise<ISDO> => {
         const recordIdentity = await recordDomain.getRecordIdentity(record, ctx);
@@ -328,7 +333,7 @@ export default function ({
                 }
 
                 if (mappingAttribute.leavAttributeId && mappingFunction) {
-                    const attr = attributes.find(_attr => _attr.id === mappingAttribute.leavAttributeId);
+                    const attr = attributesByLeavAttributeId.get(mappingAttribute.leavAttributeId);
                     const mappedValue = await mappingFunction(record[mappingAttribute.leavAttributeId], attr, ctx);
 
                     _.set(sdo.content, attributeKey, _cleanValue(mappedValue, mappingAttribute.format));
