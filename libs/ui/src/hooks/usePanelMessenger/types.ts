@@ -115,6 +115,11 @@ export type NavigateToPanelMessage = IMessageBase & {
         };
         // Called by the host when the panel opened by this navigation is closed by the user (not on successful submit)
         onClose?: () => void;
+        // Called by the host when a comment is submitted / a mention is added / the discussion
+        // status changes in the thread flap opened by this navigation.
+        onCommentSubmitted?: () => void;
+        onCommentMentionAdded?: () => void;
+        onDiscussionStatusChanged?: () => void;
     };
 };
 

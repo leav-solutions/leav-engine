@@ -1,11 +1,12 @@
 import {useState} from 'react';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import {useCreateThread} from '../useCreateThread';
 import {useGetThreadQuery, usePostDiscussionCommentMutation} from '../../../../../../__generated__';
 import {useThreadStatusOptions} from '../../useThreadStatusOption/useThreadStatusOptions';
 import {WIP_STATUS} from '../../threadConstants';
 import {REDIRECT_URL_QUERY_PARAM} from '../../../panel-custom/message-handlers/useNavigateToPanel';
+import {getThreadActionCallbacks} from '../../../../stores/threadActionCallbacks';
 
 interface IUseThreadActions {
     recordId: string;
@@ -20,6 +21,9 @@ export const usePostDiscussionComment = ({recordId, libraryId}: IUseThreadAction
     const location = useLocation();
     const createThread = useCreateThread();
     const statusesOptions = useThreadStatusOptions();
+    const {workspaceId, panelId, where: currentWhere} = useParams();
+
+    const {onCommentSubmitted, onCommentMentionAdded} = getThreadActionCallbacks({where: currentWhere});
 
     const [isPosting, setIsPosting] = useState(false);
 
@@ -60,6 +64,10 @@ export const usePostDiscussionComment = ({recordId, libraryId}: IUseThreadAction
                 },
             });
             await refetch();
+            onCommentSubmitted?.();
+            if (users && users.length > 0) {
+                onCommentMentionAdded?.();
+            }
         } catch {
             throw new Error(t('threads.post_error_title'));
         } finally {

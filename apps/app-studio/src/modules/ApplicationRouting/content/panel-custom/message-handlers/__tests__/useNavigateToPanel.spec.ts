@@ -3,6 +3,8 @@ import * as ReactRouter from 'react-router-dom';
 import * as ApplicationSettingsContext from '../../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {type Application} from '../../../../types';
 import {useNavigateToPanel} from '../useNavigateToPanel';
+import * as threadActionCallbacks from '../../../../stores/threadActionCallbacks';
+import * as panelCloseCallbacks from '../../../../utils/panelCloseCallbacks';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -258,6 +260,70 @@ describe('useNavigateToPanel', () => {
             '1234567890/fullpage/panelIdTest/flap/5511/campaign-detail/thread',
             undefined,
         );
+    });
+
+    describe('thread-action callbacks registration', () => {
+        const registerThread = jest.spyOn(threadActionCallbacks, 'registerThreadActionCallbacks');
+        const registerClose = jest.spyOn(panelCloseCallbacks, 'registerPanelCloseCallback');
+
+        const application = {libraries: {lib: {recordPanels: [{id: 'edition'}]}}} as never;
+
+        beforeEach(() => {
+            spyUseApplicationSettingsContext.mockReturnValue([application, jest.fn()]);
+        });
+
+        it('should register thread-action callbacks keyed by {where, flapPanelId} when opening the thread flap', () => {
+            const onCommentSubmitted = jest.fn();
+            const onCommentMentionAdded = jest.fn();
+            const onDiscussionStatusChanged = jest.fn();
+
+            const {
+                result: {current},
+            } = renderHook(() => useNavigateToPanel());
+
+            current.navigateToPanel({
+                where: 'fullpage',
+                libraryId: 'lib',
+                panelId: 'edition',
+                recordId: 'rec',
+                flapRecordId: 'frec',
+                flapLibraryId: 'flib',
+                flapPanelId: 'thread',
+                onCommentSubmitted,
+                onCommentMentionAdded,
+                onDiscussionStatusChanged,
+            });
+
+            expect(registerThread).toHaveBeenCalledWith(
+                {where: 'fullpage'},
+                {onCommentSubmitted, onCommentMentionAdded, onDiscussionStatusChanged},
+            );
+            expect(navigateMock).toHaveBeenCalled();
+        });
+
+        it('should not register thread-action callbacks when no flap is opened', () => {
+            const {
+                result: {current},
+            } = renderHook(() => useNavigateToPanel());
+
+            current.navigateToPanel({where: 'slider', libraryId: 'lib', panelId: 'edition', recordId: 'rec'});
+
+            expect(registerThread).not.toHaveBeenCalled();
+        });
+
+        it('should still register the onClose panel-close callback (existing behavior preserved)', () => {
+            const onClose = jest.fn();
+            const {
+                result: {current},
+            } = renderHook(() => useNavigateToPanel());
+
+            current.navigateToPanel({where: 'slider', libraryId: 'lib', panelId: 'edition', recordId: 'rec', onClose});
+
+            expect(registerClose).toHaveBeenCalledWith(
+                {recordId: 'rec', where: 'slider', recordPanelId: 'edition'},
+                onClose,
+            );
+        });
     });
 
     describe('when navigating from a slider context', () => {

@@ -7,10 +7,13 @@ import {StatusBar} from './thread-status-bar/ThreadStatusBar';
 import {useUser} from '_ui/hooks';
 import {sidePanel, container, center} from './thread.module.css';
 import cn from 'classnames';
+import {useClearThreadActionCallbacksOnClose} from './useClearThreadActionCallbacksOnClose/useClearThreadActionCallbacksOnClose';
 
 export const Thread: FunctionComponent = () => {
     const {userData} = useUser();
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId} = useParams();
+
+    useClearThreadActionCallbacksOnClose(where);
 
     const {threads, loading, editRecordPermission} = useThreads(flapRecordId, flapLibraryId);
     const mainThread = threads[0];
