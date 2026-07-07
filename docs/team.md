@@ -17,7 +17,7 @@ Sert à router une question ou une demande vers le bon interlocuteur.
 
 | Personne             | Rôle / périmètre                                         | Contact                       |
 | -------------------- | -------------------------------------------------------- | ----------------------------- |
-| Jérôme Millot        | Tech lead LEAV                                           | j.millot-ext@aristid.com      |
+| Jérôme Millot        | Architecture LEAV                                        | j.millot-ext@aristid.com      |
 | Jules Hablot         | Tech lead front — owner app-studio                       | j.hablot-ext@aristid.com      |
 | Sébastien Berthier   | Back / core (transverse LEAV & xStream)                  | s.berthier@aristid.com        |
 | Philippe Chevieux    | Lead tech front — app-studio, design-system (aristid-ds) | p.chevieux@aristid.com        |
@@ -28,24 +28,24 @@ Sert à router une question ou une demande vers le bon interlocuteur.
 | Antoine Le Chapelain | Dev (xStream, design-system, LEAV)                       | a.lechapelain-ext@aristid.com |
 | Yanis Benslimane     | Dev (xStream, LEAV)                                      | y.benslimane-ext@aristid.com  |
 | Olivier Grandgérard  | Dev (LEAV, xStream)                                      | o.grandgerard-ext@aristid.com |
-| Arnaud Groby         | Dev (xStream)                                            | a.groby-ext@aristid.com       |
 | Steven Lebonnois     | Dev (xStream), outillage IA                              | s.lebonnois-ext@aristid.com   |
 | Adil Sajide          | Dev (outillage IA, xStream)                              | a.sajide@aristid.com          |
-| Amélie Sauvageot     | Alternante — tests E2E                                   | a.sauvageot@aristid.com       |
 
 ## Ops / infra
 
-| Personne          | Rôle                    | Contact                 |
-| ----------------- | ----------------------- | ----------------------- |
-| Laurent Chartrain | Responsable OPS / infra | l.chartrain@aristid.com |
+| Personne          | Rôle                           | Contact                 |
+| ----------------- | ------------------------------ | ----------------------- |
+| Laurent Chartrain | Infrastructure Solution Expert | l.chartrain@aristid.com |
+| Edinio Zacko      | CloudOps Engineer              | e.zacko@aristid.com     |
 
 ## Product
 
-| Personne            | Rôle / périmètre              | Contact                   |
-| ------------------- | ----------------------------- | ------------------------- |
-| Nicolas Godet       | Head of Product               | n.godet@aristid.com       |
-| Gautier Vigerie     | Product Manager               | g.vigerie@aristid.com     |
-| Sébastien Mérieux   | Product Owner — LEAV          | s.merieux@aristid.com     |
-| Marianne Antoun     | Product Owner — planning, AMP | m.antoun@aristid.com      |
-| Eladine-Ali Mohamed | Product Owner — Offer Manager | e.mohamed@aristid.com     |
-| Cyril Marrone       | Product Designer              | c.marrone-ext@aristid.com |
+| Personne              | Rôle / périmètre              | Contact                         |
+| --------------------- | ----------------------------- | ------------------------------- |
+| Nicolas Godet         | Head of Product               | n.godet@aristid.com             |
+| Gautier Vigerie       | Product Manager               | g.vigerie@aristid.com           |
+| Sébastien Mérieux     | Product Owner — LEAV          | s.merieux@aristid.com           |
+| Marianne Antoun       | Product Owner — planning, AMP | m.antoun@aristid.com            |
+| Eladine-Ali Mohamed   | Product Owner — Offer Manager | e.mohamed@aristid.com           |
+| Cyril Marrone         | Product Designer              | c.marrone-ext@aristid.com       |
+| Mélanie Dalla-Vecchia | Product Designer              | m.dalla-vecchia-ext@aristid.com |
