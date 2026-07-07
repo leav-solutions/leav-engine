@@ -1,0 +1,245 @@
+import {type FunctionComponent, useState} from 'react';
+import {
+    CloudUploadOutlined,
+    DeleteOutlined,
+    ExpandAltOutlined,
+    FolderAddOutlined,
+    InfoCircleOutlined,
+    MoreOutlined,
+    OrderedListOutlined,
+    PictureOutlined,
+    SearchOutlined,
+} from '@ant-design/icons';
+import {CreateDirectory, EditRecordModal, TriggerPreviewsGenerationModal, UploadFiles} from '@leav/ui';
+import {Button, Dropdown, message} from 'antd';
+import {type ItemType} from 'antd/es/menu/interface';
+import {useTranslation} from 'react-i18next';
+import {LibraryBehavior, TreeBehavior, useRemoveTreeElementMutation} from '../../../../__generated__';
+import {type ITreeExplorerNode, type OnMessagesFunc} from '../../_types';
+import {type ITreeAllowedChildLibrary} from '../../hooks/useTreeLibraryAllowedAsChild';
+import {useRefreshTreeContent} from '../../hooks/useRefreshTreeContent';
+import {useTreeExplorerState} from '../../store/useTreeExplorerState';
+import {getDirectoriesLibraryId, getFilesLibraryId} from '../../utils';
+import {AddByCreationButton} from './AddByCreationButton';
+import {AddBySearchButton} from './AddBySearchButton';
+
+interface IDefaultActionsProps {
+    isDetail: boolean;
+    parent?: ITreeExplorerNode;
+    allowedChildrenLibraries: ITreeAllowedChildLibrary[];
+    onMessages: OnMessagesFunc;
+}
+
+export const DefaultActions: FunctionComponent<IDefaultActionsProps> = ({
+    isDetail,
+    parent,
+    allowedChildrenLibraries,
+    onMessages,
+}) => {
+    const {t} = useTranslation();
+    const {activeTree, path, selection, setPath} = useTreeExplorerState();
+    const hasSelection = !!selection.selected.length;
+    const [displayPreviewConfirm, setDisplayPreviewConfirm] = useState(false);
+    const [editRecordModalVisible, setEditRecordVisible] = useState(false);
+    const [isUploadFilesModalVisible, setIsUploadFilesModalVisible] = useState(false);
+    const [isCreateDirectoryModalVisible, setIsCreateDirectoryModalVisible] = useState(false);
+
+    const [removeFromTree] = useRemoveTreeElementMutation();
+    const {refreshTreeContent} = useRefreshTreeContent(activeTree.id);
+
+    const _handleClickDetails = () => {
+        const parentIndex = path.findIndex(p => p.id === parent?.id);
+        const newPath = [...path];
+        newPath[parentIndex] = {...parent, showDetails: true};
+
+        setPath(newPath);
+    };
+
+    const _handleOpenEditRecord = () => setEditRecordVisible(true);
+    const _handleCloseEditRecord = () => setEditRecordVisible(false);
+
+    const _handleClickDetach = async () => {
+        const label = parent.record.whoAmI.label;
+
+        try {
+            await removeFromTree({
+                variables: {
+                    treeId: activeTree.id,
+                    nodeId: parent?.id ?? null,
+                },
+            });
+
+            message.success(t('tree-explorer.infos.success-detach', {nb: 1}));
+        } catch (e) {
+            message.error(
+                t('tree-explorer.infos.error-detach', {
+                    elements: label ?? parent.record.id,
+                    errorMessage: (e as Error).message,
+                }),
+            );
+        }
+
+        refreshTreeContent();
+    };
+
+    const _handleClickUpload = () => setIsUploadFilesModalVisible(true);
+    const _handleCloseUpload = () => setIsUploadFilesModalVisible(false);
+
+    const _handleCreateDirectory = () => setIsCreateDirectoryModalVisible(true);
+    const _handleCloseCreateDirectory = () => setIsCreateDirectoryModalVisible(false);
+
+    const _handleClickClassifiedIn = () => message.warning(t('tree-explorer.feature_not_available'));
+    const _handleClickOrder = () => message.warning(t('tree-explorer.feature_not_available'));
+    const _handleClickGeneratePreviews = () => setDisplayPreviewConfirm(true);
+    const _handleClosePreviewGenerationConfirm = () => setDisplayPreviewConfirm(false);
+
+    const canEditChildren = parent ? parent.permissions.edit_children : activeTree.permissions.edit_children;
+    const canDetach = !!parent && parent.permissions.detach;
+    const isFilesTree = activeTree.behavior === TreeBehavior.files;
+    const isDirectoryParent = !parent || parent?.record.whoAmI.library.behavior === LibraryBehavior.directories;
+
+    const treeActionsMenuItems: ItemType[] = (
+        [
+            {
+                displayCondition: isFilesTree && isDirectoryParent,
+                item: {
+                    key: 'upload',
+                    icon: <CloudUploadOutlined />,
+                    onClick: _handleClickUpload,
+                    label: t('tree-explorer.actions.upload'),
+                },
+            },
+            {
+                displayCondition: isFilesTree && isDirectoryParent,
+                item: {
+                    key: 'create_directory',
+                    icon: <FolderAddOutlined />,
+                    onClick: _handleCreateDirectory,
+                    label: t('tree-explorer.actions.create_directory'),
+                },
+            },
+            {
+                displayCondition: !!parent && !isDetail,
+                item: {
+                    key: 'details',
+                    icon: <InfoCircleOutlined />,
+                    onClick: _handleClickDetails,
+                    label: t('tree-explorer.actions.details'),
+                },
+            },
+            {
+                displayCondition: !!parent,
+                item: {
+                    key: 'edit',
+                    icon: <ExpandAltOutlined />,
+                    onClick: _handleOpenEditRecord,
+                    label: t('tree-explorer.actions.edit'),
+                },
+            },
+            {
+                displayCondition: true,
+                item: {
+                    key: 'classified_in',
+                    icon: <SearchOutlined />,
+                    onClick: _handleClickClassifiedIn,
+                    label: t('tree-explorer.actions.classified_in'),
+                },
+            },
+            {
+                displayCondition: isFilesTree,
+                item: {
+                    key: 'generate_previews',
+                    label: t('tree-explorer.actions.generate_previews'),
+                    icon: <PictureOutlined />,
+                    onClick: _handleClickGeneratePreviews,
+                },
+            },
+            {displayCondition: canEditChildren, item: {key: 'divider', type: 'divider'}},
+            {
+                displayCondition: canEditChildren,
+                item: {
+                    key: 'order',
+                    icon: <OrderedListOutlined />,
+                    onClick: _handleClickOrder,
+                    label: t('tree-explorer.actions.order'),
+                },
+            },
+            {
+                displayCondition: canEditChildren && canDetach,
+                item: {
+                    key: 'detach',
+                    icon: <DeleteOutlined />,
+                    onClick: _handleClickDetach,
+                    label: t('tree-explorer.actions.detach'),
+                },
+            },
+        ] satisfies Array<{displayCondition: boolean; item: ItemType}>
+    )
+        .filter(entry => entry.displayCondition)
+        .map(entry => entry.item);
+
+    const _handleRefreshAfterModal = () => refreshTreeContent();
+
+    const filesLibraryId = getFilesLibraryId(activeTree);
+
+    return (
+        <>
+            {isUploadFilesModalVisible && (
+                <UploadFiles
+                    defaultSelectedNode={{id: parent?.id || activeTree.id, recordId: parent?.record.id}}
+                    libraryId={getFilesLibraryId(activeTree)}
+                    multiple
+                    onClose={_handleCloseUpload}
+                    onCompleted={_handleRefreshAfterModal}
+                />
+            )}
+            {isCreateDirectoryModalVisible && (
+                <CreateDirectory
+                    defaultSelectedKey={parent?.id || activeTree.id}
+                    libraryId={parent?.record.whoAmI.library.id || getDirectoriesLibraryId(activeTree)}
+                    onClose={_handleCloseCreateDirectory}
+                    onCompleted={_handleRefreshAfterModal}
+                />
+            )}
+            {editRecordModalVisible && (
+                <EditRecordModal
+                    open={editRecordModalVisible}
+                    library={parent.record.whoAmI.library.id}
+                    record={parent.record.whoAmI}
+                    onClose={_handleCloseEditRecord}
+                />
+            )}
+            {!hasSelection && (
+                <>
+                    {canEditChildren && (
+                        <>
+                            <AddBySearchButton
+                                availableLibraries={allowedChildrenLibraries}
+                                parent={parent}
+                                onMessages={onMessages}
+                            />
+                            <AddByCreationButton
+                                availableLibraries={allowedChildrenLibraries}
+                                parent={parent}
+                                onMessages={onMessages}
+                            />
+                        </>
+                    )}
+                    <span data-testid="dropdown-tree-actions">
+                        <Dropdown placement="bottomRight" menu={{items: treeActionsMenuItems}}>
+                            <Button icon={<MoreOutlined />} />
+                        </Dropdown>
+                    </span>
+                </>
+            )}
+            {displayPreviewConfirm && (
+                <TriggerPreviewsGenerationModal
+                    libraryId={parent?.record?.whoAmI?.library?.id}
+                    filesLibraryId={filesLibraryId}
+                    {...(parent && {recordIds: [parent?.record.id]})}
+                    onClose={_handleClosePreviewGenerationConfirm}
+                />
+            )}
+        </>
+    );
+};

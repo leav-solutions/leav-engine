@@ -119,8 +119,13 @@ const explorerPanelSchema = baseExplorerPanelSchema.and(
     z.union([attributeExplorerPanelSchema, libraryExplorerPanelSchema]),
 );
 
+export const treeExplorerPanelSchema = z.object({
+    type: z.literal('treeExplorer'),
+    treeId: z.string(),
+});
+
 export const PanelSchema = basePanelSchema.and(
-    z.union([explorerPanelSchema, iframePanelSchema, editionPanelSchema, creationPanelSchema]),
+    z.union([explorerPanelSchema, iframePanelSchema, editionPanelSchema, creationPanelSchema, treeExplorerPanelSchema]),
 );
 
 export const PanelIFrameSchema = basePanelSchema.and(iframePanelSchema);

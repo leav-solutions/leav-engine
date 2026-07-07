@@ -1,0 +1,15 @@
+fragment TreeExplorerRecord on Record {
+    id
+    whoAmI {
+        id
+        label
+        subLabel
+        color
+        library {
+            id
+            behavior
+            label
+        }
+        preview
+    }
+}

@@ -26,6 +26,10 @@ const WorkspaceSchema = z
                 libraryId: LibraryIdSchema,
                 subTitle: z.record(LanguageSchema, z.string()).optional(), // For now, only record workspaces can have a sub title (because they use an id card component)
             }),
+            z.object({
+                type: z.literal('tree'),
+                treeId: z.string(),
+            }),
         ]),
     );
 

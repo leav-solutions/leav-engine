@@ -41,6 +41,8 @@ export const Panel: FunctionComponent = () => {
     const currentRecordId = isFirstPanel && currentWorkspace.type === 'record' ? currentWorkspace.recordId : recordId;
     const hasFlapPanel = flapPanelId !== undefined;
     const isCreationFormPanel = currentPanel.type === 'creationForm';
+    // A tree workspace renders a full-page, self-contained explorer: no panel header, no tabs, no view volet.
+    const isTreeExplorerPanel = currentPanel.type === 'treeExplorer';
 
     const isViewSettingsVoletActive = getIsViewSettingsVoletActive(currentPanel);
     const viewSettingsContainerComponent = modalExtraRightElement ? (
@@ -115,7 +117,7 @@ export const Panel: FunctionComponent = () => {
                     [fullscreenPanel]: isPanelFullscreen,
                 })}
             >
-                {!isPanelFullscreen && (isFirstPanel || !currentPanel.isStandalone) && (
+                {!isPanelFullscreen && (isFirstPanel || !currentPanel.isStandalone) && !isTreeExplorerPanel && (
                     <div className={panelHeader}>
                         {/* `fullpage`, `popup` and `slider` are managed by `<PanelContainer />` */}
                         {isFirstPanel && (

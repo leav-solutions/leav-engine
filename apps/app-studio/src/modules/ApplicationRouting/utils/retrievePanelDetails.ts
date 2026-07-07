@@ -1,8 +1,9 @@
 import {type Application} from '../types';
+import {buildTreeWorkspacePanel, isTreeWorkspace} from './treeWorkspacePanel';
 
 type Panel = Application['libraries'][string]['libraryPanels'][number];
 type PanelType = 'libraryPanels' | 'recordPanels';
-type PanelLocation = {currentPanel: Panel; libraryId: string; panelType: PanelType};
+type PanelLocation = {currentPanel: Panel; libraryId: string | null; panelType: PanelType | null};
 type PanelIndex = Map<string, PanelLocation>;
 
 /**
@@ -25,6 +26,14 @@ const buildPanelIndex = (application: Application): PanelIndex => {
         }
         for (const currentPanel of recordPanels) {
             index.set(currentPanel.id, {currentPanel, libraryId, panelType: 'recordPanels'});
+        }
+    }
+
+    // Tree workspaces are not backed by a library: index their single implicit `treeExplorer` panel.
+    for (const workspace of application.workspaces) {
+        if (isTreeWorkspace(workspace)) {
+            const currentPanel = buildTreeWorkspacePanel(workspace);
+            index.set(currentPanel.id, {currentPanel, libraryId: null, panelType: null});
         }
     }
 

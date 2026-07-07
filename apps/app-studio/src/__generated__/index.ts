@@ -467,18 +467,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -540,6 +528,13 @@ export type DiscussionTargetRecordInput = {
   libraryId: Scalars['String']['input'];
 };
 
+/**  One level of groups (paginated), enumerated by recordsGroups  */
+export type DistinctValuesList = {
+  list: Array<GenericDistinctValues>;
+  /**  Total number of groups, before pagination  */
+  totalCount: Scalars['Int']['output'];
+};
+
 export type EmbeddedAttribute = {
   description?: Maybe<Scalars['SystemTranslationOptional']['output']>;
   embedded_fields?: Maybe<Array<Maybe<EmbeddedAttribute>>>;
@@ -581,8 +576,6 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -1084,8 +1077,6 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -1214,17 +1205,6 @@ export type Logs = {
   total: Scalars['Int']['output'];
 };
 
-export type MoveThematicResultThematic = {
-  id: Scalars['ID']['output'];
-  id_value: Scalars['ID']['output'];
-  originalId: Scalars['ID']['output'];
-};
-
-export type MoveThematicsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  thematics?: Maybe<Array<MoveThematicResultThematic>>;
-};
-
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -1261,15 +1241,11 @@ export type Mutation = {
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
-  initRenewCampaigns: Scalars['String']['output'];
-  moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
-  removeCampaigns: RemoveCampaignsResult;
-  removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1290,7 +1266,6 @@ export type Mutation = {
   treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
   updateAutomationRule: AutomationRule;
-  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   updateViewV2: ViewV2;
   upload: Array<UploadData>;
@@ -1456,22 +1431,6 @@ export type MutationIndexRecordsArgs = {
 };
 
 
-export type MutationInitRenewCampaignsArgs = {
-  campaigns: Array<CampaignToRenew>;
-  fromPacId: Scalars['String']['input'];
-  method?: InputMaybe<Scalars['String']['input']>;
-  redirectUrl: Scalars['String']['input'];
-  toPacId: Scalars['String']['input'];
-};
-
-
-export type MutationMoveOrCopyCampaignThematicsArgs = {
-  moveThematic: Scalars['Boolean']['input'];
-  thematics: Array<ThematicToRenew>;
-  toCampaignId: Scalars['String']['input'];
-};
-
-
 export type MutationPostDiscussionCommentArgs = {
   comment?: InputMaybe<DiscussionCommentInput>;
 };
@@ -1490,16 +1449,6 @@ export type MutationPurgeMultipleValuesArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
-};
-
-
-export type MutationRemoveCampaignsArgs = {
-  campaignsIds: Array<Scalars['ID']['input']>;
-};
-
-
-export type MutationRemoveStructureItemsArgs = {
-  structureItemIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1610,11 +1559,6 @@ export type MutationTreeMoveElementArgs = {
 
 export type MutationUpdateAutomationRuleArgs = {
   rule: UpdateAutomationRuleInput;
-};
-
-
-export type MutationUpdateCampaignsDatesArgs = {
-  campaigns: Array<CampaignToUpdateDates>;
 };
 
 
@@ -1871,6 +1815,12 @@ export type Query = {
   plugins: Array<Plugin>;
   recordForm?: Maybe<RecordForm>;
   records: RecordsList;
+  /**
+   * Enumerate one level of groups (distinct values + count) for an attribute,
+   * paginated and sorted. Fetch the records of a group with the records query,
+   * adding the group's equality filter.
+   */
+  recordsGroups: DistinctValuesList;
   tasks: TasksList;
   treeContent: Array<TreeNode>;
   treeNodeChildren: TreeNodeLightList;
@@ -2026,6 +1976,17 @@ export type QueryRecordsArgs = {
 };
 
 
+export type QueryRecordsGroupsArgs = {
+  attribute: Scalars['ID']['input'];
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
+  library: Scalars['ID']['input'];
+  pagination?: InputMaybe<Pagination>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<RecordsGroupsSortInput>;
+  version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
+};
+
+
 export type QueryTasksArgs = {
   filters?: InputMaybe<TaskFiltersInput>;
   pagination?: InputMaybe<Pagination>;
@@ -2089,7 +2050,6 @@ export type QueryViewsArgs = {
 
 export type QueryViewsV2Args = {
   library: Scalars['ID']['input'];
-  origin?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Record = {
@@ -2281,6 +2241,11 @@ export type RecordUpdatedValues = {
   value: GenericValue;
 };
 
+/**  Sort of the groups themselves (by count in v1)  */
+export type RecordsGroupsSortInput = {
+  order: SortOrder;
+};
+
 export type RecordsList = {
   cursor?: Maybe<RecordsListCursor>;
   list: Array<Record>;
@@ -2301,18 +2266,6 @@ export type RecordsPagination = {
 export type RelatedEntity = {
   label: Scalars['String']['output'];
   url: Scalars['String']['output'];
-};
-
-export type RenewCampaignResultThematic = {
-  id: Scalars['ID']['output'];
-  id_value: Scalars['ID']['output'];
-  thematic_id: Scalars['ID']['output'];
-};
-
-export type SaveCampaignsDatesResult = {
-  campaign_id: Scalars['ID']['output'];
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<GenericValue>;
 };
 
 export type SaveValueBulkMappingInput = {
@@ -2549,23 +2502,16 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int']['output'];
-};
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
 };
 
 export type Tree = {
@@ -3069,8 +3015,6 @@ export type ViewV2 = {
   label: Scalars['SystemTranslation']['output'];
   library: Scalars['ID']['output'];
   modified_at: Scalars['Int']['output'];
-  /**  View kind, distinct from display.type. Null for explorer views; set to the originating custom panelId (e.g. 'planning'). */
-  origin?: Maybe<Scalars['String']['output']>;
   shared: Scalars['Boolean']['output'];
   shortcuts: Array<ViewV2Shortcut>;
   sorts: Array<ViewV2Sort>;
@@ -3082,7 +3026,6 @@ export type ViewV2CreateInput = {
   filters?: InputMaybe<Array<ViewV2FilterInput>>;
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
-  origin?: InputMaybe<Scalars['String']['input']>;
   shared: Scalars['Boolean']['input'];
   shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
@@ -3096,25 +3039,25 @@ export type ViewV2Creator = {
 
 export type ViewV2Display = {
   attributes: Array<ViewV2DisplayAttribute>;
-  /**  Opaque display configuration owned by a custom panel iframe (e.g. planning timeline). Not interpreted by the core. */
-  settings?: Maybe<Scalars['JSONObject']['output']>;
   type: ViewV2Types;
 };
 
 export type ViewV2DisplayAttribute = {
   attribute: Attribute;
+  /**  Generic marker: this attribute is the grouping axis (kanban columns, table grouping…). At most one per view.  */
+  isGroupBy?: Maybe<Scalars['Boolean']['output']>;
   visible: Scalars['Boolean']['output'];
 };
 
 export type ViewV2DisplayAttributeInput = {
   attributeId: Scalars['ID']['input'];
+  isGroupBy?: InputMaybe<Scalars['Boolean']['input']>;
   visible: Scalars['Boolean']['input'];
 };
 
 export type ViewV2DisplayInput = {
   /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<ViewV2DisplayAttributeInput>>;
-  settings?: InputMaybe<Scalars['JSONObject']['input']>;
   type: ViewV2Types;
 };
 
@@ -3155,6 +3098,7 @@ export type ViewV2SortInput = {
 
 export enum ViewV2Types {
   cards = 'cards',
+  kanban = 'kanban',
   list = 'list',
   timeline = 'timeline'
 }
@@ -3166,7 +3110,6 @@ export type ViewV2UpdateInput = {
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
-  origin?: InputMaybe<Scalars['String']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
   shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
@@ -3201,16 +3144,6 @@ export type ViewsList = {
 export type ViewsV2List = {
   list: Array<ViewV2>;
   totalCount: Scalars['Int']['output'];
-};
-
-export type RemoveCampaignsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<Scalars['ID']['output']>;
-};
-
-export type RemoveStructureItemsResult = {
-  errors?: Maybe<Array<ValueBatchError>>;
-  values: Array<Scalars['ID']['output']>;
 };
 
 export type SaveValueBatchResult = {
@@ -3276,14 +3209,14 @@ export type CreateViewV2MutationVariables = Exact<{
 }>;
 
 
-export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type UpdateViewV2MutationVariables = Exact<{
   view: ViewV2UpdateInput;
 }>;
 
 
-export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 type ViewSettingsLibraryAttributeLinkAttributeFragment = { id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } };
 
@@ -3313,7 +3246,7 @@ export type GetViewV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type IsAllowedQueryVariables = Exact<{
   type: PermissionTypes;
@@ -3324,7 +3257,7 @@ export type IsAllowedQueryVariables = Exact<{
 
 export type IsAllowedQuery = { isAllowed?: Array<{ name: PermissionsActions, allowed?: boolean | null }> | null };
 
-export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> };
+export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> };
 
 export type DeleteViewV2MutationVariables = Exact<{
   viewId: Scalars['ID']['input'];
@@ -3335,11 +3268,10 @@ export type DeleteViewV2Mutation = { deleteViewV2: { id: string } };
 
 export type GetViewListQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
-  origin?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetViewListQuery = { viewsV2: { list: Array<{ id: string, label: any, shared: boolean, origin?: string | null, created_by: { id: string } }> } };
+export type GetViewListQuery = { viewsV2: { list: Array<{ id: string, label: any, shared: boolean, created_by: { id: string } }> } };
 
 export type GetLibraryNameQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
@@ -3399,6 +3331,67 @@ export type SubscribeToUserTasksSubscriptionVariables = Exact<{
 
 export type SubscribeToUserTasksSubscription = { task: { id: string, status: TaskStatus, label: any, created_at: number, startedAt?: number | null, completedAt?: number | null, progress?: { description?: any | null, percent?: number | null } | null, link?: { url: string } | null } };
 
+export type AddTreeElementMutationVariables = Exact<{
+  treeId: Scalars['ID']['input'];
+  element: TreeElementInput;
+  parent?: InputMaybe<Scalars['ID']['input']>;
+  order?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type AddTreeElementMutation = { treeAddElement: { id: string } };
+
+export type GetTreeForExplorerQueryVariables = Exact<{
+  treeId: Scalars['ID']['input'];
+}>;
+
+
+export type GetTreeForExplorerQuery = { trees?: { list: Array<{ id: string, label?: any | null, behavior: TreeBehavior, libraries: Array<{ library: { id: string, label?: any | null, behavior: LibraryBehavior } }>, permissions: { access_tree: boolean, edit_children: boolean } }> } | null };
+
+export type GetTreeLibrariesForExplorerQueryVariables = Exact<{
+  treeId?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
+}>;
+
+
+export type GetTreeLibrariesForExplorerQuery = { trees?: { totalCount: number, list: Array<{ id: string, behavior: TreeBehavior, system: boolean, libraries: Array<{ library: { id: string, label?: any | null, behavior: LibraryBehavior, system?: boolean | null }, settings: { allowMultiplePositions: boolean, allowedChildren: Array<string>, allowedAtRoot: boolean } }> }> } | null };
+
+export type GetTreeNodeChildrenQueryVariables = Exact<{
+  treeId: Scalars['ID']['input'];
+  node?: InputMaybe<Scalars['ID']['input']>;
+  pagination?: InputMaybe<Pagination>;
+}>;
+
+
+export type GetTreeNodeChildrenQuery = { treeNodeChildren: { totalCount?: number | null, list: Array<{ id: string, childrenCount?: number | null, record: { id: string, active: Array<{ value?: any | null }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: any | null, library: { id: string, behavior: LibraryBehavior, label?: any | null } } }, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } }> } };
+
+export type MoveTreeElementMutationVariables = Exact<{
+  treeId: Scalars['ID']['input'];
+  nodeId: Scalars['ID']['input'];
+  parentTo?: InputMaybe<Scalars['ID']['input']>;
+  order?: InputMaybe<Scalars['Int']['input']>;
+}>;
+
+
+export type MoveTreeElementMutation = { treeMoveElement: { id: string } };
+
+export type RemoveTreeElementMutationVariables = Exact<{
+  treeId: Scalars['ID']['input'];
+  nodeId: Scalars['ID']['input'];
+  deleteChildren?: InputMaybe<Scalars['Boolean']['input']>;
+}>;
+
+
+export type RemoveTreeElementMutation = { treeDeleteElement: string };
+
+export type TreeEventsSubscriptionVariables = Exact<{
+  filters?: InputMaybe<TreeEventFiltersInput>;
+}>;
+
+
+export type TreeEventsSubscription = { treeEvent: { type: TreeEventTypes, treeId: string, element: { id: string, childrenCount?: number | null, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: any | null, library: { id: string, behavior: LibraryBehavior, label?: any | null } } }, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } }, parentNode?: { id: string } | null, parentNodeBefore?: { id: string } | null } };
+
+export type TreeExplorerRecordFragment = { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: any | null, library: { id: string, behavior: LibraryBehavior, label?: any | null } } };
+
 export const ViewSettingsLibraryAttributeFragmentDoc = gql`
     fragment ViewSettingsLibraryAttribute on Attribute {
   id
@@ -3443,9 +3436,7 @@ export const AppStudioViewSettingsViewFragmentDoc = gql`
         label
       }
     }
-    settings
   }
-  origin
   sorts {
     attributes {
       id
@@ -3465,6 +3456,23 @@ export const AppStudioViewSettingsViewFragmentDoc = gql`
     withEmptyValues
   }
   shortcuts
+}
+    `;
+export const TreeExplorerRecordFragmentDoc = gql`
+    fragment TreeExplorerRecord on Record {
+  id
+  whoAmI {
+    id
+    label
+    subLabel
+    color
+    library {
+      id
+      behavior
+      label
+    }
+    preview
+  }
 }
     `;
 export const GetApplicationDataByEndpointDocument = gql`
@@ -4180,13 +4188,12 @@ export type DeleteViewV2MutationHookResult = ReturnType<typeof useDeleteViewV2Mu
 export type DeleteViewV2MutationResult = Apollo.MutationResult<DeleteViewV2Mutation>;
 export type DeleteViewV2MutationOptions = Apollo.BaseMutationOptions<DeleteViewV2Mutation, DeleteViewV2MutationVariables>;
 export const GetViewListDocument = gql`
-    query GetViewList($libraryId: ID!, $origin: String) {
-  viewsV2(library: $libraryId, origin: $origin) {
+    query GetViewList($libraryId: ID!) {
+  viewsV2(library: $libraryId) {
     list {
       id
       label
       shared
-      origin
       created_by {
         id
       }
@@ -4208,7 +4215,6 @@ export const GetViewListDocument = gql`
  * const { data, loading, error } = useGetViewListQuery({
  *   variables: {
  *      libraryId: // value for 'libraryId'
- *      origin: // value for 'origin'
  *   },
  * });
  */
@@ -4624,3 +4630,352 @@ export function useSubscribeToUserTasksSubscription(baseOptions?: Apollo.Subscri
       }
 export type SubscribeToUserTasksSubscriptionHookResult = ReturnType<typeof useSubscribeToUserTasksSubscription>;
 export type SubscribeToUserTasksSubscriptionResult = Apollo.SubscriptionResult<SubscribeToUserTasksSubscription>;
+export const AddTreeElementDocument = gql`
+    mutation addTreeElement($treeId: ID!, $element: TreeElementInput!, $parent: ID, $order: Int) {
+  treeAddElement(
+    treeId: $treeId
+    element: $element
+    parent: $parent
+    order: $order
+  ) {
+    id
+  }
+}
+    `;
+export type AddTreeElementMutationFn = Apollo.MutationFunction<AddTreeElementMutation, AddTreeElementMutationVariables>;
+
+/**
+ * __useAddTreeElementMutation__
+ *
+ * To run a mutation, you first call `useAddTreeElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddTreeElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addTreeElementMutation, { data, loading, error }] = useAddTreeElementMutation({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *      element: // value for 'element'
+ *      parent: // value for 'parent'
+ *      order: // value for 'order'
+ *   },
+ * });
+ */
+export function useAddTreeElementMutation(baseOptions?: Apollo.MutationHookOptions<AddTreeElementMutation, AddTreeElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AddTreeElementMutation, AddTreeElementMutationVariables>(AddTreeElementDocument, options);
+      }
+export type AddTreeElementMutationHookResult = ReturnType<typeof useAddTreeElementMutation>;
+export type AddTreeElementMutationResult = Apollo.MutationResult<AddTreeElementMutation>;
+export type AddTreeElementMutationOptions = Apollo.BaseMutationOptions<AddTreeElementMutation, AddTreeElementMutationVariables>;
+export const GetTreeForExplorerDocument = gql`
+    query getTreeForExplorer($treeId: ID!) {
+  trees(filters: {id: [$treeId]}) {
+    list {
+      id
+      label
+      libraries {
+        library {
+          id
+          label
+          behavior
+        }
+      }
+      behavior
+      permissions {
+        access_tree
+        edit_children
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTreeForExplorerQuery__
+ *
+ * To run a query within a React component, call `useGetTreeForExplorerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTreeForExplorerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTreeForExplorerQuery({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *   },
+ * });
+ */
+export function useGetTreeForExplorerQuery(baseOptions: Apollo.QueryHookOptions<GetTreeForExplorerQuery, GetTreeForExplorerQueryVariables> & ({ variables: GetTreeForExplorerQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTreeForExplorerQuery, GetTreeForExplorerQueryVariables>(GetTreeForExplorerDocument, options);
+      }
+export function useGetTreeForExplorerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTreeForExplorerQuery, GetTreeForExplorerQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTreeForExplorerQuery, GetTreeForExplorerQueryVariables>(GetTreeForExplorerDocument, options);
+        }
+// @ts-ignore
+export function useGetTreeForExplorerSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTreeForExplorerQuery, GetTreeForExplorerQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeForExplorerQuery, GetTreeForExplorerQueryVariables>;
+export function useGetTreeForExplorerSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeForExplorerQuery, GetTreeForExplorerQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeForExplorerQuery | undefined, GetTreeForExplorerQueryVariables>;
+export function useGetTreeForExplorerSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeForExplorerQuery, GetTreeForExplorerQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTreeForExplorerQuery, GetTreeForExplorerQueryVariables>(GetTreeForExplorerDocument, options);
+        }
+export type GetTreeForExplorerQueryHookResult = ReturnType<typeof useGetTreeForExplorerQuery>;
+export type GetTreeForExplorerLazyQueryHookResult = ReturnType<typeof useGetTreeForExplorerLazyQuery>;
+export type GetTreeForExplorerSuspenseQueryHookResult = ReturnType<typeof useGetTreeForExplorerSuspenseQuery>;
+export type GetTreeForExplorerQueryResult = Apollo.QueryResult<GetTreeForExplorerQuery, GetTreeForExplorerQueryVariables>;
+export const GetTreeLibrariesForExplorerDocument = gql`
+    query getTreeLibrariesForExplorer($treeId: [ID!]) {
+  trees(filters: {id: $treeId}) {
+    totalCount
+    list {
+      id
+      behavior
+      system
+      libraries {
+        library {
+          id
+          label
+          behavior
+          system
+        }
+        settings {
+          allowMultiplePositions
+          allowedChildren
+          allowedAtRoot
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTreeLibrariesForExplorerQuery__
+ *
+ * To run a query within a React component, call `useGetTreeLibrariesForExplorerQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTreeLibrariesForExplorerQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTreeLibrariesForExplorerQuery({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *   },
+ * });
+ */
+export function useGetTreeLibrariesForExplorerQuery(baseOptions?: Apollo.QueryHookOptions<GetTreeLibrariesForExplorerQuery, GetTreeLibrariesForExplorerQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTreeLibrariesForExplorerQuery, GetTreeLibrariesForExplorerQueryVariables>(GetTreeLibrariesForExplorerDocument, options);
+      }
+export function useGetTreeLibrariesForExplorerLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTreeLibrariesForExplorerQuery, GetTreeLibrariesForExplorerQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTreeLibrariesForExplorerQuery, GetTreeLibrariesForExplorerQueryVariables>(GetTreeLibrariesForExplorerDocument, options);
+        }
+// @ts-ignore
+export function useGetTreeLibrariesForExplorerSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTreeLibrariesForExplorerQuery, GetTreeLibrariesForExplorerQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeLibrariesForExplorerQuery, GetTreeLibrariesForExplorerQueryVariables>;
+export function useGetTreeLibrariesForExplorerSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeLibrariesForExplorerQuery, GetTreeLibrariesForExplorerQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeLibrariesForExplorerQuery | undefined, GetTreeLibrariesForExplorerQueryVariables>;
+export function useGetTreeLibrariesForExplorerSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeLibrariesForExplorerQuery, GetTreeLibrariesForExplorerQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTreeLibrariesForExplorerQuery, GetTreeLibrariesForExplorerQueryVariables>(GetTreeLibrariesForExplorerDocument, options);
+        }
+export type GetTreeLibrariesForExplorerQueryHookResult = ReturnType<typeof useGetTreeLibrariesForExplorerQuery>;
+export type GetTreeLibrariesForExplorerLazyQueryHookResult = ReturnType<typeof useGetTreeLibrariesForExplorerLazyQuery>;
+export type GetTreeLibrariesForExplorerSuspenseQueryHookResult = ReturnType<typeof useGetTreeLibrariesForExplorerSuspenseQuery>;
+export type GetTreeLibrariesForExplorerQueryResult = Apollo.QueryResult<GetTreeLibrariesForExplorerQuery, GetTreeLibrariesForExplorerQueryVariables>;
+export const GetTreeNodeChildrenDocument = gql`
+    query getTreeNodeChildren($treeId: ID!, $node: ID, $pagination: Pagination) {
+  treeNodeChildren(treeId: $treeId, node: $node, pagination: $pagination) {
+    totalCount
+    list {
+      id
+      childrenCount
+      record {
+        ...TreeExplorerRecord
+        active: property(attribute: "active") {
+          ... on Value {
+            value
+          }
+        }
+      }
+      permissions {
+        access_tree
+        detach
+        edit_children
+      }
+    }
+  }
+}
+    ${TreeExplorerRecordFragmentDoc}`;
+
+/**
+ * __useGetTreeNodeChildrenQuery__
+ *
+ * To run a query within a React component, call `useGetTreeNodeChildrenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTreeNodeChildrenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTreeNodeChildrenQuery({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *      node: // value for 'node'
+ *      pagination: // value for 'pagination'
+ *   },
+ * });
+ */
+export function useGetTreeNodeChildrenQuery(baseOptions: Apollo.QueryHookOptions<GetTreeNodeChildrenQuery, GetTreeNodeChildrenQueryVariables> & ({ variables: GetTreeNodeChildrenQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTreeNodeChildrenQuery, GetTreeNodeChildrenQueryVariables>(GetTreeNodeChildrenDocument, options);
+      }
+export function useGetTreeNodeChildrenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTreeNodeChildrenQuery, GetTreeNodeChildrenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTreeNodeChildrenQuery, GetTreeNodeChildrenQueryVariables>(GetTreeNodeChildrenDocument, options);
+        }
+// @ts-ignore
+export function useGetTreeNodeChildrenSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTreeNodeChildrenQuery, GetTreeNodeChildrenQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeNodeChildrenQuery, GetTreeNodeChildrenQueryVariables>;
+export function useGetTreeNodeChildrenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeNodeChildrenQuery, GetTreeNodeChildrenQueryVariables>): Apollo.UseSuspenseQueryResult<GetTreeNodeChildrenQuery | undefined, GetTreeNodeChildrenQueryVariables>;
+export function useGetTreeNodeChildrenSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetTreeNodeChildrenQuery, GetTreeNodeChildrenQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTreeNodeChildrenQuery, GetTreeNodeChildrenQueryVariables>(GetTreeNodeChildrenDocument, options);
+        }
+export type GetTreeNodeChildrenQueryHookResult = ReturnType<typeof useGetTreeNodeChildrenQuery>;
+export type GetTreeNodeChildrenLazyQueryHookResult = ReturnType<typeof useGetTreeNodeChildrenLazyQuery>;
+export type GetTreeNodeChildrenSuspenseQueryHookResult = ReturnType<typeof useGetTreeNodeChildrenSuspenseQuery>;
+export type GetTreeNodeChildrenQueryResult = Apollo.QueryResult<GetTreeNodeChildrenQuery, GetTreeNodeChildrenQueryVariables>;
+export const MoveTreeElementDocument = gql`
+    mutation moveTreeElement($treeId: ID!, $nodeId: ID!, $parentTo: ID, $order: Int) {
+  treeMoveElement(
+    treeId: $treeId
+    nodeId: $nodeId
+    parentTo: $parentTo
+    order: $order
+  ) {
+    id
+  }
+}
+    `;
+export type MoveTreeElementMutationFn = Apollo.MutationFunction<MoveTreeElementMutation, MoveTreeElementMutationVariables>;
+
+/**
+ * __useMoveTreeElementMutation__
+ *
+ * To run a mutation, you first call `useMoveTreeElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMoveTreeElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [moveTreeElementMutation, { data, loading, error }] = useMoveTreeElementMutation({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *      nodeId: // value for 'nodeId'
+ *      parentTo: // value for 'parentTo'
+ *      order: // value for 'order'
+ *   },
+ * });
+ */
+export function useMoveTreeElementMutation(baseOptions?: Apollo.MutationHookOptions<MoveTreeElementMutation, MoveTreeElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MoveTreeElementMutation, MoveTreeElementMutationVariables>(MoveTreeElementDocument, options);
+      }
+export type MoveTreeElementMutationHookResult = ReturnType<typeof useMoveTreeElementMutation>;
+export type MoveTreeElementMutationResult = Apollo.MutationResult<MoveTreeElementMutation>;
+export type MoveTreeElementMutationOptions = Apollo.BaseMutationOptions<MoveTreeElementMutation, MoveTreeElementMutationVariables>;
+export const RemoveTreeElementDocument = gql`
+    mutation removeTreeElement($treeId: ID!, $nodeId: ID!, $deleteChildren: Boolean) {
+  treeDeleteElement(
+    treeId: $treeId
+    nodeId: $nodeId
+    deleteChildren: $deleteChildren
+  )
+}
+    `;
+export type RemoveTreeElementMutationFn = Apollo.MutationFunction<RemoveTreeElementMutation, RemoveTreeElementMutationVariables>;
+
+/**
+ * __useRemoveTreeElementMutation__
+ *
+ * To run a mutation, you first call `useRemoveTreeElementMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveTreeElementMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeTreeElementMutation, { data, loading, error }] = useRemoveTreeElementMutation({
+ *   variables: {
+ *      treeId: // value for 'treeId'
+ *      nodeId: // value for 'nodeId'
+ *      deleteChildren: // value for 'deleteChildren'
+ *   },
+ * });
+ */
+export function useRemoveTreeElementMutation(baseOptions?: Apollo.MutationHookOptions<RemoveTreeElementMutation, RemoveTreeElementMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveTreeElementMutation, RemoveTreeElementMutationVariables>(RemoveTreeElementDocument, options);
+      }
+export type RemoveTreeElementMutationHookResult = ReturnType<typeof useRemoveTreeElementMutation>;
+export type RemoveTreeElementMutationResult = Apollo.MutationResult<RemoveTreeElementMutation>;
+export type RemoveTreeElementMutationOptions = Apollo.BaseMutationOptions<RemoveTreeElementMutation, RemoveTreeElementMutationVariables>;
+export const TreeEventsDocument = gql`
+    subscription treeEvents($filters: TreeEventFiltersInput) {
+  treeEvent(filters: $filters) {
+    type
+    treeId
+    element {
+      id
+      childrenCount
+      record {
+        ...TreeExplorerRecord
+      }
+      permissions {
+        access_tree
+        detach
+        edit_children
+      }
+    }
+    parentNode {
+      id
+    }
+    parentNodeBefore {
+      id
+    }
+  }
+}
+    ${TreeExplorerRecordFragmentDoc}`;
+
+/**
+ * __useTreeEventsSubscription__
+ *
+ * To run a query within a React component, call `useTreeEventsSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useTreeEventsSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTreeEventsSubscription({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useTreeEventsSubscription(baseOptions?: Apollo.SubscriptionHookOptions<TreeEventsSubscription, TreeEventsSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<TreeEventsSubscription, TreeEventsSubscriptionVariables>(TreeEventsDocument, options);
+      }
+export type TreeEventsSubscriptionHookResult = ReturnType<typeof useTreeEventsSubscription>;
+export type TreeEventsSubscriptionResult = Apollo.SubscriptionResult<TreeEventsSubscription>;

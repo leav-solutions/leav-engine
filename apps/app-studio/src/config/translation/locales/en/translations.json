@@ -1,4 +1,46 @@
 {
+    "tree-explorer": {
+        "tree_not_found": "This tree does not exist",
+        "access_denied": "You cannot access this element",
+        "inactive_element": "This element is inactive",
+        "feature_not_available": "This feature will be available soon!",
+        "details": "Details",
+        "header": {
+            "selection_label": "Selection: {{count}}",
+            "nb-selection": "{{nb}} elements in selection",
+            "add_by_search": "Search and add",
+            "add_by_creation": "Create and add"
+        },
+        "list": {
+            "info": {
+                "id": "Id",
+                "label": "Label",
+                "no-label": "No label"
+            }
+        },
+        "actions": {
+            "order": "Order",
+            "details": "Details",
+            "edit": "Edit",
+            "classified_in": "Search in",
+            "detach": "Detach",
+            "move-selected": "Move selection",
+            "detach-selected": "Detach selection",
+            "add-selected": "Add selection",
+            "generate_previews": "Generate previews",
+            "upload": "Upload files",
+            "create_directory": "Create directory"
+        },
+        "infos": {
+            "success-add": "{{nb}} elements have been added",
+            "error-add": "An error occurs while adding elements {{elements}}: {{errorMessage}}",
+            "warning-add-no-selection": "No selection to add",
+            "success-move": "{{nb}} elements have been moved",
+            "error-move": "An error occurs while moving elements {{elements}}: {{errorMessage}}",
+            "success-detach": "{{nb}} elements have been detached",
+            "error-detach": "An error occurs while detaching elements {{elements}}: {{errorMessage}}"
+        }
+    },
     "global": {
         "cancel": "Cancel",
         "confirm": "Confirm",

@@ -1,4 +1,46 @@
 {
+    "tree-explorer": {
+        "tree_not_found": "Cet arbre n'existe pas",
+        "access_denied": "Vous ne pouvez pas accéder à cet élément",
+        "inactive_element": "Cet élément est inactif",
+        "feature_not_available": "Cette fonctionnalité sera bientôt disponible!",
+        "details": "Détails",
+        "header": {
+            "selection_label": "Sélection: {{count}}",
+            "nb-selection": "{{nb}} éléments sélectionnés",
+            "add_by_search": "Rechercher et ajouter",
+            "add_by_creation": "Créer et ajouter"
+        },
+        "list": {
+            "info": {
+                "id": "Identifiant",
+                "label": "Libellé",
+                "no-label": "Pas de libellé"
+            }
+        },
+        "actions": {
+            "order": "Ordonner",
+            "details": "Détails",
+            "edit": "Éditer",
+            "classified_in": "Chercher dans",
+            "detach": "Détacher",
+            "move-selected": "Déplacer la sélection",
+            "detach-selected": "Détacher la sélection",
+            "add-selected": "Ajouter la sélection",
+            "generate_previews": "Générer les aperçus",
+            "upload": "Upload",
+            "create_directory": "Créer un dossier"
+        },
+        "infos": {
+            "success-add": "{{nb}} élément(s) ajouté(s)",
+            "error-add": "Une erreur est survenue lors de l'ajout des éléments {{elements}}: {{errorMessage}}",
+            "warning-add-no-selection": "Aucun élément sélectionné à ajouter",
+            "success-move": "{{nb}} élément(s) déplacé(s)",
+            "error-move": "Une erreur est survenue lors du déplacement des éléments {{elements}}: {{errorMessage}}",
+            "success-detach": "{{nb}} élément(s) détaché(s)",
+            "error-detach": "Une erreur est survenue lors du détachement des éléments {{elements}}: {{errorMessage}}"
+        }
+    },
     "global": {
         "cancel": "Annuler",
         "confirm": "Confirmer",

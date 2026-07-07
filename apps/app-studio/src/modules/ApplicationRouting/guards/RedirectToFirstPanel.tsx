@@ -2,6 +2,7 @@ import {type FunctionComponent} from 'react';
 import {generatePath, Navigate, useParams} from 'react-router-dom';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {AbsolutePaths} from '../router/paths';
+import {getTreeWorkspacePanelId} from '../utils/treeWorkspacePanel';
 
 export const RedirectToFirstPanel: FunctionComponent = () => {
     const [application] = useApplicationSettingsContext();
@@ -14,10 +15,14 @@ export const RedirectToFirstPanel: FunctionComponent = () => {
         return <Navigate replace to={AbsolutePaths.notFound} />;
     }
 
-    const panelId =
-        workspace.type === 'library'
-            ? application.libraries[workspace.libraryId].libraryPanels?.[0]?.id
-            : application.libraries[workspace.libraryId].recordPanels?.[0]?.id;
+    let panelId: string | undefined;
+    if (workspace.type === 'tree') {
+        panelId = getTreeWorkspacePanelId(workspace.id);
+    } else if (workspace.type === 'library') {
+        panelId = application.libraries[workspace.libraryId].libraryPanels?.[0]?.id;
+    } else {
+        panelId = application.libraries[workspace.libraryId].recordPanels?.[0]?.id;
+    }
 
     if (!panelId) {
         console.error(`No panel found for workspace with id ${workspaceId}`);

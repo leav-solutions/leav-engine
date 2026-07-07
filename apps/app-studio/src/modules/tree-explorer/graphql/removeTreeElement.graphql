@@ -1,0 +1,3 @@
+mutation removeTreeElement($treeId: ID!, $nodeId: ID!, $deleteChildren: Boolean) {
+    treeDeleteElement(treeId: $treeId, nodeId: $nodeId, deleteChildren: $deleteChildren)
+}

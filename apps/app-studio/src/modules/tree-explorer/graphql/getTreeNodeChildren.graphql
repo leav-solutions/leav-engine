@@ -1,0 +1,22 @@
+query getTreeNodeChildren($treeId: ID!, $node: ID, $pagination: Pagination) {
+    treeNodeChildren(treeId: $treeId, node: $node, pagination: $pagination) {
+        totalCount
+        list {
+            id
+            childrenCount
+            record {
+                ...TreeExplorerRecord
+                active: property(attribute: "active") {
+                    ... on Value {
+                        value
+                    }
+                }
+            }
+            permissions {
+                access_tree
+                detach
+                edit_children
+            }
+        }
+    }
+}
