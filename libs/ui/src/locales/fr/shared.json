@@ -813,6 +813,12 @@
             "some_day": "Un jour",
             "undefined": "Non définie",
             "between_dates": "Entre les dates"
+        },
+        "kanban": {
+            "no-axis-value": "Sans valeur",
+            "no-axis-selected": "Sélectionnez un attribut d’axe pour afficher le Kanban.",
+            "empty-column": "Aucun élément",
+            "truncation-banner": "{{total}} éléments au total, seuls les {{count}} premiers sont affichés. Affinez les filtres pour tout voir."
         }
     }
 }

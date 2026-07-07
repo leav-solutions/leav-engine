@@ -184,6 +184,15 @@ colonnes. L'axe est un **paramètre de la vue**, au même titre que les colonnes
     d'affichage** (parmi les attributs **éligibles** — phase 1 : type `tree`) comme axe (`isGroupBy`). Pas de picker sur tous
     les attributs : on désigne parmi les colonnes déjà présentes. Action sur `currentViewReducer` (étendre
     `ICurrentViewState`/`ICurrentViewAction`, `store-current-view/_types.ts`).
+
+    > **À traiter — distinction admin / non-admin (comme pour les colonnes).** L'axe doit suivre la même
+    > distinction gestionnaire de vues / utilisateur que la roue « attributs disponibles » des colonnes
+    > (`AvailableAttributesDropdown`, rendue **uniquement si `canManageViews`** — cf.
+    > `panel-view-settings/CLAUDE.md`) : le **gestionnaire** décide de l'axe (et/ou de la liste des axes
+    > rendus disponibles), l'**utilisateur** sans le droit ne fait que consommer la vue (pas d'édition de
+    > l'axe). Aujourd'hui `KanbanAxisSelector` est affiché **sans condition de permission** → à gater sur
+    > `canManageViews` (ou à restreindre à une sélection rendue disponible par l'admin) dans un lot ultérieur.
+
 13. **`viewV2ToSerializedView.ts:22-35`** : dériver `SerializedView.groupByAttributeId` = l'`attributeId` de l'entrée
     `display.attributes` marquée `isGroupBy` axe.
 14. **Fragment GraphQL** `viewV2Fragment.graphql:18-26` : ajouter `isGroupBy` dans `display { attributes { ... } }`.

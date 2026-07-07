@@ -31,6 +31,11 @@ export const useCurrentView = () => {
         [dispatch],
     );
 
+    const setGroupByAttribute = useCallback(
+        (attribute: AvailableAttribute | null) => dispatch({type: 'SET_GROUP_BY_ATTRIBUTE', payload: {attribute}}),
+        [dispatch],
+    );
+
     const toggleVisibility = useCallback(
         (id: string) => dispatch({type: 'TOGGLE_VISIBILITY', payload: {id}}),
         [dispatch],
@@ -119,6 +124,12 @@ export const useCurrentView = () => {
 
     // "Dirty" = the editable label/display/filters/sorts diverged from the last persisted snapshot. `shared`,
     const isDirty = useMemo(() => displayFingerprint(view) !== displayFingerprint(savedView), [view, savedView]);
+
+    // The single display attribute designated as the grouping axis (kanban columns), or null.
+    const groupByAttributeId = useMemo(
+        () => view?.display.attributes.find(attr => attr.isGroupBy)?.attribute.id ?? null,
+        [view],
+    );
 
     // Visible columns keep the view-defined order. Hidden columns are sorted alphabetically.
     const visibleColumns = useMemo(() => view?.display.attributes.filter(attr => attr.visible) ?? [], [view]);
@@ -219,6 +230,8 @@ export const useCurrentView = () => {
         canManageViews,
         isDirty,
         setViewType,
+        groupByAttributeId,
+        setGroupByAttribute,
         toggleVisibility,
         moveAttribute,
         moveSort,

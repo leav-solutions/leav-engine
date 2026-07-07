@@ -460,17 +460,6 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
-}
-
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -749,6 +738,7 @@ export enum PermissionsActions {
   edit_children = 'edit_children',
   edit_record = 'edit_record',
   edit_value = 'edit_value',
+  manage_views = 'manage_views',
   set_value = 'set_value'
 }
 
@@ -864,6 +854,11 @@ export type RecordUpdateFilterInput = {
   records?: InputMaybe<Array<Scalars['ID']['input']>>;
 };
 
+/**  Sort of the groups themselves (by count in v1)  */
+export type RecordsGroupsSortInput = {
+  order: SortOrder;
+};
+
 export type RecordsPagination = {
   cursor?: InputMaybe<Scalars['String']['input']>;
   limit: Scalars['Int']['input'];
@@ -955,7 +950,6 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
@@ -1174,6 +1168,7 @@ export type ViewV2CreateInput = {
 
 export type ViewV2DisplayAttributeInput = {
   attributeId: Scalars['ID']['input'];
+  isGroupBy?: InputMaybe<Scalars['Boolean']['input']>;
   visible: Scalars['Boolean']['input'];
 };
 
@@ -1188,6 +1183,7 @@ export type ViewV2FilterInput = {
   condition: RecordFilterCondition;
   pinned: Scalars['Boolean']['input'];
   values: Array<InputMaybe<Scalars['String']['input']>>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum ViewV2Shortcut {
@@ -1200,10 +1196,12 @@ export enum ViewV2Shortcut {
 export type ViewV2SortInput = {
   attributes: Array<Scalars['ID']['input']>;
   order: SortOrder;
+  pinned: Scalars['Boolean']['input'];
 };
 
 export enum ViewV2Types {
   cards = 'cards',
+  kanban = 'kanban',
   list = 'list',
   timeline = 'timeline'
 }
@@ -1428,7 +1426,14 @@ export type LinkAttributeDetailsFragment = { label?: any | null, type: Attribute
 
 export type TreeAttributeDetailsFragment = { id: string, label?: any | null, linked_tree?: { id: string, label?: any | null } | null };
 
-export type AttributePropertiesFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null };
+export type AttributePropertiesLinkAttributeStandardAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null };
+
+export type AttributePropertiesTreeAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null };
+
+export type AttributePropertiesFragment =
+  | AttributePropertiesLinkAttributeStandardAttributeFragment
+  | AttributePropertiesTreeAttributeFragment
+;
 
 export type PropertyValueLinkValueFragment = { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
 
@@ -1442,7 +1447,10 @@ export type PropertyValueFragment =
   | PropertyValueValueFragment
 ;
 
-export type LinkPropertyLinkValueFragment = { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }, values: Array<
+export type LinkPropertyLinkValueFragment = { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, attributeProperties:
+        | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }
+        | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null }
+      , values: Array<
         | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
         | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
         | { valuePayload?: any | null, valueRawPayload?: any | null }
@@ -2069,7 +2077,10 @@ export type ExplorerLibraryDataQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerLibraryDataQuery = { records: { totalCount?: number | null, list: Array<{ id: string, active: boolean, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, permissions: { create_record: boolean, delete_record: boolean }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }, values: Array<
+export type ExplorerLibraryDataQuery = { records: { totalCount?: number | null, list: Array<{ id: string, active: boolean, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, permissions: { create_record: boolean, delete_record: boolean }, properties: Array<{ attributeId: string, attributeProperties:
+          | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }
+          | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null }
+        , values: Array<
           | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
           | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
           | { valuePayload?: any | null, valueRawPayload?: any | null }
@@ -2084,7 +2095,10 @@ export type ExplorerLinkDataQueryVariables = Exact<{
 
 
 export type ExplorerLinkDataQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, library: { id: string } }, property: Array<
-        | { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }, values: Array<
+        | { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, attributeProperties:
+                | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }
+                | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null }
+              , values: Array<
                 | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
                 | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
                 | { valuePayload?: any | null, valueRawPayload?: any | null }
@@ -3014,6 +3028,11 @@ export const AttributePropertiesFragmentDoc = gql`
   multiple_values
   multi_link_display_option
   multi_tree_display_option
+  ... on TreeAttribute {
+    linked_tree {
+      id
+    }
+  }
 }
     `;
 export const PropertyValueFragmentDoc = gql`

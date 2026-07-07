@@ -95,7 +95,7 @@ describe('TabDisplay', () => {
         );
 
         expect(screen.queryByText('view_settings.empty_view')).not.toBeInTheDocument();
-        expect(screen.getAllByRole('checkbox')).toHaveLength(3);
+        expect(screen.getAllByRole('checkbox')).toHaveLength(2);
 
         const visibleItems = within(getVisibleList()).getAllByRole('listitem');
         expect(visibleItems).toHaveLength(1);
@@ -112,17 +112,18 @@ describe('TabDisplay', () => {
         expect(screen.getByLabelText(gearLabel)).toBeInTheDocument();
     });
 
-    it('renders three display modes: one selected, the two others disabled', () => {
+    it('renders two display modes (table + kanban) with the current type selected', () => {
+        // The seeded view type is `list`, rendered by the table tile.
         render(<TabDisplayWithState />);
 
         const tiles = screen.getAllByRole('checkbox');
-        expect(tiles).toHaveLength(3);
+        expect(tiles).toHaveLength(2);
 
         const checkedTiles = tiles.filter(tile => tile.getAttribute('aria-checked') === 'true');
-        const disabledTiles = tiles.filter(tile => (tile as HTMLButtonElement).disabled);
 
-        expect(checkedTiles).toHaveLength(1); // Table
-        expect(disabledTiles).toHaveLength(2); // List + Mosaic
+        expect(checkedTiles).toHaveLength(1); // Table (list)
+        expect(screen.getByText('view_settings.display.mode.table')).toBeInTheDocument();
+        expect(screen.getByText('view_settings.display.mode.kanban')).toBeInTheDocument();
     });
 
     it('shows the locked identity column first, always visible and non-toggleable', () => {

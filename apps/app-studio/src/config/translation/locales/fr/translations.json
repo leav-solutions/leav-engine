@@ -161,10 +161,18 @@
                 "title": "Mode d’affichage",
                 "table": "Tableau",
                 "list": "Liste",
-                "mosaic": "Mosaïc"
+                "mosaic": "Mosaïc",
+                "kanban": "Kanban"
+            },
+            "axis": {
+                "title": "Axe",
+                "placeholder": "Choisir l’attribut d’axe",
+                "none": "Aucun",
+                "no_eligible": "Aucun attribut utilisable comme axe dans cette bibliothèque."
             },
             "columns": {
                 "title": "Colonnes",
+                "title_kanban": "Attributs affichés",
                 "search_placeholder": "Rechercher...",
                 "manage_available": "Gérer les attributs disponibles",
                 "identity": "Information (affiché par défaut)",

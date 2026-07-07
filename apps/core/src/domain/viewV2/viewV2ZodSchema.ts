@@ -10,6 +10,7 @@ const systemTranslationSchema = z.record(z.string(), z.string());
 const viewV2DisplayAttributeSchema = z.object({
     attributeId: z.string(),
     visible: z.boolean(),
+    isGroupBy: z.boolean().optional(),
 });
 
 const viewV2DisplaySchema = z.object({
