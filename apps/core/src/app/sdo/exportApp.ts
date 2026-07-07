@@ -52,27 +52,19 @@ export default function ({
 
             logger.debug('Export: data event selected', {data});
 
-            if (await sdoExportDomain.isSDODataEvent(data, sdoGlobalSettings.mapping)) {
+            const sdoDataEvent = await sdoExportDomain.getSDODataEvent(data, sdoGlobalSettings.mapping);
+
+            if (sdoDataEvent) {
                 await sdoExportDomain.process(data, sdoGlobalSettings.timer, async (leavLibrary, recordId) => {
                     const sdo = await sdoDomain.getRecordSDO(
                         leavLibrary,
                         recordId,
                         sdoGlobalSettings.mapping,
+                        sdoDataEvent,
                         _systemQueryContext,
                     );
 
-                    // Sdo may be undefined from getRecordSDO, for instance when record not found, or hash not change
-                    if (!sdo) {
-                        return;
-                    }
-
                     await sdoExportDomain.sendSDO(leavLibrary, recordId, sdo);
-                    await sdoDomain.sendLog({
-                        action: EventAction.SDO_LOG_EXPORT_RECORD,
-                        record: {id: recordId, libraryId: leavLibrary},
-                        sdo,
-                        ctx: _systemQueryContext,
-                    });
                 });
             }
 

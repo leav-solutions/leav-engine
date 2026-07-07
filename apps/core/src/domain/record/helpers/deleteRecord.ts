@@ -14,6 +14,8 @@ import {AttributeTypes} from '../../../_types/attribute';
 import {type IAttributeSimpleLinkRepo} from '../../../infra/attributeTypes/attributeSimpleLinkRepo';
 import {type IValueDomain} from '../../value/valueDomain';
 import {type IfLibraryJoinLinkAttribute} from '../../attribute/helpers/ifLibraryJoinLinkAttribute';
+import {type IRecordSDORepo} from '../../../infra/sdo/recordsSDORepo/recordSDORepo';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 export type DeleteRecordHelper = (library: string, id: string, ctx: IQueryInfos) => Promise<IRecord>;
 
@@ -27,6 +29,7 @@ interface IDeps {
     'core.infra.record': IRecordRepo;
     'core.infra.tree': ITreeRepo;
     'core.infra.value': IValueRepo;
+    'core.infra.sdo.recordsSDORepo': IRecordSDORepo;
 }
 
 export default function ({
@@ -39,6 +42,7 @@ export default function ({
     'core.infra.record': recordRepo,
     'core.infra.tree': treeRepo,
     'core.infra.value': valueRepo,
+    'core.infra.sdo.recordsSDORepo': recordSDORepo,
 }: IDeps): DeleteRecordHelper {
     return async (library, id, ctx) => {
         // Check permission
@@ -146,6 +150,11 @@ export default function ({
 
         // Everything is clean, we can actually delete the record
         const deletedRecord = await recordRepo.deleteRecord({libraryId: library, recordId: id, ctx});
+
+        // Purge the stored SDO content (no-op if the record was never exported)
+        if (deletedRecord.uuid) {
+            await recordSDORepo.deleteContent({recordUUID: deletedRecord.uuid, ctx});
+        }
 
         await eventsManager.sendDatabaseEvent<EventAction.RECORD_DELETE>(
             {

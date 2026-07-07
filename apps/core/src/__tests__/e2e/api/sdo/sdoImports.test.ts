@@ -29,7 +29,7 @@ describe('SDO Imports', () => {
             library: {
                 id: SDO_IMPORTS_LIBRARY_ID,
                 label: {fr: 'Test SDO', en: 'Test SDO'},
-                attributes: ['hash_sdo', 'label', SDO_TEST_ATTRIBUTE_ID],
+                attributes: ['label', SDO_TEST_ATTRIBUTE_ID],
                 recordIdentityConf: {label: 'label'},
             },
         });
