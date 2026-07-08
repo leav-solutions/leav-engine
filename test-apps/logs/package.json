@@ -4,6 +4,8 @@
     "description": "Integration testing of the backend of app logs managing",
     "scripts": {
         "start": "vitest run -c vitest.config.ts",
+        "tscheck": "tsc --noEmit -p .",
+        "tscheck:watch": "tsc -w --noEmit -p .",
         "graphql-generate": "graphql-codegen --config ./codegen.ts"
     },
     "dependencies": {
