@@ -268,6 +268,7 @@ const valueDomain = function ({
 
         let v: IValue;
         if (attribute.multiple_values === false) {
+            // Mono-valued: at most one value can exist, no id needed to identify it.
             v = (
                 await valueRepo.getValues({
                     library,
@@ -280,6 +281,8 @@ const valueDomain = function ({
             attribute.type === AttributeTypes.ADVANCED_LINK &&
             reverseLink?.type === AttributeTypes.SIMPLE_LINK
         ) {
+            // Reverse side of a mono SIMPLE_LINK: multiple values can point back to this record, so
+            // we still need `id_value` to pick the right one.
             const values = await valueRepo.getValues({
                 library,
                 recordId,
@@ -289,6 +292,7 @@ const valueDomain = function ({
 
             v = values.filter(val => val.id_value === value.id_value).pop();
         } else if (!!value?.id_value) {
+            // Multi-valued attribute, general case: the caller must identify which value by id.
             v = await valueRepo.getValueById({
                 library,
                 recordId,
@@ -297,6 +301,8 @@ const valueDomain = function ({
                 ctx,
             });
         }
+        // Otherwise (multi-valued, no id_value provided): `v` stays undefined — there's no way to
+        // tell which value the caller means, so nothing is resolved here.
 
         return v;
     }
@@ -503,10 +509,20 @@ const valueDomain = function ({
             ctx,
         });
 
-        if (value && !existingValue) {
+        // The caller pointed at a specific value to delete — a multi-valued attribute targeted by
+        // `id_value`, or an explicit non-empty `payload` — as opposed to an implicit "delete the
+        // current value" request (mono-valued attributes, or callers that always send a
+        // `{payload: null}` placeholder). `_getExistingValue` never uses `payload` to resolve a value
+        // (only `id_value`, or the mono-valued fallback) — it's only meaningful here, to tell "nothing
+        // to delete" apart from "you asked to delete something specific that doesn't exist".
+        const isTargetingSpecificValue = Boolean(value?.payload || value?.id_value);
+
+        if (isTargetingSpecificValue && !existingValue) {
             throw new ValidationError({id: Errors.UNKNOWN_VALUE});
-        } else if (!existingValue) {
-            // there is no values on this attribute, we have nothing to do.
+        }
+
+        if (!existingValue) {
+            // Nothing to delete, and the caller didn't identify a specific value either — no-op.
             return [];
         }
 

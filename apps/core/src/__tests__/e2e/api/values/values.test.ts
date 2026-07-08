@@ -850,6 +850,21 @@ describe('Values', () => {
         expect(res.data.data.deleteValue).toEqual([{id_value: null, payload: 'TEST VAL'}]);
     });
 
+    test('Delete a value that never existed on a simple attribute does not throw (payload null)', async () => {
+        const {createRecord} = await adminUserSdk.CreateRecord({library: testLibName});
+        const freshRecordId = createRecord.record.id;
+
+        const res = await adminUserSdk.DeleteValue({
+            library: testLibName,
+            recordId: freshRecordId,
+            attribute: attrSimpleName,
+            value: {payload: null},
+        });
+
+        // No value was ever set on this fresh record for this attribute: nothing to delete, no error.
+        expect(res.deleteValue).toEqual([]);
+    });
+
     test('Delete value on simple link attribute', async () => {
         await makeGraphQlCall(`mutation {
                 saveValue(
