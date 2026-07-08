@@ -5,24 +5,21 @@ import * as ApplicationSettingsContext from '../../../../../../../config/applica
 import * as RetrievePanelDetails from '../../../../../utils/retrievePanelDetails';
 import {useLastUsedView} from '../useLastUsedView';
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useParams: jest.fn(() => ({})),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
+    useParams: vi.fn(() => ({})),
 }));
 
-jest.mock('../../../../../../../constants', () => ({
+vi.mock('../../../../../../../constants', () => ({
     APP_ENDPOINT: 'APPLICATION_ENDPOINT',
 }));
 
-jest.mock(
-    '../../../../../../../config/application-instance/application-settings/useApplicationSettingsContext',
-    () => ({
-        useApplicationSettingsContext: jest.fn(),
-    }),
-);
+vi.mock('../../../../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
+}));
 
-jest.mock('../../../../../utils/retrievePanelDetails', () => ({
-    retrievePanelDetails: jest.fn(),
+vi.mock('../../../../../utils/retrievePanelDetails', () => ({
+    retrievePanelDetails: vi.fn(),
 }));
 
 describe('useLastUsedView', () => {
@@ -33,27 +30,27 @@ describe('useLastUsedView', () => {
     // can't resurface a view id belonging to the parent (owner) library.
     const userDataKey = `last_used_view_APPLICATION_ENDPOINT_${displayedLibraryId}_${panelId}`;
 
-    const spyOnUseParams = jest.spyOn(ReactRouter, 'useParams');
-    const spyOnUseGetUserDataQuery = jest.spyOn(gqlTypes, 'useGetUserDataQuery');
-    const spyOnUseSaveUserDataMutation = jest.spyOn(gqlTypes, 'useSaveUserDataMutation');
-    const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
-    const spyRetrievePanelDetails = jest.spyOn(RetrievePanelDetails, 'retrievePanelDetails');
+    const spyOnUseParams = vi.spyOn(ReactRouter, 'useParams');
+    const spyOnUseGetUserDataQuery = vi.spyOn(gqlTypes, 'useGetUserDataQuery');
+    const spyOnUseSaveUserDataMutation = vi.spyOn(gqlTypes, 'useSaveUserDataMutation');
+    const spyUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const spyRetrievePanelDetails = vi.spyOn(RetrievePanelDetails, 'retrievePanelDetails');
 
     beforeEach(() => {
         spyOnUseParams.mockReturnValue({panelId});
-        spyUseApplicationSettingsContext.mockReturnValue([{} as any, jest.fn()]);
+        spyUseApplicationSettingsContext.mockReturnValue([{} as any, vi.fn()]);
         spyRetrievePanelDetails.mockReturnValue({displayedLibraryId} as any);
     });
 
     afterAll(() => {
-        jest.restoreAllMocks();
+        vi.restoreAllMocks();
     });
 
     it('should return the last used view id from user data', () => {
         spyOnUseGetUserDataQuery.mockReturnValue({
             data: {userData: {data: {[userDataKey]: lastUsedViewId}}},
         } as any);
-        spyOnUseSaveUserDataMutation.mockReturnValue([jest.fn(), {} as any]);
+        spyOnUseSaveUserDataMutation.mockReturnValue([vi.fn(), {} as any]);
 
         const {result} = renderHook(() => useLastUsedView());
 
@@ -61,7 +58,7 @@ describe('useLastUsedView', () => {
     });
 
     it('should save the selected view id under a key scoped by displayed library and panel', () => {
-        const saveMutation = jest.fn();
+        const saveMutation = vi.fn();
         spyOnUseSaveUserDataMutation.mockReturnValue([saveMutation, {} as any]);
         spyOnUseGetUserDataQuery.mockReturnValue({data: undefined} as any);
 

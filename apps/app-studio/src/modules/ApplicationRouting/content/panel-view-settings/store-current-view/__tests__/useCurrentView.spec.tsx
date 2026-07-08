@@ -1,3 +1,4 @@
+import {type Mock} from 'vitest';
 import {type ReactNode} from 'react';
 import {renderHook} from '@testing-library/react';
 import {SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
@@ -14,7 +15,7 @@ const makeSort = (attributePath: string[], order: SortOrder = SortOrder.asc, pin
 });
 
 // Deterministic lang/user without spinning up the providers: the current user is '123'.
-jest.mock('@leav/ui', () => ({
+vi.mock('@leav/ui', () => ({
     useLang: () => ({lang: ['fr']}),
     useUser: () => ({userData: {userId: '123'}}),
 }));
@@ -37,7 +38,7 @@ const makeView = (overrides: Partial<NonNullView> = {}): NonNullView => ({
 const renderUseCurrentView = (value: {
     view: CurrentView;
     savedView: CurrentView;
-    dispatch: jest.Mock;
+    dispatch: Mock;
     isEmptyView?: boolean;
     canManageViews?: boolean;
 }) => {
@@ -53,13 +54,13 @@ describe('useCurrentView', () => {
     describe('isOwner', () => {
         it('is true when the view creator matches the current user', () => {
             const view = makeView();
-            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn()});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: vi.fn()});
             expect(result.current.isOwner).toBe(true);
         });
 
         it('is false when the view was created by someone else', () => {
             const view = makeView({created_by: {id: '999', whoAmI: {id: '999', label: 'Alice'}}});
-            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn()});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: vi.fn()});
             expect(result.current.isOwner).toBe(false);
         });
     });
@@ -69,25 +70,25 @@ describe('useCurrentView', () => {
 
         it('is true for the owner regardless of the manage_views permission', () => {
             const view = makeView();
-            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn(), canManageViews: false});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: vi.fn(), canManageViews: false});
             expect(result.current.canManageCurrentView).toBe(true);
         });
 
         it('is true for a non-owner with manage_views on a shared view', () => {
             const view = makeView({created_by: otherUser, shared: true});
-            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn(), canManageViews: true});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: vi.fn(), canManageViews: true});
             expect(result.current.canManageCurrentView).toBe(true);
         });
 
         it('is false for a non-owner with manage_views on a private view', () => {
             const view = makeView({created_by: otherUser, shared: false});
-            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn(), canManageViews: true});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: vi.fn(), canManageViews: true});
             expect(result.current.canManageCurrentView).toBe(false);
         });
 
         it('is false for a non-owner without manage_views on a shared view', () => {
             const view = makeView({created_by: otherUser, shared: true});
-            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn(), canManageViews: false});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: vi.fn(), canManageViews: false});
             expect(result.current.canManageCurrentView).toBe(false);
         });
     });
@@ -97,7 +98,7 @@ describe('useCurrentView', () => {
             const {result} = renderUseCurrentView({
                 view: makeView(),
                 savedView: makeView(),
-                dispatch: jest.fn(),
+                dispatch: vi.fn(),
             });
             expect(result.current.isDirty).toBe(false);
         });
@@ -106,7 +107,7 @@ describe('useCurrentView', () => {
             const {result} = renderUseCurrentView({
                 view: makeView({label: {fr: 'Édité'}}),
                 savedView: makeView({label: {fr: 'V'}}),
-                dispatch: jest.fn(),
+                dispatch: vi.fn(),
             });
             expect(result.current.isDirty).toBe(true);
         });
@@ -115,7 +116,7 @@ describe('useCurrentView', () => {
             const {result} = renderUseCurrentView({
                 view: makeView({sorts: [makeSort(['date'], SortOrder.desc)]}),
                 savedView: makeView({sorts: [makeSort(['date'], SortOrder.asc)]}),
-                dispatch: jest.fn(),
+                dispatch: vi.fn(),
             });
             expect(result.current.isDirty).toBe(true);
         });
@@ -124,7 +125,7 @@ describe('useCurrentView', () => {
             const {result} = renderUseCurrentView({
                 view: makeView({shared: true}),
                 savedView: makeView({shared: false}),
-                dispatch: jest.fn(),
+                dispatch: vi.fn(),
             });
             expect(result.current.isDirty).toBe(false);
         });
@@ -133,7 +134,7 @@ describe('useCurrentView', () => {
             const {result} = renderUseCurrentView({
                 view: makeView({shortcuts: [ViewV2Shortcut.display, ViewV2Shortcut.filters]}),
                 savedView: makeView({shortcuts: [ViewV2Shortcut.display]}),
-                dispatch: jest.fn(),
+                dispatch: vi.fn(),
             });
             expect(result.current.isDirty).toBe(true);
         });
@@ -144,7 +145,7 @@ describe('useCurrentView', () => {
             const {result} = renderUseCurrentView({
                 view: null,
                 savedView: null,
-                dispatch: jest.fn(),
+                dispatch: vi.fn(),
                 isEmptyView: true,
             });
             expect(result.current.isEmptyView).toBe(true);
@@ -152,14 +153,14 @@ describe('useCurrentView', () => {
 
         it('defaults to false when a view is loaded', () => {
             const view = makeView();
-            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn()});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: vi.fn()});
             expect(result.current.isEmptyView).toBe(false);
         });
     });
 
     describe('action creators', () => {
         it('dispatch the expected actions/payloads', () => {
-            const dispatch = jest.fn();
+            const dispatch = vi.fn();
             const view = makeView();
             const {result} = renderUseCurrentView({view, savedView: view, dispatch});
 
@@ -207,7 +208,7 @@ describe('useCurrentView', () => {
     describe('sorts', () => {
         it('derives the dnd id, order, pinned flag, attribute ids and label of each sort', () => {
             const view = makeView({sorts: [makeSort(['author', 'name'], SortOrder.desc)]});
-            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn()});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: vi.fn()});
 
             expect(result.current.sorts).toEqual([
                 {
@@ -229,7 +230,7 @@ describe('useCurrentView', () => {
                     makeSort(['beta'], SortOrder.asc, false),
                 ],
             });
-            const {result} = renderUseCurrentView({view, savedView: view, dispatch: jest.fn()});
+            const {result} = renderUseCurrentView({view, savedView: view, dispatch: vi.fn()});
 
             // Pinned keep the view-defined order (= sort priority).
             expect(result.current.pinnedSorts.map(sort => sort.id)).toEqual(['zeta', 'alpha']);

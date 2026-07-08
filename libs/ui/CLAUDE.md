@@ -138,7 +138,7 @@ Explorer.SettingsSidePanel;
 
 ## Tests
 
-- Framework : Jest + Testing Library
+- Framework : Vitest + Testing Library
 - Wrapper obligatoire : `TestProviders` (`src/_tests/TestProviders.tsx`)
   — fournit MockedProvider Apollo, MemoryRouter, contextes User/Lang, Design System
 - Fichiers de test colocalisés avec le composant : `MonComposant.test.tsx`

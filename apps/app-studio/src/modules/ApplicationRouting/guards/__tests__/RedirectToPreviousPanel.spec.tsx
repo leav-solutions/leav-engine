@@ -4,20 +4,20 @@ import * as ApplicationSettingsContext from '../../../../config/application-inst
 import {type Application} from '../../types';
 import {RedirectToPreviousPanel} from '../RedirectToPreviousPanel';
 
-jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn(),
+vi.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    Navigate: jest.fn(),
-    useParams: jest.fn(),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
+    Navigate: vi.fn(),
+    useParams: vi.fn(),
 }));
 
 describe('RedirectToPreviousPanel component guard', () => {
-    const spyOnNavigate = jest.spyOn(ReactRouter, 'Navigate');
-    const spyOnUseParams = jest.spyOn(ReactRouter, 'useParams');
-    const spyOnUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const spyOnNavigate = vi.spyOn(ReactRouter, 'Navigate');
+    const spyOnUseParams = vi.spyOn(ReactRouter, 'useParams');
+    const spyOnUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
 
     const firstWorkspaceId = '42';
     const panelId = 'maps';
@@ -71,7 +71,7 @@ describe('RedirectToPreviousPanel component guard', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it.each([[{panelId}], [{recordPanelId}]])(

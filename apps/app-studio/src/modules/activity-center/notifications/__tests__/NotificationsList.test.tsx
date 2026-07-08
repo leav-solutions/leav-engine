@@ -5,26 +5,26 @@ import userEvent from '@testing-library/user-event';
 
 type Notification = GetUserNotificationsQuery['notifications']['list'][number];
 
-const mockUseGetUserNotifications = jest.fn();
-const mockUseDeleteUserNotifications = jest.fn();
+const mockUseGetUserNotifications = vi.fn();
+const mockUseDeleteUserNotifications = vi.fn();
 
-jest.mock('../get-user-notifications/useGetUserNotifications', () => ({
+vi.mock('../get-user-notifications/useGetUserNotifications', () => ({
     useGetUserNotifications: (...args: unknown[]) => mockUseGetUserNotifications(...args),
 }));
 
-jest.mock('../delete-user-notifications/useDeleteUserNotifications', () => ({
+vi.mock('../delete-user-notifications/useDeleteUserNotifications', () => ({
     useDeleteUserNotifications: () => ({deleteUserNotifications: mockUseDeleteUserNotifications}),
 }));
 
-const mockTrackNotificationEvents = jest.fn();
+const mockTrackNotificationEvents = vi.fn();
 
-jest.mock('../../../../services/analytics', () => ({
+vi.mock('../../../../services/analytics', () => ({
     trackNotificationEvents: (...args: unknown[]) => mockTrackNotificationEvents(...args),
 }));
 
-const mockOpenConfirmModal = jest.fn(({onOk}) => onOk?.());
+const mockOpenConfirmModal = vi.fn(({onOk}) => onOk?.());
 
-jest.mock('_ui/hooks', () => ({
+vi.mock('_ui/hooks', () => ({
     useUser: () => ({userData: {userId: 'test-user-id'}}),
     useLang: () => ({lang: ['fr']}),
     useConfirmModal: () => ({openConfirmModal: mockOpenConfirmModal}),
@@ -40,10 +40,10 @@ describe('NotificationsList', () => {
         ...overrides,
     });
 
-    const mockRemoveNotifications = jest.fn();
+    const mockRemoveNotifications = vi.fn();
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockUseGetUserNotifications.mockReturnValue({
             userNotifications: [],
             loading: false,
@@ -176,12 +176,12 @@ describe('NotificationsList', () => {
 
     describe('Relative time display', () => {
         beforeEach(() => {
-            jest.useFakeTimers();
-            jest.setSystemTime(new Date('2025-01-30T12:00:00.000Z'));
+            vi.useFakeTimers();
+            vi.setSystemTime(new Date('2025-01-30T12:00:00.000Z'));
         });
 
         afterEach(() => {
-            jest.useRealTimers();
+            vi.useRealTimers();
         });
 
         it('should display duration less than minute when notification is very recent', () => {
@@ -358,7 +358,7 @@ describe('NotificationsList', () => {
         });
 
         it('should emit trackingEvent with notification center source when download is clicked', async () => {
-            const windowOpenSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
+            const windowOpenSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
             const notification = createMockNotification({
                 level: NotificationLevel.error,
                 title: 'Avec pièce jointe',
@@ -401,7 +401,7 @@ describe('NotificationsList', () => {
         });
 
         it('should not emit trackingEvent when attachment has none', async () => {
-            const windowOpenSpy = jest.spyOn(window, 'open').mockImplementation(() => null);
+            const windowOpenSpy = vi.spyOn(window, 'open').mockImplementation(() => null);
             const notification = createMockNotification({
                 level: NotificationLevel.success,
                 title: 'Sans tracking',

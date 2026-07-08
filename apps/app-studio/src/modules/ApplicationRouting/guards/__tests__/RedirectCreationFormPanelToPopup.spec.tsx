@@ -5,27 +5,27 @@ import {type Application} from '../../types';
 import * as RetrievePanelDetails from '../../utils/retrievePanelDetails';
 import {RedirectCreationFormPanelToPopup} from '../RedirectCreationFormPanelToPopup';
 
-jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn(),
+vi.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useParams: jest.fn(),
-    Navigate: jest.fn(),
-    generatePath: jest.fn(),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
+    useParams: vi.fn(),
+    Navigate: vi.fn(),
+    generatePath: vi.fn(),
 }));
 
-jest.mock('../../utils/retrievePanelDetails', () => ({
-    retrievePanelDetails: jest.fn(),
+vi.mock('../../utils/retrievePanelDetails', () => ({
+    retrievePanelDetails: vi.fn(),
 }));
 
 describe('RedirectCreationFormPanelToPopup component guard', () => {
-    const spyUseParams = jest.spyOn(ReactRouter, 'useParams');
-    const spyNavigate = jest.spyOn(ReactRouter, 'Navigate');
-    const spyGeneratePath = jest.spyOn(ReactRouter, 'generatePath');
-    const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
-    const spyRetrievePanelDetails = jest.spyOn(RetrievePanelDetails, 'retrievePanelDetails');
+    const spyUseParams = vi.spyOn(ReactRouter, 'useParams');
+    const spyNavigate = vi.spyOn(ReactRouter, 'Navigate');
+    const spyGeneratePath = vi.spyOn(ReactRouter, 'generatePath');
+    const spyUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const spyRetrievePanelDetails = vi.spyOn(RetrievePanelDetails, 'retrievePanelDetails');
 
     const workspaceId = '42';
     const currentPanelId = 'map-list';
@@ -83,7 +83,7 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('should render children when panel is not a creation form', async () => {
@@ -155,7 +155,7 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
     });
 
     it('should redirect to not found when panel is not found', () => {
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
         spyUseParams.mockReturnValue({
             workspaceId,

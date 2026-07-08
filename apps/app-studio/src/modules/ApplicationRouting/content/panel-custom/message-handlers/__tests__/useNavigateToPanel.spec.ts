@@ -6,24 +6,24 @@ import {useNavigateToPanel} from '../useNavigateToPanel';
 import * as threadActionCallbacks from '../../../../stores/threadActionCallbacks';
 import * as panelCloseCallbacks from '../../../../utils/panelCloseCallbacks';
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useNavigate: jest.fn(),
-    useParams: jest.fn(() => ({})),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
+    useNavigate: vi.fn(),
+    useParams: vi.fn(() => ({})),
 }));
 
-jest.mock('../../../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn(),
+vi.mock('../../../../../../config/application-instance/application-settings/ApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
 }));
 
 describe('useNavigateToPanel', () => {
-    const spyUseNavigate = jest.spyOn(ReactRouter, 'useNavigate');
-    const spyUseParams = jest.spyOn(ReactRouter, 'useParams');
-    const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
-    const navigateMock = jest.fn();
+    const spyUseNavigate = vi.spyOn(ReactRouter, 'useNavigate');
+    const spyUseParams = vi.spyOn(ReactRouter, 'useParams');
+    const spyUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const navigateMock = vi.fn();
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         spyUseNavigate.mockReturnValue(navigateMock);
         spyUseParams.mockReturnValue({});
     });
@@ -57,7 +57,7 @@ describe('useNavigateToPanel', () => {
                     },
                 },
             } satisfies Application,
-            jest.fn(),
+            vi.fn(),
         ]);
 
         const {
@@ -103,7 +103,7 @@ describe('useNavigateToPanel', () => {
                     },
                 },
             } satisfies Application,
-            jest.fn(),
+            vi.fn(),
         ]);
 
         const {
@@ -148,7 +148,7 @@ describe('useNavigateToPanel', () => {
                     },
                 },
             } satisfies Application,
-            jest.fn(),
+            vi.fn(),
         ]);
 
         const {
@@ -186,7 +186,7 @@ describe('useNavigateToPanel', () => {
                     },
                 },
             } satisfies Application,
-            jest.fn(),
+            vi.fn(),
         ]);
 
         const {
@@ -239,7 +239,7 @@ describe('useNavigateToPanel', () => {
                     },
                 },
             } satisfies Application,
-            jest.fn(),
+            vi.fn(),
         ]);
 
         const {
@@ -263,19 +263,19 @@ describe('useNavigateToPanel', () => {
     });
 
     describe('thread-action callbacks registration', () => {
-        const registerThread = jest.spyOn(threadActionCallbacks, 'registerThreadActionCallbacks');
-        const registerClose = jest.spyOn(panelCloseCallbacks, 'registerPanelCloseCallback');
+        const registerThread = vi.spyOn(threadActionCallbacks, 'registerThreadActionCallbacks');
+        const registerClose = vi.spyOn(panelCloseCallbacks, 'registerPanelCloseCallback');
 
         const application = {libraries: {lib: {recordPanels: [{id: 'edition'}]}}} as never;
 
         beforeEach(() => {
-            spyUseApplicationSettingsContext.mockReturnValue([application, jest.fn()]);
+            spyUseApplicationSettingsContext.mockReturnValue([application, vi.fn()]);
         });
 
         it('should register thread-action callbacks keyed by {where, flapPanelId} when opening the thread flap', () => {
-            const onCommentSubmitted = jest.fn();
-            const onCommentMentionAdded = jest.fn();
-            const onDiscussionStatusChanged = jest.fn();
+            const onCommentSubmitted = vi.fn();
+            const onCommentMentionAdded = vi.fn();
+            const onDiscussionStatusChanged = vi.fn();
 
             const {
                 result: {current},
@@ -312,7 +312,7 @@ describe('useNavigateToPanel', () => {
         });
 
         it('should still register the onClose panel-close callback (existing behavior preserved)', () => {
-            const onClose = jest.fn();
+            const onClose = vi.fn();
             const {
                 result: {current},
             } = renderHook(() => useNavigateToPanel());
@@ -360,7 +360,7 @@ describe('useNavigateToPanel', () => {
                         },
                     },
                 } satisfies Application,
-                jest.fn(),
+                vi.fn(),
             ]);
 
             const {
@@ -406,7 +406,7 @@ describe('useNavigateToPanel', () => {
                         },
                     },
                 } satisfies Application,
-                jest.fn(),
+                vi.fn(),
             ]);
 
             const {

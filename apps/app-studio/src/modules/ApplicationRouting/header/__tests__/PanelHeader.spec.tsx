@@ -7,33 +7,33 @@ import * as ApplicationSettingsContext from '../../../../config/application-inst
 import {type Application} from '../../types';
 import {PanelHeader} from '../PanelHeader';
 
-jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn(),
+vi.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useParams: jest.fn(),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
+    useParams: vi.fn(),
 }));
 
-jest.mock('../id-card/LibraryIdCard', () => ({
-    LibraryIdCard: jest.fn(),
+vi.mock('../id-card/LibraryIdCard', () => ({
+    LibraryIdCard: vi.fn(),
 }));
 
-jest.mock('../id-card/RecordIdCard', () => ({
-    RecordIdCard: jest.fn(),
+vi.mock('../id-card/RecordIdCard', () => ({
+    RecordIdCard: vi.fn(),
 }));
 
-jest.mock('../tabs/PanelsTabs', () => ({
-    PanelsTabs: jest.fn(),
+vi.mock('../tabs/PanelsTabs', () => ({
+    PanelsTabs: vi.fn(),
 }));
 
 describe('PanelHeader', () => {
-    const spyUseParams = jest.spyOn(ReactRouter, 'useParams');
-    const spyLibraryIdCard = jest.spyOn(LibraryIdCardComponent, 'LibraryIdCard');
-    const spyRecordIdCard = jest.spyOn(RecordIdCardComponent, 'RecordIdCard');
-    const spyRetrievePanelDetails = jest.spyOn(Utils, 'retrievePanelDetails');
-    const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const spyUseParams = vi.spyOn(ReactRouter, 'useParams');
+    const spyLibraryIdCard = vi.spyOn(LibraryIdCardComponent, 'LibraryIdCard');
+    const spyRecordIdCard = vi.spyOn(RecordIdCardComponent, 'RecordIdCard');
+    const spyRetrievePanelDetails = vi.spyOn(Utils, 'retrievePanelDetails');
+    const spyUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
 
     const emptyApplication: Application = {
         workspaces: [],
@@ -41,7 +41,7 @@ describe('PanelHeader', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('should display RecordIdCard component when panel is type record', async () => {

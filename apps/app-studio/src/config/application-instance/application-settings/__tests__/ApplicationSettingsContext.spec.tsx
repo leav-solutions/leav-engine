@@ -1,3 +1,4 @@
+import {type MockInstance} from 'vitest';
 import {type FunctionComponent} from 'react';
 import {PanelMessengerProvider} from '@leav/ui';
 import {render, screen} from '_ui/_tests/testUtils';
@@ -6,10 +7,10 @@ import {InitApplicationSettingProvider} from '../InitApplicationSettingProvider'
 import {useApplicationSettingsContext} from '../useApplicationSettingsContext';
 
 describe('ApplicationSettingsContext component', () => {
-    let useGetApplicationDataByEndpointQuerySpy: jest.SpyInstance;
+    let useGetApplicationDataByEndpointQuerySpy: MockInstance;
 
     beforeEach(() => {
-        useGetApplicationDataByEndpointQuerySpy = jest.spyOn(GraphQLClient, 'useGetApplicationDataByEndpointQuery');
+        useGetApplicationDataByEndpointQuerySpy = vi.spyOn(GraphQLClient, 'useGetApplicationDataByEndpointQuery');
     });
 
     it('should display error if current application is empty', async () => {

@@ -2,19 +2,19 @@ import {renderHook} from '_ui/_tests/testUtils';
 import * as ReactRouter from 'react-router-dom';
 import {useOpenFlapPanel} from '../useOpenFlapPanel';
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useNavigate: jest.fn(),
-    useParams: jest.fn(() => ({})),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
+    useNavigate: vi.fn(),
+    useParams: vi.fn(() => ({})),
 }));
 
 describe('useOpenFlapPanel', () => {
-    const spyUseNavigate = jest.spyOn(ReactRouter, 'useNavigate');
-    const spyUseParams = jest.spyOn(ReactRouter, 'useParams');
-    const navigateMock = jest.fn();
+    const spyUseNavigate = vi.spyOn(ReactRouter, 'useNavigate');
+    const spyUseParams = vi.spyOn(ReactRouter, 'useParams');
+    const navigateMock = vi.fn();
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         spyUseNavigate.mockReturnValue(navigateMock);
         spyUseParams.mockReturnValue({});
     });

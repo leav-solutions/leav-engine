@@ -4,8 +4,8 @@ import * as graphqlClient from '../../../../../../../__generated__';
 import {useViewCatalog} from '../useViewCatalog';
 
 describe('useViewCatalog', () => {
-    const spyOnUseGetViewListQuery = jest.spyOn(graphqlClient, 'useGetViewListQuery');
-    const spyOnUseUser = jest.spyOn(leavUi, 'useUser');
+    const spyOnUseGetViewListQuery = vi.spyOn(graphqlClient, 'useGetViewListQuery');
+    const spyOnUseUser = vi.spyOn(leavUi, 'useUser');
 
     const currentUserId = 'user-1';
     const libraryId = 'products';
@@ -20,7 +20,7 @@ describe('useViewCatalog', () => {
     });
 
     afterAll(() => {
-        jest.restoreAllMocks();
+        vi.restoreAllMocks();
     });
 
     it('should split the view list into the current user views and the shared views', () => {

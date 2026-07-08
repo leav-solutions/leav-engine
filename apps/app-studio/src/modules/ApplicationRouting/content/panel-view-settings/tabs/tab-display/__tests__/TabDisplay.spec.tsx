@@ -47,7 +47,7 @@ describe('TabDisplay', () => {
     // The manage_views permission (canManageViews in the current-view context) gates the "available
     // attributes" gear inside ColumnsSettings.
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     // The display tab renders exactly two lists, in DOM order: visible columns then hidden columns.
@@ -67,7 +67,7 @@ describe('TabDisplay', () => {
         // the (hardcoded) display modes and the locked identity column are always rendered.
         render(
             <CurrentViewContext.Provider
-                value={{view: null, savedView: null, isEmptyView: true, canManageViews: false, dispatch: jest.fn()}}
+                value={{view: null, savedView: null, isEmptyView: true, canManageViews: false, dispatch: vi.fn()}}
             >
                 <TabDisplay />
             </CurrentViewContext.Provider>,

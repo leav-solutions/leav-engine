@@ -3,27 +3,27 @@ import {renderHook, act} from '_ui/_tests/testUtils';
 import {usePostDiscussionComment} from '../usePostDiscussionComment';
 import * as callbacksHook from '../../../../../stores/threadActionCallbacks';
 
-const postCommentMutationMock = jest.fn().mockResolvedValue({});
-const refetchMock = jest.fn().mockResolvedValue({});
+const postCommentMutationMock = vi.fn().mockResolvedValue({});
+const refetchMock = vi.fn().mockResolvedValue({});
 
-jest.mock('../../../../../../../__generated__', () => ({
+vi.mock('../../../../../../../__generated__', () => ({
     useGetThreadQuery: () => ({refetch: refetchMock}),
     usePostDiscussionCommentMutation: () => [postCommentMutationMock],
 }));
-jest.mock('../../useCreateThread', () => ({useCreateThread: () => jest.fn().mockResolvedValue('thread-1')}));
-jest.mock('../../../useThreadStatusOption/useThreadStatusOptions', () => ({useThreadStatusOptions: () => []}));
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+vi.mock('../../useCreateThread', () => ({useCreateThread: () => vi.fn().mockResolvedValue('thread-1')}));
+vi.mock('../../../useThreadStatusOption/useThreadStatusOptions', () => ({useThreadStatusOptions: () => []}));
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
     useLocation: () => ({search: ''}),
 }));
 
 describe('usePostDiscussionComment thread-action callbacks', () => {
-    const onCommentSubmitted = jest.fn();
-    const onCommentMentionAdded = jest.fn();
+    const onCommentSubmitted = vi.fn();
+    const onCommentMentionAdded = vi.fn();
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        jest.spyOn(callbacksHook, 'getThreadActionCallbacks').mockReturnValue({
+        vi.clearAllMocks();
+        vi.spyOn(callbacksHook, 'getThreadActionCallbacks').mockReturnValue({
             onCommentSubmitted,
             onCommentMentionAdded,
         });

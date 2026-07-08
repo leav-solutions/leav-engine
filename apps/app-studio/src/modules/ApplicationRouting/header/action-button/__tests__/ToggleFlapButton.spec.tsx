@@ -8,25 +8,25 @@ import {ToggleFlapButton} from '../ToggleFlapButton';
 import {FLAP_INFO_AND_HISTORY_PANEL_ID, FLAP_THREAD_PANEL_ID} from '../../../../../constants';
 import {matomoEvents} from '../../../../../services/analytics/constants/matomoEvents';
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useNavigate: jest.fn(),
-    useParams: jest.fn(),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
+    useNavigate: vi.fn(),
+    useParams: vi.fn(),
 }));
 
-jest.mock('../../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn(),
+vi.mock('../../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
 }));
 
-jest.mock('../../../../../services/analytics', () => ({
-    ...jest.requireActual('../../../../../services/analytics'),
-    matomo: {trackNavigationEvent: jest.fn()},
+vi.mock('../../../../../services/analytics', async () => ({
+    ...(await vi.importActual('../../../../../services/analytics')),
+    matomo: {trackNavigationEvent: vi.fn()},
 }));
 
 describe('ToggleFlapButton', () => {
-    const spyUseNavigate = jest.spyOn(ReactRouter, 'useNavigate');
-    const spyUseParams = jest.spyOn(ReactRouter, 'useParams');
-    const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const spyUseNavigate = vi.spyOn(ReactRouter, 'useNavigate');
+    const spyUseParams = vi.spyOn(ReactRouter, 'useParams');
+    const spyUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
 
     const applicationWithTrackingLabel: Application = {
         workspaces: [],
@@ -36,9 +36,9 @@ describe('ToggleFlapButton', () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         user = userEvent.setup();
-        spyUseNavigate.mockReturnValue(jest.fn());
+        spyUseNavigate.mockReturnValue(vi.fn());
         spyUseParams.mockReturnValue({});
         spyUseApplicationSettingsContext.mockReturnValue([applicationWithTrackingLabel] as any);
     });

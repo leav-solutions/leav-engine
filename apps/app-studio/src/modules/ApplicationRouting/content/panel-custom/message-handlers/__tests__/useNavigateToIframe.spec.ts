@@ -4,27 +4,27 @@ import * as ApplicationSettingsContext from '../../../../../../config/applicatio
 import {type Application} from '../../../../types';
 import {useNavigateToIframe} from '../useNavigateToIframe';
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useNavigate: jest.fn(),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
+    useNavigate: vi.fn(),
 }));
 
-jest.mock('../../../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn(),
+vi.mock('../../../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
 }));
 
 describe('useNavigateToIframe', () => {
-    const spyUseNavigate = jest.spyOn(ReactRouter, 'useNavigate');
-    const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
-    const navigateMock = jest.fn();
+    const spyUseNavigate = vi.spyOn(ReactRouter, 'useNavigate');
+    const spyUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const navigateMock = vi.fn();
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         spyUseNavigate.mockReturnValue(navigateMock);
     });
 
     it('should provide a method to navigate to a panel and modify application configuration', async () => {
-        const mockSetApplication = jest.fn();
+        const mockSetApplication = vi.fn();
         spyUseApplicationSettingsContext.mockReturnValue([
             {
                 workspaces: [

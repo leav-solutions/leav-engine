@@ -4,20 +4,20 @@ import * as ApplicationSettingsContext from '../../../../config/application-inst
 import {type Application} from '../../types';
 import {RedirectToFirstWorkspace} from '../RedirectToFirstWorkspace';
 
-jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn(),
+vi.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    Navigate: jest.fn(),
-    generatePath: jest.fn(),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
+    Navigate: vi.fn(),
+    generatePath: vi.fn(),
 }));
 
 describe('RedirectToFirstWorkspace component guard', () => {
-    const spyNavigate = jest.spyOn(ReactRouter, 'Navigate');
-    const spyGeneratePath = jest.spyOn(ReactRouter, 'generatePath');
-    const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const spyNavigate = vi.spyOn(ReactRouter, 'Navigate');
+    const spyGeneratePath = vi.spyOn(ReactRouter, 'generatePath');
+    const spyUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
 
     const firstWorkspaceId = '42';
     const application: Application = {
@@ -63,7 +63,7 @@ describe('RedirectToFirstWorkspace component guard', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('should redirect to first workspace', async () => {
@@ -80,7 +80,7 @@ describe('RedirectToFirstWorkspace component guard', () => {
     });
 
     it('should redirect to not found when no workspace is found', () => {
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
         const applicationWithoutWorkspaces: Application = {
             workspaces: [],

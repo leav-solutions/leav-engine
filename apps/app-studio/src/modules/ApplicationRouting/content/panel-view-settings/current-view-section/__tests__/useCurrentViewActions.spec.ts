@@ -4,34 +4,34 @@ import * as generated from '../../../../../../__generated__';
 import {RecordFilterCondition, SortOrder, ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
 import {useCurrentViewActions} from '../useCurrentViewActions';
 
-const mockUpdate = jest.fn();
-const mockCreate = jest.fn();
+const mockUpdate = vi.fn();
+const mockCreate = vi.fn();
 
-const mockDispatch = jest.fn();
-const mockSetShared = jest.fn();
+const mockDispatch = vi.fn();
+const mockSetShared = vi.fn();
 let mockView: any;
 
-jest.mock('../../store-current-view/useCurrentView', () => ({
+vi.mock('../../store-current-view/useCurrentView', () => ({
     useCurrentView: () => ({view: mockView, dispatch: mockDispatch, setShared: mockSetShared}),
 }));
 
-const mockOpenConfirmModal = jest.fn();
-const mockDispatchPanelEvent = jest.fn();
-jest.mock('@leav/ui', () => ({
-    ...jest.requireActual('@leav/ui'),
+const mockOpenConfirmModal = vi.fn();
+const mockDispatchPanelEvent = vi.fn();
+vi.mock('@leav/ui', async () => ({
+    ...(await vi.importActual('@leav/ui')),
     useConfirmModal: () => ({openConfirmModal: mockOpenConfirmModal}),
     usePanelEventHandlers: () => ({dispatch: mockDispatchPanelEvent}),
 }));
 
-const mockWriteQuery = jest.fn();
-jest.mock('@apollo/client', () => ({
-    ...jest.requireActual('@apollo/client'),
+const mockWriteQuery = vi.fn();
+vi.mock('@apollo/client', async () => ({
+    ...(await vi.importActual('@apollo/client')),
     useApolloClient: () => ({writeQuery: mockWriteQuery}),
 }));
 
-jest.mock('aristid-ds', () => ({
-    ...jest.requireActual('aristid-ds'),
-    KitAlert: {success: jest.fn(), error: jest.fn(), info: jest.fn()},
+vi.mock('aristid-ds', async () => ({
+    ...(await vi.importActual('aristid-ds')),
+    KitAlert: {success: vi.fn(), error: vi.fn(), info: vi.fn()},
 }));
 
 const T = 'view_settings.current_view';
@@ -40,7 +40,7 @@ const echoView = {id: 'view-1', label: {fr: 'V'}};
 const createdView = {id: 'view-2', label: {fr: 'Ma copie'}};
 
 beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockView = {
         id: 'view-1',
         library: 'lib',
@@ -70,8 +70,8 @@ beforeEach(() => {
     };
     mockUpdate.mockResolvedValue({data: {updateViewV2: echoView}});
     mockCreate.mockResolvedValue({data: {createViewV2: createdView}});
-    jest.spyOn(generated, 'useUpdateViewV2Mutation').mockReturnValue([mockUpdate, {loading: false}] as any);
-    jest.spyOn(generated, 'useCreateViewV2Mutation').mockReturnValue([mockCreate, {loading: false}] as any);
+    vi.spyOn(generated, 'useUpdateViewV2Mutation').mockReturnValue([mockUpdate, {loading: false}] as any);
+    vi.spyOn(generated, 'useCreateViewV2Mutation').mockReturnValue([mockCreate, {loading: false}] as any);
 });
 
 const mappedDisplay = {

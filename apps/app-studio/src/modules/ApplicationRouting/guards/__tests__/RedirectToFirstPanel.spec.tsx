@@ -4,25 +4,25 @@ import * as ApplicationSettingsContext from '../../../../config/application-inst
 import {type Application} from '../../types';
 import {RedirectToFirstPanel} from '../RedirectToFirstPanel';
 
-jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn(),
+vi.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useParams: jest.fn(),
-    Navigate: jest.fn(),
-    generatePath: jest.fn(),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
+    useParams: vi.fn(),
+    Navigate: vi.fn(),
+    generatePath: vi.fn(),
 }));
 
 describe('RedirectToFirstPanel component guard', () => {
-    const spyNavigate = jest.spyOn(ReactRouter, 'Navigate');
-    const spyGeneratePath = jest.spyOn(ReactRouter, 'generatePath');
-    const spyUseParams = jest.spyOn(ReactRouter, 'useParams');
-    const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const spyNavigate = vi.spyOn(ReactRouter, 'Navigate');
+    const spyGeneratePath = vi.spyOn(ReactRouter, 'generatePath');
+    const spyUseParams = vi.spyOn(ReactRouter, 'useParams');
+    const spyUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('should redirect to first library panel', async () => {
@@ -135,7 +135,7 @@ describe('RedirectToFirstPanel component guard', () => {
     });
 
     it('should redirect to not found when workspace is not found', () => {
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
         const workspaceId = '42';
         const application: Application = {
@@ -156,7 +156,7 @@ describe('RedirectToFirstPanel component guard', () => {
     });
 
     it('should redirect to not found when no panel is found for workspace', () => {
-        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(jest.fn());
+        const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
         const workspaceId = '42';
         const application: Application = {

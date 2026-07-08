@@ -5,20 +5,20 @@ import userEvent from '@testing-library/user-event';
 
 type Task = GetUserTasksQuery['tasks']['list'][number];
 
-const mockUseGetUserTasks = jest.fn();
-const mockUseArchiveUserTasks = jest.fn();
+const mockUseGetUserTasks = vi.fn();
+const mockUseArchiveUserTasks = vi.fn();
 
-jest.mock('../get-user-tasks/useGetUserTasks', () => ({
+vi.mock('../get-user-tasks/useGetUserTasks', () => ({
     useGetUserTasks: (...args: unknown[]) => mockUseGetUserTasks(...args),
 }));
 
-jest.mock('../archive-user-tasks/useArchiveUserTasks', () => ({
+vi.mock('../archive-user-tasks/useArchiveUserTasks', () => ({
     useArchiveUserTasks: () => ({archiveUserTasks: mockUseArchiveUserTasks}),
 }));
 
-const mockOpenConfirmModal = jest.fn(({onOk}) => onOk?.());
+const mockOpenConfirmModal = vi.fn(({onOk}) => onOk?.());
 
-jest.mock('_ui/hooks', () => ({
+vi.mock('_ui/hooks', () => ({
     useUser: () => ({userData: {userId: 'test-user-id'}}),
     useLang: () => ({lang: ['fr']}),
     useConfirmModal: () => ({openConfirmModal: mockOpenConfirmModal}),
@@ -39,10 +39,10 @@ describe('TasksList', () => {
         ...overrides,
     });
 
-    const mockRemoveTasks = jest.fn();
+    const mockRemoveTasks = vi.fn();
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockUseGetUserTasks.mockReturnValue({
             userTasks: [],
             loading: false,

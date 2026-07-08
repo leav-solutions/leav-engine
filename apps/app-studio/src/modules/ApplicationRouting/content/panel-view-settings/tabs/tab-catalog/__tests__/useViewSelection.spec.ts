@@ -6,17 +6,17 @@ import * as UseLastUsedView from '../useLastUsedView';
 import {useViewSelection} from '../useViewSelection';
 
 describe('useViewSelection', () => {
-    const spyOnUsePanelEventHandlers = jest.spyOn(leavUi, 'usePanelEventHandlers');
-    const spyOnUseCurrentView = jest.spyOn(UseCurrentView, 'useCurrentView');
-    const spyOnUseCurrentViewActions = jest.spyOn(UseCurrentViewActions, 'useCurrentViewActions');
-    const spyOnUseLastUsedView = jest.spyOn(UseLastUsedView, 'useLastUsedView');
+    const spyOnUsePanelEventHandlers = vi.spyOn(leavUi, 'usePanelEventHandlers');
+    const spyOnUseCurrentView = vi.spyOn(UseCurrentView, 'useCurrentView');
+    const spyOnUseCurrentViewActions = vi.spyOn(UseCurrentViewActions, 'useCurrentViewActions');
+    const spyOnUseLastUsedView = vi.spyOn(UseLastUsedView, 'useLastUsedView');
 
     const loadedViewId = 'view-1';
     const otherViewId = 'view-2';
 
-    const dispatch = jest.fn();
-    const save = jest.fn();
-    const saveLastUsedView = jest.fn();
+    const dispatch = vi.fn();
+    const save = vi.fn();
+    const saveLastUsedView = vi.fn();
 
     const selectViewEvent = (viewId: string) => ({type: 'view-settings-select-view', data: {viewId}});
 
@@ -26,7 +26,7 @@ describe('useViewSelection', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         spyOnUsePanelEventHandlers.mockReturnValue({dispatch} as any);
         spyOnUseCurrentViewActions.mockReturnValue({save, saveLoading: false} as any);
         spyOnUseLastUsedView.mockReturnValue({saveLastUsedView, lastUsedViewId: undefined} as any);
