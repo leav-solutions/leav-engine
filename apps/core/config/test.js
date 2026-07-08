@@ -90,16 +90,15 @@ module.exports = {
     sdo: {
         clientId: 'leav-test',
         applicationName: 'leav',
+        exchange: 'test_sdo_exchange',
+        exchangeType: 'fanout',
         import: {
             enable: true,
             queue: 'test_sdo_import_queue',
-            exchange: 'test_sdo_import_exchange',
         },
         export: {
             enable: true,
-            exchange: 'test_sdo_export_exchange',
             dataEventsQueue: 'test_sdo_data_events_queue',
-            type: 'fanout',
         },
     },
 };

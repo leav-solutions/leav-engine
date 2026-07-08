@@ -142,7 +142,7 @@ describe('sdoExportDomain', () => {
 
             // Verify RabbitMQ publish was called
             expect((await mockRabbitMQService.getSDOExportChannel()).publish).toHaveBeenCalledWith(
-                mockConfig.sdo.export.exchange,
+                mockConfig.sdo.exchange,
                 '',
                 Buffer.from(JSON.stringify(mockSDO)),
             );

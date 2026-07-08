@@ -132,7 +132,7 @@ export default function ({
 
         // Send sdo to rabbitmq
         const exportChannel = await rabbitMQService.getSDOExportChannel();
-        exportChannel.publish(config.sdo.export.exchange, '', Buffer.from(JSON.stringify(sdo)));
+        exportChannel.publish(config.sdo.exchange, '', Buffer.from(JSON.stringify(sdo)));
         await exportChannel.waitForConfirms();
 
         // Send log to ELK about sdo sent

@@ -45,8 +45,8 @@ describe('SDO Exports', () => {
         await rabbitmqClient.connect();
         await rabbitmqClient.assertExchangeAndBindQueue(
             TEST_GET_EXPORT_MSG_QUEUE,
-            conf.sdo.export.exchange,
-            conf.sdo.export.type,
+            conf.sdo.exchange,
+            conf.sdo.exchangeType,
         );
     });
 
