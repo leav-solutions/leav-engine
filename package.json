@@ -20,7 +20,7 @@
         "prettier:fix:all": "prettier --write .",
         "prettier:check": "prettier --check .",
         "format:all": "yarn prettier:fix:all && yarn lint",
-        "tscheck": "yarn workspaces foreach -vpA --exclude 'libs/core-types' run tscheck",
+        "tscheck": "yarn workspaces foreach -vptA --exclude 'libs/core-types' run tscheck",
         "clean": "yarn workspaces foreach -vpA run clean",
         "translations:check": "node ./scripts/compareTranslations.js",
         "postinstall": "husky install",
