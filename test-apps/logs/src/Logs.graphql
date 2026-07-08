@@ -1,0 +1,23 @@
+mutation SaveLibrary($library: LibraryInput!) {
+    saveLibrary(library: $library) {
+        id
+    }
+}
+
+mutation CreateRecord($library: ID!) {
+    createRecord(library: $library) {
+        record {
+            id
+        }
+    }
+}
+
+query GetLogs($filters: LogFilterInput, $sort: LogSortInput, $pagination: Pagination) {
+    logsResult: logs(filters: $filters, sort: $sort, pagination: $pagination) {
+        list: logs {
+            action
+            time
+        }
+        total
+    }
+}
