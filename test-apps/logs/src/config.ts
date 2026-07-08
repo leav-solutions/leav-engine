@@ -1,4 +1,4 @@
-import {appRootPath} from '@leav/app-root-path';
+import path from 'node:path';
 import {loadConfig} from '@leav/config-manager';
 import {z} from 'zod';
 
@@ -18,8 +18,7 @@ export type Config = z.infer<typeof configSchema>;
 
 export const getConfig = async () => {
     const definedEnv: string = process.env.NODE_ENV ?? 'development';
-    const confRootFolder = appRootPath();
-    const confFolder = confRootFolder + '/config';
+    const confFolder = path.join(__dirname, '../config');
 
     const conf = await loadConfig<Config>(confFolder, definedEnv);
     configSchema.parse(conf);
