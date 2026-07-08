@@ -6,7 +6,6 @@
         "start": "jest"
     },
     "dependencies": {
-        "@leav/app-root-path": "workspace:*",
         "@leav/config-manager": "workspace:*",
         "@leav/utils": "workspace:*",
         "axios": "1.18.1",

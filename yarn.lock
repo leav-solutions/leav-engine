@@ -4766,7 +4766,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@leav/app-root-path@workspace:*, @leav/app-root-path@workspace:libs/app-root-path":
+"@leav/app-root-path@workspace:libs/app-root-path":
   version: 0.0.0-use.local
   resolution: "@leav/app-root-path@workspace:libs/app-root-path"
   dependencies:
@@ -18016,7 +18016,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "logs@workspace:test-apps/logs"
   dependencies:
-    "@leav/app-root-path": "workspace:*"
     "@leav/config-manager": "workspace:*"
     "@leav/utils": "workspace:*"
     "@types/jest": "npm:29.5.14"
