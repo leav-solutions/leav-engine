@@ -294,6 +294,6 @@ il applique exactement la même règle `isOwner || (manage_views && view.shared)
 
 ## Tests
 
-Jest + Testing Library, `*.spec.ts(x)` colocalisés dans `__tests__/`. Le reducer est testé en
+Vitest + Testing Library, `*.spec.ts(x)` colocalisés dans `__tests__/`. Le reducer est testé en
 isolation (`store-current-view/__tests__/`), y compris `MOVE_SORT` / `SET_SORT_ORDER` et les actions
 filtres (`MOVE_FILTER` / `TOGGLE_FILTER_PINNED` / `SET_FILTER_CONFIG` / `SET_AVAILABLE_FILTERS`).

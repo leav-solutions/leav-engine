@@ -3,28 +3,28 @@ import {TabCatalog} from '../TabCatalog';
 
 // Selection (useViewSelection) and per-row actions (useViewActions) are covered by their own hook specs.
 // This file only asserts that TabCatalog wires the catalog into its two sections.
-jest.mock('@leav/ui', () => ({
-    ...jest.requireActual('@leav/ui'),
-    usePanelEventHandlers: () => ({dispatch: jest.fn()}),
-    useConfirmModal: () => ({openConfirmModal: jest.fn()}),
+vi.mock('@leav/ui', async () => ({
+    ...(await vi.importActual('@leav/ui')),
+    usePanelEventHandlers: () => ({dispatch: vi.fn()}),
+    useConfirmModal: () => ({openConfirmModal: vi.fn()}),
     useUser: () => ({userData: {userId: '123'}}),
 }));
 
-jest.mock('../useDeleteView', () => ({
-    useDeleteView: () => ({deleteView: jest.fn(), deleteLoading: false}),
+vi.mock('../useDeleteView', () => ({
+    useDeleteView: () => ({deleteView: vi.fn(), deleteLoading: false}),
 }));
 
-jest.mock('../../../current-view-section/useCurrentViewActions', () => ({
-    useCurrentViewActions: () => ({save: jest.fn(), saveLoading: false}),
+vi.mock('../../../current-view-section/useCurrentViewActions', () => ({
+    useCurrentViewActions: () => ({save: vi.fn(), saveLoading: false}),
 }));
 
 let mockCatalog: {myViews: any[]; sharedViews: any[]};
-jest.mock('../useViewCatalog', () => ({
+vi.mock('../useViewCatalog', () => ({
     useViewCatalog: () => mockCatalog,
 }));
 
-jest.mock('../useLastUsedView', () => ({
-    useLastUsedView: () => ({saveLastUsedView: jest.fn(), lastUsedViewId: undefined}),
+vi.mock('../useLastUsedView', () => ({
+    useLastUsedView: () => ({saveLastUsedView: vi.fn(), lastUsedViewId: undefined}),
 }));
 
 let mockCurrentView: {
@@ -32,7 +32,7 @@ let mockCurrentView: {
     isDirty: boolean;
     isEmptyView?: boolean;
 };
-jest.mock('../../../store-current-view/useCurrentView', () => ({
+vi.mock('../../../store-current-view/useCurrentView', () => ({
     useCurrentView: () => mockCurrentView,
 }));
 
@@ -42,7 +42,7 @@ describe('TabCatalog', () => {
     const otherSharedView = {id: 'view-3', label: {fr: 'Vue C'}, shared: true, created_by: {id: '999'}};
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockCatalog = {myViews: [myView, mySharedView], sharedViews: [otherSharedView]};
         mockCurrentView = {view: {id: 'view-1', label: {fr: 'Vue A'}}, isDirty: false};
     });

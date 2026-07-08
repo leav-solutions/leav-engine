@@ -6,17 +6,17 @@ import {type View} from '../useViewCatalog';
 import {useViewActions} from '../useViewActions';
 
 describe('useViewActions', () => {
-    const spyOnUseUser = jest.spyOn(leavUi, 'useUser');
-    const spyOnUseConfirmModal = jest.spyOn(leavUi, 'useConfirmModal');
-    const spyOnUseCurrentView = jest.spyOn(UseCurrentView, 'useCurrentView');
-    const spyOnUseDeleteView = jest.spyOn(UseDeleteView, 'useDeleteView');
+    const spyOnUseUser = vi.spyOn(leavUi, 'useUser');
+    const spyOnUseConfirmModal = vi.spyOn(leavUi, 'useConfirmModal');
+    const spyOnUseCurrentView = vi.spyOn(UseCurrentView, 'useCurrentView');
+    const spyOnUseDeleteView = vi.spyOn(UseDeleteView, 'useDeleteView');
 
     const currentUserId = 'user-1';
     const libraryId = 'products';
     const loadedViewId = 'view-loaded';
 
-    const deleteView = jest.fn();
-    const openConfirmModal = jest.fn();
+    const deleteView = vi.fn();
+    const openConfirmModal = vi.fn();
 
     const makeView = (overrides: Partial<View> = {}): View =>
         ({
@@ -31,7 +31,7 @@ describe('useViewActions', () => {
     const findAction = (view: View, key: string) => getActions(view).find(action => action.key === key);
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         spyOnUseUser.mockReturnValue({userData: {userId: currentUserId}} as any);
         spyOnUseConfirmModal.mockReturnValue({openConfirmModal} as any);
         spyOnUseCurrentView.mockReturnValue({view: {id: loadedViewId}, canManageViews: false} as any);

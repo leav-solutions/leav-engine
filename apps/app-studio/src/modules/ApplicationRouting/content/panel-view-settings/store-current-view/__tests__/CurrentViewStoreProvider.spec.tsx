@@ -6,26 +6,26 @@ import {useCurrentView} from '../useCurrentView';
 import {CurrentViewStoreProvider} from '../CurrentViewStoreProvider';
 
 // usePanelEventHandlers comes from @leav/ui; keep useLang/useUser real (provided by the test render).
-jest.mock('@leav/ui', () => ({
-    ...jest.requireActual('@leav/ui'),
-    usePanelEventHandlers: () => ({dispatch: jest.fn()}),
+vi.mock('@leav/ui', async () => ({
+    ...(await vi.importActual('@leav/ui')),
+    usePanelEventHandlers: () => ({dispatch: vi.fn()}),
 }));
 
 // The store resolves its current view id from `lastUsedViewId ?? viewId`; pin lastUsedViewId off.
-jest.mock('../../tabs/tab-catalog/useLastUsedView', () => ({
-    useLastUsedView: () => ({lastUsedViewId: undefined, saveLastUsedView: jest.fn()}),
+vi.mock('../../tabs/tab-catalog/useLastUsedView', () => ({
+    useLastUsedView: () => ({lastUsedViewId: undefined, saveLastUsedView: vi.fn()}),
 }));
 
 // Permission is resolved via an isAllowed query; stub the hook so the provider test stays isolated
 // from Apollo. `false` mirrors a non-manager: the default-view draft is never seeded (these tests
 // assert the plain empty state). Manager seeding is covered in CurrentViewSection.spec.
-jest.mock('../useCanManageViews', () => ({
+vi.mock('../useCanManageViews', () => ({
     useCanManageViews: () => false,
 }));
 
-const mockUseGetViewV2Query = jest.fn();
-jest.mock('../../../../../../__generated__', () => ({
-    ...jest.requireActual('../../../../../../__generated__'),
+const mockUseGetViewV2Query = vi.fn();
+vi.mock('../../../../../../__generated__', async () => ({
+    ...(await vi.importActual('../../../../../../__generated__')),
     useGetViewV2Query: (...args: unknown[]) => mockUseGetViewV2Query(...args),
 }));
 
@@ -77,7 +77,7 @@ const Wrapper = ({showVolet, providerKey = 'view-1'}: {showVolet: boolean; provi
 );
 
 beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockUseGetViewV2Query.mockReturnValue({data: {viewV2: makeView()}});
 });
 

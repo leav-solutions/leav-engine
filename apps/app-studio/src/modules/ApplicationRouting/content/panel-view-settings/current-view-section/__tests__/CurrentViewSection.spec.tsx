@@ -9,11 +9,11 @@ import {CurrentViewSection} from '../CurrentViewSection';
 
 type NonNullView = NonNullable<CurrentView>;
 
-const mockSave = jest.fn();
-const mockSaveAs = jest.fn();
-const mockToggleShared = jest.fn();
+const mockSave = vi.fn();
+const mockSaveAs = vi.fn();
+const mockToggleShared = vi.fn();
 
-jest.mock('../useCurrentViewActions', () => ({
+vi.mock('../useCurrentViewActions', () => ({
     useCurrentViewActions: () => ({
         save: mockSave,
         saveAs: mockSaveAs,
@@ -41,7 +41,7 @@ const makeView = (overrides: Partial<NonNullView> = {}): NonNullView => ({
 
 const nonOwner = {id: '999', whoAmI: {id: '999', label: 'Alice'}};
 
-const onClose = jest.fn();
+const onClose = vi.fn();
 
 const Harness = ({
     view,
@@ -78,7 +78,7 @@ const renderSection = (opts: {
     );
 
 beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 });
 
 describe('CurrentViewSection', () => {

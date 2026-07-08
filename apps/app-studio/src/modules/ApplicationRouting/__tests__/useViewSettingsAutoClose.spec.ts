@@ -5,24 +5,24 @@ import * as RetrievePanelDetails from '../utils/retrievePanelDetails';
 import {type Application} from '../types';
 import {useViewSettingsAutoClose} from '../useViewSettingsAutoClose';
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
-    useParams: jest.fn(),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
+    useParams: vi.fn(),
 }));
 
-jest.mock('../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn(),
+vi.mock('../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
 }));
 
-jest.mock('../utils/retrievePanelDetails', () => ({
-    retrievePanelDetails: jest.fn(),
+vi.mock('../utils/retrievePanelDetails', () => ({
+    retrievePanelDetails: vi.fn(),
 }));
 
 describe('useViewSettingsAutoClose', () => {
-    const spyUseParams = jest.spyOn(ReactRouter, 'useParams');
-    const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
-    const spyRetrievePanelDetails = jest.spyOn(RetrievePanelDetails, 'retrievePanelDetails');
-    const mockSetApplication = jest.fn();
+    const spyUseParams = vi.spyOn(ReactRouter, 'useParams');
+    const spyUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const spyRetrievePanelDetails = vi.spyOn(RetrievePanelDetails, 'retrievePanelDetails');
+    const mockSetApplication = vi.fn();
 
     const recordPanelId = 'rp';
 
@@ -40,7 +40,7 @@ describe('useViewSettingsAutoClose', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         spyUseParams.mockReturnValue({panelId: 'p', recordPanelId});
         spyUseApplicationSettingsContext.mockReturnValue([application, mockSetApplication] as any);
         spyRetrievePanelDetails.mockReturnValue({

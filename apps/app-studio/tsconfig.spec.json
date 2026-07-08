@@ -1,0 +1,24 @@
+{
+    "extends": "./tsconfig.build.json",
+    "compilerOptions": {
+        // rootDir "." (not "src"): setupTests.ts lives in tests/, outside src.
+        "rootDir": ".",
+        "outDir": "dist-spec",
+        "composite": true,
+        "types": ["vitest/globals", "@testing-library/jest-dom", "node"]
+    },
+    // libs/ui spec project owns _ui/_tests/testUtils & TestProviders (test files excluded from its
+    // build project); reference it so those imports are not pulled under this project's rootDir.
+    "references": [{"path": "./tsconfig.build.json"}, {"path": "../../libs/ui/tsconfig.spec.json"}],
+    "include": [
+        "src/**/*.spec.ts",
+        "src/**/*.spec.tsx",
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/**/__tests__/**/*",
+        "src/**/__mocks__/**/*",
+        "src/**/*.fixture.ts",
+        "tests/**/*"
+    ],
+    "exclude": []
+}

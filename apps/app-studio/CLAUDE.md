@@ -233,6 +233,8 @@ InitNetwork → InitTranslation → InitUser → InitTheme
 
 ## Tests
 
-- Framework : Jest + Testing Library
-- Fichiers : `*.spec.tsx` / `*.spec.ts` colocalisés dans `__tests__/`
+- Framework : **Vitest** + Testing Library (migré de Jest, LEAVC-826)
+- Fichiers : `*.spec.tsx` / `*.spec.ts` (majorité) et quelques `*.test.tsx`, colocalisés dans `__tests__/`
+- Setup (`tests/setupTests.ts`) : `expect.extend` de jest-dom + mocks i18n (`useSharedTranslation` renvoie les clés ; `react-i18next` renvoie `clé|valeur`) → les tests assertent sur des clés stables
+- `tsconfig` en solution config (`tsconfig.build.json` + `tsconfig.spec.json`) ; `tscheck` = `tsc -b tsconfig.json`
 - Génération des types GraphQL : `graphql-codegen` (même pattern que `libs/ui`)

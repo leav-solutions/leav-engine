@@ -1,0 +1,27 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "module": "esnext",
+        "rootDir": "src",
+        "outDir": "dist",
+        "composite": true,
+        "skipLibCheck": true,
+        "jsx": "react-jsx"
+        // TODO: "strictNullChecks": true
+    },
+    // Reference the consumed lib projects so their sources (resolved via @leav/* paths to src)
+    // are owned by their own composite projects and not pulled under this project's rootDir.
+    "references": [{"path": "../../libs/utils/tsconfig.json"}, {"path": "../../libs/ui/tsconfig.build.json"}],
+    "include": ["src/**/*"],
+    "exclude": [
+        "node_modules",
+        "**/*.spec.ts",
+        "**/*.spec.tsx",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/__tests__/**",
+        "**/__mocks__/**",
+        "**/*.fixture.ts",
+        "dist"
+    ]
+}

@@ -5,8 +5,8 @@ import * as graphqlClient from '../../../__generated__';
 import {InitUser} from '../InitUser';
 
 describe('InitUser component', () => {
-    const spyOnUseGetUserIdentityQuery = jest.spyOn(graphqlClient, 'useGetUserIdentityQuery');
-    const mockUsageOfUserContext = jest.fn();
+    const spyOnUseGetUserIdentityQuery = vi.spyOn(graphqlClient, 'useGetUserIdentityQuery');
+    const mockUsageOfUserContext = vi.fn();
 
     const FakeComponentLabel = 'FakeComponent';
     const FakeComponent: FunctionComponent = () => {
@@ -22,7 +22,7 @@ describe('InitUser component', () => {
     });
 
     afterAll(() => {
-        jest.restoreAllMocks();
+        vi.restoreAllMocks();
     });
 
     it('should provider null object when userIdentity is empty', async () => {
@@ -79,7 +79,7 @@ describe('InitUser component', () => {
 
     it('should raise error if call is in error state', async () => {
         spyOnUseGetUserIdentityQuery.mockReturnValue({error: 'network error'} as any);
-        jest.spyOn(console, 'error').mockImplementation(() => jest.fn());
+        vi.spyOn(console, 'error').mockImplementation(() => vi.fn());
 
         expect(() => render(<InitUser />)).toThrow('network error');
     });

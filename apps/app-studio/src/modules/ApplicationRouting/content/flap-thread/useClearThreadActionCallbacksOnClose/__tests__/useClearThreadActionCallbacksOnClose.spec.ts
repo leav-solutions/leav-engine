@@ -4,7 +4,7 @@ import {getThreadActionCallbacks, registerThreadActionCallbacks} from '../../../
 
 describe('useClearThreadActionCallbacksOnClose', () => {
     it('should clear the registered callbacks for the given where on unmount', () => {
-        registerThreadActionCallbacks({where: 'slider'}, {onCommentSubmitted: jest.fn()});
+        registerThreadActionCallbacks({where: 'slider'}, {onCommentSubmitted: vi.fn()});
 
         const {unmount} = renderHook(() => useClearThreadActionCallbacksOnClose('slider'));
 
@@ -16,7 +16,7 @@ describe('useClearThreadActionCallbacksOnClose', () => {
     });
 
     it('should not clear anything while still mounted', () => {
-        registerThreadActionCallbacks({where: 'slider'}, {onCommentSubmitted: jest.fn()});
+        registerThreadActionCallbacks({where: 'slider'}, {onCommentSubmitted: vi.fn()});
 
         renderHook(() => useClearThreadActionCallbacksOnClose('slider'));
 
@@ -24,7 +24,7 @@ describe('useClearThreadActionCallbacksOnClose', () => {
     });
 
     it('should do nothing when where is undefined', () => {
-        registerThreadActionCallbacks({where: 'slider'}, {onCommentSubmitted: jest.fn()});
+        registerThreadActionCallbacks({where: 'slider'}, {onCommentSubmitted: vi.fn()});
 
         const {unmount} = renderHook(() => useClearThreadActionCallbacksOnClose(undefined));
         unmount();

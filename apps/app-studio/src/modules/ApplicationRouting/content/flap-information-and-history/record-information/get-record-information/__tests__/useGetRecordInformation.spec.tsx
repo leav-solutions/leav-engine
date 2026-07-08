@@ -1,3 +1,4 @@
+import {type MockInstance} from 'vitest';
 import {renderHook} from '@testing-library/react';
 import {type ReactNode} from 'react';
 import * as GraphQLClient from '../../../../../../../__generated__';
@@ -5,7 +6,7 @@ import {useGetRecordInformation} from '../useGetRecordInformation';
 import {LangContext, type ILangContext, MockedLangContextProvider} from '@leav/ui';
 
 describe('useGetRecordInformation', () => {
-    let useGetRecordInformationQuerySpy: jest.SpyInstance;
+    let useGetRecordInformationQuerySpy: MockInstance;
 
     const createEnglishWrapper =
         () =>
@@ -14,17 +15,17 @@ describe('useGetRecordInformation', () => {
                 lang: ['en'],
                 availableLangs: ['en', 'fr'],
                 defaultLang: 'en',
-                setLang: jest.fn(),
+                setLang: vi.fn(),
             };
             return <LangContext.Provider value={mockLangContextEn}>{children}</LangContext.Provider>;
         };
 
     beforeEach(() => {
-        useGetRecordInformationQuerySpy = jest.spyOn(GraphQLClient, 'useGetRecordInformationQuery');
+        useGetRecordInformationQuerySpy = vi.spyOn(GraphQLClient, 'useGetRecordInformationQuery');
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('Loading and error states', () => {

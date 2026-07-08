@@ -5,11 +5,11 @@ import {ViewV2Shortcut} from '../../../../../../__generated__';
 import {TabHeader} from '../TabHeader';
 import {type ViewSettingsTabConfig} from '../_types';
 
-const mockToggleShortcut = jest.fn();
+const mockToggleShortcut = vi.fn();
 let mockShortcuts: ViewV2Shortcut[];
 let mockCanManageViews: boolean;
 
-jest.mock('../../store-current-view/useCurrentView', () => ({
+vi.mock('../../store-current-view/useCurrentView', () => ({
     useCurrentView: () => ({
         shortcuts: mockShortcuts,
         toggleShortcut: mockToggleShortcut,
@@ -17,7 +17,7 @@ jest.mock('../../store-current-view/useCurrentView', () => ({
     }),
 }));
 
-jest.mock('../../manage-available-attributes/AvailableAttributesDropdown', () => ({
+vi.mock('../../manage-available-attributes/AvailableAttributesDropdown', () => ({
     AvailableAttributesDropdown: ({facet}: {facet: string}) => <button aria-label={`gear-${facet}`} />,
 }));
 
@@ -30,7 +30,7 @@ const gearLabel = (facet: string) => `gear-${facet}`;
 
 describe('TabHeader', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockShortcuts = [ViewV2Shortcut.display];
         mockCanManageViews = false;
     });

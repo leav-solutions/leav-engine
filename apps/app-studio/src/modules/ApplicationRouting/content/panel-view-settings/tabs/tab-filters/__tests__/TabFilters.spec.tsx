@@ -1,4 +1,4 @@
-import {useReducer} from 'react';
+import {useContext, useReducer} from 'react';
 import userEvent from '@testing-library/user-event';
 import {FiltersActionTypes, FiltersContext, type IUIFiltersState, type UIFilter} from '@leav/ui';
 import {act, render, screen, within} from '_ui/_tests/testUtils';
@@ -10,21 +10,20 @@ import {TabFilters} from '../TabFilters';
 
 // Minimal stub of the @leav/ui filter editor: renders the store filter and dispatches a config change
 // to the (real) FiltersContext, so we can assert pinned filters are edited through the SHARED store.
-jest.mock('@leav/ui', () => {
-    const actual = jest.requireActual('@leav/ui');
-    const {useContext} = jest.requireActual('react');
+vi.mock('@leav/ui', async () => {
+    const actual = await vi.importActual('@leav/ui');
 
     return {
         ...actual,
         CommonFilterItem: ({filter}: {filter: {id: string; condition: unknown; value: unknown}}) => {
-            const {dispatch} = useContext(actual.FiltersContext);
+            const {dispatch} = useContext(FiltersContext);
             return (
                 <button
                     aria-label={`edit-${filter.id}`}
                     onClick={() =>
                         dispatch({
-                            type: actual.FiltersActionTypes.CHANGE_FILTER_CONFIG,
-                            payload: {...filter, condition: 'CONTAINS', value: 'paris'},
+                            type: FiltersActionTypes.CHANGE_FILTER_CONFIG,
+                            payload: {...filter, condition: RecordFilterCondition.CONTAINS, value: 'paris'} as UIFilter,
                         })
                     }
                 >
@@ -59,7 +58,7 @@ const makeStoreFilter = (id: string): UIFilter =>
         value: null,
     }) as unknown as UIFilter;
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 
 const TabFiltersWithState = ({filters = SEEDED_FILTERS}: {filters?: CurrentViewFilter[]}) => {
     const seed = {

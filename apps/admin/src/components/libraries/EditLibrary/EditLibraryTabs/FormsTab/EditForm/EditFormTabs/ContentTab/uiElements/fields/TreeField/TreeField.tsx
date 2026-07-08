@@ -1,7 +1,8 @@
-import RecordCardSkeleton from '../../../../../../../../../../shared/RecordCardSkeleton';
-import {Breadcrumb, type BreadcrumbSectionProps, Table} from 'semantic-ui-react';
+import {type ComponentProps} from 'react';
+import {Breadcrumb, Table} from 'semantic-ui-react';
 import styled from 'styled-components';
 import {type ICommonFieldsSettings, type IFormElementProps} from '../../../_types';
+import RecordCardSkeleton from '../../../../../../../../../../shared/RecordCardSkeleton';
 import useLang from '../../../../../../../../../../../hooks/useLang';
 import {localizedLabel} from '../../../../../../../../../../../utils';
 
@@ -17,10 +18,9 @@ function TreeField({settings}: IFormElementProps<ICommonFieldsSettings>): JSX.El
 
     const label = localizedLabel(settings.label, availableLangs);
 
-    const nodes = [];
     const sectionsNumber = 3;
 
-    const breadcrumbSection: BreadcrumbSectionProps[] = [...Array(sectionsNumber)].map((s, i) => ({
+    const breadcrumbSection: ComponentProps<typeof Breadcrumb>['sections'] = [...Array(sectionsNumber)].map((_, i) => ({
         key: i,
         content: <RecordCardSkeleton />,
         link: false,

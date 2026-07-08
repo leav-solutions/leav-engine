@@ -15,7 +15,7 @@ describe('threadActionCallbacks', () => {
     });
 
     it('registers then returns callbacks (multi-fire: not consumed on read)', () => {
-        const onCommentSubmitted = jest.fn();
+        const onCommentSubmitted = vi.fn();
         registerThreadActionCallbacks(key, {onCommentSubmitted});
 
         getThreadActionCallbacks(key)?.onCommentSubmitted?.();
@@ -25,8 +25,8 @@ describe('threadActionCallbacks', () => {
     });
 
     it('should overwrite callbacks when re-registered for the same key', () => {
-        const first = jest.fn();
-        const second = jest.fn();
+        const first = vi.fn();
+        const second = vi.fn();
         registerThreadActionCallbacks(key, {onCommentSubmitted: first});
         registerThreadActionCallbacks(key, {onCommentSubmitted: second});
 
@@ -37,7 +37,7 @@ describe('threadActionCallbacks', () => {
     });
 
     it('should clear the entry', () => {
-        registerThreadActionCallbacks(key, {onCommentSubmitted: jest.fn()});
+        registerThreadActionCallbacks(key, {onCommentSubmitted: vi.fn()});
         clearThreadActionCallbacks(key);
         expect(getThreadActionCallbacks(key)).toBeUndefined();
     });

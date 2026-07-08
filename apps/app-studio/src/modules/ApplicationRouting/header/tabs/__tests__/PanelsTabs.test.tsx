@@ -8,16 +8,16 @@ import * as ApplicationSettingsContext from '../../../../../config/application-i
 import {matomo} from '../../../../../services/analytics';
 import {matomoEvents} from '../../../../../services/analytics/constants/matomoEvents';
 
-const mockNavigate = jest.fn();
+const mockNavigate = vi.fn();
 
-jest.mock('../../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn(),
+vi.mock('../../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
 }));
 
-jest.mock('react-router-dom', () => ({
-    ...jest.requireActual('react-router-dom'),
+vi.mock('react-router-dom', async () => ({
+    ...(await vi.importActual('react-router-dom')),
     useNavigate: () => mockNavigate,
-    generatePath: jest.fn((path, params) => {
+    generatePath: vi.fn((path, params) => {
         if (!params) {
             return path;
         }
@@ -29,20 +29,20 @@ jest.mock('react-router-dom', () => ({
     }),
 }));
 
-const mockUseGetPanelsAttributeCounts = jest.fn();
+const mockUseGetPanelsAttributeCounts = vi.fn();
 
-jest.mock('../panels-attribute-counts/useGetPanelsAttributeCounts', () => ({
+vi.mock('../panels-attribute-counts/useGetPanelsAttributeCounts', () => ({
     useGetPanelsAttributeCounts: (...args: any[]) => mockUseGetPanelsAttributeCounts(...args),
 }));
 
-jest.mock('../../../../../services/analytics', () => ({
-    ...jest.requireActual('../../../../../services/analytics'),
-    matomo: {trackNavigationEvent: jest.fn()},
+vi.mock('../../../../../services/analytics', async () => ({
+    ...(await vi.importActual('../../../../../services/analytics')),
+    matomo: {trackNavigationEvent: vi.fn()},
 }));
 
 describe('PanelsTabs', () => {
     const renderWithTheme: typeof render = component => render(<InitTheme>{component}</InitTheme>);
-    const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const spyUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
     let user: ReturnType<typeof userEvent.setup>;
 
     const mockPanel1: Panel = {
@@ -169,7 +169,7 @@ describe('PanelsTabs', () => {
     };
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         mockUseGetPanelsAttributeCounts.mockReturnValue({
             panelsCounts: {},
         });

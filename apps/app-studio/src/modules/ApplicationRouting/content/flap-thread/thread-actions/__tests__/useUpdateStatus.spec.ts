@@ -3,19 +3,19 @@ import {renderHook, act} from '_ui/_tests/testUtils';
 import {useUpdateStatus} from '../useUpdateStatus';
 import * as callbacksHook from '../../../../stores/threadActionCallbacks';
 
-const saveValueBatchMutationMock = jest.fn().mockResolvedValue({});
+const saveValueBatchMutationMock = vi.fn().mockResolvedValue({});
 
-jest.mock('_ui/_gqlTypes', () => ({
-    ...jest.requireActual('_ui/_gqlTypes'),
+vi.mock('_ui/_gqlTypes', async () => ({
+    ...(await vi.importActual('_ui/_gqlTypes')),
     useSaveValueBatchMutation: () => [saveValueBatchMutationMock],
 }));
 
 describe('useUpdateStatus thread-action callback', () => {
-    const onDiscussionStatusChanged = jest.fn();
+    const onDiscussionStatusChanged = vi.fn();
 
     beforeEach(() => {
-        jest.clearAllMocks();
-        jest.spyOn(callbacksHook, 'getThreadActionCallbacks').mockReturnValue({onDiscussionStatusChanged});
+        vi.clearAllMocks();
+        vi.spyOn(callbacksHook, 'getThreadActionCallbacks').mockReturnValue({onDiscussionStatusChanged});
     });
 
     it('fires onDiscussionStatusChanged after a successful update', async () => {

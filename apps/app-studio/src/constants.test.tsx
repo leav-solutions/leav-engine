@@ -9,7 +9,7 @@ describe('constants', () => {
             window.__global_base_url__ = '';
             window.__dynamic_base__ = '/app/app-studio';
 
-            jest.resetModules();
+            vi.resetModules();
             constants = await import('./constants');
         });
 
@@ -44,7 +44,7 @@ describe('constants', () => {
             window.__global_base_url__ = '/campaigns-manager';
             window.__dynamic_base__ = '/campaigns-manager/app/app-studio';
 
-            jest.resetModules();
+            vi.resetModules();
             constants = await import('./constants');
         });
 

@@ -7,13 +7,13 @@ import userEvent from '@testing-library/user-event';
 import {matomo} from '../../../../services/analytics';
 import {matomoEvents} from '../../../../services/analytics/constants/matomoEvents';
 
-jest.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
-    useApplicationSettingsContext: jest.fn(),
+vi.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
+    useApplicationSettingsContext: vi.fn(),
 }));
 
-jest.mock('../../../../services/analytics', () => ({
-    ...jest.requireActual('../../../../services/analytics'),
-    matomo: {trackNavigationEvent: jest.fn()},
+vi.mock('../../../../services/analytics', async () => ({
+    ...(await vi.importActual('../../../../services/analytics')),
+    matomo: {trackNavigationEvent: vi.fn()},
 }));
 
 const mockApplicationWithRecordsAndLibrariesWorkspaces: Application = {
@@ -113,7 +113,7 @@ const mockApplicationWithMoreThanTenRecordsAndLibrariesWorkspaces: Application =
 
 describe('WorkspacesNavigationMenu component', () => {
     const renderWithTheme: typeof render = component => render(<InitTheme>{component}</InitTheme>);
-    const spyUseApplicationSettingsContext = jest.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
+    const spyUseApplicationSettingsContext = vi.spyOn(ApplicationSettingsContext, 'useApplicationSettingsContext');
 
     // KitSideMenu renders workspace items as <button data-role="menuitem"> (groups/separators excluded)
     const getMenuItems = () => document.querySelectorAll<HTMLElement>('[data-role="menuitem"]');
@@ -121,7 +121,7 @@ describe('WorkspacesNavigationMenu component', () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
         user = userEvent.setup();
     });
 
