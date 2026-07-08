@@ -275,17 +275,20 @@ export default function ({
     ): Promise<ISDO> => {
         const recordIdentity = await recordDomain.getRecordIdentity(record, ctx);
 
-        // Application-traceability values stored on the record (TEXT attributes; only read when the
-        // library actually carries them — legacy/system libraries may not).
+        // Application-traceability values stored on the record (TEXT attributes). All libraries carry
+        // them (added by a core migration), but legacy/system libraries might not — swallow the lookup
+        // error in that case rather than checking existence upfront.
         const leavLibraryId = sdoMappingLibrary.leavLibraryId;
-        const hasAttribute = (attributeId: string): boolean => attributes.some(attr => attr.id === attributeId);
+        const _getStoredValueOrNull = async (attributePath: string): Promise<string | null> => {
+            try {
+                return await _getStoredValue(leavLibraryId, record, attributePath, ctx);
+            } catch {
+                return null;
+            }
+        };
         const [creatorClientId, storedApplicationIds] = await Promise.all([
-            hasAttribute(SdoAttributes.CREATOR_CLIENT_ID)
-                ? _getStoredValue(leavLibraryId, record, SdoAttributes.CREATOR_CLIENT_ID, ctx)
-                : null,
-            hasAttribute(SdoAttributes.APPLICATION_IDS)
-                ? _getStoredValue(leavLibraryId, record, SdoAttributes.APPLICATION_IDS, ctx)
-                : null,
+            _getStoredValueOrNull(SdoAttributes.CREATOR_CLIENT_ID),
+            _getStoredValueOrNull(SdoAttributes.APPLICATION_IDS),
         ]);
 
         let legacyApplicationIds: Record<string, unknown> = {};

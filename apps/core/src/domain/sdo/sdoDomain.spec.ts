@@ -206,7 +206,8 @@ describe('sdoDomain', () => {
                 ),
             ).rejects.toThrow();
             expect(mockRecordDomain.find).toHaveBeenCalledTimes(1);
-            expect(mockRecordDomain.getRecordFieldValue).toHaveBeenCalledTimes(2);
+            // 2 mapped attributes ("wrong", "uuid") + 2 application-traceability lookups in _createSDO.
+            expect(mockRecordDomain.getRecordFieldValue).toHaveBeenCalledTimes(4);
             expect(jsonschemaSpy).toHaveBeenCalled();
             expect(mockValueDomain.saveValue).not.toHaveBeenCalled();
         });
