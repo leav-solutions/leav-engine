@@ -1,21 +1,21 @@
 import {render, screen} from '_ui/_tests/testUtils';
-import * as generated from '../../../__generated__';
+import * as generated from '../../../../../../__generated__';
 import {TreeExplorer} from '../TreeExplorer';
 
-jest.mock('@leav/ui', () => ({
-    ...jest.requireActual('@leav/ui'),
-    useGetRecordUpdatesSubscription: jest.fn(),
+vi.mock('@leav/ui', async () => ({
+    ...(await vi.importActual('@leav/ui')),
+    useGetRecordUpdatesSubscription: vi.fn(),
 }));
 
-jest.mock('../NavigationView', () => ({
+vi.mock('../NavigationView', () => ({
     NavigationView: () => <div>navigation-view</div>,
 }));
 
 describe('TreeExplorer', () => {
-    const spyUseGetTree = jest.spyOn(generated, 'useGetTreeForExplorerQuery');
+    const spyUseGetTree = vi.spyOn(generated, 'useGetTreeForExplorerQuery');
 
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     const buildTreeResult = (accessTree: boolean) =>

@@ -1,4 +1,3 @@
-import {type FunctionComponent} from 'react';
 import {type ITreeExplorerNode, type OnMessagesFunc} from '../../_types';
 import {useTreeExplorerState} from '../../store/useTreeExplorerState';
 import {AddSelectionButton} from './AddSelectionButton';
@@ -11,11 +10,7 @@ interface ISelectionActionsProps {
     onMessages: OnMessagesFunc;
 }
 
-export const SelectionActions: FunctionComponent<ISelectionActionsProps> = ({
-    parent,
-    allowedChildrenLibraries,
-    onMessages,
-}) => {
+export const SelectionActions = ({parent, allowedChildrenLibraries, onMessages}: ISelectionActionsProps) => {
     const {activeTree, selection} = useTreeExplorerState();
     const hasSelection = !!selection.selected.length;
 

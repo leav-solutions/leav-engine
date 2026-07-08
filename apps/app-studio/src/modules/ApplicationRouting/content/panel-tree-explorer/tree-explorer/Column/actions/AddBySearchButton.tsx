@@ -1,15 +1,16 @@
-import {type CSSProperties, type FunctionComponent, useState} from 'react';
+import {type CSSProperties, useState} from 'react';
 import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {type ISearchSelection, SearchModal, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Dropdown, message, Tooltip} from 'antd';
 import {useTranslation} from 'react-i18next';
-import {type TreeElementInput, useAddTreeElementMutation} from '../../../../__generated__';
+import {type TreeElementInput, useAddTreeElementMutation} from '../../../../../../../__generated__';
 import {type IMessages, type ITreeExplorerNode, type ITreeMutationError, type OnMessagesFunc} from '../../_types';
 import {type ITreeAllowedChildLibrary} from '../../hooks/useTreeLibraryAllowedAsChild';
 import {useRefreshTreeContent} from '../../hooks/useRefreshTreeContent';
 import {useTreeExplorerState} from '../../store/useTreeExplorerState';
+import {withTreeMutationError} from '../../utils';
 
 interface IAddBySearchButtonProps {
     availableLibraries: ITreeAllowedChildLibrary[];
@@ -17,11 +18,7 @@ interface IAddBySearchButtonProps {
     onMessages: OnMessagesFunc;
 }
 
-export const AddBySearchButton: FunctionComponent<IAddBySearchButtonProps> = ({
-    availableLibraries,
-    parent,
-    onMessages,
-}) => {
+export const AddBySearchButton = ({availableLibraries, parent, onMessages}: IAddBySearchButtonProps) => {
     const {t} = useTranslation();
     const {lang} = useLang();
     const {activeTree} = useTreeExplorerState();
@@ -59,30 +56,16 @@ export const AddBySearchButton: FunctionComponent<IAddBySearchButtonProps> = ({
 
                 messages = {...messages, countValid: messages.countValid + 1};
             } catch (e) {
-                const {graphQLErrors, message: errorMessage} = e as ITreeMutationError;
-                if (graphQLErrors && graphQLErrors.length) {
-                    const errorMessageParent = graphQLErrors[0].extensions?.fields?.parent;
-                    const errorMessageElement = graphQLErrors[0].extensions?.fields?.element;
-
-                    if (errorMessageParent) {
-                        messages.errors[errorMessageParent] = [
-                            ...(messages.errors[errorMessageParent] ?? []),
-                            elementSelected.id,
-                        ];
-                    }
-                    if (errorMessageElement) {
-                        messages.errors[errorMessageElement] = [
-                            ...(messages.errors[errorMessageElement] ?? []),
-                            elementSelected.label || elementSelected.id,
-                        ];
-                    }
+                const error = e as ITreeMutationError;
+                if (error.graphQLErrors?.length) {
+                    messages = withTreeMutationError(messages, error, elementSelected);
                 } else {
-                    message.error(`${errorMessage}`);
+                    message.error(`${error.message}`);
                 }
             }
         }
 
-        onMessages('tree-explorer.infos.success-add', 'tree-explorer.infos.error-add', messages);
+        onMessages('tree_explorer.infos.success_add', 'tree_explorer.infos.error_add', messages);
         refreshTreeContent();
     };
 
@@ -105,12 +88,12 @@ export const AddBySearchButton: FunctionComponent<IAddBySearchButtonProps> = ({
                         })),
                     }}
                 >
-                    <Tooltip title={t('tree-explorer.header.add_by_search')} placement="top">
+                    <Tooltip title={t('tree_explorer.header.add_by_search')} placement="top">
                         <Button icon={buttonIcon} style={buttonStyle} />
                     </Tooltip>
                 </Dropdown>
             ) : (
-                <Tooltip title={t('tree-explorer.header.add_by_search')} placement="top">
+                <Tooltip title={t('tree_explorer.header.add_by_search')} placement="top">
                     <Button
                         icon={buttonIcon}
                         aria-label="add-by-search"

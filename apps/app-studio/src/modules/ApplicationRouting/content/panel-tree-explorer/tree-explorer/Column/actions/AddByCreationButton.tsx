@@ -1,25 +1,27 @@
-import {type FunctionComponent, useState} from 'react';
+import {useState} from 'react';
 import {PlusOutlined} from '@ant-design/icons';
-import {EditRecordModal, type IRecordIdentityWhoAmI, useLang} from '@leav/ui';
+import {EditRecordPage, type IRecordIdentityWhoAmI, SUBMIT_BUTTONS_PORTAL, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {Button, Dropdown, message, Tooltip} from 'antd';
+import {KitModal} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
-import {useAddTreeElementMutation} from '../../../../__generated__';
+import {useAddTreeElementMutation} from '../../../../../../../__generated__';
 import {type IMessages, type ITreeExplorerNode, type ITreeMutationError, type OnMessagesFunc} from '../../_types';
 import {type ITreeAllowedChildLibrary} from '../../hooks/useTreeLibraryAllowedAsChild';
 import {useRefreshTreeContent} from '../../hooks/useRefreshTreeContent';
 import {useTreeExplorerState} from '../../store/useTreeExplorerState';
 
-interface IAddByCreationButtonProps {
-    availableLibraries: ITreeAllowedChildLibrary[];
-    parent?: ITreeExplorerNode;
-    onMessages: OnMessagesFunc;
-}
+const CREATION_POPUP_WIDTH = '656px';
+const CREATION_POPUP_HEIGHT = '80vh';
 
-export const AddByCreationButton: FunctionComponent<IAddByCreationButtonProps> = ({
+export const AddByCreationButton = ({
     availableLibraries,
     parent,
     onMessages,
+}: {
+    availableLibraries: ITreeAllowedChildLibrary[];
+    parent?: ITreeExplorerNode;
+    onMessages: OnMessagesFunc;
 }) => {
     const {t} = useTranslation();
     const {lang} = useLang();
@@ -67,7 +69,7 @@ export const AddByCreationButton: FunctionComponent<IAddByCreationButtonProps> =
                 message.error(`${errorMessage}`);
             }
         }
-        onMessages('tree-explorer.infos.success-add', 'tree-explorer.infos.error-add', messages);
+        onMessages('tree_explorer.infos.success_add', 'tree_explorer.infos.error_add', messages);
 
         refreshTreeContent();
         _handleCloseCreateRecordModal();
@@ -78,6 +80,11 @@ export const AddByCreationButton: FunctionComponent<IAddByCreationButtonProps> =
     }
 
     const buttonIcon = <PlusOutlined />;
+
+    const createRecordLibrary = availableLibraries.find(library => library.library.id === createRecordLibraryId);
+    const creationPopupTitle = createRecordLibrary
+        ? localizedTranslation(createRecordLibrary.library.label, lang)
+        : t('tree_explorer.header.add_by_creation');
 
     return (
         <>
@@ -91,12 +98,12 @@ export const AddByCreationButton: FunctionComponent<IAddByCreationButtonProps> =
                         })),
                     }}
                 >
-                    <Tooltip title={t('tree-explorer.header.add_by_creation')} placement="top">
+                    <Tooltip title={t('tree_explorer.header.add_by_creation')} placement="top">
                         <Button icon={buttonIcon} />
                     </Tooltip>
                 </Dropdown>
             ) : (
-                <Tooltip title={t('tree-explorer.header.add_by_creation')} placement="top">
+                <Tooltip title={t('tree_explorer.header.add_by_creation')} placement="top">
                     <Button
                         icon={buttonIcon}
                         aria-label="add-by-creation"
@@ -105,13 +112,25 @@ export const AddByCreationButton: FunctionComponent<IAddByCreationButtonProps> =
                 </Tooltip>
             )}
             {isCreateRecordModalVisible && (
-                <EditRecordModal
-                    open={isCreateRecordModalVisible}
-                    library={createRecordLibraryId}
-                    record={null}
-                    onClose={_handleCloseCreateRecordModal}
-                    onCreate={_handleCreateRecord}
-                />
+                <KitModal
+                    isOpen
+                    showCloseIcon
+                    width={CREATION_POPUP_WIDTH}
+                    height={CREATION_POPUP_HEIGHT}
+                    title={creationPopupTitle}
+                    footer={<div id={SUBMIT_BUTTONS_PORTAL} />}
+                    close={_handleCloseCreateRecordModal}
+                >
+                    <EditRecordPage
+                        record={null}
+                        library={createRecordLibraryId}
+                        showHeader={false}
+                        isSubmitButtonsPortal
+                        removePadding
+                        onCreate={_handleCreateRecord}
+                        onClose={_handleCloseCreateRecordModal}
+                    />
+                </KitModal>
             )}
         </>
     );

@@ -1,4 +1,7 @@
-import {type GetTreeLibrariesForExplorerQuery, useGetTreeLibrariesForExplorerQuery} from '../../../__generated__';
+import {
+    type GetTreeLibrariesForExplorerQuery,
+    useGetTreeLibrariesForExplorerQuery,
+} from '../../../../../../__generated__';
 import {type ITreeExplorerNode} from '../_types';
 
 export type ITreeAllowedChildLibrary = NonNullable<

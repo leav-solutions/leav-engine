@@ -1,4 +1,4 @@
-import {type GetTreeForExplorerQuery, type GetTreeNodeChildrenQuery} from '../../__generated__';
+import {type GetTreeForExplorerQuery, type GetTreeNodeChildrenQuery} from '../../../../../__generated__';
 
 /** Tree metadata (id, label, behavior, libraries, permissions) loaded once for the whole explorer. */
 export type ITreeExplorerTree = NonNullable<GetTreeForExplorerQuery['trees']>['list'][number];

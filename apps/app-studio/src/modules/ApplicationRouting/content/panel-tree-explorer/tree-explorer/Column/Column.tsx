@@ -1,47 +1,26 @@
-import {type FunctionComponent, useEffect, useRef, useState} from 'react';
-import {ErrorDisplay, Loading, themeVars} from '@leav/ui';
+import {useEffect, useRef, useState} from 'react';
+import {ErrorDisplay, Loading} from '@leav/ui';
 import {Pagination} from 'antd';
-import styled from 'styled-components';
-import {useGetTreeNodeChildrenQuery, useTreeEventsSubscription} from '../../../__generated__';
 import {TREE_NAVIGATION_PAGE_SIZE} from '../constants';
 import {type INavigationElement} from '../_types';
 import {useTreeExplorerState} from '../store/useTreeExplorerState';
 import {DetailNavigation} from './DetailNavigation';
 import {HeaderColumnNavigation} from './HeaderColumnNavigation';
 import {Row} from './Row';
+import {columnContent, columnPagination, columnWrapper} from './column.module.css';
+import {useGetTreeNodeChildrenQuery, useTreeEventsSubscription} from '../../../../../../__generated__';
 
-const ColumnWrapper = styled.div`
-    border-right: 1px solid ${themeVars.borderLightColor};
-    width: ${themeVars.navigationColumnWidth};
-    height: 100%;
-    display: flex;
-    flex-flow: column nowrap;
-    flex-shrink: 0;
-
-    background: ${themeVars.defaultBg};
-`;
-
-const ColumnContent = styled.div`
-    overflow-y: auto;
-    height: 100%;
-`;
-
-const ColumnPagination = styled(Pagination)`
-    && {
-        text-align: center;
-        padding: 0.5em 0;
-        border-bottom: 1px solid ${themeVars.borderColor};
-    }
-`;
-
-interface IColumnProps {
+export const Column = ({
+    treeId,
+    treeElement,
+    depth,
+    isActive: columnActive,
+}: {
     treeId: string;
     treeElement?: INavigationElement;
     depth: number;
     isActive: boolean;
-}
-
-export const Column: FunctionComponent<IColumnProps> = ({treeId, treeElement, depth, isActive: columnActive}) => {
+}) => {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [totalCount, setTotalCount] = useState<number>(0);
 
@@ -86,7 +65,7 @@ export const Column: FunctionComponent<IColumnProps> = ({treeId, treeElement, de
     // No manual refetch on page change: `queryVariables.pagination.offset` derives from `currentPage`,
     // so Apollo re-runs the query automatically when the page changes.
 
-    const children = data?.treeNodeChildren.list ?? [];
+    const columnNodes = data?.treeNodeChildren.list ?? [];
     const canDisplayContent = !error;
     const showDetails = treeElement && ((!loading && !totalCount) || treeElement.showDetails);
 
@@ -103,15 +82,14 @@ export const Column: FunctionComponent<IColumnProps> = ({treeId, treeElement, de
     };
 
     return (
-        <ColumnWrapper ref={ref} data-testid={`navigation-column${showDetails ? '-with-details' : ''}`}>
+        <div ref={ref} className={columnWrapper} data-testid={`navigation-column${showDetails ? '-with-details' : ''}`}>
             <HeaderColumnNavigation
                 depth={depth}
                 treeElement={treeElement}
                 isActive={columnActive}
                 isDetail={showDetails}
-            >
-                {children}
-            </HeaderColumnNavigation>
+                columnNodes={columnNodes}
+            />
             {error && <ErrorDisplay message={error.message} />}
             {canDisplayContent && showDetails && (
                 <DetailNavigation
@@ -123,7 +101,8 @@ export const Column: FunctionComponent<IColumnProps> = ({treeId, treeElement, de
             {canDisplayContent && (
                 <>
                     {totalCount > TREE_NAVIGATION_PAGE_SIZE && (
-                        <ColumnPagination
+                        <Pagination
+                            className={columnPagination}
                             simple
                             current={currentPage}
                             total={totalCount}
@@ -134,14 +113,14 @@ export const Column: FunctionComponent<IColumnProps> = ({treeId, treeElement, de
                     {loading ? (
                         <Loading />
                     ) : (
-                        <ColumnContent>
-                            {children.map(child => (
+                        <div className={columnContent}>
+                            {columnNodes.map(child => (
                                 <Row key={child.id} treeElement={child} depth={depth} isActive={columnActive} />
                             ))}
-                        </ColumnContent>
+                        </div>
                     )}
                 </>
             )}
-        </ColumnWrapper>
+        </div>
     );
 };

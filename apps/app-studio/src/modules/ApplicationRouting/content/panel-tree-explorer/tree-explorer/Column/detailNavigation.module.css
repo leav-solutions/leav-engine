@@ -1,0 +1,39 @@
+/* Color/size literals mirror `themeVars` from @leav/ui (navigationColumnWidth, defaultBg, borderLightColor). */
+.detail {
+    position: relative;
+    min-width: 20rem;
+    max-width: 20rem;
+
+    display: grid;
+    justify-items: center;
+    word-break: break-all;
+
+    background: #ffffff;
+    border-right: 1px solid rgb(240, 240, 240);
+    border-bottom: 1px solid rgb(240, 240, 240);
+    padding: 1rem;
+}
+
+.content {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: start;
+    gap: 0.5rem;
+}
+
+.detailElement span {
+    font-weight: 600;
+}
+
+.previewWrapper {
+    padding: 2rem;
+    width: 100%;
+}
+
+.closeButton {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 1.1em;
+    cursor: pointer;
+}

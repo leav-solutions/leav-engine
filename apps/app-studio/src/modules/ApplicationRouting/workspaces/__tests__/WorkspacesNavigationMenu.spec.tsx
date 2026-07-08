@@ -139,6 +139,37 @@ describe('WorkspacesNavigationMenu component', () => {
         expect(screen.getByText('library2')).toBeInTheDocument();
     });
 
+    it('should render tree workspaces alongside library workspaces', () => {
+        const application: Application = {
+            workspaces: [
+                {
+                    id: 'library1',
+                    title: {fr: 'library1', en: 'library1'},
+                    type: 'library',
+                    libraryId: 'test1',
+                },
+                {
+                    id: 'tree1_tree_workspace',
+                    title: {fr: 'tree1', en: 'tree1'},
+                    icon: 'fa-sitemap',
+                    type: 'tree',
+                    treeId: 'tree1',
+                },
+            ],
+            libraries: {},
+        };
+        spyUseApplicationSettingsContext.mockReturnValue([application] as any);
+
+        renderWithTheme(<WorkspacesNavigationMenu />);
+
+        expect(getMenuItems()).toHaveLength(2); // 1 library + 1 tree
+        expect(screen.getByText('library1')).toBeInTheDocument();
+        expect(screen.getByText('tree1')).toBeInTheDocument();
+
+        const treeWorkspaceItem = getMenuItems()[1];
+        expect(treeWorkspaceItem.querySelector('svg')).toHaveClass('fa-sitemap');
+    });
+
     it('should render default icons when no icon is specified', () => {
         const application: Application = {
             workspaces: [

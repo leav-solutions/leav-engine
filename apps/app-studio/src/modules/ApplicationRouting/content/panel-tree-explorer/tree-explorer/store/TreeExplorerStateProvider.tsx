@@ -1,4 +1,4 @@
-import {type FunctionComponent, type ReactNode, useCallback, useEffect, useMemo, useReducer} from 'react';
+import {type ReactNode, useCallback, useEffect, useMemo, useReducer} from 'react';
 import {type INavigationElement, type ITreeExplorerSelectedNode, type ITreeExplorerTree} from '../_types';
 import {TreeExplorerStateContext} from './TreeExplorerStateContext';
 import {treeExplorerInitialState, treeExplorerReducer} from './treeExplorerReducer';
@@ -13,10 +13,7 @@ interface ITreeExplorerStateProviderProps {
  * Replaces the data-studio Redux `navigation` and `selection` slices so the
  * component is self-contained inside app-studio.
  */
-export const TreeExplorerStateProvider: FunctionComponent<ITreeExplorerStateProviderProps> = ({
-    activeTree,
-    children,
-}) => {
+export const TreeExplorerStateProvider = ({activeTree, children}: ITreeExplorerStateProviderProps) => {
     const [state, dispatch] = useReducer(treeExplorerReducer, treeExplorerInitialState);
 
     // Switching to another tree resets both the path and the selection.

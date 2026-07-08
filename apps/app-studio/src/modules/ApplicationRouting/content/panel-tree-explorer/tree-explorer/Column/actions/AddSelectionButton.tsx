@@ -1,11 +1,11 @@
-import {type FunctionComponent} from 'react';
 import {PlusOutlined} from '@ant-design/icons';
 import {Button, message} from 'antd';
 import {useTranslation} from 'react-i18next';
-import {type TreeElementInput, useAddTreeElementMutation} from '../../../../__generated__';
+import {type TreeElementInput, useAddTreeElementMutation} from '../../../../../../../__generated__';
 import {type IMessages, type ITreeExplorerNode, type ITreeMutationError, type OnMessagesFunc} from '../../_types';
 import {useRefreshTreeContent} from '../../hooks/useRefreshTreeContent';
 import {useTreeExplorerState} from '../../store/useTreeExplorerState';
+import {withTreeMutationError} from '../../utils';
 
 interface IAddSelectionButtonProps {
     allowedLibraries: string[];
@@ -13,11 +13,7 @@ interface IAddSelectionButtonProps {
     onMessages: OnMessagesFunc;
 }
 
-export const AddSelectionButton: FunctionComponent<IAddSelectionButtonProps> = ({
-    allowedLibraries,
-    parent,
-    onMessages,
-}) => {
+export const AddSelectionButton = ({allowedLibraries, parent, onMessages}: IAddSelectionButtonProps) => {
     const {t} = useTranslation();
     const {activeTree, selection, resetSelection} = useTreeExplorerState();
     const [addToTree] = useAddTreeElementMutation();
@@ -46,31 +42,14 @@ export const AddSelectionButton: FunctionComponent<IAddSelectionButtonProps> = (
                     });
                     messages = {...messages, countValid: messages.countValid + 1};
                 } catch (e) {
-                    const {graphQLErrors} = e as ITreeMutationError;
-                    if (graphQLErrors && graphQLErrors.length) {
-                        const errorMessageParent = graphQLErrors[0].extensions?.fields?.parent;
-                        const errorMessageElement = graphQLErrors[0].extensions?.fields?.element;
-
-                        if (errorMessageParent) {
-                            messages.errors[errorMessageParent] = [
-                                ...(messages.errors[errorMessageParent] ?? []),
-                                elementSelected.id,
-                            ];
-                        }
-                        if (errorMessageElement) {
-                            messages.errors[errorMessageElement] = [
-                                ...(messages.errors[errorMessageElement] ?? []),
-                                elementSelected.label || elementSelected.id,
-                            ];
-                        }
-                    }
+                    messages = withTreeMutationError(messages, e as ITreeMutationError, elementSelected);
                 }
             }
 
-            onMessages('tree-explorer.infos.success-add', 'tree-explorer.infos.error-add', messages);
+            onMessages('tree_explorer.infos.success_add', 'tree_explorer.infos.error_add', messages);
             refreshTreeContent();
         } else {
-            message.warning(t('tree-explorer.infos.warning-add-no-selection'));
+            message.warning(t('tree_explorer.infos.warning_add_no_selection'));
         }
 
         resetSelection();
@@ -85,7 +64,7 @@ export const AddSelectionButton: FunctionComponent<IAddSelectionButtonProps> = (
             icon={<PlusOutlined />}
             onClick={_handleAddElements}
             aria-label="add-selection"
-            title={t('tree-explorer.actions.add-selected')}
+            title={t('tree_explorer.actions.add_selected')}
         />
     );
 };

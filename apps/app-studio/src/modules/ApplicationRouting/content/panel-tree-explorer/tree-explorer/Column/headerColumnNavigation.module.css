@@ -1,0 +1,27 @@
+/* Color/size literals mirror `themeVars` from @leav/ui (secondaryBg, navigationColumnWidth). */
+.headerColumn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: #f0f0f0;
+    height: 4rem;
+    flex-shrink: 0;
+    cursor: pointer;
+    max-width: 20rem;
+
+    &:not(:hover) .selectAllCheckbox {
+        visibility: hidden;
+    }
+}
+
+.clearSelectionButton {
+    border: none;
+    /* mirrors themeVars.defaultTextColor from @leav/ui */
+    color: #000000;
+}
+
+.columnLabel {
+    margin-bottom: 0;
+    margin-right: 0.5em;
+}

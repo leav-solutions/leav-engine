@@ -1,4 +1,3 @@
-import {type FunctionComponent} from 'react';
 import {Space, message} from 'antd';
 import {useTranslation} from 'react-i18next';
 import {type OnMessagesFunc} from '../../_types';
@@ -6,16 +5,14 @@ import {useTreeExplorerState} from '../../store/useTreeExplorerState';
 import {useTreeLibraryAllowedAsChild} from '../../hooks/useTreeLibraryAllowedAsChild';
 import {DefaultActions} from './DefaultActions';
 import {SelectionActions} from './SelectionActions';
+import {actionsBar} from './headerColumnNavigationActions.module.css';
 
 interface IHeaderColumnNavigationActionsProps {
     depth: number;
     isDetail?: boolean;
 }
 
-export const HeaderColumnNavigationActions: FunctionComponent<IHeaderColumnNavigationActionsProps> = ({
-    depth,
-    isDetail,
-}) => {
+export const HeaderColumnNavigationActions = ({depth, isDetail}: IHeaderColumnNavigationActionsProps) => {
     const {t} = useTranslation();
     const {activeTree, path} = useTreeExplorerState();
 
@@ -42,7 +39,7 @@ export const HeaderColumnNavigationActions: FunctionComponent<IHeaderColumnNavig
     };
 
     return (
-        <Space.Compact style={{height: '30px'}}>
+        <Space.Compact className={actionsBar}>
             <SelectionActions
                 parent={parent}
                 allowedChildrenLibraries={allowedLibrariesIds}

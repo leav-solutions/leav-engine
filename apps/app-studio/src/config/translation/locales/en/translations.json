@@ -1,13 +1,12 @@
 {
-    "tree-explorer": {
+    "tree_explorer": {
         "tree_not_found": "This tree does not exist",
         "access_denied": "You cannot access this element",
         "inactive_element": "This element is inactive",
-        "feature_not_available": "This feature will be available soon!",
         "details": "Details",
         "header": {
             "selection_label": "Selection: {{count}}",
-            "nb-selection": "{{nb}} elements in selection",
+            "nb_selection": "{{nb}} elements in selection",
             "add_by_search": "Search and add",
             "add_by_creation": "Create and add"
         },
@@ -15,30 +14,34 @@
             "info": {
                 "id": "Id",
                 "label": "Label",
-                "no-label": "No label"
+                "no_label": "No label"
             }
         },
         "actions": {
-            "order": "Order",
             "details": "Details",
             "edit": "Edit",
-            "classified_in": "Search in",
             "detach": "Detach",
-            "move-selected": "Move selection",
-            "detach-selected": "Detach selection",
-            "add-selected": "Add selection",
+            "move_selected": "Move selection",
+            "detach_selected": "Detach selection",
+            "add_selected": "Add selection",
             "generate_previews": "Generate previews",
             "upload": "Upload files",
             "create_directory": "Create directory"
         },
         "infos": {
-            "success-add": "{{nb}} elements have been added",
-            "error-add": "An error occurs while adding elements {{elements}}: {{errorMessage}}",
-            "warning-add-no-selection": "No selection to add",
-            "success-move": "{{nb}} elements have been moved",
-            "error-move": "An error occurs while moving elements {{elements}}: {{errorMessage}}",
-            "success-detach": "{{nb}} elements have been detached",
-            "error-detach": "An error occurs while detaching elements {{elements}}: {{errorMessage}}"
+            "success_add": "{{nb}} elements have been added",
+            "error_add": "An error occurs while adding elements {{elements}}: {{errorMessage}}",
+            "warning_add_no_selection": "No selection to add",
+            "success_move": "{{nb}} elements have been moved",
+            "error_move": "An error occurs while moving elements {{elements}}: {{errorMessage}}",
+            "success_detach": "{{nb}} elements have been detached",
+            "error_detach": "An error occurs while detaching elements {{elements}}: {{errorMessage}}"
+        },
+        "confirm": {
+            "detach_title": "Detach element",
+            "detach_content": "Do you really want to detach \"{{label}}\" from the tree? Its child elements will also be detached. This action cannot be undone.",
+            "detach_selection_title": "Detach selection",
+            "detach_selection_content": "Do you really want to detach {{count}} element(s) from the tree? Their child elements will also be detached. This action cannot be undone."
         }
     },
     "global": {

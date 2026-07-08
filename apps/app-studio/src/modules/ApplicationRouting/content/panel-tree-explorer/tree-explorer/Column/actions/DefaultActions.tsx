@@ -1,4 +1,4 @@
-import {type FunctionComponent, useState} from 'react';
+import {useState} from 'react';
 import {
     CloudUploadOutlined,
     DeleteOutlined,
@@ -6,15 +6,13 @@ import {
     FolderAddOutlined,
     InfoCircleOutlined,
     MoreOutlined,
-    OrderedListOutlined,
     PictureOutlined,
-    SearchOutlined,
 } from '@ant-design/icons';
-import {CreateDirectory, EditRecordModal, TriggerPreviewsGenerationModal, UploadFiles} from '@leav/ui';
+import {CreateDirectory, EditRecordModal, TriggerPreviewsGenerationModal, UploadFiles, useConfirmModal} from '@leav/ui';
 import {Button, Dropdown, message} from 'antd';
 import {type ItemType} from 'antd/es/menu/interface';
 import {useTranslation} from 'react-i18next';
-import {LibraryBehavior, TreeBehavior, useRemoveTreeElementMutation} from '../../../../__generated__';
+import {LibraryBehavior, TreeBehavior, useRemoveTreeElementMutation} from '../../../../../../../__generated__';
 import {type ITreeExplorerNode, type OnMessagesFunc} from '../../_types';
 import {type ITreeAllowedChildLibrary} from '../../hooks/useTreeLibraryAllowedAsChild';
 import {useRefreshTreeContent} from '../../hooks/useRefreshTreeContent';
@@ -23,18 +21,16 @@ import {getDirectoriesLibraryId, getFilesLibraryId} from '../../utils';
 import {AddByCreationButton} from './AddByCreationButton';
 import {AddBySearchButton} from './AddBySearchButton';
 
-interface IDefaultActionsProps {
-    isDetail: boolean;
-    parent?: ITreeExplorerNode;
-    allowedChildrenLibraries: ITreeAllowedChildLibrary[];
-    onMessages: OnMessagesFunc;
-}
-
-export const DefaultActions: FunctionComponent<IDefaultActionsProps> = ({
+export const DefaultActions = ({
     isDetail,
     parent,
     allowedChildrenLibraries,
     onMessages,
+}: {
+    isDetail: boolean;
+    parent?: ITreeExplorerNode;
+    allowedChildrenLibraries: ITreeAllowedChildLibrary[];
+    onMessages: OnMessagesFunc;
 }) => {
     const {t} = useTranslation();
     const {activeTree, path, selection, setPath} = useTreeExplorerState();
@@ -46,6 +42,7 @@ export const DefaultActions: FunctionComponent<IDefaultActionsProps> = ({
 
     const [removeFromTree] = useRemoveTreeElementMutation();
     const {refreshTreeContent} = useRefreshTreeContent(activeTree.id);
+    const {openConfirmModal} = useConfirmModal();
 
     const _handleClickDetails = () => {
         const parentIndex = path.findIndex(p => p.id === parent?.id);
@@ -58,7 +55,7 @@ export const DefaultActions: FunctionComponent<IDefaultActionsProps> = ({
     const _handleOpenEditRecord = () => setEditRecordVisible(true);
     const _handleCloseEditRecord = () => setEditRecordVisible(false);
 
-    const _handleClickDetach = async () => {
+    const _detachElement = async () => {
         const label = parent.record.whoAmI.label;
 
         try {
@@ -69,10 +66,10 @@ export const DefaultActions: FunctionComponent<IDefaultActionsProps> = ({
                 },
             });
 
-            message.success(t('tree-explorer.infos.success-detach', {nb: 1}));
+            message.success(t('tree_explorer.infos.success_detach', {nb: 1}));
         } catch (e) {
             message.error(
-                t('tree-explorer.infos.error-detach', {
+                t('tree_explorer.infos.error_detach', {
                     elements: label ?? parent.record.id,
                     errorMessage: (e as Error).message,
                 }),
@@ -82,14 +79,23 @@ export const DefaultActions: FunctionComponent<IDefaultActionsProps> = ({
         refreshTreeContent();
     };
 
+    const _handleClickDetach = () => {
+        openConfirmModal({
+            title: t('tree_explorer.confirm.detach_title'),
+            content: t('tree_explorer.confirm.detach_content', {
+                label: parent?.record.whoAmI.label ?? parent?.record.id,
+            }),
+            dangerConfirm: true,
+            onOk: _detachElement,
+        });
+    };
+
     const _handleClickUpload = () => setIsUploadFilesModalVisible(true);
     const _handleCloseUpload = () => setIsUploadFilesModalVisible(false);
 
     const _handleCreateDirectory = () => setIsCreateDirectoryModalVisible(true);
     const _handleCloseCreateDirectory = () => setIsCreateDirectoryModalVisible(false);
 
-    const _handleClickClassifiedIn = () => message.warning(t('tree-explorer.feature_not_available'));
-    const _handleClickOrder = () => message.warning(t('tree-explorer.feature_not_available'));
     const _handleClickGeneratePreviews = () => setDisplayPreviewConfirm(true);
     const _handleClosePreviewGenerationConfirm = () => setDisplayPreviewConfirm(false);
 
@@ -106,7 +112,7 @@ export const DefaultActions: FunctionComponent<IDefaultActionsProps> = ({
                     key: 'upload',
                     icon: <CloudUploadOutlined />,
                     onClick: _handleClickUpload,
-                    label: t('tree-explorer.actions.upload'),
+                    label: t('tree_explorer.actions.upload'),
                 },
             },
             {
@@ -115,7 +121,7 @@ export const DefaultActions: FunctionComponent<IDefaultActionsProps> = ({
                     key: 'create_directory',
                     icon: <FolderAddOutlined />,
                     onClick: _handleCreateDirectory,
-                    label: t('tree-explorer.actions.create_directory'),
+                    label: t('tree_explorer.actions.create_directory'),
                 },
             },
             {
@@ -124,7 +130,7 @@ export const DefaultActions: FunctionComponent<IDefaultActionsProps> = ({
                     key: 'details',
                     icon: <InfoCircleOutlined />,
                     onClick: _handleClickDetails,
-                    label: t('tree-explorer.actions.details'),
+                    label: t('tree_explorer.actions.details'),
                 },
             },
             {
@@ -133,44 +139,26 @@ export const DefaultActions: FunctionComponent<IDefaultActionsProps> = ({
                     key: 'edit',
                     icon: <ExpandAltOutlined />,
                     onClick: _handleOpenEditRecord,
-                    label: t('tree-explorer.actions.edit'),
-                },
-            },
-            {
-                displayCondition: true,
-                item: {
-                    key: 'classified_in',
-                    icon: <SearchOutlined />,
-                    onClick: _handleClickClassifiedIn,
-                    label: t('tree-explorer.actions.classified_in'),
+                    label: t('tree_explorer.actions.edit'),
                 },
             },
             {
                 displayCondition: isFilesTree,
                 item: {
                     key: 'generate_previews',
-                    label: t('tree-explorer.actions.generate_previews'),
+                    label: t('tree_explorer.actions.generate_previews'),
                     icon: <PictureOutlined />,
                     onClick: _handleClickGeneratePreviews,
                 },
             },
-            {displayCondition: canEditChildren, item: {key: 'divider', type: 'divider'}},
-            {
-                displayCondition: canEditChildren,
-                item: {
-                    key: 'order',
-                    icon: <OrderedListOutlined />,
-                    onClick: _handleClickOrder,
-                    label: t('tree-explorer.actions.order'),
-                },
-            },
+            {displayCondition: canEditChildren && canDetach, item: {key: 'divider', type: 'divider'}},
             {
                 displayCondition: canEditChildren && canDetach,
                 item: {
                     key: 'detach',
                     icon: <DeleteOutlined />,
                     onClick: _handleClickDetach,
-                    label: t('tree-explorer.actions.detach'),
+                    label: t('tree_explorer.actions.detach'),
                 },
             },
         ] satisfies Array<{displayCondition: boolean; item: ItemType}>

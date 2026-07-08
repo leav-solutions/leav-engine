@@ -1,11 +1,11 @@
-import {type FunctionComponent} from 'react';
 import {ArrowDownOutlined} from '@ant-design/icons';
 import {Button} from 'antd';
 import {useTranslation} from 'react-i18next';
-import {useMoveTreeElementMutation} from '../../../../__generated__';
+import {useMoveTreeElementMutation} from '../../../../../../../__generated__';
 import {type IMessages, type ITreeExplorerNode, type ITreeMutationError, type OnMessagesFunc} from '../../_types';
 import {useRefreshTreeContent} from '../../hooks/useRefreshTreeContent';
 import {useTreeExplorerState} from '../../store/useTreeExplorerState';
+import {withTreeMutationError} from '../../utils';
 
 interface IMoveSelectionButtonProps {
     allowedLibraries: string[];
@@ -13,11 +13,7 @@ interface IMoveSelectionButtonProps {
     onMessages: OnMessagesFunc;
 }
 
-export const MoveSelectionButton: FunctionComponent<IMoveSelectionButtonProps> = ({
-    allowedLibraries,
-    parent,
-    onMessages,
-}) => {
+export const MoveSelectionButton = ({allowedLibraries, parent, onMessages}: IMoveSelectionButtonProps) => {
     const {t} = useTranslation();
     const {activeTree, selection, resetSelection} = useTreeExplorerState();
     const [moveInTree] = useMoveTreeElementMutation();
@@ -26,7 +22,7 @@ export const MoveSelectionButton: FunctionComponent<IMoveSelectionButtonProps> =
     const canMoveSelection = selection.selected.some(selected => allowedLibraries.includes(selected.library));
 
     const _handleMoveEnd = async () => {
-        const messages: IMessages = {countValid: 0, errors: {}};
+        let messages: IMessages = {countValid: 0, errors: {}};
         const parentTo = parent?.id ?? null;
         const selectionToMove = selection.selected.filter(selected => allowedLibraries.includes(selected.library));
 
@@ -41,29 +37,12 @@ export const MoveSelectionButton: FunctionComponent<IMoveSelectionButtonProps> =
                 });
                 messages.countValid++;
             } catch (e) {
-                const {graphQLErrors} = e as ITreeMutationError;
-                if (graphQLErrors && graphQLErrors.length) {
-                    const errorMessageParent = graphQLErrors[0].extensions?.fields?.parent;
-                    const errorMessageElement = graphQLErrors[0].extensions?.fields?.element;
-
-                    if (errorMessageParent) {
-                        messages.errors[errorMessageParent] = [
-                            ...(messages.errors[errorMessageParent] ?? []),
-                            elementSelected.id,
-                        ];
-                    }
-                    if (errorMessageElement) {
-                        messages.errors[errorMessageElement] = [
-                            ...(messages.errors[errorMessageElement] ?? []),
-                            elementSelected.label || elementSelected.id,
-                        ];
-                    }
-                }
+                messages = withTreeMutationError(messages, e as ITreeMutationError, elementSelected);
             }
         }
 
         refreshTreeContent();
-        onMessages('tree-explorer.infos.success-move', 'tree-explorer.infos.error-move', messages);
+        onMessages('tree_explorer.infos.success_move', 'tree_explorer.infos.error_move', messages);
         resetSelection();
     };
 
@@ -76,7 +55,7 @@ export const MoveSelectionButton: FunctionComponent<IMoveSelectionButtonProps> =
             onClick={_handleMoveEnd}
             icon={<ArrowDownOutlined />}
             aria-label="move-selection"
-            title={t('tree-explorer.actions.move-selected')}
+            title={t('tree_explorer.actions.move_selected')}
         />
     );
 };

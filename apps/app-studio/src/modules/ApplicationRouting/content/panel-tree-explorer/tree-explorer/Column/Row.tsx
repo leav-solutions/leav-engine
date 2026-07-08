@@ -1,12 +1,5 @@
-import {type FunctionComponent, useState} from 'react';
-import {
-    InfoCircleOutlined,
-    LockFilled,
-    PictureOutlined,
-    RightOutlined,
-    SearchOutlined,
-    WarningOutlined,
-} from '@ant-design/icons';
+import {type CSSProperties, useState} from 'react';
+import {InfoCircleOutlined, LockFilled, PictureOutlined, RightOutlined, WarningOutlined} from '@ant-design/icons';
 import {
     EditRecordBtn,
     FloatingMenu,
@@ -20,17 +13,27 @@ import {
 import {Badge, Checkbox, message, Tooltip} from 'antd';
 import {type SizeType} from 'antd/es/config-provider/SizeContext';
 import {useTranslation} from 'react-i18next';
-import styled, {type CSSObject} from 'styled-components';
-import {TreeBehavior} from '../../../__generated__';
+import {TreeBehavior} from '../../../../../../__generated__';
+import cn from 'classnames';
 import {type ITreeExplorerNode} from '../_types';
 import {useTreeExplorerState} from '../store/useTreeExplorerState';
 import {getFilesLibraryId} from '../utils';
+import {
+    checkboxWrapper,
+    counter,
+    inactiveIcon,
+    isInPath as isInPathClass,
+    recordCardWrapper,
+    rowWrapper,
+    selectionActive,
+} from './row.module.css';
 
-interface IRowStyleProps {
-    $isInPath: boolean;
-    $isActive: boolean;
-    $isRecordActive: boolean;
-}
+// Style objects for third-party components whose style props can't be a CSS module class.
+const FLOATING_MENU_STYLE = {right: '15px'};
+const CHILDREN_COUNT_BADGE_STYLE = {
+    background: themeVars.secondaryBg,
+    color: themeVars.defaultTextColor,
+};
 
 const _getGridTemplateColumns = (isActive: boolean, isRecordActive: boolean): string => {
     let template: string[] = [];
@@ -48,62 +51,15 @@ const _getGridTemplateColumns = (isActive: boolean, isRecordActive: boolean): st
     return template.join(' ');
 };
 
-const RowWrapper = styled.div<IRowStyleProps>`
-    position: relative;
-    display: grid;
-
-    place-items: flex-start;
-    align-items: center;
-    max-width: ${themeVars.navigationColumnWidth};
-    overflow: hidden;
-
-    grid-template-columns: ${props => _getGridTemplateColumns(props.$isActive, props.$isRecordActive)};
-    padding: 1rem 0.5rem;
-    background: ${props => (props.$isInPath ? themeVars.activeColor : 'none')};
-
-    &:hover {
-        ${props => (props.$isInPath ? '' : `background: ${themeVars.activeColor}`)};
-
-        .checkbox-wrapper {
-            opacity: 1;
-        }
-    }
-
-    .counter {
-        justify-self: flex-end;
-    }
-
-    &:not(:hover) .floating-menu {
-        display: none;
-    }
-`;
-
-const RecordCardWrapper = styled.div`
-    min-width: 0;
-    width: 100%;
-    padding-right: 0.2rem;
-
-    & > * > * {
-        justify-content: space-around;
-    }
-`;
-
-const CheckboxWrapper = styled.div<{$selectionActive: boolean}>`
-    opacity: ${({$selectionActive}) => ($selectionActive ? 1 : 0)};
-    transition: 100ms ease;
-
-    :hover {
-        opacity: 1;
-    }
-`;
-
-interface IRowProps {
+export const Row = ({
+    isActive,
+    treeElement,
+    depth,
+}: {
     isActive: boolean;
     treeElement: ITreeExplorerNode;
     depth: number;
-}
-
-export const Row: FunctionComponent<IRowProps> = ({isActive, treeElement, depth}) => {
+}) => {
     const {t} = useTranslation();
     const {activeTree, path, selection, setPath, setSelection} = useTreeExplorerState();
     const [displayPreviewConfirm, setDisplayPreviewConfirm] = useState(false);
@@ -148,8 +104,6 @@ export const Row: FunctionComponent<IRowProps> = ({isActive, treeElement, depth}
         setSelection(newSelected, parentElement?.id ?? null);
     };
 
-    const _handleClickClassifiedIn = () => message.warning(t('tree-explorer.feature_not_available'));
-
     const _handleClickDetails = () => {
         setPath([...path.slice(0, depth), {...treeElement, showDetails: true}]);
     };
@@ -169,7 +123,7 @@ export const Row: FunctionComponent<IRowProps> = ({isActive, treeElement, depth}
     const menuBtnSize: SizeType = 'middle';
     const menuActions: FloatingMenuAction[] = [
         {
-            title: t('tree-explorer.details'),
+            title: t('tree_explorer.details'),
             button: <EditRecordBtn shape="circle" record={record} size={menuBtnSize} />,
         },
     ];
@@ -177,21 +131,16 @@ export const Row: FunctionComponent<IRowProps> = ({isActive, treeElement, depth}
     const moreMenuActions: FloatingMenuAction[] = isAccessible
         ? [
               {
-                  title: t('tree-explorer.actions.details'),
+                  title: t('tree_explorer.actions.details'),
                   icon: <InfoCircleOutlined />,
                   onClick: _handleClickDetails,
-              },
-              {
-                  title: t('tree-explorer.actions.classified_in'),
-                  icon: <SearchOutlined />,
-                  onClick: _handleClickClassifiedIn,
               },
           ]
         : [];
 
     if (activeTree?.behavior === TreeBehavior.files) {
         moreMenuActions.push({
-            title: t('tree-explorer.actions.generate_previews'),
+            title: t('tree_explorer.actions.generate_previews'),
             icon: <PictureOutlined />,
             onClick: _handleClickGeneratePreviews,
         });
@@ -200,49 +149,51 @@ export const Row: FunctionComponent<IRowProps> = ({isActive, treeElement, depth}
     const filesLibraryId = getFilesLibraryId(activeTree);
 
     return (
-        <RowWrapper onClick={addPath} $isInPath={isInPath} $isActive={isActive} $isRecordActive={isRecordActive}>
+        <div
+            onClick={addPath}
+            className={cn(rowWrapper, {[isInPathClass]: isInPath})}
+            style={{'--row-grid-template-columns': _getGridTemplateColumns(isActive, isRecordActive)} as CSSProperties}
+        >
             <FloatingMenu
                 actions={menuActions}
                 moreActions={moreMenuActions}
-                style={{right: '15px'}}
+                style={FLOATING_MENU_STYLE}
                 size={menuBtnSize}
             />
             {!isAccessible && (
-                <Tooltip title={t('tree-explorer.access_denied')}>
+                <Tooltip title={t('tree_explorer.access_denied')}>
                     <LockFilled />
                 </Tooltip>
             )}
             {isActive && isAccessible && (
-                <CheckboxWrapper
+                <div
                     onClick={e => {
                         e.preventDefault();
                         e.stopPropagation();
                     }}
-                    className="checkbox-wrapper"
-                    $selectionActive={!!selection.selected.length}
+                    className={cn(checkboxWrapper, {
+                        [selectionActive]: !!selection.selected.length,
+                    })}
                 >
                     <Checkbox onClick={handleCheckboxOnClick} checked={isChecked} />
-                </CheckboxWrapper>
+                </div>
             )}
             {!isRecordActive && (
-                <Tooltip title={t('tree-explorer.inactive_element')}>
-                    <WarningOutlined style={{color: themeVars.errorColor, fontSize: '1.3em', marginLeft: '0.5rem'}} />
+                <Tooltip title={t('tree_explorer.inactive_element')}>
+                    <WarningOutlined className={inactiveIcon} />
                 </Tooltip>
             )}
-            <RecordCardWrapper>
+            <div className={recordCardWrapper}>
                 <RecordCard record={record} size={PreviewSize.SMALL} />
-            </RecordCardWrapper>
+            </div>
 
             {!!treeElement.childrenCount && (
                 <>
-                    <div className="counter">
+                    <div className={counter}>
                         <Badge
                             count={treeElement.childrenCount}
                             overflowCount={1000}
-                            style={{
-                                background: themeVars.secondaryBg,
-                                color: themeVars.defaultTextColor,
-                            }}
+                            style={CHILDREN_COUNT_BADGE_STYLE}
                         />
                     </div>
                     <div>{isAccessible && <RightOutlined />}</div>
@@ -256,6 +207,6 @@ export const Row: FunctionComponent<IRowProps> = ({isActive, treeElement, depth}
                     onClose={_handleClosePreviewGenerationConfirm}
                 />
             )}
-        </RowWrapper>
+        </div>
     );
 };

@@ -1,52 +1,32 @@
-import {type FunctionComponent} from 'react';
 import {CloseSquareOutlined} from '@ant-design/icons';
-import {themeVars} from '@leav/ui';
+import {useLang} from '@leav/ui';
+import {localizedTranslation} from '@leav/utils';
 import {Button, Checkbox, Tooltip, Typography} from 'antd';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 import {type ITreeExplorerNode, type ITreeExplorerSelectedNode} from '../_types';
 import {useTreeExplorerState} from '../store/useTreeExplorerState';
 import {HeaderColumnNavigationActions} from './actions/HeaderColumnNavigationActions';
+import {clearSelectionButton, columnLabel, headerColumn, selectAllCheckbox} from './headerColumnNavigation.module.css';
 
-const {Paragraph} = Typography;
-
-const HeaderColumn = styled.header<{$isActive: boolean}>`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: ${themeVars.secondaryBg};
-    height: 4rem;
-    flex-shrink: 0;
-    cursor: pointer;
-    max-width: ${themeVars.navigationColumnWidth};
-
-    &:not(:hover) .select-all-checkbox {
-        visibility: hidden;
-    }
-`;
-
-interface IHeaderColumnNavigationProps {
-    depth: number;
-    isDetail?: boolean;
-    isActive?: boolean;
-    treeElement?: ITreeExplorerNode;
-    children?: ITreeExplorerNode[];
-}
-
-export const HeaderColumnNavigation: FunctionComponent<IHeaderColumnNavigationProps> = ({
+export const HeaderColumnNavigation = ({
     depth,
     isDetail,
     isActive,
     treeElement,
-    children,
+    columnNodes,
+}: {
+    depth: number;
+    isDetail?: boolean;
+    isActive?: boolean;
+    treeElement?: ITreeExplorerNode;
+    columnNodes?: ITreeExplorerNode[];
 }) => {
     const {t} = useTranslation();
+    const {lang} = useLang();
     const {activeTree, path, selection, setPath, setSelection, resetSelection} = useTreeExplorerState();
 
     const currentPositionInPath = depth;
     const selectionCount = selection.selected.length;
-    const parent = path[currentPositionInPath - 1];
 
     const goToPath = () => setPath(path.slice(0, currentPositionInPath));
 
@@ -56,13 +36,16 @@ export const HeaderColumnNavigation: FunctionComponent<IHeaderColumnNavigationPr
         }
     };
 
+    // The record label is already localized server-side (a plain string), but the tree label is a raw
+    // `{[lang]: string}` object — it must be localized before rendering, or <Paragraph> crashes trying
+    // to render an object as a React child.
     const label = treeElement?.record
         ? treeElement.record.whoAmI.label || treeElement.record.id
-        : activeTree?.label || activeTree?.id;
+        : (activeTree ? localizedTranslation(activeTree.label, lang) : '') || activeTree?.id;
 
     const _handleClickCheckbox = () => {
         // Select every accessible node of the current column.
-        const columnSelection: ITreeExplorerSelectedNode[] = (children ?? [])
+        const columnSelection: ITreeExplorerSelectedNode[] = (columnNodes ?? [])
             .filter(child => child.permissions.access_tree)
             .map(child => ({
                 id: child.record.whoAmI.id,
@@ -75,29 +58,29 @@ export const HeaderColumnNavigation: FunctionComponent<IHeaderColumnNavigationPr
     };
 
     return (
-        <HeaderColumn onClick={headerClickFn} $isActive={isActive}>
+        <header className={headerColumn} onClick={headerClickFn}>
             {!!selectionCount && isActive ? (
-                <Tooltip title={t('tree-explorer.header.nb-selection', {nb: selectionCount})} placement="right">
-                    {t('tree-explorer.header.selection_label', {count: selectionCount})}
+                <Tooltip title={t('tree_explorer.header.nb_selection', {nb: selectionCount})} placement="right">
+                    {t('tree_explorer.header.selection_label', {count: selectionCount})}
                     <Button
                         icon={<CloseSquareOutlined />}
                         aria-label="clear-selection"
                         onClick={resetSelection}
-                        style={{border: 'none', color: '#000'}}
+                        className={clearSelectionButton}
                         ghost
                     />
                 </Tooltip>
             ) : (
                 <>
                     {isActive && !!treeElement?.childrenCount && (
-                        <Checkbox className="select-all-checkbox" onClick={_handleClickCheckbox} />
+                        <Checkbox className={selectAllCheckbox} onClick={_handleClickCheckbox} />
                     )}
-                    <Paragraph ellipsis={{tooltip: label, rows: 1}} style={{marginBottom: 0, marginRight: '.5em'}}>
+                    <Typography.Paragraph ellipsis={{tooltip: label, rows: 1}} className={columnLabel}>
                         {label}
-                    </Paragraph>
+                    </Typography.Paragraph>
                 </>
             )}
             {isActive && <HeaderColumnNavigationActions depth={depth} isDetail={isDetail} />}
-        </HeaderColumn>
+        </header>
     );
 };

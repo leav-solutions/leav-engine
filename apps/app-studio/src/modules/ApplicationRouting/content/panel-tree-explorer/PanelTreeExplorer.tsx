@@ -1,10 +1,3 @@
-import {type FunctionComponent} from 'react';
-import {TreeExplorer} from '../../../tree-explorer';
+import {TreeExplorer} from './tree-explorer';
 
-interface IPanelTreeExplorerProps {
-    treeId: string;
-}
-
-export const PanelTreeExplorer: FunctionComponent<IPanelTreeExplorerProps> = ({treeId}) => (
-    <TreeExplorer treeId={treeId} />
-);
+export const PanelTreeExplorer = ({treeId}: {treeId: string}) => <TreeExplorer treeId={treeId} />;
