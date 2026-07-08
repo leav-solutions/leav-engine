@@ -18031,7 +18031,7 @@ __metadata:
     jest: "npm:29.7.0"
     ts-jest: "npm:29.4.11"
     typescript: "npm:5.9.3"
-    zod: "npm:3.25.76"
+    zod: "npm:4.3.6"
   languageName: unknown
   linkType: soft
 
