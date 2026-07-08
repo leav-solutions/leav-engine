@@ -18025,7 +18025,6 @@ __metadata:
     "@leav/config-manager": "workspace:*"
     "@leav/utils": "workspace:*"
     "@types/jest": "npm:29.5.14"
-    axios: "npm:1.18.1"
     graphql: "npm:16.14.2"
     graphql-request: "npm:7.4.0"
     graphql-tag: "npm:2.12.7"

@@ -9,7 +9,6 @@
     "dependencies": {
         "@leav/config-manager": "workspace:*",
         "@leav/utils": "workspace:*",
-        "axios": "1.18.1",
         "graphql": "16.14.2",
         "graphql-request": "7.4.0",
         "graphql-tag": "2.12.7",

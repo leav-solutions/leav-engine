@@ -1,12 +1,15 @@
-import axios from 'axios';
 import {GraphQLClient} from 'graphql-request';
 import {getSdk} from '../_gqlTypes';
 
 export const getAuthenticatedSdk = async (baseUrl: string, login: string, password: string) => {
-    const response = await axios.post(`${baseUrl}/auth/authenticate`, {login, password});
+    const response = await fetch(`${baseUrl}/auth/authenticate`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({login, password}),
+    });
 
-    const setCookies = response.headers['set-cookie'];
-    if (!setCookies) {
+    const setCookies = response.headers.getSetCookie();
+    if (!setCookies.length) {
         throw new Error('No auth cookie received');
     }
 
