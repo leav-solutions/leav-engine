@@ -9,7 +9,7 @@
         "build": "vite build",
         "build:install": "yarn run build --outDir ../core/applications/app-studio --emptyOutDir",
         "build:watch": "yarn run build:install --watch",
-        "clean": "rm -rf dist",
+        "clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
         "test": "vitest run -c vitest.config.ts",
         "test:ci": "vitest run -c vitest.config.ts --maxWorkers=2 --reporter=verbose",
         "graphql-generate": "graphql-codegen --config ./src/config/graphQL/codegen.ts",
