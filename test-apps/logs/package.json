@@ -12,7 +12,6 @@
         "graphql": "16.14.2",
         "graphql-request": "7.4.0",
         "graphql-tag": "2.12.7",
-        "typescript": "5.9.3",
         "zod": "4.3.6"
     },
     "devDependencies": {
@@ -22,6 +21,7 @@
         "@graphql-codegen/typescript": "5.0.10",
         "@graphql-codegen/typescript-graphql-request": "6.4.0",
         "@graphql-codegen/typescript-operations": "5.1.0",
+        "typescript": "5.9.3",
         "vitest": "4.1.9"
     }
 }
