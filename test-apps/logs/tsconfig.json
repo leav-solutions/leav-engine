@@ -1,7 +1,7 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "types": ["jest", "node", "@types/jest"],
+        "types": ["vitest/globals", "node"],
         "outDir": "dist",
         "isolatedModules": true,
         "strict": true,

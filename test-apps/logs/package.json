@@ -3,7 +3,7 @@
     "version": "1.18.0",
     "description": "Integration testing of the backend of app logs managing",
     "scripts": {
-        "start": "jest",
+        "start": "vitest run -c vitest.config.ts",
         "graphql-generate": "graphql-codegen --config ./codegen.ts"
     },
     "dependencies": {
@@ -12,7 +12,6 @@
         "graphql": "16.14.2",
         "graphql-request": "7.4.0",
         "graphql-tag": "2.12.7",
-        "jest": "29.7.0",
         "typescript": "5.9.3",
         "zod": "4.3.6"
     },
@@ -23,7 +22,6 @@
         "@graphql-codegen/typescript": "5.0.10",
         "@graphql-codegen/typescript-graphql-request": "6.4.0",
         "@graphql-codegen/typescript-operations": "5.1.0",
-        "@types/jest": "29.5.14",
-        "ts-jest": "29.4.11"
+        "vitest": "4.1.9"
     }
 }
