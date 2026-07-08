@@ -24,7 +24,7 @@ import {type ITreeDomain} from '../../tree/treeDomain';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {logger} from '@leav/logger';
 import {IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS} from '../../value/helpers/canSaveRecordValue';
-import {CommonAttributes} from '../../../_constants/systemAttributes';
+import {CommonAttributes, SdoAttributes} from '../../../_constants/systemAttributes';
 
 export interface ISDOImportDomainDeps {
     'core.utils.sdo': ISDOUtils;
@@ -272,7 +272,31 @@ export default function ({
                         );
                 }
             });
-        return (await Promise.all(valuesToSave)).flat(1);
+        const mappedValues = (await Promise.all(valuesToSave)).flat(1);
+
+        // LEAVC-871: persist the SDO's system.applicationIds (legacy per-application ids) into the
+        // dedicated sdo_application_ids system attribute (stored as a JSON string) when present.
+        const applicationIds = sdo.content.system?.applicationIds;
+        if (applicationIds !== undefined && applicationIds !== null) {
+            mappedValues.push({
+                id_value: null,
+                attribute: SdoAttributes.APPLICATION_IDS,
+                payload: JSON.stringify(applicationIds),
+            });
+        }
+
+        // LEAVC-871: persist the SDO's originating creator clientId (system.systemCreatorClientId)
+        // into the dedicated sdo_creator_client_id system attribute when present.
+        const creatorClientId = sdo.content.system?.systemCreatorClientId;
+        if (creatorClientId !== undefined && creatorClientId !== null) {
+            mappedValues.push({
+                id_value: null,
+                attribute: SdoAttributes.CREATOR_CLIENT_ID,
+                payload: creatorClientId,
+            });
+        }
+
+        return mappedValues;
     };
 
     function _getSaveValuesForSimpleAttribute(sdoAttr: ISDOMappingAttribute, sdoPayload: unknown): ISaveValue[] {

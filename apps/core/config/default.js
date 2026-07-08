@@ -287,6 +287,8 @@ module.exports = {
             password: process.env.SDO_AMQP_PWD || process.env.AMQP_PWD,
             port: process.env.SDO_AMQP_PORT || process.env.AMQP_PORT || '5672',
         },
+        clientId: process.env.SDO_CLIENT_ID || '',
+        applicationName: process.env.SDO_APPLICATION_NAME || 'leav',
         import: {
             enable: envToBool(process.env.SDO_IMPORT_ENABLE, false),
             prefetch: envToNumber(process.env.SDO_IMPORT_PREFETCH, 1),

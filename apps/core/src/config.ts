@@ -342,6 +342,8 @@ export const validateConfig = (conf: IConfig) => {
                 password: Joi.string(),
                 port: Joi.string().required(),
             }),
+            clientId: Joi.string().allow(''),
+            applicationName: Joi.string().allow(''),
             import: Joi.object().keys({
                 enable: Joi.boolean().required(),
                 prefetch: Joi.number().required(),

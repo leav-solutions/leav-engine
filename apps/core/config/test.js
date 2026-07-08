@@ -88,6 +88,8 @@ module.exports = {
         },
     },
     sdo: {
+        clientId: 'leav-test',
+        applicationName: 'leav',
         import: {
             enable: true,
             queue: 'test_sdo_import_queue',

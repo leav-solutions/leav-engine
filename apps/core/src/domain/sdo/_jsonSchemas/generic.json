@@ -40,6 +40,15 @@
                 },
                 "systemLabel": {
                     "type": ["string", "null"]
+                },
+                "applicationIds": {
+                    "type": ["object", "null"]
+                },
+                "systemCreatorClientId": {
+                    "type": ["string", "null"]
+                },
+                "systemLastModificatorClientId": {
+                    "type": ["string", "null"]
                 }
             }
         },
