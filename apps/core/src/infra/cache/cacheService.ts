@@ -5,6 +5,7 @@ import {getOrCreateDataLoaderInCtx} from '../../utils/dataloader';
 import {nextTick} from 'process';
 import ramService from './ramService';
 import {type IRedis} from './redis';
+import {memoizeComputeDuration, memoizeCounter} from './_metrics';
 
 export interface IMemoizeParams<T> {
     key: string;
@@ -50,7 +51,7 @@ export default function ({
     'core.infra.cache.diskService': diskService,
     config,
 }: ICacheServiceDeps): ICachesService {
-    const _ramService = ramService(redis.cache);
+    const _ramService = ramService(redis.cache, 'cache');
 
     /**
      * For the current request, keep in RAM the data loaded from redis.
@@ -119,19 +120,29 @@ export default function ({
             const ramCacheDataLoader = getRamCacheDataLoader(ctx);
             const cacheValueFrom = await ramCacheDataLoader.load(key);
             if (cacheValueFrom != null) {
+                memoizeCounter.add(1, {outcome: 'hit'});
                 return cacheValueFrom as T;
             }
 
+            memoizeCounter.add(1, {outcome: 'miss'});
+
             return memoizeWithLock<T>(key, async () => {
-                const result = await func();
+                const start = Date.now();
+                try {
+                    const result = await func();
 
-                if (result !== null || storeNulls) {
-                    ramCacheDataLoader.prime(key, result);
-                    // Do not wait for the storeData to finish, we can continue processing
-                    _ramService.storeData({key, data: JSON.stringify(result)}).catch(() => undefined);
+                    if (result !== null || storeNulls) {
+                        ramCacheDataLoader.prime(key, result);
+                        // Do not wait for the storeData to finish, we can continue processing
+                        _ramService.storeData({key, data: JSON.stringify(result)}).catch(() => undefined);
+                    }
+
+                    memoizeComputeDuration.record(Date.now() - start, {outcome: 'success'});
+                    return result;
+                } catch (err) {
+                    memoizeComputeDuration.record(Date.now() - start, {outcome: 'error'});
+                    throw err;
                 }
-
-                return result;
             });
         },
     };
