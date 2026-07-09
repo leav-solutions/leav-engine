@@ -217,30 +217,32 @@ export default function ({
             Object.values(sdoMappingLibrary.sdoAttributes)
                 .filter(attr => attr.leavAttributeId !== '')
                 .map(async attr => {
+                    const attributePath = attr.leavAttributeId;
+
                     let attributeProperty: IAttribute;
                     try {
                         attributeProperty = await getAttributeByPath({
                             libraryId: leavLibraryId,
-                            attributePath: attr.leavAttributeId,
+                            attributePath,
                             ctx,
                         });
                     } catch (e) {
                         throw new LeavError(
                             ErrorTypes.INTERNAL_ERROR,
-                            `attribute ${attr.leavAttributeId} not found in LEAV: ${e.message}`,
+                            `attribute ${attributePath} not found in LEAV: ${e.message}`,
                         );
                     }
 
-                    attributesByLeavAttributeId.set(attr.leavAttributeId, attributeProperty);
+                    attributesByLeavAttributeId.set(attributePath, attributeProperty);
 
                     const fieldValues = await recordDomain.getRecordFieldValue({
                         library: leavLibraryId,
                         record,
-                        attributePath: attr.leavAttributeId,
+                        attributePath,
                         ctx,
                     });
 
-                    record[attr.leavAttributeId] = await mapRecordAttributeValue(fieldValues, attributeProperty);
+                    record[attributePath] = await mapRecordAttributeValue(fieldValues, attributeProperty);
                 }),
         );
 

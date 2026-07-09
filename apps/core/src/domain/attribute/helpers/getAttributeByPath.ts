@@ -82,7 +82,10 @@ export default function ({
         for (const treeLibraryId of treeLibraryIds) {
             try {
                 return await _validateNestedAttribute(remainingSegments, fullAttributePath, treeLibraryId, ctx);
-            } catch {
+            } catch (e) {
+                if (!(e instanceof LeavError) || e.type !== ErrorTypes.VALIDATION_ERROR) {
+                    throw e;
+                }
                 // Not valid in this library, try the next one linked to the tree.
             }
         }
