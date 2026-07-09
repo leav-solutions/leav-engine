@@ -387,24 +387,6 @@ apps/core-unit-tests:
         - libs/monitoring-server/**/*
         - libs/utils/**/*
 
-apps/data-studio-unit-tests:
-  stage: test
-  script:
-    - yarn workspaces focus data-studio
-    - yarn workspace data-studio run test:ci
-  cache:
-    <<: *yarn_cache
-  rules:
-    - *disable_test_rule
-    - *no_tag_rule
-    - *no_duplicate_rule
-    - <<: *mr_rule
-      changes:
-        - *new_lib_installed_changes
-        - apps/data-studio/**/*
-        - libs/ui/**/*
-        - libs/utils/**/*
-
 apps/login-unit-tests:
   stage: test
   script:

@@ -8,7 +8,7 @@ Definition Of Review
     ```
      <Title>
 
-    *️⃣ Impacted projects : Core - DataStudio - Admin - @leav/ui - @leav/utils - ...
+    *️⃣ Impacted projects : Core - AppStudio - Admin - @leav/ui - @leav/utils - ...
 
     📖 Ticket: https://aristid.atlassian.net/browse/<JIRA_TICKET_IDENTIFIER>
 

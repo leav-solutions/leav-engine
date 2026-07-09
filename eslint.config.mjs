@@ -156,15 +156,7 @@ export default defineConfig([
         },
     },
     {
-        files: [
-            'libs/ui/**',
-            'apps/admin/**',
-            'apps/app-studio/**',
-            'apps/data-studio/**',
-            'apps/login/**',
-            'apps/portal/**',
-            'test-apps/**',
-        ],
+        files: ['libs/ui/**', 'apps/admin/**', 'apps/app-studio/**', 'apps/login/**', 'apps/portal/**', 'test-apps/**'],
         rules: {
             'no-console': ['error', {allow: ['warn', 'error', 'info']}],
         },

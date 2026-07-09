@@ -34,7 +34,3 @@ services:
     labels:
       - "traefik.enable=false"
     command: []
-  data-studio:
-    labels:
-      - "traefik.enable=false"
-    command: []
