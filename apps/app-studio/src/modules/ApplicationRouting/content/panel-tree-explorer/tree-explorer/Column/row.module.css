@@ -1,4 +1,4 @@
-/* Color/size literals mirror `themeVars` from @leav/ui (navigationColumnWidth, activeColor). */
+/* Colors use aristid-ds tokens. The 20rem max-width is a layout constant (was themeVars.navigationColumnWidth). */
 .rowWrapper {
     position: relative;
     display: grid;
@@ -13,7 +13,7 @@
     padding: 1rem 0.5rem;
 
     &:hover {
-        background: #def4ff;
+        background: var(--general-colors-primary-50);
 
         .checkboxWrapper {
             opacity: 1;
@@ -31,7 +31,7 @@
 }
 
 .isInPath {
-    background: #def4ff;
+    background: var(--general-colors-primary-50);
 }
 
 .recordCardWrapper {
@@ -58,8 +58,7 @@
 }
 
 .inactiveIcon {
-    /* mirrors themeVars.errorColor from @leav/ui */
-    color: #e02020;
+    color: var(--general-utilities-error-default);
     font-size: 1.3em;
     margin-left: 0.5rem;
 }

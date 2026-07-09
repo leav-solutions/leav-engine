@@ -1,10 +1,10 @@
-/* Color/size literals mirror `themeVars` from @leav/ui (secondaryBg, navigationColumnWidth). */
+/* Colors use aristid-ds tokens. The 4rem height / 20rem max-width are layout constants (was themeVars.navigationColumnWidth). */
 .headerColumn {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: #f0f0f0;
+    background: var(--general-utilities-neutral-light);
     height: 4rem;
     flex-shrink: 0;
     cursor: pointer;
@@ -17,8 +17,7 @@
 
 .clearSelectionButton {
     border: none;
-    /* mirrors themeVars.defaultTextColor from @leav/ui */
-    color: #000000;
+    color: var(--general-utilities-text-primary);
 }
 
 .columnLabel {

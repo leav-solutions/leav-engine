@@ -1,13 +1,13 @@
-/* Color/size literals mirror `themeVars` from @leav/ui (borderLightColor, navigationColumnWidth, defaultBg, borderColor). */
+/* Colors use aristid-ds tokens. The 20rem column width is a layout constant (was themeVars.navigationColumnWidth). */
 .columnWrapper {
-    border-right: 1px solid rgb(240, 240, 240);
+    border-right: 1px solid var(--general-utilities-border);
     width: 20rem;
     height: 100%;
     display: flex;
     flex-flow: column nowrap;
     flex-shrink: 0;
 
-    background: #ffffff;
+    background: var(--general-colors-neutral-white);
 }
 
 .columnContent {
@@ -19,5 +19,5 @@
 .columnPagination.columnPagination {
     text-align: center;
     padding: 0.5em 0;
-    border-bottom: 1px solid #d9d9d9;
+    border-bottom: 1px solid var(--general-utilities-border);
 }

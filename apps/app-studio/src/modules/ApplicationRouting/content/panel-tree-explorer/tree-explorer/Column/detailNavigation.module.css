@@ -1,4 +1,4 @@
-/* Color/size literals mirror `themeVars` from @leav/ui (navigationColumnWidth, defaultBg, borderLightColor). */
+/* Colors use aristid-ds tokens. The 20rem width is a layout constant (was themeVars.navigationColumnWidth). */
 .detail {
     position: relative;
     min-width: 20rem;
@@ -8,9 +8,9 @@
     justify-items: center;
     word-break: break-all;
 
-    background: #ffffff;
-    border-right: 1px solid rgb(240, 240, 240);
-    border-bottom: 1px solid rgb(240, 240, 240);
+    background: var(--general-colors-neutral-white);
+    border-right: 1px solid var(--general-utilities-border);
+    border-bottom: 1px solid var(--general-utilities-border);
     padding: 1rem;
 }
 
