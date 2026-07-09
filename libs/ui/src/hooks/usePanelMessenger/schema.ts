@@ -60,10 +60,20 @@ export const basePanelSchema = z.object({
     hideInCompactMode: z.boolean().optional(),
 });
 
+export const viewSettingsStateSchema = z.object({
+    targetLibraryId: LibraryIdSchema.optional(),
+    selectedTab: ViewSettingsTabSchema.optional(),
+    currentViewId: z.string().optional(),
+    isViewSettingsActive: z.boolean().optional(),
+    displayViewSettingsIframeSource: z.string().optional(),
+    hiddenTabs: z.array(ViewSettingsTabSchema).optional(),
+});
+
 export const iframePanelSchema = z.object({
     type: z.literal('custom'),
     iframeSource: z.string(),
     viewId: z.string().optional(),
+    viewLibraryId: LibraryIdSchema.optional(),
     isSelfContaining: z.boolean().optional(),
     popupProps: z
         .object({
@@ -72,6 +82,7 @@ export const iframePanelSchema = z.object({
             shouldCloseOnOverlayClick: z.boolean().optional(),
         })
         .optional(),
+    ...viewSettingsStateSchema.shape,
 });
 
 const editionPanelSchema = z.object({
@@ -90,11 +101,7 @@ export const baseExplorerPanelSchema = z.object({
     type: z.literal('explorer'),
     viewId: z.string().optional(),
     actions: ItemActionsSchema,
-
-    targetLibraryId: LibraryIdSchema.optional(),
-    selectedTab: ViewSettingsTabSchema.optional(),
-    currentViewId: z.string().optional(),
-    isViewSettingsActive: z.boolean().default(false),
+    ...viewSettingsStateSchema.shape,
 });
 
 export const attributeExplorerPanelSchema = z.object({

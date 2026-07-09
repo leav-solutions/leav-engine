@@ -185,8 +185,22 @@ Système de configuration de vues (épic LEAVC-762), derrière le **feature flag
   `currentView`. ExplorerV2 ne charge jamais de vue lui-même.
 - `PanelLibraryExplorer.tsx` / `PanelAttributeExplorer.tsx` **basculent** entre `Explorer` v1 et
   `ExplorerV2` selon le flag (TODO : suppression de v1 une fois la migration terminée).
-- Communication inter-panneaux via `usePanelEventHandlers` (`@leav/ui`) : événements
-  `open-view-settings` et `view-settings-select-view` (types dans `ApplicationRouting/types.ts`).
+- Communication inter-panneaux via `usePanelEventHandlers` (`@leav/ui`) : événements internes
+  `set-panel-view-settings` et `view-settings-select-view` (types dans `ApplicationRouting/types.ts`).
+  ⚠️ Le type de l'event interne `set-panel-view-settings` **ne doit pas** coïncider avec un type de
+  message cross-frame (ici le message iframe `open-view-settings`) : le bus interne et le bus
+  cross-frame partagent le même `window.postMessage`, et un message dont le type figure dans le
+  registre interne est capté directement par ce dernier (cf. `usePanelMessenger.ts`, branche `default`).
+- **Le volet monte aussi sur un panel `custom`** (iframe métier, ex. planning), pas seulement
+  l'`explorer` (LEAVC-924) : si le panel `custom` déclare `viewId` + `viewLibraryId` (library dont les
+  vues sont montrées — champ **statique**, à préférer au `targetLibraryId` runtime qui est reset à la
+  fermeture du volet), il pilote le volet générique via des messages cross-frame
+  (`open-view-settings`, `update-view`, push
+  `view-settings-update`) et voit son onglet Affichage délégué à une iframe dont l'URL
+  (`displayViewSettingsIframeSource`) est **injectée dynamiquement** via le message `open-view-settings`
+  (l'app custom seule connaît ses params de route), et non lue dans une config statique.
+  La vue porte alors une **`origin`** (= panelId, `null` pour l'explorer) qui **scope le catalogue** par
+  kind. Détails dans `panel-view-settings/CLAUDE.md` (§ Panels custom & origine).
 
 > 📖 Détails (architecture d'état, onglets, distinction admin/utilisateur, tris) :
 > [`panel-view-settings/CLAUDE.md`](src/modules/ApplicationRouting/content/panel-view-settings/CLAUDE.md).

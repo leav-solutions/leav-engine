@@ -24,8 +24,8 @@ export const TabCatalog = ({libraryId}: {libraryId: string}) => {
     const {t} = useTranslation();
     const {lang} = useLang();
 
-    const {myViews, sharedViews} = useViewCatalog(libraryId);
-    const {view: currentLoadedView, isEmptyView} = useCurrentView();
+    const {view: currentLoadedView, isEmptyView, origin} = useCurrentView();
+    const {myViews, sharedViews} = useViewCatalog(libraryId, origin);
     const {selectView, unsavedViewChangesModalProps} = useViewSelection();
     const {getViewActions} = useViewActions(libraryId);
 

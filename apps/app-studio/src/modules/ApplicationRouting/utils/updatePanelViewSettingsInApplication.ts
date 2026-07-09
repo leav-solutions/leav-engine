@@ -4,7 +4,12 @@ import {type Application} from '../types';
 
 export type PanelViewSettings = Pick<
     z.infer<typeof baseExplorerPanelSchema>,
-    'isViewSettingsActive' | 'selectedTab' | 'currentViewId' | 'targetLibraryId'
+    | 'isViewSettingsActive'
+    | 'selectedTab'
+    | 'currentViewId'
+    | 'targetLibraryId'
+    | 'displayViewSettingsIframeSource'
+    | 'hiddenTabs'
 >;
 
 type PanelLocation = {libraryId: string; panelType: keyof Application['libraries'][string]; panelId: string};
@@ -18,6 +23,8 @@ const RESET_VIEW_SETTINGS: PanelViewSettings = {
     selectedTab: undefined,
     currentViewId: undefined,
     targetLibraryId: undefined,
+    displayViewSettingsIframeSource: undefined,
+    hiddenTabs: undefined,
 };
 
 export const updatePanelViewSettingsInApplication = (

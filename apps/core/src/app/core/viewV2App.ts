@@ -67,12 +67,15 @@ export default function ({
                     type ViewV2Display {
                         type: ViewV2Types!,
                         attributes: [ViewV2DisplayAttribute!]!,
+                        """ Opaque display configuration owned by a custom panel iframe (e.g. planning timeline). Not interpreted by the core."""
+                        settings: JSONObject,
                     }
 
                     input ViewV2DisplayInput {
                         type: ViewV2Types!,
                         """ The whoAmI column should never be included in attributes because is already hard-coded to be present"""
                         attributes: [ViewV2DisplayAttributeInput!],
+                        settings: JSONObject,
                     }
 
                     type ViewV2ValuesVersion {
@@ -131,6 +134,8 @@ export default function ({
                         shortcuts: [ViewV2Shortcut!]!,
                         display: ViewV2Display!,
                         valuesVersions: [ViewV2ValuesVersion!],
+                        """ View kind, distinct from display.type. Null for explorer views; set to the originating custom panelId (e.g. 'planning')."""
+                        origin: String,
                     }
 
                     input ViewV2CreateInput {
@@ -142,6 +147,7 @@ export default function ({
                         sorts: [ViewV2SortInput!],
                         shortcuts: [ViewV2Shortcut!],
                         valuesVersions: [ViewV2ValuesVersionInput!],
+                        origin: String,
                     }
 
                     input ViewV2UpdateInput {
@@ -155,6 +161,7 @@ export default function ({
                         sorts: [ViewV2SortInput!],
                         shortcuts: [ViewV2Shortcut!],
                         valuesVersions: [ViewV2ValuesVersionInput!],
+                        origin: String,
                     }
 
                     type ViewsV2List {
@@ -163,7 +170,7 @@ export default function ({
                     }
 
                     extend type Query {
-                        viewsV2(library: ID!): ViewsV2List!
+                        viewsV2(library: ID!, origin: String): ViewsV2List!
                         viewV2(viewId: ID!): ViewV2!
                     }
 
@@ -175,8 +182,11 @@ export default function ({
                 `,
                 resolvers: {
                     Query: {
-                        viewsV2: (_, {library}: {library: string}, ctx: IQueryInfos): Promise<IList<IViewV2>> =>
-                            viewV2Domain.getViewsV2(library, ctx),
+                        viewsV2: (
+                            _,
+                            {library, origin}: {library: string; origin?: string | null},
+                            ctx: IQueryInfos,
+                        ): Promise<IList<IViewV2>> => viewV2Domain.getViewsV2(library, origin ?? null, ctx),
                         viewV2: (_, {viewId}: {viewId: string}, ctx: IQueryInfos): Promise<IViewV2> =>
                             viewV2Domain.getViewV2ById(viewId, ctx),
                     },

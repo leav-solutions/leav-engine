@@ -21,3 +21,7 @@
     overflow-y: auto;
     background: var(--general-colors-neutral-white);
 }
+
+.tabContentNoPadding {
+    padding: 0;
+}

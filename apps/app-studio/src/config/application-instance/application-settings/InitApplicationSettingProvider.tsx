@@ -39,13 +39,22 @@ export const InitApplicationSettingProvider: FunctionComponent<PropsWithChildren
     }, [currentApp?.appStudioSettings, setApplication, setParsingErrors]);
 
     usePanelEventHandlers<AppStudioInternalEvent>({
-        'open-view-settings': ({currentLibraryId, currentViewId, explorerPanelDetails, selectedTab}) => {
+        'set-panel-view-settings': ({
+            currentLibraryId,
+            currentViewId,
+            displayViewSettingsIframeSource,
+            hiddenTabs,
+            explorerPanelDetails,
+            selectedTab,
+        }) => {
             setApplication(prev =>
                 updatePanelViewSettingsInApplication(prev, explorerPanelDetails, {
                     isViewSettingsActive: true,
                     selectedTab,
                     currentViewId,
                     targetLibraryId: currentLibraryId,
+                    displayViewSettingsIframeSource,
+                    hiddenTabs,
                 }),
             );
         },

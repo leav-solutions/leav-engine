@@ -194,13 +194,21 @@ Sémantique des champs d'`IUIFilterTree` :
 - **`value` / `nodes`** : sélection "par défaut" issue des **permissions contextuelles** (`useGetTreeFilters`
   charge les nœuds `permissionTreeAttributes` de la library → `view-by-default`).
 - **`userNodes` / `userFormattedValue`** : sélection **explicite de l'utilisateur** dans le dropdown.
-  `userNodes == null` ⇒ **aucune sélection utilisateur** (≠ tableau vide). `prepareFiltersForRequest`
-  s'appuie là-dessus : _pas de userNodes + pas de valeur initiale_ ⇒ filtre **skippé** (aucune condition).
+  Trois états distincts, à ne pas confondre :
+    - `userNodes == null` ⇒ **aucune sélection utilisateur** / pas encore résolu (arbre avec valeurs stockées
+      en attente de résolution). Exclu de la projection lean (`useControlledFilterStore`).
+    - `userNodes == []` ⇒ **sélection vidée explicitement** par l'utilisateur (LEAVC-924). Présent dans la
+      projection lean (`values: []`) → se propage entre spokes ; le filtre reste **épinglé mais vide**.
+    - `userNodes` non vide ⇒ sélection active.
+      `prepareFiltersForRequest` **skip un arbre dès que sa valeur effective est vide** (`!value || value.length === 0`),
+      que `userNodes` soit `null` ou `[]` : sans recordId, aucune condition n'est générée.
 - **`includeHiddenOptions`** : toggle "inclure les options masquées".
 - Le **badge** affiché (`CommonFilterItem`) lit `userFormattedValue`, pas `value`.
 
-> ⚠️ Désélectionner tout (`value = []`) dans `CHANGE_FILTER_CONFIG` **restaure** la sélection par défaut
-> (`initialFilters`) et remet `userNodes = null` — on ne reste pas sur "rien sélectionné".
+> ⚠️ Désélectionner tout (`value = []`) dans `CHANGE_FILTER_CONFIG` conserve une **sélection vide explicite**
+> (`value/nodes/userNodes/userFormattedValue = []`) : le filtre reste épinglé mais vide, et l'état vidé se
+> propage aux deux surfaces (volet ⇄ toolbar ExplorerV2). On ne restaure PLUS la sélection par défaut, et on
+> ne repasse PLUS `userNodes` à `null` (ce qui ferait disparaître le filtre de la projection lean).
 
 ---
 

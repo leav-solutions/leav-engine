@@ -44,4 +44,5 @@ export const viewV2ToSerializedView = (view: GetViewV2Query['viewV2']): Serializ
             withEmptyValues: filter.withEmptyValues ?? false,
         })),
     shortcuts: (view.shortcuts ?? ['display']) as SerializedViewV2['shortcuts'],
+    displaySettings: view.display.settings ?? undefined,
 });

@@ -15,6 +15,11 @@ vi.mock('../../store-current-view/useCurrentView', () => ({
     useCurrentView: () => ({view: mockView, dispatch: mockDispatch, setShared: mockSetShared}),
 }));
 
+const mockSaveLastUsedView = vi.fn();
+vi.mock('../../tabs/tab-catalog/useLastUsedView', () => ({
+    useLastUsedView: () => ({saveLastUsedView: mockSaveLastUsedView}),
+}));
+
 const mockOpenConfirmModal = vi.fn();
 const mockDispatchPanelEvent = vi.fn();
 vi.mock('@leav/ui', async () => ({
@@ -174,6 +179,27 @@ describe('useCurrentViewActions', () => {
             });
             expect(mockDispatch).not.toHaveBeenCalled();
             expect(KitAlert.success).toHaveBeenCalledWith(expect.objectContaining({message: `${T}.save_as_success`}));
+        });
+
+        it('persists the created view as last-used so a refresh restores it', async () => {
+            const {result} = renderHook(() => useCurrentViewActions());
+
+            await act(async () => {
+                await result.current.saveAs('Ma copie');
+            });
+
+            expect(mockSaveLastUsedView).toHaveBeenCalledWith(createdView.id);
+        });
+
+        it('does not persist last-used when creation fails', async () => {
+            mockCreate.mockRejectedValueOnce(new Error('boom'));
+            const {result} = renderHook(() => useCurrentViewActions());
+
+            await act(async () => {
+                await result.current.saveAs('Ma copie');
+            });
+
+            expect(mockSaveLastUsedView).not.toHaveBeenCalled();
         });
     });
 

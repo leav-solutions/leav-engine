@@ -1,5 +1,7 @@
 import {type FunctionComponent, useContext, useEffect, useRef} from 'react';
-import {LangContext, usePanelIFrameHandlers} from '@leav/ui';
+import {useParams} from 'react-router-dom';
+import {LangContext, usePanelIFrameHandlers, type ViewSettingsUpdateMessage} from '@leav/ui';
+import {CurrentViewContext} from '../panel-view-settings/store-current-view/CurrentViewContext';
 import {useOpenNotification} from './message-handlers/useOpenNotification';
 import {useOpenAlert} from './message-handlers/useOpenAlert';
 import {useOpenConfirmModal} from './message-handlers/useOpenConfirmModal';
@@ -12,6 +14,9 @@ import {iframe} from './panelCustom.module.css';
 import {useGetPanelConfig} from './message-handlers/useGetPanelConfig';
 import {useGetURL} from './message-handlers/useGetURL';
 import {trackMatomoEvent} from './message-handlers/trackMatomoEvent';
+import {useOpenViewSettings} from './message-handlers/useOpenViewSettings';
+import {useUpdateView} from './message-handlers/useUpdateView';
+import {useSyncViewToIframe} from './message-handlers/useSyncViewToIframe';
 
 interface IPanelCustomProps {
     source: string;
@@ -32,8 +37,19 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
     const {closeFlapPanel} = useCloseFlapPanel();
     const {getPanelConfig} = useGetPanelConfig();
     const {getURL} = useGetURL();
+    const {openViewSettings} = useOpenViewSettings();
+    const {updateView} = useUpdateView();
 
-    const {changeLangInFrame} = usePanelIFrameHandlers(iframeRef, {
+    const {serializedView} = useContext(CurrentViewContext);
+    const {workspaceId, panelId, recordId: _recordId, where, recordPanelId} = useParams();
+    const targetPanelId = recordPanelId ?? panelId;
+
+    // The `onRequestCurrentView` handler needs `pushViewSettingsUpdate`, but that pusher is produced by
+    // the very hook we're passing the handler into. Break the cycle with a ref: the handler is re-read
+    // each render via `handlersRef` (usePanelIFrameHandlers), so it captures an up-to-date `serializedView`.
+    const pushRef = useRef<((data: ViewSettingsUpdateMessage['data']) => void) | null>(null);
+
+    const {changeLangInFrame, pushViewSettingsUpdate} = usePanelIFrameHandlers(iframeRef, {
         onModalConfirm: openConfirmModal,
         onAlert: openAlert,
         onNotification: openNotification,
@@ -45,7 +61,21 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
         onGetPanelConfig: getPanelConfig,
         onGetUrl: getURL,
         onMessage: trackMatomoEvent,
+        onOpenViewSettings: openViewSettings,
+        onUpdateView: updateView,
+        onRequestCurrentView: () => {
+            // Reply to the iframe's (re)load handshake: it pulls the current view on mount, so we push our
+            // current (last-used) view back so it restores the host's view instead of its own defaults. The
+            // host otherwise only pushes on hub CHANGE, which races the iframe's slower mount.
+            if (serializedView && targetPanelId) {
+                pushRef.current?.({targetPanelId, serializedView});
+            }
+        },
     });
+    pushRef.current = pushViewSettingsUpdate;
+
+    // Push the hub's current view to this iframe on every change (load / volet edit / reset / select).
+    useSyncViewToIframe(pushViewSettingsUpdate);
 
     const {lang} = useContext(LangContext);
 

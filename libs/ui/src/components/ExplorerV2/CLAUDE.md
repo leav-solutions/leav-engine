@@ -57,6 +57,7 @@ type SerializedView = {
     filters?: Array<SerializedFilter | HiddenFullFilter>; // filtres user lean + pré-filtres masqués (pleins), discriminés par `hidden`
     filtersOperator?: 'AND' | 'OR';
     shortcuts?: ViewSettingsShortcuts[]; // onglets du volet exposés en boutons-raccourcis
+    displaySettings?: Record<string, unknown>; // config d'affichage OPAQUE d'un panel custom (ex. timeline planning), non interprétée par ExplorerV2 ; round-trip hôte↔iframe + persistée dans view.display.settings (LEAVC-924)
 };
 
 // SerializedFilter (lean, sérialisable) = {attributes:[{id,label?}], condition, values, pinned?}

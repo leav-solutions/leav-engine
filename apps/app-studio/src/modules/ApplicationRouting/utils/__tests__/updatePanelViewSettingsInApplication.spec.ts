@@ -54,6 +54,18 @@ describe('updatePanelViewSettingsInApplication', () => {
         expect(newApplication.libraries.home.libraryPanels[0]).toMatchObject(viewSettings);
     });
 
+    it('should write the message-injected displayViewSettingsIframeSource onto the panel', () => {
+        const newApplication = updatePanelViewSettingsInApplication(
+            baseApplication,
+            {libraryId: 'home', panelType: 'libraryPanels', panelId: 'panel1'},
+            {...viewSettings, displayViewSettingsIframeSource: 'https://host/settings/rec-1/planning/configureView'},
+        );
+
+        expect(newApplication.libraries.home.libraryPanels[0]).toMatchObject({
+            displayViewSettingsIframeSource: 'https://host/settings/rec-1/planning/configureView',
+        });
+    });
+
     it('should update view settings on a panel in recordPanels', () => {
         const newApplication = updatePanelViewSettingsInApplication(
             baseApplication,
@@ -181,6 +193,7 @@ describe('resetPanelViewSettingsInApplication', () => {
                         selectedTab: 'filters',
                         currentViewId: 'view1',
                         targetLibraryId: 'home',
+                        displayViewSettingsIframeSource: 'https://host/settings/rec-1/planning/configureView',
                     },
                 ],
                 recordPanels: [],
@@ -200,6 +213,7 @@ describe('resetPanelViewSettingsInApplication', () => {
             selectedTab: undefined,
             currentViewId: undefined,
             targetLibraryId: undefined,
+            displayViewSettingsIframeSource: undefined,
         });
     });
 });

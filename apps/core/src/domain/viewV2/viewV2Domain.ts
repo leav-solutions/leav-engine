@@ -23,7 +23,7 @@ import {type ILibraryPermissionDomain} from '../permission/libraryPermissionDoma
 export interface IViewV2Domain {
     createViewV2(input: IViewV2CreateInput, ctx: IQueryInfos): Promise<IViewV2>;
     updateViewV2(input: IViewV2UpdateInput, ctx: IQueryInfos): Promise<IViewV2>;
-    getViewsV2(library: string, ctx: IQueryInfos): Promise<IList<IViewV2>>;
+    getViewsV2(library: string, origin: string | null, ctx: IQueryInfos): Promise<IList<IViewV2>>;
     getViewV2ById(viewId: string, ctx: IQueryInfos): Promise<IViewV2>;
     deleteViewV2(viewId: string, ctx: IQueryInfos): Promise<IViewV2>;
 }
@@ -116,12 +116,16 @@ export default function ({
                     display: {
                         type: input.display.type,
                         attributes: input.display.attributes ?? [],
+                        settings: input.display.settings,
                     },
                     shared: input.shared,
                     filters: input.filters ?? [],
                     sorts: input.sorts ?? [],
                     shortcuts: input.shortcuts ?? [ViewV2Shortcut.DISPLAY],
                     valuesVersions: input.valuesVersions,
+                    // No default: undefined for explorer views (stays absent in DB), set only when the
+                    // caller creates a view from a custom panel.
+                    origin: input.origin,
                     created_by: ctx.userId,
                     created_at: now,
                     modified_at: now,
@@ -161,12 +165,15 @@ export default function ({
                 ctx,
             );
         },
-        async getViewsV2(library: string, ctx: IQueryInfos): Promise<IList<IViewV2>> {
+        async getViewsV2(library: string, origin: string | null, ctx: IQueryInfos): Promise<IList<IViewV2>> {
             await validationHelper.validateLibrary(library, ctx);
 
             const filters: IViewV2FilterOptions = {
                 library,
                 created_by: ctx.userId,
+                // Always scope by origin. `null` matches views without an origin field (explorer
+                // views, transparent — no backfill); a string matches a given kind (e.g. 'planning').
+                origin,
             };
 
             return viewV2Repo.getViewsOwnedOrSharedV2({filters, withCount: true}, ctx);

@@ -23,6 +23,9 @@ export interface IViewV2DisplayAttribute {
 export interface IViewV2Display {
     type: ViewV2Types;
     attributes: IViewV2DisplayAttribute[];
+    // Opaque, view-specific display configuration owned by a custom panel iframe (e.g. planning
+    // timeline / double-timeline settings). Not interpreted by the core. `type` enum stays unchanged.
+    settings?: Record<string, unknown> | null;
 }
 
 export interface IViewV2ValuesVersion {
@@ -58,6 +61,10 @@ interface IViewV2UserFields {
     sorts: IViewV2Sort[];
     shortcuts: ViewV2Shortcut[];
     valuesVersions?: IViewV2ValuesVersion | null;
+    // View kind, distinct from `display.type`. Undefined for regular explorer views (transparent,
+    // no backfill); set to the originating custom panelId (e.g. 'planning') for views created from a
+    // custom view. Used to scope the catalog per kind.
+    origin?: string;
 }
 
 /**
@@ -111,4 +118,6 @@ export interface IViewV2FilterOptions extends ICoreEntityFilterOptions {
     created_by?: string;
     library?: string;
     type?: ViewV2Types;
+    // `null` selects views without an origin (explorer views); a string selects a given kind.
+    origin?: string | null;
 }

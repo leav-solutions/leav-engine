@@ -10,12 +10,14 @@ interface IUseViewCatalogResult {
 
 /**
  * Loads the view list of a library and splits it into the views owned by the current user
- * (`myViews`) and the views shared by other users (`sharedViews`).
+ * (`myViews`) and the views shared by other users (`sharedViews`). Scoped by `origin` (view kind):
+ * an explorer panel passes `undefined` (views without an origin), a custom panel passes its panelId.
  */
-export const useViewCatalog = (libraryId: string): IUseViewCatalogResult => {
+export const useViewCatalog = (libraryId: string, origin?: string): IUseViewCatalogResult => {
     const {data} = useGetViewListQuery({
         variables: {
             libraryId,
+            origin,
         },
     });
 

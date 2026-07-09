@@ -69,6 +69,27 @@ describe('viewReducer (display actions)', () => {
         });
     });
 
+    describe('SET_DISPLAY_SETTINGS', () => {
+        it('writes opaque display settings without touching type or attributes', () => {
+            const view = makeView();
+            const settings = {simple: {mode: 'timeline', showEvents: true}};
+            const next = viewReducer(view, {type: 'SET_DISPLAY_SETTINGS', payload: {settings}});
+            expect(next.display.settings).toEqual(settings);
+            expect(next.display.type).toBe(view.display.type);
+            expect(next.display.attributes).toBe(view.display.attributes);
+        });
+
+        it('returns the SAME view reference on an idempotent write (anti-loop guard)', () => {
+            const settings = {simple: {mode: 'timeline'}};
+            const view = makeView({display: {type: ViewV2Types.list, attributes: [], settings}});
+            const next = viewReducer(view, {
+                type: 'SET_DISPLAY_SETTINGS',
+                payload: {settings: {simple: {mode: 'timeline'}}},
+            });
+            expect(next).toBe(view);
+        });
+    });
+
     describe('TOGGLE_VISIBILITY', () => {
         it('hides a visible column in place (order unchanged)', () => {
             const next = viewReducer(makeView(), {type: 'TOGGLE_VISIBILITY', payload: {id: 'a'}});

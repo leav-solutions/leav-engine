@@ -15,12 +15,16 @@ export const CurrentViewContext = createContext<{
     // The live (possibly unsaved) view serialized for ExplorerV2's controlled `currentView` prop.
     // Read by `useViewSettingsProps`; left undefined by the volet-only test harnesses.
     serializedView?: SerializedViewV2;
+    // View kind scoping the catalog: the originating custom panelId for a custom panel, undefined for
+    // an explorer panel. Drives `viewsV2(origin)` and the origin stamped on views created here.
+    origin?: string;
 }>({
     view: null,
     savedView: null,
     isEmptyView: false,
     canManageViews: false,
     serializedView: undefined,
+    origin: undefined,
     dispatch: () => {
         throw new Error('useCurrentView must be used inside a <CurrentViewStoreProvider />');
     },

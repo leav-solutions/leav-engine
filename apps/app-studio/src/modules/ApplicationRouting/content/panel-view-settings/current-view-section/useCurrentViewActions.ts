@@ -12,6 +12,7 @@ import {
 import {IDENTITY_COLUMN_ID} from '../tabs/tab-display/_constants';
 import {type CurrentView} from '../store-current-view/_types';
 import {useCurrentView} from '../store-current-view/useCurrentView';
+import {useLastUsedView} from '../tabs/tab-catalog/useLastUsedView';
 import {type AppStudioInternalEvent} from '../../../types';
 
 type ViewDisplay = NonNullable<CurrentView>['display'];
@@ -23,6 +24,7 @@ const mapDisplay = (display: ViewDisplay) => ({
     attributes: display.attributes
         .filter(({attribute}) => attribute.id !== IDENTITY_COLUMN_ID)
         .map(({attribute, visible}) => ({attributeId: attribute.id, visible})),
+    settings: display.settings,
 });
 
 // `ViewV2SortInput` carries the descent path as bare attribute ids (the labels live server-side).
@@ -47,10 +49,11 @@ const mapFilters = (filters: ViewFilters) =>
 export const useCurrentViewActions = () => {
     const {t} = useTranslation();
     const {lang} = useLang();
-    const {view, setShared, dispatch} = useCurrentView();
+    const {view, setShared, dispatch, origin} = useCurrentView();
     const {openConfirmModal} = useConfirmModal();
     const client = useApolloClient();
     const {dispatch: dispatchPanelEvent} = usePanelEventHandlers<AppStudioInternalEvent>();
+    const {saveLastUsedView} = useLastUsedView();
 
     const [updateView, {loading: saveLoading}] = useUpdateViewV2Mutation();
     const [shareView, {loading: shareLoading}] = useUpdateViewV2Mutation();
@@ -67,7 +70,7 @@ export const useCurrentViewActions = () => {
     const notifySuccess = (message: string) =>
         KitAlert.success({message, duration: SUCCESS_NOTIFICATION_DURATION, showIcon: true});
 
-    const refetchCatalog = (library: string) => [{query: GetViewListDocument, variables: {libraryId: library}}];
+    const refetchCatalog = (library: string) => [{query: GetViewListDocument, variables: {libraryId: library, origin}}];
 
     const save = async (): Promise<boolean> => {
         if (!view) {
@@ -124,6 +127,7 @@ export const useCurrentViewActions = () => {
                         filters: mapFilters(view.filters),
                         sorts: mapSorts(view.sorts),
                         shortcuts: view.shortcuts,
+                        origin,
                     },
                 },
                 refetchQueries: refetchCatalog(view.library),
@@ -135,6 +139,8 @@ export const useCurrentViewActions = () => {
                     variables: {viewId: data.createViewV2.id},
                     data: {viewV2: data.createViewV2},
                 });
+
+                saveLastUsedView(data.createViewV2.id);
                 dispatchPanelEvent({type: 'view-settings-select-view', data: {viewId: data.createViewV2.id}});
                 notifySuccess(t('view_settings.current_view.save_as_success'));
             }

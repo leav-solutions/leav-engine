@@ -242,14 +242,19 @@ const resetFilter: Reducer<IIUIFiltersActionResetFilter> = (state, payload) => (
             }
 
             if (isUIFilterTree(filter)) {
+                // Reset-to-empty on a tree = "vidé mais reste épinglé": an EXPLICIT empty user selection
+                // (`[]`, never null). `null` drops the tree from the lean projection and desyncs the spokes
+                // (see useControlledFilterStore.projectLean / buildTreeInitial). In ViewV2 the primary reset
+                // target is `initialFilters` (buildTreeInitial); this fallback only fires when no initial
+                // filter matches, so it must follow the same convention.
                 return {
                     ...filter,
                     condition: null,
-                    value: null,
-                    nodes: null,
-                    userNodes: null,
-                    userFormattedValue: null,
-                    formattedValue: null,
+                    value: [],
+                    nodes: [],
+                    userNodes: [],
+                    userFormattedValue: [],
+                    formattedValue: [],
                     withEmptyValues: false,
                     includeHiddenOptions: false,
                 };
@@ -272,18 +277,21 @@ const changeFilterConfig: Reducer<IUIFiltersActionChangeFilterConfig> = (state, 
         }
         if (isUIFilterTree(filter)) {
             const treePayload = payload as IUIFilterTree;
-            // Convert empty user selection to null (deselecting all → no user selection)
-            // Restore initial value/nodes so the filter keeps its viewByDefault values
+            // Deselecting every node keeps the filter PINNED but empty: represent it as an EXPLICIT empty
+            // user selection (`userNodes: []`, never null). A null user selection reads as "not touched /
+            // not yet resolved" and is dropped from the lean projection (useControlledFilterStore), so a
+            // cleared tree could never propagate across spokes (volet ⇄ ExplorerV2 toolbar) — the other
+            // surface kept a stale value or silently unpinned. The empty arrays survive the projection;
+            // the records query still skips a tree with no record ids (prepareFiltersForRequest). The four
+            // fields are normalised defensively so a stale user selection can't leak through.
             if (Array.isArray(treePayload.value) && treePayload.value.length === 0) {
-                const initialFilter = state.initialFilters.find(({id}) => id === filter.id) as
-                    IUIFilterTree | undefined;
                 return {
                     ...filter,
                     ...payload,
-                    value: initialFilter?.value ?? null,
-                    nodes: initialFilter?.nodes ?? null,
-                    userNodes: null,
-                    userFormattedValue: null,
+                    value: [],
+                    nodes: [],
+                    userNodes: [],
+                    userFormattedValue: [],
                 };
             }
             return {...filter, ...payload};

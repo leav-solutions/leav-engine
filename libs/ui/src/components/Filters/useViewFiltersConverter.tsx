@@ -136,21 +136,36 @@ export const useViewFiltersConverter = (viewFilters: IViewFilterToConvert[]) => 
                 withEmptyValues: filter.withEmptyValues ?? false,
             };
 
-            // TREE filters are seeded EMPTY: a stored tree value is a set of record ids that must be
-            // resolved to `{nodeId, libraryId}` user-selections before it can be applied (and the dropdown
-            // reads `userNodes`). Without that resolution (follow-up) a `value` without `userNodes` would
-            // be treated by `prepareFiltersForRequest` as a "view-by-default" selection and wrongly filter
-            // (e.g. `value OR IS_EMPTY`) even though nothing is checked. So we drop the value here; the
-            // filter only applies once the user actually selects nodes in the tree dropdown.
+            // TREE filters with STORED VALUES are seeded EMPTY: a stored tree value is a set of record ids
+            // that must be resolved to `{nodeId, libraryId}` user-selections before it can be applied (and
+            // the dropdown reads `userNodes`). Without that resolution (follow-up) a `value` without
+            // `userNodes` would be treated by `prepareFiltersForRequest` as a "view-by-default" selection
+            // and wrongly filter (e.g. `value OR IS_EMPTY`) even though nothing is checked. So we drop the
+            // value here; the filter only applies once its nodes are resolved (useResolveTreeFilterNodes).
+            //
+            // A tree with NO stored values is an EXPLICIT empty selection (the user cleared it): seed it
+            // with empty arrays (`userNodes: []`), NOT null. `null` reads as "not yet resolved" and makes
+            // the SEED merge in useControlledFilterStore preserve a stale live selection on the receiving
+            // spoke instead of clearing it to match the hub.
             if (isUIFilterTree(converted)) {
-                const emptyTreeFilter: IUIFilterTree = {
-                    ...converted,
-                    value: null,
-                    nodes: null,
-                    userNodes: null,
-                    userFormattedValue: null,
-                    formattedValue: null,
-                };
+                const hasStoredValues = (filter.values ?? []).some(value => value !== null);
+                const emptyTreeFilter: IUIFilterTree = hasStoredValues
+                    ? {
+                          ...converted,
+                          value: null,
+                          nodes: null,
+                          userNodes: null,
+                          userFormattedValue: null,
+                          formattedValue: null,
+                      }
+                    : {
+                          ...converted,
+                          value: [],
+                          nodes: [],
+                          userNodes: [],
+                          userFormattedValue: [],
+                          formattedValue: [],
+                      };
                 return emptyTreeFilter;
             }
 

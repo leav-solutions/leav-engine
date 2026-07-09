@@ -24,7 +24,7 @@ export const CurrentViewActions = () => {
 
     const saveAsButton = (
         <KitTooltip title={String(t('view_settings.current_view.save_as'))}>
-            <KitBadge dot={isEmptyView && isDirty}>
+            <KitBadge dot={isEmptyView && isDirty} offset="m">
                 <KitButton
                     type={isEmptyView && isDirty ? 'primary' : 'secondary'}
                     size="m"
@@ -85,7 +85,7 @@ export const CurrentViewActions = () => {
             <div className={actionButtons}>
                 {canManageCurrentView && (
                     <KitTooltip title={String(t('view_settings.current_view.save'))}>
-                        <KitBadge dot={canSave}>
+                        <KitBadge dot={canSave} offset="m">
                             <KitButton
                                 type="primary"
                                 size="m"

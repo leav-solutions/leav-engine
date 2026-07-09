@@ -1,6 +1,6 @@
 import {AttributeFormat, AttributeType, RecordFilterCondition} from '_ui/_gqlTypes';
 import {prepareFiltersForRequest} from './prepareFiltersForRequest';
-import {type IUIFilterSmartFiler, type IUIFilterStandard} from './_types';
+import {type IUIFilterSmartFiler, type IUIFilterStandard, type IUIFilterTree} from './_types';
 
 const smartLinkFilter = (value: IUIFilterSmartFiler['value']): IUIFilterSmartFiler => ({
     id: 'campaign_type',
@@ -95,5 +95,40 @@ describe('prepareFiltersForRequest — smart filter', () => {
 
         const conditions = prepareFiltersForRequest([smartLinkFilter('t1' as unknown as string[])]);
         expect(conditions).toEqual([{field: 'campaign_type.id', condition: RecordFilterCondition.EQUAL, value: 't1'}]);
+    });
+});
+
+describe('prepareFiltersForRequest — tree', () => {
+    const treeFilter = (overrides: Partial<IUIFilterTree>): IUIFilterTree =>
+        ({
+            id: 'category',
+            field: 'category',
+            condition: RecordFilterCondition.EQUAL,
+            value: [],
+            nodes: [],
+            userNodes: [],
+            userFormattedValue: [],
+            attribute: {
+                id: 'category',
+                label: 'Catégorie',
+                type: AttributeType.tree,
+                linkedTree: {id: 'tree_id'},
+            },
+            ...overrides,
+        }) as unknown as IUIFilterTree;
+
+    it('skips a tree with an explicit empty selection (userNodes: [], no record id)', () => {
+        expect(prepareFiltersForRequest([treeFilter({})])).toEqual([]);
+    });
+
+    it('keeps a tree that still has a node selection', () => {
+        const conditions = prepareFiltersForRequest([
+            treeFilter({
+                value: ['rec1'],
+                nodes: [{nodeId: 'n1', libraryId: 'tree_lib'}],
+                userNodes: [{nodeId: 'n1', libraryId: 'tree_lib'}],
+            }),
+        ]);
+        expect(conditions.length).toBeGreaterThan(0);
     });
 });

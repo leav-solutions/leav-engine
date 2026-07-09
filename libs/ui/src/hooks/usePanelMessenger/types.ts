@@ -12,10 +12,11 @@ import {
     type FlapPanelIdSchema,
     type attributeExplorerPanelSchema,
     type baseExplorerPanelSchema,
+    type ViewSettingsTabSchema,
 } from '_ui/hooks/usePanelMessenger/schema';
 import {type AnyPrimitive} from '@leav/utils';
 import {type IRecordIdentity, type ITreeNodeWithRecord} from '_ui/types';
-import {type SerializedView} from '_ui/components/Explorer/_types';
+import {type SerializedView} from '_ui/components/ExplorerV2/_types';
 
 export const packetId = '__fromIframeMessenger';
 
@@ -202,12 +203,50 @@ export type ExplorerViewChangedMessage = IMessageBase & {
     };
 };
 
+export type ViewSettingsTab = z.infer<typeof ViewSettingsTabSchema>;
+
+/**
+ * Sent by a custom panel iframe (e.g. planning) to ask the host to open the generic view-settings
+ * volet on a given view. Generic — not tied to the Explorer.
+ */
+export type OpenViewSettingsMessage = IMessageBase & {
+    type: 'open-view-settings';
+    data: {
+        viewId: string;
+        libraryId: LibraryId;
+        selectedTab?: ViewSettingsTab;
+        displayViewSettingsIframeSource?: string;
+        hiddenTabs?: ViewSettingsTab[];
+    };
+};
+
+/**
+ * Sent by a custom panel iframe to push its view edits (filters and/or opaque display settings)
+ * up to the host's current-view hub. Generic — planning is not the Explorer, so this replaces
+ * `explorer-view-changed` for custom panels.
+ */
+export type UpdateViewMessage = IMessageBase & {
+    type: 'update-view';
+    data: Partial<SerializedView>;
+};
+
 export type ViewSettingsUpdateMessage = IMessageBase & {
     type: 'view-settings-update';
     data: {
         targetPanelId: string;
         serializedView: SerializedView;
     };
+};
+
+/**
+ * Sent by a custom panel iframe (e.g. planning's delegated display-settings iframe) once its
+ * `view-settings-update` listener is mounted, to pull the host's current serialized view. The host
+ * only pushes `view-settings-update` on hub CHANGES, never on a plain (re)load — so a freshly
+ * (re)loaded iframe would otherwise stay on its own defaults. This is the "ready → give me the view"
+ * handshake; the host replies with a `view-settings-update` targeted at the requesting frame. No payload.
+ */
+export type RequestCurrentViewMessage = IMessageBase & {
+    type: 'request-current-view';
 };
 
 export type MessageToParent =
@@ -225,7 +264,10 @@ export type MessageToParent =
     | CloseFlapPanelMessage
     | GetUrlMessage
     | GetPanelConfigMessage
-    | ExplorerViewChangedMessage;
+    | ExplorerViewChangedMessage
+    | OpenViewSettingsMessage
+    | UpdateViewMessage
+    | RequestCurrentViewMessage;
 
 export type MessageFromParent =
     | (IMessageBase & {
@@ -314,5 +356,8 @@ export interface IUsePanelMessengerOptions {
         onCloseFlapPanel?: () => void;
         onExplorerViewChanged?: (data: ExplorerViewChangedMessage['data']) => void;
         onViewConfigUpdate?: (data: ViewSettingsUpdateMessage['data']) => void;
+        onOpenViewSettings?: (data: OpenViewSettingsMessage['data']) => void;
+        onUpdateView?: (data: UpdateViewMessage['data']) => void;
+        onRequestCurrentView?: () => void;
     };
 }

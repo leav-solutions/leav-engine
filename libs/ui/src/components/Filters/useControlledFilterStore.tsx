@@ -168,7 +168,14 @@ export const useControlledFilterStore = ({
         () =>
             uiFilters.map(uiFilter => {
                 const resolved = resolvedById[uiFilter.id];
-                if (!isUIFilterTree(uiFilter) || !resolved || resolved.length === 0) {
+                // Enrich ONLY a tree that is still AWAITING resolution (`userNodes == null`: the converter
+                // saw stored record ids it could not resolve to nodes yet). A tree the converter already
+                // gave an EXPLICIT empty selection (`userNodes: []`, i.e. the lean value is now empty) must
+                // NOT be re-enriched: `resolvedById` clears one render LATER than `leanFilters` changes (it
+                // lives in useState, cleared by an effect), so a just-emptied tree would otherwise be
+                // re-hydrated from the STALE previous resolution — the cleared selection would silently pop
+                // back and desync the spokes (the sync-mock test hid this; the real hook is async).
+                if (!isUIFilterTree(uiFilter) || uiFilter.userNodes != null || !resolved || resolved.length === 0) {
                     return uiFilter;
                 }
                 const nodes = resolved.map(node => ({nodeId: node.nodeId, libraryId: node.libraryId}));
@@ -284,7 +291,12 @@ export const useControlledFilterStore = ({
         const buildTreeInitial = (base: IUIFilterTree): IUIFilterTree => {
             const saved = savedResolvedByIdRef.current[base.id] ?? [];
             if (saved.length === 0) {
-                return {...base, value: null, nodes: null, userNodes: null, userFormattedValue: null};
+                // Nothing was saved for this tree → "Réinitialiser" restores the EMPTY-but-PINNED state
+                // (`userNodes: []`, never null). `null` reads as "no user selection / not resolved" and
+                // drops the filter from the lean projection, so a reset-to-empty tree would fall out of
+                // sync (the toolbar unpins / the volet keeps its values). `[]` keeps it pinned-but-empty
+                // and propagates identically to a manual deselect-all across both spokes (Bugs 2 & 3).
+                return {...base, value: [], nodes: [], userNodes: [], userFormattedValue: []};
             }
             const nodes = saved.map(node => ({nodeId: node.nodeId, libraryId: node.libraryId}));
             return {
@@ -351,7 +363,6 @@ export const useControlledFilterStore = ({
                 dispatch({type: FiltersActionTypes.CHANGE_FILTER_CONFIG, payload: seed});
             }
         });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hubValueSignature, loading]);
 
     // 3. EMIT local edits/removals (store → hub) — the sole `lastSyncedLeanRef` writer:
@@ -370,7 +381,6 @@ export const useControlledFilterStore = ({
         }
         lastSyncedLeanRef.current = storeProjection;
         onChangeRef.current?.(toLeanFilters(store));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filtersData.filters]);
 
     // 4. LABEL a smart filter (display only): the lean hub carries value ids but no labels, so a value

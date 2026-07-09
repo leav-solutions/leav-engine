@@ -362,7 +362,7 @@ describe('ViewSettings Reducer', () => {
             ]);
         });
 
-        test('Reset a tree filter clears withEmptyValues, formattedValue and the node selection', () => {
+        test('Reset a tree filter (no matching initialFilter) clears to an EXPLICIT empty selection ([], not null)', () => {
             const state = filtersReducer(
                 {
                     ...filtersInitialState,
@@ -388,14 +388,16 @@ describe('ViewSettings Reducer', () => {
                 },
             );
 
+            // Reset-to-empty on a tree = "vidé mais reste épinglé": empty arrays, never null. A null user
+            // selection would drop the tree from the lean projection and desync the spokes (Bugs 2 & 3).
             expect(state.filters[0]).toMatchObject({
                 id: 'tree-id',
                 condition: null,
-                value: null,
-                nodes: null,
-                userNodes: null,
-                userFormattedValue: null,
-                formattedValue: null,
+                value: [],
+                nodes: [],
+                userNodes: [],
+                userFormattedValue: [],
+                formattedValue: [],
                 withEmptyValues: false,
                 includeHiddenOptions: false,
             });
@@ -565,6 +567,65 @@ describe('ViewSettings Reducer', () => {
                 withEmptyValues: false,
             },
         ]);
+    });
+
+    test(`Action ${FiltersActionTypes.CHANGE_FILTER_CONFIG} on a tree: deselecting all keeps an explicit empty selection`, () => {
+        const twoNodes = [
+            {nodeId: 'n1', libraryId: 'lib'},
+            {nodeId: 'n2', libraryId: 'lib'},
+        ];
+        const state = filtersReducer(
+            {
+                ...filtersInitialState,
+                filters: [
+                    {
+                        id: 'tree-id',
+                        attribute: attributeDataTree,
+                        field: 'tree',
+                        condition: RecordFilterCondition.EQUAL,
+                        value: ['rec1', 'rec2'],
+                        nodes: twoNodes,
+                        userNodes: twoNodes,
+                        userFormattedValue: ['Node 1', 'Node 2'],
+                    },
+                ],
+                // A view-by-default that the legacy behaviour would restore on deselect-all — assert it does NOT.
+                initialFilters: [
+                    {
+                        id: 'tree-id',
+                        attribute: attributeDataTree,
+                        field: 'tree',
+                        condition: RecordFilterCondition.EQUAL,
+                        value: ['default-rec'],
+                        nodes: [{nodeId: 'default-node', libraryId: 'lib'}],
+                        userNodes: [{nodeId: 'default-node', libraryId: 'lib'}],
+                        userFormattedValue: ['Default'],
+                    },
+                ],
+            },
+            {
+                type: FiltersActionTypes.CHANGE_FILTER_CONFIG,
+                payload: {
+                    id: 'tree-id',
+                    attribute: attributeDataTree,
+                    field: 'tree',
+                    condition: RecordFilterCondition.EQUAL,
+                    value: [],
+                    nodes: [],
+                    userNodes: [],
+                    userFormattedValue: [],
+                },
+            },
+        );
+
+        // Empty but pinned: an explicit empty selection, NOT the restored view-by-default.
+        expect(state.filters[0]).toMatchObject({
+            id: 'tree-id',
+            value: [],
+            nodes: [],
+            userNodes: [],
+            userFormattedValue: [],
+        });
     });
 
     describe(`Action ${FiltersActionTypes.MOVE_FILTER} test`, () => {

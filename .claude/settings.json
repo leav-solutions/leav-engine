@@ -1,0 +1,15 @@
+{
+    "permissions": {
+        "allow": [
+            "Bash(yarn test)",
+            "Bash(yarn test *)",
+            "Bash(yarn tscheck)",
+            "Bash(yarn tscheck *)",
+            "Bash(yarn jest *)",
+            "Bash(yarn vitest *)",
+            "Bash(yarn graphql-generate)",
+            "Bash(yarn build)",
+            "Bash(npm view *)"
+        ]
+    }
+}
