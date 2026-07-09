@@ -41,7 +41,7 @@ describe('GeneralCustomizationTab', () => {
                                     endpoint: 'admin',
                                 },
                                 {
-                                    endpoint: 'data-studio',
+                                    endpoint: 'app-studio',
                                 },
                                 {
                                     endpoint: 'portal',
