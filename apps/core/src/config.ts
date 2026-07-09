@@ -341,17 +341,16 @@ export const validateConfig = (conf: IConfig) => {
             amqp: amqpConnOptSchema,
             clientId: Joi.string().allow(''),
             applicationName: Joi.string().allow(''),
+            exchange: Joi.string().required(),
+            exchangeType: Joi.string().required(),
             import: Joi.object().keys({
                 enable: Joi.boolean().required(),
                 prefetch: Joi.number().required(),
                 queue: Joi.string(),
-                exchange: Joi.string(),
             }),
             export: Joi.object().keys({
                 enable: Joi.boolean().required(),
                 dataEventsQueue: Joi.string().required(),
-                exchange: Joi.string(),
-                type: Joi.string().required(),
             }),
         }),
     });

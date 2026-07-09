@@ -59,7 +59,7 @@ export default function rabbitMQ({'core.infra.amqpService': leavAmqpService, con
         if (!_sdoExportChannel) {
             const sdoConnection = await _getSDOConnection();
             _sdoExportChannel = await sdoConnection.createConfirmChannel();
-            await _sdoExportChannel.assertExchange(config.sdo.export.exchange, config.sdo.export.type);
+            await _sdoExportChannel.assertExchange(config.sdo.exchange, config.sdo.exchangeType);
 
             _sdoExportChannel.on('error', err => {
                 logger.error(`[SDO] AMQP Channel Export error : ${err.message}`);
@@ -76,10 +76,8 @@ export default function rabbitMQ({'core.infra.amqpService': leavAmqpService, con
                 await _sdoImportChannel.prefetch(config.sdo.import.prefetch);
             }
             await _sdoImportChannel.assertQueue(config.sdo.import.queue, {durable: true});
-            if (config.sdo.import.exchange) {
-                await _sdoImportChannel.assertExchange(config.sdo.import.exchange, 'fanout');
-                await _sdoImportChannel.bindQueue(config.sdo.import.queue, config.sdo.import.exchange, '');
-            }
+            await _sdoImportChannel.assertExchange(config.sdo.exchange, config.sdo.exchangeType);
+            await _sdoImportChannel.bindQueue(config.sdo.import.queue, config.sdo.exchange, '');
 
             _sdoImportChannel.on('error', err => {
                 logger.error(`[SDO] AMQP Channel Import error : ${err.message}`);

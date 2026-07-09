@@ -7,12 +7,14 @@ import {EventAction} from '@leav/utils';
 import LeavError from '../../errors/LeavError';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 import {logger} from '@leav/logger';
+import {type IConfig} from '../../_types/config';
 
 export interface IImportAppDeps {
     'core.infra.sdo.rabbitMQ': IRabbitMQ;
     'core.domain.sdo': ISDODomain;
     'core.domain.sdo.import': ISDOImportDomain;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
+    config: IConfig;
 }
 
 export interface ISDOImportApp {
@@ -24,6 +26,7 @@ export default function ({
     'core.domain.sdo': sdoDomain,
     'core.domain.sdo.import': sdoImportDomain,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
+    config,
 }: IImportAppDeps): ISDOImportApp {
     const onSDOEvent = async (msg: ConsumeMessage): Promise<void> => {
         const _systemQueryContext = getSystemQueryContext('sdo::importApp:onSDOEvent');
@@ -32,6 +35,13 @@ export default function ({
         try {
             // Validate message format
             sdo = JSON.parse(msg.content.toString());
+
+            if (sdo.clientId && sdo.clientId === config.sdo.clientId) {
+                logger.debug('Import: ignoring own SDO message', {sdo});
+                (await rabbitMQService.getSDOImportChannel()).ack(msg);
+                return;
+            }
+
             const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(_systemQueryContext);
 
             if (sdoGlobalSettings.importEnable === false) {

@@ -10,6 +10,9 @@ export const mockConfig = {
         },
     },
     sdo: {
+        clientId: 'testClientId',
+        exchange: 'testExchange',
+        exchangeType: 'fanout',
         import: {
             enable: true,
             prefetch: 1,
@@ -17,8 +20,6 @@ export const mockConfig = {
         },
         export: {
             enable: true,
-            exchange: 'testExchange',
-            type: 'fanout',
             dataEventsQueue: 'testDataEventsQueue',
         },
     },

@@ -62,16 +62,18 @@ export interface ISdo {
      * Application name, like campaigns-manager or amp, used for system.applicationIds in SDO export
      */
     applicationName: string;
+    /**
+     * Single fanout exchange shared by export (publish) and import (listen), per the SDO RabbitMQ contract
+     */
+    exchange: string;
+    exchangeType: string;
     import: {
         enable: boolean;
         prefetch?: number;
         queue?: string;
-        exchange?: string;
     };
     export: {
         enable: boolean;
-        exchange?: string;
-        type?: string;
         dataEventsQueue?: string;
     };
 }

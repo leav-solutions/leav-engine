@@ -7,12 +7,14 @@ import {EventAction} from '@leav/utils';
 import ValidationError from '../../errors/ValidationError';
 import {mockImportDomain, mockSdoDomain} from '../../__tests__/mocks/sdo/domains';
 import {mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
+import {mockConfig} from '../../__tests__/mocks/sdo/config';
 
 const depsBase: ToAny<IImportAppDeps> = {
     'core.infra.sdo.rabbitMQ': mockRabbitMQService,
     'core.domain.sdo': mockSdoDomain,
     'core.domain.sdo.import': mockImportDomain,
     'core.utils.getSystemQueryContext': () => mockSystemQueryContext,
+    config: mockConfig,
 };
 
 const sdoGlobalSettings = {};
@@ -45,6 +47,20 @@ describe('importApp', () => {
                 sdo,
                 ctx: mockSystemQueryContext,
             });
+        });
+
+        it('[-] should ignore and ack a message emitted by itself (same clientId)', async () => {
+            const sdo = {...mockSDO, name: 'campaign', clientId: mockConfig.sdo.clientId};
+            const importMessage = {
+                ...mockImportMessage,
+                content: Buffer.from(JSON.stringify(sdo)),
+            };
+
+            await importApp(depsBase).onSDOEvent(importMessage);
+
+            expect(mockImportDomain.create).not.toHaveBeenCalled();
+            expect(mockImportDomain.update).not.toHaveBeenCalled();
+            expect((await mockRabbitMQService.getSDOImportChannel()).ack).toHaveBeenCalledWith(importMessage);
         });
 
         it('[-] Should skip processing if feature flag is false', async () => {

@@ -80,7 +80,7 @@ describe('SDO Imports', () => {
                 },
             };
 
-            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.import.exchange, sdoToEmit);
+            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.exchange, sdoToEmit);
 
             await vi.waitFor(
                 async () => {
@@ -158,7 +158,7 @@ describe('SDO Imports', () => {
                 },
             };
 
-            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.import.exchange, sdoToEmit);
+            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.exchange, sdoToEmit);
 
             await vi.waitFor(
                 async () => {
@@ -175,6 +175,50 @@ describe('SDO Imports', () => {
                 {timeout: 25000, interval: 1000},
             );
         });
+
+        test('receive a message with our own clientId should be ignored (no record created)', async () => {
+            const creationDateSec = Math.round(Date.now() / 1000); // in seconds
+            const uuid = crypto.randomUUID();
+            const editorUUID = crypto.randomUUID();
+
+            const sdoToEmit: ISDO = {
+                name: SDO_IMPORTS_LIBRARY_ID,
+                dataModelRelease: 'dataModelRelease',
+                date: creationDateSec,
+                action: 'CREATE',
+                clientId: conf.sdo.clientId,
+                content: {
+                    system: {
+                        systemId: uuid,
+                        systemActive: true,
+                        systemCreationDate: creationDateSec,
+                        systemLastModifiedDate: creationDateSec,
+                        systemCreator: editorUUID,
+                        systemLastModificator: editorUUID,
+                        systemLabel: 'Should not be imported',
+                        systemSdoHash: 'hashSelfEcho',
+                    },
+                    identifier: {},
+                    info: {value: 'mock_value'},
+                },
+            };
+
+            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.exchange, sdoToEmit);
+
+            // No positive event to wait for here (message must be silently ignored) -> wait a fixed
+            // delay, longer than the normal processing time observed in the other import tests.
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            const records = (
+                await adminUserSdk.GetRecordByUUID({
+                    libraryId: SDO_IMPORTS_LIBRARY_ID,
+                    recordUUID: uuid,
+                    retrieveInactive: true,
+                })
+            ).records.list;
+
+            expect(records).toHaveLength(0);
+        }, 10000);
     });
 
     describe('update', () => {
@@ -213,7 +257,7 @@ describe('SDO Imports', () => {
                 },
             };
 
-            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.import.exchange, sdoToEmit);
+            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.exchange, sdoToEmit);
 
             await vi.waitFor(
                 async () => {

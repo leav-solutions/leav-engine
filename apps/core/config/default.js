@@ -291,17 +291,18 @@ module.exports = {
         },
         clientId: process.env.SDO_CLIENT_ID || '',
         applicationName: process.env.SDO_APPLICATION_NAME || 'leav',
+        // SDO_EXPORT_EXCHANGE / SDO_EXPORT_EXCHANGE_TYPE kept as fallback for backward compatibility
+        // (previously the export-only exchange config, now shared with import)
+        exchange: process.env.SDO_EXCHANGE || process.env.SDO_EXPORT_EXCHANGE || process.env.INSTANCE_ID + '_sdo',
+        exchangeType: process.env.SDO_EXCHANGE_TYPE || process.env.SDO_EXPORT_EXCHANGE_TYPE || 'fanout',
         import: {
             enable: envToBool(process.env.SDO_IMPORT_ENABLE, false),
             prefetch: envToNumber(process.env.SDO_IMPORT_PREFETCH, 1),
             queue: process.env.SDO_IMPORT_QUEUE || process.env.INSTANCE_ID + '_sdo_import',
-            exchange: process.env.SDO_IMPORT_EXCHANGE || process.env.INSTANCE_ID + '_sdo',
         },
         export: {
             enable: envToBool(process.env.SDO_EXPORT_ENABLE, false),
             dataEventsQueue: process.env.SDO_EXPORT_DATA_EVENTS_QUEUE || 'sdo_data_events_queue',
-            exchange: process.env.SDO_EXPORT_EXCHANGE || process.env.INSTANCE_ID + '_sdo',
-            type: process.env.SDO_EXPORT_EXCHANGE_TYPE || 'fanout',
         },
     },
 };
