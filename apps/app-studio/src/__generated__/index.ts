@@ -2026,6 +2026,7 @@ export type QueryViewsArgs = {
 
 export type QueryViewsV2Args = {
   library: Scalars['ID']['input'];
+  origin?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Record = {
@@ -2986,6 +2987,8 @@ export type ViewV2 = {
   label: Scalars['SystemTranslation']['output'];
   library: Scalars['ID']['output'];
   modified_at: Scalars['Int']['output'];
+  /**  View kind, distinct from display.type. Null for explorer views; set to the originating custom panelId (e.g. 'planning'). */
+  origin?: Maybe<Scalars['String']['output']>;
   shared: Scalars['Boolean']['output'];
   shortcuts: Array<ViewV2Shortcut>;
   sorts: Array<ViewV2Sort>;
@@ -2997,6 +3000,7 @@ export type ViewV2CreateInput = {
   filters?: InputMaybe<Array<ViewV2FilterInput>>;
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
+  origin?: InputMaybe<Scalars['String']['input']>;
   shared: Scalars['Boolean']['input'];
   shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
@@ -3010,6 +3014,8 @@ export type ViewV2Creator = {
 
 export type ViewV2Display = {
   attributes: Array<ViewV2DisplayAttribute>;
+  /**  Opaque display configuration owned by a custom panel iframe (e.g. planning timeline). Not interpreted by the core. */
+  settings?: Maybe<Scalars['JSONObject']['output']>;
   type: ViewV2Types;
 };
 
@@ -3026,6 +3032,7 @@ export type ViewV2DisplayAttributeInput = {
 export type ViewV2DisplayInput = {
   /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<ViewV2DisplayAttributeInput>>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
   type: ViewV2Types;
 };
 
@@ -3077,6 +3084,7 @@ export type ViewV2UpdateInput = {
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
+  origin?: InputMaybe<Scalars['String']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
   shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
@@ -3234,14 +3242,14 @@ export type CreateViewV2MutationVariables = Exact<{
 }>;
 
 
-export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type UpdateViewV2MutationVariables = Exact<{
   view: ViewV2UpdateInput;
 }>;
 
 
-export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 type ViewSettingsLibraryAttributeLinkAttributeFragment = { id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } };
 
@@ -3271,7 +3279,7 @@ export type GetViewV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type IsAllowedQueryVariables = Exact<{
   type: PermissionTypes;
@@ -3282,7 +3290,7 @@ export type IsAllowedQueryVariables = Exact<{
 
 export type IsAllowedQuery = { isAllowed?: Array<{ name: PermissionsActions, allowed?: boolean | null }> | null };
 
-export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> };
+export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> };
 
 export type DeleteViewV2MutationVariables = Exact<{
   viewId: Scalars['ID']['input'];
@@ -3293,10 +3301,11 @@ export type DeleteViewV2Mutation = { deleteViewV2: { id: string } };
 
 export type GetViewListQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
+  origin?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type GetViewListQuery = { viewsV2: { list: Array<{ id: string, label: any, shared: boolean, created_by: { id: string } }> } };
+export type GetViewListQuery = { viewsV2: { list: Array<{ id: string, label: any, shared: boolean, origin?: string | null, created_by: { id: string } }> } };
 
 export type GetLibraryNameQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
@@ -3416,7 +3425,9 @@ export const AppStudioViewSettingsViewFragmentDoc = gql`
         label
       }
     }
+    settings
   }
+  origin
   sorts {
     attributes {
       id
@@ -4480,12 +4491,13 @@ export type DeleteViewV2MutationHookResult = ReturnType<typeof useDeleteViewV2Mu
 export type DeleteViewV2MutationResult = Apollo.MutationResult<DeleteViewV2Mutation>;
 export type DeleteViewV2MutationOptions = Apollo.BaseMutationOptions<DeleteViewV2Mutation, DeleteViewV2MutationVariables>;
 export const GetViewListDocument = gql`
-    query GetViewList($libraryId: ID!) {
-  viewsV2(library: $libraryId) {
+    query GetViewList($libraryId: ID!, $origin: String) {
+  viewsV2(library: $libraryId, origin: $origin) {
     list {
       id
       label
       shared
+      origin
       created_by {
         id
       }
@@ -4507,6 +4519,7 @@ export const GetViewListDocument = gql`
  * const { data, loading, error } = useGetViewListQuery({
  *   variables: {
  *      libraryId: // value for 'libraryId'
+ *      origin: // value for 'origin'
  *   },
  * });
  */

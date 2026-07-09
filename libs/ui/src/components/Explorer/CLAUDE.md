@@ -5,7 +5,7 @@ vues sauvegardées, actions primaires / par ligne / en masse, sélection, pagina
 
 > ⚠️ **Statut : legacy en transition.** Ce composant sera remplacé par
 > [`ExplorerV2`](../ExplorerV2/CLAUDE.md) (qui sera renommé `Explorer` une fois la migration
-> ViewV2 terminée et `data-studio` supprimé). **Pour tout nouveau développement de vues,
+> ViewV2 terminée). **Pour tout nouveau développement de vues,
 > cibler ExplorerV2.** Ce dossier n'est documenté que pour les modifications de maintenance.
 
 ---
@@ -38,7 +38,6 @@ bas) — la vraie distinction porte sur **ce que chacun embarque** :
 
 ## Consommateurs
 
-- **`apps/data-studio`** (en suppression) — `LibraryHome.tsx` notamment. Usage historique complet.
 - **`apps/app-studio`** — `panel-explorer/PanelLibraryExplorer.tsx` et `PanelAttributeExplorer.tsx`
   **basculent entre `Explorer` (v1) et `ExplorerV2`** selon le feature flag `enableViewSettings`.
   Les deux fichiers portent un TODO « à supprimer quand ExplorerV2 sera renommé Explorer ».

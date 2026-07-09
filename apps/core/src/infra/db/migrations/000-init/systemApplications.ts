@@ -19,22 +19,6 @@ export const systemApplications: MigrationApplicationToCreate[] = [
         },
     },
     {
-        _key: 'data_studio',
-        system: false,
-        type: ApplicationTypes.INTERNAL,
-        module: 'data-studio',
-        label: {fr: 'Data Studio', en: 'Data Studio'},
-        description: {
-            fr: 'Application générique pour gérer et explorer vos données',
-            en: 'Generic app to manage and explore your data',
-        },
-        endpoint: 'data-studio',
-        settings: {
-            libraries: 'all',
-            trees: 'all',
-        },
-    },
-    {
         _key: 'login',
         system: true,
         type: ApplicationTypes.INTERNAL,
