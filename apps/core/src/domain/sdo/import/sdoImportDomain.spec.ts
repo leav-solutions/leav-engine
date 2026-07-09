@@ -10,6 +10,7 @@ import {
     mockTreeDomain,
     mockValueDomain,
 } from '../../../__tests__/mocks/sdo/core';
+import {mockConfig} from '../../../__tests__/mocks/sdo/config';
 import {Operator, type IRecord} from '../../../_types/record';
 import {type IListWithCursor} from '../../../_types/list';
 import {AttributeTypes} from '../../../_types/attribute';
@@ -28,6 +29,7 @@ const deps: ToAny<ISDOImportDomainDeps> = {
     'core.domain.value': mockValueDomain,
     'core.domain.attribute': mockAttributeDomain,
     'core.domain.tree': mockTreeDomain,
+    config: mockConfig,
 };
 
 const treeIdForLink = 'treeId';

@@ -28,6 +28,8 @@ export default function ({
     'core.utils.getSystemQueryContext': getSystemQueryContext,
     config,
 }: IImportAppDeps): ISDOImportApp {
+    const debug = config.sdo.debug ?? false;
+
     const onSDOEvent = async (msg: ConsumeMessage): Promise<void> => {
         const _systemQueryContext = getSystemQueryContext('sdo::importApp:onSDOEvent');
         let sdo: ISDO;
@@ -37,7 +39,7 @@ export default function ({
             sdo = JSON.parse(msg.content.toString());
 
             if (sdo.clientId && sdo.clientId === config.sdo.clientId) {
-                logger.debug('Import: ignoring own SDO message', {sdo});
+                debug && logger.debug('Import: ignoring own SDO message', {sdo});
                 (await rabbitMQService.getSDOImportChannel()).ack(msg);
                 return;
             }
@@ -49,7 +51,7 @@ export default function ({
                 return;
             }
 
-            logger.debug('Import: sdo event selected', {sdo});
+            debug && logger.debug('Import: sdo event selected', {sdo});
             await sdoDomain.schemaValidation(sdo.content);
 
             // Dispatch message to corresponding action

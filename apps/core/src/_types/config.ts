@@ -76,6 +76,10 @@ export interface ISdo {
         enable: boolean;
         dataEventsQueue?: string;
     };
+    /**
+     * Add debug log for each SDO import/export operation
+     */
+    debug: boolean;
 }
 
 export interface IAutomation {

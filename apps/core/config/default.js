@@ -295,6 +295,7 @@ module.exports = {
         // (previously the export-only exchange config, now shared with import)
         exchange: process.env.SDO_EXCHANGE || process.env.SDO_EXPORT_EXCHANGE || process.env.INSTANCE_ID + '_sdo',
         exchangeType: process.env.SDO_EXCHANGE_TYPE || process.env.SDO_EXPORT_EXCHANGE_TYPE || 'fanout',
+        debug: envToBool(process.env.SDO_DEBUG, false),
         import: {
             enable: envToBool(process.env.SDO_IMPORT_ENABLE, false),
             prefetch: envToNumber(process.env.SDO_IMPORT_PREFETCH, 1),

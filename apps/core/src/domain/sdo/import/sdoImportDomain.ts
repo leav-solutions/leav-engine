@@ -25,6 +25,7 @@ import {type IQueryInfos} from '../../../_types/queryInfos';
 import {logger} from '@leav/logger';
 import {IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS} from '../../value/helpers/canSaveRecordValue';
 import {CommonAttributes, SdoAttributes} from '../../../_constants/systemAttributes';
+import {type IConfig} from '../../../_types/config';
 
 export interface ISDOImportDomainDeps {
     'core.utils.sdo': ISDOUtils;
@@ -34,17 +35,13 @@ export interface ISDOImportDomainDeps {
     'core.domain.record': IRecordDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.domain.tree': ITreeDomain;
+    config: IConfig;
 }
 
 export interface ISDOImportDomain {
     create: (sdo: ISDO, ctx: IQueryInfos) => Promise<void>;
     update: (sdo: ISDO, ctx: IQueryInfos) => Promise<void>;
 }
-
-// may be added in plugin config to be configurable, for now only for devs.
-// Or may be better to use specific logger with its one level for modules (her importDomain).
-// https://aristid.atlassian.net/browse/LEAVC-221
-const debugSaveValues = false;
 
 export default function ({
     'core.utils.sdo': sdoUtils,
@@ -53,7 +50,10 @@ export default function ({
     'core.domain.sdo': sdoDomain,
     'core.domain.attribute': attributeDomain,
     'core.domain.tree': treeDomain,
+    config,
 }: ISDOImportDomainDeps): ISDOImportDomain {
+    const debug = config.sdo.debug ?? false;
+
     const create = async (sdo: ISDO, ctx: IQueryInfos) => {
         const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(ctx);
         const leavLibraryId = sdoUtils.getLeavLibraryId(sdoGlobalSettings.mapping, sdo);
@@ -64,9 +64,10 @@ export default function ({
 
         // If we find a record, it's already created, so we skip it
         if (records.length) {
-            logger.debug(
-                `Record with uuid "${recordUuid}" on library "${leavLibraryId}" already exists, import create skipped`,
-            );
+            debug &&
+                logger.debug(
+                    `Record with uuid "${recordUuid}" on library "${leavLibraryId}" already exists, import create skipped`,
+                );
 
             return;
         }
@@ -76,11 +77,13 @@ export default function ({
         // filter out immutable core system attributes to avoid create record failure
         valuesToSave = valuesToSave.filter(value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute));
 
-        if (debugSaveValues) {
-            logger.debug(`SDO Import create: new record with uuid=${recordUuid} on library "${leavLibraryId}" >> `, {
+        logger.verbose(
+            `SDO Import create on record ${leavLibraryId}/${recordUuid}`,
+            (debug && {
                 valuesToSave,
-            });
-        }
+            }) ||
+                {},
+        );
 
         const res = await recordDomain.createRecord({
             library: leavLibraryId,
@@ -123,11 +126,13 @@ export default function ({
         // filter out immutable core system attributes to avoid update system informations
         valuesToSave = valuesToSave.filter(value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute));
 
-        if (debugSaveValues) {
-            logger.debug(`SDO Import update: values to save on record ${leavLibraryId}/${records[0].uuid} >> `, {
+        logger.verbose(
+            `SDO Import update on record ${leavLibraryId}/${recordUuid}/${records[0].id}`,
+            (debug && {
                 valuesToSave,
-            });
-        }
+            }) ||
+                {},
+        );
 
         const res = await valueDomain.saveValueBatch({
             library: leavLibraryId,

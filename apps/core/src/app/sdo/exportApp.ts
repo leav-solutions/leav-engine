@@ -9,12 +9,14 @@ import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryCont
 import {logger} from '@leav/logger';
 import {type IExtensionPoints} from '../../_types/extensionPoints';
 import {type ISDOMappingFunctions} from '../../_types/sdo';
+import {type IConfig} from '../../_types/config';
 
 export interface IExportAppDeps {
     'core.domain.sdo.export': ISDOExportDomain;
     'core.infra.sdo.rabbitMQ': IRabbitMQ;
     'core.domain.sdo': ISDODomain;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
+    config: IConfig;
 }
 
 export interface IExportApp {
@@ -27,7 +29,10 @@ export default function ({
     'core.infra.sdo.rabbitMQ': rabbitMQService,
     'core.domain.sdo': sdoDomain,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
+    config,
 }: IExportAppDeps): IExportApp {
+    const debug = config.sdo.debug ?? false;
+
     const onDataEvent = async (msg: ConsumeMessage) => {
         const _systemQueryContext = getSystemQueryContext('sdo::exportApp:onDataEvent');
 
@@ -38,7 +43,7 @@ export default function ({
             // cause: import create/update will trigger an event here
             if (data.userId === systemUserId) {
                 // TODO: log event
-                logger.debug('Export skipped, event triggered by systemUserId');
+                debug && logger.debug('Export skipped, event triggered by systemUserId');
                 (await rabbitMQService.getLeavDataEventChannel()).ack(msg);
                 return;
             }
@@ -50,7 +55,7 @@ export default function ({
                 return;
             }
 
-            logger.debug('Export: data event selected', {data});
+            debug && logger.debug('Export: data event selected', {data});
 
             const sdoDataEvent = await sdoExportDomain.getSDODataEvent(data, sdoGlobalSettings.mapping);
 
