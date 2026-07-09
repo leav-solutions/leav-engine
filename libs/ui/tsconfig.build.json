@@ -3,9 +3,11 @@
     "compilerOptions": {
         "outDir": "dist",
         "rootDir": "./src",
+        "target": "es2024",
+        "module": "esnext",
+        "moduleResolution": "bundler",
         "composite": true,
         "inlineSources": true,
-        "module": "esnext",
         "skipLibCheck": true,
         "jsx": "react-jsx",
         "resolveJsonModule": true,
@@ -13,6 +15,7 @@
             "_ui/*": ["./src/*"]
         }
     },
+    "references": [{"path": "../../libs/utils/tsconfig.json"}],
     "include": ["src", "src/**/*.json"],
     "exclude": ["**/*.test.*", "**/_tests"]
 }
