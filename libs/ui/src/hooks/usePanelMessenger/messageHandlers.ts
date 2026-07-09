@@ -22,6 +22,8 @@ import {
     type OpenFlapPanelMessage,
     type GetPanelConfigMessage,
     type ViewSettingsUpdateMessage,
+    type OpenViewSettingsMessage,
+    type UpdateViewMessage,
 } from './types';
 
 export const encodeMessage = (message: Message): string =>
@@ -181,6 +183,15 @@ export const initClientHandlers: (
         case 'view-settings-update':
             options?.handlers?.onViewConfigUpdate?.(message.data as ViewSettingsUpdateMessage['data']);
             break;
+        case 'open-view-settings':
+            options?.handlers?.onOpenViewSettings?.(message.data as OpenViewSettingsMessage['data']);
+            break;
+        case 'update-view':
+            options?.handlers?.onUpdateView?.(message.data as UpdateViewMessage['data']);
+            break;
+        case 'request-current-view':
+            options?.handlers?.onRequestCurrentView?.();
+            break;
         default:
             break;
     }
@@ -257,5 +268,14 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
     },
     explorerViewChanged: (data: ExplorerViewChangedMessage['data']) => {
         dispatch?.({type: 'explorer-view-changed', data});
+    },
+    openViewSettings: (data: OpenViewSettingsMessage['data']) => {
+        dispatch?.({type: 'open-view-settings', data});
+    },
+    updateView: (data: UpdateViewMessage['data']) => {
+        dispatch?.({type: 'update-view', data});
+    },
+    requestCurrentView: () => {
+        dispatch?.({type: 'request-current-view'});
     },
 });

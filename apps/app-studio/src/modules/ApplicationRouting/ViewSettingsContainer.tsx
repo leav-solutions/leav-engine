@@ -15,11 +15,20 @@ export const ViewSettingsContainer = () => {
     const [application, setApplication] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
 
-    const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId, panelId});
+    const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({
+        application,
+        recordPanelId,
+        panelId,
+    });
 
     usePanelEventHandlers<AppStudioInternalEvent>({
         'view-settings-select-view': ({viewId}) => {
-            if (currentPanel === null || libraryId === null || panelType === null || currentPanel.type !== 'explorer') {
+            if (
+                currentPanel === null ||
+                libraryId === null ||
+                panelType === null ||
+                (currentPanel.type !== 'explorer' && currentPanel.type !== 'custom')
+            ) {
                 return;
             }
             setApplication(prev =>
@@ -37,7 +46,12 @@ export const ViewSettingsContainer = () => {
         },
     });
 
-    if (currentPanel === null || libraryId === null || panelType === null || currentPanel.type !== 'explorer') {
+    if (
+        currentPanel === null ||
+        libraryId === null ||
+        panelType === null ||
+        (currentPanel.type !== 'explorer' && currentPanel.type !== 'custom')
+    ) {
         return null;
     }
 
@@ -61,8 +75,9 @@ export const ViewSettingsContainer = () => {
                 NOT wrapping the explorer). Mounts only while the volet is open. */}
             <VoletFiltersProvider>
                 <PanelViewSettings
-                    libraryId={currentPanel.targetLibraryId}
+                    libraryId={displayedLibraryId ?? undefined}
                     currentTab={currentPanel.selectedTab}
+                    hiddenTabs={currentPanel.hiddenTabs}
                     onClose={resetViewSettings}
                 />
             </VoletFiltersProvider>

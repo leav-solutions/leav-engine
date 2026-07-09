@@ -50,10 +50,14 @@ export interface ICurrentViewState {
 
 export type CurrentViewAction =
     | {type: 'LOAD_VIEW'; payload: NonNullable<CurrentView>}
-    | {type: 'INIT_DEFAULT_VIEW'; payload: {library: string; createdBy: {id: string; label: string}}}
+    | {
+          type: 'INIT_DEFAULT_VIEW';
+          payload: {library: string; createdBy: {id: string; label: string}; origin?: string};
+      }
     | {type: 'SET_LABEL'; payload: {lang: string; value: string}}
     | {type: 'SET_SHARED'; payload: {shared: boolean}}
     | {type: 'SET_VIEW_TYPE'; payload: {viewType: CurrentViewTypes}}
+    | {type: 'SET_DISPLAY_SETTINGS'; payload: {settings: Record<string, unknown> | null}}
     | {type: 'TOGGLE_VISIBILITY'; payload: {id: string}}
     | {type: 'MOVE_ATTRIBUTE'; payload: {activeId: string; overId: string}}
     | {type: 'MOVE_SORT'; payload: {activeId: string; overId: string}}

@@ -86,7 +86,7 @@ export const useViewSettingsProps = (): {
                     }
 
                     dispatch({
-                        type: 'open-view-settings',
+                        type: 'set-panel-view-settings',
                         data: {
                             selectedTab: settingName,
                             currentViewId: clickedViewId,

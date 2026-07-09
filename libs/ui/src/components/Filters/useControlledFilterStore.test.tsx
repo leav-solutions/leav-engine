@@ -213,9 +213,9 @@ describe('useControlledFilterStore', () => {
             {initialProps: {leanFilters: [treeLean([])]}},
         );
 
-        // Empty tree → seeded empty, no nodes, no request.
+        // Empty tree → seeded as an EXPLICIT empty selection (userNodes: []), no nodes, no request.
         await waitFor(() => expect(result.current.filtersData.filters).toHaveLength(1));
-        expect((result.current.filtersData.filters[0] as IUIFilterTree).userNodes ?? null).toBeNull();
+        expect((result.current.filtersData.filters[0] as IUIFilterTree).userNodes).toEqual([]);
 
         // The volet selected a node → its recordId arrives through the hub as a lean value.
         rerender({leanFilters: [treeLean(['rec1'])]});
@@ -254,7 +254,68 @@ describe('useControlledFilterStore', () => {
         expect(tree.nodes).toEqual([{nodeId: 'node-rec2', libraryId: 'tree_lib'}]);
     });
 
-    it('excludes a tree filter with no user selection from the projection (no spurious emit)', async () => {
+    it('clearing a tree keeps it in the emitted lean as an empty selection (not dropped, not unpinned)', async () => {
+        const onChange = vi.fn();
+        const treeLean = (values: string[]): SerializedFilter => ({
+            attributes: [{id: 'category'}],
+            condition: RecordFilterCondition.EQUAL,
+            values,
+            pinned: true,
+        });
+        const {result} = renderHook(() =>
+            useControlledFilterStore({leanFilters: [treeLean(['rec1'])], libraryId: 'lib', onChange}),
+        );
+
+        // Live resolved selection.
+        await waitFor(() => expect((result.current.filtersData.filters[0] as IUIFilterTree).value).toEqual(['rec1']));
+        onChange.mockClear();
+
+        // The user deselects the last node in the dropdown → CHANGE_FILTER_CONFIG with empty arrays.
+        const current = result.current.filtersData.filters[0] as IUIFilterTree;
+        act(() => {
+            result.current.dispatch({
+                type: FiltersActionTypes.CHANGE_FILTER_CONFIG,
+                payload: {...current, value: [], nodes: [], userNodes: [], userFormattedValue: []},
+            });
+        });
+
+        // Store keeps an EXPLICIT empty selection (not restored to a default).
+        await waitFor(() => expect((result.current.filtersData.filters[0] as IUIFilterTree).userNodes).toEqual([]));
+
+        // Emitted lean: the tree is STILL present with empty values — so the volet's setFilterConfig
+        // clears it and the toolbar does NOT unpin it. The pre-fix bug dropped it from the lean entirely.
+        await waitFor(() => expect(onChange).toHaveBeenCalled());
+        const lastEmit = onChange.mock.calls.at(-1)![0] as SerializedFilter[];
+        const treeEmit = lastEmit.find(filter => filter.attributes[0].id === 'category');
+        expect(treeEmit).toBeDefined();
+        expect(treeEmit!.values).toEqual([]);
+    });
+
+    it('clears a live tree selection when the hub pushes an empty tree (other spoke deselected all)', async () => {
+        const treeLean = (values: string[]): SerializedFilter => ({
+            attributes: [{id: 'category'}],
+            condition: RecordFilterCondition.EQUAL,
+            values,
+            pinned: true,
+        });
+        const {result, rerender} = renderHook(
+            ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib'}),
+            {initialProps: {leanFilters: [treeLean(['rec1'])]}},
+        );
+        await waitFor(() => expect((result.current.filtersData.filters[0] as IUIFilterTree).value).toEqual(['rec1']));
+
+        // The other spoke cleared the tree → the hub pushes empty values. The SEED merge must adopt the
+        // empty selection (clear the stale live nodes), not preserve them as "resolution in flight".
+        rerender({leanFilters: [treeLean([])]});
+
+        await waitFor(() => {
+            const tree = result.current.filtersData.filters[0] as IUIFilterTree;
+            expect(tree.userNodes).toEqual([]);
+            expect(tree.value).toEqual([]);
+        });
+    });
+
+    it('does not emit when seeding a tree filter with no stored values (no spurious emit)', async () => {
         const onChange = vi.fn();
         const {result} = renderHook(() =>
             useControlledFilterStore({
@@ -267,7 +328,8 @@ describe('useControlledFilterStore', () => {
         );
 
         await waitFor(() => expect(result.current.filtersData.filters).toHaveLength(1));
-        // The tree filter is seeded empty (userNodes null) → excluded from the lean projection → no emit.
+        // The tree filter is seeded as an explicit empty selection (userNodes: []). Store and hub
+        // projections agree (both {category: []}) → EMIT recognises it as in-sync → no emit.
         expect(onChange).not.toHaveBeenCalled();
     });
 
@@ -329,6 +391,82 @@ describe('useControlledFilterStore', () => {
         await waitFor(() => expect((result.current.filtersData.filters[0] as IUIFilterTree).value).toEqual(['rec1']));
         const tree = result.current.filtersData.filters[0] as IUIFilterTree;
         expect(tree.userNodes).toEqual([{nodeId: 'node-rec1', libraryId: 'tree_lib'}]);
+    });
+
+    it('RESET_FILTER on a tree with NO saved value clears to an EXPLICIT empty selection ([], not null)', async () => {
+        const onChange = vi.fn();
+        const treeLean = (values: string[]): SerializedFilter => ({
+            attributes: [{id: 'category'}],
+            condition: RecordFilterCondition.EQUAL,
+            values,
+            pinned: true,
+        });
+        // Saved view has the tree EMPTY (no stored value) → the reset target must be an explicit empty
+        // selection, not `null` (which would drop the tree from the lean projection and desync the spokes).
+        const {result} = renderHook(() =>
+            useControlledFilterStore({leanFilters: [treeLean([])], libraryId: 'lib', onChange}),
+        );
+        await waitFor(() => expect(result.current.filtersData.filters).toHaveLength(1));
+
+        // User selects a node → the tree now has a live selection.
+        const current = result.current.filtersData.filters[0] as IUIFilterTree;
+        act(() => {
+            result.current.dispatch({
+                type: FiltersActionTypes.CHANGE_FILTER_CONFIG,
+                payload: {
+                    ...current,
+                    value: ['rec1'],
+                    nodes: [{nodeId: 'node-rec1', libraryId: 'tree_lib'}],
+                    userNodes: [{nodeId: 'node-rec1', libraryId: 'tree_lib'}],
+                    userFormattedValue: ['Label rec1'],
+                } as IUIFilterTree,
+            });
+        });
+        await waitFor(() => expect((result.current.filtersData.filters[0] as IUIFilterTree).value).toEqual(['rec1']));
+
+        // Reset → back to the SAVED (empty) state = vidé mais épinglé (userNodes: [], never null).
+        act(() => {
+            result.current.dispatch({type: FiltersActionTypes.RESET_FILTER, payload: {id: 'category'}});
+        });
+
+        await waitFor(() => {
+            const tree = result.current.filtersData.filters[0] as IUIFilterTree;
+            expect(tree.userNodes).toEqual([]);
+            expect(tree.value).toEqual([]);
+        });
+        // The tree stays PINNED but empty — it is not removed from the store.
+        expect(result.current.filtersData.filters).toHaveLength(1);
+    });
+
+    it('does NOT re-hydrate a just-emptied tree from a stale resolution (async resolvedById lag)', async () => {
+        // Faithful to the real (async) useResolveTreeFilterNodes: resolution clears one render LATER than
+        // leanFilters changes. When a tree is emptied, there is a window where resolvedById still holds the
+        // previous nodes; seedFilters must NOT re-enrich the (explicitly empty) converted filter from that
+        // stale entry, or the cleared selection pops back and the spokes desync.
+        const treeLean = (values: string[]): SerializedFilter => ({
+            attributes: [{id: 'category'}],
+            condition: RecordFilterCondition.EQUAL,
+            values,
+            pinned: true,
+        });
+        const {result, rerender} = renderHook(
+            ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib'}),
+            {initialProps: {leanFilters: [treeLean(['rec1'])]}},
+        );
+        await waitFor(() =>
+            expect((result.current.filtersData.filters[0] as IUIFilterTree).userNodes).toEqual([
+                {nodeId: 'node-rec1', libraryId: 'tree_lib'},
+            ]),
+        );
+
+        // The tree is cleared (deselect-all on the other spoke) → lean value goes empty.
+        rerender({leanFilters: [treeLean([])]});
+
+        await waitFor(() => {
+            const tree = result.current.filtersData.filters[0] as IUIFilterTree;
+            expect(tree.userNodes).toEqual([]);
+            expect(tree.value).toEqual([]);
+        });
     });
 
     it('seeds a smart-filter link with the FULL stored value array (LEAVC-810 — no scalar crash)', async () => {

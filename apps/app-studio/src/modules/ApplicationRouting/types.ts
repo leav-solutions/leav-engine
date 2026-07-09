@@ -17,11 +17,13 @@ export type Application = z.infer<typeof ApplicationSchema>;
 export type AppStudioInternalEvent =
     | {type: 'view-settings-select-view'; data: {viewId: string}}
     | {
-          type: 'open-view-settings';
+          type: 'set-panel-view-settings';
           data: {
               selectedTab: ViewSettingsTab;
               currentViewId: string;
               currentLibraryId: string;
+              displayViewSettingsIframeSource?: string;
+              hiddenTabs?: ViewSettingsTab[];
               explorerPanelDetails: {
                   libraryId: string;
                   panelType: 'libraryPanels' | 'recordPanels';

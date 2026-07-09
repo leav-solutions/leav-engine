@@ -1,6 +1,7 @@
-import {useReducer} from 'react';
+import {type ReactNode, useReducer} from 'react';
 import userEvent from '@testing-library/user-event';
 import {act, render, screen, within} from '_ui/_tests/testUtils';
+import {PanelMessengerContext} from '_ui/hooks/usePanelMessenger/panelMessengerContext';
 import {CurrentViewContext} from '../../../store-current-view/CurrentViewContext';
 import {currentViewReducer} from '../../../store-current-view/currentViewReducer';
 import {type CurrentViewColumn} from '../../../store-current-view/_types';
@@ -13,6 +14,22 @@ const SEEDED_COLUMNS: CurrentViewColumn[] = [
     {visible: false, attribute: {id: 'attribute_3', label: {fr: 'Attribut 3', en: 'Attribut 3'}}},
     {visible: false, attribute: {id: 'attribute_5', label: {fr: 'Attribut 5', en: 'Attribut 5'}}},
 ];
+
+// TabDisplay calls `usePanelIFrameHandlers` unconditionally (for the delegated-iframe sync), which
+// reads `PanelMessengerContext`. Provide a minimal stub so the hook mounts; `registerHandlers` must
+// return a cleanup fn (it is used as a useEffect teardown).
+const messengerStub = {
+    registerHandlers: () => () => undefined,
+    registerNativePanelHandlers: () => () => undefined,
+    dispatchToNativePanel: () => undefined,
+    changeLangInAllFrames: () => undefined,
+    addInternalEventHandler: () => () => undefined,
+    dispatchToSelf: () => undefined,
+} as unknown as React.ContextType<typeof PanelMessengerContext>;
+
+const WithMessenger = ({children}: {children: ReactNode}) => (
+    <PanelMessengerContext.Provider value={messengerStub}>{children}</PanelMessengerContext.Provider>
+);
 
 // Reducer-backed provider so toggling the eye dispatches real actions and re-renders.
 const TabDisplayWithState = ({
@@ -35,9 +52,11 @@ const TabDisplayWithState = ({
     };
     const [state, dispatch] = useReducer(currentViewReducer, {view: seed, savedView: seed});
     return (
-        <CurrentViewContext.Provider value={{...state, isEmptyView: false, canManageViews, dispatch}}>
-            <TabDisplay />
-        </CurrentViewContext.Provider>
+        <WithMessenger>
+            <CurrentViewContext.Provider value={{...state, isEmptyView: false, canManageViews, dispatch}}>
+                <TabDisplay />
+            </CurrentViewContext.Provider>
+        </WithMessenger>
     );
 };
 
@@ -66,11 +85,13 @@ describe('TabDisplay', () => {
         // Empty state = no view in the store (null). The tab no longer shows a KitEmpty placeholder:
         // the (hardcoded) display modes and the locked identity column are always rendered.
         render(
-            <CurrentViewContext.Provider
-                value={{view: null, savedView: null, isEmptyView: true, canManageViews: false, dispatch: vi.fn()}}
-            >
-                <TabDisplay />
-            </CurrentViewContext.Provider>,
+            <WithMessenger>
+                <CurrentViewContext.Provider
+                    value={{view: null, savedView: null, isEmptyView: true, canManageViews: false, dispatch: vi.fn()}}
+                >
+                    <TabDisplay />
+                </CurrentViewContext.Provider>
+            </WithMessenger>,
         );
 
         expect(screen.queryByText('view_settings.empty_view')).not.toBeInTheDocument();

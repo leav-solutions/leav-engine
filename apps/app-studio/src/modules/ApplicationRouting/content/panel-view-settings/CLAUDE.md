@@ -19,9 +19,13 @@ header `CurrentViewSection`.
 - Deux snapshots dans le state (`ICurrentViewState`) :
     - `view` : copie live, éditable, reflétée par l'UI.
     - `savedView` : dernier état persisté → sert à `isDirty` et à `RESET_VIEW`.
-- **`isDirty`** = comparaison d'un _fingerprint_ `JSON.stringify({label, display, sorts})` entre
-  `view` et `savedView` (`useCurrentView.ts`). ⚠️ `shared` est volontairement **hors** du
-  fingerprint (persisté hors-bande, ne doit jamais rendre la vue « dirty »).
+- **`isDirty`** = comparaison d'un _fingerprint_ `JSON.stringify({label, display, sorts, filters, shortcuts})`
+  entre `view` et `savedView` (`useCurrentView.ts`). `display` contient **`display.settings`**, donc **toute
+  modification de la config d'affichage opaque d'un panel custom rend la vue dirty** (→ le user peut
+  sauvegarder), sans code dédié. ⚠️ Détection = `JSON.stringify` : **sensible à l'ordre des clés** — l'app
+  custom doit émettre une forme **stable** (même ordre de clés) sinon un ré-envoi identique passerait
+  faussement en dirty (même limite dans le garde G1 de `SET_DISPLAY_SETTINGS`). ⚠️ À l'inverse, `shared` est
+  volontairement **hors** du fingerprint (persisté hors-bande, ne doit jamais rendre la vue « dirty »).
 
 ### Actions reducer (`currentViewReducer.ts` / `_types.ts`)
 
@@ -31,7 +35,11 @@ header `CurrentViewSection`.
 d'un filtre ; dispatché soit par `VoletFiltersProvider` (édition volet), soit par `useViewSettingsProps.onFiltersChange`
 (édition/suppression depuis la `FilterToolBar` d'ExplorerV2) → persistance/`isDirty`. **Durci G1** : renvoie
 le **même state** si condition+valeurs+`withEmptyValues` inchangés, pour que la synchro hub↔spoke ne boucle pas),
-**`SET_AVAILABLE_COLUMNS`**, **`SET_AVAILABLE_SORTS`**, **`SET_AVAILABLE_FILTERS`** (roue admin).
+**`SET_AVAILABLE_COLUMNS`**, **`SET_AVAILABLE_SORTS`**, **`SET_AVAILABLE_FILTERS`** (roue admin),
+**`SET_DISPLAY_SETTINGS`** (config d'affichage **opaque** `view.display.settings` d'un panel custom —
+ex. timeline planning ; dispatché par le pont `panel-custom/useUpdateView.ts` sur message `update-view` de
+l'iframe. **Durci G1** : renvoie le **même state** si le JSON est inchangé, pour que le round-trip hôte↔iframe
+ne boucle pas).
 
 - `LOAD_VIEW` **sème les deux snapshots** (chargement initial + écho serveur après save/save-as).
 - `INIT_DEFAULT_VIEW` **sème les deux snapshots** avec un brouillon synthétique vide
@@ -46,13 +54,14 @@ le **même state** si condition+valeurs+`withEmptyValues` inchangés, pour que l
 
 ### `useCurrentView()`
 
-Expose `view`, `savedView`, `isOwner`, `canManageCurrentView`, `canManageViews`, `isDirty`,
-`visibleColumns`, `invisibleColumns`, `sorts`, `pinnedSorts`, `unpinnedSorts`, `filters`,
-`pinnedFilters`, `unpinnedFilters`, `availableColumnIds`, `availableSortPaths`, `availableFilterPaths`,
+Expose `view`, `savedView`, `isOwner`, `canManageCurrentView`, `canManageViews`, `isDirty`, `origin`
+(kind de la vue courante, cf. `## Panels custom & origine`), `visibleColumns`, `invisibleColumns`,
+`sorts`, `pinnedSorts`, `unpinnedSorts`, `filters`, `pinnedFilters`, `unpinnedFilters`,
+`availableColumnIds`, `availableSortPaths`, `availableFilterPaths`,
 et les dispatchers : `setViewType`, `toggleVisibility`, `moveAttribute`, `moveSort`, `setSortOrder`,
 `toggleSortPinned`, `moveFilter`, `toggleFilterPinned`, `setFilterConfig`,
-`setLabel`, `setShared`, `setAvailableColumns`, `setAvailableSorts`, `setAvailableFilters`,
-`resetView`, `markSaved`.
+`setLabel`, `setShared`, `setDisplaySettings`, `setAvailableColumns`, `setAvailableSorts`,
+`setAvailableFilters`, `resetView`, `markSaved`.
 
 - **`isOwner`** = `view.created_by.whoAmI.id === userData.userId`.
 - **`canManageViews`** = permission `manage_views` sur la bibliothèque affichée (droit « gestionnaire
@@ -106,9 +115,13 @@ Convertit la `ViewV2` GraphQL en `SerializedView` (contrat consommé par la prop
 - **`shortcuts`** : onglets du volet exposés en boutons-raccourcis (`display | filters | sorts |
 catalog`), recopiés tels quels avec fallback `['display']` (LEAVC-892). L'ordre d'affichage est
   imposé côté ExplorerV2 (ordre canonique), pas par cette liste.
+- **`displaySettings`** : `view.display.settings` recopié tel quel (JSON **opaque**, non interprété).
+  Sert à piloter un panel custom (ex. planning) exactement comme ExplorerV2 — via la vue contrôlée /
+  sérialisée (cf. `## Panels custom & origine`). Le type public `SerializedViewV2` porte ce champ.
 - Fragment `viewV2Fragment.graphql` récupère désormais `sorts { attributes {id label} order }`,
-  `shortcuts` et `filters { … withEmptyValues }` (le flag "non défini", persisté côté core
-  `IViewV2Filter.withEmptyValues` — `Boolean` nullable pour rétro-compat, cf. LEAVC-810).
+  `shortcuts`, `filters { … withEmptyValues }` (le flag "non défini", persisté côté core
+  `IViewV2Filter.withEmptyValues` — `Boolean` nullable pour rétro-compat, cf. LEAVC-810), ainsi que
+  **`display.settings`** (`JSONObject` opaque) et **`origin`** (kind de la vue).
 
 **Câblage** : `panel-explorer/useViewSettingsProps.ts` lit le store et fournit `currentView` +
 les callbacks `viewSettings` à `ExplorerV2` (monté dans `PanelLibraryExplorer.tsx`).
@@ -185,8 +198,65 @@ hub↔spoke est no-op ou converge en un tour :
   résout donc les recordIds **sauvegardés** séparément (snapshot pré-édition, cache-hit) pour que
   "Réinitialiser" restaure les nœuds **sauvegardés** (idem la valeur d'un filtre standard), pas les courants.
 
-> ⏳ **Différé** (avec le câblage iframe) : push réel `view-settings-update` hôte→iframe + émission
-> `explorer-view-changed`, et lean-ification du pré-filtre `hidden`. L'architecture est déjà message-ready.
+> ✅ **Câblage iframe implémenté** (LEAVC-924) : le push hôte→iframe `view-settings-update` et la
+> remontée iframe→hôte sont branchés pour un panel custom (cf. `## Panels custom & origine`). La
+> lean-ification du pré-filtre `hidden` reste différée. L'architecture était déjà message-ready.
+
+---
+
+## Panels custom & origine (LEAVC-924)
+
+Le volet ne sert plus **uniquement** l'`explorer` : il monte aussi au-dessus d'un panel **`custom`**
+(iframe métier, ex. planning) qui délègue au volet générique tout sauf son mode d'affichage propre.
+
+- **Montage** (`Panel.tsx`) : `CurrentViewStoreProvider` enveloppe le panel dès que
+  `enableViewSettings && (explorer || custom)` (le `viewId` / la library transitent en props, le store
+  se garde lui-même quand `viewId` manque). Pour un custom, `origin = panel.id` et
+  `displayedLibraryId` est résolu par `retrievePanelDetails` selon la précédence **`viewLibraryId`
+  (config statique) → `targetLibraryId` (runtime, posé par le message `open-view-settings`) →
+  `libraryId` (owner)**. ⚠️ Le champ **statique `viewLibraryId`** est ce qui doit être déclaré en
+  config panel : `targetLibraryId` est remis à `undefined` à la fermeture du volet, donc s'y fier
+  seul ferait « flipper » la library affichée sur l'owner. `getIsViewSettingsVoletActive` +
+  `ViewSettingsContainer` acceptent aussi `custom`.
+- **`view.origin`** (kind, distinct de `display.type`) : **non défini** pour les vues explorer
+  (transparent, pas de backfill), = **panelId** custom sinon. Scope le catalogue : `useViewCatalog(libraryId, origin)`
+  et `useCurrentViewActions.saveAs`/`createDefaultView` lisent `origin` via `CurrentViewContext` — l'explorer
+  ne voit que les vues **sans origine**, un panel custom que les siennes. `origin` est aussi transmis à la
+  query `viewsV2(library, origin)` et posé à la création.
+- **Pont cross-frame** (`content/panel-custom/message-handlers/`) : câblé dans `PanelCustom` via
+  `usePanelIFrameHandlers`.
+    - `useOpenViewSettings` — message iframe→hôte `open-view-settings` → dispatch de l'event **interne**
+      `set-panel-view-settings` (ouvre le volet), comme le clic roue de l'explorer. Le type interne
+      diffère volontairement du message cross-frame (`open-view-settings`) : sinon le message brut de
+      l'iframe (sans `explorerPanelDetails`) serait capté directement par le registre d'events internes
+      avant que `useOpenViewSettings` puisse l'enrichir (cf. `usePanelMessenger.ts`, branche `default`).
+      Le message porte aussi **`displayViewSettingsIframeSource`** (URL de l'onglet Affichage) : l'app
+      custom seule connaît ses params de route (recordId/iframePanelId), donc elle fournit l'URL et
+      app-studio l'**injecte** dans l'état du panel (via `updatePanelViewSettingsInApplication`) plutôt
+      que de la lire dans une config statique. Le message porte enfin **`hiddenTabs?: ViewSettingsTab[]`**
+      (LEAVC-924) : l'ouvreur masque les onglets qui n'ont pas de sens dans son contexte (planning code
+      en dur `['sorts']`). Transporté via le même chemin (`set-panel-view-settings` → panel), consommé par
+      `PanelViewSettings` qui filtre le rail (`visibleTabs`) et **garde l'onglet actif hors des masqués**
+      (fallback sur le premier visible). Absent → les 4 onglets restent (rétro-compatible). Réinitialisé à
+      la fermeture par `RESET_VIEW_SETTINGS`.
+    - `useUpdateView` — message iframe→hôte `update-view` (`Partial<SerializedView>`) → réconcilie au hub :
+      `displaySettings` → `SET_DISPLAY_SETTINGS` ; `filters` → même réconciliation lean que
+      `useViewSettingsProps.onFiltersChange` (setFilterConfig / toggleFilterPinned). Safe hors provider (`view` null → no-op).
+    - `useSyncViewToIframe` — pousse `view-settings-update` (le `serializedView` du hub) à la frame à chaque
+      changement (load / édition volet / RESET / sélection), via `pushViewSettingsUpdate` (post direct au
+      `contentWindow`, modèle `changeLangInFrame`).
+- **Onglet Affichage** (`tab-display/TabDisplay.tsx`) : si `origin` défini → rend l'iframe
+  `panel.displayViewSettingsIframeSource` (c'est elle qui gère timeline/double-timeline) ;
+  sinon → onglet natif (`DisplayModeSelector` + `ColumnsSettings`). ⚠️ Cette URL n'est **plus** un champ
+  de config statique : elle est **injectée dynamiquement** par le message `open-view-settings` (cf.
+  `useOpenViewSettings` ci-dessus) et posée sur le panel comme état runtime — TabDisplay la lit donc
+  toujours via `retrievePanelDetails`, sans code dédié. Le champ vit dans `viewSettingsStateSchema`
+  (réinitialisé à la fermeture du volet par `RESET_VIEW_SETTINGS`).
+- **`SerializedView` / messenger** : le contrat transporté est le **`SerializedViewV2`** lean (`@leav/ui`,
+  `ExplorerV2/_types`), pas le v1 riche — cf. le piège documenté dans `usePanelMessenger/CLAUDE.md`.
+
+> MVP : l'iframe de l'onglet Affichage est un **stub** ; la migration du contenu réel `ConfigureView`
+> (sync/compare/attribut) y est un suivi. Toute la plomberie de synchro est en place.
 
 ---
 
@@ -287,7 +357,9 @@ il applique exactement la même règle `isOwner || (manage_views && view.shared)
   `PanelAttributeExplorer.tsx`, `useViewSettingsProps.ts`). Sinon → `Explorer` v1.
 - **Événements internes** (bus `usePanelEventHandlers<AppStudioInternalEvent>` de `@leav/ui`,
   types dans `ApplicationRouting/types.ts`) :
-    - `open-view-settings` : ouverture du volet (depuis le bouton/raccourci d'ExplorerV2).
+    - `set-panel-view-settings` : ouverture du volet — depuis le bouton/raccourci d'ExplorerV2, **ou** depuis
+      un panel custom via le message cross-frame `open-view-settings` relayé par `useOpenViewSettings`
+      (cf. `## Panels custom & origine`).
     - `view-settings-select-view` : changement de vue active (depuis `TabCatalog` ou post-« Enregistrer sous »).
 
 ---

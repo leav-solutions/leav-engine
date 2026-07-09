@@ -69,6 +69,7 @@ describe('ViewsV2', () => {
                     {attribute: expect.objectContaining({id: 'id'}), visible: true},
                     {attribute: expect.objectContaining({id: 'label'}), visible: true},
                 ],
+                settings: null,
             });
             expect(createdView.filters).toEqual([
                 {
@@ -132,6 +133,103 @@ describe('ViewsV2', () => {
         test('Delete viewV2', async () => {
             const {deleteViewV2} = await adminUserSdk.DeleteViewV2({viewId});
             expect(deleteViewV2.id).toBe(viewId);
+        });
+    });
+
+    describe('display.settings (opaque JSON) and origin scoping', () => {
+        const scopedLibName = 'test_views_v2_scoped_lib';
+        const planningSettings = {
+            simple: {mode: 'timeline', timelineZoomLevel: 3, showEvents: true},
+        };
+
+        beforeAll(async () => {
+            await adminUserSdk.SaveLibrary({library: {id: scopedLibName, label: {en: 'Scoped Lib'}}});
+        });
+
+        test('Persists display.settings verbatim and keeps display.type unchanged', async () => {
+            const {createViewV2} = await adminUserSdk.CreateViewV2({
+                view: {
+                    library: scopedLibName,
+                    display: {
+                        type: ViewV2Types.list,
+                        attributes: [{attributeId: 'id', visible: true}],
+                        settings: planningSettings,
+                    },
+                    shared: true,
+                    label: {en: 'view_with_settings'},
+                    filters: [],
+                    sorts: [],
+                    origin: 'planning',
+                },
+            });
+
+            const {viewsV2} = await adminUserSdk.GetViewsV2({library: scopedLibName, origin: 'planning'});
+            const created = viewsV2.list.find(view => view.id === createViewV2.id);
+            expect(created?.display.type).toBe(ViewV2Types.list);
+            expect(created?.display.settings).toEqual(planningSettings);
+            expect(created?.origin).toBe('planning');
+        });
+
+        test('Update rewrites display.settings while display.type stays put', async () => {
+            const {createViewV2} = await adminUserSdk.CreateViewV2({
+                view: {
+                    library: scopedLibName,
+                    display: {type: ViewV2Types.list, attributes: [], settings: {simple: {mode: 'timeline'}}},
+                    shared: true,
+                    label: {en: 'view_to_update'},
+                    filters: [],
+                    sorts: [],
+                    origin: 'planning',
+                },
+            });
+
+            const nextSettings = {simple: {mode: 'timeline', showEvents: false}};
+            const {updateViewV2} = await adminUserSdk.UpdateViewV2({
+                view: {
+                    id: createViewV2.id,
+                    display: {type: ViewV2Types.list, attributes: [], settings: nextSettings},
+                },
+            });
+
+            expect(updateViewV2.display.type).toBe(ViewV2Types.list);
+            expect(updateViewV2.display.settings).toEqual(nextSettings);
+        });
+
+        test('viewsV2 is scoped by origin: explorer (no origin) never sees custom-origin views and vice versa', async () => {
+            const {createViewV2: explorerView} = await adminUserSdk.CreateViewV2({
+                view: {
+                    library: scopedLibName,
+                    display: {type: ViewV2Types.list, attributes: []},
+                    shared: true,
+                    label: {en: 'explorer_view'},
+                    filters: [],
+                    sorts: [],
+                },
+            });
+            const {createViewV2: planningView} = await adminUserSdk.CreateViewV2({
+                view: {
+                    library: scopedLibName,
+                    display: {type: ViewV2Types.list, attributes: []},
+                    shared: true,
+                    label: {en: 'planning_view'},
+                    filters: [],
+                    sorts: [],
+                    origin: 'planning',
+                },
+            });
+
+            const {viewsV2: explorerScope} = await adminUserSdk.GetViewsV2({library: scopedLibName});
+            const explorerIds = explorerScope.list.map(view => view.id);
+            expect(explorerIds).toContain(explorerView.id);
+            expect(explorerIds).not.toContain(planningView.id);
+
+            const {viewsV2: planningScope} = await adminUserSdk.GetViewsV2({
+                library: scopedLibName,
+                origin: 'planning',
+            });
+            const planningIds = planningScope.list.map(view => view.id);
+            expect(planningIds).toContain(planningView.id);
+            expect(planningIds).not.toContain(explorerView.id);
         });
     });
 

@@ -345,11 +345,24 @@ describe('viewV2Domain', () => {
                 'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
             });
 
-            const views = await domain.getViewsV2('test_lib', mockCtx);
+            const views = await domain.getViewsV2('test_lib', null, mockCtx);
 
             expect(mockViewV2Repo.getViewsOwnedOrSharedV2).toBeCalled();
             expect(mockViewV2Repo.getViewsOwnedOrSharedV2.mock.calls[0][0].filters.created_by).toBe(mockCtx.userId);
+            expect(mockViewV2Repo.getViewsOwnedOrSharedV2.mock.calls[0][0].filters.origin).toBeNull();
             expect(views.list[0]).toEqual(mockViewV2);
+        });
+
+        test('Should scope viewsV2 by origin when provided', async () => {
+            const domain = viewV2Domain({
+                ...depsBase,
+                'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,
+                'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
+            });
+
+            await domain.getViewsV2('test_lib', 'planning', mockCtx);
+
+            expect(mockViewV2Repo.getViewsOwnedOrSharedV2.mock.calls[0][0].filters.origin).toBe('planning');
         });
 
         test('Should throw if unknown library', async () => {
@@ -359,7 +372,7 @@ describe('viewV2Domain', () => {
                 'core.infra.viewV2': mockViewV2Repo as IViewV2Repo,
             });
 
-            await expect(domain.getViewsV2('bad_lib', mockCtx)).rejects.toThrow(ValidationError);
+            await expect(domain.getViewsV2('bad_lib', null, mockCtx)).rejects.toThrow(ValidationError);
             expect(mockViewV2Repo.getViewsOwnedOrSharedV2).not.toBeCalled();
         });
     });

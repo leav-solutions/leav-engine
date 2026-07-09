@@ -11,6 +11,7 @@ export const VIEWS_V2_COLLECTION_NAME = 'core_views_v2';
 export type IViewV2FilterOptionsInRepo = ICoreEntityFilterOptions & {
     created_by?: string;
     library?: string;
+    origin?: string | null;
 };
 
 export type IGetViewV2Params = IGetCoreEntitiesParams & {

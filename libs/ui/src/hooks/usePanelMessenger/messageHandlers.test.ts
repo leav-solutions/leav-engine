@@ -1,3 +1,4 @@
+import {ViewV2Types} from '_ui/_gqlTypes';
 import {decodeMessage, encodeMessage, getExposedMethods, initClientHandlers} from './messageHandlers';
 import {type Message} from './types';
 
@@ -28,6 +29,9 @@ describe('MessageHandlers', () => {
                 getPanelConfig: expect.any(Function),
                 getUrl: expect.any(Function),
                 explorerViewChanged: expect.any(Function),
+                openViewSettings: expect.any(Function),
+                updateView: expect.any(Function),
+                requestCurrentView: expect.any(Function),
             });
         });
 
@@ -163,6 +167,31 @@ describe('MessageHandlers', () => {
 
             expect(dispatchMock).toHaveBeenCalledWith({type: 'explorer-view-changed', data});
         });
+
+        it('Should expose method openViewSettings which asks the host to open the view-settings volet', async () => {
+            const data: any = {viewId: 'view-1', libraryId: 'campaigns', selectedTab: 'display'};
+
+            const {openViewSettings} = getExposedMethods({current: null}, dispatchMock);
+            openViewSettings(data);
+
+            expect(dispatchMock).toHaveBeenCalledWith({type: 'open-view-settings', data});
+        });
+
+        it('Should expose method updateView which pushes view edits to the host', async () => {
+            const data: any = {displaySettings: {simple: {mode: 'timeline'}}};
+
+            const {updateView} = getExposedMethods({current: null}, dispatchMock);
+            updateView(data);
+
+            expect(dispatchMock).toHaveBeenCalledWith({type: 'update-view', data});
+        });
+
+        it('Should expose method requestCurrentView which pulls the current view from the host', async () => {
+            const {requestCurrentView} = getExposedMethods({current: null}, dispatchMock);
+            requestCurrentView();
+
+            expect(dispatchMock).toHaveBeenCalledWith({type: 'request-current-view'});
+        });
     });
 
     describe('initClientHandlers', () => {
@@ -180,12 +209,15 @@ describe('MessageHandlers', () => {
             const handlers = initClientHandlers(callCbMock, {handlers: {onExplorerViewChanged}}, callbacksStore);
 
             handlers(
-                {type: 'explorer-view-changed', data: {serializedView: {viewType: 'table', attributesIds: ['attr1']}}},
+                {
+                    type: 'explorer-view-changed',
+                    data: {serializedView: {viewType: ViewV2Types.cards, attributesIds: ['attr1']}},
+                },
                 dispatchMock,
             );
 
             expect(onExplorerViewChanged).toHaveBeenCalledWith({
-                serializedView: {viewType: 'table', attributesIds: ['attr1']},
+                serializedView: {viewType: ViewV2Types.cards, attributesIds: ['attr1']},
             });
         });
 
@@ -196,15 +228,74 @@ describe('MessageHandlers', () => {
             handlers(
                 {
                     type: 'view-settings-update',
-                    data: {targetPanelId: 'explorer-panel-1', serializedView: {viewType: 'list'}},
+                    data: {targetPanelId: 'explorer-panel-1', serializedView: {viewType: ViewV2Types.list}},
                 },
                 dispatchMock,
             );
 
             expect(onViewConfigUpdate).toHaveBeenCalledWith({
                 targetPanelId: 'explorer-panel-1',
-                serializedView: {viewType: 'list'},
+                serializedView: {viewType: ViewV2Types.list},
             });
+        });
+
+        it('should call onOpenViewSettings when receiving open-view-settings', () => {
+            const onOpenViewSettings = vi.fn();
+            const handlers = initClientHandlers(callCbMock, {handlers: {onOpenViewSettings}}, callbacksStore);
+
+            handlers(
+                {type: 'open-view-settings', data: {viewId: 'view-1', libraryId: 'campaigns', selectedTab: 'display'}},
+                dispatchMock,
+            );
+
+            expect(onOpenViewSettings).toHaveBeenCalledWith({
+                viewId: 'view-1',
+                libraryId: 'campaigns',
+                selectedTab: 'display',
+            });
+        });
+
+        it('should forward displayViewSettingsIframeSource on open-view-settings', () => {
+            const onOpenViewSettings = vi.fn();
+            const handlers = initClientHandlers(callCbMock, {handlers: {onOpenViewSettings}}, callbacksStore);
+
+            handlers(
+                {
+                    type: 'open-view-settings',
+                    data: {
+                        viewId: 'view-1',
+                        libraryId: 'campaigns',
+                        selectedTab: 'display',
+                        displayViewSettingsIframeSource: 'https://host/settings/rec-1/planning/configureView',
+                    },
+                },
+                dispatchMock,
+            );
+
+            expect(onOpenViewSettings).toHaveBeenCalledWith({
+                viewId: 'view-1',
+                libraryId: 'campaigns',
+                selectedTab: 'display',
+                displayViewSettingsIframeSource: 'https://host/settings/rec-1/planning/configureView',
+            });
+        });
+
+        it('should call onUpdateView when receiving update-view', () => {
+            const onUpdateView = vi.fn();
+            const handlers = initClientHandlers(callCbMock, {handlers: {onUpdateView}}, callbacksStore);
+
+            handlers({type: 'update-view', data: {displaySettings: {simple: {mode: 'timeline'}}}}, dispatchMock);
+
+            expect(onUpdateView).toHaveBeenCalledWith({displaySettings: {simple: {mode: 'timeline'}}});
+        });
+
+        it('should call onRequestCurrentView when receiving request-current-view', () => {
+            const onRequestCurrentView = vi.fn();
+            const handlers = initClientHandlers(callCbMock, {handlers: {onRequestCurrentView}}, callbacksStore);
+
+            handlers({type: 'request-current-view'} as any, dispatchMock);
+
+            expect(onRequestCurrentView).toHaveBeenCalledTimes(1);
         });
     });
 

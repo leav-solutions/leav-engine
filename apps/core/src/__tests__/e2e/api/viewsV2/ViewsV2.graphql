@@ -4,8 +4,8 @@ mutation CreateViewV2($view: ViewV2CreateInput!) {
     }
 }
 
-query GetViewsV2($library: ID!) {
-    viewsV2(library: $library) {
+query GetViewsV2($library: ID!, $origin: String) {
+    viewsV2(library: $library, origin: $origin) {
         totalCount
         list {
             id
@@ -24,11 +24,13 @@ query GetViewsV2($library: ID!) {
                     }
                     visible
                 }
+                settings
             }
             modified_at
             created_at
             shared
             label
+            origin
             filters {
                 pinned
                 attributes {
@@ -68,7 +70,9 @@ mutation UpdateViewV2($view: ViewV2UpdateInput!) {
         id
         display {
             type
+            settings
         }
+        origin
     }
 }
 

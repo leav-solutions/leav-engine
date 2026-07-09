@@ -8,6 +8,13 @@ Le détail (types de messages, mécanisme de callbacks cross-frame, encodage) se
 dans le code de ce dossier. Pour les décisions d'architecture côté view config panel,
 voir `docs/adr/ADR-006-explorer-views-settings-volet.md`.
 
+> ⚠️ **Piège `SerializedView`** : il existe **deux** types de ce nom. `types.ts` importe celui
+> d'**`ExplorerV2/_types`** (forme **lean sérialisable**, exporté publiquement sous l'alias
+> `SerializedViewV2`, produit par `viewV2ToSerializedView`) — c'est lui que transportent les messages
+> `view-settings-update` / `update-view` (message-ready cross-iframe). **Ne pas** confondre avec le
+> `SerializedView` d'`Explorer/_types` (v1, `DefaultViewSettings` avec `filters: UIFilter[]` **riche,
+> non sérialisable**). Toute évolution du contrat de vue transporté doit viser le type **V2**.
+
 ## Fichiers clés
 
 | Fichier                      | Export                    | Rôle                                                                   |

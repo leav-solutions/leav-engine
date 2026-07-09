@@ -59,8 +59,16 @@ export const retrievePanelDetails = ({
     // The library whose VIEWS the explorer shows. For a record-panel link explorer this is the linked
     // library carried on the panel (`panel.libraryId`), NOT the owner library under which the panel is
     // configured (`libraryId`, e.g. the parent record's library). For a library panel both coincide.
+    // For a custom panel hosting the view-settings volet, it is the panel's static `viewLibraryId`
+    // (config, stable across the volet lifecycle) if set, else the transient runtime `targetLibraryId`,
+    // else the owner `libraryId`. The static field takes precedence so the displayed library does not
+    // flip when the volet closes (which resets `targetLibraryId` to undefined).
     const displayedLibraryId =
-        currentPanel?.type === 'explorer' && 'attributeSource' in currentPanel ? currentPanel.libraryId : libraryId;
+        currentPanel?.type === 'explorer' && 'attributeSource' in currentPanel
+            ? currentPanel.libraryId
+            : currentPanel?.type === 'custom'
+              ? (currentPanel.viewLibraryId ?? currentPanel.targetLibraryId ?? libraryId)
+              : libraryId;
 
     return {currentPanel, libraryId, panelType, displayedLibraryId};
 };

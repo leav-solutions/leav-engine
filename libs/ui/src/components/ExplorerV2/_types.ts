@@ -117,6 +117,7 @@ export type SerializedView = {
     filters?: Array<SerializedFilter | HiddenFullFilter>;
     filtersOperator?: 'AND' | 'OR';
     shortcuts?: ViewSettingsShortcuts[];
+    displaySettings?: Record<string, unknown>;
 };
 
 export type ViewSettingsShortcuts = z.infer<typeof ViewSettingsTabSchema>;

@@ -24,7 +24,9 @@ fragment AppStudioViewSettingsView on ViewV2 {
                 label
             }
         }
+        settings
     }
+    origin
     sorts {
         attributes {
             id

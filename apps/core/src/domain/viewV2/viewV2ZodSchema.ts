@@ -15,6 +15,7 @@ const viewV2DisplayAttributeSchema = z.object({
 const viewV2DisplaySchema = z.object({
     type: z.enum(ViewV2Types),
     attributes: z.array(viewV2DisplayAttributeSchema),
+    settings: z.record(z.string(), z.unknown()).optional().nullable(),
 });
 
 const viewV2FilterSchema = z.object({
@@ -42,6 +43,7 @@ export const viewV2UserFieldsSchema = z.object({
     sorts: z.array(viewV2SortSchema),
     shortcuts: z.array(z.enum(ViewV2Shortcut)).optional(),
     valuesVersions: viewV2ValuesVersionSchema.optional().nullable(),
+    origin: z.string().optional(),
 });
 
 export const viewV2UpdateFieldsSchema = viewV2UserFieldsSchema.partial();

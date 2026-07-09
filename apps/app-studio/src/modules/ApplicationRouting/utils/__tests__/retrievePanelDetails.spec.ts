@@ -141,6 +141,46 @@ describe('retrievePanelDetails', () => {
             isStandalone: true,
         });
     });
+
+    const makeCustomRecordPanelApp = (panel: Record<string, unknown>): Application => ({
+        ...emptyApplication,
+        libraries: {
+            ...emptyApplication.libraries,
+            home: {
+                ...emptyApplication.libraries.home,
+                recordPanels: [{id: '1', type: 'custom', iframeSource: 'https://fake', ...panel}],
+            },
+        },
+    });
+
+    it('should resolve displayedLibraryId to the static viewLibraryId for a custom panel (precedence)', () => {
+        const {displayedLibraryId} = retrievePanelDetails({
+            application: makeCustomRecordPanelApp({viewLibraryId: 'campaigns', targetLibraryId: 'map'}),
+            recordPanelId: '1',
+        });
+
+        // viewLibraryId (static config) wins over the transient runtime targetLibraryId so the displayed
+        // library stays stable across the volet open/close lifecycle.
+        expect(displayedLibraryId).toBe('campaigns');
+    });
+
+    it('should fall back to targetLibraryId for a custom panel without viewLibraryId', () => {
+        const {displayedLibraryId} = retrievePanelDetails({
+            application: makeCustomRecordPanelApp({targetLibraryId: 'map'}),
+            recordPanelId: '1',
+        });
+
+        expect(displayedLibraryId).toBe('map');
+    });
+
+    it('should fall back to the owner library for a custom panel without viewLibraryId nor targetLibraryId', () => {
+        const {displayedLibraryId} = retrievePanelDetails({
+            application: makeCustomRecordPanelApp({}),
+            recordPanelId: '1',
+        });
+
+        expect(displayedLibraryId).toBe('home');
+    });
 });
 
 /**

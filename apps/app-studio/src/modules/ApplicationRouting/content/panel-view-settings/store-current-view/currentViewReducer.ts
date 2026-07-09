@@ -22,6 +22,7 @@ export const initialCurrentViewState: ICurrentViewState = {view: null, savedView
 export const createDefaultView = (
     library: string,
     createdBy: {id: string; label: string},
+    origin?: string,
 ): NonNullable<CurrentView> => ({
     id: DEFAULT_DRAFT_VIEW_ID,
     library,
@@ -32,6 +33,7 @@ export const createDefaultView = (
     display: {type: ViewV2Types.list, attributes: []},
     sorts: [],
     filters: [],
+    origin,
 });
 
 /**
@@ -43,6 +45,16 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
     switch (action.type) {
         case 'SET_VIEW_TYPE':
             return {...view, display: {...view.display, type: action.payload.viewType}};
+        // Opaque display config from a custom panel iframe. G1-style idempotency guard (mirror of
+        // SET_FILTER_CONFIG): an identical write returns the SAME view ref so the useReducer bail-out
+        // holds and the host↔iframe round-trip cannot loop.
+        case 'SET_DISPLAY_SETTINGS': {
+            const {settings} = action.payload;
+            if (JSON.stringify(view.display.settings ?? null) === JSON.stringify(settings ?? null)) {
+                return view;
+            }
+            return {...view, display: {...view.display, settings}};
+        }
         case 'TOGGLE_VISIBILITY': {
             const {id} = action.payload;
             const index = view.display.attributes.findIndex(attr => attr.attribute.id === id);
@@ -307,7 +319,7 @@ export const currentViewReducer = (state: ICurrentViewState, action: CurrentView
         // Seeds both snapshots with a fresh synthetic draft: identical snapshots → isDirty starts at
         // false; RESET_VIEW returns to the empty draft.
         case 'INIT_DEFAULT_VIEW': {
-            const draft = createDefaultView(action.payload.library, action.payload.createdBy);
+            const draft = createDefaultView(action.payload.library, action.payload.createdBy, action.payload.origin);
             return {view: draft, savedView: draft};
         }
         case 'RESET_VIEW':

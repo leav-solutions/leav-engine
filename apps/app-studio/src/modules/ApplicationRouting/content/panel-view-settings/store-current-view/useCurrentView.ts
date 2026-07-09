@@ -22,7 +22,7 @@ const displayFingerprint = (view: CurrentView) =>
         : null;
 
 export const useCurrentView = () => {
-    const {view, savedView, isEmptyView, canManageViews, dispatch} = useContext(CurrentViewContext);
+    const {view, savedView, isEmptyView, canManageViews, dispatch, origin} = useContext(CurrentViewContext);
     const {lang} = useLang();
     const {userData} = useUser();
 
@@ -84,6 +84,11 @@ export const useCurrentView = () => {
     );
 
     const setShared = useCallback((shared: boolean) => dispatch({type: 'SET_SHARED', payload: {shared}}), [dispatch]);
+
+    const setDisplaySettings = useCallback(
+        (settings: Record<string, unknown> | null) => dispatch({type: 'SET_DISPLAY_SETTINGS', payload: {settings}}),
+        [dispatch],
+    );
 
     const toggleShortcut = useCallback(
         (shortcut: ViewV2Shortcut) => dispatch({type: 'TOGGLE_SHORTCUT', payload: {shortcut}}),
@@ -207,6 +212,7 @@ export const useCurrentView = () => {
         view,
         savedView,
         isEmptyView,
+        origin,
         dispatch,
         isOwner,
         canManageCurrentView,
@@ -224,6 +230,7 @@ export const useCurrentView = () => {
         setAvailableFilters,
         setLabel,
         setShared,
+        setDisplaySettings,
         toggleShortcut,
         setAvailableColumns,
         setAvailableSorts,

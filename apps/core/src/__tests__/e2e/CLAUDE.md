@@ -105,6 +105,15 @@ await expect(adminUserSdk.CreateAutomationRule({rule: invalidRule})).rejects.toT
 
 Pré-requis : core tourne, ArangoDB joignable. Config Vitest : [`vitest.e2e-api.config.ts`](../../../vitest.e2e-api.config.ts). Setup partagé : [`api/globalSetup.ts`](api/globalSetup.ts) et [`e2eVitestSharedContext.ts`](e2eVitestSharedContext.ts).
 
+> ⚠️ **Env obligatoire pour un run isolé.** Le `globalSetup` provisionne les utilisateurs (dont le
+> guest) uniquement quand `CONFIG_IGNORE_LOCAL=true NODE_ENV=test NODE_OPTIONS='--import tsx'` sont
+> posés — c'est ce que fait le script `test:e2e:api`. Un `npx vitest run <fichier>` **brut** (sans ces
+> vars) échoue au setup avec `Cannot destructure property 'userId' of 'undefined'` (`e2eGuestUser`).
+> Pour lancer **une seule suite** de façon fiable, garder les vars et passer le motif en positionnel :
+> `docker exec -i $(docker container ls -aqf "name=core") sh -c "CONFIG_IGNORE_LOCAL=true NODE_ENV=test NODE_OPTIONS='--import tsx' npx vitest run -c vitest.e2e-api.config.ts <motif>"`.
+> Préférer **le container** (env complet) au run local. Certaines suites dépendent de services
+> optionnels (ex. `mailpit` → profil docker `mail`) : sans eux, elles échouent indépendamment de ton code.
+
 ## Hors `api/`
 
 Les répertoires [`filesManager/`](filesManager/) et [`indexationManager/`](indexationManager/) ont leurs propres configs Vitest (`vitest.e2e-filesManager.config.ts`, `vitest.e2e-indexationManager.config.ts`) et leurs propres scripts (`yarn run test:e2e:filesManager`, `yarn run test:e2e:indexationManager`). Le SDK GraphQL généré est partagé — la config codegen scanne `src/__tests__/e2e/**/*.graphql`.

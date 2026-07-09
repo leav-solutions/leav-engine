@@ -21,10 +21,12 @@ import {viewV2ToSerializedView} from './viewV2ToSerializedView';
 export const CurrentViewStoreProvider = ({
     viewId,
     displayedLibraryId,
+    origin,
     children,
 }: {
     viewId?: string;
     displayedLibraryId?: string;
+    origin?: string;
     children: ReactNode;
 }) => {
     const [{view, savedView}, dispatch] = useReducer(currentViewReducer, initialCurrentViewState);
@@ -86,10 +88,10 @@ export const CurrentViewStoreProvider = ({
         if (isEmptyView && canManageViews && displayedLibraryId && view?.id !== DEFAULT_DRAFT_VIEW_ID) {
             dispatch({
                 type: 'INIT_DEFAULT_VIEW',
-                payload: {library: displayedLibraryId, createdBy: {id: userData?.userId ?? '', label: ''}},
+                payload: {library: displayedLibraryId, createdBy: {id: userData?.userId ?? '', label: ''}, origin},
             });
         }
-    }, [isEmptyView, canManageViews, displayedLibraryId, view?.id, userData?.userId]);
+    }, [isEmptyView, canManageViews, displayedLibraryId, view?.id, userData?.userId, origin]);
 
     // The live (possibly unsaved) view, serialized for ExplorerV2's controlled `currentView` prop.
     // Gated on `!isEmptyView` so switching from a valid id to an unresolvable one drops the Explorer
@@ -102,8 +104,8 @@ export const CurrentViewStoreProvider = ({
     );
 
     const value = useMemo(
-        () => ({view, savedView, isEmptyView, canManageViews, dispatch, serializedView}),
-        [view, savedView, isEmptyView, canManageViews, serializedView],
+        () => ({view, savedView, isEmptyView, canManageViews, dispatch, serializedView, origin}),
+        [view, savedView, isEmptyView, canManageViews, serializedView, origin],
     );
 
     return <CurrentViewContext.Provider value={value}>{children}</CurrentViewContext.Provider>;

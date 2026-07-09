@@ -1,9 +1,10 @@
-query GetViewList($libraryId: ID!) {
-    viewsV2(library: $libraryId) {
+query GetViewList($libraryId: ID!, $origin: String) {
+    viewsV2(library: $libraryId, origin: $origin) {
         list {
             id
             label
             shared
+            origin
             created_by {
                 id
             }

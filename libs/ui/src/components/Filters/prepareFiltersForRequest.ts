@@ -180,11 +180,14 @@ export const prepareFiltersForRequest = (
                     return true;
                 }
                 if (isUIFilterTree(filter)) {
-                    // Skip if: (Toggle ON + no user selection) OR (No user selection + no initial value)
-                    const noUserSelectionNoInitialValue =
-                        filter.userNodes == null && (!filter.value || filter.value.length === 0);
+                    // Skip if: (no effective record id to filter on) OR (Toggle ON + no user selection).
+                    // "No effective value" covers both an untouched tree (`userNodes == null`) and an
+                    // EXPLICITLY cleared one (`userNodes: []`, value `[]`): a tree with no record ids can't
+                    // filter anything. A tree with `withEmptyValues` already returned true above, so
+                    // "Non défini" still applies.
+                    const noEffectiveValue = !filter.value || filter.value.length === 0;
                     const toggleOnNoUserSelection = filter.includeHiddenOptions && filter.userNodes == null;
-                    return !(noUserSelectionNoInitialValue || toggleOnNoUserSelection);
+                    return !(noEffectiveValue || toggleOnNoUserSelection);
                 }
                 if (isUIFilterWithSmartFilter(filter)) {
                     return (
