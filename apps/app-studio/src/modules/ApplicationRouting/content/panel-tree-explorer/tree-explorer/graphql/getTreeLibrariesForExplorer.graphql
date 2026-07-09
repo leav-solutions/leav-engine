@@ -4,16 +4,13 @@ query getTreeLibrariesForExplorer($treeId: [ID!]) {
         list {
             id
             behavior
-            system
             libraries {
                 library {
                     id
                     label
                     behavior
-                    system
                 }
                 settings {
-                    allowMultiplePositions
                     allowedChildren
                     allowedAtRoot
                 }

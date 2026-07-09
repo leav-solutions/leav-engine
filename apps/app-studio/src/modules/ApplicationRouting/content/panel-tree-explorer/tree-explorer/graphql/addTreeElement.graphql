@@ -1,5 +1,5 @@
-mutation addTreeElement($treeId: ID!, $element: TreeElementInput!, $parent: ID, $order: Int) {
-    treeAddElement(treeId: $treeId, element: $element, parent: $parent, order: $order) {
+mutation addTreeElement($treeId: ID!, $element: TreeElementInput!, $parent: ID) {
+    treeAddElement(treeId: $treeId, element: $element, parent: $parent) {
         id
     }
 }
