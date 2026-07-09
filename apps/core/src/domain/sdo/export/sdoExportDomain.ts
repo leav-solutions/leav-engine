@@ -16,7 +16,6 @@ export const ACTIONS_MAPPING = {
     VALUE_SAVE: 'UPDATE',
     VALUE_DELETE: 'UPDATE',
     RECORD_SAVE: 'UPDATE',
-    RECORD_DELETE: 'UPDATE',
 } satisfies Record<string, SDOAction>;
 
 export interface ISDOExportDomainDeps {
