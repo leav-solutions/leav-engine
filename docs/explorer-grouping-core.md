@@ -11,7 +11,7 @@
 
 Le backend offre un **moteur d'énumération de groupes mono-niveau**. Tout le reste
 (multi-niveaux, records par groupe, hiérarchie d'arbre) est de la **composition** côté
-consommateur à partir de primitives existantes. Voir ADR-007 pour le pourquoi.
+consommateur à partir de primitives existantes. Voir ADR-008 pour le pourquoi.
 
 ```
 recordsGroups(library, attribute, filters, searchQuery, sort, pagination)   ← NOUVEAU (seule surface backend)
@@ -49,7 +49,7 @@ que les attributs dont l'ensemble des groupes est **borné et curé** :
 **Pourquoi cette limite ne coûte rien à lever plus tard** : le moteur backend étant déjà générique,
 élargir les axes en v2 (dates, labels libres, liens quelconques…) est un changement **front-only** —
 on élargit le filtre d'axes éligibles dans l'UI, **aucun rework core, aucune migration**. Cf.
-ADR-007 § _Périmètre des axes (V1)_.
+ADR-008 § _Périmètre des axes (V1)_.
 
 ## Surface backend (2 briques)
 
@@ -81,7 +81,7 @@ input RecordsGroupsSortInput {
 - Réutilise le `GenericDistinctValues` (`Standard`/`Link`/`Tree`) et toute l'infra `COLLECT … WITH
 COUNT` de `listDistinctValues` : bucket nul, permissions, labels lien/arbre, libraries JOIN.
 - **`listDistinctValues` n'est pas modifié** (reste l'API simple des pickers de filtre).
-- Tri par **compteur** uniquement en v1, bucket nul **toujours en dernier** (cf. ADR-007 open points).
+- Tri par **compteur** uniquement en v1, bucket nul **toujours en dernier** (cf. ADR-008 open points).
 
 #### Contrat des filtres — identique à la query `records` de l'Explorer
 
@@ -150,7 +150,7 @@ base n'est même pas établi — coût/risque élevés pour ce que le cumul fron
 
 > ⚠️ **Multivalué** : un attribut arbre peut être multivalué (ex. `user_groups`). Un record dans
 > plusieurs nœuds compte dans chacun ⇒ **Σ compteurs ≠ records distincts**, et le cumul front peut
-> double-compter un record présent sur un parent **et** un descendant. À cadrer côté UX (cf. ADR-007
+> double-compter un record présent sur un parent **et** un descendant. À cadrer côté UX (cf. ADR-008
 > open points).
 
 ## Recettes de consommation
