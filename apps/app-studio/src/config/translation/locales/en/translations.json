@@ -23,6 +23,12 @@
         "floating_window": "Floating window",
         "fullpage_window": "Fullpage window"
     },
+    "fullscreen": {
+        "enter": "Fullscreen",
+        "exit": "Exit fullscreen",
+        "alert_title": "Fullscreen mode enabled",
+        "alert_description": "To exit fullscreen mode, press the escape key or click the same button."
+    },
     "information_and_history": {
         "system_information": "System information",
         "id": "Identifier",

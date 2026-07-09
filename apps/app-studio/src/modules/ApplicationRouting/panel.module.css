@@ -24,6 +24,20 @@
     gap: calc(var(--general-spacing-xs) * 1px);
 }
 
+.fullscreenPanel {
+    /* CSS pseudo-fullscreen: fill the viewport while staying in the normal DOM.
+       Native requestFullscreen was dropped because it hid app-studio's body-mounted portals. */
+    position: fixed;
+    inset: 0;
+    /* Coordinated z-index scale: fullpage modal 998 (MODAL_FULLSCREEN_INDEX) < DS toaster 999
+       < panel 1000 < alert 1001. For a nested fullpage panel this is scoped to the KitModal's stacking
+       context (998), so DS overlays (slider/popup) still layer above. */
+    z-index: 1000;
+    padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px)
+        calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-m) * 1px);
+    background-color: var(--general-colors-primary-50);
+}
+
 .firstPanelContent {
     box-shadow: var(--general-utilities-shadow-light);
 }

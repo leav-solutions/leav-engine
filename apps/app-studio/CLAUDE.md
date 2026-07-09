@@ -140,6 +140,25 @@ Définissent comment s'ouvre un record. Un seul `onRowClick: true` par explorate
 
 > 📖 Doc utilisateur/admin (Confluence) : [App-Studio — Workspaces & Panels](https://aristid.atlassian.net/wiki/spaces/XSTREAM/pages/1963884553), [Définir les panels d'une bibliothèque](https://aristid.atlassian.net/wiki/spaces/XSTREAM/pages/1964769283), [Gérer l'affichage en mode compact](https://aristid.atlassian.net/wiki/spaces/XSTREAM/pages/1964670997).
 
+### Plein écran (toggle runtime)
+
+Étend un panneau à tout l'écran. À ne pas confondre avec les modes d'affichage ci-dessus, qui sont figés dans la config JSON.
+
+- **Bouton** `FullscreenToggleButton` (`header/action-button/`) affiché dans l'en-tête des panneaux
+  **au premier plan** (`isForegroundPanel = !isPanelInSlider && !hasNextLevelPanel`) ou déjà en plein
+  écran. Câblage dans [`Panel.tsx`](src/modules/ApplicationRouting/Panel.tsx).
+- **Plein écran « CSS », pas l'API Fullscreen native.** L'API native place uniquement le sous-arbre
+  dans le top layer → les portails montés sur `document.body` (dropdowns/tooltips/modales du design
+  system, portails de l'Explorer) deviennent invisibles/non cliquables. On bascule donc une classe
+  CSS (`position: fixed`) sur le panneau. Voir le commentaire de [`useFullscreen.ts`](src/hooks/useFullscreen.ts).
+- **État global** via `useFullscreen` (store `useSyncExternalStore`, hors React) : retient l'**id du
+  panneau** en plein écran. Le panneau reste plein écran quand un panneau enfant s'ouvre par-dessus.
+- **Sticky à la navigation** : naviguer vers un **autre** panneau `fullpage` de premier plan transfère
+  le plein écran ; les overlays `slider`/`popup`/flap se superposent sans le rompre.
+- **Sortie** : bouton toggle ou touche **Échap**.
+- **Alerte `FullscreenAlert`** affichée une seule fois par utilisateur ; l'état de fermeture est
+  persisté dans `localStorage['fullscreenAlertDismissed']` [`useFullscreenAlertDismissal.ts`](src/hooks/useFullscreenAlertDismissal.ts).
+
 ---
 
 ## Comportements de bibliothèque et config panels

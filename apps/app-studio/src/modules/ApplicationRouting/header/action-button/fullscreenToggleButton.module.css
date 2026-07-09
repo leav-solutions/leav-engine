@@ -1,0 +1,21 @@
+.fullscreenToggleButtonBackdrop {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    padding: calc(var(--general-spacing-xs) * 1px);
+    background-color: color-mix(in srgb, #000 40%, transparent);
+    border-bottom-left-radius: calc(var(--general-border-radius-s) * 1px);
+    box-shadow: var(--general-utilities-shadow-light);
+    height: 48px;
+    width: 48px;
+}
+
+.revealOnHover {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.revealOnHover:hover {
+    opacity: 1;
+}
