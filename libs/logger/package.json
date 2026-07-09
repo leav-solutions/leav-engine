@@ -23,6 +23,7 @@
         "winston": "3.19.0"
     },
     "devDependencies": {
+        "@types/node": "24.13.2",
         "typescript": "6.0.3",
         "vitest": "4.1.9"
     }
