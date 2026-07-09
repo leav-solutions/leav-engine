@@ -14,7 +14,6 @@ import {
     faSliders,
 } from '@fortawesome/free-solid-svg-icons';
 import {type KitSideMenu} from 'aristid-ds';
-import {useCurrentApplicationContext} from '../../context/CurrentApplicationContext';
 
 export const useGetNavigationMenuItems = () => {
     const userData = useUserData();
@@ -68,23 +67,15 @@ export const useGetNavigationMenuItems = () => {
         },
     ];
 
-    // TODO: To remove when "displayNewAutomationModule" feature toggle is removed (https://aristid.atlassian.net/browse/LEAVC-747)
-    const applicationData = useCurrentApplicationContext();
-
     const menuItemsAllowedByDefault = ['general'];
 
     const allowedMenuItems = userData.permissions
-        ? menuItems
-              .filter(
-                  item =>
-                      !(item.key === 'automation' && !applicationData.currentApp.settings.displayNewAutomationModule), // TODO: To remove when "displayNewAutomationModule" feature toggle is removed (https://aristid.atlassian.net/browse/LEAVC-747)
-              )
-              .filter(
-                  item =>
-                      menuItemsAllowedByDefault.includes(item.key) ||
-                      userData.permissions![`admin_access_${item.key}`] ||
-                      userData.permissions![`admin_manage_${item.key}`],
-              )
+        ? menuItems.filter(
+              item =>
+                  menuItemsAllowedByDefault.includes(item.key) ||
+                  userData.permissions![`admin_access_${item.key}`] ||
+                  userData.permissions![`admin_manage_${item.key}`],
+          )
         : [];
 
     return allowedMenuItems;

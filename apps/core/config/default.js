@@ -272,7 +272,6 @@ module.exports = {
     },
     pluginsPath: envToStringArray(process.env.PLUGINS_PATH),
     automation: {
-        enable: envToBool(process.env.AUTOMATION_ENABLE, false),
         cache: {
             enable: envToBool(process.env.AUTOMATION_CACHE_ENABLE, true),
         },

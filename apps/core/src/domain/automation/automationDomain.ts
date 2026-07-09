@@ -21,7 +21,6 @@ import {EventAction} from '@leav/utils';
 import ValidationError from '../../errors/ValidationError';
 import {Errors} from '../../_types/errors';
 import {isArangoError} from 'arangojs/error';
-import {type IConfig} from '../../_types/config';
 import {type IAutomationPipelineDomain} from './pipeline/pipeline';
 import {type IAutomationRulesCache} from './automationRulesCache';
 import {type IAutomationTriggers} from './triggers/automationTriggers';
@@ -83,7 +82,6 @@ export interface IAutomationDomainDeps {
     'core.domain.automation.pipeline': IAutomationPipelineDomain;
     'core.domain.automation.rulesCache': IAutomationRulesCache;
     'core.infra.automation.rule': IAutomationRuleRepo;
-    config: IConfig;
 }
 
 export default function ({
@@ -95,12 +93,7 @@ export default function ({
     'core.domain.automation.pipeline': pipelineDomain,
     'core.domain.automation.rulesCache': automationRulesCache,
     'core.infra.automation.rule': automationRuleRepo,
-    config,
 }: IAutomationDomainDeps): IAutomationDomain {
-    if (config.automation.enable === false) {
-        return automationDisabled();
-    }
-
     const _hasManageAutomationPermissionOrThrow = async (ctx: IQueryInfos): Promise<void> => {
         const hasAdminAccessPermission = await adminPermissionDomain.getAdminPermission({
             action: AdminPermissionsActions.MANAGE_AUTOMATION,
@@ -341,40 +334,6 @@ export default function ({
             );
 
             return deletedAutomationRule;
-        },
-    };
-}
-
-function automationDisabled(): IAutomationDomain {
-    logger.verbose('Automation system is disabled in the configuration.');
-
-    return {
-        async getAutomationRules(): Promise<IList<IAutomationRule>> {
-            logger.silly('Automation system is disabled. Skipping automation rules retrieval.');
-            return {list: [], totalCount: 0};
-        },
-        async getAutomationRuleJsonSchemaForm(): Promise<RJSFSchema> {
-            logger.silly('Automation system is disabled. Skipping automation rule JSON schema form retrieval.');
-            return {};
-        },
-        async getAutomationRuleUiJsonSchemaForm(): Promise<UiSchema> {
-            logger.silly('Automation system is disabled. Skipping automation rule UI JSON schema form retrieval.');
-            return {};
-        },
-        async createAutomationRule(): Promise<IAutomationRule> {
-            logger.silly('Automation system is disabled. Skipping automation rule creation.');
-            return null;
-        },
-        async updateAutomationRule(): Promise<IAutomationRule> {
-            logger.silly('Automation system is disabled. Skipping automation rule update.');
-            return null;
-        },
-        async deleteAutomationRule(): Promise<IAutomationRule> {
-            logger.silly('Automation system is disabled. Skipping automation rule deletion.');
-            return null;
-        },
-        async triggerRules(): Promise<void> {
-            logger.silly('Automation system is disabled. Skipping rules trigger.');
         },
     };
 }

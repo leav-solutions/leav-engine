@@ -83,7 +83,6 @@ export interface ISdo {
 }
 
 export interface IAutomation {
-    enable: boolean;
     cache: IAutomationCache;
     queues: {
         events: string;

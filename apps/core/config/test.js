@@ -79,7 +79,6 @@ module.exports = {
         assetsMaxAge: '42h',
     },
     automation: {
-        enable: true,
         cache: {
             enable: true,
         },
