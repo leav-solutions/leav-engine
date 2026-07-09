@@ -31,6 +31,11 @@ export interface IViewSettingsState {
     viewLabels: Record<string, string>;
     viewType: ViewType;
     attributesIds: string[];
+    /**
+     * Id of the attribute designated as the grouping axis (kanban columns…). Display field: comes from
+     * the controlled `currentView` and is merged on top in `Explorer.tsx` — no local mutating action.
+     */
+    groupByAttributeId?: string;
     fulltextSearch: string;
     sort: Array<{
         field: string;

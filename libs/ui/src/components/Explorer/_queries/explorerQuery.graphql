@@ -25,6 +25,12 @@ fragment AttributeProperties on Attribute {
     multiple_values
     multi_link_display_option
     multi_tree_display_option
+    # The linked tree id is needed to load the kanban grouping-axis columns (the tree's nodes).
+    ... on TreeAttribute {
+        linked_tree {
+            id
+        }
+    }
 }
 
 query ExplorerLibraryData(

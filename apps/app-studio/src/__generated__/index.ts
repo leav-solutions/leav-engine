@@ -528,6 +528,13 @@ export type DiscussionTargetRecordInput = {
   libraryId: Scalars['String']['input'];
 };
 
+/**  One level of groups (paginated), enumerated by recordsGroups  */
+export type DistinctValuesList = {
+  list: Array<GenericDistinctValues>;
+  /**  Total number of groups, before pagination  */
+  totalCount: Scalars['Int']['output'];
+};
+
 export type EmbeddedAttribute = {
   description?: Maybe<Scalars['SystemTranslationOptional']['output']>;
   embedded_fields?: Maybe<Array<Maybe<EmbeddedAttribute>>>;
@@ -1808,6 +1815,12 @@ export type Query = {
   plugins: Array<Plugin>;
   recordForm?: Maybe<RecordForm>;
   records: RecordsList;
+  /**
+   * Enumerate one level of groups (distinct values + count) for an attribute,
+   * paginated and sorted. Fetch the records of a group with the records query,
+   * adding the group's equality filter.
+   */
+  recordsGroups: DistinctValuesList;
   tasks: TasksList;
   treeContent: Array<TreeNode>;
   treeNodeChildren: TreeNodeLightList;
@@ -1959,6 +1972,17 @@ export type QueryRecordsArgs = {
   pagination?: InputMaybe<RecordsPagination>;
   retrieveInactive?: InputMaybe<Scalars['Boolean']['input']>;
   searchQuery?: InputMaybe<Scalars['String']['input']>;
+  version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
+};
+
+
+export type QueryRecordsGroupsArgs = {
+  attribute: Scalars['ID']['input'];
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
+  library: Scalars['ID']['input'];
+  pagination?: InputMaybe<Pagination>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
+  sort?: InputMaybe<RecordsGroupsSortInput>;
   version?: InputMaybe<Array<InputMaybe<ValueVersionInput>>>;
 };
 
@@ -2216,6 +2240,11 @@ export type RecordUpdateFilterInput = {
 export type RecordUpdatedValues = {
   attribute: Scalars['String']['output'];
   value: GenericValue;
+};
+
+/**  Sort of the groups themselves (by count in v1)  */
+export type RecordsGroupsSortInput = {
+  order: SortOrder;
 };
 
 export type RecordsList = {
@@ -3021,11 +3050,14 @@ export type ViewV2Display = {
 
 export type ViewV2DisplayAttribute = {
   attribute: Attribute;
+  /**  Generic marker: this attribute is the grouping axis (kanban columns, table grouping…). At most one per view.  */
+  isGroupBy?: Maybe<Scalars['Boolean']['output']>;
   visible: Scalars['Boolean']['output'];
 };
 
 export type ViewV2DisplayAttributeInput = {
   attributeId: Scalars['ID']['input'];
+  isGroupBy?: InputMaybe<Scalars['Boolean']['input']>;
   visible: Scalars['Boolean']['input'];
 };
 
@@ -3073,6 +3105,7 @@ export type ViewV2SortInput = {
 
 export enum ViewV2Types {
   cards = 'cards',
+  kanban = 'kanban',
   list = 'list',
   timeline = 'timeline'
 }
@@ -3242,18 +3275,18 @@ export type CreateViewV2MutationVariables = Exact<{
 }>;
 
 
-export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, isGroupBy?: boolean | null, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type UpdateViewV2MutationVariables = Exact<{
   view: ViewV2UpdateInput;
 }>;
 
 
-export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, isGroupBy?: boolean | null, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
-type ViewSettingsLibraryAttributeLinkAttributeFragment = { id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } };
+type ViewSettingsLibraryAttributeLinkAttributeFragment = { id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null } | null, values_list?: { enable: boolean, allowFreeEntry?: boolean | null } | null, permissions: { access_attribute: boolean } };
 
-type ViewSettingsLibraryAttributeStandardAttributeFragment = { id: string, type: AttributeType, label?: any | null, permissions: { access_attribute: boolean } };
+type ViewSettingsLibraryAttributeStandardAttributeFragment = { id: string, type: AttributeType, label?: any | null, values_list?: { enable: boolean, allowFreeEntry?: boolean | null } | null, permissions: { access_attribute: boolean } };
 
 type ViewSettingsLibraryAttributeTreeAttributeFragment = { id: string, type: AttributeType, label?: any | null, linked_tree?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } };
 
@@ -3269,8 +3302,8 @@ export type GetViewSettingsLibraryAttributesQueryVariables = Exact<{
 
 
 export type GetViewSettingsLibraryAttributesQuery = { libraries?: { list: Array<{ id: string, label?: any | null, attributes?: Array<
-        | { id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } }
-        | { id: string, type: AttributeType, label?: any | null, permissions: { access_attribute: boolean } }
+        | { id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null } | null, values_list?: { enable: boolean, allowFreeEntry?: boolean | null } | null, permissions: { access_attribute: boolean } }
+        | { id: string, type: AttributeType, label?: any | null, values_list?: { enable: boolean, allowFreeEntry?: boolean | null } | null, permissions: { access_attribute: boolean } }
         | { id: string, type: AttributeType, label?: any | null, linked_tree?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } }
       > | null }> } | null };
 
@@ -3279,7 +3312,7 @@ export type GetViewV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, isGroupBy?: boolean | null, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type IsAllowedQueryVariables = Exact<{
   type: PermissionTypes;
@@ -3290,7 +3323,7 @@ export type IsAllowedQueryVariables = Exact<{
 
 export type IsAllowedQuery = { isAllowed?: Array<{ name: PermissionsActions, allowed?: boolean | null }> | null };
 
-export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> };
+export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, isGroupBy?: boolean | null, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> };
 
 export type DeleteViewV2MutationVariables = Exact<{
   viewId: Scalars['ID']['input'];
@@ -3389,10 +3422,26 @@ export const ViewSettingsLibraryAttributeFragmentDoc = gql`
   permissions {
     access_attribute
   }
+  ... on StandardAttribute {
+    values_list {
+      ... on StandardStringValuesListConf {
+        enable
+        allowFreeEntry
+      }
+      ... on StandardDateRangeValuesListConf {
+        enable
+        allowFreeEntry
+      }
+    }
+  }
   ... on LinkAttribute {
     linked_library {
       id
       label
+    }
+    values_list {
+      enable
+      allowFreeEntry
     }
   }
   ... on TreeAttribute {
@@ -3420,6 +3469,7 @@ export const AppStudioViewSettingsViewFragmentDoc = gql`
     type
     attributes {
       visible
+      isGroupBy
       attribute {
         id
         label

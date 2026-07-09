@@ -55,7 +55,8 @@ beforeEach(() => {
             type: ViewV2Types.list,
             attributes: [
                 {visible: true, attribute: {id: 'a'}},
-                {visible: false, attribute: {id: 'b'}},
+                // Hidden grouping axis (kanban columns): must be persisted with its `isGroupBy` marker.
+                {visible: false, isGroupBy: true, attribute: {id: 'b'}},
             ],
         },
         sorts: [
@@ -82,8 +83,8 @@ beforeEach(() => {
 const mappedDisplay = {
     type: ViewV2Types.list,
     attributes: [
-        {attributeId: 'a', visible: true},
-        {attributeId: 'b', visible: false},
+        {attributeId: 'a', visible: true, isGroupBy: false},
+        {attributeId: 'b', visible: false, isGroupBy: true},
     ],
 };
 

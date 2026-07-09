@@ -23,7 +23,13 @@ const mapDisplay = (display: ViewDisplay) => ({
     type: display.type,
     attributes: display.attributes
         .filter(({attribute}) => attribute.id !== IDENTITY_COLUMN_ID)
-        .map(({attribute, visible}) => ({attributeId: attribute.id, visible})),
+        // `isGroupBy` marks the single grouping axis (kanban columns); it must be persisted so the
+        // axis survives a save + server echo. Defaults to false so non-axis columns are explicit.
+        .map(({attribute, visible, isGroupBy}) => ({
+            attributeId: attribute.id,
+            visible,
+            isGroupBy: isGroupBy ?? false,
+        })),
     settings: display.settings,
 });
 

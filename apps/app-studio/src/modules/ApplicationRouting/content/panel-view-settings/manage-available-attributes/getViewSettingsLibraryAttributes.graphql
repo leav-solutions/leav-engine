@@ -1,7 +1,9 @@
-# Scoped to the app-studio view-settings admin gear ONLY (configure available attributes).
+# Scoped to the app-studio view-settings feature (admin gear + kanban axis picker).
 # The same query is reused for every library: the top-level (view.library) and each linked
 # library reached by expanding a link attribute (lazy descent — see AvailableAttributesDropdown).
 # A link attribute is detected by the presence of `linked_library`; a tree by `linked_tree`.
+# `values_list` (enable/allowFreeEntry) is consumed by the kanban axis picker to decide grouping-axis
+# eligibility (finite value set — see `isValidGroupingAxis` in @leav/ui); the gear ignores it.
 fragment ViewSettingsLibraryAttribute on Attribute {
     id
     type
@@ -9,10 +11,26 @@ fragment ViewSettingsLibraryAttribute on Attribute {
     permissions {
         access_attribute
     }
+    ... on StandardAttribute {
+        values_list {
+            ... on StandardStringValuesListConf {
+                enable
+                allowFreeEntry
+            }
+            ... on StandardDateRangeValuesListConf {
+                enable
+                allowFreeEntry
+            }
+        }
+    }
     ... on LinkAttribute {
         linked_library {
             id
             label
+        }
+        values_list {
+            enable
+            allowFreeEntry
         }
     }
     ... on TreeAttribute {

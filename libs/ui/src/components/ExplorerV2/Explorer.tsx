@@ -1,5 +1,5 @@
 import {forwardRef, type ReactNode, useId, useImperativeHandle, useMemo} from 'react';
-import {KitEmpty, KitSnackBarProvider, KitTypography} from 'aristid-ds';
+import {KitAlert, KitEmpty, KitSnackBarProvider, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {Loading} from '_ui/components/Loading';
@@ -50,6 +50,13 @@ const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => u
 
 const emptyArray = [];
 const emptyObject = {};
+
+/**
+ * Kanban groups the WHOLE filtered set client-side, but the records query is paginated. Phase 1 caps the
+ * kanban load to this bounded limit (pagination UI disabled) and shows a truncation banner beyond it —
+ * acceptable because real kanban views are pre-filtered to small sets. Per-column pagination is phase 2.
+ */
+const KANBAN_MAX_CARDS = 10;
 
 const ExplorerHeaderDivStyled = styled.div`
     display: flex;
@@ -216,6 +223,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                 viewLabels: currentView?.viewLabels ?? {},
                 viewType: currentView?.viewType ?? ViewV2Types.list,
                 attributesIds: currentView?.attributesIds ?? [],
+                groupByAttributeId: currentView?.groupByAttributeId,
                 sort: currentView?.sort ?? [],
                 shortcuts: currentView?.shortcuts ?? DEFAULT_VIEW_SHORTCUTS,
             }),
@@ -264,6 +272,19 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {currentPage, setNewPageSize, setNewPage} = usePagination(viewSettingsDispatch);
 
+        const isKanban = view.viewType === ViewV2Types.kanban;
+
+        // The grouping axis must be fetched even when it is a hidden column, otherwise cards could not be
+        // distributed into columns. It is appended to the queried attributes without becoming a displayed
+        // table column (attributesToDisplay stays view.attributesIds).
+        const queryAttributeIds = useMemo(
+            () =>
+                view.groupByAttributeId && !view.attributesIds.includes(view.groupByAttributeId)
+                    ? [...view.attributesIds, view.groupByAttributeId]
+                    : view.attributesIds,
+            [view.attributesIds, view.groupByAttributeId],
+        );
+
         const {
             data,
             isMultivalue,
@@ -273,9 +294,13 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         } = useExplorerData({
             entrypoint,
             libraryId: view.libraryId,
-            attributeIds: view.attributesIds,
+            attributeIds: queryAttributeIds,
             fulltextSearch: view.fulltextSearch,
-            pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
+            pagination: isKanban
+                ? {limit: KANBAN_MAX_CARDS, offset: 0}
+                : noPagination
+                  ? null
+                  : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
             sorts: view.sort,
             filters: requestFilters,
             filtersOperator,
@@ -490,43 +515,56 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                             {emptyPlaceholder || <KitEmpty title={t('explorer.empty-data')} />}
                         </ExplorerEmptyDataStyled>
                     ) : (
-                        <DataView
-                            dataGroupedFilteredSorted={data?.records ?? emptyArray}
-                            attributesProperties={data?.attributes ?? emptyObject}
-                            attributesToDisplay={
-                                /* ⚠️ whoAmI column will always be displayed first*/ view.attributesIds
-                            }
-                            hideTableHeader={hideTableHeader}
-                            useSmallHeaderSize={useSmallHeaderSize}
-                            paginationProps={
-                                entrypoint.type === 'library' && !noPagination
-                                    ? {
-                                          pageSizeOptions: defaultPageSizeOptions,
-                                          currentPage,
-                                          pageSize: view.pageSize,
-                                          setNewPageSize,
-                                          setNewPage,
-                                          totalCount: totalCountFiltered,
-                                      }
-                                    : undefined
-                            }
-                            itemActions={[...itemActions, replaceItemAction, editStatusItemAction]
-                                .filter(Boolean)
-                                .map(action => ({
-                                    ...action,
-                                    disabled: isMassSelectionAll || action.disabled,
-                                }))}
-                            selection={{
-                                onSelectItem: _isSelectionDisable ? null : defaultCallbacks?.item?.select,
-                                onSelectionChange: _isSelectionDisable ? null : setSelectedKeys,
-                                isMassSelectionAll,
-                                selectedKeys: isMassSelectionAll
-                                    ? data?.records.map(({whoAmI}) => whoAmI.id)
-                                    : (view.massSelection as string[]),
-                                mode: selectionMode,
-                            }}
-                            tableBodyHeight={tableBodyHeight}
-                        />
+                        <>
+                            {isKanban && totalCountFiltered > KANBAN_MAX_CARDS && (
+                                <KitAlert
+                                    type="warning"
+                                    message={t('explorer.kanban.truncation-banner', {
+                                        count: KANBAN_MAX_CARDS,
+                                        total: totalCountFiltered,
+                                    })}
+                                />
+                            )}
+                            <DataView
+                                viewType={view.viewType}
+                                groupByAttributeId={view.groupByAttributeId}
+                                dataGroupedFilteredSorted={data?.records ?? emptyArray}
+                                attributesProperties={data?.attributes ?? emptyObject}
+                                attributesToDisplay={
+                                    /* ⚠️ whoAmI column will always be displayed first*/ view.attributesIds
+                                }
+                                hideTableHeader={hideTableHeader}
+                                useSmallHeaderSize={useSmallHeaderSize}
+                                paginationProps={
+                                    entrypoint.type === 'library' && !noPagination && !isKanban
+                                        ? {
+                                              pageSizeOptions: defaultPageSizeOptions,
+                                              currentPage,
+                                              pageSize: view.pageSize,
+                                              setNewPageSize,
+                                              setNewPage,
+                                              totalCount: totalCountFiltered,
+                                          }
+                                        : undefined
+                                }
+                                itemActions={[...itemActions, replaceItemAction, editStatusItemAction]
+                                    .filter(Boolean)
+                                    .map(action => ({
+                                        ...action,
+                                        disabled: isMassSelectionAll || action.disabled,
+                                    }))}
+                                selection={{
+                                    onSelectItem: _isSelectionDisable ? null : defaultCallbacks?.item?.select,
+                                    onSelectionChange: _isSelectionDisable ? null : setSelectedKeys,
+                                    isMassSelectionAll,
+                                    selectedKeys: isMassSelectionAll
+                                        ? data?.records.map(({whoAmI}) => whoAmI.id)
+                                        : (view.massSelection as string[]),
+                                    mode: selectionMode,
+                                }}
+                                tableBodyHeight={tableBodyHeight}
+                            />
+                        </>
                     )}
                 </ExplorerPageDivStyled>
                 {replaceItemModal}

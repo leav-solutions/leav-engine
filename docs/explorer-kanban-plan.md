@@ -82,7 +82,6 @@ colonnes. L'axe est un **paramètre de la vue**, au même titre que les colonnes
 - Axe sur **lien vers une LOV** (collection plate) ou **`boolean`**.
 - **Réordonnancement** intra-colonne (priorité) si un attribut d'ordre est défini.
 - WIP limits / agrégats par colonne (somme d'un attribut numérique).
-- Chargement incrémental par colonne (« charger plus ») — voir §7 pagination.
 
 ---
 
@@ -143,6 +142,12 @@ colonnes. L'axe est un **paramètre de la vue**, au même titre que les colonnes
   du nœud.
 - **Carte** : `KitIdCard` (identité du record) + N attributs configurés (réutiliser les renderers de `TableCell` ;
   pour un attribut `%` afficher une progress bar — dépend du lot B2 « affichage % », non bloquant : fallback texte).
+- **Pagination par colonne** : chaque colonne affiche ses **10 premières cartes** + un bouton **« Voir plus »** en
+  **fin de colonne** quand il en reste (cf. §7 — `recordsGroups` pour le `count`, `records` par colonne pour les
+  cartes). Pas de limite globale, pas de bandeau de troncature.
+- **Scroll horizontal du header** : en mode **Kanban uniquement**, le header de l'explorateur défile horizontalement
+  (les colonnes peuvent dépasser la largeur visible) — comportement propre au Kanban, à ne pas appliquer aux autres
+  modes d'affichage.
 
 8. **DnD (`dnd-kit`, ADR-001)** : `DndContext` au niveau `KanbanView`, chaque colonne = zone droppable, chaque carte =
    draggable (pattern existant `sort-items/SortItems.tsx` + `useSortable`). Pendant le drag, **seules les colonnes
@@ -184,6 +189,17 @@ colonnes. L'axe est un **paramètre de la vue**, au même titre que les colonnes
     d'affichage** (parmi les attributs **éligibles** — phase 1 : type `tree`) comme axe (`isGroupBy`). Pas de picker sur tous
     les attributs : on désigne parmi les colonnes déjà présentes. Action sur `currentViewReducer` (étendre
     `ICurrentViewState`/`ICurrentViewAction`, `store-current-view/_types.ts`).
+
+    > **À traiter — distinction admin / non-admin (comme pour les colonnes, les tris et les filtres).** La
+    > désignation des **axes possibles** doit passer par la **roue « attributs disponibles »**
+    > (`AvailableAttributesDropdown`, rendue **uniquement si `canManageViews`** — cf.
+    > `panel-view-settings/CLAUDE.md`), exactement comme la roue existe déjà sur les **trois facettes**
+    > (Affichage/**colonnes**, **Tris**, **Filtres**). Modèle à respecter : le **gestionnaire de vues**
+    > décide de l'axe et/ou de la **liste des axes rendus disponibles** ; l'**utilisateur classique** sans
+    > le droit ne fait que **consommer** la vue (il choisit son axe parmi ceux rendus disponibles, il ne les
+    > édite pas). Aujourd'hui `KanbanAxisSelector` est affiché **sans condition de permission** → à gater sur
+    > `canManageViews` (ou à restreindre à une sélection rendue disponible par l'admin) **avant PR-3**.
+
 13. **`viewV2ToSerializedView.ts:22-35`** : dériver `SerializedView.groupByAttributeId` = l'`attributeId` de l'entrée
     `display.attributes` marquée `isGroupBy` axe.
 14. **Fragment GraphQL** `viewV2Fragment.graphql:18-26` : ajouter `isGroupBy` dans `display { attributes { ... } }`.
@@ -201,7 +217,7 @@ Chaque étape est livrable/reviewable indépendamment.
 | PR       | Contenu                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Zone                                        | Dépend de |
 | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | --------- |
 | **PR-1** | **Config dans le volet (priorité).** Modèle : `kanban` dans `ViewV2Types` + champ `isGroupBy` sur `ViewV2DisplayAttributeInput` (core + `_gqlTypes`) + state/reducer + `SerializedView.groupByAttributeId`. Volet app-studio : `DisplayModeSelector` réel (incl. `kanban`) + désignation de l'axe parmi les colonnes + mapping `viewV2ToSerializedView` + `isGroupBy` dans le fragment. **Résultat visible :** on configure et on **sauvegarde** une vue Kanban (axe inclus) depuis le volet — rendue en table en attendant PR-2. | `apps/core` + `libs/ui` + `apps/app-studio` | —         |
-| **PR-2** | **Affichage.** Refactor `DataView` en routeur sur `viewType` (extraction `TableView`, 3 types existants → table, sans régression) **+** `KanbanView` (colonnes depuis `treeNodeChildren`, répartition + compteurs, carte compacte, lecture seule, pas de DnD). Le refactor arrive avec la vue qu'il rend possible, jamais livré seul.                                                                                                                                                                                             | `libs/ui` ExplorerV2                        | PR-1      |
+| **PR-2** | **Affichage.** Refactor `DataView` en routeur sur `viewType` (extraction `TableView`, 3 types existants → table, sans régression) **+** `KanbanView` (colonnes depuis `treeNodeChildren`, répartition + compteurs, carte compacte, lecture seule, pas de DnD) **+ pagination par colonne** (10 cartes + « Voir plus » en fin de colonne, via `recordsGroups`/`records`, cf. §7) **+ scroll horizontal du header** (Kanban only). Le refactor arrive avec la vue qu'il rend possible, jamais livré seul.                           | `libs/ui` ExplorerV2                        | PR-1      |
 | **PR-3** | DnD `dnd-kit` + **colonnes autorisées en amont** (`allowedDependentValues` via le mécanisme de l'édition en masse) + écriture `useExecuteSaveValueBatchMutation` + optimistic/rollback.                                                                                                                                                                                                                                                                                                                                           | `libs/ui` ExplorerV2                        | PR-2      |
 
 > **i18n :** pas d'étape dédiée — les clés `explorer.kanban.*` sont ajoutées **au fil de l'eau dans
@@ -222,16 +238,19 @@ Chaque étape est livrable/reviewable indépendamment.
 `pagination: RecordsPagination` offset/limit). Un Kanban groupe **tout** le jeu filtré, pas une
 page → en l'état, on ne verrait grouper que la page courante.
 
-**Décision phase 1 :** en mode Kanban, **désactiver la pagination UI** et charger le jeu filtré
-avec une **limite haute bornée** (ex. paramétrable, défaut prudent). C'est acceptable car les
-vues Kanban réelles sont **préfiltrées** (Offers Manager : Kanban d'UB **scopé par campagne**,
-~12 cartes typiques, ≤ ~500 au pire — cf. volumétrie cadrage). **Garde-fou obligatoire :** si le
-`totalCount` dépasse la limite, afficher un bandeau « N cartes non affichées, affinez les filtres »
-plutôt que de tronquer silencieusement.
+**Décision : pagination _par colonne_ (10 cartes par colonne, pas 10 au total).** Chaque colonne
+charge ses **10 premières cartes** ; dès qu'une colonne a **plus** de records que ceux affichés, un
+bouton **« Voir plus »** est rendu **en fin de colonne** pour charger la suite. Il n'y a **pas de
+limite globale** sur l'ensemble du jeu et **pas de bandeau de troncature** : le message
+« N cartes non affichées, affinez les filtres » est **supprimé** — chaque colonne se pagine
+indépendamment, aucune carte n'est masquée silencieusement.
 
-**Phase 2 (si besoin gros volumes) :** chargement **par colonne** avec pagination indépendante
-(« charger plus » en bas de colonne) + compteur via `totalCount` par valeur d'axe — plus complexe
-(N requêtes), à n'engager que si un cas réel l'exige.
+C'est exactement le contrat du backend de regroupement déjà livré (cf.
+[`explorer-grouping-core.md`](explorer-grouping-core.md), « 10 puis voir plus » par groupe) :
+`recordsGroups` fournit **la liste des colonnes + le `count` par colonne**, puis `records` (filtre de
+la vue **+ égalité d'axe de la colonne**, pagination propre) charge les cartes d'une colonne. Le
+compteur de colonne = ce `count` (cohérent avec le préfiltre courant), donc « Voir plus » disparaît
+quand toutes les cartes de la colonne sont chargées.
 
 ---
 
@@ -241,7 +260,7 @@ plutôt que de tronquer silencieusement.
 
 Les clés `explorer.kanban.*` sont ajoutées **dans la PR qui crée le composant correspondant** :
 PR-1 (libellés du volet : mode « Kanban », « Attribut de colonne »), PR-2 (titre, « Sans valeur »,
-bandeau de troncature), PR-3 (messages d'erreur de transition). Fichiers
+« Voir plus »), PR-3 (messages d'erreur de transition). Fichiers
 `libs/ui/src/locales/{en,fr}/shared.json` ; accès via `useSharedTranslation()` (jamais
 `useTranslation()` — app-studio ne charge que le namespace `translations`).
 
@@ -284,8 +303,8 @@ TODO E2E (test-apps/e2e-playwright) — Kanban
    existe des enregistrements sans valeur** (sinon masquée).
 4. **Couleur de colonne :** issue de la **carte d'identité du nœud** de l'arbre de regroupement
    (`whoAmI.color` du nœud), pas de palette par défaut. Idem pour le libellé de colonne (`whoAmI.label`).
-5. **Limite haute** du chargement Kanban (§7) : bornée, valeur par défaut prudente et paramétrable,
-   avec bandeau de troncature au-delà.
+5. **Pagination _par colonne_** (§7) : **10 cartes par colonne** (pas 10 au total) + bouton **« Voir
+   plus »** en fin de colonne quand il en reste. Pas de limite globale, **pas de bandeau de troncature**.
 
 ---
 

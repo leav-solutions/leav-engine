@@ -1,0 +1,92 @@
+.board {
+    flex: 1 1 min-content;
+    display: flex;
+    gap: calc(var(--general-spacing-s) * 1px);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: calc(var(--general-spacing-xs) * 1px);
+    align-items: flex-start;
+}
+
+.column {
+    flex: 0 0 auto;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    background: var(--general-utilities-background-secondary, #f5f6f8);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+    overflow: hidden;
+}
+
+.columnHeader {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+    padding: calc(var(--general-spacing-s) * 1px);
+    font-weight: 600;
+}
+
+.colorDot {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--dot-color, var(--general-utilities-neutral, #8c8c8c));
+}
+
+.columnLabel {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.columnCount {
+    flex: 0 0 auto;
+    color: var(--general-utilities-text-secondary, #8c8c8c);
+}
+
+.columnBody {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xs) * 1px);
+    padding: 0 calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-s) * 1px);
+    overflow-y: auto;
+}
+
+.emptyColumn {
+    padding: calc(var(--general-spacing-s) * 1px);
+    color: var(--general-utilities-text-secondary, #8c8c8c);
+    text-align: center;
+}
+
+.clickableCard {
+    cursor: pointer;
+}
+
+/* Records without a preview would otherwise show KitItemCard's grey image placeholder (the image area
+   is always rendered by the DS). Collapse it so the card is text-only, closer to the target design. */
+.cardNoImage :global(.kit-item-card-image) {
+    display: none;
+}
+
+.cardAttributes {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xs) * 1px);
+}
+
+/* One attribute per block: the label on its own line, its value underneath. */
+.cardAttributeRow {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xxs) * 1px);
+    font-size: 0.85em;
+}
+
+.cardAttributeLabel {
+    color: var(--general-utilities-text-secondary, #8c8c8c);
+}

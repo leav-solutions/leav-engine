@@ -58,6 +58,10 @@ export type CurrentViewAction =
     | {type: 'SET_SHARED'; payload: {shared: boolean}}
     | {type: 'SET_VIEW_TYPE'; payload: {viewType: CurrentViewTypes}}
     | {type: 'SET_DISPLAY_SETTINGS'; payload: {settings: Record<string, unknown> | null}}
+    // Designates (or clears, with `null`) the single grouping-axis attribute (kanban columns). The axis
+    // may be any library tree attribute: if it is not already a display column, it is appended as a hidden
+    // one so it can carry the `isGroupBy` marker. Sets `isGroupBy` on the target, unsets it on the others.
+    | {type: 'SET_GROUP_BY_ATTRIBUTE'; payload: {attribute: AvailableAttribute | null}}
     | {type: 'TOGGLE_VISIBILITY'; payload: {id: string}}
     | {type: 'MOVE_ATTRIBUTE'; payload: {activeId: string; overId: string}}
     | {type: 'MOVE_SORT'; payload: {activeId: string; overId: string}}

@@ -4,17 +4,18 @@ import {useLang, usePanelIFrameHandlers} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {ColumnsSettings} from './ColumnsSettings';
 import {DisplayModeSelector} from './DisplayModeSelector';
+import {KanbanAxisSelector} from './KanbanAxisSelector';
 import {useCurrentView} from '../../store-current-view/useCurrentView';
 import {CurrentViewContext} from '../../store-current-view/CurrentViewContext';
 import {useDelegatedDisplayIframeSource} from './useDelegatedDisplayIframeSource';
 import {useSyncViewToIframe} from '../../../panel-custom/message-handlers/useSyncViewToIframe';
 import {sanitize} from './_constants';
 import {tab} from './tabDisplay.module.css';
+import {ViewV2Types} from '../../../../../../__generated__';
 import {type CurrentViewColumn} from '../../store-current-view/_types';
 
-// TODO (display mode): wire DisplayModeSelector to view.display.type + dispatch SET_VIEW_TYPE
 export const TabDisplay = () => {
-    const {visibleColumns, invisibleColumns, toggleVisibility, moveAttribute} = useCurrentView();
+    const {view, visibleColumns, invisibleColumns, toggleVisibility, moveAttribute} = useCurrentView();
     const {lang} = useLang();
 
     // A custom view (origin set) delegates its display config to the panel's own iframe: it owns the
@@ -45,6 +46,8 @@ export const TabDisplay = () => {
         },
     });
     useSyncViewToIframe(pushViewSettingsUpdate);
+
+    const isKanban = view?.display.type === ViewV2Types.kanban;
 
     // Search is a transient UI filter on the column lists, NOT part of the current view.
     const [search, setSearch] = useState('');
@@ -84,6 +87,7 @@ export const TabDisplay = () => {
     return (
         <div className={tab}>
             <DisplayModeSelector />
+            {isKanban && <KanbanAxisSelector />}
             <ColumnsSettings
                 search={search}
                 visibleColumns={filteredVisibleColumns}
