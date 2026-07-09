@@ -16,9 +16,6 @@ global.__mockPromiseMultiple = promResults => {
     return jestFn;
 };
 
-declare global {
-    // Used to mock any interface, turning all function properties to an optionnal mock
-    // Mockified object must be then passed to a function with a type assertion
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? ReturnType<typeof vi.fn> : T[P]};
-}
+// Used to mock any interface, turning all function properties to an optionnal mock
+// Mockified object must be then passed to a function with a type assertion
+type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? ReturnType<typeof vi.fn> : T[P]};
