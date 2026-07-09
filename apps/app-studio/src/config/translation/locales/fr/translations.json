@@ -23,6 +23,12 @@
         "floating_window": "Fenêtre flottante",
         "fullpage_window": "Fenêtre pleine page"
     },
+    "fullscreen": {
+        "enter": "Plein écran",
+        "exit": "Quitter le plein écran",
+        "alert_title": "Mode plein écran activé",
+        "alert_description": "Pour quitter le mode plein écran, cliquez sur la touche echap ou sur le même bouton."
+    },
     "information_and_history": {
         "system_information": "Informations système",
         "id": "Identifiant",

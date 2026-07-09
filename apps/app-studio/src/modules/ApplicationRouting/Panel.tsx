@@ -16,7 +16,10 @@ import {AbsolutePaths} from './router/paths';
 import {FlapContainer} from './FlapContainer';
 import {ViewSettingsContainer} from './ViewSettingsContainer';
 import {CurrentViewStoreProvider} from './content/panel-view-settings/store-current-view/CurrentViewStoreProvider';
-import {firstPanel, firstPanelContent, panel, panelContent, panelHeader} from './panel.module.css';
+import {FullscreenToggleButton} from './header/action-button/FullscreenToggleButton';
+import {FullscreenAlert} from './content/FullscreenAlert';
+import {useFullscreen} from '../../hooks/useFullscreen';
+import {firstPanel, firstPanelContent, fullscreenPanel, panel, panelContent, panelHeader} from './panel.module.css';
 
 export const Panel: FunctionComponent = () => {
     const [modalExtraRightElement, setModalExtraRightElement] = useState<HTMLElement>();
@@ -30,6 +33,7 @@ export const Panel: FunctionComponent = () => {
     });
     const NextLevelRoutes = useRoutes(nextLevelRoutes);
     const match = useMatch(AbsolutePaths.recordPanel);
+    const {fullscreenPanelId, enterFullscreen} = useFullscreen();
 
     const isFirstPanel = where === undefined;
     const isPanelInSlider = where === 'slider';
@@ -50,7 +54,24 @@ export const Panel: FunctionComponent = () => {
     // explorer, so it does not hide the volet (the volet floats on top of it). It is never shown when
     // the explorer itself is displayed in a `slider`.
     const hasNextLevelPanel = NextLevelRoutes !== null;
-    const isViewSettingsVisible = !hasNextLevelPanel && !isPanelInSlider;
+    const isForegroundPanel = !isPanelInSlider && !hasNextLevelPanel;
+
+    const isPanelFullscreen = fullscreenPanelId === currentPanel?.id;
+    const showFullscreenButton = isForegroundPanel || isPanelFullscreen;
+
+    // Fullscreen is sticky across navigation: when we navigate into a *different* foreground fullpage
+    // panel while fullscreen, transfer fullscreen to it.  Slider/popup/flap overlays (where !== 'fullpage')
+    // // keep fullscreen on the current panel and layer above it.
+    useEffect(() => {
+        if (
+            where === 'fullpage' &&
+            !hasNextLevelPanel &&
+            fullscreenPanelId !== null &&
+            fullscreenPanelId !== currentPanel?.id
+        ) {
+            enterFullscreen(currentPanel.id);
+        }
+    }, [where, hasNextLevelPanel, fullscreenPanelId, currentPanel?.id, enterFullscreen]);
 
     useViewSettingsAutoClose(hasNextLevelPanel);
 
@@ -91,9 +112,10 @@ export const Panel: FunctionComponent = () => {
             <section
                 className={cn(panel, {
                     [firstPanel]: isFirstPanel,
+                    [fullscreenPanel]: isPanelFullscreen,
                 })}
             >
-                {(isFirstPanel || !currentPanel.isStandalone) && (
+                {!isPanelFullscreen && (isFirstPanel || !currentPanel.isStandalone) && (
                     <div className={panelHeader}>
                         {/* `fullpage`, `popup` and `slider` are managed by `<PanelContainer />` */}
                         {isFirstPanel && (
@@ -127,9 +149,11 @@ export const Panel: FunctionComponent = () => {
                     />
                     {NextLevelRoutes}
                 </div>
+                {showFullscreenButton && <FullscreenToggleButton panelId={currentPanel.id} />}
+                {isPanelFullscreen && <FullscreenAlert />}
             </section>
             {hasFlapPanel && flapContainerComponent}
-            {isViewSettingsVoletActive && isViewSettingsVisible && viewSettingsContainerComponent}
+            {isViewSettingsVoletActive && isForegroundPanel && viewSettingsContainerComponent}
         </>
     );
 

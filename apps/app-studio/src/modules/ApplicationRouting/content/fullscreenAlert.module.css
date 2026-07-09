@@ -1,0 +1,9 @@
+.fullscreenAlert {
+    position: absolute;
+    top: calc(var(--general-spacing-s) * 1px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    width: 400px;
+    max-width: calc(100% - calc(var(--general-spacing-m) * 2px));
+}

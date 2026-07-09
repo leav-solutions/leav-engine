@@ -5,6 +5,7 @@ import {Explorer, SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
 import {KitModal, KitSidePanel} from 'aristid-ds';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
+import {useFullscreen} from '../../hooks/useFullscreen';
 import {PanelHeader} from './header/PanelHeader';
 import {AbsolutePaths, RelativePaths} from './router/paths';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
@@ -41,9 +42,11 @@ export const PanelContainer: FunctionComponent<PropsWithChildren> = ({children})
     });
     const explorerContainerRef = useRef<HTMLDivElement>(null);
     const match = useMatch(AbsolutePaths.recordPanel);
+    const {fullscreenPanelId} = useFullscreen();
 
     const hasFlapPanel = flapPanelId !== undefined;
     const isCreationFormPanel = currentPanel.type === 'creationForm';
+    const isThisPanelFullscreen = currentPanel?.id === fullscreenPanelId;
 
     const isPanelInFullpage = where === 'fullpage';
     const isPanelInPopup = where === 'popup';
@@ -90,7 +93,11 @@ export const PanelContainer: FunctionComponent<PropsWithChildren> = ({children})
                   parentSelector: getFullsPagePopupContainer,
                   appElement: getFullsPagePopupContainer(),
                   //TODO Remove zIndex from here when design system handles the case
-                  style: {overlay: {position: 'absolute' as const, zIndex: MODAL_FULLSCREEN_INDEX}},
+                  style: {
+                      overlay: isThisPanelFullscreen
+                          ? {position: 'fixed' as const, inset: 0, zIndex: MODAL_FULLSCREEN_INDEX}
+                          : {position: 'absolute' as const, zIndex: MODAL_FULLSCREEN_INDEX},
+                  },
                   width: undefined, // We override the width so the modal is fullscreen
                   height: undefined, // We override the height so the modal is fullscreen
               }
@@ -116,6 +123,7 @@ export const PanelContainer: FunctionComponent<PropsWithChildren> = ({children})
                 isOpen
                 // shouldCloseOnOverlayClick has no effect if showCloseIcon = true
                 showCloseIcon={!hasPanelInFullpageAfterPopup && popupProps.shouldCloseOnOverlayClick}
+                shouldCloseOnEsc={!isThisPanelFullscreen}
                 className={cn({
                     [centerPopup]: isPanelInPopup,
                     [centerPopupForCreationForm]: isCreationFormPanel,
@@ -128,7 +136,9 @@ export const PanelContainer: FunctionComponent<PropsWithChildren> = ({children})
                 })}
                 width={isCreationFormPanel ? 'revert-layer' : '70vw'} // Use revert-layer to inherit the width from the popupCreationOverlay (as modal use html with style attribute)
                 height={isCreationFormPanel ? 'revert-layer' : '70vh'} // Use revert-layer to inherit the height from the popupCreationOverlay (as modal use html with style attribute)
-                title={<PanelHeader hidePanelDisplayModeSelector={isCreationFormPanel} />}
+                title={
+                    isThisPanelFullscreen ? null : <PanelHeader hidePanelDisplayModeSelector={isCreationFormPanel} />
+                }
                 footer={isCreationFormPanel ? <div id={SUBMIT_BUTTONS_PORTAL} /> : null}
                 close={closeContainer}
                 extraRight={
