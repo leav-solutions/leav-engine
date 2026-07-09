@@ -18,6 +18,15 @@ import {
 } from './_types/permissions';
 
 export const validateConfig = (conf: IConfig) => {
+    const amqpConnOptSchema = Joi.object().keys({
+        protocol: Joi.string().required(),
+        hostname: Joi.string().required(),
+        username: Joi.string().required(),
+        password: Joi.string().required(),
+        port: Joi.string().required(),
+        vhost: Joi.string().required(),
+    });
+
     const permissionsByActionsSchema = (permissionActions: Record<string, string>) => {
         const schemaShape: Record<string, Joi.Schema> = {
             default: Joi.boolean(),
@@ -177,13 +186,7 @@ export const validateConfig = (conf: IConfig) => {
             enableCache: Joi.boolean().required(),
         }),
         amqp: Joi.object().keys({
-            connOpt: Joi.object().keys({
-                protocol: Joi.string().required(),
-                hostname: Joi.string().required(),
-                username: Joi.string().required(),
-                password: Joi.string().required(),
-                port: Joi.string().required(),
-            }),
+            connOpt: amqpConnOptSchema,
             exchange: Joi.string().required(),
             type: Joi.string().required(),
             prefetch: Joi.number().required(),
@@ -335,13 +338,7 @@ export const validateConfig = (conf: IConfig) => {
             }),
         }),
         sdo: Joi.object().keys({
-            amqp: Joi.object().keys({
-                protocol: Joi.string().required(),
-                hostname: Joi.string(),
-                username: Joi.string(),
-                password: Joi.string(),
-                port: Joi.string().required(),
-            }),
+            amqp: amqpConnOptSchema,
             clientId: Joi.string().allow(''),
             applicationName: Joi.string().allow(''),
             import: Joi.object().keys({
