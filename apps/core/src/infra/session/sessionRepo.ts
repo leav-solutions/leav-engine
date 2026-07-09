@@ -9,5 +9,5 @@ interface ISessionRepoDeps {
 }
 
 export default function ({'core.infra.redis': redis = null}: ISessionRepoDeps): ISessionRepo {
-    return ramService(redis.session);
+    return ramService(redis.session, 'session');
 }
