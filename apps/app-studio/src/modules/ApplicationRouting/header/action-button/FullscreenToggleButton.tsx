@@ -3,9 +3,8 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitTooltip} from 'aristid-ds';
 import {type FunctionComponent} from 'react';
 import {useTranslation} from 'react-i18next';
-import cn from 'classnames';
 import {useFullscreen} from '../../../../hooks/useFullscreen';
-import {fullscreenToggleButtonBackdrop, revealOnHover} from './fullscreenToggleButton.module.css';
+import {fullscreenToggleButtonBackdrop} from './fullscreenToggleButton.module.css';
 
 interface IFullscreenToggleButtonProps {
     panelId: string;
@@ -27,7 +26,7 @@ export const FullscreenToggleButton: FunctionComponent<IFullscreenToggleButtonPr
     };
 
     return (
-        <div className={cn(fullscreenToggleButtonBackdrop, {[revealOnHover]: isFullscreen})}>
+        <div className={fullscreenToggleButtonBackdrop}>
             <KitTooltip title={label}>
                 <KitButton
                     type="secondary"

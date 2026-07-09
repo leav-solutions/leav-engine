@@ -9,13 +9,10 @@
     box-shadow: var(--general-utilities-shadow-light);
     height: 48px;
     width: 48px;
-}
-
-.revealOnHover {
     opacity: 0;
     transition: opacity 0.2s ease;
 }
 
-.revealOnHover:hover {
+.fullscreenToggleButtonBackdrop:hover {
     opacity: 1;
 }
