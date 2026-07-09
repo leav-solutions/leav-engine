@@ -19,7 +19,9 @@ import {setupCryptoRandomUUIDPolyfill} from '@leav/e2e-test-utils';
 
 setupCryptoRandomUUIDPolyfill(test);
 
-test.describe('Standard type field scenario', () => {
+// Skipped: this scenario drives the removed data-studio app (accessDataStudio / DataStudioPage),
+// so every test times out on the entry click. To be rewritten against explorer-studio in LEAVC-988.
+test.describe.skip('Standard type field scenario', () => {
     test.beforeEach(async ({page}) => {
         await page.goto(config.baseUrl);
 
