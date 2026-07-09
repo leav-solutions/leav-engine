@@ -1,5 +1,4 @@
-import userEvent from '@testing-library/user-event';
-import {type UserEvent} from '@testing-library/user-event/dist/types/setup/setup';
+import userEvent, {type UserEvent} from '@testing-library/user-event';
 import {useRef} from 'react';
 import {getRecordColumnsValues} from '_ui/_queries/records/getRecordColumnsValues';
 import {mockRecord} from '_ui/__mocks__/common/record';
