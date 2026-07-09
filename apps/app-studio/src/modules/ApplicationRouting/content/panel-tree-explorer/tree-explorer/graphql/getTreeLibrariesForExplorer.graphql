@@ -1,0 +1,20 @@
+query getTreeLibrariesForExplorer($treeId: [ID!]) {
+    trees(filters: {id: $treeId}) {
+        totalCount
+        list {
+            id
+            behavior
+            libraries {
+                library {
+                    id
+                    label
+                    behavior
+                }
+                settings {
+                    allowedChildren
+                    allowedAtRoot
+                }
+            }
+        }
+    }
+}

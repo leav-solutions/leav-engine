@@ -1,5 +1,5 @@
 import {KitAvatar, KitIdCard, KitSideMenu, KitTypography} from 'aristid-ds';
-import {useMemo, useState, type FunctionComponent, type ComponentProps, useContext} from 'react';
+import {useMemo, useState, type ComponentProps, useContext} from 'react';
 import {useNavigate, generatePath, useParams, Outlet} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {type IconProp} from '@fortawesome/fontawesome-svg-core';
@@ -16,7 +16,7 @@ import {MIN_WORKSPACES_TO_SHOW_SEARCH} from '../../../constants';
 import {matomo} from '../../../services/analytics';
 import {matomoEvents} from '../../../services/analytics/constants/matomoEvents';
 
-export const WorkspacesNavigationMenu: FunctionComponent = () => {
+export const WorkspacesNavigationMenu = () => {
     const [application] = useApplicationSettingsContext();
     const {workspaceId} = useParams();
     const {lang} = useContext(LangContext);
@@ -65,29 +65,32 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
         [application?.workspaces, searchWorkspaceValue, lang],
     );
 
-    const libraryWorkspaceItems: ComponentProps<typeof KitSideMenu>['items'] = useMemo(
+    // Library and tree workspaces are both flat menu entry points with the same item shape (icon +
+    // title + navigate to workspace). They are kept in a single list, so the alphabetical order mixing
+    // both types (computed by the core) is preserved in the menu.
+    const flatWorkspaceItems: ComponentProps<typeof KitSideMenu>['items'] = useMemo(
         () =>
             (application?.workspaces ?? [])
-                .filter(workspace => workspace.type === 'library')
+                .filter(workspace => workspace.type === 'library' || workspace.type === 'tree')
                 .filter(_filterWorkspacesOnSearchValue)
-                .map(libraryWorkspace => {
+                .map(flatWorkspace => {
                     // As suggested by FontAwesome documentation, we need this workaround to use the string notation
                     // More info: https://docs.fontawesome.com/web/use-with/react/add-icons#workaround
                     // @ts-expect-error: Type 'string' is not assignable to type 'IconProp'
-                    const icon: IconProp = `fa-solid ${libraryWorkspace.icon ? libraryWorkspace.icon : 'fa-star-of-life'}`;
-                    const libraryWorkspaceTitle = localizedTranslation(libraryWorkspace.title, lang);
+                    const icon: IconProp = `fa-solid ${flatWorkspace.icon ? flatWorkspace.icon : 'fa-star-of-life'}`;
+                    const flatWorkspaceTitle = localizedTranslation(flatWorkspace.title, lang);
 
                     return {
-                        key: libraryWorkspace.id,
+                        key: flatWorkspace.id,
                         type: 'default',
-                        title: libraryWorkspaceTitle,
+                        title: flatWorkspaceTitle,
                         icon: <FontAwesomeIcon icon={icon} />,
                         onClick: () => {
                             matomo.trackNavigationEvent(
                                 matomoEvents.actions.workspace_clicked,
-                                libraryWorkspaceTitle || libraryWorkspace.id,
+                                flatWorkspaceTitle || flatWorkspace.id,
                             );
-                            navigate(generatePath(UnreachablePaths.workspace, {workspaceId: libraryWorkspace.id}));
+                            navigate(generatePath(UnreachablePaths.workspace, {workspaceId: flatWorkspace.id}));
                         },
                     };
                 }),
@@ -115,25 +118,25 @@ export const WorkspacesNavigationMenu: FunctionComponent = () => {
 
     const sideMenuItems = useMemo((): ComponentProps<typeof KitSideMenu>['items'] => {
         const hasRecord = recordWorkspaceItems?.length > 0;
-        const hasLibrary = libraryWorkspaceItems?.length > 0;
+        const hasFlatWorkspace = flatWorkspaceItems?.length > 0;
 
-        if (!hasRecord && !hasLibrary) {
+        if (!hasRecord && !hasFlatWorkspace) {
             if (searchWorkspaceValue) {
                 return [noResultsItem];
             }
             return [];
         }
 
-        if (hasRecord && hasLibrary) {
-            return [groupShortcutItems, ...recordWorkspaceItems!, separatorItem, ...libraryWorkspaceItems!];
+        if (hasRecord && hasFlatWorkspace) {
+            return [groupShortcutItems, ...recordWorkspaceItems!, separatorItem, ...flatWorkspaceItems!];
         }
 
         if (hasRecord) {
             return [groupShortcutItems, ...recordWorkspaceItems!];
         }
 
-        return [...libraryWorkspaceItems!];
-    }, [recordWorkspaceItems, libraryWorkspaceItems, searchWorkspaceValue]);
+        return [...flatWorkspaceItems!];
+    }, [recordWorkspaceItems, flatWorkspaceItems, searchWorkspaceValue]);
 
     return (
         <>

@@ -21,7 +21,7 @@ describe('applicationRepo', () => {
         description: 'Super application',
         libraries: ['products', 'categories'],
         color: 'orange',
-        module: 'data-studio',
+        module: 'app-studio',
     };
     const applicationData = {
         ...mockApplication,
@@ -33,7 +33,7 @@ describe('applicationRepo', () => {
         libraries: ['products', 'categories'],
         trees: ['files', 'categories'],
         color: 'orange',
-        module: 'data-studio',
+        module: 'app-studio',
     };
 
     describe('getApplications', () => {
@@ -151,12 +151,12 @@ describe('applicationRepo', () => {
 
         test('Return modules found on directory', async () => {
             const pathSpy = vi.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
-            vi.mocked(fs.readdir).mockResolvedValueOnce(['data-studio', 'admin'] as any[]);
+            vi.mocked(fs.readdir).mockResolvedValueOnce(['app-studio', 'admin'] as any[]);
             vi.mocked(fs.stat).mockResolvedValue({} as Stats);
 
-            vi.mock('/some/path/data-studio/manifest.json', () => ({
-                name: 'data-studio',
-                description: 'data studio description',
+            vi.mock('/some/path/app-studio/manifest.json', () => ({
+                name: 'app-studio',
+                description: 'app studio description',
                 version: '42',
             }));
 
@@ -171,7 +171,7 @@ describe('applicationRepo', () => {
             const modules = await repo.getAvailableModules({ctx: mockCtx});
 
             expect(modules).toEqual([
-                {id: 'data-studio', description: 'data studio description', version: '42'},
+                {id: 'app-studio', description: 'app studio description', version: '42'},
                 {id: 'admin', description: 'admin description', version: '42'},
             ]);
 
@@ -180,7 +180,7 @@ describe('applicationRepo', () => {
 
         test('Ignore invalid folders', async () => {
             const pathSpy = vi.spyOn(path, 'resolve').mockReturnValueOnce('/some/path');
-            vi.mocked(fs.readdir).mockResolvedValueOnce(['data-studio', 'invalid_module'] as any[]);
+            vi.mocked(fs.readdir).mockResolvedValueOnce(['app-studio', 'invalid_module'] as any[]);
             vi.mocked(fs.stat).mockImplementation(statPath => {
                 if (String(statPath).match(/invalid_module/)) {
                     throw new Error('Invalid module');
@@ -188,9 +188,9 @@ describe('applicationRepo', () => {
                 return Promise.resolve({} as Stats);
             });
 
-            vi.mock('/some/path/data-studio/manifest.json', () => ({
-                name: 'data-studio',
-                description: 'data studio description',
+            vi.mock('/some/path/app-studio/manifest.json', () => ({
+                name: 'app-studio',
+                description: 'app studio description',
                 version: '42',
             }));
 
@@ -205,7 +205,7 @@ describe('applicationRepo', () => {
 
             const modules = await repo.getAvailableModules({ctx: mockCtx});
 
-            expect(modules).toEqual([{id: 'data-studio', description: 'data studio description', version: '42'}]);
+            expect(modules).toEqual([{id: 'app-studio', description: 'app studio description', version: '42'}]);
 
             pathSpy.mockRestore();
         });

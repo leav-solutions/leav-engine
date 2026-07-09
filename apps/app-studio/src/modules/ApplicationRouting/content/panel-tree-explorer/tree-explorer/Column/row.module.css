@@ -1,0 +1,64 @@
+/* Colors use aristid-ds tokens. The 20rem max-width is a layout constant (was themeVars.navigationColumnWidth). */
+.rowWrapper {
+    position: relative;
+    display: grid;
+
+    place-items: flex-start;
+    align-items: center;
+    max-width: 20rem;
+    overflow: hidden;
+
+    /* Grid columns depend on the row state; computed by the component and passed as a CSS variable. */
+    grid-template-columns: var(--row-grid-template-columns);
+    padding: 1rem 0.5rem;
+
+    &:hover {
+        background: var(--general-colors-primary-50);
+
+        .checkboxWrapper {
+            opacity: 1;
+        }
+    }
+
+    .counter {
+        justify-self: flex-end;
+    }
+
+    /* `.floating-menu` is owned by the @leav/ui <FloatingMenu>, so it stays a global selector. */
+    &:not(:hover) :global(.floating-menu) {
+        display: none;
+    }
+}
+
+.isInPath {
+    background: var(--general-colors-primary-50);
+}
+
+.recordCardWrapper {
+    min-width: 0;
+    width: 100%;
+    padding-right: 0.2rem;
+
+    & > * > * {
+        justify-content: space-around;
+    }
+}
+
+.checkboxWrapper {
+    opacity: 0;
+    transition: 100ms ease;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.selectionActive {
+    opacity: 1;
+}
+
+.inactiveIcon {
+    color: var(--general-utilities-error-default);
+    font-size: 1.3em;
+    margin-left: 0.5rem;
+}

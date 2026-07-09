@@ -12,7 +12,7 @@ export const mockApplication: MandatoryId<IApplication> = {
     icon: {
         id: '123456',
     },
-    module: 'data-studio',
+    module: 'app-studio',
 };
 
 export const mockApplicationExternal: IApplication = {

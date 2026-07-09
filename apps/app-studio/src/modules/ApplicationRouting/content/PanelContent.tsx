@@ -5,6 +5,7 @@ import {PanelCustom} from './panel-custom/PanelCustom';
 import {PanelLibraryExplorer} from './panel-explorer/PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './panel-explorer/PanelAttributeExplorer';
 import {PanelCreationForm} from './panel-creation-form/PanelCreationForm';
+import {PanelTreeExplorer} from './panel-tree-explorer/PanelTreeExplorer';
 
 interface IPanelContentProps {
     panel: Panel;
@@ -37,6 +38,9 @@ export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, reco
     }
     if (panel.type === 'custom') {
         return <PanelCustom source={panel.iframeSource} title={panel.id} recordId={recordId} />;
+    }
+    if (panel.type === 'treeExplorer') {
+        return <PanelTreeExplorer treeId={panel.treeId} />;
     }
     if (panel.type === 'explorer') {
         if ('attributeSource' in panel) {

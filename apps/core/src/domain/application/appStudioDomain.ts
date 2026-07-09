@@ -3,6 +3,7 @@ import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IApplication} from '../../_types/application';
 import {type ILibraryDomain} from '../../domain/library/libraryDomain';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
+import {type ITreeDomain} from '../../domain/tree/treeDomain';
 import {LibraryPermissionsActions, PermissionTypes, RecordPermissionsActions} from '../../_types/permissions';
 import {type IConfig} from '../../_types/config';
 import ValidationError from '../../errors/ValidationError';
@@ -10,6 +11,9 @@ import {Errors} from '../../_types/errors';
 import uniq from 'lodash/uniq';
 import {type IGetLibrarySystemPanelsHelper} from './helpers/getLibrarySystemPanels';
 import {EXPLORER_STUDIO_APPLICATION} from '../../_constants/globalSettings';
+
+// FontAwesome icon distinguishing tree workspaces from library workspaces in the navigation menu.
+const TREE_WORKSPACE_ICON = 'fa-sitemap';
 
 export interface IAppStudioDomain {
     /**
@@ -35,6 +39,7 @@ export interface IAppStudioDomainDeps {
     'core.domain.permission': IPermissionDomain;
     'core.domain.library': ILibraryDomain;
     'core.domain.record': IRecordDomain;
+    'core.domain.tree': ITreeDomain;
     'core.domain.application.helpers.getLibrarySystemPanels': IGetLibrarySystemPanelsHelper;
 }
 
@@ -43,6 +48,7 @@ export default function ({
     'core.domain.permission': permissionDomain,
     'core.domain.library': libraryDomain,
     'core.domain.record': recordDomain,
+    'core.domain.tree': treeDomain,
     'core.domain.application.helpers.getLibrarySystemPanels': librarySystemPanelsHelper,
 }: IAppStudioDomainDeps): IAppStudioDomain {
     const _filterWorkspacesByPermissions = async (
@@ -74,6 +80,12 @@ export default function ({
                     });
                 }
 
+                if (workspace.type === 'tree') {
+                    // Tree workspaces are only produced by the explorer-studio auto-populate, which
+                    // sources them from treeDomain.getTrees — already filtered by ACCESS_TREE permission.
+                    canAccess = true;
+                }
+
                 return canAccess ? workspace : null;
             }),
         );
@@ -87,6 +99,15 @@ export default function ({
     ) =>
         Promise.all(
             workspaces.map(async workspace => {
+                if (workspace.type === 'tree') {
+                    const title = workspace.title ?? (await treeDomain.getTreeProperties(workspace.treeId, ctx)).label;
+
+                    return {
+                        ...workspace,
+                        title,
+                    };
+                }
+
                 if (!workspace.libraryId) {
                     throw new ValidationError<IApplication>({
                         id: {msg: Errors.APP_STUDIO_WORKSPACE_LIBRARY_ID_REQUIRED, vars: {workspaceId: workspace.id}},
@@ -188,6 +209,20 @@ export default function ({
             });
         }
 
+        // getTrees is already filtered by the ACCESS_TREE permission, so unauthorized trees never surface.
+        const trees = (await treeDomain.getTrees({ctx}))?.list ?? [];
+
+        for (const tree of trees) {
+            explorerStudioWorkspaces.push({
+                // `_tree_workspace` suffix (not `_workspace`) so a tree and a library sharing the same id
+                // don't produce colliding workspace ids (checkWorkspaceIdsUniqueness on the front).
+                id: `${tree.id}_tree_workspace`,
+                type: 'tree',
+                treeId: tree.id,
+                icon: TREE_WORKSPACE_ICON,
+            });
+        }
+
         return explorerStudioWorkspaces;
     };
 
@@ -210,7 +245,23 @@ export default function ({
         workspaces = await _filterWorkspacesByPermissions(workspaces, ctx);
         workspaces = await _setWorkspacesTitles(workspaces, ctx);
 
-        const librariesIds = uniq(workspaces.map(workspace => workspace.libraryId));
+        // Explorer studio auto-populates workspaces with no meaningful order, so sort them alphabetically
+        // (mixing both types) by their resolved title. Other instances keep their configured order.
+        if (applicationId === EXPLORER_STUDIO_APPLICATION) {
+            workspaces = [...workspaces].sort((a, b) => {
+                const titleA = a.title?.[config.lang.default] ?? '';
+                const titleB = b.title?.[config.lang.default] ?? '';
+                return titleA.localeCompare(titleB);
+            });
+        }
+
+        // Tree workspaces have no library (their treeExplorer panel is built implicitly by the front),
+        // so only library/record workspaces contribute to the library panels lookup below.
+        const librariesIds = uniq(
+            workspaces
+                .map(workspace => workspace.libraryId)
+                .filter((libraryId): libraryId is NonNullable<typeof libraryId> => libraryId != null),
+        );
         const processedLibraryIds = new Set<string>();
 
         for (const libraryId of librariesIds) {

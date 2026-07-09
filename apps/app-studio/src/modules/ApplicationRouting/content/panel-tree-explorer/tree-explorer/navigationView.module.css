@@ -1,0 +1,8 @@
+.page {
+    width: auto;
+    height: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
+}

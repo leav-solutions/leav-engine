@@ -1,0 +1,24 @@
+subscription treeEvents($filters: TreeEventFiltersInput) {
+    treeEvent(filters: $filters) {
+        type
+        treeId
+        element {
+            id
+            childrenCount
+            record {
+                ...TreeExplorerRecord
+            }
+            permissions {
+                access_tree
+                detach
+                edit_children
+            }
+        }
+        parentNode {
+            id
+        }
+        parentNodeBefore {
+            id
+        }
+    }
+}

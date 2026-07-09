@@ -1,0 +1,5 @@
+mutation moveTreeElement($treeId: ID!, $nodeId: ID!, $parentTo: ID) {
+    treeMoveElement(treeId: $treeId, nodeId: $nodeId, parentTo: $parentTo) {
+        id
+    }
+}

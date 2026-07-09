@@ -36,4 +36,4 @@ const App = () => {
 };
 ```
 
-Real-world implementation can be seen on [Data Studio](https://github.com/leav-solutions/leav-engine/blob/main/apps/data-studio/src/components/app/AppHandler/AppHandler.tsx])
+Real-world implementation can be seen on [App Studio](https://github.com/leav-solutions/leav-engine/tree/main/apps/app-studio/src)

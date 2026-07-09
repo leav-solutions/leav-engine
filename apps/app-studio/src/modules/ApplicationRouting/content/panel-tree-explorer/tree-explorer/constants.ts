@@ -1,0 +1,1 @@
+export const TREE_NAVIGATION_PAGE_SIZE = 20;

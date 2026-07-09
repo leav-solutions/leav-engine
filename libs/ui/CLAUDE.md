@@ -1,7 +1,7 @@
 # libs/ui — CLAUDE.md
 
 `@leav/ui` — Composants React partagés du framework LEAV.
-Consommé en interne par `app-studio` (et historiquement `data-studio`, en cours de suppression).
+Consommé en interne par `app-studio`.
 Publié sur npm pour les applications tierces qui utilisent LEAV : **AMP** et **xStream**.
 
 ---
@@ -53,7 +53,7 @@ actions primaires, actions par ligne, actions en masse.
 ### ExplorerV2 (`src/components/ExplorerV2/`) — voir [`ExplorerV2/CLAUDE.md`](src/components/ExplorerV2/CLAUDE.md)
 
 Fork **contrôlé** de l'Explorer, futur remplaçant (sera renommé `Explorer` une fois ViewV2
-intégré et `data-studio` supprimé — TODO dans `index.ts`). Ne possède aucune config de vue ni
+intégré — TODO dans `index.ts`). Ne possède aucune config de vue ni
 volet : la vue lui est fournie en prop `currentView` par app-studio (source de vérité, cf.
 ADR-006). C'est la cible de tout nouveau développement lié aux vues.
 

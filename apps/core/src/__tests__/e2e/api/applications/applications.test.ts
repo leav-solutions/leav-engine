@@ -72,7 +72,7 @@ describe('Applications', () => {
                     id: "test_app",
                     label: {en: "Test app"},
                     endpoint: "my-app",
-                    module: "data-studio",
+                    module: "app-studio",
                     type: internal
                 }) {
                     id
@@ -90,7 +90,7 @@ describe('Applications', () => {
             expect(res.data.errors).toBeUndefined();
 
             expect(res.data.data.saveApplication.id).toBe('test_app');
-            expect(res.data.data.saveApplication.module).toBe('data-studio');
+            expect(res.data.data.saveApplication.module).toBe('app-studio');
             expect(res.data.data.saveApplication.type).toBe('internal');
             expect(res.data.data.saveApplication.permissions.access_application).toBeDefined();
 
@@ -142,7 +142,7 @@ describe('Applications', () => {
                 }
             }`);
             expect(res.status).toBe(200);
-            expect(res.data.data.saveApplication.module).toBe('data-studio');
+            expect(res.data.data.saveApplication.module).toBe('app-studio');
             expect(res.data.data.saveApplication.type).toBe('internal');
         });
     });

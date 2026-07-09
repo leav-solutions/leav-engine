@@ -1,0 +1,23 @@
+/* Colors use aristid-ds tokens. The 20rem column width is a layout constant (was themeVars.navigationColumnWidth). */
+.columnWrapper {
+    border-right: 1px solid var(--general-utilities-border);
+    width: 20rem;
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    flex-shrink: 0;
+
+    background: var(--general-colors-neutral-white);
+}
+
+.columnContent {
+    overflow-y: auto;
+    height: 100%;
+}
+
+/* Doubled selector raises specificity over antd's own Pagination styles (equivalent to styled-components' `&&`). */
+.columnPagination.columnPagination {
+    text-align: center;
+    padding: 0.5em 0;
+    border-bottom: 1px solid var(--general-utilities-border);
+}

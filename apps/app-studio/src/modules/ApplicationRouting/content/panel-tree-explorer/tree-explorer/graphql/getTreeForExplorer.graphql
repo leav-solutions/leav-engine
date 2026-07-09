@@ -1,0 +1,20 @@
+query getTreeForExplorer($treeId: ID!) {
+    trees(filters: {id: [$treeId]}) {
+        list {
+            id
+            label
+            libraries {
+                library {
+                    id
+                    label
+                    behavior
+                }
+            }
+            behavior
+            permissions {
+                access_tree
+                edit_children
+            }
+        }
+    }
+}

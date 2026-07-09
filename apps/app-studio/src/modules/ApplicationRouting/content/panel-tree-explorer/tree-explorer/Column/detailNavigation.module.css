@@ -1,0 +1,39 @@
+/* Colors use aristid-ds tokens. The 20rem width is a layout constant (was themeVars.navigationColumnWidth). */
+.detail {
+    position: relative;
+    min-width: 20rem;
+    max-width: 20rem;
+
+    display: grid;
+    justify-items: center;
+    word-break: break-all;
+
+    background: var(--general-colors-neutral-white);
+    border-right: 1px solid var(--general-utilities-border);
+    border-bottom: 1px solid var(--general-utilities-border);
+    padding: 1rem;
+}
+
+.content {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: start;
+    gap: 0.5rem;
+}
+
+.detailElement span {
+    font-weight: 600;
+}
+
+.previewWrapper {
+    padding: 2rem;
+    width: 100%;
+}
+
+.closeButton {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 1.1em;
+    cursor: pointer;
+}

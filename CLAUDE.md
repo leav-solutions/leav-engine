@@ -142,7 +142,6 @@ leav-engine/
 │   ├── mcp-runtime/       # Serveur MCP (Model Context Protocol) — expose les outils LEAV
 │   │                      # aux agents IA (graphql, rest à venir, trpc à venir).
 │   │                      # Stateless, conçu pour K8s. Auth par apiKey utilisateur.
-│   ├── data-studio/       # ⚠️ SUPPRESSION EN COURS — remplacé par une instance app-studio nommée explorer-studio. Ne pas y ajouter de code.
 │   ├── login/             # ⚠️ Local uniquement — en prod : Keycloak + OIDC
 │   ├── portal/            # Listing générique des applications disponibles
 │   │                      # Ne pas y toucher : le vrai portail métier est AMP (repo séparé, hors leav-engine)
@@ -249,13 +248,9 @@ Voir [`CODING_GUIDELINES.md`](CODING_GUIDELINES.md) — source de vérité pour 
 
 ## Chantiers en cours et à venir
 
-### En cours
-
-- **Suppression de `data-studio`** — remplacement progressif par `explorer-studio`, une instance de `app-studio`. Ne pas ajouter de code dans `data-studio`.
-
 ### Planifiés
 
-- **Restructuration de `@leav/ui`** — une fois `data-studio` supprimé, nettoyer et restructurer la lib pour mettre en avant les composants publics : `Explorer`, composants de formulaire, composants de filtres. Ce chantier est bloqué par la suppression complète de `data-studio`.
+- **Restructuration de `@leav/ui`** — maintenant que `data-studio` est supprimé, nettoyer et restructurer la lib pour mettre en avant les composants publics : `Explorer`, composants de formulaire, composants de filtres.
 - **AMP → instance `app-studio`** — objectif long terme de faire d'AMP une instance de `app-studio` (comme `explorer-studio`). `app-studio` devra être enrichi pour couvrir les besoins d'AMP. Permettra un nouveau cycle de nettoyage de `@leav/ui`.
 - **DX plugins `core`** — simplifier le développement des plugins core pour les consommateurs externes. Situation actuelle : imports incorrects dans `xstream/apps/plugins/`, nécessite un `git sparse-checkout` ; AMP utilise `core` via image Docker. Chantier porté par l'équipe core (Sébastien / Jérémy).
 - **Migration TypeScript `strict`** — `tsconfig.json` a `strict: true` mais court-circuité par 6 overrides (`strictNullChecks: false`, `noImplicitAny: false`, etc.). À activer progressivement, app par app — jamais en une seule PR globale.

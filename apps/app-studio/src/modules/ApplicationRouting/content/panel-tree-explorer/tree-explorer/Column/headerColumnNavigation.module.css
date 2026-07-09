@@ -1,0 +1,26 @@
+/* Colors use aristid-ds tokens. The 4rem height / 20rem max-width are layout constants (was themeVars.navigationColumnWidth). */
+.headerColumn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--general-utilities-neutral-light);
+    height: 4rem;
+    flex-shrink: 0;
+    cursor: pointer;
+    max-width: 20rem;
+
+    &:not(:hover) .selectAllCheckbox {
+        visibility: hidden;
+    }
+}
+
+.clearSelectionButton {
+    border: none;
+    color: var(--general-utilities-text-primary);
+}
+
+.columnLabel {
+    margin-bottom: 0;
+    margin-right: 0.5em;
+}

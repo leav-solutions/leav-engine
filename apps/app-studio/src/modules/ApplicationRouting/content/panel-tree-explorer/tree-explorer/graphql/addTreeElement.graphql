@@ -1,0 +1,5 @@
+mutation addTreeElement($treeId: ID!, $element: TreeElementInput!, $parent: ID) {
+    treeAddElement(treeId: $treeId, element: $element, parent: $parent) {
+        id
+    }
+}

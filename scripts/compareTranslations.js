@@ -1,11 +1,10 @@
-// Function that compares translations files from admin, core, data-studio, login, portal and libs/ui projects.
+// Function that compares translations files from admin, core, login, portal and libs/ui projects.
 // The function outputs the missing translations. It fails if there are any ; Succeed otherwise.
 const fs = require('fs');
 
 const moduleLocalesPaths = [
     'apps/admin/public/locales/',
     'apps/core/src/locales/',
-    'apps/data-studio/src/locales/',
     'apps/login/src/locales/',
     'apps/portal/src/locales/',
     'apps/app-studio/src/config/translation/locales/',

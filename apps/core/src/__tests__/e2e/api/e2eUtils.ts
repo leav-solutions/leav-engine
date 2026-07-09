@@ -180,7 +180,7 @@ export async function gqlSaveApplication(id: string, label: string, endpoint: st
                 id: "${id}",
                 label: {en: "${label}"},
                 endpoint: "${endpoint}",
-                module: "data-studio"
+                module: "app-studio"
             }) { id }
         }`,
     );
