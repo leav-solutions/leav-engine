@@ -9,9 +9,11 @@ import {
     PictureOutlined,
 } from '@ant-design/icons';
 import {CreateDirectory, EditRecordModal, TriggerPreviewsGenerationModal, UploadFiles, useConfirmModal} from '@leav/ui';
-import {Button, Dropdown, message} from 'antd';
+import {Button, Dropdown} from 'antd';
 import {type ItemType} from 'antd/es/menu/interface';
+import {KitAlert} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
+import {ERROR_NOTIFICATION_DURATION, SUCCESS_NOTIFICATION_DURATION} from '_ui/constants';
 import {LibraryBehavior, TreeBehavior, useRemoveTreeElementMutation} from '../../../../../../../__generated__';
 import {type ITreeExplorerNode, type OnMessagesFunc} from '../../_types';
 import {type ITreeAllowedChildLibrary} from '../../hooks/useTreeLibraryAllowedAsChild';
@@ -66,14 +68,21 @@ export const DefaultActions = ({
                 },
             });
 
-            message.success(t('tree_explorer.infos.success_detach', {nb: 1}));
+            KitAlert.success({
+                message: t('tree_explorer.infos.success_detach', {nb: 1}),
+                duration: SUCCESS_NOTIFICATION_DURATION,
+                showIcon: true,
+            });
         } catch (e) {
-            message.error(
-                t('tree_explorer.infos.error_detach', {
+            KitAlert.error({
+                message: t('tree_explorer.infos.error_detach', {
                     elements: label ?? parent.record.id,
                     errorMessage: (e as Error).message,
                 }),
-            );
+                duration: ERROR_NOTIFICATION_DURATION,
+                closable: true,
+                showIcon: true,
+            });
         }
 
         refreshTreeContent();
@@ -213,11 +222,13 @@ export const DefaultActions = ({
                             />
                         </>
                     )}
-                    <span data-testid="dropdown-tree-actions">
-                        <Dropdown placement="bottomRight" menu={{items: treeActionsMenuItems}}>
-                            <Button icon={<MoreOutlined />} />
-                        </Dropdown>
-                    </span>
+                    {treeActionsMenuItems.length > 0 && (
+                        <span data-testid="dropdown-tree-actions">
+                            <Dropdown placement="bottomRight" menu={{items: treeActionsMenuItems}}>
+                                <Button icon={<MoreOutlined />} />
+                            </Dropdown>
+                        </span>
+                    )}
                 </>
             )}
             {displayPreviewConfirm && (

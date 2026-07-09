@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {PlusOutlined} from '@ant-design/icons';
 import {EditRecordPage, type IRecordIdentityWhoAmI, SUBMIT_BUTTONS_PORTAL, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {Button, Dropdown, message, Tooltip} from 'antd';
+import {Button, Dropdown, Tooltip} from 'antd';
 import {KitModal} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {useAddTreeElementMutation} from '../../../../../../../__generated__';
@@ -10,6 +10,7 @@ import {type IMessages, type ITreeExplorerNode, type ITreeMutationError, type On
 import {type ITreeAllowedChildLibrary} from '../../hooks/useTreeLibraryAllowedAsChild';
 import {useRefreshTreeContent} from '../../hooks/useRefreshTreeContent';
 import {useTreeExplorerState} from '../../store/useTreeExplorerState';
+import {withTreeMutationError} from '../../utils';
 
 const CREATION_POPUP_WIDTH = '656px';
 const CREATION_POPUP_HEIGHT = '80vh';
@@ -54,20 +55,10 @@ export const AddByCreationButton = ({
 
             messages = {...messages, countValid: 1};
         } catch (err) {
-            const {graphQLErrors, message: errorMessage} = err as ITreeMutationError;
-            if (graphQLErrors && graphQLErrors.length) {
-                const errorMessageParent = graphQLErrors[0].extensions?.fields?.parent;
-                const errorMessageElement = graphQLErrors[0].extensions?.fields?.element;
-
-                if (errorMessageParent) {
-                    messages.errors[errorMessageParent] = [...(messages.errors[errorMessageParent] ?? [])];
-                }
-                if (errorMessageElement) {
-                    messages.errors[errorMessageElement] = [...(messages.errors[errorMessageElement] ?? [])];
-                }
-            } else {
-                message.error(`${errorMessage}`);
-            }
+            messages = withTreeMutationError(messages, err as ITreeMutationError, {
+                id: newRecord.id,
+                label: newRecord.label ?? undefined,
+            });
         }
         onMessages('tree_explorer.infos.success_add', 'tree_explorer.infos.error_add', messages);
 
