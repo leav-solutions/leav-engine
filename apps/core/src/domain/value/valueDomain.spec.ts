@@ -2163,27 +2163,76 @@ describe('ValueDomain', () => {
 
         test('Should throw if unknown value', async function () {
             const mockAttrDomain: Mockify<IAttributeDomain> = {
-                getAttributeProperties: global.__mockPromise({...mockAttribute, type: AttributeTypes.ADVANCED}),
-                getLibraryFullTextAttributes: global.__mockPromise([{id: 'id'}]),
+                getAttributeProperties: global.__mockPromise({
+                    ...mockAttribute,
+                    type: AttributeTypes.ADVANCED,
+                    multiple_values: true,
+                }),
+                getAttributeLibraries: global.__mockPromise([]),
+            };
+
+            const mockValRepo = {
+                getValueById: global.__mockPromise(null),
             };
 
             const valDomain = valueDomain({
                 ...depsBase,
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.domain.helpers.validate': mockValidateHelper as IValidateHelper,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
             });
 
-            await expect(
-                valDomain.saveValue({
-                    library: 'test_lib',
-                    recordId: '12345',
-                    attribute: 'test_attr',
-                    value: {
-                        id_value: '12345',
-                        payload: 'test val',
-                    },
-                    ctx,
-                }),
-            ).rejects.toThrow();
+            const deleteVal = valDomain.deleteValue({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                value: {id_value: 'unknown'},
+                ctx,
+            });
+
+            await expect(deleteVal).rejects.toThrow(ValidationError);
+            await expect(deleteVal).rejects.toHaveProperty('fields.id', Errors.UNKNOWN_VALUE);
+        });
+
+        test('Should return an empty array when deleting a value that never existed (payload null)', async function () {
+            const mockAttrDomain: Mockify<IAttributeDomain> = {
+                getAttributeProperties: global.__mockPromise(mockAttrSimple),
+                getAttributeLibraries: global.__mockPromise([{id: 'test_lib'}]),
+            };
+
+            const mockValRepo = {
+                getValues: global.__mockPromise([]),
+            };
+
+            const mockValidHelper: Mockify<IValidateHelper> = {
+                validateLibrary: global.__mockPromise(true),
+                validateRecord: global.__mockPromise(true),
+            };
+
+            const valDomain = valueDomain({
+                ...depsBase,
+                'core.domain.attribute': mockAttrDomain as IAttributeDomain,
+                'core.infra.value': mockValRepo as IValueRepo,
+                'core.domain.helpers.validate': mockValidHelper as IValidateHelper,
+                'core.domain.permission.record': mockRecordPermDomain as IRecordPermissionDomain,
+                'core.domain.permission.recordAttribute': mockRecordAttrPermDomain as IRecordAttributePermissionDomain,
+                'core.domain.eventsManager': mockEventsManagerDomain as IEventsManagerDomain,
+                'core.domain.automation': mockAutomationDomain as IAutomationDomain,
+                'core.domain.permission.helpers.recordInCreationBypass':
+                    mockRecordInCreationBypassHelper as IRecordInCreationBypassHelper,
+            });
+
+            const deletedValues = valDomain.deleteValue({
+                library: 'test_lib',
+                recordId: '12345',
+                attribute: 'test_attr',
+                value: {payload: null},
+                ctx,
+            });
+
+            await expect(deletedValues).resolves.toEqual([]);
         });
 
         test('Should return an empty array if no values', async function () {
