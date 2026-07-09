@@ -1,6 +1,6 @@
 {
     "name": "@leav/monitoring-server",
-    "version": "1.18.0",
+    "version": "1.19.0-offers-manager.0",
     "description": "Module to create simple http monitoring server for health, metrics ...",
     "scripts": {
         "test": "vitest run -c vitest.config.ts",
