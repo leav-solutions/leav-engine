@@ -62,3 +62,4 @@ For decisions taken mid-EPIC, a table of subjects still to settle.
 | 004 | [Plugins real-time computed data architecture](ADR-004-plugins-realtime-computed-data.md)  | Accepted |
 | 005 | [GraphQL plugin types in generated files](ADR-005-graphql-plugins-types.md)                | Accepted |
 | 006 | [Explorer view configuration panel architecture](ADR-006-explorer-views-settings-volet.md) | Accepted |
+| 007 | [AMQP connection resilience & message-broker interface](ADR-007-amqp-resilience.md)        | Proposed |
