@@ -3,8 +3,10 @@ import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {type ISearchSelection, SearchModal, useLang} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {Button, Dropdown, message, Tooltip} from 'antd';
+import {Button, Dropdown, Tooltip} from 'antd';
+import {KitAlert} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
+import {ERROR_NOTIFICATION_DURATION} from '_ui/constants';
 import {type TreeElementInput, useAddTreeElementMutation} from '../../../../../../../__generated__';
 import {type IMessages, type ITreeExplorerNode, type ITreeMutationError, type OnMessagesFunc} from '../../_types';
 import {type ITreeAllowedChildLibrary} from '../../hooks/useTreeLibraryAllowedAsChild';
@@ -60,7 +62,12 @@ export const AddBySearchButton = ({availableLibraries, parent, onMessages}: IAdd
                 if (error.graphQLErrors?.length) {
                     messages = withTreeMutationError(messages, error, elementSelected);
                 } else {
-                    message.error(`${error.message}`);
+                    KitAlert.error({
+                        message: `${error.message}`,
+                        duration: ERROR_NOTIFICATION_DURATION,
+                        closable: true,
+                        showIcon: true,
+                    });
                 }
             }
         }

@@ -10,7 +10,7 @@ import {
     themeVars,
     TriggerPreviewsGenerationModal,
 } from '@leav/ui';
-import {Badge, Checkbox, message, Tooltip} from 'antd';
+import {Badge, Checkbox, Tooltip} from 'antd';
 import {type SizeType} from 'antd/es/config-provider/SizeContext';
 import {useTranslation} from 'react-i18next';
 import {TreeBehavior} from '../../../../../../__generated__';

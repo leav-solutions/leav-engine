@@ -1,5 +1,7 @@
-import {Space, message} from 'antd';
+import {Space} from 'antd';
+import {KitAlert} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
+import {INFO_NOTIFICATION_DURATION, SUCCESS_NOTIFICATION_DURATION} from '_ui/constants';
 import {type OnMessagesFunc} from '../../_types';
 import {useTreeExplorerState} from '../../store/useTreeExplorerState';
 import {useTreeLibraryAllowedAsChild} from '../../hooks/useTreeLibraryAllowedAsChild';
@@ -22,19 +24,25 @@ export const HeaderColumnNavigationActions = ({depth, isDetail}: IHeaderColumnNa
 
     const _displayMessages: OnMessagesFunc = (tMessageSuccess, tMessageFail, messages) => {
         if (messages.countValid) {
-            message.success(t(tMessageSuccess, {nb: messages.countValid}));
+            KitAlert.success({
+                message: t(tMessageSuccess, {nb: messages.countValid}),
+                duration: SUCCESS_NOTIFICATION_DURATION,
+                showIcon: true,
+            });
         }
 
         for (const error of Object.keys(messages.errors)) {
-            message.warning(
-                t(tMessageFail, {
+            KitAlert.warning({
+                message: t(tMessageFail, {
                     elements: messages.errors[error].reduce(
                         (acc, elementLabel) => (acc ? `${acc}, ${elementLabel}` : `${elementLabel}`),
                         '',
                     ),
                     errorMessage: error,
                 }),
-            );
+                duration: INFO_NOTIFICATION_DURATION,
+                showIcon: true,
+            });
         }
     };
 
