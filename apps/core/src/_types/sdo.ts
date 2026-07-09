@@ -46,6 +46,11 @@ export type SDOMappingAttributeFormat = 'number' | 'integer' | 'boolean' | 'stri
 export const sdoPathIdentifierUuid = 'system.systemId' as const;
 
 export interface ISDOMappingAttribute {
+    /**
+     * LEAV attribute id, or a dotted path traversing links/trees for export (e.g. "category.color").
+     * Import ignores mapping entries whose leavAttributeId is a path, since a path can't be resolved
+     * to a single writable attribute.
+     */
     leavAttributeId: string;
     valueRequired: boolean;
     format: SDOMappingAttributeFormat;

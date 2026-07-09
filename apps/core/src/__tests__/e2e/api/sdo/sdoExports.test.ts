@@ -5,6 +5,8 @@ import {SDO_EXPORT_TIMER, sdoGlobalSettings, SDO_EXPORTS_LIBRARY_ID, SDO_EXPORTS
 import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes';
+import {SystemLibraries} from '../../../../_constants/systemLibraries';
+import {UsersAttributes} from '../../../../_constants/systemAttributes';
 
 const rabbitmqClient = new RabbitMqClient();
 
@@ -98,6 +100,34 @@ describe('SDO Exports', () => {
                 },
             },
         });
+    });
+
+    test('exports a nested attribute path (modified_by.email) in the SDO content', async () => {
+        // CREATE always triggers an export, regardless of hasSDOAttribute's exact-match limitation on
+        // path-based leavAttributeId (see UPDATE trigger caveat noted in the plan/CLAUDE.md).
+        const {createRecord} = await adminUserSdk.CreateRecord({
+            library: SDO_EXPORTS_LIBRARY_ID,
+        });
+        const {uuid: recordUUID} = createRecord.record;
+
+        const msg = await waitForSdo(recordUUID);
+
+        const {records} = await adminUserSdk.GetRecordByUUID({
+            libraryId: SDO_EXPORTS_LIBRARY_ID,
+            recordUUID,
+            retrieveInactive: false,
+        });
+        const editorId = records.list[0].modified_by[0].payload.id;
+
+        const {records: userRecords} = await adminUserSdk.GetRecordByIdStandardValuesProperty({
+            libraryId: SystemLibraries.USERS,
+            recordId: editorId,
+            attributeId: UsersAttributes.EMAIL,
+        });
+        const editorEmail = userRecords.list[0].property[0].payload;
+
+        expect(editorEmail).toEqual(expect.any(String));
+        expect((msg.content as any).info?.editorEmail).toBe(editorEmail);
     });
 
     test('updating the mapped attribute triggers an UPDATE export message with the new content', async () => {

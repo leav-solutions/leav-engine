@@ -341,7 +341,6 @@ describe('Values', () => {
             recordId,
             attributeId: CommonAttributes.UUID,
         });
-        console.log('res :>> ', JSON.stringify(res, null, 2));
 
         expect(res.records.list[0].property[0].payload).toBe('3a70335f-36f7-44d1-92b7-af503e7565bf');
     });

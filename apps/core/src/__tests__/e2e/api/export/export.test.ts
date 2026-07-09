@@ -350,7 +350,7 @@ describe('Export', () => {
                 expect(wrongProfile).toBeDefined();
                 expect(wrongProfile?.error).toBeDefined();
                 expect(wrongProfile?.error?.message).toContain(
-                    'Export profile column attribute "wrong_attribute" does not exist in the library (attribute "wrong_attribute" not found)',
+                    'Export profile column attribute "wrong_attribute": Attribute path "wrong_attribute" does not exist in the library "export_lib" (attribute "wrong_attribute" not found)',
                 );
             });
         });

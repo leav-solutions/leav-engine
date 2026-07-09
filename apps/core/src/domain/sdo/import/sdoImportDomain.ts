@@ -214,6 +214,8 @@ export default function ({
     ): Promise<ISaveValue[]> => {
         const valuesToSave: Array<Promise<ISaveValue[]>> = Object.entries(sdoMappingLibrary.sdoAttributes)
             .filter(([, sdoAttr]) => sdoAttr.leavAttributeId !== '')
+            // A path (e.g. "category.color") can't be resolved to a single writable attribute — skip it.
+            .filter(([, sdoAttr]) => !sdoAttr.leavAttributeId.includes('.'))
             .filter(([sdoKey]) => {
                 const value = _.get(sdo.content, sdoKey);
                 return value !== undefined && value !== '';

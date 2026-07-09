@@ -8,7 +8,9 @@ import exportProfileDomain, {
 } from './exportProfileDomain';
 import {type IConfig} from '../../_types/config';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
-import {type ITreeDomain} from '../tree/treeDomain';
+import {type GetAttributeByPath} from '../attribute/helpers/getAttributeByPath';
+import {ErrorTypes} from '../../_types/errors';
+import LeavError from '../../errors/LeavError';
 
 vi.mock('@leav/logger', () => ({
     logger: mockLogger,
@@ -48,14 +50,12 @@ describe('exportProfileDomain', () => {
         getLibraryAttributes: vi.fn(),
     };
 
-    const mockTreeDomain: Mockify<ITreeDomain> = {
-        getTreeProperties: vi.fn(),
-    };
+    const mockGetAttributeByPath = vi.fn() as GetAttributeByPath;
 
     const deps: IExportProfileDomainDeps = {
         'core.domain.library': mockLibraryDomain as ILibraryDomain,
         'core.domain.attribute': mockAttributeDomain as IAttributeDomain,
-        'core.domain.tree': mockTreeDomain as ITreeDomain,
+        'core.domain.attribute.helpers.getAttributeByPath': mockGetAttributeByPath,
         config: {} as IConfig,
     };
     const domain: IExportProfileDomain = exportProfileDomain(deps);
@@ -74,6 +74,7 @@ describe('exportProfileDomain', () => {
             {id: 'title', label: 'Title', type: 'text'},
             {id: 'description', label: 'Description', type: 'text'},
         ]);
+        (mockGetAttributeByPath as ReturnType<typeof vi.fn>).mockResolvedValue({});
     });
 
     describe('getColumnsFromProfileConfig', () => {
@@ -146,10 +147,17 @@ describe('exportProfileDomain', () => {
         });
 
         it('should throw error if attribute not in library', async () => {
-            mockAttributeDomain.getLibraryAttributes.mockResolvedValue([{id: 'name', label: 'Name', type: 'text'}]);
+            (mockGetAttributeByPath as ReturnType<typeof vi.fn>)
+                .mockResolvedValueOnce({})
+                .mockRejectedValueOnce(
+                    new LeavError(
+                        ErrorTypes.VALIDATION_ERROR,
+                        'Attribute path "email" does not exist in the library (attribute "email" not found)',
+                    ),
+                );
 
             await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
-                'Export profile column attribute "email" does not exist in the library (attribute "email" not found)',
+                'Export profile column attribute "email": Attribute path "email" does not exist in the library (attribute "email" not found)',
             );
         });
 
@@ -278,163 +286,6 @@ describe('exportProfileDomain', () => {
             await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
                 'Export profile is not valid: "columns" does not contain 1 required value(s)',
             );
-        });
-
-        describe('nested attributes validation', () => {
-            it('should validate nested attributes through link attributes', async () => {
-                const configWithNestedAttr: IExportProfileConfig = {
-                    defaultProfile: 'Profile 1',
-                    profiles: [
-                        {
-                            label: 'Profile 1',
-                            columns: [{columnLabel: 'Linked Color', attribute: 'category.color'}],
-                        },
-                    ],
-                };
-
-                mockLibraryDomain.getLibraryProperties.mockResolvedValue({
-                    id: 'test_library',
-                    settings: {export: configWithNestedAttr},
-                });
-
-                // Main library has a link attribute "category"
-                mockAttributeDomain.getLibraryAttributes
-                    .mockResolvedValueOnce([
-                        {id: 'category', label: {fr: 'Catégorie'}, type: 'simple_link', linked_library: 'categories'},
-                    ])
-                    // Linked library "categories" has attribute "color"
-                    .mockResolvedValueOnce([{id: 'color', label: {fr: 'Couleur'}, type: 'simple'}]);
-
-                const result = await domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx);
-
-                expect(result).toEqual([{columnLabel: 'Linked Color', attribute: 'category.color'}]);
-                expect(mockAttributeDomain.getLibraryAttributes).toHaveBeenCalledTimes(2);
-                expect(mockAttributeDomain.getLibraryAttributes).toHaveBeenNthCalledWith(1, 'test_library', mockCtx);
-                expect(mockAttributeDomain.getLibraryAttributes).toHaveBeenNthCalledWith(2, 'categories', mockCtx);
-            });
-
-            it('should throw error if nested attribute does not exist in linked library', async () => {
-                const configWithInvalidNested: IExportProfileConfig = {
-                    defaultProfile: 'Profile 1',
-                    profiles: [
-                        {
-                            label: 'Profile 1',
-                            columns: [{columnLabel: 'Invalid', attribute: 'category.nonexistent'}],
-                        },
-                    ],
-                };
-
-                mockLibraryDomain.getLibraryProperties.mockResolvedValue({
-                    id: 'test_library',
-                    settings: {export: configWithInvalidNested},
-                });
-
-                mockAttributeDomain.getLibraryAttributes
-                    .mockResolvedValueOnce([
-                        {id: 'category', label: {fr: 'Catégorie'}, type: 'simple_link', linked_library: 'categories'},
-                    ])
-                    .mockResolvedValueOnce([{id: 'color', label: {fr: 'Couleur'}, type: 'simple'}]);
-
-                await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
-                    'Export profile column attribute "category.nonexistent" does not exist in the library (attribute "nonexistent" not found)',
-                );
-            });
-
-            it('should throw error if intermediate attribute is not a link', async () => {
-                const configWithNonLink: IExportProfileConfig = {
-                    defaultProfile: 'Profile 1',
-                    profiles: [
-                        {
-                            label: 'Profile 1',
-                            columns: [{columnLabel: 'Invalid', attribute: 'name.something'}],
-                        },
-                    ],
-                };
-
-                mockLibraryDomain.getLibraryProperties.mockResolvedValue({
-                    id: 'test_library',
-                    settings: {export: configWithNonLink},
-                });
-
-                mockAttributeDomain.getLibraryAttributes.mockResolvedValueOnce([
-                    {id: 'name', label: {fr: 'Nom'}, type: 'simple'},
-                ]);
-
-                await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
-                    'Export profile column attribute "name.something" is invalid: "name" is not a link or tree attribute',
-                );
-            });
-
-            it('should validate nested attributes through a tree attribute (any of its libraries)', async () => {
-                const configWithTreeAttr: IExportProfileConfig = {
-                    defaultProfile: 'Profile 1',
-                    profiles: [
-                        {
-                            label: 'Profile 1',
-                            columns: [{columnLabel: 'Group uuid', attribute: 'group_tree.uuid'}],
-                        },
-                    ],
-                };
-
-                mockLibraryDomain.getLibraryProperties.mockResolvedValue({
-                    id: 'test_library',
-                    settings: {export: configWithTreeAttr},
-                });
-
-                mockAttributeDomain.getLibraryAttributes
-                    .mockResolvedValueOnce([
-                        {id: 'group_tree', label: {fr: 'Groupes'}, type: 'tree', linked_tree: 'groups_tree'},
-                    ])
-                    // users_groups library (linked to the tree) has the "uuid" base attribute
-                    .mockResolvedValueOnce([{id: 'uuid', label: {fr: 'UUID'}, type: 'simple'}]);
-
-                mockTreeDomain.getTreeProperties.mockResolvedValue({
-                    id: 'groups_tree',
-                    libraries: {
-                        users_groups: {allowedAtRoot: true, allowMultiplePositions: false, allowedChildren: []},
-                    },
-                });
-
-                const result = await domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx);
-
-                expect(result).toEqual([{columnLabel: 'Group uuid', attribute: 'group_tree.uuid'}]);
-                expect(mockTreeDomain.getTreeProperties).toHaveBeenCalledWith('groups_tree', mockCtx);
-                expect(mockAttributeDomain.getLibraryAttributes).toHaveBeenNthCalledWith(2, 'users_groups', mockCtx);
-            });
-
-            it('should throw when tree sub-attribute exists in none of the tree libraries', async () => {
-                const configWithInvalidTree: IExportProfileConfig = {
-                    defaultProfile: 'Profile 1',
-                    profiles: [
-                        {
-                            label: 'Profile 1',
-                            columns: [{columnLabel: 'Invalid', attribute: 'group_tree.nonexistent'}],
-                        },
-                    ],
-                };
-
-                mockLibraryDomain.getLibraryProperties.mockResolvedValue({
-                    id: 'test_library',
-                    settings: {export: configWithInvalidTree},
-                });
-
-                mockAttributeDomain.getLibraryAttributes
-                    .mockResolvedValueOnce([
-                        {id: 'group_tree', label: {fr: 'Groupes'}, type: 'tree', linked_tree: 'groups_tree'},
-                    ])
-                    .mockResolvedValueOnce([{id: 'uuid', label: {fr: 'UUID'}, type: 'simple'}]);
-
-                mockTreeDomain.getTreeProperties.mockResolvedValue({
-                    id: 'groups_tree',
-                    libraries: {
-                        users_groups: {allowedAtRoot: true, allowMultiplePositions: false, allowedChildren: []},
-                    },
-                });
-
-                await expect(domain.getColumnsFromProfileConfig('Profile 1', 'test_library', mockCtx)).rejects.toThrow(
-                    'Export profile column attribute "group_tree.nonexistent" is invalid: "nonexistent" not found in any library linked to tree "groups_tree"',
-                );
-            });
         });
     });
 });
