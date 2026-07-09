@@ -158,7 +158,7 @@ describe('SDO Imports', () => {
                 },
             };
 
-            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.import.exchange, sdoToEmit);
+            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.exchange, sdoToEmit);
 
             await vi.waitFor(
                 async () => {
