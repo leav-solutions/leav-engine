@@ -74,7 +74,8 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
         }
 
         // Read plugins information in package.json to register it
-        const packageInfos = await import(pluginFullPath + '/package.json');
+        const packageJsonContent = await fs.promises.readFile(`${pluginFullPath}/package.json`, 'utf8');
+        const packageInfos = JSON.parse(packageJsonContent);
 
         pluginsApp.registerPlugin(pluginFullPath, {
             name: packageInfos.name,
