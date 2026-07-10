@@ -363,5 +363,54 @@ describe('SDO Imports', () => {
                 {timeout: 5000, interval: 1000},
             );
         });
+
+        test('receive an update message with systemActive: false should deactivate the record', async () => {
+            const {createRecord} = await adminUserSdk.CreateRecord({
+                library: SDO_IMPORTS_LIBRARY_ID,
+                data: {values: [{attribute: SDO_TEST_ATTRIBUTE_ID, payload: 'value'}]},
+            });
+
+            const recordUUID = createRecord.record!.uuid;
+            const editorUUID = crypto.randomUUID();
+            const creationDateSec = Math.round(Date.now() / 1000); // in seconds
+
+            const sdoToEmit: ISDO = {
+                name: SDO_IMPORTS_LIBRARY_ID,
+                dataModelRelease: 'dataModelRelease',
+                date: creationDateSec,
+                action: 'UPDATE',
+                content: {
+                    system: {
+                        systemId: recordUUID,
+                        systemActive: false,
+                        systemCreationDate: creationDateSec,
+                        systemLastModifiedDate: creationDateSec,
+                        systemCreator: editorUUID,
+                        systemLastModificator: editorUUID,
+                        systemLabel: 'new_label_1',
+                        systemSdoHash: 'hashDeactivate',
+                    },
+                    identifier: {},
+                    info: {value: 'value'},
+                },
+            };
+
+            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.exchange, sdoToEmit);
+
+            await vi.waitFor(
+                async () => {
+                    const record = (
+                        await adminUserSdk.GetRecordByUUID({
+                            libraryId: SDO_IMPORTS_LIBRARY_ID,
+                            recordUUID,
+                            retrieveInactive: true,
+                        })
+                    ).records.list[0];
+
+                    expect(record.active).toBe(false);
+                },
+                {timeout: 5000, interval: 1000},
+            );
+        });
     });
 });

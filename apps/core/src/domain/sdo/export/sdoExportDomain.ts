@@ -3,6 +3,7 @@ import {logger} from '@leav/logger';
 import {type IDbEvent, EventAction} from '@leav/utils';
 import {type SDOAction, type IBuffer, type IBufferList, type ISDO, type ISDOMapping} from '../../../_types/sdo';
 import {type IConfig} from '../../../_types/config';
+import {CommonAttributes} from '../../../_constants/systemAttributes';
 import {type IRabbitMQ} from '../../../infra/sdo/rabbitMQ/rabbitMQ';
 import {type ISDOUtils} from '../../../utils/sdo/sdo';
 import {type IRecordSDORepo} from '../../../infra/sdo/recordsSDORepo/recordSDORepo';
@@ -185,7 +186,8 @@ export default function ({
             if (!leavAttribute) {
                 throw new Error('[SDO] Leav Attribute not defined in amqp db event');
             }
-            if (!sdoUtils.hasSDOAttribute(libraryMapping, leavAttribute)) {
+            // Record activation state always triggers an export, regardless of the configured mapping
+            if (leavAttribute !== CommonAttributes.ACTIVE && !sdoUtils.hasSDOAttribute(libraryMapping, leavAttribute)) {
                 debug && logger.debug(`[SDO] Attribute ${leavAttribute} skipped`);
                 return null;
             }

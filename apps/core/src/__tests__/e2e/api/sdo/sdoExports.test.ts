@@ -179,6 +179,28 @@ describe('SDO Exports', () => {
         await expect(waitForSdo(recordUUID, SDO_EXPORT_TIMER * 4)).rejects.toThrow();
     });
 
+    test('deactivating a record triggers an UPDATE export message with systemActive: false', async () => {
+        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+        await waitForSdo(recordUUID); // wait for the CREATE export before deactivating
+
+        await adminUserSdk.DeactivateRecords({
+            libraryId: SDO_EXPORTS_LIBRARY_ID,
+            recordsIds: [recordId],
+        });
+
+        const msg = await waitForSdo(recordUUID);
+
+        expect(msg).toMatchObject({
+            name: SDO_EXPORTS_LIBRARY_ID,
+            action: 'UPDATE',
+            content: {
+                system: {systemId: recordUUID, systemActive: false},
+            },
+        });
+    });
+
     // TODO: Voir quoi faire dans le cas d'un DELETE_RECORD (différent d'une desactivation)
     // test.skip('deleting a record triggers an UPDATE export message with systemActive: false', async () => {
     //     const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_LIBRARY_ID});
