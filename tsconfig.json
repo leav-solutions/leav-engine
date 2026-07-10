@@ -1,9 +1,8 @@
 {
     "compilerOptions": {
         "target": "es2022",
-        "module": "CommonJS",
-        "moduleResolution": "node10",
-        "ignoreDeprecations": "6.0",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         "lib": ["es6", "dom", "esnext"],
         "rootDir": "./",
         "paths": {
