@@ -8,6 +8,7 @@
         "start:dev": "NODE_ENV=development tsx watch --clear-screen=false --ignore src/__tests__ --ignore 'src/**/*.spec.ts' src/index.ts",
         "start:watch": "yarn run start:dev",
         "build": "tsc -b tsconfig.build.json",
+        "build:backend": "yarn run build",
         "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
         "test": "vitest run -c vitest.unit.config.ts",
         "test:ci": "vitest run -c vitest.unit.config.ts --maxWorkers=2 --reporter=verbose",

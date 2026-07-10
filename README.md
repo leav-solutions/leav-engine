@@ -481,6 +481,45 @@ docker compose -f docker-compose.yml -f light.yml up -d
 
 - Then you can access the core at http://core.leav.localhost
 
+## Run in build mode
+
+The build mode runs the same local stack as `docker-compose.yml` (network, ArangoDB/Redis data,
+volumes) but starts each backend app from its already-built `dist/` instead of running `tsx watch`
+on TS sources. It's meant to check how the app behaves once built, without going through the full
+Docker image build (multi-stage, production-only `node_modules`, etc.).
+
+### Prerequisites
+
+Build the backend apps and the fronts:
+
+```shell
+yarn libs:build
+yarn backs:build
+yarn fronts:build:install
+```
+
+The fronts are needed because `admin`/`app-studio`/`login`/`portal` dev servers are disabled in
+build mode: `core` serves their built bundles from `apps/core/applications/` instead (same
+mechanism as described in the [OIDC](#oidc) section).
+
+### Execution
+
+- Run the following command in docker folder:
+
+    ```shell
+    docker compose -f docker-compose.build.yml up -d
+    ```
+
+- Then you can access the core at http://core.leav.localhost
+
+After changing some code, rebuild and restart the impacted services (no need to `down`/`up`, the
+new `dist/` is picked up through the existing bind mount):
+
+```shell
+yarn libs:build && yarn backs:build && yarn fronts:build:install
+docker compose -f docker-compose.build.yml restart core logs-collector automate-scan preview-generator mcp-runtime
+```
+
 ## Mail
 
 ### Local

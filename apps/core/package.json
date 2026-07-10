@@ -27,6 +27,7 @@
         "buildapps:dev": "tsx src/ build-apps",
         "benchmark": "tsx src/ benchmark",
         "build": "scripts/build.js",
+        "build:backend": "yarn run build",
         "clean": "rm -rf dist dist-spec dist-types tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
         "build-types": "tsc -b tsconfig.types.json",
         "build-publish": "tsc -b tsconfig.publish.json",

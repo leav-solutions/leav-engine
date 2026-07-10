@@ -9,6 +9,7 @@
         "start:dev": "tsx watch --clear-screen=false --ignore src/__tests__ --ignore 'src/**/*.spec.ts' ./src ",
         "start:watch:test": "NODE_ENV=test tsx watch --clear-screen=false --ignore src/__tests__ --ignore 'src/**/*.spec.ts' src/",
         "build": "tsc -b tsconfig.build.json",
+        "build:backend": "yarn run build",
         "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
         "dev": "npm run start:watch",
         "test": "vitest run -c vitest.unit.config.ts",

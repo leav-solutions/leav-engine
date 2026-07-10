@@ -1,0 +1,51 @@
+##### Build mode #####
+# Runs the same local stack (network, ArangoDB/Redis data, volumes) as docker-compose.yml, but
+# using the already-built `dist/` of each backend app instead of `tsx watch` on TS sources.
+#
+# Prerequisites:
+#   yarn libs:build
+#   yarn backs:build
+#   yarn fronts:build:install
+#
+# Usage (from the docker/ folder):
+#   docker compose -f docker-compose.build.yml up -d
+#
+# See "Run in build mode" section in the root README.md for details.
+
+include:
+  - docker-compose.yml
+
+services:
+  core:
+    command: [sh, -c, "yarn install && yarn run db:migrate && yarn run start"]
+
+  logs-collector:
+    command: [sh, -c, "yarn run start"]
+
+  automate-scan:
+    command: [sh, -c, "yarn run start"]
+
+  preview-generator:
+    command: [sh, -c, "yarn run start"]
+
+  mcp-runtime:
+    command: [sh, -c, "yarn run start"]
+
+  # Fronts aren't backend-buildable: their bundles are served by core from apps/core/applications
+  # (built via `yarn fronts:build:install`), so their dev servers are disabled here.
+  admin:
+    labels:
+      - "traefik.enable=false"
+    command: []
+  app-studio:
+    labels:
+      - "traefik.enable=false"
+    command: []
+  login:
+    labels:
+      - "traefik.enable=false"
+    command: []
+  portal:
+    labels:
+      - "traefik.enable=false"
+    command: []
