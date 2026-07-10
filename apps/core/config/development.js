@@ -19,7 +19,4 @@ module.exports = {
     bugsnag: {
         releaseStage: process.env.BUGSNAG_RELEASE_STAGE || 'development',
     },
-    automation: {
-        enable: envToBool(process.env.AUTOMATION_ENABLE, true),
-    },
 };
