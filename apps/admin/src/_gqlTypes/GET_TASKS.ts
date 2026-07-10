@@ -61,7 +61,7 @@ export interface GET_TASKS_tasks_list {
     created_by: GET_TASKS_tasks_list_created_by;
     startAt: number;
     status: TaskStatus;
-    priority: TaskPriority;
+    priority: any;
     progress: GET_TASKS_tasks_list_progress | null;
     startedAt: number | null;
     completedAt: number | null;

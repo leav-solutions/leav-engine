@@ -48,7 +48,7 @@
         "react-i18next": "12",
         "react-router-dom": "6.30.4",
         "tsc-alias": "1.9.0",
-        "typescript": "5.9.3",
+        "typescript": "6.0.3",
         "vite": "7.3.6",
         "vitest": "4.1.9"
     },

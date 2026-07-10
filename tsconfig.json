@@ -1,7 +1,9 @@
 {
     "compilerOptions": {
-        "target": "ES2020",
+        "target": "es2022",
         "module": "CommonJS",
+        "moduleResolution": "node10",
+        "ignoreDeprecations": "6.0",
         "lib": ["es6", "dom", "esnext"],
         "rootDir": "./",
         "paths": {
@@ -12,7 +14,6 @@
         "noImplicitAny": false,
         "strictNullChecks": false,
         "alwaysStrict": true,
-        "moduleResolution": "node",
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
@@ -24,7 +25,6 @@
         "noImplicitReturns": false,
         "noImplicitThis": true,
         "noUnusedLocals": false,
-        "downlevelIteration": true,
         "noFallthroughCasesInSwitch": false,
         "sourceMap": true,
         "declaration": true,

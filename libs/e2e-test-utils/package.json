@@ -32,6 +32,7 @@
         "@graphql-codegen/typescript-graphql-request": "6.4.0",
         "@graphql-codegen/typescript-operations": "5.1.0",
         "@playwright/test": "1.60.0",
-        "typescript": "5.9.3"
+        "@types/node": "24.13.2",
+        "typescript": "6.0.3"
     }
 }

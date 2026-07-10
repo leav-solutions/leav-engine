@@ -60,7 +60,7 @@
         "graphql-request": "7.4.0",
         "prettier": "3.9.4",
         "tsx": "4.23.0",
-        "typescript": "5.9.3",
+        "typescript": "6.0.3",
         "vitest": "4.1.9"
     },
     "dependencies": {

@@ -4324,9 +4324,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/app-root-path@workspace:libs/app-root-path"
   dependencies:
+    "@types/node": "npm:24.13.2"
     app-root-path: "npm:3.1.0"
     prettier: "npm:3.9.4"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
   languageName: unknown
   linkType: soft
@@ -4335,8 +4336,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/config-manager@workspace:libs/config-manager"
   dependencies:
+    "@types/node": "npm:24.13.2"
     prettier: "npm:3.9.4"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
   languageName: unknown
   linkType: soft
@@ -4358,10 +4360,11 @@ __metadata:
     "@graphql-codegen/typescript-graphql-request": "npm:6.4.0"
     "@graphql-codegen/typescript-operations": "npm:5.1.0"
     "@playwright/test": "npm:1.60.0"
+    "@types/node": "npm:24.13.2"
     graphql: "npm:16.14.2"
     graphql-request: "npm:7.4.0"
     graphql-tag: "npm:2.12.7"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
   languageName: unknown
   linkType: soft
 
@@ -4369,7 +4372,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/logger@workspace:libs/logger"
   dependencies:
-    typescript: "npm:5.9.3"
+    "@types/node": "npm:24.13.2"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
     winston: "npm:3.19.0"
   languageName: unknown
@@ -4380,8 +4384,9 @@ __metadata:
   resolution: "@leav/message-broker@workspace:libs/message-broker"
   dependencies:
     "@leav/logger": "workspace:libs/logger"
+    "@types/node": "npm:24.13.2"
     amqplib: "npm:2.0.1"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
   languageName: unknown
   linkType: soft
@@ -4392,9 +4397,10 @@ __metadata:
   dependencies:
     "@hono/node-server": "npm:1.19.14"
     "@leav/logger": "workspace:libs/logger"
+    "@types/node": "npm:24.13.2"
     hono: "npm:4.12.27"
     prom-client: "npm:15.1.3"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
   languageName: unknown
   linkType: soft
@@ -4438,7 +4444,7 @@ __metadata:
     react-router-dom: "npm:6.30.4"
     styled-components: "npm:6.0.8"
     tsc-alias: "npm:1.9.0"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vite: "npm:7.3.6"
     vitest: "npm:4.1.9"
     xlsx: "npm:0.18.5"
@@ -4460,7 +4466,7 @@ __metadata:
   dependencies:
     lodash: "npm:4.18.1"
     minimatch: "npm:10.2.5"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
   languageName: unknown
   linkType: soft
@@ -9141,7 +9147,7 @@ __metadata:
     semantic-ui-react: "npm:2.1.5"
     sleep-promise: "npm:8.0.1"
     styled-components: "npm:6.0.8"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vite: "npm:7.3.6"
     vite-plugin-svgr: "npm:4.5.0"
     vitest: "npm:4.1.9"
@@ -9544,7 +9550,7 @@ __metadata:
     react-i18next: "npm:12"
     react-router-dom: "npm:6.30.4"
     styled-components: "npm:6.0.8"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vite: "npm:7.3.6"
     vite-plugin-dynamic-base: "npm:1.4.1"
     vite-plugin-svgr: "npm:4.5.0"
@@ -9911,7 +9917,7 @@ __metadata:
     prettier: "npm:3.9.4"
     redis: "npm:5.12.1"
     tsx: "npm:4.23.0"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
   languageName: unknown
   linkType: soft
@@ -11294,7 +11300,7 @@ __metadata:
     progress-stream: "npm:2.0.0"
     redis: "npm:5.12.1"
     tsx: "npm:4.23.0"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
     ws: "npm:8.21.0"
     zod: "npm:4.3.6"
@@ -12005,10 +12011,11 @@ __metadata:
     "@graphql-codegen/typescript-operations": "npm:5.1.0"
     "@leav/e2e-test-utils": "workspace:*"
     "@playwright/test": "npm:1.60.0"
+    "@types/node": "npm:24.13.2"
     graphql: "npm:16.14.2"
     graphql-request: "npm:7.4.0"
     graphql-tag: "npm:2.12.7"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
   languageName: unknown
   linkType: soft
 
@@ -15858,7 +15865,7 @@ __metadata:
     husky: "npm:6.0.0"
     lint-staged: "npm:16.4.0"
     prettier: "npm:3.9.4"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
   languageName: unknown
   linkType: soft
 
@@ -16432,7 +16439,7 @@ __metadata:
     react-i18next: "npm:12"
     react-router-dom: "npm:6.30.4"
     styled-components: "npm:6.0.8"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vite: "npm:7.3.6"
     vite-plugin-dynamic-base: "npm:1.4.1"
     vite-plugin-rewrite-all: "npm:1.0.2"
@@ -16463,7 +16470,7 @@ __metadata:
     graphql: "npm:16.14.2"
     graphql-request: "npm:7.4.0"
     graphql-tag: "npm:2.12.7"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
     zod: "npm:4.3.6"
   languageName: unknown
@@ -16632,7 +16639,7 @@ __metadata:
     express: "npm:4.22.2"
     prettier: "npm:3.9.4"
     tsx: "npm:4.23.0"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
     zod: "npm:4.3.6"
   languageName: unknown
@@ -18002,7 +18009,7 @@ __metadata:
     react-i18next: "npm:12"
     react-router-dom: "npm:6.30.4"
     styled-components: "npm:6.0.8"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vite: "npm:7.3.6"
     vite-plugin-dynamic-base: "npm:1.4.1"
     vitest: "npm:4.1.9"
@@ -18104,7 +18111,7 @@ __metadata:
     fast-xml-parser: "npm:5.9.3"
     prettier: "npm:3.9.4"
     tsx: "npm:4.23.0"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
   languageName: unknown
   linkType: soft
@@ -20950,7 +20957,7 @@ __metadata:
     joi: "npm:18.2.3"
     prettier: "npm:3.9.4"
     tsx: "npm:4.23.0"
-    typescript: "npm:5.9.3"
+    typescript: "npm:6.0.3"
     vitest: "npm:4.1.9"
     walk: "npm:2.3.15"
     xxhashjs: "npm:0.2.2"
@@ -21453,23 +21460,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.9.3":
-  version: 5.9.3
-  resolution: "typescript@npm:5.9.3"
+"typescript@npm:6.0.3":
+  version: 6.0.3
+  resolution: "typescript@npm:6.0.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/c089d9d3da2729fd4ac517f9b0e0485914c4b3c26f80dc0cffcb5de1719a17951e92425d55db59515c1a7ddab65808466debb864d0d56dcf43f27007d0709594
+  checksum: 10/0ef2357a4cffd916b52b683a021cdab0f81eea4e9aa35f2d254581c9a5106da02224e3392e1b0ed42b7a48f80c966e5f52b8e1a27941fa0523c1705a9c2e0330
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>":
-  version: 5.9.3
-  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
+"typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>":
+  version: 6.0.3
+  resolution: "typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>::version=6.0.3&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10/696e1b017bc2635f4e0c94eb4435357701008e2f272f553d06e35b494b8ddc60aa221145e286c28ace0c89ee32827a28c2040e3a69bdc108b1a5dc8fb40b72e3
+  checksum: 10/22b67a18dafedf9b1468b64ca20d9aa02ea61d449b65413d8aa6552aeb63f52ef369e86beb25b6b4c91a803d9726ee5c196f391a9b64201263263410a4223ee6
   languageName: node
   linkType: hard
 
