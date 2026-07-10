@@ -43,6 +43,8 @@ export default function ({
     'core.utils.getSystemQueryContext': getSystemQueryContext,
     'core.domain.sdo': sdoDomain,
 }: ISDOExportDomainDeps): ISDOExportDomain {
+    const debug = config.sdo.debug ?? false;
+
     const _systemQueryContext = getSystemQueryContext('sdo::sdoExportDomain');
 
     const buffers: IBufferList = {};
@@ -52,7 +54,7 @@ export default function ({
         sdoGlobalSettingsTimer: number,
         callback: ProcessCallback,
     ): Promise<void> => {
-        logger.debug('[SDO] Processing data...');
+        debug && logger.debug('[SDO] Processing data...');
 
         const record = dataEvent.payload.topic.record;
         // use record.libraryId because RECORD_INIT events does not have dataEvent.payload.topic.library
@@ -96,7 +98,7 @@ export default function ({
         timer: number,
         callback: ProcessCallback,
     ): NodeJS.Timeout => {
-        logger.debug(`[SDO] Start timer for buffer with library: ${leavLibraryId}`);
+        debug && logger.debug(`[SDO] Start timer for buffer with library: ${leavLibraryId}`);
 
         return setTimeout(() => {
             // Shortly store the buffer in a variable
@@ -125,7 +127,7 @@ export default function ({
         const storedContent = await recordSDORepo.getContent({recordUUID, ctx: _systemQueryContext});
 
         if (_.isEqual(storedContent, sdo.content)) {
-            logger.debug(`[SDO] Content unchanged for ${recordId} in ${libraryId}, export skipped`);
+            debug && logger.debug(`[SDO] Content unchanged for ${recordId} in ${libraryId}, export skipped`);
             return;
         }
 
@@ -135,7 +137,7 @@ export default function ({
         await exportChannel.waitForConfirms();
 
         // Send log to ELK about sdo sent
-        logger.info(`SDO sent to rabbitmq library: ${libraryId}, record id: ${recordId}`);
+        logger.verbose(`SDO Export record ${libraryId}/${recordUUID}/${recordId}`);
 
         // Persist the content only once the SDO has been successfully published, so a publish
         // failure (message nacked without requeue) doesn't leave a stale snapshot that would
@@ -165,7 +167,7 @@ export default function ({
         const leavAttribute = dataEvent?.payload?.topic?.attribute;
 
         if (!(action in ACTIONS_MAPPING)) {
-            logger.debug(`[SDO] Action ${action} skipped`);
+            debug && logger.debug(`[SDO] Action ${action} skipped`);
             return null;
         } else if (!libraryId) {
             throw new Error('[SDO] Library name not defined');
@@ -174,7 +176,7 @@ export default function ({
         const libraryMapping = sdoUtils.getLibraryMapping(sdoGlobalSettingsMapping, libraryId);
 
         if (!libraryMapping) {
-            logger.debug(`[SDO] Element from library ${libraryId} skipped`);
+            debug && logger.debug(`[SDO] Element from library ${libraryId} skipped`);
             return null;
         }
 
@@ -184,7 +186,7 @@ export default function ({
                 throw new Error('[SDO] Leav Attribute not defined in amqp db event');
             }
             if (!sdoUtils.hasSDOAttribute(libraryMapping, leavAttribute)) {
-                logger.debug(`[SDO] Attribute ${leavAttribute} skipped`);
+                debug && logger.debug(`[SDO] Attribute ${leavAttribute} skipped`);
                 return null;
             }
         }

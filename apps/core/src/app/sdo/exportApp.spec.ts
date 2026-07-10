@@ -9,6 +9,7 @@ import LeavError from '../../errors/LeavError';
 import {mockExportDomain, mockSdoDomain} from '../../__tests__/mocks/sdo/domains';
 import {mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
 import {EventAction} from '@leav/utils';
+import {mockConfig} from '../../__tests__/mocks/sdo/config';
 
 const sdoGlobalSettings = {
     timer: 120000,
@@ -28,6 +29,7 @@ const depsBase: ToAny<IExportAppDeps> = {
     'core.domain.sdo': mockSdoDomain,
     'core.infra.sdo.rabbitMQ': mockRabbitMQService,
     'core.utils.getSystemQueryContext': () => mockSystemQueryContext,
+    config: mockConfig,
 };
 
 describe('exportApp', () => {

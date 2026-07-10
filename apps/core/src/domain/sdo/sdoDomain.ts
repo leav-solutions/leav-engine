@@ -78,6 +78,8 @@ export default function ({
     'core.infra.record': recordRepo,
     config,
 }: ISDODomainDeps): ISDODomain {
+    const debug = config.sdo.debug ?? false;
+
     const exportMappingFunctions: Map<string, ISDOMappingFunction> = new Map();
 
     const sendLog = async ({action, record, sdo, error, ctx}): Promise<void> => {
@@ -98,7 +100,7 @@ export default function ({
         const result = jsonschema.validate(content, JSON.parse(sdoJSONSchema.toString()));
 
         if (result?.errors?.length > 0) {
-            logger.debug(`Schema validation errors: ${result.errors.toString()}`, {content});
+            debug && logger.debug(`Schema validation errors: ${result.errors.toString()}`, {content});
             throw new Error(`[sdoDomain::schemaValidation]: ${result.errors.toString()}`);
         }
     };
@@ -388,9 +390,10 @@ export default function ({
             for (const [functionName, mappingFunction] of Object.entries(mappingFunctions)) {
                 exportMappingFunctions.set(functionName, mappingFunction);
             }
-            logger.debug(
-                `Registered ${Object.keys(mappingFunctions).length} (${Array.from(exportMappingFunctions.keys()).join(', ')}) SDO export mapping functions`,
-            );
+            debug &&
+                logger.debug(
+                    `Registered ${Object.keys(mappingFunctions).length} (${Array.from(exportMappingFunctions.keys()).join(', ')}) SDO export mapping functions`,
+                );
         },
     };
 }

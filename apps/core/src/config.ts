@@ -352,6 +352,7 @@ export const validateConfig = (conf: IConfig) => {
                 enable: Joi.boolean().required(),
                 dataEventsQueue: Joi.string().required(),
             }),
+            debug: Joi.boolean().required(),
         }),
     });
 
