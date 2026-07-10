@@ -9,9 +9,13 @@ export const SDO_EXPORTS_LIBRARY_ID = 'test_sdo_exports';
 export const SDO_EXPORTS_TEST_ATTRIBUTE_ID = 'sdo_export_test_value';
 export const SDO_EXPORTS_LINKED_LIBRARY_ID = 'test_sdo_exports_linked';
 export const SDO_EXPORTS_SIMPLE_LINK_ATTRIBUTE_ID = 'sdo_export_test_simple_link';
-export const SDO_EXPORTS_ADVANCED_LINK_ATTRIBUTE_ID = 'sdo_export_test_advanced_link';
-export const SDO_EXPORTS_TREE_ATTRIBUTE_ID = 'sdo_export_test_tree';
+export const SDO_EXPORTS_ADVANCED_LINK_MONO_ATTRIBUTE_ID = 'sdo_export_test_advanced_link_mono';
+export const SDO_EXPORTS_ADVANCED_LINK_MULTI_ATTRIBUTE_ID = 'sdo_export_test_advanced_link_multi';
+export const SDO_EXPORTS_ADVANCED_MONO_ATTRIBUTE_ID = 'sdo_export_test_advanced_mono';
+export const SDO_EXPORTS_ADVANCED_MULTI_ATTRIBUTE_ID = 'sdo_export_test_advanced_multi';
 export const SDO_EXPORTS_TREE_ID = 'test_sdo_exports_tree';
+export const SDO_EXPORTS_TREE_MONO_ATTRIBUTE_ID = 'sdo_export_test_tree_mono';
+export const SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID = 'sdo_export_test_tree_multi';
 
 // IMPORT
 export const SDO_IMPORTS_LIBRARY_ID = 'test_sdo_imports';
@@ -42,15 +46,35 @@ export const sdoGlobalSettings: ISDOSettings = {
                     valueRequired: false,
                     format: 'string',
                 },
-                'info.advancedLinks': {
-                    leavAttributeId: SDO_EXPORTS_ADVANCED_LINK_ATTRIBUTE_ID,
+                'info.advancedLinkMono': {
+                    leavAttributeId: SDO_EXPORTS_ADVANCED_LINK_MONO_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'string',
+                },
+                'info.advancedLinkMulti': {
+                    leavAttributeId: SDO_EXPORTS_ADVANCED_LINK_MULTI_ATTRIBUTE_ID,
                     valueRequired: false,
                     format: 'array',
                 },
-                'info.treeValue': {
-                    leavAttributeId: SDO_EXPORTS_TREE_ATTRIBUTE_ID,
+                'info.advancedMono': {
+                    leavAttributeId: SDO_EXPORTS_ADVANCED_MONO_ATTRIBUTE_ID,
                     valueRequired: false,
                     format: 'string',
+                },
+                'info.advancedMulti': {
+                    leavAttributeId: SDO_EXPORTS_ADVANCED_MULTI_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'array',
+                },
+                'info.treeMono': {
+                    leavAttributeId: SDO_EXPORTS_TREE_MONO_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'string',
+                },
+                'info.treeMulti': {
+                    leavAttributeId: SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'array',
                 },
             },
         },
