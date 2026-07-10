@@ -1,7 +1,17 @@
 import {type ISDO} from '../../../../_types/sdo';
 import {adminUserSdk, e2eNonAdminUser, nonAdminUserSdk} from '../e2eUtils';
 import {RabbitMqClient} from './rabbitMQUtils';
-import {SDO_EXPORT_TIMER, sdoGlobalSettings, SDO_EXPORTS_LIBRARY_ID, SDO_EXPORTS_TEST_ATTRIBUTE_ID} from './sdoConfig';
+import {
+    SDO_EXPORT_TIMER,
+    sdoGlobalSettings,
+    SDO_EXPORTS_LIBRARY_ID,
+    SDO_EXPORTS_TEST_ATTRIBUTE_ID,
+    SDO_EXPORTS_LINKED_LIBRARY_ID,
+    SDO_EXPORTS_SIMPLE_LINK_ATTRIBUTE_ID,
+    SDO_EXPORTS_ADVANCED_LINK_ATTRIBUTE_ID,
+    SDO_EXPORTS_TREE_ATTRIBUTE_ID,
+    SDO_EXPORTS_TREE_ID,
+} from './sdoConfig';
 import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes';
@@ -32,6 +42,69 @@ describe('SDO Exports', () => {
                 id: SDO_EXPORTS_LIBRARY_ID,
                 label: {fr: 'Test SDO', en: 'Test SDO'},
                 attributes: [SDO_EXPORTS_TEST_ATTRIBUTE_ID],
+                recordIdentityConf: {label: 'id'},
+            },
+        });
+
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: SDO_EXPORTS_LINKED_LIBRARY_ID,
+                label: {fr: 'Test SDO liée', en: 'Test SDO linked'},
+                recordIdentityConf: {label: 'id'},
+            },
+        });
+
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_EXPORTS_SIMPLE_LINK_ATTRIBUTE_ID,
+                type: AttributeType.simple_link,
+                linked_library: SDO_EXPORTS_LINKED_LIBRARY_ID,
+                label: {fr: 'SDO export test simple link', en: 'SDO export test simple link'},
+            },
+        });
+
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_EXPORTS_ADVANCED_LINK_ATTRIBUTE_ID,
+                type: AttributeType.advanced_link,
+                linked_library: SDO_EXPORTS_LINKED_LIBRARY_ID,
+                multiple_values: true,
+                label: {fr: 'SDO export test advanced link', en: 'SDO export test advanced link'},
+            },
+        });
+
+        await adminUserSdk.SaveTree({
+            tree: {
+                id: SDO_EXPORTS_TREE_ID,
+                label: {fr: 'SDO export test tree', en: 'SDO export test tree'},
+                libraries: [
+                    {
+                        library: SDO_EXPORTS_LINKED_LIBRARY_ID,
+                        settings: {allowMultiplePositions: false, allowedAtRoot: true, allowedChildren: []},
+                    },
+                ],
+            },
+        });
+
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_EXPORTS_TREE_ATTRIBUTE_ID,
+                type: AttributeType.tree,
+                linked_tree: SDO_EXPORTS_TREE_ID,
+                label: {fr: 'SDO export test tree attribute', en: 'SDO export test tree attribute'},
+            },
+        });
+
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: SDO_EXPORTS_LIBRARY_ID,
+                label: {fr: 'Test SDO', en: 'Test SDO'},
+                attributes: [
+                    SDO_EXPORTS_TEST_ATTRIBUTE_ID,
+                    SDO_EXPORTS_SIMPLE_LINK_ATTRIBUTE_ID,
+                    SDO_EXPORTS_ADVANCED_LINK_ATTRIBUTE_ID,
+                    SDO_EXPORTS_TREE_ATTRIBUTE_ID,
+                ],
                 recordIdentityConf: {label: 'id'},
             },
         });
@@ -197,6 +270,89 @@ describe('SDO Exports', () => {
             action: 'UPDATE',
             content: {
                 system: {systemId: recordUUID, systemActive: false},
+            },
+        });
+    });
+
+    test('exports a simple link attribute value as the linked record UUID', async () => {
+        const {createRecord: linked} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LINKED_LIBRARY_ID});
+        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+        await waitForSdo(recordUUID);
+
+        await adminUserSdk.SaveValue({
+            libraryId: SDO_EXPORTS_LIBRARY_ID,
+            recordId,
+            attributeId: SDO_EXPORTS_SIMPLE_LINK_ATTRIBUTE_ID,
+            value: {payload: linked.record.id},
+        });
+
+        const msg = await waitForSdo(recordUUID);
+
+        expect(msg).toMatchObject({
+            action: 'UPDATE',
+            content: {
+                system: {systemId: recordUUID},
+                info: {simpleLink: linked.record.uuid},
+            },
+        });
+    });
+
+    test('exports an advanced (multiple) link attribute as an array of linked records UUIDs', async () => {
+        const {createRecord: linkedA} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LINKED_LIBRARY_ID});
+        const {createRecord: linkedB} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LINKED_LIBRARY_ID});
+        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+        await waitForSdo(recordUUID);
+
+        await adminUserSdk.SaveValue({
+            libraryId: SDO_EXPORTS_LIBRARY_ID,
+            recordId,
+            attributeId: SDO_EXPORTS_ADVANCED_LINK_ATTRIBUTE_ID,
+            value: {payload: linkedA.record.id},
+        });
+        await adminUserSdk.SaveValue({
+            libraryId: SDO_EXPORTS_LIBRARY_ID,
+            recordId,
+            attributeId: SDO_EXPORTS_ADVANCED_LINK_ATTRIBUTE_ID,
+            value: {payload: linkedB.record.id},
+        });
+
+        const msg = await waitForSdo(recordUUID);
+
+        expect((msg.content as any).info?.advancedLinks).toEqual(
+            expect.arrayContaining([linkedA.record.uuid, linkedB.record.uuid]),
+        );
+    });
+
+    test('exports a tree attribute value as the linked record UUID', async () => {
+        const {createRecord: linked} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LINKED_LIBRARY_ID});
+        const {treeAddElement: treeElement} = await adminUserSdk.TreeAddElement({
+            treeId: SDO_EXPORTS_TREE_ID,
+            element: {id: linked.record.id, library: SDO_EXPORTS_LINKED_LIBRARY_ID},
+        });
+
+        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+        await waitForSdo(recordUUID);
+
+        await adminUserSdk.SaveValue({
+            libraryId: SDO_EXPORTS_LIBRARY_ID,
+            recordId,
+            attributeId: SDO_EXPORTS_TREE_ATTRIBUTE_ID,
+            value: {payload: treeElement.id},
+        });
+
+        const msg = await waitForSdo(recordUUID);
+
+        expect(msg).toMatchObject({
+            action: 'UPDATE',
+            content: {
+                system: {systemId: recordUUID},
+                info: {treeValue: linked.record.uuid},
             },
         });
     });
