@@ -29,6 +29,12 @@ mutation DeleteRecord($id: ID, $library: ID) {
     }
 }
 
+mutation DeactivateRecords($libraryId: String!, $recordsIds: [String!]) {
+    deactivateRecords(libraryId: $libraryId, recordsIds: $recordsIds) {
+        id
+    }
+}
+
 mutation PurgeInactiveRecords($libraryId: String!) {
     purgeInactiveRecords(libraryId: $libraryId) {
         id

@@ -76,6 +76,8 @@ export default function ({
 
         // filter out immutable core system attributes to avoid create record failure
         valuesToSave = valuesToSave.filter(value => !IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(value.attribute));
+        // activation on create is handled via skipActivate below, not via a generic value save
+        valuesToSave = valuesToSave.filter(value => value.attribute !== CommonAttributes.ACTIVE);
 
         logger.verbose(
             `SDO Import create on record ${leavLibraryId}/${recordUuid}`,
@@ -300,6 +302,16 @@ export default function ({
                 id_value: null,
                 attribute: SdoAttributes.CREATOR_CLIENT_ID,
                 payload: creatorClientId,
+            });
+        }
+
+        // Persist the SDO's activation state (system.systemActive) onto the leav record's active flag.
+        const systemActive = sdo.content.system?.systemActive;
+        if (systemActive !== undefined && systemActive !== null) {
+            mappedValues.push({
+                id_value: null,
+                attribute: CommonAttributes.ACTIVE,
+                payload: systemActive,
             });
         }
 

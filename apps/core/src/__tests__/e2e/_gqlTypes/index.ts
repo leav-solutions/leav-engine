@@ -1397,6 +1397,14 @@ export type DeleteRecordMutationVariables = Exact<{
 
 export type DeleteRecordMutation = { deleteRecord: { id: string } };
 
+export type DeactivateRecordsMutationVariables = Exact<{
+  libraryId: Scalars['String']['input'];
+  recordsIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
+}>;
+
+
+export type DeactivateRecordsMutation = { deactivateRecords: Array<{ id: string }> };
+
 export type PurgeInactiveRecordsMutationVariables = Exact<{
   libraryId: Scalars['String']['input'];
 }>;
@@ -1830,6 +1838,13 @@ export const DeleteRecordDocument = gql`
   }
 }
     `;
+export const DeactivateRecordsDocument = gql`
+    mutation DeactivateRecords($libraryId: String!, $recordsIds: [String!]) {
+  deactivateRecords(libraryId: $libraryId, recordsIds: $recordsIds) {
+    id
+  }
+}
+    `;
 export const PurgeInactiveRecordsDocument = gql`
     mutation PurgeInactiveRecords($libraryId: String!) {
   purgeInactiveRecords(libraryId: $libraryId) {
@@ -2190,6 +2205,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     DeleteRecord(variables?: DeleteRecordMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteRecordMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteRecordMutation>({ document: DeleteRecordDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteRecord', 'mutation', variables);
+    },
+    DeactivateRecords(variables: DeactivateRecordsMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeactivateRecordsMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeactivateRecordsMutation>({ document: DeactivateRecordsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeactivateRecords', 'mutation', variables);
     },
     PurgeInactiveRecords(variables: PurgeInactiveRecordsMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<PurgeInactiveRecordsMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<PurgeInactiveRecordsMutation>({ document: PurgeInactiveRecordsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'PurgeInactiveRecords', 'mutation', variables);
