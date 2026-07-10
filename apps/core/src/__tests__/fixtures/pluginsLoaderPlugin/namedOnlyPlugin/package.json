@@ -1,0 +1,6 @@
+{
+    "name": "named-only-plugin",
+    "description": "No default export fixture",
+    "version": "3.0.0",
+    "author": "test"
+}

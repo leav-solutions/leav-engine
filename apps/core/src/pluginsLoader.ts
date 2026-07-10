@@ -9,6 +9,7 @@ import {getConfig} from './config';
 import path from 'path';
 import {type IUtils} from './utils/utils';
 import {appRootPath} from './rootPath';
+import {isTscCjsDoubleWrap} from './utils/helpers/isTscCjsDoubleWrap';
 
 export const initPlugins = async (pluginsPath: string[], depsManager: AwilixContainer) => {
     if (!pluginsPath.length) {
@@ -58,7 +59,13 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
             ? `${pluginFullPath}/index.ts`
             : `${pluginFullPath}/index.js`;
         const importedPlugin = await import(pluginIndexPath);
-        const defaultExport = importedPlugin.default;
+        let defaultExport = importedPlugin.default;
+
+        if (isTscCjsDoubleWrap(defaultExport)) {
+            // Unwrap one level; if there's no real default underneath (a plugin with only named
+            // exports), this plugin simply has no init function to call below.
+            defaultExport = defaultExport.default;
+        }
 
         // Load plugin config
         const pluginConf = await getConfig(pluginFullPath);
