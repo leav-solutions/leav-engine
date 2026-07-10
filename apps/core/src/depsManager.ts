@@ -13,8 +13,9 @@ import {getConfig} from './config';
 import path from 'path';
 import {existsSync} from 'fs';
 import {appRootPath} from './rootPath';
+import {isTscCjsDoubleWrap} from './utils/helpers/isTscCjsDoubleWrap';
 
-const _registerModules = async (
+export const registerModules = async (
     container: AwilixContainer,
     folder: string,
     glob: string,
@@ -39,6 +40,17 @@ const _registerModules = async (
         // Register default export by its parent folder name, register named exports by their actual name
         // This will give, for example: 'core.domain.value' or 'core.domain.permissions.record'
         for (const modExport of Object.keys(importedMod)) {
+            let exportValue = importedMod[modExport];
+
+            if (modExport === 'default' && isTscCjsDoubleWrap(exportValue)) {
+                // Unwrap one level; if there's no real default underneath (named-exports-only
+                // module), there's nothing to register for this key.
+                if (typeof exportValue.default === 'undefined') {
+                    continue;
+                }
+                exportValue = exportValue.default;
+            }
+
             const prefixedNamePart = prefix ? [prefix] : [];
             const nameParts = [...prefixedNamePart, ...pathParts];
 
@@ -50,9 +62,7 @@ const _registerModules = async (
             // Registering as class is not supported voluntarily. We don't want class.
             container.register({
                 [nameParts.join('.')]:
-                    typeof importedMod[modExport] === 'function'
-                        ? asFunction(importedMod[modExport]).singleton()
-                        : asValue(importedMod[modExport]),
+                    typeof exportValue === 'function' ? asFunction(exportValue).singleton() : asValue(exportValue),
             });
         }
     }
@@ -78,7 +88,7 @@ export async function initDI(additionalModulesToRegister?: {
         injectionMode: InjectionMode.PROXY,
     });
 
-    await _registerModules(coreContainer, srcFolder, modulesGlob, 'core');
+    await registerModules(coreContainer, srcFolder, modulesGlob, 'core');
 
     coreContainer.register('config', asValue(coreConf));
 
@@ -91,7 +101,7 @@ export async function initDI(additionalModulesToRegister?: {
 
     await Promise.all(
         pluginsFolder.map(pluginFolder =>
-            _registerModules(pluginsContainer, pluginFolder, modulesGlob, path.basename(pluginFolder)),
+            registerModules(pluginsContainer, pluginFolder, modulesGlob, path.basename(pluginFolder)),
         ),
     );
 

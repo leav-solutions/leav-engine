@@ -51,7 +51,13 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
             continue;
         }
 
-        const importedPlugin = await import(pluginFullPath);
+        // Unlike require(), Node's native import() doesn't resolve a directory to its index file,
+        // and always needs an explicit extension - resolve to whichever exists (.ts in dev via
+        // tsx, .js once compiled).
+        const pluginIndexPath = (await utils.fileExists(`${pluginFullPath}/index.ts`))
+            ? `${pluginFullPath}/index.ts`
+            : `${pluginFullPath}/index.js`;
+        const importedPlugin = await import(pluginIndexPath);
         const defaultExport = importedPlugin.default;
 
         // Load plugin config
