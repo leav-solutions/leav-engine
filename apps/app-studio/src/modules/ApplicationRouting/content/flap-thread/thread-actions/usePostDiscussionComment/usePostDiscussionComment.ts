@@ -23,7 +23,7 @@ export const usePostDiscussionComment = ({recordId, libraryId}: IUseThreadAction
     const statusesOptions = useThreadStatusOptions();
     const {workspaceId, panelId, where: currentWhere} = useParams();
 
-    const {onCommentSubmitted, onCommentMentionAdded} = getThreadActionCallbacks({where: currentWhere});
+    const {onCommentSubmitted, onCommentMentionAdded} = getThreadActionCallbacks({where: currentWhere}) ?? {};
 
     const [isPosting, setIsPosting] = useState(false);
 

@@ -15,7 +15,7 @@ export const useUpdateStatus = ({threadId, threadStatusId}: IUpdateStatus) => {
     const [saveValueBatchMutation] = useSaveValueBatchMutation();
     const [status, setStatus] = useState(threadStatusId);
     const {workspaceId, panelId, recordId, where} = useParams();
-    const {onDiscussionStatusChanged} = getThreadActionCallbacks({where});
+    const {onDiscussionStatusChanged} = getThreadActionCallbacks({where}) ?? {};
 
     const updateStatus = async (newStatusId: string) => {
         const values = [{attribute: THREAD_STATUS_ATTIBUTE_ID, payload: newStatusId, id_value: null}];
