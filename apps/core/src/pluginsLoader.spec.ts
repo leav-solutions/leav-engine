@@ -8,7 +8,7 @@ vi.mock('./config', () => ({
     getConfig: vi.fn().mockResolvedValue({}),
 }));
 
-const fixturesFolder = './__tests__/fixtures/pluginsLoaderPlugin';
+const fixturesFolder = './src/__tests__/fixtures/pluginsLoaderPlugin';
 
 const makeContainer = (registerPlugin = vi.fn()) => {
     const container = createContainer({injectionMode: InjectionMode.PROXY});
@@ -43,7 +43,9 @@ describe('pluginsLoader', () => {
 
             await initPlugins([`${fixturesFolder}/compiledPlugin`], container);
 
-            const compiledModule = await import(path.resolve(__dirname, `${fixturesFolder}/compiledPlugin/index.js`));
+            const compiledModule = await import(
+                path.resolve(__dirname, `../${fixturesFolder}/compiledPlugin/index.js`)
+            );
             expect(compiledModule.wasInitCalled()).toBe(true);
         });
 
