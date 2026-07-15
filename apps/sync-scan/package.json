@@ -20,11 +20,11 @@
     "author": "",
     "license": "LGPL3",
     "devDependencies": {
-        "@types/node": "24.13.2",
-        "prettier": "3.9.4",
+        "@types/node": "24.13.3",
+        "prettier": "3.9.5",
         "tsx": "4.23.0",
         "typescript": "6.0.3",
-        "vitest": "4.1.9"
+        "vitest": "4.1.10"
     },
     "dependencies": {
         "@leav/app-root-path": "workspace:libs/app-root-path",
