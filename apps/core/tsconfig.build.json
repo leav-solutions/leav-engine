@@ -39,5 +39,5 @@
         }
     ],
     "include": ["src/**/*", "src/**/*.json"],
-    "exclude": ["node_modules", "**/*.spec.ts", "**/__tests__", "applications", "scripts", "dist", "src/plugins"]
+    "exclude": ["node_modules", "**/*.spec.ts", "**/__tests__", "applications", "scripts", "dist", "plugins"]
 }

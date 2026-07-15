@@ -12,7 +12,7 @@
 /.gitignore
 
 /apps/core/applications/**
-/apps/core/src/plugins/**
+/apps/core/plugins/**
 /apps/core/benchmarks_example.json
 /apps/core/data_example.json
 /scripts/

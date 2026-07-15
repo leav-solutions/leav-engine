@@ -34,7 +34,7 @@ import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
-    const pluginsFolder = path.resolve('./src/plugins/');
+    const pluginsFolder = path.resolve('./plugins/');
     const fakePluginSrc = `${__dirname}/_fixtures/fakeplugin`;
     const fakePluginDest = `${pluginsFolder}/fakeplugin`;
     const relativePath = path.relative(pluginsFolder, fakePluginSrc);
@@ -213,7 +213,7 @@ export async function setup(project: TestProject) {
 
 export async function teardown() {
     // Remove fake plugin
-    const pluginsFolder = path.resolve(appRootPath() + '/src/plugins/');
+    const pluginsFolder = path.resolve(appRootPath() + '/plugins/');
     const fakePluginDest = `${pluginsFolder}/fakeplugin`;
 
     fsremaned.unlinkSync(fakePluginDest);

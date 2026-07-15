@@ -8,6 +8,8 @@ import {
     listModules,
     type ModuleDescriptor,
 } from 'awilix';
+import {appRootPath} from '@leav/app-root-path';
+
 import {getConfig} from './config';
 import path from 'path';
 import {existsSync} from 'fs';
@@ -64,9 +66,10 @@ export async function initDI(additionalModulesToRegister?: {
     const srcFolder = __dirname;
     // Add a few extra dependencies
     const coreConf = await getConfig();
+    const rootPath = appRootPath();
 
     const pluginsFolder: string[] = (coreConf.pluginsPath ?? [])
-        .map(pluginPath => path.resolve(__dirname + '/' + pluginPath))
+        .map(pluginPath => path.join(rootPath, pluginPath))
         .filter(existsSync);
 
     const modulesGlob = '+(app|domain|infra|interface|utils)/**/index.+(ts|js)';

@@ -1,6 +1,6 @@
 YARN_INSTALL_DONE=node_modules/.yarn_install_done
 ROOT_YARN_LOCK=../../yarn.lock
-PLUGINS_DIR_PATH=./src/plugins
+PLUGINS_DIR_PATH=./plugins
 PLUGINS_YARN_LOCK=yarn.lock
 
 # Install dependencies
