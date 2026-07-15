@@ -1,4 +1,3 @@
-import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
 import Joi from 'joi';
 import {CoreMode, type IConfig} from './_types/config';
@@ -16,6 +15,8 @@ import {
     TreeNodePermissionsActions,
     TreePermissionsActions,
 } from './_types/permissions';
+import {appRootPath} from './rootPath';
+import path from 'path';
 
 export const validateConfig = (conf: IConfig) => {
     const amqpConnOptSchema = Joi.object().keys({
@@ -378,8 +379,8 @@ export const validateConfig = (conf: IConfig) => {
  */
 export const getConfig = async (folder?: string) => {
     const definedEnv: string = appEnv;
-    const confRootFolder = folder ?? appRootPath();
-    const confFolder = confRootFolder + '/config';
+    const confRootFolder = folder ?? appRootPath;
+    const confFolder = path.join(confRootFolder, 'config');
 
     return loadConfig<IConfig>(confFolder, definedEnv);
 };

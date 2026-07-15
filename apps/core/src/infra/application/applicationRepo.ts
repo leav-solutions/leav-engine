@@ -1,4 +1,4 @@
-import {appRootPath} from '@leav/app-root-path';
+import {appRootPath} from '../../rootPath';
 import {aql} from 'arangojs';
 import fs, {readdir} from 'fs/promises';
 import path from 'path';
@@ -88,8 +88,7 @@ export default function ({
             return dbUtils.cleanup(res.pop());
         },
         async getAvailableModules(): Promise<IApplicationModule[]> {
-            const rootPath = appRootPath();
-            const appRootFolder = path.resolve(rootPath, config.applications.rootFolder);
+            const appRootFolder = path.resolve(appRootPath, config.applications.rootFolder);
 
             const appsFolders = await readdir(appRootFolder);
 

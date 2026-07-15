@@ -4337,18 +4337,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@leav/app-root-path@workspace:libs/app-root-path":
-  version: 0.0.0-use.local
-  resolution: "@leav/app-root-path@workspace:libs/app-root-path"
-  dependencies:
-    "@types/node": "npm:24.13.3"
-    app-root-path: "npm:3.1.0"
-    prettier: "npm:3.9.5"
-    typescript: "npm:6.0.3"
-    vitest: "npm:4.1.10"
-  languageName: unknown
-  linkType: soft
-
 "@leav/config-manager@workspace:*, @leav/config-manager@workspace:libs/config-manager":
   version: 0.0.0-use.local
   resolution: "@leav/config-manager@workspace:libs/config-manager"
@@ -9149,13 +9137,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"app-root-path@npm:3.1.0":
-  version: 3.1.0
-  resolution: "app-root-path@npm:3.1.0"
-  checksum: 10/b4cdab5f7e51ec43fa04c97eca2adedf8e18d6c3dd21cd775b70457c5e71f0441c692a49dcceb426f192640b7393dcd41d85c36ef98ecb7c785a53159c912def
-  languageName: node
-  linkType: hard
-
 "app-studio@workspace:apps/app-studio":
   version: 0.0.0-use.local
   resolution: "app-studio@workspace:apps/app-studio"
@@ -9555,14 +9536,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "automate-scan@workspace:apps/automate-scan"
   dependencies:
-    "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/logger": "workspace:libs/logger"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
     "@types/node": "npm:24.13.3"
     amqplib: "npm:2.0.1"
-    app-root-path: "npm:3.1.0"
     chokidar: "npm:4.0.3"
     lodash: "npm:4.18.1"
     prettier: "npm:3.9.5"
@@ -10902,7 +10881,6 @@ __metadata:
     "@graphql-codegen/typescript-graphql-request": "npm:6.4.0"
     "@graphql-codegen/typescript-operations": "npm:5.1.0"
     "@graphql-tools/schema": "npm:10.0.36"
-    "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/logger": "workspace:libs/logger"
     "@leav/message-broker": "workspace:libs/message-broker"
@@ -10928,7 +10906,6 @@ __metadata:
     "@types/ws": "npm:8.18.1"
     add-filename-increment: "npm:1.0.0"
     amqplib: "npm:2.0.1"
-    app-root-path: "npm:3.1.0"
     arangojs: "npm:8.8.1"
     awilix: "npm:12.1.1"
     axios: "npm:1.18.1"
@@ -17791,7 +17768,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "preview-generator@workspace:apps/preview-generator"
   dependencies:
-    "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
@@ -20628,7 +20604,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "sync-scan@workspace:apps/sync-scan"
   dependencies:
-    "@leav/app-root-path": "workspace:libs/app-root-path"
     "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/logger": "workspace:libs/logger"
     "@leav/message-broker": "workspace:libs/message-broker"
@@ -20639,7 +20614,6 @@ __metadata:
     apollo-client: "npm:2.6.10"
     apollo-link: "npm:1.2.14"
     apollo-link-http: "npm:1.5.17"
-    app-root-path: "npm:3.1.0"
     arangojs: "npm:8.8.1"
     graphql: "npm:16.14.2"
     graphql-tag: "npm:2.12.7"

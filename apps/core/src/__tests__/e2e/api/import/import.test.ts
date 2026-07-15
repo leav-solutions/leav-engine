@@ -1,7 +1,7 @@
 import {type Client as GraphqlWsClient} from 'graphql-ws';
-
-import {appRootPath} from '@leav/app-root-path';
 import path from 'path';
+
+import {appRootPath} from '../../../../rootPath';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {
     adminUserSdk,
@@ -125,7 +125,7 @@ describe('Import', () => {
             );
         });
         it('should import import.test.json and verify DB state', async () => {
-            const importFilePath = path.join(appRootPath(), '/src/__tests__/e2e/api/import/datas/import.test.json');
+            const importFilePath = path.join(appRootPath, '/src/__tests__/e2e/api/import/datas/import.test.json');
 
             const importResult = await importFileGraphQlCall(
                 `mutation importData($file: Upload!) {
@@ -158,10 +158,7 @@ describe('Import', () => {
                 const query = `mutation importExcel($file: Upload!, $sheets: [SheetInput!]!) {
                         importExcel(file: $file, sheets: $sheets)
                     }`;
-                const importFilePath = path.join(
-                    appRootPath(),
-                    '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx',
-                );
+                const importFilePath = path.join(appRootPath, '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx');
                 const sheets = [
                     {
                         type: ImportType.STANDARD,
@@ -225,7 +222,7 @@ describe('Import', () => {
                         importExcel(file: $file, sheets: $sheets)
                     }`;
                 const importFilePath = path.join(
-                    appRootPath(),
+                    appRootPath,
                     '/src/__tests__/e2e/api/import/datas/datasToImportWithEmptyFields.xlsx',
                 );
                 const sheets = [
@@ -290,10 +287,7 @@ describe('Import', () => {
                 const query = `mutation importExcel($file: Upload!, $sheets: [SheetInput!]!) {
                         importExcel(file: $file, sheets: $sheets)
                     }`;
-                const importFilePath = path.join(
-                    appRootPath(),
-                    '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx',
-                );
+                const importFilePath = path.join(appRootPath, '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx');
                 const sheets = [
                     {
                         type: ImportType.STANDARD,
@@ -336,7 +330,7 @@ describe('Import', () => {
                         importExcel(file: $file, sheets: $sheets)
                     }`;
                 const importFilePath = path.join(
-                    appRootPath(),
+                    appRootPath,
                     '/src/__tests__/e2e/api/import/datas/datasToImportWithEmptySheet.xlsx',
                 );
                 const sheets = [
@@ -361,10 +355,7 @@ describe('Import', () => {
                 const query = `mutation importExcel($file: Upload!, $sheets: [SheetInput!]!) {
                         importExcel(file: $file, sheets: $sheets)
                     }`;
-                const importFilePath = path.join(
-                    appRootPath(),
-                    '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx',
-                );
+                const importFilePath = path.join(appRootPath, '/src/__tests__/e2e/api/import/datas/datasToImport.xlsx');
 
                 const sheets1 = [
                     {

@@ -26,7 +26,6 @@ x-volume-automate_scan-modules: &volume-automate_scan-modules node_modules_autom
 x-volume-sync_scan-modules: &volume-sync_scan-modules node_modules_sync-scan:/app/apps/sync-scan/node_modules
 x-volume-mcp_runtime-modules: &volume-mcp_runtime-modules node_modules_mcp-runtime:/app/apps/mcp-runtime/node_modules
 x-volume-config_manager-modules: &volume-config_manager-modules node_modules_config-manager:/app/libs/config-manager/node_modules
-x-volume-app_root_path-modules: &volume-app_root_path-modules node_modules_app-root-path:/app/libs/app-root-path/node_modules
 x-volume-utils-modules: &volume-utils-modules node_modules_utils:/app/libs/utils/node_modules
 x-volume-ui-modules: &volume-ui-modules node_modules_ui:/app/libs/ui/node_modules
 x-volume-message_broker-modules: &volume-message_broker-modules node_modules_message-broker:/app/libs/message-broker/node_modules
@@ -58,7 +57,6 @@ x-env-core: &env-core
   DB_NAME: leav_core
   INSTANCE_ID: leav_engine
   AUTH_KEY: 999999
-  APP_ROOT_PATH: *dir-core
   SERVER_HOST: "0.0.0.0"
   SERVER_PORT: 4001
   SERVER_PUBLIC_URL: http://core.leav.localhost
@@ -115,7 +113,6 @@ x-env-automate-scan: &env-automate-scan
   REDIS_PORT: 6379
   ROOT_PATH: /files
   ROOT_KEY: files1
-  APP_ROOT_PATH: *dir-automate_scan
 
 x-env-logger: &env-logger
   LOG_LEVEL: "silly"
@@ -145,23 +142,12 @@ x-env-sync-scan: &env-sync-scan
   FILESYSTEM_ABSOLUTE_PATH: /files
   GRAPHQL_URI: http://core:4001/graphql
   GRAPHQL_API_KEY: ${GRAPHQL_API_KEY}
-  APP_ROOT_PATH: *dir-sync_scan
-
-x-env-admin: &env-admin
-  APP_ROOT_PATH: *dir-admin
-
-x-env-login: &env-login
-  APP_ROOT_PATH: *dir-login
-
-x-env-portal: &env-portal
-  APP_ROOT_PATH: *dir-portal
 
 x-env-preview-generator: &env-preview-generator
   NODE_ENV: development
   INPUT_ROOT_PATH: /files
   OUTPUT_ROOT_PATH: /results
   ICC_PATH: /app/apps/preview-generator/profile/
-  APP_ROOT_PATH: *dir-preview_generator
 
 x-env-build-core: &env-build-core
   context: ../apps/core
@@ -215,7 +201,6 @@ services:
       - *volume-automate_scan-modules
       - *volume-sync_scan-modules
       - *volume-mcp_runtime-modules
-      - *volume-app_root_path-modules
       - *volume-config_manager-modules
       - *volume-logger-modules
       - *volume-message_broker-modules
@@ -253,7 +238,6 @@ services:
       - *volume-yarn
       - *volume-shared-modules
       - *volume-core-modules
-      - *volume-app_root_path-modules
       - *volume-config_manager-modules
       - *volume-logger-modules
       - *volume-message_broker-modules
@@ -279,7 +263,7 @@ services:
       - "traefik.http.routers.admin.entrypoints=web"
       - "traefik.http.routers.admin.priority=100"
     environment:
-      <<: [*env-react, *env-admin]
+      <<: [*env-react]
       PUBLIC_URL: http://core.leav.localhost/app/admin
       WDS_SOCKET_HOST: admin.leav.localhost
       WDS_SOCKET_PORT: 80
@@ -338,7 +322,7 @@ services:
       - "traefik.http.routers.login.entrypoints=web"
       - "traefik.http.routers.login.priority=100"
     environment:
-      <<: [*env-react, *env-login]
+      <<: [*env-react]
       PUBLIC_URL: http://core.leav.localhost/app/login
       WDS_SOCKET_HOST: login.leav.localhost
       WDS_SOCKET_PORT: 80
@@ -367,7 +351,7 @@ services:
       - "traefik.http.routers.portal.entrypoints=web"
       - "traefik.http.routers.portal.priority=100"
     environment:
-      <<: [*env-react, *env-portal]
+      <<: [*env-react]
       PUBLIC_URL: http://core.leav.localhost/app/portal
     volumes:
       - *mount_point-repo
@@ -398,7 +382,6 @@ services:
       - *volume-yarn
       - *volume-shared-modules
       - *volume-mcp_runtime-modules
-      - *volume-app_root_path-modules
       - *volume-config_manager-modules
       - *volume-logger-modules
       - *volume-monitoring_server-modules
@@ -423,7 +406,6 @@ services:
       - *volume-yarn
       - *volume-shared-modules
       - *volume-automate_scan-modules
-      - *volume-app_root_path-modules
       - *volume-config_manager-modules
       - *volume-logger-modules
       - *volume-monitoring_server-modules
@@ -452,7 +434,6 @@ services:
       - *volume-yarn
       - *volume-shared-modules
       - *volume-preview_generator-modules
-      - *volume-app_root_path-modules
       - *volume-config_manager-modules
       - *volume-logger-modules
       - *volume-message_broker-modules
@@ -670,8 +651,6 @@ volumes:
   node_modules_mcp-runtime:
     driver: local
   node_modules_config-manager:
-    driver: local
-  node_modules_app-root-path:
     driver: local
   node_modules_utils:
     driver: local

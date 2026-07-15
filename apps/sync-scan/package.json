@@ -13,7 +13,7 @@
         "test:ci": "vitest run -c vitest.unit.config.ts --maxWorkers=2 --reporter=verbose",
         "test:commit": "vitest run -c vitest.unit.config.ts --changed",
         "test:watch": "vitest -c vitest.unit.config.ts",
-        "test:e2e": "NODE_OPTIONS='--import tsx' vitest run -c vitest.e2e.config.ts",
+        "test:e2e": "NODE_ENV=test NODE_OPTIONS='--import tsx' vitest run -c vitest.e2e.config.ts",
         "prettier": "prettier --write 'src/**/*.ts'",
         "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
         "tscheck:watch": "tsc -b -w tsconfig.json"
@@ -28,7 +28,6 @@
         "vitest": "4.1.10"
     },
     "dependencies": {
-        "@leav/app-root-path": "workspace:libs/app-root-path",
         "@leav/config-manager": "workspace:libs/config-manager",
         "@leav/logger": "workspace:libs/logger",
         "@leav/message-broker": "workspace:libs/message-broker",
@@ -38,7 +37,6 @@
         "apollo-client": "2.6.10",
         "apollo-link": "1.2.14",
         "apollo-link-http": "1.5.17",
-        "app-root-path": "3.1.0",
         "arangojs": "8.8.1",
         "graphql": "16.14.2",
         "graphql-tag": "2.12.7",

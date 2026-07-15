@@ -2,7 +2,7 @@ import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {SystemTrees} from '../../../_constants/systemTrees';
 import {amqpService} from '@leav/message-broker';
 import {logger} from '@leav/logger';
-import {appRootPath} from '@leav/app-root-path';
+import {appRootPath} from '../../../rootPath';
 import fsremaned from 'fs';
 import path from 'path';
 import {type AwilixContainer} from 'awilix';
@@ -29,8 +29,6 @@ import {GUEST_USER_EMAIL, NON_ADMIN_USER_EMAIL} from './constants';
 import {type ICorePluginsApp} from '../../../app/core/pluginsApp';
 import {type TestProject} from 'vitest/node';
 import {CommonAttributes, UsersAttributes} from '../../../_constants/systemAttributes';
-import {type IAttributeDomain} from '../../../domain/attribute/attributeDomain';
-import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
@@ -213,7 +211,7 @@ export async function setup(project: TestProject) {
 
 export async function teardown() {
     // Remove fake plugin
-    const pluginsFolder = path.resolve(appRootPath() + '/plugins/');
+    const pluginsFolder = path.join(appRootPath, 'plugins');
     const fakePluginDest = `${pluginsFolder}/fakeplugin`;
 
     fsremaned.unlinkSync(fakePluginDest);

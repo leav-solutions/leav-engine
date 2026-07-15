@@ -17,6 +17,7 @@ import {type IDbDocument, type IExecuteWithCount} from './_types';
 import {CORE_INDEX_FIELD} from '../indexation/indexationService';
 import {CORE_IN_CREATION_BY} from '../../_types/record';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
+import {appRootPath} from '../../rootPath';
 
 export const MIGRATIONS_COLLECTION_NAME = 'core_db_migrations';
 
@@ -167,9 +168,7 @@ export default function ({
 
             /*** Plugins migrations ***/
             for (const pluginPath of config.pluginsPath) {
-                const pluginMigrationFolderPath = path.resolve(
-                    `${__dirname}/../../../${pluginPath}/infra/db/migrations`,
-                );
+                const pluginMigrationFolderPath = path.join(appRootPath, pluginPath, 'infra/db/migrations');
                 const pluginName = path.basename(pluginPath);
 
                 try {

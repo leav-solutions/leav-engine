@@ -1,4 +1,3 @@
-import {appRootPath} from '@leav/app-root-path';
 import {type InitQueryContextFunc} from '../helpers/initQueryContext';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
 import {type NextFunction, type Response} from 'express';
@@ -17,6 +16,7 @@ import {AttributeCondition} from '../../_types/record';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type IServerRouteAppModule} from '../../interface/server';
 import {CommonAttributes} from '../../_constants/systemAttributes';
+import {appRootPath} from '../../rootPath';
 
 export type ICoreApp = IAppModule & IGraphqlAppModule & IServerRouteAppModule;
 
@@ -146,14 +146,12 @@ export default function ({
             };
 
             const _serveDefaultIcon = async (req: IRequestWithContext, res: Response, next: NextFunction) => {
-                const rootPath = appRootPath();
-                const defaultIconPath = path.resolve(rootPath, '../../assets/logo-leavengine.svg');
+                const defaultIconPath = path.resolve(appRootPath, '../../assets/logo-leavengine.svg');
                 res.sendFile(defaultIconPath);
             };
 
             const _serveDefaultFavicon = async (req: IRequestWithContext, res: Response, next: NextFunction) => {
-                const rootPath = appRootPath();
-                const defaultFaviconPath = path.resolve(rootPath, '../../assets/favicon-leav.svg');
+                const defaultFaviconPath = path.resolve(appRootPath, '../../assets/favicon-leav.svg');
                 res.sendFile(defaultFaviconPath);
             };
 

@@ -20,9 +20,6 @@
     },
     "references": [
         {
-            "path": "../../libs/app-root-path/tsconfig.build.json"
-        },
-        {
             "path": "../../libs/config-manager/tsconfig.build.json"
         },
         {

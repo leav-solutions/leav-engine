@@ -148,7 +148,6 @@ leav-engine/
 │   ├── preview-generator/ # Génération de previews
 │   └── sync-scan/         # Synchronisation / scan de fichiers
 └── libs/                  # Code partagé entre les apps, préfixe @leav/
-    ├── app-root-path/     # Résolution du chemin racine de l'app
     ├── config-manager/    # Gestion de la configuration
     ├── logger/            # Logger partagé
     ├── message-broker/    # Abstraction RabbitMQ
