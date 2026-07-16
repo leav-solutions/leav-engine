@@ -239,6 +239,27 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             [allFilters],
         );
 
+        // An unpinned filter still applies to the request (see `requestFilters` below) but must not show as
+        // a toolbar chip — `UIFilter`/the filter store carry no `pinned` field, so this id set is computed
+        // straight from the lean source and threaded down to `ExplorerFilters` for display filtering.
+        const pinnedFilterIds = useMemo(
+            () =>
+                new Set(
+                    userLeanFilters
+                        .filter(filter => filter.pinned)
+                        .map(filter => filter.attributes.map(attribute => attribute.id).join('/')),
+                ),
+            [userLeanFilters],
+        );
+
+        // A filter merely made "available" by the admin gear (SET_AVAILABLE_FILTERS) is seeded with
+        // an empty condition and no `withEmptyValues` — it must not count as "active" (shortcut
+        // button + green dot), pinned or not, until it actually carries a value.
+        const hasActiveFilters = useMemo(
+            () => userLeanFilters.some(filter => filter.values.length > 0 || Boolean(filter.withEmptyValues)),
+            [userLeanFilters],
+        );
+
         const onFiltersChange = defaultCallbacks?.viewSettings?.onFiltersChange;
         const handleFiltersChange = useMemo(
             () => (onFiltersChange ? (filters: SerializedFilter[]) => onFiltersChange({filters}) : undefined),
@@ -426,18 +447,12 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
          */
         const canManageViewSettings = defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick !== undefined;
 
-        const handleSortClick =
-            canManageViewSettings && view.viewId
-                ? () =>
-                      defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick?.({
-                          settingName: 'sorts',
-                          viewId: view.viewId!,
-                      })
-                : undefined;
-
         const {viewSettingsShortcutsButtons} = useOpenViewSettingsV2({
             isEnabled: canManageViewSettings,
             view,
+            showFilters,
+            showSorts,
+            hasActiveFilters,
             open: !isMassSelectionAll,
             closeViewSettings: defaultCallbacks?.viewSettings?.closeViewSettings,
             onViewSettingsShortcutClick: defaultCallbacks?.viewSettings?.onViewSettingsShortcutClick,
@@ -471,13 +486,12 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                     )}
                     <ExplorerToolbar
                         showFilters={showFilters}
-                        showSorts={showSorts}
+                        pinnedFilterIds={pinnedFilterIds}
                         isMassSelectionAll={isMassSelectionAll}
                         headless={hideTableHeader}
                         canRemoveFilters={canManageViewSettings}
                         selectAllButton={hideSelectAllAction ? null : selectAllButton}
                         viewSettingsLoading={viewSettingsLoading}
-                        onSortClick={handleSortClick}
                     >
                         {showSearch ? searchInput : null}
                         {viewSettingsShortcutsButtons}

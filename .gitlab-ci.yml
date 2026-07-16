@@ -228,11 +228,31 @@ libs/monitoring-server-unit-tests:
         - libs/monitoring-server/**/*
 
 # Split libs/ui-unit-tests job to run in parallel for faster execution
+# NB: "src/components/Explorer" is matched by Vitest as a substring, so it also picks up
+# "src/components/ExplorerV2" — the trailing slash below scopes each job to its own folder only.
+# Explorer and ExplorerV2 are split into their own jobs (rather than combined) because running both
+# in the same Vitest process pushes the worker past its heap limit (OOM) on the full suite.
 libs/ui-unit-tests/explorer:
   stage: test
   script:
     - yarn workspaces focus @leav/ui
-    - yarn workspace @leav/ui run test:ci src/components/Explorer
+    - yarn workspace @leav/ui run test:ci src/components/Explorer/
+  cache:
+    <<: *yarn_cache
+  rules:
+    - *disable_test_rule
+    - *no_tag_rule
+    - *no_duplicate_rule
+    - <<: *mr_rule
+      changes:
+        - *new_lib_installed_changes
+        - libs/ui/**/*
+
+libs/ui-unit-tests/explorer-v2:
+  stage: test
+  script:
+    - yarn workspaces focus @leav/ui
+    - yarn workspace @leav/ui run test:ci src/components/ExplorerV2/
   cache:
     <<: *yarn_cache
   rules:
@@ -264,7 +284,7 @@ libs/ui-unit-tests/rest:
   stage: test
   script:
     - yarn workspaces focus @leav/ui
-    - yarn workspace @leav/ui run test:ci --exclude='**/components/Explorer/**' --exclude='**/components/RecordEdition/**'
+    - yarn workspace @leav/ui run test:ci --exclude='**/components/Explorer/**' --exclude='**/components/ExplorerV2/**' --exclude='**/components/RecordEdition/**'
   cache:
     <<: *yarn_cache
   rules:

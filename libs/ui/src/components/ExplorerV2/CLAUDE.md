@@ -30,6 +30,11 @@ configuration. La vue lui est fournie par **app-studio** (source de vérité) vi
   `defaultCallbacks.viewSettings.onFiltersChange` (**echo-suppressed** : un seed/une valeur poussée par
   l'hôte ne re-déclenche pas l'émission). Les pré-filtres masqués `hidden:true` restent des filtres
   **pleins** (non lean) et sont fusionnés à la requête sans passer par le store.
+  Contrairement aux tris (qui ne transitent que **pinned**), `currentView.filters` porte **tous**
+  les filtres (pinned et non pinned) : un filtre non épinglé s'applique quand même à la requête
+  (`requestFilters`), seule sa présence en chip toolbar est conditionnée au pin (`UIFilter` ne
+  portant pas ce flag, `Explorer.tsx` calcule `pinnedFilterIds` directement depuis les
+  `SerializedFilter` lean et filtre l'affichage dans `ExplorerFilters` avec).
 
 ---
 
@@ -71,6 +76,14 @@ pas ordonner). Fallback `['display']` si la liste est vide (l'API garantit déj�
 création — cf. champ `shortcuts` de `ViewV2`, LEAVC-892). Lecture seule pour l'instant ; l'édition
 viendra dans un ticket ultérieur.
 
+Un tri n'est pas un filtre (LEAVC-588) : il n'a **plus** de gélule dans `ExplorerFilters`
+(retirée, contrairement aux chips de filtres classiques qui restent affichés — pinned uniquement,
+cf. plus bas). Pour compenser, "filters" et "sorts" sont chacun affichés en bouton-raccourci de la
+toolbar **même absents de `shortcuts`**, dès qu'il y a une valeur active (`showFilters &&
+hasActiveFilters` / `showSorts && view.sort.length > 0`) — sans changer les `shortcuts` de la vue.
+Une pastille verte (`KitBadge dot color="success"`) signale cette valeur active sur le bouton,
+qu'il soit un raccourci déjà configuré ou affiché dynamiquement.
+
 Exporté sous l'alias **`SerializedViewV2`** dans l'API publique `@leav/ui` (c'est le nom que
 app-studio importe). Construit par `panel-view-settings/store-current-view/viewV2ToSerializedView.ts`.
 
@@ -78,13 +91,13 @@ app-studio importe). Construit par `panel-view-settings/store-current-view/viewV
 
 ## Internes
 
-| Fichier / dossier             | Rôle                                                                                                                                                   |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `useViewSettingsReducer.ts`   | Fusionne `currentView` (config display reçue) + état éphémère local (recherche, pagination, sélection de masse)                                        |
-| `manage-view-settings-v2/`    | `store-view-settings/`, `useOpenViewSettingsV2.tsx`, type `ViewType`, `defaultPageSizeOptions`                                                         |
-| store de filtres              | `useControlledFilterStore` (`@leav/ui`), **toujours interne**, semé depuis `currentView.filters` (lean) ; émet via `onFiltersChange` (echo-suppressed) |
-| `ExplorerFiltersAndSorts.tsx` | Barre filtres + tris                                                                                                                                   |
-| `_queries/`                   | `useExplorerData` (records), `useExplorerCountData` (compte total)                                                                                     |
+| Fichier / dossier           | Rôle                                                                                                                                                   |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `useViewSettingsReducer.ts` | Fusionne `currentView` (config display reçue) + état éphémère local (recherche, pagination, sélection de masse)                                        |
+| `manage-view-settings-v2/`  | `store-view-settings/`, `useOpenViewSettingsV2.tsx`, type `ViewType`, `defaultPageSizeOptions`                                                         |
+| store de filtres            | `useControlledFilterStore` (`@leav/ui`), **toujours interne**, semé depuis `currentView.filters` (lean) ; émet via `onFiltersChange` (echo-suppressed) |
+| `ExplorerFilters.tsx`       | Barre de chips de filtres (pinned uniquement) — plus de chip de tri (LEAVC-588)                                                                        |
+| `_queries/`                 | `useExplorerData` (records), `useExplorerCountData` (compte total)                                                                                     |
 
 **Pré-filtres `hidden:true`** : injectés par le parent dans `currentView.filters` (ex. le
 pré-filtre de liaison de `PanelAttributeExplorer`). Ils restent des filtres **pleins** (`HiddenFullFilter`),

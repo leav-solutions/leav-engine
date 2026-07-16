@@ -51,8 +51,8 @@ export const useCurrentView = () => {
         [dispatch],
     );
 
-    const toggleSortPinned = useCallback(
-        (id: string) => dispatch({type: 'TOGGLE_SORT_PINNED', payload: {id}}),
+    const toggleSortActivated = useCallback(
+        (id: string) => dispatch({type: 'TOGGLE_SORT_ACTIVATED', payload: {id}}),
         [dispatch],
     );
 
@@ -142,7 +142,7 @@ export const useCurrentView = () => {
             view?.sorts.map(sort => ({
                 id: getSortId(sort),
                 order: sort.order,
-                pinned: sort.pinned,
+                activated: sort.activated,
                 ids: sort.attributes.map(attribute => attribute.id),
                 // Descent path label, e.g. "Campagnes › Thématiques". A single-attribute sort just
                 // shows that attribute's label.
@@ -151,14 +151,14 @@ export const useCurrentView = () => {
         [view, lang],
     );
 
-    // Pinned sorts keep the view-defined order (= sort priority). Unpinned sorts are sorted
+    // Activated sorts keep the view-defined order (= sort priority). Deactivated sorts are sorted
     // alphabetically. Mirrors visibleColumns / invisibleColumns.
-    const pinnedSorts = useMemo(() => sorts.filter(sort => sort.pinned), [sorts]);
+    const activatedSorts = useMemo(() => sorts.filter(sort => sort.activated), [sorts]);
 
-    const unpinnedSorts = useMemo(
+    const deactivatedSorts = useMemo(
         () =>
             sorts
-                .filter(sort => !sort.pinned)
+                .filter(sort => !sort.activated)
                 .slice()
                 .sort((a, b) => a.label.localeCompare(b.label)),
         [sorts],
@@ -191,7 +191,7 @@ export const useCurrentView = () => {
     );
 
     // Pinned filters keep the view-defined order (= toolbar order). Unpinned filters are sorted
-    // alphabetically. Mirrors pinnedSorts / unpinnedSorts.
+    // alphabetically. Mirrors activatedSorts / deactivatedSorts.
     const pinnedFilters = useMemo(() => filters.filter(filter => filter.pinned), [filters]);
 
     const unpinnedFilters = useMemo(
@@ -223,7 +223,7 @@ export const useCurrentView = () => {
         moveAttribute,
         moveSort,
         setSortOrder,
-        toggleSortPinned,
+        toggleSortActivated,
         moveFilter,
         toggleFilterPinned,
         setFilterConfig,
@@ -239,8 +239,8 @@ export const useCurrentView = () => {
         visibleColumns,
         invisibleColumns,
         sorts,
-        pinnedSorts,
-        unpinnedSorts,
+        activatedSorts,
+        deactivatedSorts,
         filters,
         pinnedFilters,
         unpinnedFilters,

@@ -25,10 +25,10 @@ import {tab, search as searchClass, lists, list, filterChip, emptyBox} from './t
  * Filters tab. Structure (available/pinned/order, search, DnD) is read from the current-view store
  * (`useCurrentView`). The VALUE editor reuses `@leav/ui`'s `CommonFilterItem`, wired to the volet's OWN
  * `FiltersContext` (mounted by `VoletFiltersProvider`, scoped to the volet — Spoke A of the hub & spoke,
- * ADR-006 / LEAVC-810). Editing a pinned filter here writes the value back to the hub (current-view
- * store); ExplorerV2's separate store adopts it (and vice-versa) with full fidelity (values list, tree
- * nodes, badge). Per product decision, only PINNED filters are value-editable; unpinned ones show their
- * stored value read-only with a pin button.
+ * ADR-006 / LEAVC-810). Editing a filter here writes the value back to the hub (current-view store);
+ * ExplorerV2's separate store adopts it (and vice-versa) with full fidelity (values list, tree nodes,
+ * badge). Both pinned and unpinned filters are value-editable: pinning only controls whether the filter
+ * shows as a toolbar chip in ExplorerV2, it stays applied to the records request either way.
  */
 export const TabFilters = () => {
     const {t: tShared} = useSharedTranslation();
@@ -80,15 +80,16 @@ export const TabFilters = () => {
         return <CommonFilterItem filter={uiFilter} isPinned className={filterChip} />;
     };
 
-    // Unpinned → read-only CommonFilterItem from the shared store (dropdown disabled via `disabled`), so
-    // it displays the same rich value formatting as the pinned editor (tree labels, "non défini", dates).
-    // Fallback to a label chip while the store is still seeding the filter.
+    // Unpinned → same live editor as pinned (same shared store, same rich value formatting: tree labels,
+    // "non défini", dates). Unpinned only means "not a toolbar chip in ExplorerV2" — the filter still
+    // applies to the records request and remains fully editable here. Fallback to a label chip while the
+    // store is still seeding the filter.
     const renderUnpinnedFilter = (filter: (typeof filters)[number]) => {
         const uiFilter = storeFilterById.get(filter.id);
         if (!uiFilter) {
             return <KitTypography.Text size="fontSize7">{filter.label}</KitTypography.Text>;
         }
-        return <CommonFilterItem filter={uiFilter} disabled className={filterChip} />;
+        return <CommonFilterItem filter={uiFilter} className={filterChip} />;
     };
 
     if (filters.length === 0) {

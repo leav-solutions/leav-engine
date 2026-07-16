@@ -8,10 +8,10 @@ import {useCurrentView} from '../useCurrentView';
 
 type NonNullSort = NonNullable<CurrentView>['sorts'][number];
 
-const makeSort = (attributePath: string[], order: SortOrder = SortOrder.asc, pinned = true): NonNullSort => ({
+const makeSort = (attributePath: string[], order: SortOrder = SortOrder.asc, activated = true): NonNullSort => ({
     attributes: attributePath.map(id => ({id, label: {en: id.toUpperCase()}})),
     order,
-    pinned,
+    activated,
 });
 
 // Deterministic lang/user without spinning up the providers: the current user is '123'.
@@ -194,8 +194,8 @@ describe('useCurrentView', () => {
                 payload: {id: 'date', order: SortOrder.desc},
             });
 
-            result.current.toggleSortPinned('date');
-            expect(dispatch).toHaveBeenCalledWith({type: 'TOGGLE_SORT_PINNED', payload: {id: 'date'}});
+            result.current.toggleSortActivated('date');
+            expect(dispatch).toHaveBeenCalledWith({type: 'TOGGLE_SORT_ACTIVATED', payload: {id: 'date'}});
 
             result.current.toggleShortcut(ViewV2Shortcut.filters);
             expect(dispatch).toHaveBeenCalledWith({
@@ -206,7 +206,7 @@ describe('useCurrentView', () => {
     });
 
     describe('sorts', () => {
-        it('derives the dnd id, order, pinned flag, attribute ids and label of each sort', () => {
+        it('derives the dnd id, order, activated flag, attribute ids and label of each sort', () => {
             const view = makeView({sorts: [makeSort(['author', 'name'], SortOrder.desc)]});
             const {result} = renderUseCurrentView({view, savedView: view, dispatch: vi.fn()});
 
@@ -214,14 +214,14 @@ describe('useCurrentView', () => {
                 {
                     id: 'author/name',
                     order: SortOrder.desc,
-                    pinned: true,
+                    activated: true,
                     ids: ['author', 'name'],
                     label: 'AUTHOR › NAME',
                 },
             ]);
         });
 
-        it('splits pinned (view order) and unpinned (alphabetical) sorts', () => {
+        it('splits activated (view order) and deactivated (alphabetical) sorts', () => {
             const view = makeView({
                 sorts: [
                     makeSort(['zeta'], SortOrder.asc, true),
@@ -232,10 +232,10 @@ describe('useCurrentView', () => {
             });
             const {result} = renderUseCurrentView({view, savedView: view, dispatch: vi.fn()});
 
-            // Pinned keep the view-defined order (= sort priority).
-            expect(result.current.pinnedSorts.map(sort => sort.id)).toEqual(['zeta', 'alpha']);
-            // Unpinned are sorted alphabetically by label.
-            expect(result.current.unpinnedSorts.map(sort => sort.id)).toEqual(['beta', 'gamma']);
+            // Activated keep the view-defined order (= sort priority).
+            expect(result.current.activatedSorts.map(sort => sort.id)).toEqual(['zeta', 'alpha']);
+            // Deactivated are sorted alphabetically by label.
+            expect(result.current.deactivatedSorts.map(sort => sort.id)).toEqual(['beta', 'gamma']);
         });
     });
 });

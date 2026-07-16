@@ -46,7 +46,7 @@ describe('ViewsV2', () => {
                             withEmptyValues: true,
                         },
                     ],
-                    sorts: [{pinned: false, attributes: ['created_at'], order: SortOrder.asc}],
+                    sorts: [{activated: false, attributes: ['created_at'], order: SortOrder.asc}],
                 },
             });
 
@@ -82,7 +82,7 @@ describe('ViewsV2', () => {
             ]);
             expect(createdView.sorts).toEqual([
                 {
-                    pinned: false,
+                    activated: false,
                     attributes: [expect.objectContaining({id: 'created_at'})],
                     order: SortOrder.asc,
                 },
@@ -255,7 +255,7 @@ describe('ViewsV2', () => {
                             condition: RecordFilterCondition.EQUAL,
                         },
                     ],
-                    sorts: [{pinned: false, attributes: ['created_at'], order: SortOrder.asc}],
+                    sorts: [{activated: false, attributes: ['created_at'], order: SortOrder.asc}],
                 },
             });
             return createViewV2.id;

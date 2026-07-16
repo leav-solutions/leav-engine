@@ -3,6 +3,7 @@ import cn from 'classnames';
 import {DEFAULT_VIEW_SETTINGS_TAB_KEY} from '../../../../constants';
 import {CurrentViewSection} from './current-view-section/CurrentViewSection';
 import {PanelViewSettingsSidebar} from './panel-view-settings-sidebar/PanelViewSettingsSidebar';
+import {useCurrentView} from './store-current-view/useCurrentView';
 import {VIEW_SETTINGS_TABS} from './tabs/_constantes';
 import {type ViewSettingsTab} from '../../types';
 import {TabCatalog} from './tabs/tab-catalog/TabCatalog';
@@ -26,6 +27,22 @@ export const PanelViewSettings = ({
 }) => {
     // Single source of truth for the visible tab rail (sidebar + default-tab guard below).
     const visibleTabs = VIEW_SETTINGS_TABS.filter(({key}) => !hiddenTabs?.includes(key));
+
+    // Green-dot indicator on the sidebar tabs:
+    // - "sorts" is active as soon as at least one sort is activated (an unactivated sort is
+    //   configured but not applied, cf. viewV2ToSerializedView.ts), so an all-deactivated view has
+    //   no active sort even though `sorts` itself is non-empty.
+    // - "filters" is active as soon as at least one filter (pinned or unpinned — the volet gives
+    //   access to the whole facette) actually carries a value: a filter merely made "available" by the
+    //   admin gear is seeded with an empty condition (cf. SET_AVAILABLE_FILTERS) and shouldn't count.
+    const {view, activatedSorts} = useCurrentView();
+    const hasActiveFilterValue = (view?.filters ?? []).some(
+        filter => filter.values.length > 0 || Boolean(filter.withEmptyValues),
+    );
+    const tabsWithActiveValue: ViewSettingsTab[] = [
+        ...(hasActiveFilterValue ? (['filters'] as const) : []),
+        ...(activatedSorts.length > 0 ? (['sorts'] as const) : []),
+    ];
 
     // Keep the active tab out of the hidden set: fall back to the first visible tab whenever the
     // resolved tab is masked, so an opener that hides the default tab never lands on it.
@@ -58,7 +75,12 @@ export const PanelViewSettings = ({
 
     return (
         <div className={root}>
-            <PanelViewSettingsSidebar tabs={visibleTabs} activeTab={activeTab} onTabChange={setActiveTab} />
+            <PanelViewSettingsSidebar
+                tabs={visibleTabs}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                tabsWithActiveValue={tabsWithActiveValue}
+            />
             <div className={rightColumn}>
                 <CurrentViewSection onViewSettingsClose={onClose} />
                 <TabHeader tab={activeTabMeta} />

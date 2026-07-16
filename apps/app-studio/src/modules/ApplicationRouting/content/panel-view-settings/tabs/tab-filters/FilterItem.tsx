@@ -4,14 +4,15 @@ import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import {KitButton, KitTooltip} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faFilter, faGripLines} from '@fortawesome/free-solid-svg-icons';
+import {faThumbtack, faThumbtackSlash, faGripLines} from '@fortawesome/free-solid-svg-icons';
 import {item, handleSlot, dragHandle, dragging, pinButton, pinnedIcon, unpinnedIcon} from './filterItem.module.css';
 
 /**
- * One filter row in the filters tab. Mirrors `SortItem`: drag handle (when pinned) + the value editor
- * (`children`) + a single right-aligned button that IS the pin/unpin toggle. Here that button uses the
- * funnel icon (`faFilter`), blue when pinned (the filter shows in the ExplorerV2 FilterToolBar) and
- * grey otherwise.
+ * One filter row in the filters tab. Mirrors `SortItem`'s structure: drag handle (when pinned) + the
+ * value editor (`children`) + a single right-aligned button that IS the pin/unpin toggle. Unlike
+ * `SortItem`, this button uses the dedicated pin icons (`faThumbtack`/`faThumbtackSlash`, same as the
+ * tab-level pin toggle in `TabHeader.tsx`) rather than the filter's own domain icon, blue when pinned
+ * (the filter shows in the ExplorerV2 FilterToolBar) and grey otherwise.
  */
 export const FilterItem = ({
     id,
@@ -59,7 +60,12 @@ export const FilterItem = ({
                     type="tertiary"
                     size="s"
                     aria-label={pinLabel}
-                    icon={<FontAwesomeIcon className={pinned ? pinnedIcon : unpinnedIcon} icon={faFilter} />}
+                    icon={
+                        <FontAwesomeIcon
+                            className={pinned ? pinnedIcon : unpinnedIcon}
+                            icon={pinned ? faThumbtack : faThumbtackSlash}
+                        />
+                    }
                     onClick={onTogglePinned}
                 />
             </KitTooltip>

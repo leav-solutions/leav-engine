@@ -34,7 +34,7 @@ describe('viewV2Repo', () => {
                 condition: AttributeCondition.EQUAL,
             },
         ],
-        sorts: [{pinned: false, attributes: ['id'], order: SortOrder.ASC}],
+        sorts: [{activated: false, attributes: ['id'], order: SortOrder.ASC}],
         shortcuts: [ViewV2Shortcut.DISPLAY, ViewV2Shortcut.FILTERS],
         shared: false,
         created_by: '1',

@@ -269,6 +269,18 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -348,6 +360,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -460,17 +474,6 @@ export enum FormsSortableFields {
   system = 'system'
 }
 
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
-}
-
 export type GlobalSettingsFileInput = {
   library: Scalars['String']['input'];
   recordId: Scalars['String']['input'];
@@ -572,6 +575,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -749,6 +754,7 @@ export enum PermissionsActions {
   edit_children = 'edit_children',
   edit_record = 'edit_record',
   edit_value = 'edit_value',
+  manage_views = 'manage_views',
   set_value = 'set_value'
 }
 
@@ -960,8 +966,14 @@ export enum TaskType {
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1166,6 +1178,7 @@ export type ViewV2CreateInput = {
   filters?: InputMaybe<Array<ViewV2FilterInput>>;
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
+  origin?: InputMaybe<Scalars['String']['input']>;
   shared: Scalars['Boolean']['input'];
   shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
@@ -1180,6 +1193,7 @@ export type ViewV2DisplayAttributeInput = {
 export type ViewV2DisplayInput = {
   /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<ViewV2DisplayAttributeInput>>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
   type: ViewV2Types;
 };
 
@@ -1188,6 +1202,7 @@ export type ViewV2FilterInput = {
   condition: RecordFilterCondition;
   pinned: Scalars['Boolean']['input'];
   values: Array<InputMaybe<Scalars['String']['input']>>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum ViewV2Shortcut {
@@ -1198,6 +1213,7 @@ export enum ViewV2Shortcut {
 }
 
 export type ViewV2SortInput = {
+  activated: Scalars['Boolean']['input'];
   attributes: Array<Scalars['ID']['input']>;
   order: SortOrder;
 };
@@ -1215,6 +1231,7 @@ export type ViewV2UpdateInput = {
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
+  origin?: InputMaybe<Scalars['String']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
   shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;

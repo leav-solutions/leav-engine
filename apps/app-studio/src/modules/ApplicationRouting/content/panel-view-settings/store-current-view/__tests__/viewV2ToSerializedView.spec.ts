@@ -43,7 +43,7 @@ describe('viewV2ToSerializedView', () => {
         expect(result.attributesIds).toEqual(['attribute_2']);
     });
 
-    it('serializes each pinned sort in order, joining the descent path into a dotted field', () => {
+    it('serializes each activated sort in order, joining the descent path into a dotted field', () => {
         const result = viewV2ToSerializedView(
             makeView({
                 sorts: [
@@ -53,9 +53,9 @@ describe('viewV2ToSerializedView', () => {
                             {id: 'name', label: {}},
                         ],
                         order: SortOrder.desc,
-                        pinned: true,
+                        activated: true,
                     },
-                    {attributes: [{id: 'date', label: {}}], order: SortOrder.asc, pinned: true},
+                    {attributes: [{id: 'date', label: {}}], order: SortOrder.asc, activated: true},
                 ],
             }),
         );
@@ -66,12 +66,12 @@ describe('viewV2ToSerializedView', () => {
         ]);
     });
 
-    it('keeps only pinned sorts (unpinned sorts are configured but not applied)', () => {
+    it('keeps only activated sorts (deactivated sorts are configured but not applied)', () => {
         const result = viewV2ToSerializedView(
             makeView({
                 sorts: [
-                    {attributes: [{id: 'author', label: {}}], order: SortOrder.asc, pinned: false},
-                    {attributes: [{id: 'date', label: {}}], order: SortOrder.desc, pinned: true},
+                    {attributes: [{id: 'author', label: {}}], order: SortOrder.asc, activated: false},
+                    {attributes: [{id: 'date', label: {}}], order: SortOrder.desc, activated: true},
                 ],
             }),
         );
@@ -83,8 +83,8 @@ describe('viewV2ToSerializedView', () => {
         const result = viewV2ToSerializedView(
             makeView({
                 sorts: [
-                    {attributes: [], order: SortOrder.asc, pinned: true},
-                    {attributes: [{id: 'date', label: {}}], order: SortOrder.desc, pinned: true},
+                    {attributes: [], order: SortOrder.asc, activated: true},
+                    {attributes: [{id: 'date', label: {}}], order: SortOrder.desc, activated: true},
                 ],
             }),
         );
@@ -123,7 +123,7 @@ describe('viewV2ToSerializedView', () => {
         ]);
     });
 
-    it('excludes unpinned filters (configured but not applied, like unpinned sorts)', () => {
+    it('includes unpinned filters too (unlike unpinned sorts) — they still apply to the request, just hidden from the toolbar', () => {
         const result = viewV2ToSerializedView(
             makeView({
                 filters: [
@@ -134,6 +134,13 @@ describe('viewV2ToSerializedView', () => {
         );
 
         expect(result.filters).toEqual([
+            {
+                attributes: [{id: 'status', label: {}}],
+                condition: 'EQUAL',
+                values: ['a'],
+                pinned: false,
+                withEmptyValues: false,
+            },
             {
                 attributes: [{id: 'kind', label: {}}],
                 condition: 'EQUAL',

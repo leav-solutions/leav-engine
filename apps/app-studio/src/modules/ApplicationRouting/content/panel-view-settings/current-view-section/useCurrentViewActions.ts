@@ -32,7 +32,7 @@ const mapSorts = (sorts: ViewSorts) =>
     sorts.map(sort => ({
         attributes: sort.attributes.map(attribute => attribute.id),
         order: sort.order,
-        pinned: sort.pinned,
+        activated: sort.activated,
     }));
 
 // `ViewV2FilterInput` carries the attribute path as bare ids; condition+values hold the persisted

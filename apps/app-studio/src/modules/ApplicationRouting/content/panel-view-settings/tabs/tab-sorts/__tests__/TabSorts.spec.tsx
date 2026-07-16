@@ -7,13 +7,13 @@ import {type CurrentViewSort} from '../../../store-current-view/_types';
 import {TabSorts} from '../TabSorts';
 import {SortOrder, ViewV2Types} from '../../../../../../../__generated__';
 
-const makeSort = (id: string, label: string, pinned: boolean): CurrentViewSort => ({
+const makeSort = (id: string, label: string, activated: boolean): CurrentViewSort => ({
     attributes: [{id, label: {fr: label, en: label}}],
     order: SortOrder.asc,
-    pinned,
+    activated,
 });
 
-// Two pinned sorts (kept in view order) and two unpinned ones (sorted alphabetically by label).
+// Two activated sorts (kept in view order) and two deactivated ones (sorted alphabetically by label).
 const SEEDED_SORTS: CurrentViewSort[] = [
     makeSort('sort_a', 'Sort A', true),
     makeSort('sort_b', 'Sort B', true),
@@ -21,7 +21,7 @@ const SEEDED_SORTS: CurrentViewSort[] = [
     makeSort('sort_d', 'Sort D', false),
 ];
 
-// Reducer-backed provider so toggling the pin dispatches real actions and re-renders.
+// Reducer-backed provider so toggling the activation dispatches real actions and re-renders.
 const TabSortsWithState = ({sorts = SEEDED_SORTS}: {sorts?: CurrentViewSort[]}) => {
     const seed = {
         id: 'view-1',
@@ -45,9 +45,9 @@ const TabSortsWithState = ({sorts = SEEDED_SORTS}: {sorts?: CurrentViewSort[]}) 
 describe('TabSorts', () => {
     const user = userEvent.setup();
 
-    // The sorts tab renders exactly two lists, in DOM order: pinned sorts then unpinned sorts.
-    const getPinnedList = () => screen.getAllByRole('list')[0];
-    const getUnpinnedList = () => screen.getAllByRole('list')[1];
+    // The sorts tab renders exactly two lists, in DOM order: activated sorts then deactivated sorts.
+    const getActivatedList = () => screen.getAllByRole('list')[0];
+    const getDeactivatedList = () => screen.getAllByRole('list')[1];
     const getItemByLabel = (list: HTMLElement, label: string) =>
         within(list).getByText(label).closest('li') as HTMLElement;
 
@@ -58,37 +58,37 @@ describe('TabSorts', () => {
         expect(screen.queryAllByRole('list')).toHaveLength(0);
     });
 
-    it('splits pinned sorts (top) from unpinned sorts (bottom)', () => {
+    it('splits activated sorts (top) from deactivated sorts (bottom)', () => {
         render(<TabSortsWithState />);
 
-        expect(within(getPinnedList()).getByText('Sort A')).toBeInTheDocument();
-        expect(within(getPinnedList()).getByText('Sort B')).toBeInTheDocument();
-        expect(within(getUnpinnedList()).getByText('Sort C')).toBeInTheDocument();
-        expect(within(getUnpinnedList()).getByText('Sort D')).toBeInTheDocument();
+        expect(within(getActivatedList()).getByText('Sort A')).toBeInTheDocument();
+        expect(within(getActivatedList()).getByText('Sort B')).toBeInTheDocument();
+        expect(within(getDeactivatedList()).getByText('Sort C')).toBeInTheDocument();
+        expect(within(getDeactivatedList()).getByText('Sort D')).toBeInTheDocument();
     });
 
-    it('moves a sort between the unpinned and pinned lists when toggling the pin', async () => {
+    it('moves a sort between the deactivated and activated lists when toggling activation', async () => {
         render(<TabSortsWithState />);
 
-        expect(within(getUnpinnedList()).getByText('Sort C')).toBeInTheDocument();
-        expect(within(getPinnedList()).queryByText('Sort C')).not.toBeInTheDocument();
+        expect(within(getDeactivatedList()).getByText('Sort C')).toBeInTheDocument();
+        expect(within(getActivatedList()).queryByText('Sort C')).not.toBeInTheDocument();
 
-        // Pin "Sort C" → it moves to the top list.
+        // Activate "Sort C" → it moves to the top list.
         await act(async () => {
             await user.click(
-                within(getItemByLabel(getUnpinnedList(), 'Sort C')).getByLabelText('view_settings.sorts.pin'),
+                within(getItemByLabel(getDeactivatedList(), 'Sort C')).getByLabelText('view_settings.sorts.activate'),
             );
         });
-        expect(within(getPinnedList()).getByText('Sort C')).toBeInTheDocument();
-        expect(within(getUnpinnedList()).queryByText('Sort C')).not.toBeInTheDocument();
+        expect(within(getActivatedList()).getByText('Sort C')).toBeInTheDocument();
+        expect(within(getDeactivatedList()).queryByText('Sort C')).not.toBeInTheDocument();
 
-        // Unpin it again → it moves back to the bottom list.
+        // Deactivate it again → it moves back to the bottom list.
         await act(async () => {
             await user.click(
-                within(getItemByLabel(getPinnedList(), 'Sort C')).getByLabelText('view_settings.sorts.unpin'),
+                within(getItemByLabel(getActivatedList(), 'Sort C')).getByLabelText('view_settings.sorts.deactivate'),
             );
         });
-        expect(within(getUnpinnedList()).getByText('Sort C')).toBeInTheDocument();
-        expect(within(getPinnedList()).queryByText('Sort C')).not.toBeInTheDocument();
+        expect(within(getDeactivatedList()).getByText('Sort C')).toBeInTheDocument();
+        expect(within(getActivatedList()).queryByText('Sort C')).not.toBeInTheDocument();
     });
 });

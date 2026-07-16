@@ -133,7 +133,7 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
 
             return {...view, sorts: view.sorts.toSpliced(index, 1, {...view.sorts[index], order})};
         }
-        case 'TOGGLE_SORT_PINNED': {
+        case 'TOGGLE_SORT_ACTIVATED': {
             const {id} = action.payload;
             const index = view.sorts.findIndex(sort => getSortId(sort) === id);
 
@@ -143,19 +143,19 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
 
             const target = view.sorts[index];
 
-            if (target.pinned) {
-                // Unpinning: flip the flag in place. The array position is irrelevant for unpinned
-                // sorts since the unpinned list is re-sorted alphabetically by the selector.
-                const sorts = view.sorts.toSpliced(index, 1, {...target, pinned: false});
+            if (target.activated) {
+                // Deactivating: flip the flag in place. The array position is irrelevant for
+                // deactivated sorts since the deactivated list is re-sorted alphabetically by the selector.
+                const sorts = view.sorts.toSpliced(index, 1, {...target, activated: false});
 
                 return {...view, sorts};
             }
 
-            // Pinning: flip AND move just after the last pinned sort, so it appends to the end of
-            // the pinned group (mirrors TOGGLE_VISIBILITY). The pinned order IS the sort priority.
+            // Activating: flip AND move just after the last activated sort, so it appends to the end of
+            // the activated group (mirrors TOGGLE_VISIBILITY). The activated order IS the sort priority.
             const withoutTarget = view.sorts.filter((_, i) => i !== index);
-            const lastPinnedPos = withoutTarget.findLastIndex(sort => sort.pinned);
-            const sorts = withoutTarget.toSpliced(lastPinnedPos + 1, 0, {...target, pinned: true});
+            const lastActivatedPos = withoutTarget.findLastIndex(sort => sort.activated);
+            const sorts = withoutTarget.toSpliced(lastActivatedPos + 1, 0, {...target, activated: true});
 
             return {...view, sorts};
         }
@@ -204,7 +204,7 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
             const keptKeys = new Set(kept.map(getSortId));
             const added = sorts
                 .filter(path => !keptKeys.has(pathKey(path)))
-                .map(path => ({attributes: path.attributes, order: SortOrder.asc, pinned: false}));
+                .map(path => ({attributes: path.attributes, order: SortOrder.asc, activated: false}));
 
             return {...view, sorts: [...kept, ...added]};
         }
@@ -226,7 +226,7 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
 
             return {...view, filters: arrayMove(view.filters, from, to)};
         }
-        // Mirror of TOGGLE_SORT_PINNED. Pinning moves the filter just after the last pinned one (its
+        // Mirror of TOGGLE_SORT_ACTIVATED. Pinning moves the filter just after the last pinned one (its
         // toolbar position); unpinning flips the flag in place (the unpinned list is re-sorted alpha).
         case 'TOGGLE_FILTER_PINNED': {
             const {id} = action.payload;

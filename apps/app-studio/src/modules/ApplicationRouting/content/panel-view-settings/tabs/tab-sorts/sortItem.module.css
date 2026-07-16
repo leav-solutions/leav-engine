@@ -42,14 +42,14 @@
     color: var(--general-utilities-text-primary);
 }
 
-.pinButton {
+.activateButton {
     margin-left: auto;
 }
 
-.pinnedIcon {
+.activatedIcon {
     color: var(--general-utilities-text-blue);
 }
 
-.unpinnedIcon {
+.deactivatedIcon {
     color: var(--general-utilities-disabled);
 }
