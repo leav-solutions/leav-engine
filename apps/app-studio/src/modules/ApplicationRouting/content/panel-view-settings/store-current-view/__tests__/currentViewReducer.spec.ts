@@ -10,15 +10,15 @@ const makeAttributes = (
 ): NonNullState['display']['attributes'] =>
     defs.map(({id, label, visible}) => ({visible, attribute: {id, label: {en: label}}}));
 
-const makeSorts = (ids: string[], pinned = true): NonNullState['sorts'] =>
-    ids.map(id => ({attributes: [{id, label: {en: id.toUpperCase()}}], order: SortOrder.asc, pinned}));
+const makeSorts = (ids: string[], activated = true): NonNullState['sorts'] =>
+    ids.map(id => ({attributes: [{id, label: {en: id.toUpperCase()}}], order: SortOrder.asc, activated}));
 
 // A sort whose path descends through several attributes (link-attribute descent). Its DnD id is the
 // joined attribute ids (e.g. 'author/name'), per getSortId.
-const makeCompositeSort = (attributePath: string[], pinned = true): NonNullState['sorts'][number] => ({
+const makeCompositeSort = (attributePath: string[], activated = true): NonNullState['sorts'][number] => ({
     attributes: attributePath.map(id => ({id, label: {en: id.toUpperCase()}})),
     order: SortOrder.asc,
-    pinned,
+    activated,
 });
 
 const sortIds = (view: NonNullState) => view.sorts.map(sort => sort.attributes.map(attr => attr.id).join('/'));
@@ -192,38 +192,42 @@ describe('viewReducer (display actions)', () => {
         });
     });
 
-    describe('TOGGLE_SORT_PINNED', () => {
-        const pinnedOf = (view: NonNullState, id: string) =>
-            view.sorts.find(sort => sort.attributes.map(attr => attr.id).join('/') === id)?.pinned;
+    describe('TOGGLE_SORT_ACTIVATED', () => {
+        const activatedOf = (view: NonNullState, id: string) =>
+            view.sorts.find(sort => sort.attributes.map(attr => attr.id).join('/') === id)?.activated;
 
-        it('unpins a pinned sort in place (order unchanged)', () => {
+        it('deactivates an activated sort in place (order unchanged)', () => {
             const view = makeView({sorts: makeSorts(['a', 'b', 'c'])});
-            const next = viewReducer(view, {type: 'TOGGLE_SORT_PINNED', payload: {id: 'a'}});
-            expect(pinnedOf(next, 'a')).toBe(false);
+            const next = viewReducer(view, {type: 'TOGGLE_SORT_ACTIVATED', payload: {id: 'a'}});
+            expect(activatedOf(next, 'a')).toBe(false);
             expect(sortIds(next)).toEqual(['a', 'b', 'c']);
         });
 
-        it('pins an unpinned sort and appends it after the last pinned sort', () => {
-            // a(pinned), b(pinned), c(unpinned), d(unpinned). Pinning 'd' must move it just after the
-            // last pinned sort 'b', proving the repositioning — not merely the flag flip.
+        it('activates a deactivated sort and appends it after the last activated sort', () => {
+            // a(activated), b(activated), c(deactivated), d(deactivated). Activating 'd' must move it
+            // just after the last activated sort 'b', proving the repositioning — not merely the flag flip.
             const view = makeView({sorts: [...makeSorts(['a', 'b']), ...makeSorts(['c', 'd'], false)]});
-            const next = viewReducer(view, {type: 'TOGGLE_SORT_PINNED', payload: {id: 'd'}});
-            expect(pinnedOf(next, 'd')).toBe(true);
-            expect(next.sorts.filter(sort => sort.pinned).map(sort => sort.attributes[0].id)).toEqual(['a', 'b', 'd']);
+            const next = viewReducer(view, {type: 'TOGGLE_SORT_ACTIVATED', payload: {id: 'd'}});
+            expect(activatedOf(next, 'd')).toBe(true);
+            expect(next.sorts.filter(sort => sort.activated).map(sort => sort.attributes[0].id)).toEqual([
+                'a',
+                'b',
+                'd',
+            ]);
             expect(sortIds(next)).toEqual(['a', 'b', 'd', 'c']);
         });
 
-        it('pins an unpinned sort at the front when none is pinned', () => {
+        it('activates a deactivated sort at the front when none is activated', () => {
             const view = makeView({sorts: makeSorts(['a', 'b'], false)});
-            const next = viewReducer(view, {type: 'TOGGLE_SORT_PINNED', payload: {id: 'b'}});
+            const next = viewReducer(view, {type: 'TOGGLE_SORT_ACTIVATED', payload: {id: 'b'}});
             expect(sortIds(next)).toEqual(['b', 'a']);
-            expect(next.sorts[0].pinned).toBe(true);
+            expect(next.sorts[0].activated).toBe(true);
         });
 
         it('targets a sort identified by its composite attribute path', () => {
             const view = makeView({sorts: [makeCompositeSort(['author', 'name'], false)]});
-            const next = viewReducer(view, {type: 'TOGGLE_SORT_PINNED', payload: {id: 'author/name'}});
-            expect(pinnedOf(next, 'author/name')).toBe(true);
+            const next = viewReducer(view, {type: 'TOGGLE_SORT_ACTIVATED', payload: {id: 'author/name'}});
+            expect(activatedOf(next, 'author/name')).toBe(true);
         });
     });
 
@@ -292,7 +296,7 @@ describe('viewReducer (display actions)', () => {
         it('keeps still-selected sorts (priority order + asc/desc), appends new ones ascending, drops the rest', () => {
             const view = makeView({
                 sorts: [
-                    {attributes: [{id: 'date', label: {en: 'DATE'}}], order: SortOrder.desc, pinned: true},
+                    {attributes: [{id: 'date', label: {en: 'DATE'}}], order: SortOrder.desc, activated: true},
                     makeCompositeSort(['author', 'name']),
                 ],
             });
@@ -313,15 +317,15 @@ describe('viewReducer (display actions)', () => {
             });
 
             // 'date' deselected → dropped; 'author/name' kept (and keeps its ascending order);
-            // 'price' is new → appended ascending and unpinned by default.
+            // 'price' is new → appended ascending and deactivated by default.
             expect(sortIds(next)).toEqual(['author/name', 'price']);
             expect(next.sorts[1].order).toBe(SortOrder.asc);
-            expect(next.sorts[1].pinned).toBe(false);
+            expect(next.sorts[1].activated).toBe(false);
         });
 
         it('preserves the asc/desc order of a kept sort', () => {
             const view = makeView({
-                sorts: [{attributes: [{id: 'date', label: {en: 'DATE'}}], order: SortOrder.desc, pinned: true}],
+                sorts: [{attributes: [{id: 'date', label: {en: 'DATE'}}], order: SortOrder.desc, activated: true}],
             });
             const next = viewReducer(view, {
                 type: 'SET_AVAILABLE_SORTS',

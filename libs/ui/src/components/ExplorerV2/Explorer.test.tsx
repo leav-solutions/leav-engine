@@ -2084,7 +2084,6 @@ describe('Explorer', () => {
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
             expect(within(toolbar).getByText(simpleMockAttribute.label.fr)).toBeVisible();
-            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
 
             expect(spy).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -2144,7 +2143,6 @@ describe('Explorer', () => {
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
-            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
 
             expect(spy).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -2663,7 +2661,6 @@ describe('Explorer', () => {
             expect(
                 within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)}),
             ).not.toHaveClass('kit-filter-disabled');
-            expect(within(toolbar).getByRole('button', {name: /sort-items/})).not.toHaveClass('kit-filter-disabled');
 
             // AND only the first record is displayed
             const tableRows = screen.getAllByRole('row');
@@ -2678,11 +2675,10 @@ describe('Explorer', () => {
 
             // THEN the select all checkbox is totally checked
             expect(within(toolbar).getByRole('checkbox')).toBeChecked();
-            // AND the rest of toolbar: sort and filter are disabled only
+            // AND the rest of toolbar: filter is disabled only
             expect(within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)})).toHaveClass(
                 'kit-filter-disabled',
             );
-            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toHaveClass('kit-filter-disabled');
 
             // AND the first record is selected
             const [firstRecordRow] = screen.getAllByRole('row');
@@ -2715,11 +2711,10 @@ describe('Explorer', () => {
             // AND the second record is locked
             expect(within(secondSelectRowCell).getByRole('checkbox')).toBeDisabled();
             expect(within(secondRecordRow).getByRole('button', {name: /deactivate-item/})).toBeDisabled();
-            // AND the toolbar: sort and filters stay disabled but displayed
+            // AND the toolbar: filter stays disabled but displayed
             expect(within(toolbar).getByRole('button', {name: new RegExp(simpleMockAttribute.label.fr)})).toHaveClass(
                 'kit-filter-disabled',
             );
-            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toHaveClass('kit-filter-disabled');
 
             // AND the snackbar is up to date with the count of selected items
             expect(screen.getByRole('status').textContent).toContain('massAction.selectedItems|2');
@@ -3077,26 +3072,24 @@ describe('Explorer', () => {
                 () => mockExplorerAttributesPermissionsQueryResult as gqlTypes.ExplorerAttributesQueryResult,
             );
 
-            const spyUseAttributeDetailsData = vi
-                .spyOn(attributeDetailsModule, 'useAttributeDetailsData')
-                .mockReturnValue({
-                    // Only attributes the user has access to
-                    attributeDetailsById: {
-                        [simpleMockAttribute.id]: {
-                            id: simpleMockAttribute.id,
-                            type: simpleMockAttribute.type,
-                            format: simpleMockAttribute.format,
-                            label: simpleMockAttribute.label.fr,
-                        },
-                        [simpleColorMockAttribute.id]: {
-                            id: simpleColorMockAttribute.id,
-                            type: simpleColorMockAttribute.type,
-                            format: simpleColorMockAttribute.format,
-                            label: simpleColorMockAttribute.label.fr,
-                        },
+            vi.spyOn(attributeDetailsModule, 'useAttributeDetailsData').mockReturnValue({
+                // Only attributes the user has access to
+                attributeDetailsById: {
+                    [simpleMockAttribute.id]: {
+                        id: simpleMockAttribute.id,
+                        type: simpleMockAttribute.type,
+                        format: simpleMockAttribute.format,
+                        label: simpleMockAttribute.label.fr,
                     },
-                    isLoading: false,
-                } as any);
+                    [simpleColorMockAttribute.id]: {
+                        id: simpleColorMockAttribute.id,
+                        type: simpleColorMockAttribute.type,
+                        format: simpleColorMockAttribute.format,
+                        label: simpleColorMockAttribute.label.fr,
+                    },
+                },
+                isLoading: false,
+            } as any);
 
             vi.spyOn(console, 'warn').mockImplementationOnce(() => vi.fn());
 
@@ -3134,7 +3127,6 @@ describe('Explorer', () => {
             expect(await within(toolbar).findByText(simpleMockAttribute.label.fr)).toBeVisible();
 
             expect(within(toolbar).queryByText(booleanMockAttribute.label.fr)).not.toBeInTheDocument();
-            expect(spyUseAttributeDetailsData).toHaveBeenCalled();
 
             expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
@@ -3151,7 +3143,9 @@ describe('Explorer', () => {
             );
         });
 
-        test('Should display sorts', async () => {
+        // The sort chip (`sort-items`) was removed from ExplorerFilters (LEAVC-588): a sort
+        // is surfaced only through the "sorts" view-settings shortcut button, never as a toolbar chip.
+        test('never displays a sort chip in the toolbar, even when showSorts is set and currentView.sort is not empty', async () => {
             render(
                 <ExplorerV2
                     entrypoint={libraryEntrypoint}
@@ -3170,18 +3164,23 @@ describe('Explorer', () => {
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
 
-            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
+            expect(within(toolbar).queryByRole('button', {name: /sort-items/})).not.toBeInTheDocument();
         });
 
-        test('Should not display sorts', async () => {
+        // Compensates for the removed chip: the "sorts" view-settings shortcut button is forced into
+        // the toolbar when a sort is active, even if "sorts" is not part of currentView.shortcuts,
+        // provided the host enables view settings management (onViewSettingsShortcutClick).
+        test('displays the sorts shortcut button when a sort is active but "sorts" is not a configured shortcut', async () => {
             render(
                 <ExplorerV2
                     entrypoint={libraryEntrypoint}
+                    showSorts
+                    defaultCallbacks={{viewSettings: {onViewSettingsShortcutClick: vi.fn()}}}
                     currentView={{
                         sort: [
                             {
-                                field: simpleColorMockAttribute.id,
-                                order: gqlTypes.SortOrder.desc,
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc,
                             },
                         ],
                     }}
@@ -3191,7 +3190,7 @@ describe('Explorer', () => {
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
 
-            expect(within(toolbar).queryByRole('button', {name: /sort-items/})).not.toBeInTheDocument();
+            expect(within(toolbar).getByRole('button', {name: 'explorer.viewSettings.sorts'})).toBeVisible();
         });
 
         // Pure consumer (ADR-006): ExplorerV2 forwards every sort declared in `currentView` to the
@@ -3224,8 +3223,6 @@ describe('Explorer', () => {
 
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
-
-            expect(within(toolbar).getByRole('button', {name: /sort-items/})).toBeVisible();
 
             expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({

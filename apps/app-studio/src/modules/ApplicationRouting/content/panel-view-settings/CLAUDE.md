@@ -30,7 +30,7 @@ header `CurrentViewSection`.
 ### Actions reducer (`currentViewReducer.ts` / `_types.ts`)
 
 `LOAD_VIEW`, `RESET_VIEW`, `MARK_SAVED`, `SET_LABEL`, `SET_SHARED`, `SET_VIEW_TYPE`,
-`TOGGLE_VISIBILITY`, `MOVE_ATTRIBUTE`, **`MOVE_SORT`**, **`SET_SORT_ORDER`**,
+`TOGGLE_VISIBILITY`, `MOVE_ATTRIBUTE`, **`MOVE_SORT`**, **`SET_SORT_ORDER`**, **`TOGGLE_SORT_ACTIVATED`**,
 **`MOVE_FILTER`**, **`TOGGLE_FILTER_PINNED`**, **`SET_FILTER_CONFIG`** (condition+valeurs **+ `withEmptyValues`**
 d'un filtre ; dispatché soit par `VoletFiltersProvider` (édition volet), soit par `useViewSettingsProps.onFiltersChange`
 (édition/suppression depuis la `FilterToolBar` d'ExplorerV2) → persistance/`isDirty`. **Durci G1** : renvoie
@@ -56,10 +56,10 @@ ne boucle pas).
 
 Expose `view`, `savedView`, `isOwner`, `canManageCurrentView`, `canManageViews`, `isDirty`, `origin`
 (kind de la vue courante, cf. `## Panels custom & origine`), `visibleColumns`, `invisibleColumns`,
-`sorts`, `pinnedSorts`, `unpinnedSorts`, `filters`, `pinnedFilters`, `unpinnedFilters`,
+`sorts`, `activatedSorts`, `deactivatedSorts`, `filters`, `pinnedFilters`, `unpinnedFilters`,
 `availableColumnIds`, `availableSortPaths`, `availableFilterPaths`,
 et les dispatchers : `setViewType`, `toggleVisibility`, `moveAttribute`, `moveSort`, `setSortOrder`,
-`toggleSortPinned`, `moveFilter`, `toggleFilterPinned`, `setFilterConfig`,
+`toggleSortActivated`, `moveFilter`, `toggleFilterPinned`, `setFilterConfig`,
 `setLabel`, `setShared`, `setDisplaySettings`, `setAvailableColumns`, `setAvailableSorts`,
 `setAvailableFilters`, `resetView`, `markSaved`.
 
@@ -83,12 +83,12 @@ et les dispatchers : `setViewType`, `toggleVisibility`, `moveAttribute`, `moveSo
 
 ## Onglets (`tabs/`)
 
-| Onglet         | Statut | Notes                                                                                                                                                                                                                                                                  |
-| -------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tab-display/` | ✅     | Colonnes visibles/cachées (DnD dnd-kit) + sélecteur de type de vue                                                                                                                                                                                                     |
-| `tab-catalog/` | ✅     | `useViewCatalog` scinde `myViews` / `sharedViews` ; dernière vue via localStorage ; modale unsaved                                                                                                                                                                     |
-| `tab-sorts/`   | ✅     | Tris réordonnables (DnD dnd-kit) + bascule asc/desc (`KitFilter`) ; ordre du tableau = priorité                                                                                                                                                                        |
-| `tab-filters/` | ✅     | Filtres épinglables/réordonnables (DnD) + recherche. Les **épinglés** sont édités via `CommonFilterItem` branché sur le **store de filtres du volet** (`VoletFiltersProvider`, Spoke A, cf. ci-dessous) ; les **non-épinglés** sont en lecture seule (bouton épingle). |
+| Onglet         | Statut | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| -------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tab-display/` | ✅     | Colonnes visibles/cachées (DnD dnd-kit) + sélecteur de type de vue                                                                                                                                                                                                                                                                                                                                                                                   |
+| `tab-catalog/` | ✅     | `useViewCatalog` scinde `myViews` / `sharedViews` ; dernière vue via localStorage ; modale unsaved                                                                                                                                                                                                                                                                                                                                                   |
+| `tab-sorts/`   | ✅     | Tris réordonnables (DnD dnd-kit) + bascule asc/desc (`KitFilter`) ; ordre du tableau = priorité                                                                                                                                                                                                                                                                                                                                                      |
+| `tab-filters/` | ✅     | Filtres épinglables/réordonnables (DnD) + recherche. Pinned **et** non-pinned sont édités via `CommonFilterItem` branché sur le **store de filtres du volet** (`VoletFiltersProvider`, Spoke A, cf. ci-dessous) — seul le pin change (bouton dédié, icône `faThumbtack`/`faThumbtackSlash`, cf. `FilterItem.tsx`) : un filtre non épinglé reste éditable et s'applique quand même à la requête, il n'apparaît juste pas en chip toolbar (LEAVC-588). |
 
 > Détail tris : clé DnD = **`getSortId(sort)`** (ids du chemin joints par `/`, cf. JSDoc dans
 > `store-current-view/_types.ts`) — DnD et reducer doivent s'accorder dessus. La config des
@@ -106,12 +106,16 @@ Convertit la `ViewV2` GraphQL en `SerializedView` (contrat consommé par la prop
   est le **chemin de descente joint par `.`** — format compris par la query records (cf. core
   `getAttributesFromField`) : `campagnes.label` trie sur un attribut lié, `campagnes` seul trie sur
   l'identité de l'enregistrement lié. Un tri mono-attribut donne juste l'id de l'attribut.
-- **`filters`** : les filtres utilisateur **épinglés**, dans l'ordre de la vue (= ordre toolbar), en forme
-  **lean** sérialisable (`{attributes, condition, values, pinned, withEmptyValues}`). Non-épinglés exclus
-  (comme les tris non épinglés). Les filtres user **retransitent par `currentView`** — la **déviation ADR-006 « filtres
-  hors de currentView » est annulée** (voir `## Filtres : hub & spoke`). Les pré-filtres masqués
-  `hidden:true` (ex. pré-filtre de liaison) restent injectés **séparément** par l'appelant dans
-  `currentView.filters` comme filtres **pleins** et fusionnés à la requête par ExplorerV2 (jamais affichés).
+- **`filters`** : **tous** les filtres utilisateur (pinned **et** non-pinned), dans l'ordre de la vue
+  (= ordre toolbar pour les pinned), en forme **lean** sérialisable (`{attributes, condition, values,
+pinned, withEmptyValues}`) avec le vrai flag `pinned` par filtre. Contrairement aux tris (qui
+  n'exposent que les pinned — un tri non épinglé est configuré mais pas appliqué), un filtre non
+  épinglé **s'applique quand même** à la requête records ; seule sa visibilité en chip toolbar
+  d'ExplorerV2 dépend du pin (LEAVC-588 — cf. `ExplorerV2/CLAUDE.md`). Les filtres user
+  **retransitent par `currentView`** — la **déviation ADR-006 « filtres hors de currentView » est
+  annulée** (voir `## Filtres : hub & spoke`). Les pré-filtres masqués `hidden:true` (ex. pré-filtre
+  de liaison) restent injectés **séparément** par l'appelant dans `currentView.filters` comme
+  filtres **pleins** et fusionnés à la requête par ExplorerV2 (jamais affichés).
 - **`shortcuts`** : onglets du volet exposés en boutons-raccourcis (`display | filters | sorts |
 catalog`), recopiés tels quels avec fallback `['display']` (LEAVC-892). L'ordre d'affichage est
   imposé côté ExplorerV2 (ordre canonique), pas par cette liste.
@@ -141,11 +145,17 @@ via le hook partagé **`useControlledFilterStore`** (`@leav/ui`) et n'écrivent 
 partager de `FiltersContext`** :
 
 - **Spoke A — volet** (`VoletFiltersProvider`, monté dans `ViewSettingsContainer` autour de
-  `PanelViewSettings`, jamais autour de l'explorer) : semé des filtres **épinglés** lean ; `onChange`
-  réécrit au hub via `setFilterConfig`. `CommonFilterItem` (onglet Filtres) édite ce store.
-- **Spoke B — store interne d'ExplorerV2** : semé de `currentView.filters` (lean) ; `onChange` =
-  `useViewSettingsProps.onFiltersChange` qui **réconcilie l'ensemble lean** contre le hub (setFilterConfig
-  pour les présents ; `toggleFilterPinned` pour un épinglé **absent** = suppression depuis la toolbar).
+  `PanelViewSettings`, jamais autour de l'explorer) : semé de **tous** les filtres (pinned et non
+  pinned) de `view.filters` lean — les deux sections (épinglés/non-épinglés) de l'onglet Filtres
+  éditent le même store, seul le pin diffère ; `onChange` réécrit au hub via `setFilterConfig`
+  (pin-agnostic, ne touche jamais `pinned`). `CommonFilterItem` (onglet Filtres) édite ce store.
+- **Spoke B — store interne d'ExplorerV2** : semé de **tous** les filtres de `currentView.filters`
+  (lean, pinned et non pinned depuis LEAVC-588) — un filtre non épinglé s'applique donc à la requête
+  mais n'est filtré qu'à l'affichage (chip toolbar pinned-only, cf. `ExplorerV2/CLAUDE.md`) ;
+  `onChange` = `useViewSettingsProps.onFiltersChange` qui **réconcilie l'ensemble lean** contre le hub
+  (`setFilterConfig` pour les présents ; `toggleFilterPinned` pour un épinglé **absent** =
+  suppression depuis la toolbar — cette détection ne regarde que les `pinnedFilters` du hub, donc
+  reste correcte même si l'ensemble reçu contient aussi des filtres non épinglés).
 
 ### Pourquoi un `VoletFiltersProvider` séparé, et pas la logique dans `CurrentViewStoreProvider` ?
 

@@ -1,6 +1,6 @@
 import {type ReactNode, type FunctionComponent} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {ExplorerFiltersAndSorts} from './ExplorerFiltersAndSorts';
+import {ExplorerFilters} from './ExplorerFilters';
 import styled from 'styled-components';
 
 const ExplorerToolbarListStyled = styled.ul`
@@ -39,22 +39,20 @@ const Section = styled.div`
 export const ExplorerToolbar: FunctionComponent<{
     isMassSelectionAll: boolean;
     showFilters: boolean;
-    showSorts: boolean;
+    pinnedFilterIds: Set<string>;
     headless: boolean;
     canRemoveFilters: boolean;
     selectAllButton: ReactNode | null;
     viewSettingsLoading: boolean;
-    onSortClick?: () => void;
     children?: ReactNode;
 }> = ({
     isMassSelectionAll,
     showFilters,
-    showSorts,
+    pinnedFilterIds,
     headless,
     canRemoveFilters,
     selectAllButton,
     viewSettingsLoading,
-    onSortClick,
     children,
 }) => {
     const {t} = useSharedTranslation();
@@ -63,13 +61,12 @@ export const ExplorerToolbar: FunctionComponent<{
         <ExplorerToolbarListStyled aria-label={t('explorer.toolbar')} className={headless ? 'headless' : ''}>
             <Section>
                 {!viewSettingsLoading && (
-                    <ExplorerFiltersAndSorts
+                    <ExplorerFilters
                         selectAllButton={selectAllButton}
                         showFilters={showFilters}
-                        showSorts={showSorts}
+                        pinnedFilterIds={pinnedFilterIds}
                         canRemoveFilters={canRemoveFilters}
                         isMassSelectionAll={isMassSelectionAll}
-                        onSortClick={onSortClick}
                     />
                 )}
             </Section>

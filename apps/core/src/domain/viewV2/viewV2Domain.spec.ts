@@ -49,7 +49,7 @@ describe('viewV2Domain', () => {
                 condition: AttributeCondition.EQUAL,
             },
         ],
-        sorts: [{pinned: false, attributes: ['id'], order: SortOrder.ASC}],
+        sorts: [{activated: false, attributes: ['id'], order: SortOrder.ASC}],
         shortcuts: [ViewV2Shortcut.DISPLAY, ViewV2Shortcut.FILTERS],
     };
 
@@ -60,8 +60,8 @@ describe('viewV2Domain', () => {
         created_at: 1234567890,
         modified_at: 1234567890,
         sorts: [
-            {pinned: false, attributes: ['id'], order: SortOrder.ASC},
-            {pinned: false, attributes: ['label'], order: SortOrder.ASC},
+            {activated: false, attributes: ['id'], order: SortOrder.ASC},
+            {activated: false, attributes: ['label'], order: SortOrder.ASC},
         ],
     };
 
@@ -207,14 +207,14 @@ describe('viewV2Domain', () => {
 
             await expect(
                 domain.createViewV2(
-                    {...mockViewV2CreateInput, sorts: [{pinned: false, attributes: [], order: SortOrder.ASC}]},
+                    {...mockViewV2CreateInput, sorts: [{activated: false, attributes: [], order: SortOrder.ASC}]},
                     mockCtx,
                 ),
             ).rejects.toThrow(ValidationError);
             expect(mockViewV2Repo.createViewV2).not.toBeCalled();
         });
 
-        test('Should throw ValidationError when a sort has no pinned', async () => {
+        test('Should throw ValidationError when a sort has no activated', async () => {
             const domain = viewV2Domain({
                 ...depsBase,
                 'core.domain.helpers.validate': mockValidationHelper as IValidateHelper,

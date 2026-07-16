@@ -33,7 +33,7 @@ fragment AppStudioViewSettingsView on ViewV2 {
             label
         }
         order
-        pinned
+        activated
     }
     filters {
         attributes {

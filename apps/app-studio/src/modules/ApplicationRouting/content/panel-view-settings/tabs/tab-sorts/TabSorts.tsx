@@ -20,14 +20,14 @@ import {tab, lists, list, sortFilter, emptyBox} from './tabSorts.module.css';
 // not here — see TabHeader. This tab only renders the list of configured sorts.
 export const TabSorts = () => {
     const {t} = useSharedTranslation();
-    const {sorts, pinnedSorts, unpinnedSorts, moveSort, setSortOrder, toggleSortPinned} = useCurrentView();
+    const {sorts, activatedSorts, deactivatedSorts, moveSort, setSortOrder, toggleSortActivated} = useCurrentView();
 
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates}),
     );
 
-    // The order of the pinned sorts list IS the order in which sorts are applied in the explorer.
+    // The order of the activated sorts list IS the order in which sorts are applied in the explorer.
     const handleDragEnd = ({active, over}: DragEndEvent) => {
         if (over && active.id !== over.id) {
             moveSort(String(active.id), String(over.id));
@@ -67,7 +67,7 @@ export const TabSorts = () => {
     return (
         <div className={tab}>
             <div className={lists}>
-                {pinnedSorts.length > 0 && (
+                {activatedSorts.length > 0 && (
                     <DndContext
                         sensors={sensors}
                         collisionDetection={closestCenter}
@@ -75,16 +75,16 @@ export const TabSorts = () => {
                         modifiers={[restrictToVerticalAxis, restrictToParentElement]}
                     >
                         <SortableContext
-                            items={pinnedSorts.map(sort => sort.id)}
+                            items={activatedSorts.map(sort => sort.id)}
                             strategy={verticalListSortingStrategy}
                         >
                             <ul className={list}>
-                                {pinnedSorts.map(sort => (
+                                {activatedSorts.map(sort => (
                                     <SortItem
                                         key={sort.id}
                                         id={sort.id}
-                                        pinned
-                                        onTogglePinned={() => toggleSortPinned(sort.id)}
+                                        activated
+                                        onToggleActivated={() => toggleSortActivated(sort.id)}
                                     >
                                         {renderSortFilter(sort)}
                                     </SortItem>
@@ -93,16 +93,16 @@ export const TabSorts = () => {
                         </SortableContext>
                     </DndContext>
                 )}
-                {pinnedSorts.length > 0 && unpinnedSorts.length > 0 && <KitDivider noMargin />}
-                {unpinnedSorts.length > 0 && (
+                {activatedSorts.length > 0 && deactivatedSorts.length > 0 && <KitDivider noMargin />}
+                {deactivatedSorts.length > 0 && (
                     <ul className={list}>
-                        {unpinnedSorts.map(sort => (
+                        {deactivatedSorts.map(sort => (
                             <SortItem
                                 key={sort.id}
                                 id={sort.id}
-                                pinned={false}
+                                activated={false}
                                 draggable={false}
-                                onTogglePinned={() => toggleSortPinned(sort.id)}
+                                onToggleActivated={() => toggleSortActivated(sort.id)}
                             >
                                 {renderSortFilter(sort, true)}
                             </SortItem>

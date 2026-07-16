@@ -2,6 +2,15 @@ import userEvent from '@testing-library/user-event';
 import {act, render, screen} from '_ui/_tests/testUtils';
 import {PanelViewSettings} from '../PanelViewSettings';
 
+let mockFilters: unknown[];
+let mockActivatedSorts: unknown[];
+
+// Only `view.filters`/`activatedSorts` (used for the sidebar's green-dot indicator) are exercised
+// here; other fields aren't read by `PanelViewSettings`.
+vi.mock('../store-current-view/useCurrentView', () => ({
+    useCurrentView: () => ({view: {filters: mockFilters}, activatedSorts: mockActivatedSorts}),
+}));
+
 // The tab contents pull in the whole view store / network stack; the sidebar rail and the
 // default-tab guard are what we exercise here, so stub the heavy children out.
 vi.mock('../current-view-section/CurrentViewSection', () => ({
@@ -29,6 +38,63 @@ const LABEL_BY_TAB = {
 const tabLabel = (key: keyof typeof LABEL_BY_TAB) => LABEL_BY_TAB[key];
 
 describe('PanelViewSettings', () => {
+    beforeEach(() => {
+        mockFilters = [];
+        mockActivatedSorts = [];
+    });
+
+    it('shows a green dot on the filters/sorts tab buttons when they have an active value', () => {
+        mockFilters = [{id: 'attr1', values: ['value'], withEmptyValues: false}];
+        mockActivatedSorts = [{id: 'attr2'}];
+        render(<PanelViewSettings libraryId="lib" onClose={vi.fn()} />);
+
+        const filtersBadge = screen.getByLabelText(tabLabel('filters')).closest('.ant-badge');
+        const sortsBadge = screen.getByLabelText(tabLabel('sorts')).closest('.ant-badge');
+        const displayBadge = screen.getByLabelText(tabLabel('display')).closest('.ant-badge');
+
+        expect(filtersBadge?.querySelector('.ant-badge-dot')).toBeInTheDocument();
+        expect(sortsBadge?.querySelector('.ant-badge-dot')).toBeInTheDocument();
+        expect(displayBadge?.querySelector('.ant-badge-dot')).not.toBeInTheDocument();
+    });
+
+    it('shows no green dot on the filters/sorts tab buttons when there is no active value', () => {
+        render(<PanelViewSettings libraryId="lib" onClose={vi.fn()} />);
+
+        const filtersBadge = screen.getByLabelText(tabLabel('filters')).closest('.ant-badge');
+        const sortsBadge = screen.getByLabelText(tabLabel('sorts')).closest('.ant-badge');
+
+        expect(filtersBadge?.querySelector('.ant-badge-dot')).not.toBeInTheDocument();
+        expect(sortsBadge?.querySelector('.ant-badge-dot')).not.toBeInTheDocument();
+    });
+
+    it('shows no green dot on the sorts tab button when every sort is deactivated', () => {
+        // `activatedSorts` reflects only activated sorts (cf. useCurrentView) — an
+        // all-deactivated view must therefore have no active sort, even though sorts exist.
+        mockActivatedSorts = [];
+        render(<PanelViewSettings libraryId="lib" onClose={vi.fn()} />);
+
+        const sortsBadge = screen.getByLabelText(tabLabel('sorts')).closest('.ant-badge');
+        expect(sortsBadge?.querySelector('.ant-badge-dot')).not.toBeInTheDocument();
+    });
+
+    it('shows no green dot on the filters tab button when a filter exists but has no value', () => {
+        // A filter merely made "available" by the admin gear is seeded with empty values and no
+        // `withEmptyValues` — it must not count as active, regardless of its pin state.
+        mockFilters = [{id: 'attr1', values: [], withEmptyValues: false}];
+        render(<PanelViewSettings libraryId="lib" onClose={vi.fn()} />);
+
+        const filtersBadge = screen.getByLabelText(tabLabel('filters')).closest('.ant-badge');
+        expect(filtersBadge?.querySelector('.ant-badge-dot')).not.toBeInTheDocument();
+    });
+
+    it('shows a green dot on the filters tab button for an unpinned filter with a value', () => {
+        mockFilters = [{id: 'attr1', pinned: false, values: [], withEmptyValues: true}];
+        render(<PanelViewSettings libraryId="lib" onClose={vi.fn()} />);
+
+        const filtersBadge = screen.getByLabelText(tabLabel('filters')).closest('.ant-badge');
+        expect(filtersBadge?.querySelector('.ant-badge-dot')).toBeInTheDocument();
+    });
+
     it('renders all four tab buttons without hiddenTabs', () => {
         render(<PanelViewSettings libraryId="lib" onClose={vi.fn()} />);
 

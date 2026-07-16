@@ -174,8 +174,8 @@
         },
         "sorts": {
             "manage_available": "Manage available attributes",
-            "pin": "Pin",
-            "unpin": "Unpin"
+            "activate": "Activate",
+            "deactivate": "Deactivate"
         },
         "filters": {
             "manage_available": "Manage available attributes",

@@ -42,7 +42,7 @@ export interface IViewV2Filter {
 }
 
 export interface IViewV2Sort {
-    pinned: boolean;
+    activated: boolean;
     attributes: string[];
     order: SortOrder;
 }

@@ -59,8 +59,8 @@ beforeEach(() => {
             ],
         },
         sorts: [
-            {order: SortOrder.asc, pinned: true, attributes: [{id: 'a'}]},
-            {order: SortOrder.desc, pinned: false, attributes: [{id: 'campagnes'}, {id: 'thematiques'}]},
+            {order: SortOrder.asc, activated: true, attributes: [{id: 'a'}]},
+            {order: SortOrder.desc, activated: false, attributes: [{id: 'campagnes'}, {id: 'thematiques'}]},
         ],
         filters: [
             {condition: RecordFilterCondition.EQUAL, values: ['x'], pinned: true, attributes: [{id: 'a'}]},
@@ -88,8 +88,8 @@ const mappedDisplay = {
 };
 
 const mappedSorts = [
-    {attributes: ['a'], order: SortOrder.asc, pinned: true},
-    {attributes: ['campagnes', 'thematiques'], order: SortOrder.desc, pinned: false},
+    {attributes: ['a'], order: SortOrder.asc, activated: true},
+    {attributes: ['campagnes', 'thematiques'], order: SortOrder.desc, activated: false},
 ];
 
 const mappedFilters = [

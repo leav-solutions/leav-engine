@@ -467,6 +467,18 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -569,6 +581,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -1070,6 +1084,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -1198,6 +1214,17 @@ export type Logs = {
   total: Scalars['Int']['output'];
 };
 
+export type MoveThematicResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+  originalId: Scalars['ID']['output'];
+};
+
+export type MoveThematicsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  thematics?: Maybe<Array<MoveThematicResultThematic>>;
+};
+
 export enum MultiDisplayOption {
   avatar = 'avatar',
   badge_qty = 'badge_qty',
@@ -1234,11 +1261,15 @@ export type Mutation = {
   importData: Scalars['ID']['output'];
   importExcel: Scalars['ID']['output'];
   indexRecords: Scalars['Boolean']['output'];
+  initRenewCampaigns: Scalars['String']['output'];
+  moveOrCopyCampaignThematics: MoveThematicsResult;
   postDiscussionComment: DiscussionComment;
   purgeInactiveRecords: Array<Record>;
   /**  Purge multiples values of a mono attribute and keep only the more recent one  */
   purgeMultipleValues: Scalars['String']['output'];
   purgeRecord: Record;
+  removeCampaigns: RemoveCampaignsResult;
+  removeStructureItems: RemoveStructureItemsResult;
   saveApiKey: ApiKey;
   saveApplication: Application;
   saveAttribute: Attribute;
@@ -1259,6 +1290,7 @@ export type Mutation = {
   treeDeleteElement: Scalars['ID']['output'];
   treeMoveElement: TreeNode;
   updateAutomationRule: AutomationRule;
+  updateCampaignsDates: Array<SaveCampaignsDatesResult>;
   updateView: View;
   updateViewV2: ViewV2;
   upload: Array<UploadData>;
@@ -1424,6 +1456,23 @@ export type MutationIndexRecordsArgs = {
 };
 
 
+export type MutationInitRenewCampaignsArgs = {
+  campaigns: Array<CampaignToRenew>;
+  copyFramingMode: Scalars['String']['input'];
+  fromPacId: Scalars['String']['input'];
+  method?: InputMaybe<Scalars['String']['input']>;
+  redirectUrl: Scalars['String']['input'];
+  toPacId: Scalars['String']['input'];
+};
+
+
+export type MutationMoveOrCopyCampaignThematicsArgs = {
+  moveThematic: Scalars['Boolean']['input'];
+  thematics: Array<ThematicToRenew>;
+  toCampaignId: Scalars['String']['input'];
+};
+
+
 export type MutationPostDiscussionCommentArgs = {
   comment?: InputMaybe<DiscussionCommentInput>;
 };
@@ -1442,6 +1491,16 @@ export type MutationPurgeMultipleValuesArgs = {
 export type MutationPurgeRecordArgs = {
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['ID']['input'];
+};
+
+
+export type MutationRemoveCampaignsArgs = {
+  campaignsIds: Array<Scalars['ID']['input']>;
+};
+
+
+export type MutationRemoveStructureItemsArgs = {
+  structureItemIds: Array<Scalars['ID']['input']>;
 };
 
 
@@ -1552,6 +1611,11 @@ export type MutationTreeMoveElementArgs = {
 
 export type MutationUpdateAutomationRuleArgs = {
   rule: UpdateAutomationRuleInput;
+};
+
+
+export type MutationUpdateCampaignsDatesArgs = {
+  campaigns: Array<CampaignToUpdateDates>;
 };
 
 
@@ -2240,6 +2304,18 @@ export type RelatedEntity = {
   url: Scalars['String']['output'];
 };
 
+export type RenewCampaignResultThematic = {
+  id: Scalars['ID']['output'];
+  id_value: Scalars['ID']['output'];
+  thematic_id: Scalars['ID']['output'];
+};
+
+export type SaveCampaignsDatesResult = {
+  campaign_id: Scalars['ID']['output'];
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<GenericValue>;
+};
+
 export type SaveValueBulkMappingInput = {
   dependenciesFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>>>;
   values: Array<SaveValueBulkMappingValueInput>;
@@ -2474,16 +2550,23 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
 
 export type TasksList = {
   list: Array<Task>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
 };
 
 export type Tree = {
@@ -3060,15 +3143,15 @@ export enum ViewV2Shortcut {
 }
 
 export type ViewV2Sort = {
+  activated: Scalars['Boolean']['output'];
   attributes: Array<Attribute>;
   order: SortOrder;
-  pinned: Scalars['Boolean']['output'];
 };
 
 export type ViewV2SortInput = {
+  activated: Scalars['Boolean']['input'];
   attributes: Array<Scalars['ID']['input']>;
   order: SortOrder;
-  pinned: Scalars['Boolean']['input'];
 };
 
 export enum ViewV2Types {
@@ -3119,6 +3202,16 @@ export type ViewsList = {
 export type ViewsV2List = {
   list: Array<ViewV2>;
   totalCount: Scalars['Int']['output'];
+};
+
+export type RemoveCampaignsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
+};
+
+export type RemoveStructureItemsResult = {
+  errors?: Maybe<Array<ValueBatchError>>;
+  values: Array<Scalars['ID']['output']>;
 };
 
 export type SaveValueBatchResult = {
@@ -3242,14 +3335,14 @@ export type CreateViewV2MutationVariables = Exact<{
 }>;
 
 
-export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type CreateViewV2Mutation = { createViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, activated: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type UpdateViewV2MutationVariables = Exact<{
   view: ViewV2UpdateInput;
 }>;
 
 
-export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type UpdateViewV2Mutation = { updateViewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, activated: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 type ViewSettingsLibraryAttributeLinkAttributeFragment = { id: string, type: AttributeType, label?: any | null, linked_library?: { id: string, label?: any | null } | null, permissions: { access_attribute: boolean } };
 
@@ -3279,7 +3372,7 @@ export type GetViewV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
+export type GetViewV2Query = { viewV2: { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, activated: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> } };
 
 export type IsAllowedQueryVariables = Exact<{
   type: PermissionTypes;
@@ -3290,7 +3383,7 @@ export type IsAllowedQueryVariables = Exact<{
 
 export type IsAllowedQuery = { isAllowed?: Array<{ name: PermissionsActions, allowed?: boolean | null }> | null };
 
-export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, pinned: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> };
+export type AppStudioViewSettingsViewFragment = { id: string, library: string, label: any, shared: boolean, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string, label?: any | null } }> }, sorts: Array<{ order: SortOrder, activated: boolean, attributes: Array<{ id: string, label?: any | null }> }>, filters: Array<{ condition: RecordFilterCondition, values: Array<string | null>, pinned: boolean, withEmptyValues?: boolean | null, attributes: Array<{ id: string, label?: any | null }> }> };
 
 export type DeleteViewV2MutationVariables = Exact<{
   viewId: Scalars['ID']['input'];
@@ -3434,7 +3527,7 @@ export const AppStudioViewSettingsViewFragmentDoc = gql`
       label
     }
     order
-    pinned
+    activated
   }
   filters {
     attributes {

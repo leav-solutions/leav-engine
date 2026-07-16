@@ -1213,9 +1213,9 @@ export enum ViewV2Shortcut {
 }
 
 export type ViewV2SortInput = {
+  activated: Scalars['Boolean']['input'];
   attributes: Array<Scalars['ID']['input']>;
   order: SortOrder;
-  pinned: Scalars['Boolean']['input'];
 };
 
 export enum ViewV2Types {
@@ -1520,7 +1520,7 @@ export type GetViewsV2QueryVariables = Exact<{
 }>;
 
 
-export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, withEmptyValues?: boolean | null, attributes: Array<{ id: string }> }>, sorts: Array<{ pinned: boolean, order: SortOrder, attributes: Array<{ id: string }> }> }> } };
+export type GetViewsV2Query = { viewsV2: { totalCount: number, list: Array<{ id: string, modified_at: number, created_at: number, shared: boolean, label: any, origin?: string | null, shortcuts: Array<ViewV2Shortcut>, created_by: { id: string, whoAmI: { id: string, label?: string | null } }, display: { type: ViewV2Types, settings?: any | null, attributes: Array<{ visible: boolean, attribute: { id: string } }> }, filters: Array<{ pinned: boolean, values: Array<string | null>, condition: RecordFilterCondition, withEmptyValues?: boolean | null, attributes: Array<{ id: string }> }>, sorts: Array<{ activated: boolean, order: SortOrder, attributes: Array<{ id: string }> }> }> } };
 
 export type GetViewV2QueryVariables = Exact<{
   viewId: Scalars['ID']['input'];
@@ -2094,7 +2094,7 @@ export const GetViewsV2Document = gql`
         withEmptyValues
       }
       sorts {
-        pinned
+        activated
         attributes {
           id
         }

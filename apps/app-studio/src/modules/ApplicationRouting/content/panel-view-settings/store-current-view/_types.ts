@@ -62,7 +62,7 @@ export type CurrentViewAction =
     | {type: 'MOVE_ATTRIBUTE'; payload: {activeId: string; overId: string}}
     | {type: 'MOVE_SORT'; payload: {activeId: string; overId: string}}
     | {type: 'SET_SORT_ORDER'; payload: {id: string; order: SortOrder}}
-    | {type: 'TOGGLE_SORT_PINNED'; payload: {id: string}}
+    | {type: 'TOGGLE_SORT_ACTIVATED'; payload: {id: string}}
     | {type: 'MOVE_FILTER'; payload: {activeId: string; overId: string}}
     | {type: 'TOGGLE_FILTER_PINNED'; payload: {id: string}}
     | {

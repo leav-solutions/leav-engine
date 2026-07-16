@@ -5,19 +5,27 @@ import {CSS} from '@dnd-kit/utilities';
 import {KitButton, KitTooltip} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faArrowDownWideShort, faGripLines} from '@fortawesome/free-solid-svg-icons';
-import {item, handleSlot, dragHandle, dragging, pinButton, pinnedIcon, unpinnedIcon} from './sortItem.module.css';
+import {
+    item,
+    handleSlot,
+    dragHandle,
+    dragging,
+    activateButton,
+    activatedIcon,
+    deactivatedIcon,
+} from './sortItem.module.css';
 
 export const SortItem = ({
     id,
-    pinned,
+    activated,
     draggable = true,
-    onTogglePinned,
+    onToggleActivated,
     children,
 }: {
     id: string;
-    pinned: boolean;
+    activated: boolean;
     draggable?: boolean;
-    onTogglePinned?: () => void;
+    onToggleActivated?: () => void;
     children: ReactNode;
 }) => {
     const {t} = useTranslation();
@@ -26,7 +34,9 @@ export const SortItem = ({
         disabled: !draggable,
     });
 
-    const pinLabel = pinned ? String(t('view_settings.sorts.unpin')) : String(t('view_settings.sorts.pin'));
+    const pinLabel = activated
+        ? String(t('view_settings.sorts.deactivate'))
+        : String(t('view_settings.sorts.activate'));
 
     return (
         <li
@@ -49,14 +59,17 @@ export const SortItem = ({
             {children}
             <KitTooltip title={pinLabel}>
                 <KitButton
-                    className={pinButton}
+                    className={activateButton}
                     type="tertiary"
                     size="s"
                     aria-label={pinLabel}
                     icon={
-                        <FontAwesomeIcon className={pinned ? pinnedIcon : unpinnedIcon} icon={faArrowDownWideShort} />
+                        <FontAwesomeIcon
+                            className={activated ? activatedIcon : deactivatedIcon}
+                            icon={faArrowDownWideShort}
+                        />
                     }
-                    onClick={onTogglePinned}
+                    onClick={onToggleActivated}
                 />
             </KitTooltip>
         </li>

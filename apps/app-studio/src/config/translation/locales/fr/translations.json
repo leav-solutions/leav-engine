@@ -174,8 +174,8 @@
         },
         "sorts": {
             "manage_available": "Gérer les attributs disponibles",
-            "pin": "Épingler",
-            "unpin": "Détacher"
+            "activate": "Activer",
+            "deactivate": "Désactiver"
         },
         "filters": {
             "manage_available": "Gérer les attributs disponibles",

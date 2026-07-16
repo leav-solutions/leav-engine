@@ -41,7 +41,7 @@ query GetViewsV2($library: ID!, $origin: String) {
                 withEmptyValues
             }
             sorts {
-                pinned
+                activated
                 attributes {
                     id
                 }
