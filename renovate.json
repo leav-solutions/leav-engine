@@ -31,7 +31,8 @@
             "description": "Group all npm patch updates into one PR",
             "matchUpdateTypes": ["patch"],
             "groupName": "all npm patch updates",
-            "matchManagers": ["npm"]
+            "matchManagers": ["npm"],
+            "automerge": true
         },
         {
             "description": "Ignore aristid-ds dependencies",
