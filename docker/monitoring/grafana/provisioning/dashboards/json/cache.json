@@ -291,7 +291,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum(cache_redis_keys_count{k8s_namespace_name=\"$namespace\",db=\"cache\"})",
+                    "expr": "max(cache_redis_keys_count{k8s_namespace_name=\"$namespace\",db=\"cache\"})",
                     "range": true,
                     "refId": "A"
                 }
@@ -837,7 +837,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum by (db) (cache_redis_keys_count{k8s_namespace_name=\"$namespace\"})",
+                    "expr": "max by (db) (cache_redis_keys_count{k8s_namespace_name=\"$namespace\"})",
                     "legendFormat": "{{db}}",
                     "range": true,
                     "refId": "A"
