@@ -32,6 +32,7 @@ describe('MessageHandlers', () => {
                 openViewSettings: expect.any(Function),
                 updateView: expect.any(Function),
                 requestCurrentView: expect.any(Function),
+                notifyEscape: expect.any(Function),
             });
         });
 
@@ -192,6 +193,13 @@ describe('MessageHandlers', () => {
 
             expect(dispatchMock).toHaveBeenCalledWith({type: 'request-current-view'});
         });
+
+        it('Should expose method notifyEscape which tells the host the user pressed Escape in the iframe', async () => {
+            const {notifyEscape} = getExposedMethods({current: null}, dispatchMock);
+            notifyEscape();
+
+            expect(dispatchMock).toHaveBeenCalledWith({type: 'panel-escape'});
+        });
     });
 
     describe('initClientHandlers', () => {
@@ -296,6 +304,15 @@ describe('MessageHandlers', () => {
             handlers({type: 'request-current-view'} as any, dispatchMock);
 
             expect(onRequestCurrentView).toHaveBeenCalledTimes(1);
+        });
+
+        it('should call onEscape when receiving panel-escape', () => {
+            const onEscape = vi.fn();
+            const handlers = initClientHandlers(callCbMock, {handlers: {onEscape}}, callbacksStore);
+
+            handlers({type: 'panel-escape'} as any, dispatchMock);
+
+            expect(onEscape).toHaveBeenCalledTimes(1);
         });
     });
 

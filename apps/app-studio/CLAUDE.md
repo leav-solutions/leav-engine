@@ -155,6 +155,10 @@ Définissent comment s'ouvre un record. Un seul `onRowClick: true` par explorate
   panneau** en plein écran. Le panneau reste plein écran quand un panneau enfant s'ouvre par-dessus.
 - **Sticky à la navigation** : naviguer vers un **autre** panneau `fullpage` de premier plan transfère
   le plein écran ; les overlays `slider`/`popup`/flap se superposent sans le rompre.
+- **Un seul niveau de plein écran** : le bouton _entrer_ n'apparaît que si **aucun** panneau n'est en
+  plein écran (`fullscreenPanelId === null`) ; un overlay (`popup`/`slider`) ouvert par-dessus un panneau
+  déjà en plein écran ne propose donc pas son propre toggle. Seul le panneau en plein écran garde son
+  bouton _sortir_. Voir `showFullscreenButton` dans [`Panel.tsx`](src/modules/ApplicationRouting/Panel.tsx).
 - **Sortie** : bouton toggle ou touche **Échap**.
 - **Alerte `FullscreenAlert`** affichée une seule fois par utilisateur ; l'état de fermeture est
   persisté dans `localStorage['fullscreenAlertDismissed']` [`useFullscreenAlertDismissal.ts`](src/hooks/useFullscreenAlertDismissal.ts).

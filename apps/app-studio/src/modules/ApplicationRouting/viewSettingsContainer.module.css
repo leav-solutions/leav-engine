@@ -1,0 +1,10 @@
+.fullscreenVolet {
+    /* In CSS-fullscreen the foreground panel escapes to `position: fixed; inset: 0` while this
+       floating volet stays its sibling. Anchoring the wrapper to the viewport makes the volet fill the full fullscreen height. */
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    /* Match the fullscreen panel scale (panel 1000): sibling rendered after the panel → wins. */
+    z-index: 1000;
+}

@@ -249,6 +249,15 @@ export type RequestCurrentViewMessage = IMessageBase & {
     type: 'request-current-view';
 };
 
+/**
+ * Sent by a custom panel iframe when the user presses Escape inside it. A cross-origin iframe swallows
+ * keyboard events once it has focus, so the host's own `keydown` listener never sees them — the iframe
+ * must forward Escape explicitly. The host uses it to exit fullscreen (no-op when not fullscreen).
+ */
+export type EscapeMessage = IMessageBase & {
+    type: 'panel-escape';
+};
+
 export type MessageToParent =
     | ModalConfirmMessage
     | AlertMessage
@@ -267,7 +276,8 @@ export type MessageToParent =
     | ExplorerViewChangedMessage
     | OpenViewSettingsMessage
     | UpdateViewMessage
-    | RequestCurrentViewMessage;
+    | RequestCurrentViewMessage
+    | EscapeMessage;
 
 export type MessageFromParent =
     | (IMessageBase & {
@@ -359,5 +369,6 @@ export interface IUsePanelMessengerOptions {
         onOpenViewSettings?: (data: OpenViewSettingsMessage['data']) => void;
         onUpdateView?: (data: UpdateViewMessage['data']) => void;
         onRequestCurrentView?: () => void;
+        onEscape?: () => void;
     };
 }
