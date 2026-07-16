@@ -493,9 +493,8 @@ Docker image build (multi-stage, production-only `node_modules`, etc.).
 Build the backend apps and the fronts:
 
 ```shell
-yarn libs:build
-yarn backs:build
-yarn fronts:build:install
+yarn build
+yarn fronts:link:install
 ```
 
 The fronts are needed because `admin`/`app-studio`/`login`/`portal` dev servers are disabled in
