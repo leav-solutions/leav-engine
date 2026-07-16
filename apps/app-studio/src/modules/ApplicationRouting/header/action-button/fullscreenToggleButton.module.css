@@ -2,7 +2,10 @@
     position: fixed;
     top: 0;
     right: 0;
-    z-index: 1000;
+    /* Above slider/popup overlays (z-index 1000) opened over a fullscreen panel, so the toggle
+       stays clickable. Coordinated scale: fullpage modal 998 < toaster 999 < panel/overlay 1000
+       < fullscreen toggle & alert 1001. */
+    z-index: 1001;
     padding: calc(var(--general-spacing-xs) * 1px);
     background-color: color-mix(in srgb, #000 40%, transparent);
     border-bottom-left-radius: calc(var(--general-border-radius-s) * 1px);

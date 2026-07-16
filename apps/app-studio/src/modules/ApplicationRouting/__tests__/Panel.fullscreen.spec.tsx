@@ -81,7 +81,7 @@ describe('Panel fullscreen', () => {
         expect(screen.queryByRole('button', {name: 'fullscreen.enter'})).not.toBeInTheDocument();
     });
 
-    it('should not render the toggle button on a background panel that has a next-level panel open', () => {
+    it('should not render the toggle button when a fullpage next-level panel replaces it', () => {
         (ReactRouter.useRoutes as Mock).mockReturnValue(<div>next level</div>);
         (ReactRouter.useParams as Mock).mockReturnValue({
             workspaceId: 'ws',
@@ -89,6 +89,64 @@ describe('Panel fullscreen', () => {
             recordId: '1',
             where: 'fullpage',
             recordPanelId: 'planning',
+            '*': '2/fullpage/other',
+        });
+        render(<Panel />);
+        expect(screen.queryByRole('button', {name: 'fullscreen.enter'})).not.toBeInTheDocument();
+    });
+
+    it('should keep the toggle button when a slider overlay is open over it', () => {
+        (ReactRouter.useRoutes as Mock).mockReturnValue(<div>next level</div>);
+        (ReactRouter.useParams as Mock).mockReturnValue({
+            workspaceId: 'ws',
+            panelId: 'pac',
+            recordId: '1',
+            where: 'fullpage',
+            recordPanelId: 'planning',
+            '*': '2/slider/other',
+        });
+        render(<Panel />);
+        expect(screen.getByRole('button', {name: 'fullscreen.enter'})).toBeInTheDocument();
+    });
+
+    it('should keep the toggle button when a popup overlay is open over it', () => {
+        (ReactRouter.useRoutes as Mock).mockReturnValue(<div>next level</div>);
+        (ReactRouter.useParams as Mock).mockReturnValue({
+            workspaceId: 'ws',
+            panelId: 'pac',
+            recordId: '1',
+            where: 'fullpage',
+            recordPanelId: 'planning',
+            '*': '2/popup/other',
+        });
+        render(<Panel />);
+        expect(screen.getByRole('button', {name: 'fullscreen.enter'})).toBeInTheDocument();
+    });
+
+    it('should render the toggle button on a popup when no panel is fullscreen', () => {
+        (ReactRouter.useParams as Mock).mockReturnValue({
+            workspaceId: 'ws',
+            panelId: 'pac',
+            recordId: '1',
+            where: 'popup',
+            recordPanelId: 'other',
+        });
+        render(<Panel />);
+        expect(screen.getByRole('button', {name: 'fullscreen.enter'})).toBeInTheDocument();
+    });
+
+    it('should not render the toggle button on a popup while another panel is fullscreen', () => {
+        (useFullscreenHook.useFullscreen as Mock).mockReturnValue({
+            fullscreenPanelId: 'planning',
+            enterFullscreen: vi.fn(),
+            exitFullscreen: vi.fn(),
+        });
+        (ReactRouter.useParams as Mock).mockReturnValue({
+            workspaceId: 'ws',
+            panelId: 'pac',
+            recordId: '1',
+            where: 'popup',
+            recordPanelId: 'other',
         });
         render(<Panel />);
         expect(screen.queryByRole('button', {name: 'fullscreen.enter'})).not.toBeInTheDocument();

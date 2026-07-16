@@ -24,8 +24,17 @@ import {firstPanel, firstPanelContent, fullscreenPanel, panel, panelContent, pan
 export const Panel: FunctionComponent = () => {
     const [modalExtraRightElement, setModalExtraRightElement] = useState<HTMLElement>();
     const [application] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
-        useParams();
+    const {
+        workspaceId,
+        panelId,
+        recordId,
+        where,
+        recordPanelId,
+        flapRecordId,
+        flapLibraryId,
+        flapPanelId,
+        '*': nextLevelPath,
+    } = useParams();
     const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({
         application,
         recordPanelId,
@@ -59,7 +68,17 @@ export const Panel: FunctionComponent = () => {
     const isForegroundPanel = !isPanelInSlider && !hasNextLevelPanel;
 
     const isPanelFullscreen = fullscreenPanelId === currentPanel?.id;
-    const showFullscreenButton = isForegroundPanel || isPanelFullscreen;
+    // Should this panel show its own fullscreen toggle? It depends on how the next-level panel opened.
+    // Read from the splat tail `recordId/where/recordPanelId` ([1] = `where`):
+    //   - slider / popup / flap  → an overlay; this panel is still visible underneath → keep the toggle.
+    //   - fullpage               → replaces this panel entirely → hide the toggle (the replacing panel
+    //                              renders its own). Same fullpage-vs-overlay split as the transfer below.
+    const nextLevelWhere = nextLevelPath?.split('/')[1];
+    const isReplacedByFullpagePanel = hasNextLevelPanel && nextLevelWhere === 'fullpage';
+    // Only one level of fullscreen at a time: once a panel is fullscreen, an overlay opened over it
+    // (e.g. a `popup` creation form) must not offer its own toggle.
+    const showFullscreenButton =
+        isPanelFullscreen || (fullscreenPanelId === null && !isPanelInSlider && !isReplacedByFullpagePanel);
 
     // Fullscreen is sticky across navigation: when we navigate into a *different* foreground fullpage
     // panel while fullscreen, transfer fullscreen to it.  Slider/popup/flap overlays (where !== 'fullpage')
@@ -151,9 +170,12 @@ export const Panel: FunctionComponent = () => {
                     />
                     {NextLevelRoutes}
                 </div>
-                {showFullscreenButton && <FullscreenToggleButton panelId={currentPanel.id} />}
                 {isPanelFullscreen && <FullscreenAlert />}
             </section>
+            {/* Rendered *outside* the section on purpose: when fullscreen, the section is a
+                `position:fixed; z-index` stacking context that would trap this fixed button below a
+                slider/popup opened over the panel. */}
+            {showFullscreenButton && <FullscreenToggleButton panelId={currentPanel.id} />}
             {hasFlapPanel && flapContainerComponent}
             {isViewSettingsVoletActive && isForegroundPanel && viewSettingsContainerComponent}
         </>

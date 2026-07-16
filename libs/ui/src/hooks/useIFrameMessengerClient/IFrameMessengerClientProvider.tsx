@@ -12,6 +12,19 @@ export const IFrameMessengerClientProvider: FunctionComponent<IFrameMessengerCli
 
     useEffect(() => () => iFrameMessenger.unregister(), []);
 
+    // A cross-origin iframe swallows keyboard events once focused, so the host never sees Escape. Forward
+    // it up so the host can react (e.g. exit fullscreen).
+    const {notifyEscape} = iFrameMessenger;
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                notifyEscape();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [notifyEscape]);
+
     if (!iFrameMessenger.isRegistered) {
         return null;
     }

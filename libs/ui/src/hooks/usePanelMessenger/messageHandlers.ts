@@ -192,6 +192,9 @@ export const initClientHandlers: (
         case 'request-current-view':
             options?.handlers?.onRequestCurrentView?.();
             break;
+        case 'panel-escape':
+            options?.handlers?.onEscape?.();
+            break;
         default:
             break;
     }
@@ -277,5 +280,8 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
     },
     requestCurrentView: () => {
         dispatch?.({type: 'request-current-view'});
+    },
+    notifyEscape: () => {
+        dispatch?.({type: 'panel-escape'});
     },
 });

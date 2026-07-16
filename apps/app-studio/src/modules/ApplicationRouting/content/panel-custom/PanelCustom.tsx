@@ -17,6 +17,7 @@ import {trackMatomoEvent} from './message-handlers/trackMatomoEvent';
 import {useOpenViewSettings} from './message-handlers/useOpenViewSettings';
 import {useUpdateView} from './message-handlers/useUpdateView';
 import {useSyncViewToIframe} from './message-handlers/useSyncViewToIframe';
+import {useFullscreen} from '../../../../hooks/useFullscreen';
 
 interface IPanelCustomProps {
     source: string;
@@ -39,6 +40,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
     const {getURL} = useGetURL();
     const {openViewSettings} = useOpenViewSettings();
     const {updateView} = useUpdateView();
+    const {exitFullscreen} = useFullscreen();
 
     const {serializedView} = useContext(CurrentViewContext);
     const {workspaceId, panelId, recordId: _recordId, where, recordPanelId} = useParams();
@@ -63,6 +65,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
         onMessage: trackMatomoEvent,
         onOpenViewSettings: openViewSettings,
         onUpdateView: updateView,
+        onEscape: () => exitFullscreen(),
         onRequestCurrentView: () => {
             // Reply to the iframe's (re)load handshake: it pulls the current view on mount, so we push our
             // current (last-used) view back so it restores the host's view instead of its own defaults. The

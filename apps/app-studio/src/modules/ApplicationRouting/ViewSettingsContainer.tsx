@@ -1,19 +1,23 @@
 import {KitSidePanel} from 'aristid-ds';
+import cn from 'classnames';
 import {useParams} from 'react-router-dom';
 import {usePanelEventHandlers} from '@leav/ui';
 import {PanelViewSettings} from './content/panel-view-settings/PanelViewSettings';
 import {VoletFiltersProvider} from './content/panel-view-settings/store-current-view/VoletFiltersProvider';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
+import {useFullscreen} from '../../hooks/useFullscreen';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {
     resetPanelViewSettingsInApplication,
     updatePanelViewSettingsInApplication,
 } from './utils/updatePanelViewSettingsInApplication';
 import {type AppStudioInternalEvent} from './types';
+import {fullscreenVolet} from './viewSettingsContainer.module.css';
 
 export const ViewSettingsContainer = () => {
     const [application, setApplication] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
+    const {fullscreenPanelId} = useFullscreen();
 
     const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({
         application,
@@ -61,8 +65,11 @@ export const ViewSettingsContainer = () => {
         );
     };
 
+    const isCurrentPanelFullscreen = fullscreenPanelId === currentPanel.id;
+
     return (
         <KitSidePanel
+            className={cn({[fullscreenVolet]: isCurrentPanelFullscreen})}
             floating
             closable={false}
             closeOnEsc
