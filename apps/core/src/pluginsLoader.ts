@@ -1,6 +1,5 @@
 import './pluginsModuleResolver';
 import {logger} from '@leav/logger';
-import {appRootPath} from '@leav/app-root-path';
 import {type ICorePluginsApp} from './app/core/pluginsApp';
 import {asValue, type AwilixContainer} from 'awilix';
 import * as fs from 'fs';
@@ -9,6 +8,7 @@ import {type IAppModule} from './_types/shared';
 import {getConfig} from './config';
 import path from 'path';
 import {type IUtils} from './utils/utils';
+import {appRootPath} from './rootPath';
 
 export const initPlugins = async (pluginsPath: string[], depsManager: AwilixContainer) => {
     if (!pluginsPath.length) {
@@ -16,7 +16,6 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
     }
 
     const pluginsApp: ICorePluginsApp = depsManager.cradle['core.app.core.plugins'];
-    const rootPath = appRootPath();
 
     // Retrieve extensions points across all core app files
     // They will be passed to each plugin in init function
@@ -41,7 +40,7 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
     // Init plugins
     for (const pluginPath of pluginsPath) {
         // Ignore files (like .gitignore or any other files)
-        const pluginFullPath = path.join(rootPath, pluginPath);
+        const pluginFullPath = path.join(appRootPath, pluginPath);
         const pluginName = path.basename(pluginPath);
 
         if (

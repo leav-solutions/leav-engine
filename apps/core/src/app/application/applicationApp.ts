@@ -1,4 +1,4 @@
-import {appRootPath} from '@leav/app-root-path';
+import {appRootPath} from '../../rootPath';
 import * as fs from 'fs';
 import {type Override, type PublishedEvent} from '@leav/utils';
 import {type ICommonSubscriptionFilters, type ICoreSubscriptionsHelpersApp} from '../core/helpers/subscriptions';
@@ -357,8 +357,7 @@ export default function ({
                         application.module = requestApplication.module;
                     }
 
-                    const rootPath = appRootPath();
-                    const appFolder = path.resolve(rootPath, config.applications.rootFolder, application.module);
+                    const appFolder = path.resolve(appRootPath, config.applications.rootFolder, application.module);
 
                     // Try to locate a file at given path. If not found, serve root path of the app,
                     // considering it will be handled it client-side (e.g. SPAs)

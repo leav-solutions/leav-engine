@@ -11,7 +11,7 @@ Accepted
 Le chantier de montée TypeScript 5.9.3 → 6.0.3 (branche `chore/deps/typescript-6.x`) avait basculé le
 `module`/`moduleResolution` racine sur `nodenext`/`nodenext`, hérité par défaut par tout le backend
 Node (`apps/core`, `apps/mcp-runtime`, `apps/automate-scan`, `apps/sync-scan`,
-`apps/preview-generator`, `libs/config-manager`, `libs/message-broker`, `libs/app-root-path`,
+`apps/preview-generator`, `libs/config-manager`, `libs/message-broker`,
 `libs/monitoring-server`, `libs/e2e-test-utils`, `libs/logger`).
 
 Ce changement, en apparence anodin, modifie silencieusement la façon dont `tsc` compile

@@ -1,8 +1,8 @@
-import {appRootPath} from '@leav/app-root-path';
 import {loadConfig} from '@leav/config-manager';
 import * as Joi from 'joi';
 import {type IConfig} from './_types/config';
 import {env as appEnv} from './env';
+import path from 'node:path';
 
 const checkConfig = (conf: IConfig) => {
     const configSchema: Joi.ObjectSchema = Joi.object().keys({
@@ -67,7 +67,7 @@ export const getConfig = async (): Promise<IConfig> => {
     }
     const definedEnv: string = appEnv || '';
 
-    const conf = await loadConfig<IConfig>(appRootPath() + '/config', definedEnv);
+    const conf = await loadConfig<IConfig>(path.join(__dirname, '../config'), definedEnv);
 
     checkConfig(conf);
     loadedConfig = conf;

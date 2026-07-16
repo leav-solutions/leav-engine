@@ -162,22 +162,6 @@ audit-production-dependencies:
   if: $DISABLE_TEST_JOBS == "true"
   when: never
 
-libs/app-root-path-unit-tests:
-  stage: test
-  script:
-    - yarn workspaces focus @leav/app-root-path
-    - yarn workspace @leav/app-root-path run test:ci
-  cache:
-    <<: *yarn_cache
-  rules:
-    - *disable_test_rule
-    - *no_tag_rule
-    - *no_duplicate_rule
-    - <<: *mr_rule
-      changes:
-        - *new_lib_installed_changes
-        - libs/app-root-path/**/*
-
 libs/config-manager-unit-tests:
   stage: test
   script:
@@ -359,7 +343,6 @@ apps/automate-scan-unit-tests:
       changes:
         - *new_lib_installed_changes
         - apps/automate-scan/**/*
-        - libs/app-root-path/**/*
         - libs/config-manager/**/*
         - libs/logger/**/*
         - libs/monitoring-server/**/*
@@ -380,7 +363,6 @@ apps/core-unit-tests:
       changes:
         - *new_lib_installed_changes
         - apps/core/**/*
-        - libs/app-root-path/**/*
         - libs/config-manager/**/*
         - libs/logger/**/*
         - libs/message-broker/**/*
@@ -437,7 +419,6 @@ apps/preview-generator-unit-tests:
       changes:
         - *new_lib_installed_changes
         - apps/preview-generator/**/*
-        - libs/app-root-path/**/*
         - libs/config-manager/**/*
         - libs/logger/**/*
         - libs/monitoring-server/**/*
@@ -458,7 +439,6 @@ apps/sync-scan-unit-tests:
       changes:
         - *new_lib_installed_changes
         - apps/sync-scan/**/*
-        - libs/app-root-path/**/*
         - libs/config-manager/**/*
         - libs/message-broker/**/*
         - libs/utils/**/*
@@ -518,7 +498,6 @@ integration-test-core:
     REDIS_HOST: "redis"
     REDIS_PORT: "6379"
     ARANGO_URL: "http://root:@arangodb:8529"
-    APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/core"
     AMQP_HOST: "rabbitmq"
     AMQP_PORT: "5672"
     AMQP_USERNAME: "guest"
@@ -536,7 +515,6 @@ integration-test-core:
       changes:
         - *new_lib_installed_changes
         - apps/core/**/*
-        - libs/app-root-path/**/*
         - libs/config-manager/**/*
         - libs/logger/**/*
         - libs/message-broker/**/*
@@ -549,7 +527,6 @@ integration-test-automate-scan:
     - *e2e_service_rabbitmq
     - *e2e_service_redis
   variables:
-    APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/automate-scan"
     AMQP_HOST: "rabbitmq"
     AMQP_PORT: "5672"
     AMQP_USERNAME: "guest"
@@ -569,7 +546,6 @@ integration-test-automate-scan:
       changes:
         - *new_lib_installed_changes
         - apps/automate-scan/**/*
-        - libs/app-root-path/**/*
         - libs/config-manager/**/*
         - libs/logger/**/*
         - libs/message-broker/**/*
@@ -595,7 +571,6 @@ e2e-api:
     MAILER_PORT: "1025"
     MAILER_SECURE: "false"
     MAILER_REQUIRE_TLS: "false"
-    APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/core"
     IMPORT_DIR: "$CI_PROJECT_DIR/imports"
     DISK_CACHE_DIRECTORY: "$CI_PROJECT_DIR/cache"
     FILES_ROOT_PATHS: "files1:$CI_PROJECT_DIR/files"
@@ -614,7 +589,6 @@ e2e-api:
       changes:
         - *new_lib_installed_changes
         - apps/core/**/*
-        - libs/app-root-path/**/*
         - libs/config-manager/**/*
         - libs/logger/**/*
         - libs/message-broker/**/*
@@ -635,7 +609,6 @@ e2e-indexation-manager:
     AMQP_PORT: "5672"
     AMQP_USERNAME: "guest"
     AMQP_PWD: "guest"
-    APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/core"
     REDIS_HOST: "redis"
     REDIS_PORT: "6379"
   script:
@@ -651,7 +624,6 @@ e2e-indexation-manager:
       changes:
         - *new_lib_installed_changes
         - apps/core/**/*
-        - libs/app-root-path/**/*
         - libs/config-manager/**/*
         - libs/logger/**/*
         - libs/message-broker/**/*
@@ -667,7 +639,6 @@ e2e-sync-scan:
     AMQP_PORT: "5672"
     AMQP_USERNAME: "guest"
     AMQP_PWD: "guest"
-    APP_ROOT_PATH: "$CI_PROJECT_DIR/apps/sync-scan"
     ALLOW_FILES_LIST: ""
     IGNORE_FILES_LIST: ""
   script:
@@ -683,7 +654,6 @@ e2e-sync-scan:
       changes:
         - *new_lib_installed_changes
         - apps/sync-scan/**/*
-        - libs/app-root-path/**/*
         - libs/config-manager/**/*
         - libs/logger/**/*
         - libs/message-broker/**/*

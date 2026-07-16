@@ -1,7 +1,5 @@
-const rootPath = require('app-root-path');
-
 module.exports = {
-    rootPath: rootPath.path + '/src/__tests__/integration/_fixtures',
+    rootPath: __dirname + '../src/__tests__/integration/_fixtures',
     amqp: {
         protocol: 'amqp',
         hostname: process.env.AMQP_HOST,
