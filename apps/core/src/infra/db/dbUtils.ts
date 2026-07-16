@@ -167,7 +167,9 @@ export default function ({
 
             /*** Plugins migrations ***/
             for (const pluginPath of config.pluginsPath) {
-                const pluginMigrationFolderPath = path.resolve(`${__dirname}/../../${pluginPath}/infra/db/migrations`);
+                const pluginMigrationFolderPath = path.resolve(
+                    `${__dirname}/../../../${pluginPath}/infra/db/migrations`,
+                );
                 const pluginName = path.basename(pluginPath);
 
                 try {
