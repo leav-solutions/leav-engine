@@ -1,6 +1,6 @@
 import {type Locator, type Page} from '@playwright/test';
 import {type Year, type Month, type Day} from './_types';
-import {STANDARD_FIELD_ATTRIBUTE_DATE_RANGE_ID, STANDARD_FIELD_ATTRIBUTE_DATE_RANGE_LABEL} from '../../src/constants';
+import {STANDARD_FIELD_ATTRIBUTE_DATE_RANGE_ID} from '../../src/constants';
 
 export class DateRangeComponent {
     private readonly page: Page;
@@ -10,10 +10,17 @@ export class DateRangeComponent {
     private readonly decadeField: Locator;
     public constructor(page: Page) {
         this.page = page;
-        this.field = this.page.getByRole('textbox', {name: STANDARD_FIELD_ATTRIBUTE_DATE_RANGE_LABEL});
+        // Anchor on the `#standardfield-<attributeId>` wrapper: in the edition popup the label is not
+        // linked to the input, so role-based accessible names are unreliable there. The range picker
+        // holds two inputs (from/to); the first one carries the value used by the scenario.
+        this.field = this.page
+            .locator(`#standardfield-${STANDARD_FIELD_ATTRIBUTE_DATE_RANGE_ID}`)
+            .locator('input')
+            .first();
+        // DS clear icons are FontAwesome svgs carrying `aria-label="clear"`.
         this.deleteBtn = this.page
             .locator(`#standardfield-${STANDARD_FIELD_ATTRIBUTE_DATE_RANGE_ID}`)
-            .getByRole('button');
+            .getByLabel('clear');
         this.yearField = this.page.getByRole('button', {name: 'year panel'}).first();
         this.decadeField = this.page.getByRole('button', {name: 'decade panel'});
     }
@@ -42,18 +49,18 @@ export class DateRangeComponent {
 
     private async selectMonth(month: string) {
         const monthNames = [
-            'janv.',
-            'févr.',
+            'janvier',
+            'février',
             'mars',
-            'avr.',
+            'avril',
             'mai',
             'juin',
-            'juil.',
+            'juillet',
             'août',
-            'sept.',
-            'oct.',
-            'nov.',
-            'déc.',
+            'septembre',
+            'octobre',
+            'novembre',
+            'décembre',
         ];
         const monthName = monthNames[Number(month) - 1];
         await this.getMonth(monthName).click();
@@ -85,7 +92,8 @@ export class DateRangeComponent {
     }
 
     public async clear() {
-        await this.field.click();
+        // The clear icon (antd allowClear) is only rendered while the picker input is hovered.
+        await this.field.hover();
         await this.deleteBtn.click();
     }
 
