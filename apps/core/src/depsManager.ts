@@ -51,6 +51,14 @@ export const registerModules = async (
                 exportValue = exportValue.default;
             }
 
+            if (modExport === '__esModule' || modExport === 'module.exports') {
+                // Both are artifacts Node's native import() adds when loading a tsc-compiled CJS
+                // module (the __esModule interop marker, and a self-reference back to the whole
+                // exports object) - never real exports of the source file, so never real modules
+                // to register here.
+                continue;
+            }
+
             const prefixedNamePart = prefix ? [prefix] : [];
             const nameParts = [...prefixedNamePart, ...pathParts];
 
