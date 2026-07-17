@@ -75,6 +75,10 @@ interface IViewV2ServerFields {
     created_by: string;
     created_at: number;
     modified_at: number;
+    // Reference to the V1 view (`core_views`) a migrated V2 view originates from. Set only by the
+    // V1→V2 migration (027) to make it re-runnable (purge previously-migrated views, recreate them).
+    // Internal-only: never exposed through domain/GraphQL inputs, only persisted via the repo.
+    sourceViewId?: string;
 }
 
 /**
