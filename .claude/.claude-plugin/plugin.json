@@ -1,7 +1,6 @@
 {
-    "name": "leav-tools",
-    "displayName": "ARiSTiD LEAV Tools",
-    "version": "1.0.0",
+    "name": "leav-code",
+    "displayName": "ARiSTiD LEAV CODE",
     "description": "Skills Claude Code pour les workflows LEAV.",
     "author": {
         "name": "ARiSTiD Dev"
