@@ -22,7 +22,14 @@ export const useOpenViewSettings = (): {
     const {dispatch} = usePanelEventHandlers<AppStudioInternalEvent>();
 
     return {
-        openViewSettings: ({viewId, libraryId, selectedTab, displayViewSettingsIframeSource, hiddenTabs}) => {
+        openViewSettings: ({
+            viewId,
+            libraryId,
+            selectedTab,
+            displayViewSettingsIframeSource,
+            hiddenTabs,
+            hiddenFilters,
+        }) => {
             const {
                 currentPanel,
                 libraryId: ownerLibraryId,
@@ -45,6 +52,7 @@ export const useOpenViewSettings = (): {
                     currentLibraryId: libraryId,
                     displayViewSettingsIframeSource,
                     hiddenTabs,
+                    hiddenFilters,
                     explorerPanelDetails: {libraryId: ownerLibraryId, panelType, panelId: currentPanel.id},
                 },
             });

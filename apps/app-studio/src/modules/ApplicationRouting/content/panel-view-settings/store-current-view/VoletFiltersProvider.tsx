@@ -1,9 +1,11 @@
 import {type ReactNode, useCallback, useMemo} from 'react';
-import {FiltersContext, type SerializedFilter, useControlledFilterStore} from '@leav/ui';
+import {FiltersContext, type SerializedFilter, type UIFilter, useControlledFilterStore} from '@leav/ui';
 import {RecordFilterCondition} from '../../../../../__generated__';
 import {useCurrentView} from './useCurrentView';
 
 const DEFAULT_FILTER_CONDITION = RecordFilterCondition.EQUAL;
+
+const emptyHiddenFilters: UIFilter[] = [];
 
 /**
  * Spoke A of the filters hub & spoke (ADR-006 / LEAVC-810). Mounts a `FiltersContext` scoped to the
@@ -12,8 +14,23 @@ const DEFAULT_FILTER_CONDITION = RecordFilterCondition.EQUAL;
  * `useControlledFilterStore`, and writes value edits back to the hub through `setFilterConfig`. Structure
  * (pin/unpin/order/availability) and tree shape still flow through the `useCurrentView` dispatchers
  * unchanged — this provider only mediates filter VALUES.
+ *
+ * `hiddenFilters` (optional): the masked pre-filters passed in by `ViewSettingsContainer`. For an
+ * `explorer` panel these are built from `attributeSource` (cf. `PanelAttributeExplorer.tsx`'s
+ * `linkPreFilter`); for a `custom` panel the iframe pushes them via the `open-view-settings` message.
+ * The hub never carries them (they're not part of the persisted view), so they must be merged in here too
+ * — otherwise a
+ * smart-filter dropdown opened from the volet computes its `listDistinctValues` unscoped, same class of
+ * bug as ExplorerV2's own store. `useFilters()` already excludes `hidden` filters from display, so this
+ * is display-safe (mirrors the fix applied to ExplorerV2's own `FiltersContext.Provider`).
  */
-export const VoletFiltersProvider = ({children}: {children: ReactNode}) => {
+export const VoletFiltersProvider = ({
+    children,
+    hiddenFilters = emptyHiddenFilters,
+}: {
+    children: ReactNode;
+    hiddenFilters?: UIFilter[];
+}) => {
     const {view, setFilterConfig} = useCurrentView();
 
     // Seed the store with ALL view filters (pinned AND unpinned): the Filters tab renders the pinned ones
@@ -57,5 +74,14 @@ export const VoletFiltersProvider = ({children}: {children: ReactNode}) => {
         onChange: handleChange,
     });
 
-    return <FiltersContext.Provider value={{filtersData, dispatch}}>{children}</FiltersContext.Provider>;
+    const filtersDataWithHidden = useMemo(
+        () => ({...filtersData, filters: [...hiddenFilters, ...(filtersData.filters as UIFilter[])]}),
+        [filtersData, hiddenFilters],
+    );
+
+    return (
+        <FiltersContext.Provider value={{filtersData: filtersDataWithHidden, dispatch}}>
+            {children}
+        </FiltersContext.Provider>
+    );
 };

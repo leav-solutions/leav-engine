@@ -1,4 +1,5 @@
 import * as z from 'zod/v4';
+import {type HiddenFullFilter} from '_ui/components/ExplorerV2/_types';
 
 export const FONT_AWESOME_ICON_REGEX = /^fa-/;
 
@@ -67,6 +68,8 @@ export const viewSettingsStateSchema = z.object({
     isViewSettingsActive: z.boolean().optional(),
     displayViewSettingsIframeSource: z.string().optional(),
     hiddenTabs: z.array(ViewSettingsTabSchema).optional(),
+    // Runtime-only : injecté par le message open-view-settings, jamais renseigné en config admin.
+    hiddenFilters: z.array(z.custom<HiddenFullFilter>()).optional(),
 });
 
 export const iframePanelSchema = z.object({

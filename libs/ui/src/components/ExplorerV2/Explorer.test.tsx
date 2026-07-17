@@ -14,6 +14,7 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {ERROR_NOTIFICATION_DURATION, SUCCESS_NOTIFICATION_DURATION} from '_ui/index';
 import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesSubscription';
 import {type IEntrypointLibrary, type IEntrypointLink, type IItemAction, type IPrimaryAction} from './_types';
+import {ThroughConditionFilter} from '_ui/types';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import * as useColumnWidth from './useColumnWidth';
 import {ExplorerV2, type IExplorerRef} from './Explorer';
@@ -2291,6 +2292,104 @@ describe('Explorer', () => {
                 }),
             );
         });
+
+        // Regression test for the FiltersContext.Provider fix: hidden pre-filters (e.g. a recordPanel's
+        // `attributeSource` link scoping) must reach smart-filter dropdowns' `listDistinctValues` query,
+        // not just the main records/count requests.
+        test("includes the hidden pre-filter in the smart filter dropdown's listDistinctValues query", async () => {
+            const smartFilterMockAttribute = {
+                id: 'smart_filter_attribute',
+                label: {fr: 'Attribut smart filter', en: 'Smart filter attribute'},
+                type: gqlTypes.AttributeType.simple,
+                format: gqlTypes.AttributeFormat.text,
+            };
+            const baseAttributesList = (mockExplorerAttributesQueryResult as gqlTypes.ExplorerAttributesQueryResult)
+                .data.attributes.list;
+            // Built ONCE and served via mockReturnValue: a mockImplementation building a fresh `data`
+            // object per call gives `attributesDataById` (useViewFiltersConverter) a new identity every
+            // render, re-firing useControlledFilterStore's SEED effect (RESET dispatch) each render —
+            // an infinite render loop that hangs the whole run.
+            const attributesQueryResultWithSmartFilter = {
+                ...mockExplorerAttributesQueryResult,
+                data: {
+                    attributes: {
+                        list: [
+                            ...baseAttributesList,
+                            {
+                                id: smartFilterMockAttribute.id,
+                                label: smartFilterMockAttribute.label,
+                                permissions: {access_attribute: true},
+                                type: smartFilterMockAttribute.type,
+                                format: smartFilterMockAttribute.format,
+                                multiple_values: false,
+                                smart_filter: {enable: true, through: null},
+                            },
+                        ],
+                    },
+                },
+            } as gqlTypes.ExplorerAttributesQueryResult;
+            vi.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockReturnValue(attributesQueryResultWithSmartFilter);
+
+            const smartFilterListValuesSpy = vi.spyOn(gqlTypes, 'useSmartFilterListValuesQuery').mockReturnValue({
+                data: {listDistinctValues: []},
+                loading: false,
+            } as unknown as gqlTypes.SmartFilterListValuesQueryResult);
+
+            render(
+                <ExplorerV2
+                    entrypoint={{type: 'library', libraryId: 'campaigns'}}
+                    showFilters
+                    currentView={{
+                        filters: [
+                            // Masked pre-filter, shaped like PanelAttributeExplorer's `linkPreFilter`
+                            // (scopes a recordPanel explorer to records linked via `attributeSource`).
+                            {
+                                id: 'filter_to_linked_records',
+                                hidden: true as const,
+                                field: linkMockAttribute.id,
+                                subField: 'id',
+                                attribute: {
+                                    id: linkMockAttribute.id,
+                                    type: gqlTypes.AttributeType.simple_link,
+                                    label: 'SHOULD BE HIDDEN',
+                                },
+                                condition: ThroughConditionFilter.THROUGH,
+                                subCondition: gqlTypes.RecordFilterCondition.EQUAL,
+                                value: '42',
+                            },
+                            // Lean, pinned user filter on the smart-filter attribute.
+                            {
+                                attributes: [{id: smartFilterMockAttribute.id}],
+                                condition: gqlTypes.RecordFilterCondition.EQUAL,
+                                values: [],
+                                pinned: true,
+                            },
+                        ],
+                    }}
+                />,
+            );
+
+            const toolbar = await screen.findByRole('list', {name: /toolbar/});
+            await userEvent.click(
+                within(toolbar).getByRole('button', {name: new RegExp(smartFilterMockAttribute.label.fr)}),
+            );
+
+            await waitFor(() => {
+                expect(smartFilterListValuesSpy).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        variables: expect.objectContaining({
+                            recordFilters: expect.arrayContaining([
+                                expect.objectContaining({
+                                    field: `${linkMockAttribute.id}.id`,
+                                    condition: gqlTypes.RecordFilterCondition.EQUAL,
+                                    value: '42',
+                                }),
+                            ]),
+                        }),
+                    }),
+                );
+            });
+        });
     });
 
     describe('Entrypoint type link', () => {
@@ -3143,7 +3242,7 @@ describe('Explorer', () => {
             );
         });
 
-        // The sort chip (`sort-items`) was removed from ExplorerFilters (LEAVC-588): a sort
+        // The sort chip (`sort-items`) was removed from ExplorerFiltersAndSorts (LEAVC-588): a sort
         // is surfaced only through the "sorts" view-settings shortcut button, never as a toolbar chip.
         test('never displays a sort chip in the toolbar, even when showSorts is set and currentView.sort is not empty', async () => {
             render(
@@ -3165,6 +3264,29 @@ describe('Explorer', () => {
             expect(toolbar).toBeVisible();
 
             expect(within(toolbar).queryByRole('button', {name: /sort-items/})).not.toBeInTheDocument();
+        });
+
+        test('never displays a sort chip in the toolbar when showSorts is not set', async () => {
+            render(
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    showSorts
+                    defaultCallbacks={{viewSettings: {onViewSettingsShortcutClick: vi.fn()}}}
+                    currentView={{
+                        sort: [
+                            {
+                                field: simpleMockAttribute.id,
+                                order: gqlTypes.SortOrder.asc,
+                            },
+                        ],
+                    }}
+                />,
+            );
+
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            expect(toolbar).toBeVisible();
+
+            expect(within(toolbar).getByRole('button', {name: 'explorer.viewSettings.sorts'})).toBeVisible();
         });
 
         // Compensates for the removed chip: the "sorts" view-settings shortcut button is forced into

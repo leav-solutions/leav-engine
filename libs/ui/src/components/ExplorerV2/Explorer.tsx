@@ -555,8 +555,11 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         return (
             <>
                 {/* ExplorerV2 ALWAYS provides its own filter store (no ambient detection): native and
-                    future iframe panels behave identically. The toolbar + filters tab read this context. */}
-                <FiltersContext.Provider value={{filtersData, dispatch: filtersDispatch}}>
+                    future iframe panels behave identically. The toolbar + filters tab read this context.
+                    `filtersStore` (hidden + editable filters merged) is exposed rather than the raw store
+                    so query-driving consumers (e.g. smart filter dropdowns) see the same masked scoping
+                    as the records request. */}
+                <FiltersContext.Provider value={{filtersData: filtersStore, dispatch: filtersDispatch}}>
                     {explorerBody}
                 </FiltersContext.Provider>
                 <KitSnackBarProvider id={massActionSnackbarId} />
