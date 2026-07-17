@@ -149,6 +149,39 @@ describe('ViewSettings Reducer', () => {
                 withEmptyValues: true,
             });
         });
+
+        test('adds a smart filter with `through` as a THROUGH filter on the target attribute', () => {
+            const attributeDataSmartThrough = {
+                label: 'smart',
+                id: 'smart',
+                format: AttributeFormat.text,
+                linkedLibrary: {id: 'lib'},
+                type: AttributeType.simple_link,
+                smartFilter: {enable: true, through: {id: 'targetAttr'}},
+            };
+
+            const state = filtersReducer(
+                {...filtersInitialState, filters: []},
+                {
+                    type: FiltersActionTypes.ADD_FILTER,
+                    payload: {
+                        attribute: attributeDataSmartThrough,
+                        field: 'smart',
+                    },
+                },
+            );
+
+            expect(state.filters).toHaveLength(1);
+            expect(state.filters[0]).toEqual({
+                id: expect.any(String),
+                attribute: attributeDataSmartThrough,
+                field: 'smart',
+                condition: ThroughConditionFilter.THROUGH,
+                subCondition: RecordFilterCondition.EQUAL,
+                subField: 'targetAttr.id',
+                value: null,
+            });
+        });
     });
 
     describe(`Action ${FiltersActionTypes.SET_FILTERS} test`, () => {

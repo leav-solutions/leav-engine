@@ -1,7 +1,6 @@
 import {AttributeFormat, type RecordFilterCondition} from '_ui/_gqlTypes';
 import {
     type UIFilter,
-    type IUIFilterStandard,
     type IUIFilterTree,
     isUIFilterLink,
     isUIFilterStandard,
@@ -10,11 +9,10 @@ import {
     isUIFilterValueList,
     isUIFilterWithSmartFilter,
     type FiltersOperator,
-    type IUIFilterLinkAttribute,
     type IUIFilterThrough,
 } from '../_types';
 import {hasOnlyNoValueConditions, nullValueConditions} from '../conditionsHelper';
-import {conditionsByFormat, getFirstConditionByFilterType} from '../filter-items/filter-type/useConditionOptionsByType';
+import {conditionsByFormat, treeFilterConditions} from '../filter-items/filter-type/useConditionOptionsByType';
 import {AttributeConditionFilter, ThroughConditionFilter} from '_ui/types';
 import {isLinkAttribute} from '_ui/_utils/attributeType';
 import {type AttributesById} from '../useTransformFilters';
@@ -124,58 +122,90 @@ export type UIFiltersAction =
     | IUIFiltersActionRestoreInitialViewSettings
     | IUIFiltersActionUpdateViewListAndCurrentView;
 
+/**
+ * Builds the THROUGH filter materialized when a "smart filter" attribute points through another
+ * attribute (attribute.smartFilter.through). The filter targets `<through.id>.id`.
+ */
+const buildSmartFilterThroughFilter = (
+    payload: IUIFiltersActionAddFilter['payload'],
+    throughId: string,
+): IUIFilterThrough => ({
+    ...payload,
+    field: Array.isArray(payload.field) ? payload.field[0] : payload.field,
+    id: window.crypto.randomUUID(),
+    condition: ThroughConditionFilter.THROUGH,
+    subCondition: AttributeConditionFilter.EQUAL,
+    subField: `${throughId}.id`,
+    value: null,
+});
+
+const buildTreeFilter = (
+    payload: IUIFiltersActionAddFilter['payload'],
+    initialFilters: IUIFiltersState['initialFilters'],
+): IUIFilterTree => {
+    const filterWithDefaultValues = initialFilters.find(
+        initialFilter => initialFilter.attribute.id === payload.attribute.id,
+    );
+    if (filterWithDefaultValues !== undefined && isUIFilterTree(filterWithDefaultValues)) {
+        // TODO : include IS_EMPTY to permissions
+        return {...filterWithDefaultValues, withEmptyValues: true};
+    }
+    const {format} = payload.attribute;
+    const treeFilter = {
+        ...payload,
+        id: window.crypto.randomUUID(),
+        field: Array.isArray(payload.field) ? payload.field : [payload.field],
+        condition: format && hasOnlyNoValueConditions(format) ? null : treeFilterConditions[0],
+        value: null,
+    };
+    return treeFilter;
+};
+
+const buildDefaultFilter = (
+    payload: IUIFiltersActionAddFilter['payload'],
+    {condition, hasValueList}: {condition: RecordFilterCondition | null; hasValueList?: boolean},
+): UIFilter => {
+    const newFilter = {
+        ...payload,
+        field: isLinkAttribute(payload.attribute.type)
+            ? `${payload.field}.id`
+            : Array.isArray(payload.field)
+              ? payload.field[0]
+              : payload.field,
+        id: window.crypto.randomUUID(),
+        condition,
+        value: null,
+        valuesList: hasValueList ? payload.attribute.valuesList : undefined,
+    };
+    return newFilter;
+};
+
 const addFilter: Reducer<IUIFiltersActionAddFilter> = (state, payload) => {
+    const candidate = payload as UIFilter;
+
     const hasValueList = payload.attribute.valuesList?.enable;
-    const isSmartFilter = isUIFilterWithSmartFilter(payload as UIFilter);
-    let condition: RecordFilterCondition | null = hasOnlyNoValueConditions(
-        (payload as IUIFilterStandard).attribute.format,
-    )
-        ? null
-        : (conditionsByFormat[(payload as IUIFilterStandard).attribute.format][0] ?? null);
+    const isSmartFilter = isUIFilterWithSmartFilter(candidate);
+    const {format} = payload.attribute;
+    let condition: RecordFilterCondition | null =
+        format == null || hasOnlyNoValueConditions(format) ? null : (conditionsByFormat[format][0] ?? null);
     if (hasValueList || isSmartFilter) {
         condition = AttributeConditionFilter.EQUAL;
     }
 
+    // A smart filter pointing "through" another attribute is not added as a smart filter:
+    // it is materialized as a THROUGH filter on that target attribute (and thus rendered by
+    // LinkAttributeDropDown, not SmartFilterAttributeDropdown). See buildSmartFilterThroughFilter.
+    const smartFilterThrough = isUIFilterWithSmartFilter(candidate)
+        ? candidate.attribute.smartFilter?.through
+        : undefined;
+
     let filterToAdd;
-    if (isSmartFilter && (payload.attribute as IUIFilterLinkAttribute).smartFilter.through) {
-        if ((payload.attribute as IUIFilterLinkAttribute).smartFilter.through) {
-            filterToAdd = {
-                ...payload,
-                field: payload.field as string,
-                id: window.crypto.randomUUID(),
-                condition: ThroughConditionFilter.THROUGH,
-                subCondition: AttributeConditionFilter.EQUAL,
-                subField: `${(payload.attribute as IUIFilterLinkAttribute).smartFilter.through.id}.id`,
-                value: null,
-            } satisfies IUIFilterThrough;
-        }
-    } else if (isUIFilterTree(payload as UIFilter)) {
-        const filterWithDefaultValues = state.initialFilters.find(
-            initialFilter => initialFilter.attribute.id === payload.attribute.id,
-        );
-        if (filterWithDefaultValues !== undefined) {
-            // TODO : include IS_EMPTY to permissions
-            filterToAdd = {...filterWithDefaultValues, withEmptyValues: true};
-        } else {
-            filterToAdd = {
-                ...payload,
-                id: window.crypto.randomUUID(),
-                field: Array.isArray(payload.field) ? payload.field : [payload.field],
-                condition: hasOnlyNoValueConditions((payload as IUIFilterStandard).attribute.format)
-                    ? null
-                    : (getFirstConditionByFilterType(payload as UIFilter) as RecordFilterCondition[])[0],
-                value: null,
-            };
-        }
+    if (smartFilterThrough) {
+        filterToAdd = buildSmartFilterThroughFilter(payload, smartFilterThrough.id);
+    } else if (isUIFilterTree(candidate)) {
+        filterToAdd = buildTreeFilter(payload, state.initialFilters);
     } else {
-        filterToAdd = {
-            ...payload,
-            field: isLinkAttribute(payload.attribute.type) ? `${payload.field}.id` : (payload.field as string),
-            id: window.crypto.randomUUID(),
-            condition,
-            value: null,
-            valuesList: hasValueList ? payload.attribute.valuesList : undefined,
-        };
+        filterToAdd = buildDefaultFilter(payload, {condition, hasValueList});
     }
 
     return {
@@ -276,7 +306,6 @@ const changeFilterConfig: Reducer<IUIFiltersActionChangeFilterConfig> = (state, 
             return filter;
         }
         if (isUIFilterTree(filter)) {
-            const treePayload = payload as IUIFilterTree;
             // Deselecting every node keeps the filter PINNED but empty: represent it as an EXPLICIT empty
             // user selection (`userNodes: []`, never null). A null user selection reads as "not touched /
             // not yet resolved" and is dropped from the lean projection (useControlledFilterStore), so a
@@ -284,7 +313,7 @@ const changeFilterConfig: Reducer<IUIFiltersActionChangeFilterConfig> = (state, 
             // surface kept a stale value or silently unpinned. The empty arrays survive the projection;
             // the records query still skips a tree with no record ids (prepareFiltersForRequest). The four
             // fields are normalised defensively so a stale user selection can't leak through.
-            if (Array.isArray(treePayload.value) && treePayload.value.length === 0) {
+            if (isUIFilterTree(payload) && Array.isArray(payload.value) && payload.value.length === 0) {
                 return {
                     ...filter,
                     ...payload,
