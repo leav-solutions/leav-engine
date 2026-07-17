@@ -2,10 +2,7 @@
     "name": "@leav/logger",
     "version": "1.18.0",
     "description": "leav logger",
-    "main": "./src/index",
-    "publishConfig": {
-        "main": "./dist/index"
-    },
+    "main": "./dist/index",
     "files": [
         "dist"
     ],

@@ -2,10 +2,7 @@
     "name": "@leav/config-manager",
     "version": "1.18.0",
     "description": "Module to load project configuration, allowing config overrides based on environment",
-    "main": "./src/index",
-    "publishConfig": {
-        "main": "./dist/index"
-    },
+    "main": "./dist/index",
     "files": [
         "dist"
     ],

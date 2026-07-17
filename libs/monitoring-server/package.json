@@ -2,10 +2,7 @@
     "name": "@leav/monitoring-server",
     "version": "1.18.0",
     "description": "Module to create simple http monitoring server for health, metrics ...",
-    "main": "./src/index",
-    "publishConfig": {
-        "main": "./dist/index"
-    },
+    "main": "./dist/index",
     "files": [
         "dist"
     ],
