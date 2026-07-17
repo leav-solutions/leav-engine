@@ -48,6 +48,20 @@ describe('useViewActions', () => {
             expect(findAction(makeView({shared: true}), 'copy-id')?.disabled).toBe(false);
         });
 
+        it('carries the copy-id tooltip title interpolated with the view id when shared', () => {
+            expect(findAction(makeView({id: 'view-42', shared: true}), 'copy-id')?.title).toBe(
+                'view_settings.copy_id_tooltip|view-42',
+            );
+        });
+
+        it('omits the copy-id tooltip title when the view is not shared (disabled)', () => {
+            expect(findAction(makeView({shared: false}), 'copy-id')?.title).toBeUndefined();
+        });
+
+        it('carries the delete tooltip title', () => {
+            expect(findAction(makeView(), 'delete')?.title).toBe('view_settings.delete');
+        });
+
         it('disables the copy-id action when the view is not shared', () => {
             expect(findAction(makeView({shared: false}), 'copy-id')?.disabled).toBe(true);
         });

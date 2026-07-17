@@ -9,7 +9,8 @@ import {CurrentViewContext} from '../../store-current-view/CurrentViewContext';
 import {useDelegatedDisplayIframeSource} from './useDelegatedDisplayIframeSource';
 import {useSyncViewToIframe} from '../../../panel-custom/message-handlers/useSyncViewToIframe';
 import {sanitize} from './_constants';
-import {tab} from './tabDisplay.module.css';
+import {tab, tabIframe} from './tabDisplay.module.css';
+import cn from 'classnames';
 import {type CurrentViewColumn} from '../../store-current-view/_types';
 
 // TODO (display mode): wire DisplayModeSelector to view.display.type + dispatch SET_VIEW_TYPE
@@ -68,7 +69,7 @@ export const TabDisplay = () => {
     // Custom view: delegate the whole Display tab to the panel's config iframe (MVP: may be a stub).
     if (displayViewSettingsIframeSource) {
         return (
-            <div className={tab}>
+            <div className={cn(tab, tabIframe)}>
                 <iframe
                     ref={iframeRef}
                     src={displayViewSettingsIframeSource}

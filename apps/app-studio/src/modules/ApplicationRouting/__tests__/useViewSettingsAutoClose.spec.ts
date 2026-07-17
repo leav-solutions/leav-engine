@@ -114,4 +114,30 @@ describe('useViewSettingsAutoClose', () => {
 
         expect(mockSetApplication).not.toHaveBeenCalled();
     });
+
+    it('should reset the leaving panel when the current panel changes', () => {
+        const {rerender} = renderHook(() => useViewSettingsAutoClose(false));
+        expect(mockSetApplication).not.toHaveBeenCalled();
+
+        // Navigate to a different panel: the previous panel's cleanup must reset its volet state so
+        // it does not reopen on return.
+        spyRetrievePanelDetails.mockReturnValue({
+            currentPanel: {...explorerWithActiveVolet, id: 'other-panel'},
+            libraryId: 'lib',
+            displayedLibraryId: 'lib',
+            panelType: 'recordPanels',
+        });
+        rerender();
+
+        expect(mockSetApplication).toHaveBeenCalled();
+    });
+
+    it('should reset the leaving panel on unmount when the volet is active', () => {
+        const {unmount} = renderHook(() => useViewSettingsAutoClose(false));
+        expect(mockSetApplication).not.toHaveBeenCalled();
+
+        unmount();
+
+        expect(mockSetApplication).toHaveBeenCalled();
+    });
 });

@@ -1,4 +1,4 @@
-import {useLayoutEffect, useRef} from 'react';
+import {useEffect, useLayoutEffect, useRef} from 'react';
 import {useParams} from 'react-router-dom';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
@@ -16,6 +16,10 @@ import {getIsViewSettingsVoletActive} from './utils/getIsViewSettingsVoletActive
  *
  * Opening the volet while a flap is ALREADY open keeps both (avoids a UI shift), so we react only to
  * the flap *opening*.
+ *
+ * A third trigger is navigation itself: when the current panel/workspace changes, the volet subtree is
+ * unmounted by the router but its `isViewSettingsActive` flag survives on the application context. An
+ * effect cleanup resets the *leaving* panel's volet state so it does not reopen when the user returns.
  *
  * @param hasNextLevelPanel - whether a next-level panel (record) is currently open over this explorer.
  */
@@ -54,4 +58,20 @@ export const useViewSettingsAutoClose = (hasNextLevelPanel: boolean): void => {
         currentPanel?.id,
         setApplication,
     ]);
+
+    // Reset the leaving panel's volet on panel/workspace change so it does not reopen on return.
+    // The flag lives on the long-lived application context and survives navigation; nothing else
+    // clears it when the volet subtree is unmounted by a route change (onCloseAfterAnimation fires
+    // only on an animated close). isViewSettingsVoletActive is in the deps so the cleanup closure is
+    // refreshed when the volet opens without a panel-id change — otherwise it would capture a stale
+    // "inactive" snapshot and skip the reset.
+    useEffect(() => {
+        if (!isViewSettingsVoletActive || libraryId === null || panelType === null) {
+            return;
+        }
+        const location = {libraryId, panelType, panelId: currentPanel.id};
+        return () => {
+            setApplication(prev => resetPanelViewSettingsInApplication(prev, location));
+        };
+    }, [currentPanel?.id, isViewSettingsVoletActive, libraryId, panelType, setApplication]);
 };
