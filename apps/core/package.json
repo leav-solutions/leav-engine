@@ -28,8 +28,7 @@
         "benchmark": "tsx src/ benchmark",
         "build": "scripts/build.js",
         "build:backend": "yarn run build",
-        "clean": "rm -rf dist dist-spec dist-types tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
-        "build-types": "tsc -b tsconfig.types.json",
+        "clean": "rm -rf dist dist-spec dist-publish tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
         "build-publish": "tsc -b tsconfig.publish.json",
         "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
         "tscheck:watch": "tsc -b -w tsconfig.json"
