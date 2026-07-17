@@ -2,7 +2,6 @@ import {Client, type estypes} from '@elastic/elasticsearch';
 import {type IConfig} from '../../_types/config';
 import {logger} from '@leav/logger';
 import {type Log} from '@leav/utils';
-import {type MappingProperty} from '@elastic/elasticsearch/lib/api/types';
 
 export interface IElasticsearchServiceSearchResponse<T> {
     total: number;
@@ -98,7 +97,7 @@ export default function ({config}: IElasticsearchServiceDeps): IElasticsearchSer
                             before: {type: 'flattened'},
                             after: {type: 'flattened'},
                             metadata: {type: 'flattened'},
-                        } satisfies Record<keyof Log | '@timestamp', MappingProperty>,
+                        } satisfies Record<keyof Log | '@timestamp', estypes.MappingProperty>,
                     },
                 },
             });
