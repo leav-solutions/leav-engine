@@ -1,6 +1,6 @@
 import {type MutableRefObject, type RefObject} from 'react';
 import {
-    type IUIFilterSmartFiler,
+    type IUIFilterSmartFilter,
     type IUIFilterLink,
     type IUIFilterStandard,
     type IUIFilterThrough,
@@ -29,7 +29,7 @@ export interface IFilterChildrenTreeDropDownProps {
 }
 
 export interface IFilterChildrenSmartFilterDropDownProps {
-    filter: IUIFilterSmartFiler;
-    onFilterChange: (filterData: IUIFilterSmartFiler) => void;
+    filter: IUIFilterSmartFilter;
+    onFilterChange: (filterData: IUIFilterSmartFilter) => void;
     selectDropDownRef?: RefObject<HTMLDivElement>;
 }

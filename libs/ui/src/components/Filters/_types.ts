@@ -66,8 +66,10 @@ interface IUIFilterBase {
      *
      * - ex: `campaigns_id_pac`
      * - ex with **subField**: `campaigns_id_pac.id`
+     *
+     * Concrete filter interfaces narrow this to `string` or `string[]` (tree).
      */
-    field: any;
+    field: string | string[];
     value: string | null;
     formattedValue?: string | null;
     hidden?: boolean | undefined;
@@ -108,8 +110,11 @@ export interface IUIFilterTree extends Omit<IUIFilterBase, 'value' | 'formattedV
     userFormattedValue?: string[] | null;
 }
 
-export interface IUIFilterSmartFiler extends Omit<IUIFilterBase, 'value' | 'formattedValue'> {
-    attribute: IUIFilterLinkAttribute;
+export interface IUIFilterSmartFilter extends Omit<IUIFilterBase, 'value' | 'formattedValue'> {
+    // A smart filter is a *decoration* (attribute.smartFilter.enable) on a standard or link
+    // attribute, not an attribute type of its own. The attribute type must therefore stay
+    // consistent with `isUIFilterWithSmartFilter`, which accepts standard / link / through.
+    attribute: IUIFilterStandardAttribute | IUIFilterLinkAttribute;
     value: string[] | null;
     formattedValue?: string[] | null;
     condition: RecordFilterCondition | null;
@@ -148,7 +153,7 @@ export interface IUIFilterTreeValueList extends Omit<IUIFilterTree, 'attribute' 
 }
 
 export type UIFilter =
-    IUIFilterStandard | IUIFilterLink | IUIFilterThrough | IUIFilterValueList | IUIFilterTree | IUIFilterSmartFiler;
+    IUIFilterStandard | IUIFilterLink | IUIFilterThrough | IUIFilterValueList | IUIFilterTree | IUIFilterSmartFilter;
 
 export const isUIFilterStandard = (filter: UIFilter): filter is IUIFilterStandard =>
     [AttributeType.simple, AttributeType.advanced].includes(filter.attribute.type);
@@ -176,7 +181,7 @@ export const isUIFilterTree = (filter: UIFilter): filter is IUIFilterTree =>
 export const isUIFilterTreeWithValueList = (filter: UIFilter): filter is IUIFilterTreeValueList =>
     isUIFilterTree(filter) && isValueList(filter);
 
-export const isUIFilterWithSmartFilter = (filter: UIFilter): filter is IUIFilterSmartFiler =>
+export const isUIFilterWithSmartFilter = (filter: UIFilter): filter is IUIFilterSmartFilter =>
     (isUIFilterStandard(filter) || isUIFilterLink(filter) || isUIFilterThrough(filter)) &&
     filter.attribute.smartFilter?.enable;
 
@@ -186,7 +191,7 @@ export const isUIFilterWithSmartFilter = (filter: UIFilter): filter is IUIFilter
  * `IUIFilterThrough` (its `.id` is already baked into `subField`) and a standard smart filter carries
  * plain text values — neither is matched here.
  */
-export const isUIFilterLinkWithSmartFilter = (filter: UIFilter): filter is IUIFilterSmartFiler =>
+export const isUIFilterLinkWithSmartFilter = (filter: UIFilter): filter is IUIFilterSmartFilter =>
     isUIFilterLink(filter) && !!filter.attribute.smartFilter?.enable;
 
 const isValueList = (filter: UIFilter): filter is UIFilter & {attribute: {valuesList: {enabled: true}}} =>

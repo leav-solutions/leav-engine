@@ -155,7 +155,7 @@ Points à connaître avant de toucher à ce fichier :
   "no-value condition" (`nullValueConditions` : `IS_EMPTY`, `IS_NOT_EMPTY`, `TODAY`…) ou `withEmptyValues`.
 - **Multi-valeurs** (valuesList, smartFilter, arbre) : génère un groupe `OPEN_BRACKET … OR … CLOSE_BRACKET`
   (ou `AND` si condition `NOT_EQUAL`). Cf. `_generateConditionsFromMultipleValues`. La `value` d'un smart
-  filter est **toujours** un `string[]` (`IUIFilterSmartFiler`) ; `_generateConditionsFromMultipleValues`
+  filter est **toujours** un `string[]` (`IUIFilterSmartFilter`) ; `_generateConditionsFromMultipleValues`
   normalise défensivement un scalaire égaré (un smart filter sur lien est typé `IUIFilterLink` par
   `toUIFilters`, donc `value` peut arriver en `string` sans la réinjection de `useViewFiltersConverter`).
 - **`withEmptyValues` ("Non défini")** : enveloppe la condition dans `(condition OR <field> IS_EMPTY)`

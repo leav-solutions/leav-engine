@@ -3,7 +3,7 @@ import {AttributeFormat, AttributeType, RecordFilterCondition, useExplorerAttrib
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FiltersActionTypes} from './context/filtersReducer';
 import {useControlledFilterStore} from './useControlledFilterStore';
-import {type IUIFilterSmartFiler, type IUIFilterTree, type UIFilter} from './_types';
+import {type IUIFilterSmartFilter, type IUIFilterTree, type UIFilter} from './_types';
 import {type SerializedFilter} from '../ExplorerV2/_types';
 
 vi.mock('_ui/_gqlTypes', async () => ({
@@ -491,7 +491,7 @@ describe('useControlledFilterStore', () => {
         );
 
         await waitFor(() =>
-            expect((result.current.filtersData.filters[0] as IUIFilterSmartFiler).formattedValue).toEqual([
+            expect((result.current.filtersData.filters[0] as IUIFilterSmartFilter).formattedValue).toEqual([
                 'Toussaint',
             ]),
         );
@@ -501,7 +501,7 @@ describe('useControlledFilterStore', () => {
         rerender({leanFilters: [leanSmart(['t1', 't2'])]});
 
         await waitFor(() =>
-            expect((result.current.filtersData.filters[0] as IUIFilterSmartFiler).formattedValue).toEqual([
+            expect((result.current.filtersData.filters[0] as IUIFilterSmartFilter).formattedValue).toEqual([
                 'Toussaint',
                 "Loisirs d'extérieur",
             ]),
