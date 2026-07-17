@@ -4,7 +4,7 @@ Date: 09/07/2026
 
 ## Status
 
-Accepted
+Superseded by [ADR-010](ADR-010-backend-nodenext-reenabled.md)
 
 ## Context
 

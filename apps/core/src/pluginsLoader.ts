@@ -9,6 +9,8 @@ import {getConfig} from './config';
 import path from 'path';
 import {type IUtils} from './utils/utils';
 import {appRootPath} from './rootPath';
+import {isTscCjsDoubleWrap} from './utils/helpers/isTscCjsDoubleWrap';
+import {resolveIndexFilePath} from './utils/helpers/resolveIndexFilePath';
 
 export const initPlugins = async (pluginsPath: string[], depsManager: AwilixContainer) => {
     if (!pluginsPath.length) {
@@ -51,8 +53,15 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
             continue;
         }
 
-        const importedPlugin = await import(pluginFullPath);
-        const defaultExport = importedPlugin.default;
+        const pluginIndexPath = await resolveIndexFilePath(pluginFullPath, utils.fileExists);
+        const importedPlugin = await import(pluginIndexPath);
+        let defaultExport = importedPlugin.default;
+
+        if (isTscCjsDoubleWrap(defaultExport)) {
+            // Unwrap one level; if there's no real default underneath (a plugin with only named
+            // exports), this plugin simply has no init function to call below.
+            defaultExport = defaultExport.default;
+        }
 
         // Load plugin config
         const pluginConf = await getConfig(pluginFullPath);
@@ -74,7 +83,8 @@ export const initPlugins = async (pluginsPath: string[], depsManager: AwilixCont
         }
 
         // Read plugins information in package.json to register it
-        const packageInfos = await import(pluginFullPath + '/package.json');
+        const packageJsonContent = await fs.promises.readFile(`${pluginFullPath}/package.json`, 'utf8');
+        const packageInfos = JSON.parse(packageJsonContent);
 
         pluginsApp.registerPlugin(pluginFullPath, {
             name: packageInfos.name,

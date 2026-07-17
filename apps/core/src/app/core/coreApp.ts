@@ -153,7 +153,8 @@ export default function ({
                     const nsFiles = await fs.promises.readdir(path + '/' + lngFolder);
 
                     for (const nsFile of nsFiles) {
-                        const fileContent = await import(path + '/' + lngFolder + '/' + nsFile);
+                        const nsFilePath = `${path}/${lngFolder}/${nsFile}`;
+                        const fileContent = JSON.parse(await fs.promises.readFile(nsFilePath, 'utf8'));
                         const ns = nsFile.substring(0, nsFile.indexOf('.json'));
                         translator.addResourceBundle(lngFolder, ns, fileContent, true);
                     }

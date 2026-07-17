@@ -102,7 +102,7 @@ apps/core/config/local.js
 ### Local builds ###
 apps/*/dist
 apps/*/dist-spec
-apps/*/dist-types
+apps/*/dist-publish
 apps/*/build
 libs/*/dist
 libs/*/dist-spec

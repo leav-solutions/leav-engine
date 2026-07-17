@@ -54,14 +54,15 @@ For decisions taken mid-EPIC, a table of subjects still to settle.
 
 ## Decisions log
 
-| #   | Title                                                                                                     | Status   |
-| --- | --------------------------------------------------------------------------------------------------------- | -------- |
-| 001 | [Drag and drop library](ADR-001-dnd.md)                                                                   | Accepted |
-| 002 | [E2E forms test](ADR-002-tests-e2e-forms.md)                                                              | Accepted |
-| 003 | [Documentation](ADR-003-documentation.md)                                                                 | Accepted |
-| 004 | [Plugins real-time computed data architecture](ADR-004-plugins-realtime-computed-data.md)                 | Accepted |
-| 005 | [GraphQL plugin types in generated files](ADR-005-graphql-plugins-types.md)                               | Accepted |
-| 006 | [Explorer view configuration panel architecture](ADR-006-explorer-views-settings-volet.md)                | Accepted |
-| 007 | [AMQP connection resilience & message-broker interface](ADR-007-amqp-resilience.md)                       | Proposed |
-| 008 | [Backend Node module system: CommonJS, ESM migration deferred](ADR-008-backend-module-commonjs.md)        | Accepted |
-| 009 | [libs/utils ESM-only migration: blocked without a bundler, deferred](ADR-009-libs-utils-esm-migration.md) | Accepted |
+| #   | Title                                                                                                     | Status            |
+| --- | --------------------------------------------------------------------------------------------------------- | ----------------- |
+| 001 | [Drag and drop library](ADR-001-dnd.md)                                                                   | Accepted          |
+| 002 | [E2E forms test](ADR-002-tests-e2e-forms.md)                                                              | Accepted          |
+| 003 | [Documentation](ADR-003-documentation.md)                                                                 | Accepted          |
+| 004 | [Plugins real-time computed data architecture](ADR-004-plugins-realtime-computed-data.md)                 | Accepted          |
+| 005 | [GraphQL plugin types in generated files](ADR-005-graphql-plugins-types.md)                               | Accepted          |
+| 006 | [Explorer view configuration panel architecture](ADR-006-explorer-views-settings-volet.md)                | Accepted          |
+| 007 | [AMQP connection resilience & message-broker interface](ADR-007-amqp-resilience.md)                       | Proposed          |
+| 008 | [Backend Node module system: CommonJS, ESM migration deferred](ADR-008-backend-module-commonjs.md)        | Superseded by 010 |
+| 009 | [libs/utils ESM-only migration: blocked without a bundler, deferred](ADR-009-libs-utils-esm-migration.md) | Accepted          |
+| 010 | [Backend Node module system: nodenext re-enabled](ADR-010-backend-nodenext-reenabled.md)                  | Accepted          |

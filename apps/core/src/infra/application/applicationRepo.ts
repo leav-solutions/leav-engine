@@ -107,7 +107,8 @@ export default function ({
                         return acc;
                     }
 
-                    const appManifestJson = await import(manifestJsonPath);
+                    const manifestJsonContent = await fs.readFile(manifestJsonPath, 'utf8');
+                    const appManifestJson = JSON.parse(manifestJsonContent);
 
                     acc.push({
                         id: appManifestJson.name,

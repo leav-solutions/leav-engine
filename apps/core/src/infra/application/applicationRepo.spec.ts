@@ -154,17 +154,13 @@ describe('applicationRepo', () => {
             vi.mocked(fs.readdir).mockResolvedValueOnce(['app-studio', 'admin'] as any[]);
             vi.mocked(fs.stat).mockResolvedValue({} as Stats);
 
-            vi.mock('/some/path/app-studio/manifest.json', () => ({
-                name: 'app-studio',
-                description: 'app studio description',
-                version: '42',
-            }));
-
-            vi.mock('/some/path/admin/manifest.json', () => ({
-                name: 'admin',
-                description: 'admin description',
-                version: '42',
-            }));
+            vi.mocked(fs.readFile)
+                .mockResolvedValueOnce(
+                    JSON.stringify({name: 'app-studio', description: 'app studio description', version: '42'}),
+                )
+                .mockResolvedValueOnce(
+                    JSON.stringify({name: 'admin', description: 'admin description', version: '42'}),
+                );
 
             const repo = applicationRepo({config: mockConfig as IConfig});
 
@@ -188,11 +184,9 @@ describe('applicationRepo', () => {
                 return Promise.resolve({} as Stats);
             });
 
-            vi.mock('/some/path/app-studio/manifest.json', () => ({
-                name: 'app-studio',
-                description: 'app studio description',
-                version: '42',
-            }));
+            vi.mocked(fs.readFile).mockResolvedValueOnce(
+                JSON.stringify({name: 'app-studio', description: 'app studio description', version: '42'}),
+            );
 
             const mockLogger: Mockify<ILogger> = {
                 warn: vi.fn(),
