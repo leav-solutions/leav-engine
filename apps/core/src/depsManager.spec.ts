@@ -29,5 +29,13 @@ describe('depsManager', () => {
             expect(container.cradle['utils.namedThing']).toBe('named-value');
             expect(container.cradle['infra.namedOnly']).toBe('infra-value');
         });
+
+        test('Should not register the __esModule/module.exports interop artifacts as their own entries', async () => {
+            const container = createContainer({injectionMode: InjectionMode.PROXY});
+            await registerModules(container, fixturesFolder, '**/index.+(ts|js)');
+
+            expect('utils.__esModule' in container.registrations).toBe(false);
+            expect('utils.module.exports' in container.registrations).toBe(false);
+        });
     });
 });
