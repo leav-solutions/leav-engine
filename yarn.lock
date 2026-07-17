@@ -4373,7 +4373,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@leav/logger@npm:1.18.0, @leav/logger@workspace:libs/logger":
+"@leav/logger@workspace:libs/logger":
   version: 0.0.0-use.local
   resolution: "@leav/logger@workspace:libs/logger"
   dependencies:
@@ -4401,7 +4401,7 @@ __metadata:
   resolution: "@leav/monitoring-server@workspace:libs/monitoring-server"
   dependencies:
     "@hono/node-server": "npm:1.19.14"
-    "@leav/logger": "npm:1.18.0"
+    "@leav/logger": "workspace:libs/logger"
     "@types/node": "npm:24.13.3"
     hono: "npm:4.12.30"
     prom-client: "npm:15.1.3"
