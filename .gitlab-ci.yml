@@ -1033,5 +1033,27 @@ build-npm-leav-e2e-test-utils:
     PKG: "@leav/e2e-test-utils"
     FOCUS: "@leav/e2e-test-utils"
     PATH_CHANGES: libs/e2e-test-utils/**/*
+
+build-npm-leav-logger:
+  <<: *build_npm
+  variables:
+    PKG: "@leav/logger"
+    FOCUS: "@leav/logger"
+    PATH_CHANGES: libs/logger/**/*
+
+build-npm-leav-monitoring-server:
+  <<: *build_npm
+  variables:
+    PKG: "@leav/monitoring-server"
+    FOCUS: "@leav/monitoring-server"
+    PATH_CHANGES: libs/monitoring-server/**/*
+
+build-npm-leav-config-manager:
+  <<: *build_npm
+  variables:
+    PKG: "@leav/config-manager"
+    FOCUS: "@leav/config-manager"
+    PATH_CHANGES: libs/config-manager/**/*
+
 ## Build npm packages
 ##########
