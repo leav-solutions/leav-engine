@@ -2,7 +2,7 @@ import {test, expect} from '@playwright/test';
 import config from '../config';
 import {PortalPage} from '../../pages/PortalPage';
 import {LibraryStandardFieldPage} from '../../pages/LibraryStandardFieldPage';
-import {DataStudioPage} from '../../pages/DataStudioPage';
+import {ExplorerStudioPage} from '../../pages/ExplorerStudioPage';
 import {
     STANDARD_FIELD_ATTRIBUTE_DROPDOWN_OPTION_1,
     TEST_COLOR_RECORD_INITIAL_VALUE,
@@ -19,9 +19,7 @@ import {setupCryptoRandomUUIDPolyfill} from '@leav/e2e-test-utils';
 
 setupCryptoRandomUUIDPolyfill(test);
 
-// Skipped: this scenario drives the removed data-studio app (accessDataStudio / DataStudioPage),
-// so every test times out on the entry click. To be rewritten against explorer-studio in LEAVC-988.
-test.describe.skip('Standard type field scenario', () => {
+test.describe('Standard type field scenario', () => {
     test.beforeEach(async ({page}) => {
         await page.goto(config.baseUrl);
 
@@ -33,14 +31,13 @@ test.describe.skip('Standard type field scenario', () => {
 
         await expect(portalPage.pageTitle).toBeVisible({timeout: 10000});
 
-        await portalPage.accessDataStudio();
+        await portalPage.accessExplorerStudio();
 
-        await expect(portalPage.dataStudioTitle).toBeVisible();
+        const explorerStudioPage = new ExplorerStudioPage(page);
+        await explorerStudioPage.enterLibraryWorkspace();
 
         const libraryStandardFieldPage = new LibraryStandardFieldPage(page);
-        const dataStudioPage = new DataStudioPage(page);
-        await dataStudioPage.enterLibrary();
-        await expect(libraryStandardFieldPage.libraryTitle).toBeVisible();
+        await expect(libraryStandardFieldPage.createBtn).toBeVisible({timeout: 10000});
     });
 
     test('Save simple text', async ({page}) => {

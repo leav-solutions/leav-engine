@@ -8,12 +8,10 @@ import {ColorComponent} from '../components/simpleField/ColorComponent';
 import {PasswordComponent} from '../components/simpleField/PasswordComponent';
 import {RichTextComponent} from '../components/simpleField/RichTextComponent';
 import {DropdownComponent} from '../components/simpleField/DropdownComponent';
-import {STANDARD_FIELD_LIBRARY_LABEL} from '../src/constants';
 
 export class LibraryStandardFieldPage {
     private readonly page: Page;
-    public readonly libraryTitle: Locator;
-    private readonly createBtn: Locator;
+    public readonly createBtn: Locator;
     public simpleTextComponent: TextFieldComponent;
     public modal: ModalComponent;
     public booleanSwitch: BooleanFieldComponent;
@@ -26,8 +24,12 @@ export class LibraryStandardFieldPage {
 
     public constructor(page: Page) {
         this.page = page;
-        this.libraryTitle = this.page.getByRole('heading').getByText(`${STANDARD_FIELD_LIBRARY_LABEL} (fr)`);
-        this.createBtn = this.page.getByRole('button', {name: 'Créer'});
+        // In explorer-studio, app-studio always passes `hideFirstActionLabel` to the Explorer,
+        // so the create primary action is an icon-only "+" button (no « Créer » text).
+        // KitButton renders a plain <button> with literal `kit-btn-*` classes (not an antd button).
+        this.createBtn = this.page
+            .locator('button.kit-btn-primary')
+            .filter({has: this.page.locator('svg[data-icon="plus"]')});
         this.simpleTextComponent = new TextFieldComponent(this.page);
         this.modal = new ModalComponent(this.page);
         this.booleanSwitch = new BooleanFieldComponent(this.modal.modal);

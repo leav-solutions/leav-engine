@@ -15,10 +15,17 @@ export class DropdownComponent {
     public constructor(page: Page, root: Locator) {
         this.page = page;
         this.root = root;
-        this.field = this.page.getByRole('combobox', {name: STANDARD_FIELD_ATTRIBUTE_DROPDOWN_LABEL});
+        // Anchor on the `#standardfield-<attributeId>` wrapper: in the edition popup the label is not
+        // linked to the select, so role-based accessible names are unreliable there.
+        // The select inner search input is invisible while unfocused, so target the visible
+        // `.ant-select` container for pointer interactions.
+        this.field = this.page.locator(`#standardfield-${STANDARD_FIELD_ATTRIBUTE_DROPDOWN_ID}`).locator('.ant-select');
         this.option = this.page.getByText(STANDARD_FIELD_ATTRIBUTE_DROPDOWN_OPTION_1).nth(1);
         this.label = this.root.getByText(STANDARD_FIELD_ATTRIBUTE_DROPDOWN_LABEL, {exact: true});
-        this.deleteBtn = this.page.getByTestId(STANDARD_FIELD_ATTRIBUTE_DROPDOWN_ID).getByLabel('clear');
+        // DS clear icons are FontAwesome svgs carrying `aria-label="clear"`.
+        this.deleteBtn = this.page
+            .locator(`#standardfield-${STANDARD_FIELD_ATTRIBUTE_DROPDOWN_ID}`)
+            .getByLabel('clear');
     }
 
     public async select() {
@@ -27,6 +34,8 @@ export class DropdownComponent {
     }
 
     public async clear() {
+        // The clear icon (antd allowClear) is only rendered while the select is hovered.
+        await this.field.hover();
         await this.deleteBtn.click();
         await this.label.click();
     }

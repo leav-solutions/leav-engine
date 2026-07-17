@@ -6,7 +6,8 @@ export class PortalPage {
     private readonly idInput: Locator;
     private readonly passwordInput: Locator;
     public readonly pageTitle: Locator;
-    public readonly dataStudioTitle: Locator;
+    // System application created by the core migrations (label fr: « Explorateur Studio »).
+    public readonly explorerStudioTitle: Locator;
 
     public constructor(page: Page) {
         this.page = page;
@@ -14,7 +15,7 @@ export class PortalPage {
         this.idInput = this.page.getByLabel('Identifiant');
         this.passwordInput = this.page.getByLabel('Mot de passe');
         this.pageTitle = this.page.getByRole('heading', {name: 'app-studio (fr)'});
-        this.dataStudioTitle = this.page.getByText('Data Studio');
+        this.explorerStudioTitle = this.page.getByText('Explorateur Studio');
     }
 
     public async login({id, password}: {id: string; password: string}) {
@@ -23,7 +24,7 @@ export class PortalPage {
         await this.connectionBtn.click();
     }
 
-    public async accessDataStudio() {
-        await this.dataStudioTitle.click();
+    public async accessExplorerStudio() {
+        await this.explorerStudioTitle.click();
     }
 }

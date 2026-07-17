@@ -9,11 +9,14 @@ export class DateFieldComponent {
     private readonly deleteBtn: Locator;
     private readonly yearField: Locator;
     private readonly decadeField: Locator;
+    private readonly input: Locator;
     public constructor(page: Page, root: Locator) {
         this.page = page;
         this.root = root;
         this.field = this.root.getByText(STANDARD_FIELD_ATTRIBUTE_DATE_LABEL, {exact: true});
-        this.deleteBtn = this.page.locator(`#standardfield-${STANDARD_FIELD_ATTRIBUTE_DATE_ID}`).getByRole('button');
+        this.input = this.page.locator(`#standardfield-${STANDARD_FIELD_ATTRIBUTE_DATE_ID}`).locator('input');
+        // DS clear icons are FontAwesome svgs carrying `aria-label="clear"`.
+        this.deleteBtn = this.page.locator(`#standardfield-${STANDARD_FIELD_ATTRIBUTE_DATE_ID}`).getByLabel('clear');
         this.yearField = this.page.getByRole('button', {name: 'year panel'});
         this.decadeField = this.page.getByRole('button', {name: 'decade panel'});
     }
@@ -42,18 +45,18 @@ export class DateFieldComponent {
 
     private async selectMonth(month: string) {
         const monthNames = [
-            'janv.',
-            'févr.',
+            'janvier',
+            'février',
             'mars',
-            'avr.',
+            'avril',
             'mai',
             'juin',
-            'juil.',
+            'juillet',
             'août',
-            'sept.',
-            'oct.',
-            'nov.',
-            'déc.',
+            'septembre',
+            'octobre',
+            'novembre',
+            'décembre',
         ];
         const monthName = monthNames[Number(month) - 1];
         await this.getMonth(monthName).click();
@@ -83,7 +86,8 @@ export class DateFieldComponent {
     }
 
     public async clear() {
-        await this.field.click();
+        // The clear icon (antd allowClear) is only rendered while the picker input is hovered.
+        await this.input.hover();
         await this.deleteBtn.click();
     }
 }
