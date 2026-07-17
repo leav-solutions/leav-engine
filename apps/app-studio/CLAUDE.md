@@ -268,6 +268,45 @@ InitNetwork → InitTranslation → InitUser → InitTheme
 
 ---
 
+## Analytics (Matomo)
+
+Le tracking est **opt-in par instance** via le flag `enableMatomoTracking` de la config `appStudioSettings`
+(schéma `ApplicationRouting/schema.ts`). Un **même déploiement** app-studio sert les instances génériques
+(`explorer-studio`, `app-studio`) **et** campaigns-manager (routes `/app/…` distinctes, cf.
+`docker-compose.yml`), avec le même `index.html`/env Matomo — c'est donc ce flag de config, **pas
+l'endpoint d'URL**, qui empêche l'usage générique d'être tracké dans le site Matomo de campaigns-manager.
+`InitApplicationSettingProvider` appelle `matomo.setTrackingEnabled(config.enableMatomoTracking ?? false)`
+au chargement des settings ; `matomo.push` no-op tant que c'est `false` (défaut). Les événements sont
+poussés dans `window._paq`.
+
+> ⚠️ `matomo.setUserRole` (dim 1, portée Visit) est appelé dans `InitUser`, **avant** le chargement des
+> settings — il peut donc partir avant que le flag soit posé et être ignoré (compromis accepté).
+
+**Dimensions personnalisées de portée Action** (reconstruites à chaque événement, `services/analytics/resolveActionDimensions.ts`) :
+Page type (2, catégorie déduite de `panel.type`), Panel Name (3, `panel.name` localisé, repli sur `panel.id`),
+In Comparaison Mode (4, `'false'` pour les panels génériques).
+
+> ⚠️ **Piège Matomo JS** : `setCustomDimension(id, val)` est **persitant** sur le tracker — la valeur est
+> renvoyée sur **tous** les hits suivants jusqu'à `deleteCustomDimension(id)` ou rechargement de page. La
+> portée « Action » côté serveur ne réinitialise PAS la valeur côté JS. `matomo.trackEvent` fixe donc les
+> dimensions avant le hit **puis les supprime juste après** (`deleteCustomDimension`), pour qu'elles ne
+> fuient pas sur un événement ultérieur (ex. un événement de navigation qui ne doit porter aucune dimension
+> d'action). Ne jamais les fixer au montage.
+
+- **Panels génériques** (explorer/editionForm/…) : `matomo.trackInteractionEvent(action, panel, lang)` fixe les
+  3 dimensions puis émet. Points d'émission : `useViewSettingsProps` (filtre appliqué/réinitialisé, export —
+  **ExplorerV2 uniquement**, le hook renvoie `{}` quand `enableViewSettings` est off) et `ToggleFlapButton`
+  (ouverture du panel de commentaires / flap `thread`).
+- **Panels iframe `custom`** : xStream possède ses dimensions et les envoie dans le postMessage `matomo-track` ;
+  `trackMatomoEvent.ts` les transmet verbatim. app-studio n'ajoute rien.
+- **Événements de navigation** (`trackNavigationEvent` : workspace/onglet/historique) ne portent aucune
+  dimension d'action, par décision.
+
+> ⚠️ Limite connue : l'Explorer **v1** (flag off) ne track ni filtre ni export (aucun callback consommateur
+> exposé) ; différé jusqu'au retrait de v1.
+
+---
+
 ## Tests
 
 - Framework : **Vitest** + Testing Library (migré de Jest, LEAVC-826)
