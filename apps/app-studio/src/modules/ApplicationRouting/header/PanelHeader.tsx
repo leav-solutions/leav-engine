@@ -65,11 +65,15 @@ export const PanelHeader: FunctionComponent<{
                             targetFlapPanelId={FLAP_INFO_AND_HISTORY_PANEL_ID}
                             targetRecordId={computedRecordId}
                             targetLibraryId={computedLibraryId}
+                            currentPanel={currentPanel}
+                            lang={lang}
                         />
                         <ToggleFlapButton
                             targetFlapPanelId={FLAP_THREAD_PANEL_ID}
                             targetRecordId={computedRecordId}
                             targetLibraryId={computedLibraryId}
+                            currentPanel={currentPanel}
+                            lang={lang}
                         />
                         {!isFirstPanel && !hidePanelDisplayModeSelector && !isBlankPanel && (
                             <PanelDisplayModeSelector />

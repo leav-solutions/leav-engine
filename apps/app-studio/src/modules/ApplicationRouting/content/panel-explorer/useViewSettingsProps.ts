@@ -1,12 +1,14 @@
 import {type ComponentProps, useCallback, useContext} from 'react';
 import {useParams} from 'react-router-dom';
-import {type ExplorerV2, type SerializedFilter, type SerializedViewV2, usePanelEventHandlers} from '@leav/ui';
+import {type ExplorerV2, type SerializedFilter, type SerializedViewV2, useLang, usePanelEventHandlers} from '@leav/ui';
 import {retrievePanelDetails} from '../../utils/retrievePanelDetails';
 import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {type AppStudioInternalEvent} from '../../types';
 import {RecordFilterCondition} from '../../../../__generated__';
 import {CurrentViewContext} from '../panel-view-settings/store-current-view/CurrentViewContext';
 import {useCurrentView} from '../panel-view-settings/store-current-view/useCurrentView';
+import {matomo} from '../../../../services/analytics';
+import {matomoEvents} from '../../../../services/analytics/constants/matomoEvents';
 
 /**
  * app-studio is the source of truth for views (ADR-006): the `CurrentViewStoreProvider` (mounted in
@@ -20,6 +22,7 @@ export const useViewSettingsProps = (): {
 } => {
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
+    const {lang} = useLang();
 
     const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({
         application,
@@ -54,8 +57,14 @@ export const useViewSettingsProps = (): {
                     toggleFilterPinned(pinnedFilter.id);
                 }
             });
+
+            if (currentPanel !== null) {
+                const filterInteractionAction =
+                    filters.length === 0 ? matomoEvents.actions.filter_reset : matomoEvents.actions.filter_applied;
+                matomo.trackInteractionEvent(filterInteractionAction, currentPanel, lang);
+            }
         },
-        [setFilterConfig, toggleFilterPinned, pinnedFilters],
+        [setFilterConfig, toggleFilterPinned, pinnedFilters, currentPanel, lang],
     );
 
     if (!application.enableViewSettings) {
@@ -101,6 +110,13 @@ export const useViewSettingsProps = (): {
                             },
                         },
                     });
+                },
+            },
+            mass: {
+                export: () => {
+                    if (currentPanel !== null) {
+                        matomo.trackInteractionEvent(matomoEvents.actions.content_exported, currentPanel, lang);
+                    }
                 },
             },
         },

@@ -44,6 +44,7 @@ export const ApplicationSchema = z
             }),
         ),
         enableViewSettings: z.boolean().optional(),
+        enableMatomoTracking: z.boolean().optional(),
     })
     .check(ctx => {
         checkWorkspaceIdsUniqueness(ctx);

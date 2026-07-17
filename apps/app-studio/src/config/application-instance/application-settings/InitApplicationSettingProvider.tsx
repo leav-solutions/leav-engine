@@ -8,6 +8,7 @@ import {ApplicationSchema} from '../../../modules/ApplicationRouting/schema';
 import {APP_ENDPOINT} from '../../../constants';
 import {ApplicationSettingsContext} from './ApplicationSettingsContext';
 import {updatePanelViewSettingsInApplication} from '../../../modules/ApplicationRouting/utils/updatePanelViewSettingsInApplication';
+import {matomo} from '../../../services/analytics';
 
 export const InitApplicationSettingProvider: FunctionComponent<PropsWithChildren> = ({children}) => {
     const {t} = useTranslation();
@@ -35,6 +36,7 @@ export const InitApplicationSettingProvider: FunctionComponent<PropsWithChildren
                 return;
             }
             setApplication(result.data);
+            matomo.setTrackingEnabled(result.data.enableMatomoTracking ?? false);
         }
     }, [currentApp?.appStudioSettings, setApplication, setParsingErrors]);
 

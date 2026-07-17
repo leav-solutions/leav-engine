@@ -5,21 +5,26 @@ import {type FunctionComponent} from 'react';
 import {generatePath, useNavigate, useParams, useSearchParams} from 'react-router-dom';
 import {RelativePaths} from '../../router/paths';
 import {useTranslation} from 'react-i18next';
-import {type FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID, BLANK_PANEL_ID} from '../../../../constants';
+import {FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID, BLANK_PANEL_ID} from '../../../../constants';
 import {REDIRECT_URL_QUERY_PARAM} from '../../content/panel-custom/message-handlers/useNavigateToPanel';
 import {matomo} from '../../../../services/analytics';
 import {matomoEvents} from '../../../../services/analytics/constants/matomoEvents';
+import {type Panel} from '_ui/hooks/usePanelMessenger/types';
 
 interface IToggleFlapButtonProps {
     targetFlapPanelId: typeof FLAP_THREAD_PANEL_ID | typeof FLAP_INFO_AND_HISTORY_PANEL_ID;
     targetRecordId: string;
     targetLibraryId: string;
+    currentPanel: Panel | null;
+    lang: string[];
 }
 
 export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({
     targetFlapPanelId,
     targetRecordId,
     targetLibraryId,
+    currentPanel,
+    lang,
 }) => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
@@ -46,6 +51,10 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({
                 icon={<FontAwesomeIcon icon={buttonIcon} />}
                 active={isTargetFlapAlreadyOpen}
                 onClick={() => {
+                    const isOpeningThreadFlap = targetFlapPanelId === FLAP_THREAD_PANEL_ID && !isTargetFlapAlreadyOpen;
+                    if (isOpeningThreadFlap && currentPanel !== null) {
+                        matomo.trackInteractionEvent(matomoEvents.actions.comments_panel_opened, currentPanel, lang);
+                    }
                     if (isToggleFromThreadsToInfoHistoryFlap) {
                         matomo.trackNavigationEvent(matomoEvents.actions.history_panel_opened, targetLibraryId);
                     }
