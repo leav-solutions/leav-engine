@@ -10,6 +10,7 @@ export type PanelViewSettings = Pick<
     | 'targetLibraryId'
     | 'displayViewSettingsIframeSource'
     | 'hiddenTabs'
+    | 'hiddenFilters'
 >;
 
 type PanelLocation = {libraryId: string; panelType: keyof Application['libraries'][string]; panelId: string};
@@ -25,6 +26,7 @@ const RESET_VIEW_SETTINGS: PanelViewSettings = {
     targetLibraryId: undefined,
     displayViewSettingsIframeSource: undefined,
     hiddenTabs: undefined,
+    hiddenFilters: undefined,
 };
 
 export const updatePanelViewSettingsInApplication = (

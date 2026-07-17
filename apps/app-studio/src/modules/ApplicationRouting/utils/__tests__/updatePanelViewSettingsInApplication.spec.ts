@@ -1,3 +1,5 @@
+import {type HiddenFullFilter, ThroughConditionFilter} from '@leav/ui';
+import {AttributeType, RecordFilterCondition} from '../../../../__generated__';
 import {type Application} from '../../types';
 import {
     type PanelViewSettings,
@@ -5,6 +7,23 @@ import {
     updatePanelViewSettingsInApplication,
 } from '../updatePanelViewSettingsInApplication';
 import {campaignsManagerApplication} from './campaignsManagerApplication.fixture';
+
+const hiddenFilters: HiddenFullFilter[] = [
+    {
+        id: 'filter_to_linked_records',
+        hidden: true,
+        field: 'campaigns_id_pac',
+        subField: 'id',
+        attribute: {
+            id: 'campaigns_id_pac',
+            type: AttributeType.simple_link,
+            label: 'SHOULD BE HIDDEN',
+        },
+        condition: ThroughConditionFilter.THROUGH,
+        subCondition: RecordFilterCondition.EQUAL,
+        value: 'pac-1',
+    },
+];
 
 describe('updatePanelViewSettingsInApplication', () => {
     const baseApplication: Application = {
@@ -64,6 +83,16 @@ describe('updatePanelViewSettingsInApplication', () => {
         expect(newApplication.libraries.home.libraryPanels[0]).toMatchObject({
             displayViewSettingsIframeSource: 'https://host/settings/rec-1/planning/configureView',
         });
+    });
+
+    it('should write the message-injected hiddenFilters onto the panel', () => {
+        const newApplication = updatePanelViewSettingsInApplication(
+            baseApplication,
+            {libraryId: 'home', panelType: 'libraryPanels', panelId: 'panel1'},
+            {...viewSettings, hiddenFilters},
+        );
+
+        expect(newApplication.libraries.home.libraryPanels[0]).toMatchObject({hiddenFilters});
     });
 
     it('should update view settings on a panel in recordPanels', () => {
@@ -194,6 +223,7 @@ describe('resetPanelViewSettingsInApplication', () => {
                         currentViewId: 'view1',
                         targetLibraryId: 'home',
                         displayViewSettingsIframeSource: 'https://host/settings/rec-1/planning/configureView',
+                        hiddenFilters,
                     },
                 ],
                 recordPanels: [],
@@ -214,6 +244,7 @@ describe('resetPanelViewSettingsInApplication', () => {
             currentViewId: undefined,
             targetLibraryId: undefined,
             displayViewSettingsIframeSource: undefined,
+            hiddenFilters: undefined,
         });
     });
 });

@@ -44,6 +44,7 @@ export const InitApplicationSettingProvider: FunctionComponent<PropsWithChildren
             currentViewId,
             displayViewSettingsIframeSource,
             hiddenTabs,
+            hiddenFilters,
             explorerPanelDetails,
             selectedTab,
         }) => {
@@ -55,6 +56,7 @@ export const InitApplicationSettingProvider: FunctionComponent<PropsWithChildren
                     targetLibraryId: currentLibraryId,
                     displayViewSettingsIframeSource,
                     hiddenTabs,
+                    hiddenFilters,
                 }),
             );
         },

@@ -16,7 +16,7 @@ import {
 } from '_ui/hooks/usePanelMessenger/schema';
 import {type AnyPrimitive} from '@leav/utils';
 import {type IRecordIdentity, type ITreeNodeWithRecord} from '_ui/types';
-import {type SerializedView} from '_ui/components/ExplorerV2/_types';
+import {type HiddenFullFilter, type SerializedView} from '_ui/components/ExplorerV2/_types';
 
 export const packetId = '__fromIframeMessenger';
 
@@ -217,6 +217,9 @@ export type OpenViewSettingsMessage = IMessageBase & {
         selectedTab?: ViewSettingsTab;
         displayViewSettingsIframeSource?: string;
         hiddenTabs?: ViewSettingsTab[];
+        /** Pré-filtres masqués (ex. THROUGH campaigns_id_pac=pacId) que le volet fusionne dans son
+         *  FiltersContext. DOIVENT être JSON-sérialisables (postMessage) : plain data uniquement. */
+        hiddenFilters?: HiddenFullFilter[];
     };
 };
 

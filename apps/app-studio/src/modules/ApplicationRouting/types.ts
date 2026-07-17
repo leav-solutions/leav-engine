@@ -1,4 +1,5 @@
 import type * as z from 'zod/v4';
+import {type HiddenFullFilter} from '@leav/ui';
 import {
     type ExplorerPropsSchema,
     type ItemActionsSchema,
@@ -24,6 +25,7 @@ export type AppStudioInternalEvent =
               currentLibraryId: string;
               displayViewSettingsIframeSource?: string;
               hiddenTabs?: ViewSettingsTab[];
+              hiddenFilters?: HiddenFullFilter[];
               explorerPanelDetails: {
                   libraryId: string;
                   panelType: 'libraryPanels' | 'recordPanels';
