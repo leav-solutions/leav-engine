@@ -3,9 +3,8 @@
 # using the already-built `dist/` of each backend app instead of `tsx watch` on TS sources.
 #
 # Prerequisites:
-#   yarn libs:build
-#   yarn backs:build
-#   yarn fronts:build:install
+#   yarn build
+#   yarn fronts:link:install
 #
 # Usage (from the docker/ folder):
 #   docker compose -f docker-compose.build.yml up -d

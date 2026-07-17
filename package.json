@@ -11,8 +11,8 @@
     },
     "scripts": {
         "fronts:build:install": "yarn workspaces foreach -v -A --include 'apps/*' run build:install",
-        "backs:build": "yarn workspaces foreach -v -A --include 'apps/*' run build:backend",
-        "libs:build": "yarn workspaces foreach -v -A --include 'libs/*' --exclude 'libs/core-publish' run build",
+        "fronts:link:install": "yarn workspaces foreach -v -A --include 'apps/*' run link:install",
+        "build": "yarn workspaces foreach -v -A --exclude 'libs/core-publish' run build",
         "fronts:graphql-generate": "yarn workspaces foreach -v -A run graphql-generate",
         "test": "CI=true node ./scripts/testChangedProjects.js",
         "test:ci": "",
