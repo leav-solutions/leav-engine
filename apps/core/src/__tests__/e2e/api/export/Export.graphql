@@ -1,0 +1,3 @@
+query Export($library: ID!, $filters: [RecordFilterInput], $searchQuery: String, $profile: String) {
+    export(library: $library, filters: $filters, searchQuery: $searchQuery, profile: $profile)
+}

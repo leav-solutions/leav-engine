@@ -108,6 +108,7 @@ export interface IRecordDomain {
         libraryId: string;
         recordsIds?: string[];
         filters?: IRecordFilterLight[];
+        fulltextSearch?: string;
         ctx: IQueryInfos;
     }): Promise<IRecord[]>;
 
@@ -447,14 +448,15 @@ export default function ({
                 recordsToActivate.map(recordId => this.activateRecord({id: recordId, library: libraryId}, ctx)),
             );
         },
-        async deactivateRecordsBatch({libraryId, recordsIds, filters, ctx}) {
+        async deactivateRecordsBatch({libraryId, recordsIds, filters, fulltextSearch, ctx}) {
             let recordsToDeactivate: string[] = recordsIds ?? [];
 
-            if (filters) {
+            if (filters || fulltextSearch) {
                 const records = await findRecordsHelper({
                     params: {
                         library: libraryId,
                         filters,
+                        fulltextSearch,
                         options: {forceArray: true, forceGetAllValues: true},
                         retrieveInactive: false,
                         withCount: false,

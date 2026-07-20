@@ -34,13 +34,16 @@ export default function ({'core.domain.export': exportDomain}: IDeps): ICoreExpo
                     }
 
                     extend type Query {
-                        export(library: ID!, filters: [RecordFilterInput], profile: String): String!
+                        export(library: ID!, filters: [RecordFilterInput], profile: String, searchQuery: String): String!
                     }
                 `,
                 resolvers: {
                     Query: {
-                        async export(parent, {library, filters, profile}, ctx): Promise<string> {
-                            return exportDomain.exportExcel({library, filters, ctx, profile}, {});
+                        async export(parent, {library, filters, profile, searchQuery}, ctx): Promise<string> {
+                            return exportDomain.exportExcel(
+                                {library, filters, fulltextSearch: searchQuery, ctx, profile},
+                                {},
+                            );
                         },
                     },
                 },

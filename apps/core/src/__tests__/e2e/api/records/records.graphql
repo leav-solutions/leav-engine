@@ -29,9 +29,24 @@ mutation DeleteRecord($id: ID, $library: ID) {
     }
 }
 
-mutation DeactivateRecords($libraryId: String!, $recordsIds: [String!]) {
-    deactivateRecords(libraryId: $libraryId, recordsIds: $recordsIds) {
+mutation DeactivateRecords(
+    $libraryId: String!
+    $recordsIds: [String!]
+    $filters: [RecordFilterInput!]
+    $searchQuery: String
+) {
+    deactivateRecords(libraryId: $libraryId, recordsIds: $recordsIds, filters: $filters, searchQuery: $searchQuery) {
         id
+    }
+}
+
+query SearchRecords($libraryId: ID!, $searchQuery: String, $filters: [RecordFilterInput], $retrieveInactive: Boolean) {
+    records(library: $libraryId, searchQuery: $searchQuery, filters: $filters, retrieveInactive: $retrieveInactive) {
+        totalCount
+        list {
+            id
+            active
+        }
     }
 }
 

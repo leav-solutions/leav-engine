@@ -3,8 +3,18 @@ import {recordIdentityFragment} from '_ui/gqlFragments';
 
 export const deactivateRecordsMutation = gql`
     ${recordIdentityFragment}
-    mutation DEACTIVATE_RECORDS($libraryId: String!, $recordsIds: [String!], $filters: [RecordFilterInput!]) {
-        deactivateRecords(recordsIds: $recordsIds, filters: $filters, libraryId: $libraryId) {
+    mutation DEACTIVATE_RECORDS(
+        $libraryId: String!
+        $recordsIds: [String!]
+        $filters: [RecordFilterInput!]
+        $searchQuery: String
+    ) {
+        deactivateRecords(
+            recordsIds: $recordsIds
+            filters: $filters
+            libraryId: $libraryId
+            searchQuery: $searchQuery
+        ) {
             id
             ...RecordIdentity
         }

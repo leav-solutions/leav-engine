@@ -59,7 +59,11 @@ export interface IPrimaryAction {
 }
 
 export interface IMassActions {
-    callback: (massSelectedFilter: RecordFilterInput[], massSelection: MassSelection) => void | Promise<void>;
+    callback: (
+        massSelectedFilter: RecordFilterInput[],
+        massSelection: MassSelection,
+        searchQuery?: string,
+    ) => void | Promise<void>;
     deselectAll: boolean;
     icon: ReactElement;
     label: string;

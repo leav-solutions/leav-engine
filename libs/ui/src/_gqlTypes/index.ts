@@ -961,7 +961,6 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
@@ -1216,6 +1215,7 @@ export type ViewV2SortInput = {
   activated: Scalars['Boolean']['input'];
   attributes: Array<Scalars['ID']['input']>;
   order: SortOrder;
+  pinned: Scalars['Boolean']['input'];
 };
 
 export enum ViewV2Types {
@@ -1609,6 +1609,7 @@ export type ExportQueryVariables = Exact<{
   library: Scalars['ID']['input'];
   filters?: InputMaybe<Array<RecordFilterInput> | RecordFilterInput>;
   profile?: InputMaybe<Scalars['String']['input']>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -1769,6 +1770,7 @@ export type DeactivateRecordsMutationVariables = Exact<{
   libraryId: Scalars['String']['input'];
   recordsIds?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
   filters?: InputMaybe<Array<RecordFilterInput> | RecordFilterInput>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -3695,8 +3697,13 @@ export type SaveAttributeMutationHookResult = ReturnType<typeof useSaveAttribute
 export type SaveAttributeMutationResult = Apollo.MutationResult<SaveAttributeMutation>;
 export type SaveAttributeMutationOptions = Apollo.BaseMutationOptions<SaveAttributeMutation, SaveAttributeMutationVariables>;
 export const ExportDocument = gql`
-    query EXPORT($library: ID!, $filters: [RecordFilterInput!], $profile: String) {
-  export(library: $library, filters: $filters, profile: $profile)
+    query EXPORT($library: ID!, $filters: [RecordFilterInput!], $profile: String, $searchQuery: String) {
+  export(
+    library: $library
+    filters: $filters
+    profile: $profile
+    searchQuery: $searchQuery
+  )
 }
     `;
 
@@ -3715,6 +3722,7 @@ export const ExportDocument = gql`
  *      library: // value for 'library'
  *      filters: // value for 'filters'
  *      profile: // value for 'profile'
+ *      searchQuery: // value for 'searchQuery'
  *   },
  * });
  */
@@ -4494,11 +4502,12 @@ export type CreateRecordMutationHookResult = ReturnType<typeof useCreateRecordMu
 export type CreateRecordMutationResult = Apollo.MutationResult<CreateRecordMutation>;
 export type CreateRecordMutationOptions = Apollo.BaseMutationOptions<CreateRecordMutation, CreateRecordMutationVariables>;
 export const DeactivateRecordsDocument = gql`
-    mutation DEACTIVATE_RECORDS($libraryId: String!, $recordsIds: [String!], $filters: [RecordFilterInput!]) {
+    mutation DEACTIVATE_RECORDS($libraryId: String!, $recordsIds: [String!], $filters: [RecordFilterInput!], $searchQuery: String) {
   deactivateRecords(
     recordsIds: $recordsIds
     filters: $filters
     libraryId: $libraryId
+    searchQuery: $searchQuery
   ) {
     id
     ...RecordIdentity
@@ -4523,6 +4532,7 @@ export type DeactivateRecordsMutationFn = Apollo.MutationFunction<DeactivateReco
  *      libraryId: // value for 'libraryId'
  *      recordsIds: // value for 'recordsIds'
  *      filters: // value for 'filters'
+ *      searchQuery: // value for 'searchQuery'
  *   },
  * });
  */

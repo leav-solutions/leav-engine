@@ -28,6 +28,7 @@ export interface IExportParams {
     library: string;
     profile: string;
     filters?: IRecordFilterLight[];
+    fulltextSearch?: string;
     ctx: IQueryInfos;
 }
 
@@ -145,7 +146,7 @@ export default function ({
 
     return {
         async exportExcel(params: IExportParams, task?: ITaskFuncParams): Promise<string> {
-            const {library, profile, filters, ctx} = params;
+            const {library, profile, filters, fulltextSearch, ctx} = params;
 
             // If we found a profile, extract attributes and column labels from it
             // This code has to be executed before the export, to notify the user if the profile is not valid
@@ -239,7 +240,7 @@ export default function ({
 
                 await _updateTaskProgress(0, 'tasks.export_description.elements_retrieval');
 
-                const records = await recordDomain.find({params: {library, filters}, ctx});
+                const records = await recordDomain.find({params: {library, filters, fulltextSearch}, ctx});
 
                 progress.recordsNb = records.list.length;
 

@@ -39,6 +39,7 @@ export const useExportMassAction = ({
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [massSelectionFilter, setMassSelectionFilter] = useState<RecordFilterInput[] | undefined>();
+    const [massSelectionSearchQuery, setMassSelectionSearchQuery] = useState<string | undefined>();
 
     const _handleConfirmExport = useCallback(
         async (profileLabel: string) => {
@@ -55,6 +56,7 @@ export const useExportMassAction = ({
                     variables: {
                         library: view.libraryId,
                         filters: massSelectionFilter,
+                        searchQuery: massSelectionSearchQuery,
                         profile: profileLabel,
                     },
                 });
@@ -103,12 +105,22 @@ export const useExportMassAction = ({
                 setIsExporting(false);
             }
         },
-        [exportQuery, view.libraryId, view.massSelection, totalCount, massSelectionFilter, onExport, t],
+        [
+            exportQuery,
+            view.libraryId,
+            view.massSelection,
+            totalCount,
+            massSelectionFilter,
+            massSelectionSearchQuery,
+            onExport,
+            t,
+        ],
     );
 
     const _handleCloseModal = useCallback(() => {
         setIsModalOpen(false);
         setMassSelectionFilter(undefined);
+        setMassSelectionSearchQuery(undefined);
     }, []);
 
     const _exportMassAction: IMassActions = useMemo(
@@ -116,8 +128,9 @@ export const useExportMassAction = ({
             label: t('explorer.massAction.export'),
             icon: <FontAwesomeIcon icon={faFileExport} />,
             deselectAll: false,
-            callback: filter => {
+            callback: (filter, _massSelection, searchQuery) => {
                 setMassSelectionFilter(filter);
+                setMassSelectionSearchQuery(searchQuery);
                 setIsModalOpen(true);
             },
         }),
