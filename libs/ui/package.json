@@ -47,7 +47,7 @@
         "react-dom": "18.2.0",
         "react-i18next": "12",
         "react-router-dom": "6.30.4",
-        "tsc-alias": "1.9.0",
+        "tsc-alias": "1.9.1",
         "typescript": "6.0.3",
         "vite": "7.3.6",
         "vitest": "4.1.10"
