@@ -37,7 +37,7 @@ import * as crypto from 'node:crypto';
 
 export interface IAuthApp extends IGraphqlAppModule, IServerRouteAppModule {
     validateRequestToken(
-        params: {apiKey?: string; headers: IncomingHttpHeaders; cookies?: {}},
+        params: {apiKey?: string; headers: IncomingHttpHeaders; cookies?: object},
         res: Response<unknown>,
     ): Promise<ITokenUserData>;
     authenticateWithOIDCService(req: IRequestWithContext, res: Response<unknown>): Promise<void | Response>;

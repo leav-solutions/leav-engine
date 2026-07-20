@@ -18,7 +18,7 @@ interface IDeps {
     'core.utils.logger': ILogger;
 }
 
-type ActionsListExcelValueType = string | number | boolean | {};
+type ActionsListExcelValueType = string | number | boolean | object;
 
 type ActionParams = {
     Formula: true;

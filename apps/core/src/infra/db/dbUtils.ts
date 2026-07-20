@@ -42,7 +42,7 @@ export interface IFindCoreEntityParams<T extends ICoreEntity, DbDocument extends
 
 export interface IDbUtils {
     migrate?(depsManager: AwilixContainer): Promise<void>;
-    cleanup?<T extends {}>(record: {}): T;
+    cleanup?<T extends object>(record: object): T;
     convertToDoc?<T extends {id?: string | string[]}>(obj: T): Omit<T, 'id'> & {_key?: string | string[]};
     isCollectionExists?(name: string): Promise<boolean>;
     findCoreEntity?<T extends ICoreEntity, DbDocument extends IDbDocument = IDbDocument>(

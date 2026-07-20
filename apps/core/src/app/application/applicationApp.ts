@@ -214,7 +214,7 @@ export default function ({
                                 ctx,
                             });
                         },
-                        async applicationsModules(_, args: {}, ctx: IQueryInfos): Promise<IApplicationModule[]> {
+                        async applicationsModules(_, args: object, ctx: IQueryInfos): Promise<IApplicationModule[]> {
                             return applicationDomain.getAvailableModules({ctx});
                         },
                     },

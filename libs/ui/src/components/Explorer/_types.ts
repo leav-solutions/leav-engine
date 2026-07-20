@@ -68,7 +68,7 @@ export interface IMassActions {
     label: string;
 }
 
-export type FeatureHook<T = {}> = {isEnabled: boolean; isVisible?: boolean} & T;
+export type FeatureHook<T = unknown> = {isEnabled: boolean; isVisible?: boolean} & T;
 
 export type DefaultViewSettings = Override<
     Partial<IViewSettingsState>,

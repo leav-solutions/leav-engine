@@ -12,7 +12,7 @@ function Container({
     onValueSubmit,
     onValueDelete,
     onDeleteMultipleValues,
-}: IFormElementProps<{}> & {antdForm?: FormInstance; computedValues: GetRecordColumnsValuesRecord}): JSX.Element {
+}: IFormElementProps<unknown> & {antdForm?: FormInstance; computedValues: GetRecordColumnsValuesRecord}): JSX.Element {
     const {elements: formElements} = useRecordEditionContext();
     const children = formElements[element.id] ?? [];
     const isAlone = children.length < 2;

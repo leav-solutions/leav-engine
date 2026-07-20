@@ -19,7 +19,7 @@ interface IALCReserveCardProps {
     currentIndex?: number;
     setCurrentIndex?: (idx: number) => void;
     connectionState?: {top: boolean; bottom: boolean};
-    getConnectorStatus?: (indx: number, action: {}) => boolean | undefined;
+    getConnectorStatus?: (indx: number, action: object) => boolean | undefined;
     colorTypeDictionnary: IColorDic;
     changeParam?: (input: IParamInput) => void;
     index?: number;

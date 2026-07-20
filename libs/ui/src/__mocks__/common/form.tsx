@@ -39,7 +39,7 @@ const formElementBase = {
     settings: {},
 };
 
-export const mockFormElementContainer: FormElement<{}> = {
+export const mockFormElementContainer: FormElement<unknown> = {
     ...formElementBase,
     id: 'container',
     containerId: '__root',
@@ -48,7 +48,7 @@ export const mockFormElementContainer: FormElement<{}> = {
     uiElementType: FormUIElementTypes.FIELDS_CONTAINER,
 };
 
-export const mockFormElementInput: FormElement<{}> = {
+export const mockFormElementInput: FormElement<unknown> = {
     ...formElementBase,
     id: 'input_element',
     containerId: '__root',
@@ -59,7 +59,7 @@ export const mockFormElementInput: FormElement<{}> = {
     uiElementType: FormFieldTypes.TEXT_INPUT,
 };
 
-export const mockFormElementRequiredInput: FormElement<{}> = {
+export const mockFormElementRequiredInput: FormElement<unknown> = {
     ...formElementBase,
     id: 'input_element_required',
     containerId: '__root',
@@ -75,7 +75,7 @@ export const mockFormElementRequiredInput: FormElement<{}> = {
     uiElementType: FormFieldTypes.TEXT_INPUT,
 };
 
-export const mockFormElementMultipleInput: FormElement<{}> = {
+export const mockFormElementMultipleInput: FormElement<unknown> = {
     ...formElementBase,
     id: 'input_element',
     containerId: '__root',
@@ -92,7 +92,7 @@ export const mockFormElementMultipleInput: FormElement<{}> = {
     uiElementType: FormFieldTypes.TEXT_INPUT,
 };
 
-export const mockFormElementDate: FormElement<{}> = {
+export const mockFormElementDate: FormElement<unknown> = {
     ...formElementBase,
     id: 'date_element',
     containerId: '__root',
@@ -102,7 +102,7 @@ export const mockFormElementDate: FormElement<{}> = {
     uiElementType: FormFieldTypes.DATE,
 };
 
-export const mockFormElementInputVersionable: FormElement<{}> = {
+export const mockFormElementInputVersionable: FormElement<unknown> = {
     ...mockFormElementInput,
     attribute: {
         ...mockFormElementInput.attribute,
@@ -144,7 +144,7 @@ const mockFormAttributeLink = {
     linkValuesList: {enable: false, allowFreeEntry: false, allowListUpdate: false, values: []},
 };
 
-export const mockFormElementLink: FormElement<{}> = {
+export const mockFormElementLink: FormElement<unknown> = {
     ...formElementBase,
     id: 'link_element',
     containerId: '__root',
@@ -156,7 +156,7 @@ export const mockFormElementLink: FormElement<{}> = {
     values: [mockLinkValue],
 };
 
-export const mockFormElementLinkVersionable: FormElement<{}> = {
+export const mockFormElementLinkVersionable: FormElement<unknown> = {
     ...mockFormElementLink,
     attribute: {
         ...mockFormElementLink.attribute,
@@ -273,7 +273,7 @@ export const mockFormElementTree: FormElement<ICommonFieldsSettings> = {
     ],
 };
 
-export const mockFormElementTextBlock: FormElement<{}> = {
+export const mockFormElementTextBlock: FormElement<unknown> = {
     ...formElementBase,
     id: 'text_block',
     containerId: '__root',

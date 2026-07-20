@@ -23,7 +23,7 @@ export interface ICardProps {
     marginTop?: string;
     currentIndex?: number;
     setCurrentIndex?: (idx: number) => void;
-    getConnectorStatus?: (indx: number, action: {}) => boolean | undefined;
+    getConnectorStatus?: (indx: number, action: object) => boolean | undefined;
     colorTypeDictionnary: IColorDic;
     changeParam?: (input: IParamInput) => void;
     onChangeCustomMessage?: (actionId: number, value: string, lang: string) => void;

@@ -12,7 +12,10 @@ interface IKeyValue<T> {
  * @param  {string}  env
  * @return {Promise<{}>}
  */
-const _getConfigByEnv = async function <T extends object>(dirPath: string, env: string): Promise<T | {}> {
+const _getConfigByEnv = async function <T extends object>(
+    dirPath: string,
+    env: string,
+): Promise<T | Record<string, never>> {
     const envFile = path.join(dirPath, `${env}.js`);
 
     try {
@@ -24,7 +27,7 @@ const _getConfigByEnv = async function <T extends object>(dirPath: string, env: 
     return (await import(envFile)).default;
 };
 
-const _isObject = (item: any): item is {} => item && typeof item === 'object' && !Array.isArray(item);
+const _isObject = (item: any): item is object => item && typeof item === 'object' && !Array.isArray(item);
 
 /**
  * Deep merge two objects.
@@ -32,7 +35,7 @@ const _isObject = (item: any): item is {} => item && typeof item === 'object' &&
  * @param target
  * @param ...sources
  */
-const _mergeDeep = function (target: IKeyValue<any>, ...sources: Array<IKeyValue<any>>): {} {
+const _mergeDeep = function (target: IKeyValue<any>, ...sources: Array<IKeyValue<any>>): IKeyValue<any> {
     if (!sources.length) {
         return target;
     }
@@ -65,7 +68,7 @@ const _mergeDeep = function (target: IKeyValue<any>, ...sources: Array<IKeyValue
  *
  * @return {Promise} Full config
  */
-export async function loadConfig<T extends {} = {}>(dirPath: string, env: string): Promise<T> {
+export async function loadConfig<T extends object = object>(dirPath: string, env: string): Promise<T> {
     const ignoreLocal = process.env.CONFIG_IGNORE_LOCAL === 'true' || process.env.CONFIG_IGNORE_LOCAL === '1';
 
     const merged = _mergeDeep(

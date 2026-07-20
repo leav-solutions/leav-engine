@@ -75,7 +75,7 @@ function DependenciesLibraryItem({
         onMove(libraryItem.library.id, parentItemId, null);
     };
 
-    const [, drag] = useDrag<IDndLibraryItem, IDndDropResult, {}>({
+    const [, drag] = useDrag<IDndLibraryItem, IDndDropResult, Record<string, never>>({
         type: LIBRARY_DND_TYPE,
         item: {
             type: LIBRARY_DND_TYPE,

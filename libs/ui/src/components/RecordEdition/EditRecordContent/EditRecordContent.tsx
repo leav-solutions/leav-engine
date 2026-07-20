@@ -150,7 +150,7 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         return deleteRes;
     };
 
-    const rootElement: FormElement<{}> = {
+    const rootElement: FormElement<unknown> = {
         id: FORM_ROOT_CONTAINER_ID,
         containerId: null,
         type: FormElementTypes.layout,

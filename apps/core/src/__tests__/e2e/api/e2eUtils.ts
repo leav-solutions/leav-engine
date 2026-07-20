@@ -466,7 +466,7 @@ export async function gqlSaveVersionProfile(profileId: string, label: string, tr
 /**
  * Convert object to JSON, escaping quotes to be able to use it in a graphql query
  **/
-export function toCleanJSON(obj: {}): string {
+export function toCleanJSON(obj: object): string {
     return JSON.stringify(obj).replace(/["]/g, '\\"');
 }
 

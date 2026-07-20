@@ -60,9 +60,9 @@ export interface IUtils {
 
     mergeConcat<T = object, U = object>(object: T, sources: U): T & U;
 
-    nameValArrayToObj(arr?: Array<{}>, keyFieldName?: string, valueFieldName?: string): {[key: string]: any};
+    nameValArrayToObj(arr?: object[], keyFieldName?: string, valueFieldName?: string): {[key: string]: any};
 
-    objToNameValArray<T extends {}>(obj: {}, keyFieldName?: string, valueFieldName?: string): T[];
+    objToNameValArray<T extends object>(obj: object, keyFieldName?: string, valueFieldName?: string): T[];
 
     /**
      * Get the tree library associated with the library given
