@@ -31,7 +31,7 @@ export const ExplorerFilters: FunctionComponent<{
             {selectAllButton && (
                 <>
                     <li>{selectAllButton}</li>
-                    {showFilters && filtersProps.length !== 0 && <DividerStyled type="vertical" />}
+                    {showFilters && filtersProps.length !== 0 && <DividerStyled vertical />}
                 </>
             )}
             {showFilters && (

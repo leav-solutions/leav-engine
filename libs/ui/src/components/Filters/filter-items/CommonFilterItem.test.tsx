@@ -508,7 +508,8 @@ describe('CommonFilterItem', () => {
             await userEvent.click(screen.getByRole('button', {name: /link/}));
 
             // THEN the "through" condition should be selected
-            const throughSelectionLabel = baseElement.querySelector('[class*="ant-select-selection-item"]');
+            // antd 6 renamed the Select selected-value class ant-select-selection-item → ant-select-content
+            const throughSelectionLabel = baseElement.querySelector('[class*="ant-select-content"]');
             expect(throughSelectionLabel?.textContent).toMatch(/through/i);
 
             // AND the subField select is available

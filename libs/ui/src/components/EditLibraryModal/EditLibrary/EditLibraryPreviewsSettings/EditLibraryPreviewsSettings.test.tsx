@@ -14,7 +14,8 @@ describe('EditLibraryPreviewsSettings', () => {
     test('Display list of previews settings', async () => {
         render(<EditLibraryPreviewsSettings library={mockLibraryWithPreviewsSettings} />);
 
-        expect(screen.getAllByRole('row')).toHaveLength(2);
+        // Since antd 6, the table header row is exposed as an accessible row (index 0) — drop it.
+        expect(screen.getAllByRole('row').slice(1)).toHaveLength(2);
 
         // Labels
         expect(screen.getByText('Ma config')).toBeInTheDocument();

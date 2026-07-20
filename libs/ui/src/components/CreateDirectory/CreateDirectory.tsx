@@ -1,4 +1,4 @@
-import {App, Button, Input, Modal, type StepProps, Steps, theme} from 'antd';
+import {App, Button, Input, Modal, type StepsProps, Steps, theme} from 'antd';
 import {useEffect, useState} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type ITreeNodeWithRecord} from '_ui/types/trees';
@@ -23,7 +23,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
     const {token} = theme.useToken();
     const [selectedNodeKey, setSelectedNodeKey] = useState<string>(defaultSelectedKey);
     const [directoryName, setDirectoryName] = useState<string>();
-    const [status, setStatus] = useState<StepProps['status']>('wait');
+    const [status, setStatus] = useState<StepsProps['status']>('wait');
     const [currentStep, setCurrentStep] = useState(!!defaultSelectedKey ? 1 : 0);
     const [treeId, setTreeId] = useState<string>();
     const {modal} = App.useApp();

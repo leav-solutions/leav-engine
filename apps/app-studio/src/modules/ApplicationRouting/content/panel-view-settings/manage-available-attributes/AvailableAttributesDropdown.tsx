@@ -14,7 +14,7 @@ import {sanitize} from '../tabs/tab-display/_constants';
 import {
     attachChildren,
     type AvailableAttributesMode,
-    buildAttributeNode,
+    buildAttributeNodes,
     collectBranchKeys,
     countCheckedDescendants,
     filterAttributeNodes,
@@ -124,7 +124,7 @@ export const AvailableAttributesDropdown = ({facet}: {facet: AvailableAttributes
         if (!attributes || seededLibraryRef.current === libraryId) {
             return;
         }
-        const nodes = attributes.map(attribute => buildAttributeNode(attribute, [], mode, lang));
+        const nodes = buildAttributeNodes(attributes, [], mode, lang);
         nodes.forEach(node => pathIndex.current.set(node.key, node.attributePath));
         seededLibraryRef.current = libraryId ?? null;
         setExpandedKeys([]);
@@ -137,7 +137,7 @@ export const AvailableAttributesDropdown = ({facet}: {facet: AvailableAttributes
         }
         const result = await fetchAttributes({variables: {libraryId: node.linkedLibraryId}});
         const attributes = result.data?.libraries?.list?.[0]?.attributes ?? [];
-        const children = attributes.map(attribute => buildAttributeNode(attribute, node.attributePath, mode, lang));
+        const children = buildAttributeNodes(attributes, node.attributePath, mode, lang);
         children.forEach(child => pathIndex.current.set(child.key, child.attributePath));
         setTreeData(previous => attachChildren(previous, node.key, children));
     };

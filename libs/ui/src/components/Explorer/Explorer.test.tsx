@@ -4,7 +4,7 @@
 // In this case, the spyOn is too complex to implement, prefer using the mocks parameter of render method.
 //
 import {createRef} from 'react';
-import {waitFor, render, screen, within} from '_ui/_tests/testUtils';
+import {waitFor, render, screen, within, getRecordRows} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {type Mockify} from '_ui/__mocks__/utils';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -17,11 +17,8 @@ import {type IEntrypointLibrary, type IEntrypointLink, type IItemAction, type IP
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import * as useColumnWidth from './useColumnWidth';
 import {type IExplorerRef} from './Explorer';
-import ResizeObserver from 'resize-observer-polyfill';
 import * as attributeDetailsModule from '_ui/components/Explorer/manage-view-settings/_shared/useAttributeDetailsData';
 import {KitAlert} from 'aristid-ds';
-
-global.ResizeObserver = ResizeObserver;
 
 const UploadFilesMock = 'UploadFiles';
 const CreateDirectoryMock = 'CreateDirectory';
@@ -1094,7 +1091,7 @@ describe('Explorer', () => {
                     <Explorer entrypoint={libraryEntrypoint} />
                 </Explorer.EditSettingsContextProvider>,
             );
-            expect(screen.getByText('explorer.name')).toBeInTheDocument();
+            expect(screen.getByRole('columnheader', {name: 'explorer.name'})).toBeInTheDocument();
         });
 
         test('should not display the table headers', () => {
@@ -1104,8 +1101,8 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            expect(screen.queryByText('explorer.name')).not.toBeInTheDocument();
-            expect(screen.queryByText('explorer.actions')).not.toBeInTheDocument();
+            expect(screen.queryByRole('columnheader', {name: 'explorer.name'})).not.toBeInTheDocument();
+            expect(screen.queryByRole('columnheader', {name: 'explorer.actions'})).not.toBeInTheDocument();
         });
 
         test('should display the selection checkboxes and button', () => {
@@ -1115,7 +1112,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const tableRows = screen.getAllByRole('row');
+            const tableRows = getRecordRows();
             expect(tableRows).toHaveLength(mockRecords.length); // 2 records
             const [firstRecordRow] = tableRows;
             expect(within(firstRecordRow).getByRole('checkbox')).toBeInTheDocument();
@@ -1137,7 +1134,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const tableRows = screen.getAllByRole('row');
+            const tableRows = getRecordRows();
             expect(tableRows).toHaveLength(mockRecords.length); // 2 records
             const [firstRecordRow] = tableRows;
             expect(within(firstRecordRow).getByRole('checkbox')).toBeInTheDocument();
@@ -1150,7 +1147,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const tableRows = screen.getAllByRole('row');
+            const tableRows = getRecordRows();
             expect(tableRows).toHaveLength(mockRecords.length); // 2 records
             const [firstRecordRow] = tableRows;
             expect(within(firstRecordRow).queryByRole('checkbox')).not.toBeInTheDocument();
@@ -1228,8 +1225,8 @@ describe('Explorer', () => {
             </Explorer.EditSettingsContextProvider>,
         );
 
-        expect(screen.getByRole('table')).toBeVisible();
-        expect(screen.getAllByRole('row')).toHaveLength(mockRecords.length); // 2 records
+        expect(screen.getAllByRole('table')[0]).toBeVisible();
+        expect(getRecordRows()).toHaveLength(mockRecords.length); // 2 records
         const [record1, record2] = mockRecords;
         expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
         expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
@@ -1282,8 +1279,8 @@ describe('Explorer', () => {
             </Explorer.EditSettingsContextProvider>,
         );
 
-        const tableRows = screen.getAllByRole('row');
-        expect(screen.getByRole('table')).toBeVisible();
+        const tableRows = getRecordRows();
+        expect(screen.getAllByRole('table')[0]).toBeVisible();
         expect(tableRows).toHaveLength(mockRecords.length); // 2 records
         const [firstRecordRow, secondRecordRow] = tableRows;
         const [record1] = mockRecords;
@@ -1362,7 +1359,7 @@ describe('Explorer', () => {
             </Explorer.EditSettingsContextProvider>,
         );
 
-        const [, firstRecordRow] = screen.getAllByRole('row');
+        const [, firstRecordRow] = getRecordRows();
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
 
         expect(await screen.findByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
@@ -1407,7 +1404,7 @@ describe('Explorer', () => {
             </Explorer.EditSettingsContextProvider>,
         );
 
-        const [, firstRecordRow] = screen.getAllByRole('row');
+        const [, firstRecordRow] = getRecordRows();
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'}));
 
         expect(await screen.findByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
@@ -1460,7 +1457,7 @@ describe('Explorer', () => {
             </Explorer.EditSettingsContextProvider>,
         );
 
-        const [, firstRecordRow] = screen.getAllByRole('row');
+        const [, firstRecordRow] = getRecordRows();
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.activate-item'}));
 
         expect(await screen.findByText('explorer.activate_item_description', {exact: false})).toBeVisible();
@@ -1506,7 +1503,7 @@ describe('Explorer', () => {
             },
         );
 
-        const [, firstRecordRow] = await screen.findAllByRole('row');
+        const [, firstRecordRow] = (await screen.findAllByRole('row')).slice(1); // skip the header row
         await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'}));
 
         expect(await screen.findByText('explorer.delete_link_one')).toBeVisible();
@@ -1534,7 +1531,7 @@ describe('Explorer', () => {
             </Explorer.EditSettingsContextProvider>,
         );
 
-        const tableRows = screen.getAllByRole('row');
+        const tableRows = getRecordRows();
         const [firstRecordRow] = tableRows;
         const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
 
@@ -1584,7 +1581,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const [, firstRecordRow] = screen.getAllByRole('row');
+            const [, firstRecordRow] = getRecordRows();
             await user.click(within(firstRecordRow).getByRole('button', {name: customAction.label}));
 
             expect(customAction.callback).toHaveBeenCalled();
@@ -1620,7 +1617,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const [, firstRecordRow] = screen.getAllByRole('row');
+            const [, firstRecordRow] = getRecordRows();
             await user.hover(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
 
             expect(within(firstRecordRow).getByRole('button', {name: /Test 1/})).toBeVisible();
@@ -1644,7 +1641,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const [, firstRecordRow] = screen.getAllByRole('row');
+            const [, firstRecordRow] = getRecordRows();
             expect(within(firstRecordRow).queryByRole('button')).not.toBeInTheDocument();
         });
 
@@ -1662,7 +1659,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const [, firstRecordRow] = screen.getAllByRole('row');
+            const [, firstRecordRow] = getRecordRows();
             await user.click(firstRecordRow);
             expect(customAction.callback).toHaveBeenCalled();
         });
@@ -1698,7 +1695,7 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const [, firstRecordRow] = screen.getAllByRole('row');
+            const [, firstRecordRow] = getRecordRows();
             await user.click(within(firstRecordRow).getByRole('button', {name: 'explorer.more-actions'}));
             expect(customActions[0].callback).not.toHaveBeenCalled();
         });
@@ -2495,7 +2492,7 @@ describe('Explorer', () => {
                 },
             );
 
-            const rows = await screen.findAllByRole('row');
+            const rows = (await screen.findAllByRole('row')).slice(1); // skip the header row
             expect(rows).toHaveLength(2); // 2 linked records
             expect(rows[0]).toHaveTextContent(mockRecords[0].whoAmI.label);
 
@@ -2551,8 +2548,8 @@ describe('Explorer', () => {
             expect(screen.queryByRole('status')).not.toBeInTheDocument();
 
             // GIVEN there is a checkbox on the first record
-            const tableRows = screen.getAllByRole('row');
-            expect(screen.getByRole('table')).toBeVisible();
+            const tableRows = getRecordRows();
+            expect(screen.getAllByRole('table')[0]).toBeVisible();
             expect(tableRows).toHaveLength(mockRecords.length); // 2 records
             const [firstRecordRow] = tableRows;
             const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
@@ -2567,7 +2564,7 @@ describe('Explorer', () => {
 
             // GIVEN there is a second checkbox on the second record
             // note: The table re-render, not the same ref as before
-            const [, secondRecordRow] = screen.getAllByRole('row');
+            const [, secondRecordRow] = getRecordRows();
             const [secondSelectRowCell] = within(secondRecordRow).getAllByRole('cell');
             // WHEN the user clicks on it
             await user.click(within(secondSelectRowCell).getByRole('checkbox'));
@@ -2626,8 +2623,8 @@ describe('Explorer', () => {
             // AND the snackbar is hidden
             expect(screen.queryByRole('status')).not.toBeInTheDocument();
             // AND there is 2 records on screen
-            const tableRows = screen.getAllByRole('row');
-            expect(screen.getByRole('table')).toBeVisible();
+            const tableRows = getRecordRows();
+            expect(screen.getAllByRole('table')[0]).toBeVisible();
             expect(tableRows).toHaveLength(mockRecords.length); // 2 records
 
             // WHEN the user clicks select all
@@ -2637,12 +2634,12 @@ describe('Explorer', () => {
             expect(within(toolbar).getByRole('checkbox')).toBeChecked();
 
             // AND the first record is selected
-            const [firstRecordRow] = screen.getAllByRole('row');
+            const [firstRecordRow] = getRecordRows();
             const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
             expect(within(firstSelectRowCell).getByRole('checkbox')).toBeChecked();
 
             // AND the second record is selected too
-            const [, secondRecordRow] = screen.getAllByRole('row');
+            const [, secondRecordRow] = getRecordRows();
             const [secondSelectRowCell] = within(secondRecordRow).getAllByRole('cell');
             expect(within(secondSelectRowCell).getByRole('checkbox')).toBeChecked();
 
@@ -2741,8 +2738,8 @@ describe('Explorer', () => {
             expect(screen.queryByRole('status')).not.toBeInTheDocument();
 
             // AND there is only the first record in the table
-            const tableRows = screen.getAllByRole('row');
-            expect(screen.getByRole('table')).toBeVisible();
+            const tableRows = getRecordRows();
+            expect(screen.getAllByRole('table')[0]).toBeVisible();
             expect(tableRows).toHaveLength(1);
 
             // WHEN the user clicks on selection all page only
@@ -2755,7 +2752,7 @@ describe('Explorer', () => {
             expect(within(toolbar).getByRole('checkbox')).toHaveAttribute('aria-checked', 'mixed');
 
             // AND the checkbox of the first record is checked
-            const [firstRecordRow] = screen.getAllByRole('row');
+            const [firstRecordRow] = getRecordRows();
             const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
             expect(within(firstSelectRowCell).getByRole('checkbox')).toBeChecked();
 
@@ -2774,7 +2771,7 @@ describe('Explorer', () => {
             await user.click(within(nextPageElement).getByRole<HTMLButtonElement>('button'));
 
             // THEN the second record is not selected
-            const [secondRecordRow] = screen.getAllByRole('row');
+            const [secondRecordRow] = getRecordRows();
             const [secondSelectRowCell] = within(secondRecordRow).getAllByRole('cell');
             expect(within(secondSelectRowCell).getByRole('checkbox')).not.toBeChecked();
 
@@ -2870,8 +2867,8 @@ describe('Explorer', () => {
             expect(within(toolbar).getByRole('button', {name: /sort-items/})).not.toHaveClass('kit-filter-disabled');
 
             // AND only the first record is displayed
-            const tableRows = screen.getAllByRole('row');
-            expect(screen.getByRole('table')).toBeVisible();
+            const tableRows = getRecordRows();
+            expect(screen.getAllByRole('table')[0]).toBeVisible();
             expect(tableRows).toHaveLength(1);
 
             // WHEN the user clicks on the select all checkbox (all pages)
@@ -2889,7 +2886,7 @@ describe('Explorer', () => {
             expect(within(toolbar).getByRole('button', {name: /sort-items/})).toHaveClass('kit-filter-disabled');
 
             // AND the first record is selected
-            const [firstRecordRow] = screen.getAllByRole('row');
+            const [firstRecordRow] = getRecordRows();
             const [firstSelectRowCell, firstWhoAmICell] = within(firstRecordRow).getAllByRole('cell');
             expect(within(firstWhoAmICell).getByText(firstRecord.whoAmI.label)).toBeVisible();
             expect(within(firstSelectRowCell).getByRole('checkbox')).toBeChecked();
@@ -2912,7 +2909,7 @@ describe('Explorer', () => {
             await user.click(within(nextPageElement).getByRole<HTMLButtonElement>('button'));
 
             // THEN the second record is displayed and selected
-            const [secondRecordRow] = screen.getAllByRole('row');
+            const [secondRecordRow] = getRecordRows();
             const [secondSelectRowCell, secondWhoAmICell] = within(secondRecordRow).getAllByRole('cell');
             expect(within(secondWhoAmICell).getByText(secondRecord.whoAmI.label)).toBeVisible();
             expect(within(secondSelectRowCell).getByRole('checkbox')).toBeChecked();
@@ -2978,8 +2975,8 @@ describe('Explorer', () => {
             expect(screen.queryByRole('status')).not.toBeInTheDocument();
 
             // AND the records are displayed
-            const tableRows = screen.getAllByRole('row');
-            expect(screen.getByRole('table')).toBeVisible();
+            const tableRows = getRecordRows();
+            expect(screen.getAllByRole('table')[0]).toBeVisible();
             expect(tableRows).toHaveLength(mockRecords.length); // 2 records
 
             // WHEN ths user clicks on the select all checkbox (no pagination)
@@ -2989,11 +2986,11 @@ describe('Explorer', () => {
             expect(within(toolbar).getByRole('checkbox')).toBeChecked();
 
             // AND the first record is selected
-            const [firstRecordRow] = screen.getAllByRole('row');
+            const [firstRecordRow] = getRecordRows();
             const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
             expect(within(firstSelectRowCell).getByRole('checkbox')).toBeChecked();
             // AND the second record is selected too
-            const [, secondRecordRow] = screen.getAllByRole('row');
+            const [, secondRecordRow] = getRecordRows();
             const [secondSelectRowCell] = within(secondRecordRow).getAllByRole('cell');
             expect(within(secondSelectRowCell).getByRole('checkbox')).toBeChecked();
 
@@ -3051,8 +3048,8 @@ describe('Explorer', () => {
             expect(screen.queryByRole('status')).not.toBeInTheDocument();
 
             // AND the records are displayed
-            const tableRows = screen.getAllByRole('row');
-            expect(screen.getByRole('table')).toBeVisible();
+            const tableRows = getRecordRows();
+            expect(screen.getAllByRole('table')[0]).toBeVisible();
             expect(tableRows).toHaveLength(mockRecords.length); // 2 records
 
             // WHEN ths user clicks on the select all checkbox (no pagination)
@@ -3062,11 +3059,11 @@ describe('Explorer', () => {
             expect(within(toolbar).getByRole('checkbox')).toBeChecked();
 
             // AND the first record is selected
-            const [firstRecordRow] = screen.getAllByRole('row');
+            const [firstRecordRow] = getRecordRows();
             const [firstSelectRowCell] = within(firstRecordRow).getAllByRole('cell');
             expect(within(firstSelectRowCell).getByRole('checkbox')).toBeChecked();
             // AND the second record is selected too
-            const [, secondRecordRow] = screen.getAllByRole('row');
+            const [, secondRecordRow] = getRecordRows();
             const [secondSelectRowCell] = within(secondRecordRow).getAllByRole('cell');
             expect(within(secondSelectRowCell).getByRole('checkbox')).toBeChecked();
 
@@ -3181,13 +3178,13 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            expect(screen.getByRole('table')).toBeVisible();
-            expect(screen.getAllByRole('row')).toHaveLength(mockRecords.length); // 2 records
+            expect(screen.getAllByRole('table')[0]).toBeVisible();
+            expect(getRecordRows()).toHaveLength(mockRecords.length); // 2 records
             const [record1, record2] = mockRecords;
             expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
             expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
 
-            const [firstRecordRow, secondRecordRow] = screen.getAllByRole('row');
+            const [firstRecordRow, secondRecordRow] = getRecordRows();
             expect(within(firstRecordRow).getByRole('button', {name: 'explorer.deactivate-item'})).toBeEnabled();
             expect(within(secondRecordRow).getByRole('button', {name: 'explorer.deactivate-item'})).not.toBeEnabled();
         });
@@ -3231,13 +3228,13 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            expect(screen.getByRole('table')).toBeVisible();
-            expect(screen.getAllByRole('row')).toHaveLength(mockRecords.length); // 2 records
+            expect(screen.getAllByRole('table')[0]).toBeVisible();
+            expect(getRecordRows()).toHaveLength(mockRecords.length); // 2 records
             const [record1, record2] = mockRecords;
             expect(screen.getByText(record1.whoAmI.label)).toBeInTheDocument();
             expect(screen.getByText(record2.whoAmI.label)).toBeInTheDocument();
 
-            const [firstRecordRow, secondRecordRow] = screen.getAllByRole('row');
+            const [firstRecordRow, secondRecordRow] = getRecordRows();
             expect(within(firstRecordRow).getByRole('button', {name: 'explorer.activate-item'})).toBeEnabled();
             expect(within(secondRecordRow).getByRole('button', {name: 'explorer.activate-item'})).not.toBeEnabled();
         });
@@ -3255,7 +3252,7 @@ describe('Explorer', () => {
                 },
             );
 
-            const [, firstRecordRow] = await screen.findAllByRole('row');
+            const [, firstRecordRow] = (await screen.findAllByRole('row')).slice(1); // skip the header row
             expect(within(firstRecordRow).getByRole('button', {name: 'explorer.delete-item'})).not.toBeEnabled();
         });
 
@@ -3272,7 +3269,7 @@ describe('Explorer', () => {
                 },
             );
 
-            const [, firstRecordRow] = await screen.findAllByRole('row');
+            const [, firstRecordRow] = (await screen.findAllByRole('row')).slice(1); // skip the header row
             expect(within(firstRecordRow).getByRole('button', {name: 'explorer.replace-item'})).not.toBeEnabled();
         });
 
@@ -3296,8 +3293,8 @@ describe('Explorer', () => {
                 </Explorer.EditSettingsContextProvider>,
             );
 
-            const tableRows = screen.getAllByRole('row');
-            expect(screen.getByRole('table')).toBeVisible();
+            const tableRows = getRecordRows();
+            expect(screen.getAllByRole('table')[0]).toBeVisible();
 
             const [firstRecordRow] = tableRows;
             const cells = within(firstRecordRow).getAllByRole('cell');

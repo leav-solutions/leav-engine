@@ -60,9 +60,10 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
     };
 
     const _handleDateChange: (
-        datePickerDate: dayjs.Dayjs | null,
+        datePickerDate: dayjs.Dayjs | dayjs.Dayjs[] | null,
         antOnChangeParams: string | string[],
-    ) => void = async (datePickerDate, ...antOnChangeParams) => {
+    ) => void = async (rawDatePickerDate, ...antOnChangeParams) => {
+        let datePickerDate = Array.isArray(rawDatePickerDate) ? (rawDatePickerDate[0] ?? null) : rawDatePickerDate;
         hasChangedRef.current = true;
 
         if ((inheritedFlags.isInheritedValues || calculatedFlags.isCalculatedValues) && datePickerDate === null) {

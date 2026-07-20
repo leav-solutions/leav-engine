@@ -47,7 +47,8 @@ export const LegacyDateAttributeDropDown: FunctionComponent<IFilterChildrenDropD
         });
     };
 
-    const _onDateChanged: ComponentProps<typeof KitDatePicker>['onChange'] = date => {
+    const _onDateChanged: ComponentProps<typeof KitDatePicker>['onChange'] = value => {
+        const date = Array.isArray(value) ? value[0] : value;
         onFilterChange({
             ...filter,
             value: date ? String(date.unix()) : null,

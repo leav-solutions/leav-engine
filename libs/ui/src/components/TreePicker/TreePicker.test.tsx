@@ -77,7 +77,7 @@ describe('TreePicker', () => {
         const mockHandleSubmit = vi.fn();
         render(<TreePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getAllByRole('table')[0]).toBeInTheDocument());
 
         expect(screen.getByText('treeA')).toBeInTheDocument();
         expect(screen.getByText('treeB')).toBeInTheDocument();
@@ -88,14 +88,15 @@ describe('TreePicker', () => {
         const mockHandleSubmit = vi.fn();
         render(<TreePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getAllByRole('table')[0]).toBeInTheDocument());
 
         expect(screen.getByText('treeA')).toBeInTheDocument();
         expect(screen.getByText('treeB')).toBeInTheDocument();
         expect(screen.getByText('treeC')).toBeInTheDocument();
 
-        await userEvent.type(screen.getByRole('textbox'), 'treeA');
-        expect(screen.getByRole('textbox')).toHaveValue('treeA');
+        // Since the antd bump, Input.Search renders an <input type="search"> (role "searchbox")
+        await userEvent.type(screen.getByRole('searchbox'), 'treeA');
+        expect(screen.getByRole('searchbox')).toHaveValue('treeA');
 
         expect(screen.getByText('treeA')).toBeInTheDocument();
         expect(screen.queryByText('treeB')).not.toBeInTheDocument();
@@ -106,10 +107,10 @@ describe('TreePicker', () => {
         const mockHandleSubmit = vi.fn();
         render(<TreePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getAllByRole('table')[0]).toBeInTheDocument());
 
         await userEvent.click(screen.getByText('treeA'));
-        const rows = screen.getAllByRole('row');
+        const rows = screen.getAllByRole('row').slice(1); // skip the header row
         const rowAttributeA = rows[0];
         const rowAttributeB = rows[1];
         const rowAttributeC = rows[2];
@@ -140,7 +141,7 @@ describe('TreePicker', () => {
         const mockHandleSubmit = vi.fn();
         render(<TreePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open multiple={false} />, {mocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getAllByRole('table')[0]).toBeInTheDocument());
 
         await userEvent.click(screen.getByText('treeA'));
         const radioBtnAttributeA = within(screen.getByRole('row', {name: /treeA/i})).getByRole('radio');
@@ -158,7 +159,7 @@ describe('TreePicker', () => {
         const mockHandleSubmit = vi.fn();
         render(<TreePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks});
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getAllByRole('table')[0]).toBeInTheDocument());
 
         const newTreeButton = screen.queryByRole('button', {name: /new_tree/i});
         expect(newTreeButton).toBeInTheDocument();
@@ -196,7 +197,7 @@ describe('TreePicker', () => {
             mocks: mocksNotAllowed,
         });
 
-        await waitFor(() => expect(screen.getByRole('table')).toBeInTheDocument());
+        await waitFor(() => expect(screen.getAllByRole('table')[0]).toBeInTheDocument());
 
         expect(screen.queryByRole('button', {name: /new_tree/i})).not.toBeInTheDocument();
     });

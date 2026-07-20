@@ -50,6 +50,7 @@ export const useViewActions = (libraryId: string): IUseViewActionsResult => {
             {
                 key: 'copy-id',
                 label: String(t('view_settings.copy_id')),
+                title: view.shared ? String(t('view_settings.copy_id_tooltip', {id: view.id})) : undefined,
                 icon: (
                     <span title={view.shared ? undefined : String(t('view_settings.copy_id_disabled'))}>
                         <FontAwesomeIcon icon={faCopy} />
@@ -73,6 +74,7 @@ export const useViewActions = (libraryId: string): IUseViewActionsResult => {
             actions.push({
                 key: 'delete',
                 label: String(t('view_settings.delete_view')),
+                title: String(t('view_settings.delete')),
                 icon: <FontAwesomeIcon icon={faTrash} className={cn({[dangerIcon]: !isViewCurrentlyLoaded})} />,
                 disabled: isViewCurrentlyLoaded,
                 onClick: e => {

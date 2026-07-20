@@ -1,6 +1,7 @@
 import {
     render,
     renderHook,
+    screen,
     type Queries,
     type RenderHookOptions,
     type RenderOptions,
@@ -110,3 +111,8 @@ export const expectToThrow = (func: () => unknown, error?: JestToErrorArg): void
 };
 
 type JestToErrorArg = string | RegExp | Error | (new (...args: any[]) => any);
+
+// Since antd 6, the table renders a fixed header in its own <table>, so the header <tr>
+// is exposed as an accessible row at index 0. This helper drops it to return only record rows,
+// keeping the row indexing used throughout the tests unchanged.
+export const getRecordRows = (): HTMLElement[] => screen.getAllByRole('row').slice(1);

@@ -83,7 +83,7 @@ describe('DSInputEncryptedWrapper', () => {
         await user.type(input, text);
         await user.tab();
         expect(mockHandleSubmit).toHaveBeenCalledWith(text, mockFormAttribute.id);
-        const clearButton = screen.getByRole('button');
+        const clearButton = screen.getByRole('button', {name: /clear/i});
 
         await user.click(clearButton);
         await user.tab();

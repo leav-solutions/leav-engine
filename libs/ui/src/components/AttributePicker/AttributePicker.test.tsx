@@ -169,14 +169,14 @@ describe('AttributePicker', () => {
         render(<AttributePicker onClose={vi.fn()} onSubmit={mockHandleSubmit} open />, {mocks: mocksWithSort});
 
         await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
-        const rows = screen.getAllByRole('row');
+        const rows = screen.getAllByRole('row').slice(1); // skip the header row
         expect(rows[0]).toHaveTextContent('attributeA');
         expect(rows[1]).toHaveTextContent('attributeB');
         expect(rows[2]).toHaveTextContent('attributeC');
 
-        await userEvent.click(screen.getByText('attributes.type'));
+        await userEvent.click(screen.getByRole('columnheader', {name: 'attributes.type'}));
         await waitFor(() => {
-            const newRows = screen.getAllByRole('row');
+            const newRows = screen.getAllByRole('row').slice(1); // skip the header row
             expect(newRows[0]).toHaveTextContent('attributeA');
             expect(newRows[1]).toHaveTextContent('attributeC');
             expect(newRows[2]).toHaveTextContent('attributeB');
@@ -189,7 +189,7 @@ describe('AttributePicker', () => {
 
         await waitFor(() => expect(screen.getByText('attributeA')).toBeInTheDocument());
         await userEvent.click(screen.getByText('attributeA'));
-        const rows = screen.getAllByRole('row');
+        const rows = screen.getAllByRole('row').slice(1); // skip the header row
         const rowAttributeA = rows[0];
         const rowAttributeB = rows[1];
         const rowAttributeC = rows[2];
