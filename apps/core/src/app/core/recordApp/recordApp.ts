@@ -294,7 +294,7 @@ export default function ({
                         deleteRecord(library: ID, id: ID): Record!
                         indexRecords(libraryId: String!, records: [String!]): Boolean!
                         activateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!]): [Record!]!
-                        deactivateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!]): [Record!]!
+                        deactivateRecords(libraryId: String!, recordsIds: [String!], filters: [RecordFilterInput!], searchQuery: String): [Record!]!
                         purgeInactiveRecords(libraryId: String!): [Record!]!
                         purgeRecord(libraryId: ID!, recordId: ID!): Record!
                     }
@@ -407,8 +407,18 @@ export default function ({
                         async activateRecords(parent, {libraryId, recordsIds, filters}, ctx): Promise<IRecord[]> {
                             return recordDomain.activateRecordsBatch({libraryId, recordsIds, filters, ctx});
                         },
-                        async deactivateRecords(parent, {libraryId, recordsIds, filters}, ctx): Promise<IRecord[]> {
-                            return recordDomain.deactivateRecordsBatch({libraryId, recordsIds, filters, ctx});
+                        async deactivateRecords(
+                            parent,
+                            {libraryId, recordsIds, filters, searchQuery},
+                            ctx,
+                        ): Promise<IRecord[]> {
+                            return recordDomain.deactivateRecordsBatch({
+                                libraryId,
+                                recordsIds,
+                                filters,
+                                fulltextSearch: searchQuery,
+                                ctx,
+                            });
                         },
                         async purgeInactiveRecords(parent, {libraryId}, ctx): Promise<IRecord[]> {
                             return recordDomain.purgeInactiveRecords({libraryId, ctx});

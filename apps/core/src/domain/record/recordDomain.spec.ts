@@ -756,6 +756,34 @@ describe('RecordDomain', () => {
             expect(records).toEqual([mockRecord, mockRecord, mockRecord]);
         });
 
+        test('Deactivate records scoped by fulltext search (without filters)', async () => {
+            const mockRecordPermissionDomain: Mockify<IRecordPermissionDomain> = {
+                getRecordPermission: global.__mockPromise(true),
+            };
+
+            const mockFindRecords = vi.fn().mockImplementation(() => Promise.resolve({list: [mockRecord, mockRecord]}));
+
+            const domain = recordDomain({
+                ...depsBase,
+                'core.domain.permission.record': mockRecordPermissionDomain as IRecordPermissionDomain,
+                'core.domain.record.helpers.findRecords': mockFindRecords,
+            });
+
+            domain.deactivateRecord = vi.fn().mockImplementation(() => Promise.resolve(mockRecord));
+
+            const records = await domain.deactivateRecordsBatch({
+                libraryId: 'test_lib',
+                fulltextSearch: 'foo',
+                ctx: mockCtx,
+            });
+
+            // The fulltext search must reach findRecords, otherwise the batch would target the whole library.
+            expect(mockFindRecords).toBeCalledTimes(1);
+            expect(mockFindRecords.mock.calls[0][0].params.fulltextSearch).toBe('foo');
+            expect(domain.deactivateRecord).toBeCalledTimes(2);
+            expect(records).toEqual([mockRecord, mockRecord]);
+        });
+
         test('Do not deactivate records without permission', async () => {
             const mockRecordPermissionDomain: Mockify<IRecordPermissionDomain> = {
                 getRecordPermission: global.__mockPromiseMultiple([true, true, false]),

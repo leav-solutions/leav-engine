@@ -2511,6 +2511,7 @@ describe('Explorer', () => {
                     },
                 ],
                 ['613982168', '612694174'],
+                undefined,
             );
 
             // AND the selection is cleared
@@ -2581,6 +2582,7 @@ describe('Explorer', () => {
                     },
                 ],
                 ['613982168', '612694174'],
+                undefined,
             );
 
             // AND the selection is cleared
@@ -2695,6 +2697,7 @@ describe('Explorer', () => {
                     },
                 ],
                 [firstRecord.id],
+                undefined,
             );
 
             // AND the selection is cleared
@@ -2838,6 +2841,7 @@ describe('Explorer', () => {
                     },
                 ],
                 'all',
+                undefined,
             );
 
             // AND the selection is cleared

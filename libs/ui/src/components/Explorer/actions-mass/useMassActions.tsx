@@ -92,6 +92,7 @@ export const useMassActions = ({
                                       ]),
                                   ),
                             view.massSelection,
+                            view.massSelection === MASS_SELECTION_ALL ? view.fulltextSearch || undefined : undefined,
                         );
                         if (deselectAll) {
                             dispatch({

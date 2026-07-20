@@ -51,7 +51,7 @@ export const useDeactivateMassAction = ({
             label: t('explorer.massAction.deactivate'),
             icon: <FontAwesomeIcon icon={faTrash} />,
             deselectAll: true,
-            callback: massSelectionFilter => {
+            callback: (massSelectionFilter, _massSelection, searchQuery) => {
                 openConfirmModal({
                     title:
                         t('explorer.deactivate_item', {
@@ -68,6 +68,7 @@ export const useDeactivateMassAction = ({
                             variables: {
                                 libraryId: view.libraryId,
                                 filters: massSelectionFilter,
+                                searchQuery,
                             },
                         });
                         const total =
