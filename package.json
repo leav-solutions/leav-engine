@@ -32,6 +32,7 @@
         "@aristid/eslint-plugin": "2.3.0",
         "@commitlint/cli": "19.8.1",
         "@commitlint/config-conventional": "19.8.1",
+        "@typescript/native": "npm:typescript@^7.0.2",
         "commitizen": "4.3.2",
         "cz-conventional-changelog": "3.3.0",
         "eslint": "9.39.5",
@@ -40,7 +41,7 @@
         "husky": "6.0.0",
         "lint-staged": "16.4.0",
         "prettier": "3.9.5",
-        "typescript": "6.0.3"
+        "typescript": "npm:@typescript/typescript6@^6.0.2"
     },
     "resolutions": {
         "nwsapi": "2.2.7",
