@@ -239,5 +239,76 @@ describe('TableCell component', () => {
                 });
             });
         });
+
+        describe('Tag color from identity card (LEAVC-876)', () => {
+            const _getTagRoot = (label: string) => screen.getByText(label).closest('.ant-tag');
+
+            test('For link attribute, colors the tag and contrasts the text with the identity card color', async () => {
+                const linkValues: PropertyValueLinkValueFragment[] = [
+                    // Light background → dark text for readability
+                    {linkPayload: {id: 'r1', whoAmI: {...mockRecord, label: 'Light', color: '#f8e58c'}}},
+                    // Dark background → white text
+                    {linkPayload: {id: 'r2', whoAmI: {...mockRecord, label: 'Dark', color: '#000080'}}},
+                    // No color → default primary (blue) tag, white text
+                    {linkPayload: {id: 'r3', whoAmI: {...mockRecord, label: 'Default', color: null}}},
+                ];
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    multiple_values: true,
+                    multi_link_display_option: MultiDisplayOption.tag,
+                    type: AttributeType.advanced_link,
+                };
+
+                render(<TableCell values={linkValues} attributeProperties={attributeProperties} />);
+
+                expect(_getTagRoot('Light')).toHaveStyle({backgroundColor: '#f8e58c'});
+                expect(_getTagRoot('Light')).not.toHaveClass('kit-tag-primary');
+                expect(screen.getByText('Light')).toHaveStyle({
+                    '--kit-typography-color': 'var(--general-colors-neutral-black)',
+                });
+
+                expect(_getTagRoot('Dark')).toHaveStyle({backgroundColor: '#000080'});
+                expect(screen.getByText('Dark')).toHaveStyle({
+                    '--kit-typography-color': 'var(--general-colors-neutral-white)',
+                });
+
+                expect(_getTagRoot('Default')).toHaveClass('kit-tag-primary');
+                expect(screen.getByText('Default')).toHaveStyle({
+                    '--kit-typography-color': 'var(--general-colors-neutral-white)',
+                });
+            });
+
+            test('For tree attribute, colors the tag and contrasts the text with the identity card color', async () => {
+                const treeValues: PropertyValueTreeValueFragment[] = [
+                    {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, label: 'Light', color: '#f8e58c'}}}},
+                    {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, label: 'Dark', color: '#000080'}}}},
+                    {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, label: 'Default', color: null}}}},
+                ];
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    multiple_values: true,
+                    multi_tree_display_option: MultiDisplayOption.tag,
+                    type: AttributeType.tree,
+                };
+
+                render(<TableCell values={treeValues} attributeProperties={attributeProperties} />);
+
+                expect(_getTagRoot('Light')).toHaveStyle({backgroundColor: '#f8e58c'});
+                expect(_getTagRoot('Light')).not.toHaveClass('kit-tag-primary');
+                expect(screen.getByText('Light')).toHaveStyle({
+                    '--kit-typography-color': 'var(--general-colors-neutral-black)',
+                });
+
+                expect(_getTagRoot('Dark')).toHaveStyle({backgroundColor: '#000080'});
+                expect(screen.getByText('Dark')).toHaveStyle({
+                    '--kit-typography-color': 'var(--general-colors-neutral-white)',
+                });
+
+                expect(_getTagRoot('Default')).toHaveClass('kit-tag-primary');
+                expect(screen.getByText('Default')).toHaveStyle({
+                    '--kit-typography-color': 'var(--general-colors-neutral-white)',
+                });
+            });
+        });
     });
 });

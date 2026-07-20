@@ -13,6 +13,7 @@ import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import DOMPurify from 'dompurify';
 import {KitAvatar, KitBadge, KitIdCard, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {type IKitTag} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
+import {getContrastColor} from 'aristid-ds/dist/utils/functions';
 import styled from 'styled-components';
 import {IdCard} from './IdCard';
 import {multiColorTagAvatarClassName, TableTagGroup} from './TableTagGroup';
@@ -74,6 +75,26 @@ interface ITableCellProps {
 }
 
 const TOOLTIP_COLOR = '#ffffff';
+
+// Delegate the contrast computation to the DS (getContrastColor returns the neutral palette hex,
+// '#000000' | '#FFFFFF', or undefined for a named/unknown color). Remap to the 'black' | 'white'
+// KitTypography keywords that the DS translates to neutral tokens (deterministic render + tests).
+const _getTagTextColor = (color: string): 'black' | 'white' =>
+    getContrastColor(color)?.toUpperCase() === '#000000' ? 'black' : 'white';
+
+const _buildLinkTreeTag = (label: string | null | undefined, color: string | null | undefined): IKitTag => {
+    const textColor = color ? _getTagTextColor(color) : 'white';
+    const children = <KitTypography.Text color={textColor}>{label ?? undefined}</KitTypography.Text>;
+
+    // No identity card color: keep the default primary (blue) tag.
+    if (!color) {
+        return {type: 'primary', children};
+    }
+
+    // UX-validated rendering: solid DS tag whose background is the linked entity's identity card
+    // color, with a contrast-computed text color for readability.
+    return {style: {backgroundColor: color, borderColor: color}, children};
+};
 
 export const TableCell: FunctionComponent<ITableCellProps> = ({values, attributeProperties}) => {
     const {t} = useSharedTranslation();
@@ -156,14 +177,9 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                 case MultiDisplayOption.tag:
                     return (
                         <TableTagGroup
-                            tags={values.map(value => ({
-                                type: 'primary',
-                                children: (
-                                    <KitTypography.Text color={TOOLTIP_COLOR}>
-                                        {value.linkPayload?.whoAmI.label ?? undefined}
-                                    </KitTypography.Text>
-                                ),
-                            }))}
+                            tags={values.map(value =>
+                                _buildLinkTreeTag(value.linkPayload?.whoAmI.label, value.linkPayload?.whoAmI.color),
+                            )}
                         />
                     );
 
@@ -197,14 +213,12 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                 case MultiDisplayOption.tag:
                     return (
                         <TableTagGroup
-                            tags={values.map(value => ({
-                                type: 'primary',
-                                children: (
-                                    <KitTypography.Text color={TOOLTIP_COLOR}>
-                                        {value.treePayload?.record.whoAmI.label ?? undefined}
-                                    </KitTypography.Text>
+                            tags={values.map(value =>
+                                _buildLinkTreeTag(
+                                    value.treePayload?.record.whoAmI.label,
+                                    value.treePayload?.record.whoAmI.color,
                                 ),
-                            }))}
+                            )}
                         />
                     );
                 case MultiDisplayOption.badge_qty:
