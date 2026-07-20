@@ -170,6 +170,26 @@ Modèle à trois niveaux : Admin → Library → Record.
 
 ---
 
+## Migrations DB
+
+Fichiers `NNN-*.ts` dans [`src/infra/db/migrations/`](src/infra/db/migrations/), joués une fois via le
+registre `core_db_migrations` (au boot / commande `dbMigrate`). Factory DI standard exportant par
+défaut une fonction qui retourne un `IMigration` (`{run(ctx)}`) — cf. modèle
+[`026-removeDataStudioApplication.ts`](src/infra/db/migrations/026-removeDataStudioApplication.ts).
+
+> ⚠️ **Ne jamais colocaliser de fichier de test dans `migrations/`.** Le loader
+> (`_filterMigrationFile` dans [`dbUtils.ts`](src/infra/db/dbUtils.ts)) n'exclut que `.map` et
+> `.d.ts` : **tout autre fichier** du dossier (dont un `.spec.ts`) est chargé et exécuté comme une
+> migration, ce qui plante au runtime (`ReferenceError: describe is not defined`). Écrire le test
+> d'une migration **ailleurs** (ex. `src/__tests__/`), ou tester la logique via un helper extrait
+> hors du dossier `migrations/`.
+
+> ℹ️ Re-jouabilité : une migration n'est jouée qu'une fois (entrée dans `core_db_migrations`). Pour
+> la rejouer en prod, les ops suppriment/éditent manuellement l'entrée puis relancent le core — donc
+> le `run()` doit rester **auto-idempotent** (ex. purger avant de recréer).
+
+---
+
 ## Tests
 
 ```bash
