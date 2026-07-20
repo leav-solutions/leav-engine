@@ -94,8 +94,8 @@ describe('LibraryPicker', () => {
         expect(screen.getByText('libB')).toBeInTheDocument();
         expect(screen.getByText('libC')).toBeInTheDocument();
 
-        await userEvent.type(screen.getByRole('textbox'), 'libA');
-        expect(screen.getByRole('textbox')).toHaveValue('libA');
+        await userEvent.type(screen.getByRole('searchbox'), 'libA');
+        expect(screen.getByRole('searchbox')).toHaveValue('libA');
 
         expect(screen.getByText('libA')).toBeInTheDocument();
         expect(screen.queryByText('libB')).not.toBeInTheDocument();
@@ -111,7 +111,7 @@ describe('LibraryPicker', () => {
         await userEvent.click(screen.getByText('libA'));
 
         // Select 'libA'
-        const rows = screen.getAllByRole('row');
+        const rows = screen.getAllByRole('row').slice(1); // skip the header row
         const rowLibA = rows[0];
         const rowLibB = rows[1];
         const rowLibC = rows[2];

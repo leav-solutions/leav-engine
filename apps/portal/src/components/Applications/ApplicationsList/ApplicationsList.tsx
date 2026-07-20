@@ -132,7 +132,7 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
         <Wrapper>
             {!!favoriteApps.length && (
                 <>
-                    <KitDivider orientation="left">
+                    <KitDivider titlePlacement="left">
                         <StarFilled style={dividerIconStyle} />
                         {t('favorites')}
                     </KitDivider>
@@ -150,7 +150,7 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
             )}
             {!!consultedApps.length && (
                 <>
-                    <KitDivider orientation="left">
+                    <KitDivider titlePlacement="left">
                         <ClockCircleOutlined style={dividerIconStyle} />
                         {t('consulted_apps')}
                     </KitDivider>
@@ -163,7 +163,7 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
             )}
             {!!otherApps.length && (
                 <>
-                    <KitDivider orientation="left">
+                    <KitDivider titlePlacement="left">
                         <AppstoreOutlined style={dividerIconStyle} />
                         {t('other_applications')}
                     </KitDivider>

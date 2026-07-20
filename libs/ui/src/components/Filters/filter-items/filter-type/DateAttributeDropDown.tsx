@@ -111,7 +111,8 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
         });
     };
 
-    const _onDateChanged: ComponentProps<typeof KitDatePicker>['onChange'] = date => {
+    const _onDateChanged: ComponentProps<typeof KitDatePicker>['onChange'] = value => {
+        const date = Array.isArray(value) ? value[0] : value;
         const formattedToday = dayjs().format('YYYY-MM-DD');
         const formattedValue = date ? date.format('YYYY-MM-DD') : null;
         const condition =

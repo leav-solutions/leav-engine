@@ -31,7 +31,7 @@ export const HistoryToolbar = ({
         extraAlignLeft={
             <>
                 <TotalResult loading={loading} total={total} />
-                <KitDivider type="vertical" />
+                <KitDivider orientation="vertical" />
                 <DateFilter
                     loading={loading}
                     value={filtersValues.dates}

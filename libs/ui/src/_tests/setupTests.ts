@@ -17,6 +17,7 @@ console.error = (...args: unknown[]) => {
 };
 
 import {webcrypto} from 'node:crypto';
+import ResizeObserver from 'resize-observer-polyfill';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 
@@ -32,6 +33,12 @@ window.matchMedia = query => ({
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
 });
+
+// jsdom does not implement ResizeObserver. Since the antd bump, several components
+// (@rc-component/resize-observer used by Table, Tree, etc.) call it in a passive effect,
+// which throws "ResizeObserver is not defined" and prevents rendering. Polyfill it globally
+// so every test file benefits (previously each file had to import it individually).
+global.ResizeObserver = ResizeObserver;
 
 vi.mock('_ui/hooks/useSharedTranslation');
 // Some components import the hook through its deep path instead of the directory index, so the

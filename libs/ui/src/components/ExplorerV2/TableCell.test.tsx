@@ -1,4 +1,3 @@
-import ResizeObserver from 'resize-observer-polyfill';
 import {render, screen} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {
@@ -9,8 +8,6 @@ import {
     type PropertyValueTreeValueFragment,
 } from '_ui/_gqlTypes';
 import {TableCell} from './TableCell';
-
-global.ResizeObserver = ResizeObserver;
 
 describe('TableCell component', () => {
     describe('Attribute with single value', () => {

@@ -65,7 +65,7 @@ export const ExplorerFiltersAndSorts: FunctionComponent<{
                 <>
                     <li>{selectAllButton}</li>
                     {((showFilters && filtersProps.length !== 0) || (showSorts && sort.length > 0)) && (
-                        <DividerStyled type="vertical" />
+                        <DividerStyled vertical />
                     )}
                 </>
             )}

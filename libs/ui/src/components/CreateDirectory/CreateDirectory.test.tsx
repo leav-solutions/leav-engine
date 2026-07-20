@@ -164,7 +164,13 @@ describe('UploadFiles', () => {
 
         await userEvent.click(createBtn);
 
-        await waitFor(() => expect(screen.getByText('create_directory.duplicate_modal.title')).toBeInTheDocument());
+        // Since antd 6, confirm modals render their title twice (modal header + confirm body),
+        // so a plain getByText matches multiple elements. Target the confirm body one.
+        await waitFor(() =>
+            expect(
+                screen.getByText('create_directory.duplicate_modal.title', {selector: '.ant-modal-confirm-title'}),
+            ).toBeInTheDocument(),
+        );
     });
 
     test('Directory name exists', async () => {

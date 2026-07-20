@@ -216,7 +216,7 @@ describe('<DSListSelect />', () => {
         });
 
         it('should display the option with free entry', async () => {
-            render(
+            const {rerender} = render(
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
                         <DSListSelect
@@ -239,6 +239,23 @@ describe('<DSListSelect />', () => {
             await userEvent.click(newColorOption);
 
             expect(handleSubmitMock).toHaveBeenCalledWith(newColor, attribute.id);
+
+            // Since antd 6, selecting an option closes the dropdown, so the component falls back to
+            // displaying presentationValue — which the parent recomputes after handleSubmit. Simulate it.
+            rerender(
+                <AntForm name="name">
+                    <AntForm.Item name="chartreuse">
+                        <DSListSelect
+                            attribute={{...attribute, values_list: {...valuesList, allowFreeEntry: true}}}
+                            presentationValue={newColor}
+                            handleSubmit={handleSubmitMock}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        />
+                    </AntForm.Item>
+                </AntForm>,
+            );
             expect(screen.getByTestId(attribute.id).innerHTML).toMatch(new RegExp(newColor));
         });
 
@@ -250,7 +267,7 @@ describe('<DSListSelect />', () => {
                 dispatch: mockEditRecordDispatch,
             }));
 
-            render(
+            const {rerender} = render(
                 <AntForm name="name">
                     <AntForm.Item name="chartreuse">
                         <DSListSelect
@@ -277,6 +294,26 @@ describe('<DSListSelect />', () => {
 
             expect(handleSubmitMock).toHaveBeenCalledWith(newColor, attribute.id);
             expect(mockEditRecordDispatch).toHaveBeenCalledWith({type: EditRecordReducerActionsTypes.REQUEST_REFRESH});
+
+            // Since antd 6, selecting an option closes the dropdown, so the component falls back to
+            // displaying presentationValue — which the parent recomputes after handleSubmit. Simulate it.
+            rerender(
+                <AntForm name="name">
+                    <AntForm.Item name="chartreuse">
+                        <DSListSelect
+                            attribute={{
+                                ...attribute,
+                                values_list: {...valuesList, allowFreeEntry: true, allowListUpdate: true},
+                            }}
+                            presentationValue={newColor}
+                            handleSubmit={handleSubmitMock}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        />
+                    </AntForm.Item>
+                </AntForm>,
+            );
             expect(screen.getByTestId(attribute.id).innerHTML).toMatch(new RegExp(newColor));
         });
 

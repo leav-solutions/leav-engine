@@ -99,7 +99,7 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
                     <Button block type="primary" onClick={_onRefresh} disabled={isReadOnly}>
                         {t('libraries.sync_indexation')}
                     </Button>
-                    <Divider orientation="left">{t('libraries.indexed_attributes')}</Divider>
+                    <Divider titlePlacement="left">{t('libraries.indexed_attributes')}</Divider>
                     <Select
                         optionFilterProp="label"
                         disabled={isReadOnly}
