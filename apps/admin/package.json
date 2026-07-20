@@ -30,7 +30,7 @@
         "@rjsf/utils": "6.7.0",
         "@rjsf/validator-ajv8": "6.7.0",
         "@uiw/react-json-view": "2.0.0-alpha.43",
-        "aristid-ds": "16.2.0-3ed127f",
+        "aristid-ds": "17.0.0-ead9988",
         "cross-fetch": "3.2.0",
         "dayjs": "1.11.21",
         "fomantic-ui-less": "2.9.4",
