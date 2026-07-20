@@ -1,6 +1,6 @@
 # Migration ESM-only de `libs/utils` : bloquée sans bundler, différée
 
-Date: 09/07/2026
+Date: 09/07/2026 (mis à jour le 17/07/2026)
 
 ## Status
 
@@ -114,10 +114,37 @@ couplée à ADR-008) pour ne pas reperdre cette investigation, sans trancher ent
 dépendra du contexte au moment de la reprise (urgence de simplifier `libs/utils` seule vs.
 avancement du chantier backend `nodenext`).
 
+### Mise à jour du 17/07/2026 — sortie de `node10`/`ignoreDeprecations`, sans toucher au dual build
+
+Ni la Voie A (bundler) ni la Voie B (ESM réel, couplée à ADR-010 qui a depuis levé le prérequis
+d'ADR-008) n'ont été prises. Le dual build CJS/ESM et l'`exports` conditionnel restent
+strictement inchangés — ce point reste entièrement ouvert, cf. Open points.
+
+Un changement plus étroit, hors du choix Voie A/Voie B, a en revanche été fait : sortir
+`libs/utils` de `moduleResolution: node10` (déprécié depuis TS 6.0) et du pin
+`ignoreDeprecations: "6.0"` qui l'accompagnait, en modernisant vers `nodenext` — sans rien changer
+d'autre :
+
+- `libs/utils/tsconfig.base.json` : `"module": "CommonJS"`, `"moduleResolution": "node10"` et
+  `"ignoreDeprecations": "6.0"` remplacés par `"moduleResolution": "nodenext"` seul (le `module`
+  n'a plus besoin d'être surchargé, `../../tsconfig.json` racine vaut déjà `nodenext`).
+- `libs/utils/tsconfig.json` (config CJS, `outDir: dist/cjs`) : l'override `"module": "CommonJS"`
+  devient inutile et est retiré — sous `nodenext`, sans `"type": "module"` dans `package.json`
+  (inchangé), TypeScript émet toujours du CommonJS. Vérifié empiriquement : `dist/cjs/index.js`
+  reste `"use strict"` + `require()`, chargeable par `require()` réel de Node, exactement comme
+  avant ce changement.
+- `libs/utils/tsconfig.esm.json` inchangé (surcharge déjà `module: esnext` /
+  `moduleResolution: bundler` explicitement, indépendamment de `tsconfig.base.json`).
+- `libs/utils/package.json` inchangé (dual `main`/`publishConfig`, `exports` conditionnels).
+
+`ignoreDeprecations` a disparu de tout le repo suite à ce changement (c'était sa seule occurrence).
+
 ## Consequences
 
 - `libs/utils` continue à publier un dist dual CJS/ESM, avec `exports` conditionnels, tel qu'avant
   cet essai — aucune régression, aucun changement fonctionnel.
+- `ignoreDeprecations: "6.0"` a disparu du repo ; `moduleResolution: node10` n'est plus utilisé
+  nulle part dans `libs/utils`.
 - Toute future tentative de passer `libs/utils` en ESM-only avec un simple `tsc` sans lever l'un
   des deux blocages documentés (bundler, ou migration `nodenext` du backend) reproduira le même
   échec silencieux — silencieux au sens où `tscheck` ne le détecte pas, seul un chargement réel du
