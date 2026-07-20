@@ -57,20 +57,44 @@ export default function ({
 
             debug && logger.debug('Export: data event selected', {data});
 
-            const sdoDataEvent = await sdoExportDomain.getSDODataEvent(data, sdoGlobalSettings.mapping);
+            const sdoExportTargets = await sdoExportDomain.getSDOExportTargets(
+                data,
+                sdoGlobalSettings.mapping,
+                _systemQueryContext,
+            );
 
-            if (sdoDataEvent) {
-                await sdoExportDomain.process(data, sdoGlobalSettings.timer, async (leavLibrary, recordId) => {
-                    const sdo = await sdoDomain.getRecordSDO(
-                        leavLibrary,
-                        recordId,
-                        sdoGlobalSettings.mapping,
-                        sdoDataEvent,
-                        _systemQueryContext,
-                    );
+            const results = await Promise.allSettled(
+                sdoExportTargets.map(target =>
+                    sdoExportDomain.process(
+                        target.leavLibraryId,
+                        target.recordId,
+                        sdoGlobalSettings.timer,
+                        async (leavLibrary, recordId) => {
+                            const sdo = await sdoDomain.getRecordSDO(
+                                leavLibrary,
+                                recordId,
+                                sdoGlobalSettings.mapping,
+                                target.action,
+                                _systemQueryContext,
+                            );
 
-                    await sdoExportDomain.sendSDO(leavLibrary, recordId, sdo);
-                });
+                            await sdoExportDomain.sendSDO(leavLibrary, recordId, sdo);
+                        },
+                    ),
+                ),
+            );
+
+            const failures = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected');
+            if (failures.length > 0) {
+                // Log every failure individually before rethrowing the first one,
+                // so a misconfigured additionalLibraryTriggers path on ONE target doesn't mask errors on
+                // the others, and doesn't hide that some targets already succeeded (their SDO was
+                // sent/persisted regardless of this failure).
+                failures.forEach(failure =>
+                    logger.error('Error while processing an SDO export target', {stack: failure.reason?.stack}),
+                );
+
+                throw failures[0].reason;
             }
 
             (await rabbitMQService.getLeavDataEventChannel()).ack(msg);

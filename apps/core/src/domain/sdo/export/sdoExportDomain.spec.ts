@@ -24,6 +24,7 @@ describe('sdoExportDomain', () => {
         vi.clearAllMocks();
         vi.useFakeTimers();
         vi.spyOn(global, 'setTimeout');
+        mockSdoDomain.resolveAdditionalLibraryTriggerTargets.mockResolvedValue([]);
     });
 
     afterEach(() => {
@@ -33,24 +34,11 @@ describe('sdoExportDomain', () => {
 
     const _sdoExportDomain = exportDomain(deps);
 
-    const getValidEvent = (overrides = {}): IDbEvent =>
-        ({
-            payload: {
-                action: 'RECORD_INIT',
-                topic: {
-                    attribute: 'id',
-                    library: 'campaigns',
-                    record: {id: 'record123', libraryId: 'campaigns'},
-                },
-                ...overrides,
-            },
-        }) as IDbEvent;
-
     describe('process()', () => {
-        it('[+] should buffer valid a new event with timer', async () => {
+        it('[+] should buffer a new call with timer', async () => {
             const mockProcessCallback = vi.fn().mockResolvedValue(undefined);
 
-            const processPromise = _sdoExportDomain.process(getValidEvent(), timer, mockProcessCallback);
+            const processPromise = _sdoExportDomain.process('campaigns', 'record123', timer, mockProcessCallback);
 
             await vi.advanceTimersByTimeAsync(timer * 0.5);
             // buffer timer not yet finished
@@ -66,15 +54,13 @@ describe('sdoExportDomain', () => {
         it('[+] should refresh existing buffer timer', async () => {
             const mockProcessCallback = vi.fn().mockResolvedValue(undefined);
 
-            const event = getValidEvent();
-
             // First call creates the buffer and stores the fake timer
-            const firstPromise = _sdoExportDomain.process(event, timer, mockProcessCallback);
+            const firstPromise = _sdoExportDomain.process('campaigns', 'record123', timer, mockProcessCallback);
 
             await vi.advanceTimersByTimeAsync(timer * 0.5);
 
             // Second call should call refresh on the same timer
-            const secondPromise = _sdoExportDomain.process(event, timer, mockProcessCallback);
+            const secondPromise = _sdoExportDomain.process('campaigns', 'record123', timer, mockProcessCallback);
 
             // First promise resolves just after refresh buffer timer
             await expect(firstPromise).resolves.toBeUndefined();
@@ -93,10 +79,9 @@ describe('sdoExportDomain', () => {
         });
 
         it('[+] Should call process callback after setTimeout delay', async () => {
-            const event = getValidEvent();
             const mockProcessCallback = vi.fn().mockResolvedValue(undefined);
 
-            const processPromise = _sdoExportDomain.process(event, timer, mockProcessCallback);
+            const processPromise = _sdoExportDomain.process('campaigns', 'record123', timer, mockProcessCallback);
 
             // Fast-forward time
             vi.runAllTimers();
@@ -104,18 +89,30 @@ describe('sdoExportDomain', () => {
             // let callback to be called in setTimeout handler
             await expect(processPromise).resolves.toBeUndefined();
 
-            expect(mockProcessCallback).toHaveBeenCalledWith(
-                event.payload.topic.library,
-                event.payload.topic.record.id,
-            );
+            expect(mockProcessCallback).toHaveBeenCalledWith('campaigns', 'record123');
+        });
+
+        it('[+] buffers different targets independently', async () => {
+            const mockProcessCallback = vi.fn().mockResolvedValue(undefined);
+
+            const firstPromise = _sdoExportDomain.process('campaigns', 'record123', timer, mockProcessCallback);
+            const secondPromise = _sdoExportDomain.process('structure_items', 'record456', timer, mockProcessCallback);
+
+            vi.runAllTimers();
+
+            await expect(firstPromise).resolves.toBeUndefined();
+            await expect(secondPromise).resolves.toBeUndefined();
+
+            expect(mockProcessCallback).toHaveBeenCalledTimes(2);
+            expect(mockProcessCallback).toHaveBeenCalledWith('campaigns', 'record123');
+            expect(mockProcessCallback).toHaveBeenCalledWith('structure_items', 'record456');
         });
 
         it('[-] Should raise error from callback', async () => {
-            const event = getValidEvent();
             const processError = new Error('Process error');
             const mockProcessCallback = vi.fn().mockRejectedValue(processError);
 
-            const processPromise = _sdoExportDomain.process(event, timer, mockProcessCallback);
+            const processPromise = _sdoExportDomain.process('campaigns', 'record123', timer, mockProcessCallback);
 
             // Fast-forward time
             vi.runAllTimers();
@@ -123,10 +120,7 @@ describe('sdoExportDomain', () => {
             // let callback to be called in setTimeout handler
             await expect(processPromise).rejects.toThrow(processError);
 
-            expect(mockProcessCallback).toHaveBeenCalledWith(
-                event.payload.topic.library,
-                event.payload.topic.record.id,
-            );
+            expect(mockProcessCallback).toHaveBeenCalledWith('campaigns', 'record123');
         });
     });
 
@@ -174,17 +168,21 @@ describe('sdoExportDomain', () => {
         });
     });
 
-    describe('isSDODataEvent() when empty sdoConfig', () => {
-        it('[-] Should return null when event has INVALID_ACTION', async () => {
+    describe('getSDOExportTargets()', () => {
+        it('[-] Should return [] when event has INVALID_ACTION', async () => {
             const invalidActionEvent = {
                 payload: {
                     action: 'INVALID_ACTION',
                 },
             } as IDbEvent;
 
-            const isValid = await _sdoExportDomain.getSDODataEvent(invalidActionEvent, mockSDOMapping);
+            const targets = await _sdoExportDomain.getSDOExportTargets(
+                invalidActionEvent,
+                mockSDOMapping,
+                mockSystemQueryContext,
+            );
 
-            expect(isValid).toBe(null);
+            expect(targets).toEqual([]);
         });
 
         it('[-] Should throw when libraryId is not defined', async () => {
@@ -197,17 +195,18 @@ describe('sdoExportDomain', () => {
                 },
             } as IDbEvent;
 
-            await expect(_sdoExportDomain.getSDODataEvent(undefinedLibraryEvent, mockSDOMapping)).rejects.toThrow(
-                'Library name not defined',
-            );
+            await expect(
+                _sdoExportDomain.getSDOExportTargets(undefinedLibraryEvent, mockSDOMapping, mockSystemQueryContext),
+            ).rejects.toThrow('Library name not defined');
         });
 
-        it('[-] Should throw when attribute is not defined for UPDATE action', async () => {
+        it('[-] Should throw when attribute is not defined for UPDATE action on a directly mapped library', async () => {
             const undefinedAttributeEvent = {
                 payload: {
                     action: 'VALUE_SAVE',
                     topic: {
                         record: {
+                            id: 'record123',
                             libraryId: 'campaigns',
                         },
                     },
@@ -216,36 +215,43 @@ describe('sdoExportDomain', () => {
 
             mockSDOUtils.getLibraryMapping.mockReturnValue({} as ISDOMappingLibrary);
 
-            await expect(_sdoExportDomain.getSDODataEvent(undefinedAttributeEvent, mockSDOMapping)).rejects.toThrow(
-                '[SDO] Leav Attribute not defined in amqp db event',
+            await expect(
+                _sdoExportDomain.getSDOExportTargets(undefinedAttributeEvent, mockSDOMapping, mockSystemQueryContext),
+            ).rejects.toThrow('[SDO] Leav Attribute not defined in amqp db event');
+        });
+
+        it('[-] Should return [] when there is no direct mapping and no additional trigger resolves anything', async () => {
+            const goodEvent = {
+                payload: {
+                    action: 'VALUE_SAVE',
+                    topic: {
+                        attribute: 'attribute',
+                        record: {
+                            id: 'record123',
+                            libraryId: 'structure_items',
+                        },
+                    },
+                },
+            } as IDbEvent;
+
+            // getLibraryMapping returns undefined by default (no direct mapping)
+            const targets = await _sdoExportDomain.getSDOExportTargets(
+                goodEvent,
+                mockSDOMapping,
+                mockSystemQueryContext,
             );
+
+            expect(targets).toEqual([]);
         });
 
-        it('[-] Should return false when mapping library is undefined', async () => {
-            // getLibraryMapping return undefined
+        it('[-] Should return [] when mapping attribute is not part of the direct mapping', async () => {
             const goodEvent = {
                 payload: {
                     action: 'VALUE_SAVE',
                     topic: {
                         attribute: 'attribute',
                         record: {
-                            libraryId: 'campaigns',
-                        },
-                    },
-                },
-            } as IDbEvent;
-
-            const isValid = await _sdoExportDomain.getSDODataEvent(goodEvent, mockSDOMapping);
-
-            expect(isValid).toBe(null);
-        });
-        it('[-] Should return false when mapping attribute is undefined', async () => {
-            const goodEvent = {
-                payload: {
-                    action: 'VALUE_SAVE',
-                    topic: {
-                        attribute: 'attribute',
-                        record: {
+                            id: 'record123',
                             libraryId: 'campaigns',
                         },
                     },
@@ -253,19 +259,24 @@ describe('sdoExportDomain', () => {
             } as IDbEvent;
 
             mockSDOUtils.getLibraryMapping.mockReturnValue({} as ISDOMappingLibrary);
-            // hasSDOAttribute return undefined
+            mockSDOUtils.hasSDOAttribute.mockReturnValue(false);
 
-            const isValid = await _sdoExportDomain.getSDODataEvent(goodEvent, mockSDOMapping);
+            const targets = await _sdoExportDomain.getSDOExportTargets(
+                goodEvent,
+                mockSDOMapping,
+                mockSystemQueryContext,
+            );
 
-            expect(isValid).toBe(null);
+            expect(targets).toEqual([]);
         });
 
-        it('[+] Should return true when everything is set and in SDO config for CREATE action', async () => {
+        it('[+] Should return the direct match target for a CREATE action', async () => {
             const goodEvent = {
                 payload: {
                     action: 'RECORD_INIT',
                     topic: {
                         record: {
+                            id: 'record123',
                             libraryId: 'campaigns',
                         },
                     },
@@ -274,18 +285,23 @@ describe('sdoExportDomain', () => {
 
             mockSDOUtils.getLibraryMapping.mockReturnValue({} as ISDOMappingLibrary);
 
-            const isValid = await _sdoExportDomain.getSDODataEvent(goodEvent, mockSDOMapping);
+            const targets = await _sdoExportDomain.getSDOExportTargets(
+                goodEvent,
+                mockSDOMapping,
+                mockSystemQueryContext,
+            );
 
-            expect(isValid).toBe('CREATE');
+            expect(targets).toEqual([{leavLibraryId: 'campaigns', recordId: 'record123', action: 'CREATE'}]);
         });
 
-        it('[+] Should return true when everything is set and in SDO config for UPDATE action', async () => {
+        it('[+] Should return the direct match target for an UPDATE action when the attribute is mapped', async () => {
             const goodEvent = {
                 payload: {
                     action: 'VALUE_SAVE',
                     topic: {
                         attribute: 'attribute',
                         record: {
+                            id: 'record123',
                             libraryId: 'campaigns',
                         },
                     },
@@ -295,9 +311,136 @@ describe('sdoExportDomain', () => {
             mockSDOUtils.getLibraryMapping.mockReturnValue({} as ISDOMappingLibrary);
             mockSDOUtils.hasSDOAttribute.mockReturnValue(true);
 
-            const isValid = await _sdoExportDomain.getSDODataEvent(goodEvent, mockSDOMapping);
+            const targets = await _sdoExportDomain.getSDOExportTargets(
+                goodEvent,
+                mockSDOMapping,
+                mockSystemQueryContext,
+            );
 
-            expect(isValid).toBe('UPDATE');
+            expect(targets).toEqual([{leavLibraryId: 'campaigns', recordId: 'record123', action: 'UPDATE'}]);
+        });
+
+        it('[+] Should include both the direct match target and a resolved additional-trigger target', async () => {
+            const goodEvent = {
+                payload: {
+                    action: 'VALUE_SAVE',
+                    topic: {
+                        attribute: 'attribute',
+                        record: {
+                            id: 'record123',
+                            libraryId: 'campaigns',
+                        },
+                    },
+                },
+            } as IDbEvent;
+
+            mockSDOUtils.getLibraryMapping.mockReturnValue({} as ISDOMappingLibrary);
+            mockSDOUtils.hasSDOAttribute.mockReturnValue(true);
+            mockSdoDomain.resolveAdditionalLibraryTriggerTargets.mockResolvedValueOnce([
+                {leavLibraryId: 'map', recordId: 'map1'},
+            ]);
+
+            const targets = await _sdoExportDomain.getSDOExportTargets(
+                goodEvent,
+                mockSDOMapping,
+                mockSystemQueryContext,
+            );
+
+            expect(targets).toEqual(
+                expect.arrayContaining([
+                    {leavLibraryId: 'campaigns', recordId: 'record123', action: 'UPDATE'},
+                    {leavLibraryId: 'map', recordId: 'map1', action: 'UPDATE'},
+                ]),
+            );
+            expect(mockSdoDomain.resolveAdditionalLibraryTriggerTargets).toHaveBeenCalledWith(
+                mockSDOMapping,
+                'campaigns',
+                'record123',
+                mockSystemQueryContext,
+            );
+        });
+
+        it('[+] Should not throw on a missing attribute when there is no direct mapping but additional triggers resolve targets', async () => {
+            const recordSaveEvent = {
+                payload: {
+                    action: 'RECORD_SAVE',
+                    topic: {
+                        record: {
+                            id: 'structureItem123',
+                            libraryId: 'structure_items',
+                        },
+                    },
+                },
+            } as IDbEvent;
+
+            // No direct mapping for structure_items
+            mockSDOUtils.getLibraryMapping.mockReturnValueOnce(undefined);
+            mockSdoDomain.resolveAdditionalLibraryTriggerTargets.mockResolvedValueOnce([
+                {leavLibraryId: 'campaigns', recordId: 'campaign1'},
+            ]);
+
+            const targets = await _sdoExportDomain.getSDOExportTargets(
+                recordSaveEvent,
+                mockSDOMapping,
+                mockSystemQueryContext,
+            );
+
+            expect(targets).toEqual([{leavLibraryId: 'campaigns', recordId: 'campaign1', action: 'UPDATE'}]);
+        });
+
+        it('[+] Should force the action to UPDATE for additional-trigger targets even when the originating event is a CREATE', async () => {
+            const createEvent = {
+                payload: {
+                    action: 'RECORD_INIT',
+                    topic: {
+                        record: {
+                            id: 'structureItem123',
+                            libraryId: 'structure_items',
+                        },
+                    },
+                },
+            } as IDbEvent;
+
+            // No direct mapping for structure_items
+            mockSDOUtils.getLibraryMapping.mockReturnValueOnce(undefined);
+            mockSdoDomain.resolveAdditionalLibraryTriggerTargets.mockResolvedValueOnce([
+                {leavLibraryId: 'campaigns', recordId: 'campaign1'},
+            ]);
+
+            const targets = await _sdoExportDomain.getSDOExportTargets(
+                createEvent,
+                mockSDOMapping,
+                mockSystemQueryContext,
+            );
+
+            expect(targets).toEqual([{leavLibraryId: 'campaigns', recordId: 'campaign1', action: 'UPDATE'}]);
+        });
+
+        it('[+] Should dedupe when the direct match and an additional trigger resolve to the same target, keeping the direct match action', async () => {
+            const createEvent = {
+                payload: {
+                    action: 'RECORD_INIT',
+                    topic: {
+                        record: {
+                            id: 'campaign1',
+                            libraryId: 'campaigns',
+                        },
+                    },
+                },
+            } as IDbEvent;
+
+            mockSDOUtils.getLibraryMapping.mockReturnValue({} as ISDOMappingLibrary);
+            mockSdoDomain.resolveAdditionalLibraryTriggerTargets.mockResolvedValueOnce([
+                {leavLibraryId: 'campaigns', recordId: 'campaign1'},
+            ]);
+
+            const targets = await _sdoExportDomain.getSDOExportTargets(
+                createEvent,
+                mockSDOMapping,
+                mockSystemQueryContext,
+            );
+
+            expect(targets).toEqual([{leavLibraryId: 'campaigns', recordId: 'campaign1', action: 'CREATE'}]);
         });
     });
 });

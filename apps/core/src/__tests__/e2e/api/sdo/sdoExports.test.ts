@@ -506,31 +506,12 @@ describe('SDO Exports', () => {
         );
     });
 
-    // TODO: Voir quoi faire dans le cas d'un DELETE_RECORD (différent d'une desactivation)
-    // test.skip('deleting a record triggers an UPDATE export message with systemActive: false', async () => {
-    //     const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_LIBRARY_ID});
-    //     const recordId = createRecord.record!.id;
+    // The additionalLibraryTriggers mechanism is covered by integration tests
+    // (resolveAdditionalLibraryTriggerTargets.test.ts) rather than e2e because the
+    // trigger-driven re-export produces identical target content and is swallowed by sendSDO's
+    // content-based dedup, so it isn't observable at the RabbitMQ edge.
 
-    //     // Wait for the CREATE message before soft-deleting
-    //     const msgCreate = await waitForSdo(recordId);
-    //     expect(msgCreate.action).toBe('CREATE');
-    //     expect((msgCreate.content as any).system?.systemActive).toBe(true);
-
-    //     await adminUserSdk.DeleteRecord({id: recordId, library: SDO_LIBRARY_ID});
-    //     const msgUpdate = await waitForSdo(recordId);
-
-    //     expect(msgUpdate).toMatchObject({
-    //         name: SDO_LIBRARY_ID,
-    //         action: 'UPDATE',
-    //         content: {
-    //             system: {
-    //                 systemId: Number.parseInt(recordId, 10),
-    //                 systemActive: false,
-    //             },
-    //             identifier: {
-    //                 uuid: (msgCreate.content as any).identifier?.uuid,
-    //             },
-    //         },
-    //     });
-    // });
+    // Unlink/relink of a trigger attribute is a known limitation: resolution reads the CURRENT DB
+    // state, so the OLD target is no longer reachable and won't be re-exported (possible follow-up
+    // ticket via dataEvent.payload.before).
 });

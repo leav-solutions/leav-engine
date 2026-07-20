@@ -8,6 +8,7 @@ export const mockSdoDomain: Mockify<ISDODomain> = {
     schemaValidation: vi.fn(),
     getSDOGlobalSettings: vi.fn(),
     getRecordSDO: vi.fn(),
+    resolveAdditionalLibraryTriggerTargets: vi.fn(),
     sendLog: vi.fn(),
 };
 
@@ -19,7 +20,7 @@ export const mockImportDomain: Mockify<ISDOImportDomain> = {
 export const mockExportDomain: Mockify<ISDOExportDomain> = {
     process: vi.fn(),
     sendSDO: vi.fn(),
-    getSDODataEvent: vi.fn(),
+    getSDOExportTargets: vi.fn(),
 };
 
 export const mockRecordSDORepo: Mockify<IRecordSDORepo> = {
@@ -30,6 +31,7 @@ export const mockRecordSDORepo: Mockify<IRecordSDORepo> = {
 
 export const mockSDOUtils: Mockify<ISDOUtils> = {
     getLibraryMapping: vi.fn(),
+    getAdditionalLibraryTriggers: vi.fn(),
     getLeavLibraryId: vi.fn(),
     hasSDOLibrary: vi.fn(),
     hasSDOAttribute: vi.fn(),
