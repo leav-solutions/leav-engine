@@ -171,6 +171,9 @@ module.exports = {
         exchange: process.env.AMQP_EXCHANGE || 'leav_core',
         type: process.env.AMQP_TYPE || 'direct',
         prefetch: envToNumber(process.env.AMQP_PREFETCH, 5),
+        // ADR-007: only heartbeat setting (createAmqpConnection) - never 0 by default (amqplib 2.0
+        // would disable heartbeats entirely, whereas "0" used to mean "no preference"/server value).
+        heartbeatInSeconds: envToNumber(process.env.AMQP_HEARTBEAT, 30),
     },
     redis: {
         host: process.env.REDIS_HOST,

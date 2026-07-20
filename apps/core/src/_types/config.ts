@@ -279,6 +279,8 @@ export interface IAmqp {
     exchange: string;
     type: string;
     prefetch?: number;
+    /** ADR-007: setting for the resilient createAmqpConnection, used alongside amqpService. */
+    heartbeatInSeconds?: number;
 }
 
 export interface IRedis {

@@ -1,4 +1,4 @@
-import {amqpService} from '@leav/message-broker';
+import {amqpService, createAmqpConnection} from '@leav/message-broker';
 import {monitoringServer} from '@leav/monitoring-server';
 import fs from 'fs';
 import {type IConfig, CORE_MODES_E2E_PLAYWRIGHT, CoreMode} from './_types/config';
@@ -74,9 +74,17 @@ import {type ICorePluginsApp} from './app/core/pluginsApp';
         initDb(conf),
     ]);
 
+    // ADR-007: new resilient connection, added alongside `amqpService` while domains migrate one by one.
+    const amqpConnection = createAmqpConnection({
+        connOpt: conf.amqp.connOpt,
+        heartbeatInSeconds: conf.amqp.heartbeatInSeconds,
+        connectionName: conf.instanceId,
+    });
+
     const {coreContainer, pluginsContainer} = await initDI({
         translator,
         'core.infra.amqpService': amqp,
+        'core.infra.amqp.connection': amqpConnection,
         'core.infra.redis': redis,
         'core.infra.mailer': mailer,
         'core.infra.oidcClient': oidcClient,
