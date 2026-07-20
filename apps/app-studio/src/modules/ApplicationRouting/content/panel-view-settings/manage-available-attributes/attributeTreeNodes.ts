@@ -51,6 +51,21 @@ export const buildAttributeNode = (
     };
 };
 
+/**
+ * Build the tree nodes for a list of library attributes, sorted alphabetically by their (localized)
+ * label so the "available attributes" catalog always reads in a predictable A→Z order regardless of
+ * the order the GraphQL API returns them in. Used for both the top level and lazily-loaded children.
+ */
+export const buildAttributeNodes = (
+    attributes: ViewSettingsLibraryAttributeFragment[],
+    parentPath: AvailableAttribute[],
+    mode: AvailableAttributesMode,
+    lang: string[],
+): IAttributeTreeNode[] =>
+    attributes
+        .map(attribute => buildAttributeNode(attribute, parentPath, mode, lang))
+        .sort((a, b) => a.title.localeCompare(b.title, lang[0]));
+
 /** Immutably attach (lazily-loaded) children to the node matching `parentKey`. */
 export const attachChildren = (
     nodes: IAttributeTreeNode[],
