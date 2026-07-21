@@ -140,7 +140,7 @@ function EditPreviewsSettingsModal({
                     name={['versions', 'density']}
                     label={t('libraries.previews_settings.density')}
                 >
-                    <InputNumber aria-label="density" disabled={isReadOnly} addonAfter="dpi" />
+                    <InputNumber aria-label="density" disabled={isReadOnly} suffix="dpi" />
                 </Form.Item>
                 <Form.Item label={t('libraries.previews_settings.background')}>
                     <Space>

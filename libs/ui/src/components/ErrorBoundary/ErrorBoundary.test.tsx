@@ -1,5 +1,5 @@
 import {Button} from 'antd';
-import {render, screen} from '../../_tests/testUtils';
+import {render, screen, suppressUncaughtError} from '../../_tests/testUtils';
 import {ErrorBoundary} from './ErrorBoundary';
 import {type FunctionComponent} from 'react';
 
@@ -9,6 +9,7 @@ vi.mock('_ui/_utils/isDevEnv', () => ({
 }));
 
 let consoleSpy;
+let restoreUncaughtError: () => void;
 
 describe('ErrorBoundary', () => {
     const ComponentWithError: FunctionComponent = () => {
@@ -17,9 +18,11 @@ describe('ErrorBoundary', () => {
 
     beforeEach(() => {
         consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => null);
+        restoreUncaughtError = suppressUncaughtError('boom!');
     });
     afterEach(() => {
         consoleSpy.mockRestore();
+        restoreUncaughtError();
     });
 
     describe('in production build', () => {

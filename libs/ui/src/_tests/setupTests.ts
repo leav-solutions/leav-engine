@@ -40,6 +40,15 @@ window.matchMedia = query => ({
 // so every test file benefits (previously each file had to import it individually).
 global.ResizeObserver = ResizeObserver;
 
+// jsdom throws "Not implemented: window.getComputedStyle(elt, pseudoElt)" whenever a pseudo-element
+// is passed. antd measures the scrollbar with getComputedStyle(ele, '::-webkit-scrollbar')
+// (@rc-component/util getScrollBarSize) when locking scroll for modals/portals, which floods the
+// output with that error on nearly every test that opens one. Drop the pseudo-element argument so
+// the call succeeds against jsdom's real implementation (scrollbar width resolves to 0, harmless
+// in tests) instead of erroring.
+const originalGetComputedStyle = window.getComputedStyle.bind(window);
+window.getComputedStyle = (element: Element) => originalGetComputedStyle(element);
+
 vi.mock('_ui/hooks/useSharedTranslation');
 // Some components import the hook through its deep path instead of the directory index, so the
 // directory-level mock above does not intercept them. Mock the deep path too (both resolve to the

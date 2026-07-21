@@ -1,4 +1,4 @@
-import {render, screen} from '../../_tests/testUtils';
+import {render, screen, suppressUncaughtError} from '../../_tests/testUtils';
 import {SimpleErrorBoundary} from './SimpleErrorBoundary';
 
 let isDevEnvMock: boolean;
@@ -7,6 +7,7 @@ vi.mock('_ui/_utils/isDevEnv', () => ({
 }));
 
 let consoleSpy;
+let restoreUncaughtError: () => void;
 
 describe('SimpleErrorBoundary', () => {
     const ComponentWithError = () => {
@@ -15,9 +16,11 @@ describe('SimpleErrorBoundary', () => {
 
     beforeEach(() => {
         consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => null);
+        restoreUncaughtError = suppressUncaughtError('boom!');
     });
     afterEach(() => {
         consoleSpy.mockRestore();
+        restoreUncaughtError();
     });
 
     test('Should display error', async () => {
