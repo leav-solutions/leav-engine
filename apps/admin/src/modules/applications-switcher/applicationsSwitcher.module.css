@@ -1,0 +1,8 @@
+.appList {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xxs) * 1px);
+    min-width: 280px;
+    max-height: 70vh;
+    overflow-y: auto;
+}

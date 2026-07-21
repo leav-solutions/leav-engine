@@ -22,9 +22,16 @@ Inclut une feature **history** pour consulter l'historique des actions (remplace
 > ⚠️ **Toute nouvelle fonctionnalité va dans `modules/`** — c'est la seule destination pour du nouveau code.
 > Les autres dossiers (`components/`, `hooks/`, `queries/`, etc.) sont du code existant et ne doivent pas recevoir de nouvelles features.
 
+> Le **shell applicatif** lui-même migre progressivement de `components/` vers `modules/`.
+> Le **header** en est le premier exemple : il vit désormais dans `modules/layout/` (`Header`),
+> `modules/switch-language/` (`LanguageSelector`, un `KitSelect` calqué sur app-studio) et
+> `modules/applications-switcher/` (bouton + `KitDropDown` de changement d'application), en
+> remplacement de l'ancien header `semantic-ui-react` supprimé de `components/app/`. Il s'aligne sur
+> le `KitHeader` d'`apps/app-studio` (`modules/layout/RootHeader.tsx`).
+
 ```
 src/
-├── modules/       # ✅ Cible pour toutes les nouvelles features (history, navigation-menu, routes…)
+├── modules/       # ✅ Cible pour toutes les nouvelles features + shell migré (layout, history, navigation-menu, routes…)
 ├── components/    # Shell applicatif legacy (ApolloHandler, App, Navigation…)
 ├── hooks/         # Hooks custom legacy
 ├── queries/       # Opérations GraphQL legacy

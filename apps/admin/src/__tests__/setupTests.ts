@@ -11,6 +11,22 @@ dayjs.extend(duration);
 // which throws "ResizeObserver is not defined" and prevents rendering. Polyfill it globally.
 global.ResizeObserver = ResizeObserver;
 
+// jsdom does not implement window.matchMedia. antd's responsive grid (useBreakpoint),
+// used e.g. by KitHeader.Profile, calls it and throws otherwise. Polyfill it globally.
+Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: (query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+    }),
+});
+
 vi.mock('react-i18next', async () => import('../__mocks__/react-i18next'));
 
 Object.defineProperty(globalThis, 'crypto', {
