@@ -5,7 +5,7 @@ export enum ApplicationErrorType {
     FORBIDDEN_ERROR = 'forbidden',
 }
 
-export default class ApplicationError extends LeavError<{}, ApplicationErrorType> {
+export default class ApplicationError extends LeavError<unknown, ApplicationErrorType> {
     public applicationErrorType: ApplicationErrorType;
     public appEndpoint: string;
     public statusCode: number;

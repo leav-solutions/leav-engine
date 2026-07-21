@@ -28,7 +28,7 @@ const FormTabs: FunctionComponent<IFormElementProps<IFormTabsSettings>> = ({elem
     const tabPosition = element.settings.direction === TabsDirection.VERTICAL ? 'left' : 'top';
 
     const tabItems = element.settings.tabs.map(({id, label}) => {
-        const tabContainer: FormElement<{}> = {
+        const tabContainer: FormElement<unknown> = {
             id: `${element.id}/${id}`,
             containerId: element.id,
             settings: {},

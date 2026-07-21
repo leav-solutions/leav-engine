@@ -19,7 +19,7 @@ export enum ActionsListIOTypes {
     BOOLEAN = 'boolean',
 }
 
-export type ActionsListValueType = string | number | boolean | {};
+export type ActionsListValueType = string | number | boolean | object;
 
 export type ActionsListConfig = {[Event in ActionsListEvents]?: IActionsListSavedAction[]};
 

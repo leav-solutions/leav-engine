@@ -69,7 +69,7 @@ export interface IMassActions {
     label: string;
 }
 
-export type FeatureHook<T = {}> = {isEnabled: boolean; isVisible?: boolean} & T;
+export type FeatureHook<T = unknown> = {isEnabled: boolean; isVisible?: boolean} & T;
 
 /**
  * Lean, JSON-serializable projection of a USER filter — the message-ready transport shape carried by the

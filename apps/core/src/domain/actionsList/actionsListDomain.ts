@@ -129,7 +129,7 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
                         );
                     } else {
                         const errorsByType = errors.reduce<
-                            Record<Errors, {attributeValues: IValue[]; message: string}> | {}
+                            Partial<Record<Errors, {attributeValues: IValue[]; message: string}>>
                         >((acc, actionError) => {
                             if (!acc[actionError.errorType]) {
                                 acc[actionError.errorType] = {attributeValues: [], message: actionError.message};
