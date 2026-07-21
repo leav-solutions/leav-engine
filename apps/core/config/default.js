@@ -220,6 +220,9 @@ module.exports = {
             // Used to create a queue by instance to deliver websocket for all clients
             pubsub_events_prefix: 'pubsub_events-',
         },
+        // Dedicated prefetch for the pubsub relay channel (not config.amqp.prefetch, which was the
+        // old shared value for every domain before each got its own channel).
+        pubsubPrefetch: envToNumber(process.env.PUBSUB_EVENTS_PREFETCH, 5),
     },
     indexationManager: {
         queues: {
@@ -281,6 +284,9 @@ module.exports = {
         queues: {
             events: process.env.AUTOMATIONS_EVENTS_QUEUE || 'automations_events',
         },
+        // Dedicated prefetch (not config.amqp.prefetch, which was the old shared value for every
+        // domain before each got its own channel) - defaults to 1, sequential automation processing.
+        prefetch: envToNumber(process.env.AUTOMATION_PREFETCH, 1),
     },
     sdo: {
         amqp: {

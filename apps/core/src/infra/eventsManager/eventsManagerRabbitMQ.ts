@@ -1,5 +1,5 @@
 import * as crypto from 'node:crypto';
-import {type IAmqpConnection, type AmqpMessageHandler} from '@leav/message-broker';
+import {type IAmqpConnection, type IAmqpChannel, type AmqpMessageHandler} from '@leav/message-broker';
 import {type IConfig} from '../../_types/config';
 import {type ICoreExchangeRabbitMQ} from '../amqp/coreExchange';
 
@@ -29,29 +29,43 @@ export default function ({
         },
     });
 
-    // Generated once (not per (re)connect): each running instance keeps the same pubsub queue for
-    // its whole lifetime, matching the previous behavior.
-    const pubSubQueueName = `${config.instanceId}_${config.eventsManager.queues.pubsub_events_prefix}-${crypto.randomUUID()}`;
-
-    // Consumer-only channel: no publish() call here, so no need for broker publish confirms.
-    const pubSubConsumerChannel = amqpConnection.createChannel({
-        name: 'eventsManager:pubsubEvents',
-        confirm: false,
-        setup: async t => {
-            await coreExchange.assertOnto(t);
-            await t.assertQueue(pubSubQueueName, {durable: false, autoDelete: true});
-            await t.bindQueue(pubSubQueueName, config.amqp.exchange, config.eventsManager.routingKeys.pubsub_events);
-        },
-    });
+    // Created lazily, only when consumePubSubEvents() is actually called (SERVER mode only) - every
+    // other core mode injects this same domain but never consumes pubsub events. Creating this
+    // channel/queue eagerly in the factory used to leak: RabbitMQ never cleans up an autoDelete
+    // queue that never had a consumer, so every non-SERVER instance would accumulate a copy of
+    // every pubsub event forever.
+    let pubSubConsumerChannel: IAmqpChannel | undefined;
 
     return {
         publishDatabaseEvent: payload =>
             producerChannel.publish(config.amqp.exchange, config.eventsManager.routingKeys.data_events, payload),
         publishPubSubEvent: payload =>
             producerChannel.publish(config.amqp.exchange, config.eventsManager.routingKeys.pubsub_events, payload),
-        consumePubSubEvents: handler => pubSubConsumerChannel.consume(pubSubQueueName, handler).then(() => undefined),
+        consumePubSubEvents: handler => {
+            // Generated once (not per (re)connect): this instance keeps the same pubsub queue for
+            // its whole lifetime, matching the previous behavior.
+            const pubSubQueueName = `${config.instanceId}_${config.eventsManager.queues.pubsub_events_prefix}-${crypto.randomUUID()}`;
+
+            // Consumer-only channel: no publish() call here, so no need for broker publish confirms.
+            pubSubConsumerChannel = amqpConnection.createChannel({
+                name: 'eventsManager:pubsubEvents',
+                confirm: false,
+                setup: async t => {
+                    await coreExchange.assertOnto(t);
+                    await t.assertQueue(pubSubQueueName, {durable: false, autoDelete: true});
+                    await t.bindQueue(
+                        pubSubQueueName,
+                        config.amqp.exchange,
+                        config.eventsManager.routingKeys.pubsub_events,
+                    );
+                    await t.prefetch(config.eventsManager.pubsubPrefetch ?? 5);
+                },
+            });
+
+            return pubSubConsumerChannel.consume(pubSubQueueName, handler).then(() => undefined);
+        },
         close: async () => {
-            await Promise.allSettled([producerChannel.close(), pubSubConsumerChannel.close()]);
+            await Promise.allSettled([producerChannel.close(), pubSubConsumerChannel?.close() ?? Promise.resolve()]);
         },
     };
 }

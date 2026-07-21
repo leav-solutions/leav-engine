@@ -243,6 +243,7 @@ export const validateConfig = (conf: IConfig) => {
             queues: Joi.object().keys({
                 pubsub_events_prefix: Joi.string().required(),
             }),
+            pubsubPrefetch: Joi.number().required(),
         }),
         debug: Joi.boolean(),
         env: Joi.string(),
@@ -337,6 +338,7 @@ export const validateConfig = (conf: IConfig) => {
             queues: Joi.object().keys({
                 events: Joi.string().required(),
             }),
+            prefetch: Joi.number().required(),
         }),
         sdo: Joi.object().keys({
             amqp: amqpConnOptSchema,

@@ -30,6 +30,7 @@ export default function ({
                 config.amqp.exchange,
                 config.eventsManager.routingKeys.data_events,
             );
+            await t.prefetch(config.automation.prefetch ?? 1);
         },
     });
 

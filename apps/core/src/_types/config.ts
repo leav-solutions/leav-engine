@@ -87,6 +87,7 @@ export interface IAutomation {
     queues: {
         events: string;
     };
+    prefetch?: number;
 }
 
 export interface IAutomationCache {
@@ -316,6 +317,7 @@ export interface IEventsManager {
     queues: {
         pubsub_events_prefix: string;
     };
+    pubsubPrefetch?: number;
 }
 
 export interface IIndexationManager {
