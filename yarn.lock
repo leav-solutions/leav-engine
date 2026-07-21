@@ -11329,13 +11329,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^1.0.0":
-  version: 1.2.7
-  resolution: "core-js@npm:1.2.7"
-  checksum: 10/834f3398eb587af52e0731d44ae3ead0d331a10fb253c8358c801cac9c1788d96faba8d83c4e8e53270b560969f512596dfdeca875ae626e8af2c901598706fc
-  languageName: node
-  linkType: hard
-
 "core-util-is@npm:~1.0.0":
   version: 1.0.3
   resolution: "core-util-is@npm:1.0.3"
@@ -11520,16 +11513,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"create-react-context@npm:^0.2.2":
-  version: 0.2.3
-  resolution: "create-react-context@npm:0.2.3"
+"create-react-context@npm:>=0.3.0":
+  version: 0.3.0
+  resolution: "create-react-context@npm:0.3.0"
   dependencies:
-    fbjs: "npm:^0.8.0"
     gud: "npm:^1.0.0"
+    warning: "npm:^4.0.3"
   peerDependencies:
     prop-types: ^15.0.0
     react: ^0.14.0 || ^15.0.0 || ^16.0.0
-  checksum: 10/d02cb9573a5785eaf40bf6a93c818f55598b6fcc0fd1e846639c5d651d1d920d39e11a4370c75b7d5885803f5e8a2aa4167904e3385f0949db5c65e96751ceca
+  checksum: 10/3ae9d5af6a36993c5b9928967b4258e8d327373def6fb5964cebfcb00e6dce48297317adb9346bb8fad7eed35e6b39f3dbbac8b6ab29015de48d7ee60774f665
   languageName: node
   linkType: hard
 
@@ -12219,15 +12212,6 @@ __metadata:
   version: 2.0.0
   resolution: "encodeurl@npm:2.0.0"
   checksum: 10/abf5cd51b78082cf8af7be6785813c33b6df2068ce5191a40ca8b1afe6a86f9230af9a9ce694a5ce4665955e5c1120871826df9c128a642e09c58d592e2807fe
-  languageName: node
-  linkType: hard
-
-"encoding@npm:^0.1.11":
-  version: 0.1.13
-  resolution: "encoding@npm:0.1.13"
-  dependencies:
-    iconv-lite: "npm:^0.6.2"
-  checksum: 10/bb98632f8ffa823996e508ce6a58ffcf5856330fde839ae42c9e1f436cc3b5cc651d4aeae72222916545428e54fd0f6aa8862fd8d25bdbcc4589f1e3f3715e7f
   languageName: node
   linkType: hard
 
@@ -13382,21 +13366,6 @@ __metadata:
   version: 1.0.2
   resolution: "fbjs-css-vars@npm:1.0.2"
   checksum: 10/72baf6d22c45b75109118b4daecb6c8016d4c83c8c0f23f683f22e9d7c21f32fff6201d288df46eb561e3c7d4bb4489b8ad140b7f56444c453ba407e8bd28511
-  languageName: node
-  linkType: hard
-
-"fbjs@npm:^0.8.0":
-  version: 0.8.18
-  resolution: "fbjs@npm:0.8.18"
-  dependencies:
-    core-js: "npm:^1.0.0"
-    isomorphic-fetch: "npm:^2.1.1"
-    loose-envify: "npm:^1.0.0"
-    object-assign: "npm:^4.1.0"
-    promise: "npm:^7.1.1"
-    setimmediate: "npm:^1.0.5"
-    ua-parser-js: "npm:^0.7.30"
-  checksum: 10/80e855a89b956071676681c9481f399f2356435dc1745d47bd609ce9bd1dda1c487b18c8ffc58423f96452dab6932811ef70758ec8a875dac9ff319c0a5f9adc
   languageName: node
   linkType: hard
 
@@ -14638,7 +14607,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2, iconv-lite@npm:^0.6.3":
+"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.3":
   version: 0.6.3
   resolution: "iconv-lite@npm:0.6.3"
   dependencies:
@@ -15250,13 +15219,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-stream@npm:^1.0.1":
-  version: 1.1.0
-  resolution: "is-stream@npm:1.1.0"
-  checksum: 10/351aa77c543323c4e111204482808cfad68d2e940515949e31ccd0b010fc13d5fba4b9c230e4887fd24284713040f43e542332fbf172f6b9944b7d62e389c0ec
-  languageName: node
-  linkType: hard
-
 "is-stream@npm:^2.0.0":
   version: 2.0.1
   resolution: "is-stream@npm:2.0.1"
@@ -15414,16 +15376,6 @@ __metadata:
   version: 4.0.0
   resolution: "isexe@npm:4.0.0"
   checksum: 10/2ead327ef596042ef9c9ec5f236b316acfaedb87f4bb61b3c3d574fb2e9c8a04b67305e04733bde52c24d9622fdebd3270aadb632adfbf9cadef88fe30f479e5
-  languageName: node
-  linkType: hard
-
-"isomorphic-fetch@npm:^2.1.1":
-  version: 2.2.1
-  resolution: "isomorphic-fetch@npm:2.2.1"
-  dependencies:
-    node-fetch: "npm:^1.0.1"
-    whatwg-fetch: "npm:>=0.10.0"
-  checksum: 10/bb5daa7c3785d6742f4379a81e55b549a469503f7c9bf9411b48592e86632cf5e8fe8ea878dba185c0f33eb7c510c23abdeb55aebfdf5d3c70f031ced68c5424
   languageName: node
   linkType: hard
 
@@ -17233,16 +17185,6 @@ __metadata:
     object.entries: "npm:^1.1.9"
     semver: "npm:^6.3.1"
   checksum: 10/0a1667d535f499ac1fe6c6d22f8146bc8b68abc76fa355856219202f6cf5f386027e0ff054e66a22d08be02acbc63fcdc9f98d0fbc97993f5eabc66408fdadad
-  languageName: node
-  linkType: hard
-
-"node-fetch@npm:^1.0.1":
-  version: 1.7.3
-  resolution: "node-fetch@npm:1.7.3"
-  dependencies:
-    encoding: "npm:^0.1.11"
-    is-stream: "npm:^1.0.1"
-  checksum: 10/17be1a182eec37ba43c1b02673329ab1fa1c2e3ddbdf9b5f62d5157aa118c253dcd42f338eb1b6fe84fb0689c4dd8eb5aaebf46a9b5a066fae88c74e36522688
   languageName: node
   linkType: hard
 
@@ -21055,15 +20997,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ua-parser-js@npm:^0.7.30":
-  version: 0.7.41
-  resolution: "ua-parser-js@npm:0.7.41"
-  bin:
-    ua-parser-js: script/cli.js
-  checksum: 10/e41306332d8ace098d51a644a3ba95522ddfc04243727a3c0419efcdf486c8f868c3af8e6a56f6aa86bdc26e6b893abb0b2bde0c9e1a1625a183dfdf839cac82
-  languageName: node
-  linkType: hard
-
 "ua-parser-js@npm:^1.0.35":
   version: 1.0.41
   resolution: "ua-parser-js@npm:1.0.41"
@@ -21776,13 +21709,6 @@ __metadata:
   dependencies:
     iconv-lite: "npm:0.6.3"
   checksum: 10/bbef815eb67f91487c7f2ef96329743f5fd8357d7d62b1119237d25d41c7e452dff8197235b2d3c031365a17f61d3bb73ca49d0ed1582475aa4a670815e79534
-  languageName: node
-  linkType: hard
-
-"whatwg-fetch@npm:>=0.10.0":
-  version: 3.6.20
-  resolution: "whatwg-fetch@npm:3.6.20"
-  checksum: 10/2b4ed92acd6a7ad4f626a6cb18b14ec982bbcaf1093e6fe903b131a9c6decd14d7f9c9ca3532663c2759d1bdf01d004c77a0adfb2716a5105465c20755a8c57c
   languageName: node
   linkType: hard
 
