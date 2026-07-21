@@ -1,4 +1,4 @@
-import {amqpService} from '@leav/message-broker';
+import {amqpService, createAmqpConnection} from '@leav/message-broker';
 import {getConfig} from '../../../config';
 import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
@@ -38,10 +38,16 @@ export async function setup(project: TestProject) {
         const amqp = await amqpService({config: conf.amqp});
         const redis = await initRedis({config: conf});
         const mailer = await initMailer({config: conf});
+        const amqpConnection = createAmqpConnection({
+            connOpt: conf.amqp.connOpt,
+            heartbeatInSeconds: conf.amqp.heartbeatInSeconds,
+            connectionName: conf.instanceId,
+        });
 
         const {coreContainer} = await initDI({
             translator,
             'core.infra.amqpService': amqp,
+            'core.infra.amqp.connection': amqpConnection,
             'core.infra.redis': redis,
             'core.infra.mailer': mailer,
         });
