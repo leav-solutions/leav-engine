@@ -43,6 +43,7 @@ export const mockAttributeDomain: Mockify<IAttributeDomain> = {
 
 export const mockValueDomain: Mockify<IValueDomain> = {
     getValues: vi.fn(),
+    getRecordFieldValue: vi.fn(),
     saveValue: vi.fn(),
     saveValueBatch: vi.fn(),
     deleteValue: vi.fn(),

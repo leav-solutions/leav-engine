@@ -13,6 +13,7 @@ import {
     type ISDOSettings,
     type ISDOMappingFunctions,
     type ISDOMappingFunction,
+    type ISDOTriggerTarget,
 } from '../../_types/sdo';
 import {type IGlobalSettings} from '../../_types/globalSettings';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
@@ -52,6 +53,12 @@ export interface ISDODomain {
         sdoAction: SDOAction,
         ctx: IQueryInfos,
     ): Promise<ISDO>;
+    resolveAdditionalLibraryTriggerTargets(
+        sdoMapping: ISDOMapping,
+        eventLibraryId: string,
+        eventRecordId: string,
+        ctx: IQueryInfos,
+    ): Promise<ISDOTriggerTarget[]>;
     sendLog({
         action,
         record,
@@ -269,6 +276,51 @@ export default function ({
         return sdo;
     };
 
+    const _extractLinkedRecordId = (value: IValue): string | null => {
+        const payload = (value as ILinkValue | ITreeValue)?.payload as {id?: string; record?: {id?: string}};
+        return payload?.record?.id ?? payload?.id ?? null;
+    };
+
+    const resolveAdditionalLibraryTriggerTargets = async (
+        sdoMapping: ISDOMapping,
+        eventLibraryId: string,
+        eventRecordId: string,
+        ctx: IQueryInfos,
+    ): Promise<ISDOTriggerTarget[]> => {
+        const triggers = sdoUtils.getAdditionalLibraryTriggers(sdoMapping, eventLibraryId);
+
+        const resolvedPerTrigger = await Promise.all(
+            triggers.map(async trigger => {
+                let values: IValue[];
+
+                try {
+                    values = await valueDomain.getRecordFieldValue({
+                        library: eventLibraryId,
+                        record: {id: eventRecordId, library: eventLibraryId},
+                        attributePath: trigger.attributePathToTarget,
+                        ctx,
+                    });
+                } catch (e) {
+                    throw new LeavError(
+                        ErrorTypes.INTERNAL_ERROR,
+                        `resolveAdditionalLibraryTriggerTargets(): failed to resolve path "${trigger.attributePathToTarget}" from ${eventLibraryId}/${eventRecordId}: ${e.message}`,
+                    );
+                }
+
+                // Known limitation: resolution reads the CURRENT DB state, so unlinking/repointing the
+                // trigger attribute won't re-export the OLD target (it's no longer reachable from the
+                // record). Handling that would require walking dataEvent.payload.before — out of scope
+                // here (possible follow-up ticket).
+                return values
+                    .map(_extractLinkedRecordId)
+                    .filter((id): id is string => id !== null)
+                    .map(recordId => ({leavLibraryId: trigger.targetLeavLibraryId, recordId}));
+            }),
+        );
+
+        return resolvedPerTrigger.flat();
+    };
+
     const _createSDO = async (
         record: IRecord,
         action: SDOAction,
@@ -382,6 +434,7 @@ export default function ({
     return {
         getSDOGlobalSettings,
         getRecordSDO,
+        resolveAdditionalLibraryTriggerTargets,
         schemaValidation,
         sendLog,
 

@@ -1,8 +1,14 @@
 import _ from 'lodash';
 import {type ISDO, sdoPathIdentifierUuid, type ISDOMapping, type ISDOMappingLibrary} from '../../_types/sdo';
 
+export interface ISDOAdditionalLibraryTriggerMatch {
+    targetLeavLibraryId: string;
+    attributePathToTarget: string;
+}
+
 export interface ISDOUtils {
     getLibraryMapping: (sdoGlobalSettingsMapping: ISDOMapping, libraryId: string) => ISDOMappingLibrary | undefined;
+    getAdditionalLibraryTriggers: (mapping: ISDOMapping, eventLibraryId: string) => ISDOAdditionalLibraryTriggerMatch[];
     getLeavLibraryId: (mapping: ISDOMapping, sdo: ISDO) => string;
     hasSDOLibrary: (mapping: ISDOMapping, leavLibraryId: string) => boolean;
     hasSDOAttribute: (sdoLibrary: ISDOMappingLibrary, attribute: string) => boolean;
@@ -17,6 +23,26 @@ export default function (): ISDOUtils {
         libraryId: string,
     ): ISDOMappingLibrary | undefined =>
         Object.values(sdoGlobalSettingsMapping).find(libraryMapping => libraryMapping?.leavLibraryId === libraryId);
+
+    const getAdditionalLibraryTriggers = (
+        mapping: ISDOMapping,
+        eventLibraryId: string,
+    ): ISDOAdditionalLibraryTriggerMatch[] => {
+        const triggers: ISDOAdditionalLibraryTriggerMatch[] = [];
+
+        for (const sdoMappingLibrary of Object.values(mapping)) {
+            for (const trigger of sdoMappingLibrary.additionalLibraryTriggers ?? []) {
+                if (trigger.leavLibraryId === eventLibraryId) {
+                    triggers.push({
+                        targetLeavLibraryId: sdoMappingLibrary.leavLibraryId,
+                        attributePathToTarget: trigger.leavAttributePath,
+                    });
+                }
+            }
+        }
+
+        return triggers;
+    };
 
     const getSDOLibrary = (mapping: ISDOMapping, leavLibraryId: string) => {
         const lib = Object.values(mapping).find(sdoMappingLibrary => sdoMappingLibrary.leavLibraryId === leavLibraryId);
@@ -49,6 +75,7 @@ export default function (): ISDOUtils {
 
     return {
         getLibraryMapping,
+        getAdditionalLibraryTriggers,
         getLeavLibraryId,
         hasSDOLibrary,
         hasSDOAttribute,

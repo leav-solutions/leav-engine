@@ -57,15 +57,30 @@ export interface ISDOMappingAttribute {
     exportFunction?: string; // name of the function to use for export
 }
 
+export interface ISDOAdditionalLibraryTrigger {
+    leavLibraryId: string;
+    leavAttributePath: string;
+}
+
 export interface ISDOMappingLibrary {
     leavLibraryId: string;
     sdoAttributes: {
         [sdoAttributePath: string]: ISDOMappingAttribute;
     };
+    additionalLibraryTriggers?: ISDOAdditionalLibraryTrigger[];
 }
 
 export interface ISDOMapping {
     [sdoLibraryId: string]: ISDOMappingLibrary;
+}
+
+export interface ISDOTriggerTarget {
+    leavLibraryId: string;
+    recordId: string;
+}
+
+export interface ISDOExportTarget extends ISDOTriggerTarget {
+    action: SDOAction;
 }
 
 export interface ISDOSettings {

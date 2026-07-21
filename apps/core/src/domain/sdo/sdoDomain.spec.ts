@@ -748,6 +748,123 @@ describe('sdoDomain', () => {
         });
     });
 
+    describe('resolveAdditionalLibraryTriggerTargets', () => {
+        const sourceLibraryId = 'structure_items';
+        const sourceRecordId = 'structureItem123';
+
+        it('[-] returns an empty array when no trigger matches the source library', async () => {
+            mockSDOUtils.getAdditionalLibraryTriggers.mockReturnValueOnce([]);
+
+            const targets = await _sdoDomain.resolveAdditionalLibraryTriggerTargets(
+                mockSDOMapping,
+                sourceLibraryId,
+                sourceRecordId,
+                mockSystemQueryContext,
+            );
+
+            expect(targets).toEqual([]);
+            expect(mockValueDomain.getRecordFieldValue).not.toHaveBeenCalled();
+        });
+
+        it('[+] resolves a single-hop link value via payload.id', async () => {
+            mockSDOUtils.getAdditionalLibraryTriggers.mockReturnValueOnce([
+                {targetLeavLibraryId: 'campaigns', attributePathToTarget: 'structure_items_campaign'},
+            ]);
+            mockValueDomain.getRecordFieldValue.mockResolvedValueOnce([
+                {payload: {id: 'campaign1', library: 'campaigns'}},
+            ] as ILinkValue[]);
+
+            const targets = await _sdoDomain.resolveAdditionalLibraryTriggerTargets(
+                mockSDOMapping,
+                sourceLibraryId,
+                sourceRecordId,
+                mockSystemQueryContext,
+            );
+
+            expect(targets).toEqual([{leavLibraryId: 'campaigns', recordId: 'campaign1'}]);
+        });
+
+        it('[+] resolves a terminal tree value via payload.record.id, not the tree node id', async () => {
+            mockSDOUtils.getAdditionalLibraryTriggers.mockReturnValueOnce([
+                {targetLeavLibraryId: 'campaigns', attributePathToTarget: 'structure_items_categories_thematic'},
+            ]);
+            mockValueDomain.getRecordFieldValue.mockResolvedValueOnce([
+                {payload: {id: 'treeNode1', record: {id: 'campaign1', library: 'campaigns'}}},
+            ] as ITreeValue[]);
+
+            const targets = await _sdoDomain.resolveAdditionalLibraryTriggerTargets(
+                mockSDOMapping,
+                sourceLibraryId,
+                sourceRecordId,
+                mockSystemQueryContext,
+            );
+
+            expect(targets).toEqual([{leavLibraryId: 'campaigns', recordId: 'campaign1'}]);
+        });
+
+        it('[+] resolves multiple values for a single trigger', async () => {
+            mockSDOUtils.getAdditionalLibraryTriggers.mockReturnValueOnce([
+                {targetLeavLibraryId: 'campaigns', attributePathToTarget: 'structure_items_campaign'},
+            ]);
+            mockValueDomain.getRecordFieldValue.mockResolvedValueOnce([
+                {payload: {id: 'campaign1', library: 'campaigns'}},
+                {payload: {id: 'campaign2', library: 'campaigns'}},
+            ] as ILinkValue[]);
+
+            const targets = await _sdoDomain.resolveAdditionalLibraryTriggerTargets(
+                mockSDOMapping,
+                sourceLibraryId,
+                sourceRecordId,
+                mockSystemQueryContext,
+            );
+
+            expect(targets).toEqual([
+                {leavLibraryId: 'campaigns', recordId: 'campaign1'},
+                {leavLibraryId: 'campaigns', recordId: 'campaign2'},
+            ]);
+        });
+
+        it('[+] resolves multiple triggers pointing at different target libraries', async () => {
+            mockSDOUtils.getAdditionalLibraryTriggers.mockReturnValueOnce([
+                {targetLeavLibraryId: 'campaigns', attributePathToTarget: 'structure_items_campaign'},
+                {targetLeavLibraryId: 'map', attributePathToTarget: 'structure_items_map'},
+            ]);
+            mockValueDomain.getRecordFieldValue
+                .mockResolvedValueOnce([{payload: {id: 'campaign1', library: 'campaigns'}}] as ILinkValue[])
+                .mockResolvedValueOnce([{payload: {id: 'map1', library: 'map'}}] as ILinkValue[]);
+
+            const targets = await _sdoDomain.resolveAdditionalLibraryTriggerTargets(
+                mockSDOMapping,
+                sourceLibraryId,
+                sourceRecordId,
+                mockSystemQueryContext,
+            );
+
+            expect(targets).toEqual(
+                expect.arrayContaining([
+                    {leavLibraryId: 'campaigns', recordId: 'campaign1'},
+                    {leavLibraryId: 'map', recordId: 'map1'},
+                ]),
+            );
+        });
+
+        it('[-] rethrows when the path resolution fails', async () => {
+            mockSDOUtils.getAdditionalLibraryTriggers.mockReturnValueOnce([
+                {targetLeavLibraryId: 'campaigns', attributePathToTarget: 'structure_items_campaign'},
+            ]);
+            mockValueDomain.getRecordFieldValue.mockRejectedValueOnce(new Error('bad path'));
+
+            await expect(
+                _sdoDomain.resolveAdditionalLibraryTriggerTargets(
+                    mockSDOMapping,
+                    sourceLibraryId,
+                    sourceRecordId,
+                    mockSystemQueryContext,
+                ),
+            ).rejects.toThrow(/failed to resolve path/);
+        });
+    });
+
     describe('getSDOGlobalSettings', () => {
         it('[-] should return a default global settings not available', async () => {
             mockGlobalSettingsDomain.getSettings.mockResolvedValueOnce({settings: {}} as IGlobalSettings);

@@ -1,7 +1,15 @@
 import _ from 'lodash';
 import {logger} from '@leav/logger';
 import {type IDbEvent, EventAction} from '@leav/utils';
-import {type SDOAction, type IBuffer, type IBufferList, type ISDO, type ISDOMapping} from '../../../_types/sdo';
+import {
+    type SDOAction,
+    type IBuffer,
+    type IBufferList,
+    type ISDO,
+    type ISDOMapping,
+    type ISDOExportTarget,
+} from '../../../_types/sdo';
+import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IConfig} from '../../../_types/config';
 import {CommonAttributes} from '../../../_constants/systemAttributes';
 import {type IRabbitMQ} from '../../../infra/sdo/rabbitMQ/rabbitMQ';
@@ -31,9 +39,18 @@ export interface ISDOExportDomainDeps {
 type ProcessCallback = (library: string, recordId: string) => Promise<void>;
 
 export interface ISDOExportDomain {
-    process: (data: IDbEvent, sdoGlobalSettingsTimer: number, callback: ProcessCallback) => Promise<void>;
+    process: (
+        libraryId: string,
+        recordId: string,
+        sdoGlobalSettingsTimer: number,
+        callback: ProcessCallback,
+    ) => Promise<void>;
     sendSDO(libraryId: string, recordId: string, sdo: ISDO): Promise<void>;
-    getSDODataEvent: (data: IDbEvent, sdoGlobalSettingsMapping: ISDOMapping) => Promise<SDOAction | null>;
+    getSDOExportTargets: (
+        data: IDbEvent,
+        sdoGlobalSettingsMapping: ISDOMapping,
+        ctx: IQueryInfos,
+    ) => Promise<ISDOExportTarget[]>;
 }
 
 export default function ({
@@ -51,21 +68,17 @@ export default function ({
     const buffers: IBufferList = {};
 
     const process = async (
-        dataEvent: IDbEvent,
+        leavLibraryId: string,
+        recordId: string,
         sdoGlobalSettingsTimer: number,
         callback: ProcessCallback,
     ): Promise<void> => {
         debug && logger.debug('[SDO] Processing data...');
 
-        const record = dataEvent.payload.topic.record;
-        // use record.libraryId because RECORD_INIT events does not have dataEvent.payload.topic.library
-        const leavLibraryId = record.libraryId;
-
-        // 1. If library is not set yet
         buffers[leavLibraryId] ??= new Map<string, IBuffer>();
 
         // get library buffer
-        const buffer = buffers[leavLibraryId].get(record.id);
+        const buffer = buffers[leavLibraryId].get(recordId);
 
         return new Promise<void>((resolve, reject) => {
             if (buffer) {
@@ -80,10 +93,10 @@ export default function ({
                 };
             } else {
                 // 3. Create buffer
-                buffers[leavLibraryId].set(record.id, {
+                buffers[leavLibraryId].set(recordId, {
                     library: leavLibraryId,
-                    recordId: record.id,
-                    timer: _startBufferTimeout(leavLibraryId, record.id, sdoGlobalSettingsTimer, callback),
+                    recordId,
+                    timer: _startBufferTimeout(leavLibraryId, recordId, sdoGlobalSettingsTimer, callback),
                     promise: {
                         resolve,
                         reject,
@@ -159,46 +172,75 @@ export default function ({
         });
     };
 
-    const getSDODataEvent = async (
+    const getSDOExportTargets = async (
         dataEvent: IDbEvent,
         sdoGlobalSettingsMapping: ISDOMapping,
-    ): Promise<SDOAction | null> => {
+        ctx: IQueryInfos,
+    ): Promise<ISDOExportTarget[]> => {
         const action = dataEvent.payload?.action;
-        const libraryId = dataEvent?.payload?.topic?.record?.libraryId;
+        const eventLibraryId = dataEvent?.payload?.topic?.record?.libraryId;
+        const eventRecordId = dataEvent?.payload?.topic?.record?.id;
         const leavAttribute = dataEvent?.payload?.topic?.attribute;
 
         if (!(action in ACTIONS_MAPPING)) {
             debug && logger.debug(`[SDO] Action ${action} skipped`);
-            return null;
-        } else if (!libraryId) {
+            return [];
+        } else if (!eventLibraryId) {
             throw new Error('[SDO] Library name not defined');
         }
 
-        const libraryMapping = sdoUtils.getLibraryMapping(sdoGlobalSettingsMapping, libraryId);
+        const sdoAction = ACTIONS_MAPPING[action];
+        const targetsByKey = new Map<string, ISDOExportTarget>();
 
-        if (!libraryMapping) {
-            debug && logger.debug(`[SDO] Element from library ${libraryId} skipped`);
-            return null;
+        const addTarget = (target: ISDOExportTarget): void => {
+            const key = `${target.leavLibraryId}/${target.recordId}`;
+
+            if (!targetsByKey.has(key)) {
+                targetsByKey.set(key, target);
+            }
+        };
+
+        const libraryMapping = sdoUtils.getLibraryMapping(sdoGlobalSettingsMapping, eventLibraryId);
+        if (libraryMapping) {
+            let includeEventRecord = true;
+
+            if (sdoAction === 'UPDATE') {
+                // Check leavAttribute only in case of UPDATE, for CREATE we always export SDO
+                if (!leavAttribute) {
+                    throw new Error('[SDO] Leav Attribute not defined in amqp db event');
+                }
+                // Record activation state always triggers an export, regardless of the configured mapping
+                if (
+                    leavAttribute !== CommonAttributes.ACTIVE &&
+                    !sdoUtils.hasSDOAttribute(libraryMapping, leavAttribute)
+                ) {
+                    debug && logger.debug(`[SDO] Attribute ${leavAttribute} skipped`);
+                    includeEventRecord = false;
+                }
+            }
+
+            if (includeEventRecord) {
+                addTarget({leavLibraryId: eventLibraryId, recordId: eventRecordId, action: sdoAction});
+            }
         }
 
-        if (ACTIONS_MAPPING[action] === 'UPDATE') {
-            // Check leavAttribute only in case of UPDATE, for CREATE we always export SDO
-            if (!leavAttribute) {
-                throw new Error('[SDO] Leav Attribute not defined in amqp db event');
-            }
-            // Record activation state always triggers an export, regardless of the configured mapping
-            if (leavAttribute !== CommonAttributes.ACTIVE && !sdoUtils.hasSDOAttribute(libraryMapping, leavAttribute)) {
-                debug && logger.debug(`[SDO] Attribute ${leavAttribute} skipped`);
-                return null;
-            }
+        const resolvedTargets = await sdoDomain.resolveAdditionalLibraryTriggerTargets(
+            sdoGlobalSettingsMapping,
+            eventLibraryId,
+            eventRecordId,
+            ctx,
+        );
+
+        for (const resolved of resolvedTargets) {
+            addTarget({...resolved, action: 'UPDATE'});
         }
 
-        return ACTIONS_MAPPING[action];
+        return [...targetsByKey.values()];
     };
 
     return {
         process,
-        getSDODataEvent,
+        getSDOExportTargets,
         sendSDO,
     };
 }
