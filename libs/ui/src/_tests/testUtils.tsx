@@ -105,12 +105,40 @@ export const expectToThrow = (func: () => unknown, error?: JestToErrorArg): void
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     spy.mockImplementation(() => {});
 
-    expect(func).toThrow(error);
+    // React (in dev) rethrows the caught error to the host, so jsdom dispatches it as an uncaught
+    // window 'error' event and logs "Uncaught [Error: …]" to stderr. The throw is expected here, so
+    // cancel it for the duration of the call to keep the output clean.
+    const swallowUncaught = (event: ErrorEvent): void => event.preventDefault();
+    window.addEventListener('error', swallowUncaught);
 
-    spy.mockRestore();
+    try {
+        expect(func).toThrow(error);
+    } finally {
+        window.removeEventListener('error', swallowUncaught);
+        spy.mockRestore();
+    }
 };
 
 type JestToErrorArg = string | RegExp | Error | (new (...args: any[]) => any);
+
+/**
+ * When a component throws during render, React (in dev) rethrows the caught error to the host, so
+ * jsdom dispatches an uncaught 'error' event and logs "Uncaught [Error: …]" to stderr — even when
+ * the throw is expected (e.g. error-boundary tests) and console.error is already mocked. Registering
+ * a window 'error' listener that cancels the event for the expected message makes jsdom treat it as
+ * handled and stops the log, without hiding any other error.
+ *
+ * Returns a cleanup function to remove the listener (call it in afterEach).
+ */
+export const suppressUncaughtError = (message: string): (() => void) => {
+    const handler = (event: ErrorEvent): void => {
+        if (event.error?.message === message) {
+            event.preventDefault();
+        }
+    };
+    window.addEventListener('error', handler);
+    return () => window.removeEventListener('error', handler);
+};
 
 // Since antd 6, the table renders a fixed header in its own <table>, so the header <tr>
 // is exposed as an accessible row at index 0. This helper drops it to return only record rows,

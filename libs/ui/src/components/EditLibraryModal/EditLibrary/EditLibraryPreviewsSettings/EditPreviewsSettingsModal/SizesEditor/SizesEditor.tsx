@@ -100,7 +100,7 @@ function SizesEditor({sizes, readOnly, onChange}: ISizesEditorProps): JSX.Elemen
                         <InputNumber
                             min={1}
                             disabled={readOnly}
-                            addonAfter="px"
+                            suffix="px"
                             onChange={_handleChange}
                             aria-label="size"
                         />

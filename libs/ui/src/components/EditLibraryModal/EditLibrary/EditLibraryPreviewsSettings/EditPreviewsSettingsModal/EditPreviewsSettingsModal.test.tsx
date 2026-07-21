@@ -47,7 +47,9 @@ describe('EditPreviewsSettingsModal', () => {
         expect(screen.getAllByRole('textbox', {name: /size_name/i})).toHaveLength(3);
 
         await userEvent.click(screen.getAllByRole('button', {name: /delete/i})[0]);
-        await userEvent.click(screen.getByRole('button', {name: /confirm/i}));
+        // The Popconfirm popup mounts through an antd CSSMotion transition, so its confirm button is
+        // not in the DOM synchronously. findByRole waits for it (avoids the "not wrapped in act" noise).
+        await userEvent.click(await screen.findByRole('button', {name: /confirm/i}));
 
         expect(screen.getAllByRole('textbox', {name: /size_name/i})).toHaveLength(2);
     });

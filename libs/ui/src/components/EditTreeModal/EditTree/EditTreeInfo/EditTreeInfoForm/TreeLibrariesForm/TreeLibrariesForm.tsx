@@ -1,6 +1,6 @@
 import {CloseOutlined, PlusOutlined} from '@ant-design/icons';
 import {localizedTranslation} from '@leav/utils';
-import {Button, Collapse, Form, List, Select, Space, Switch} from 'antd';
+import {Button, Collapse, Form, Select, Space, Switch} from 'antd';
 import {type ComponentProps, type ReactNode, useState} from 'react';
 import styled, {type CSSObject} from 'styled-components';
 import {type LibraryLightFragment, type TreeDetailsFragment} from '../../../../../../_gqlTypes';
@@ -23,6 +23,27 @@ const ListItemPart = styled.div<{style?: CSSObject}>`
     gap: 1rem;
 
     ${props => props.style}
+`;
+
+// Replaces antd's deprecated <List>: a semantic <ul> (keeps the listitem role tests rely on).
+const LibrariesList = styled.ul`
+    margin: 0;
+    padding: 0;
+    list-style: none;
+`;
+
+// Replaces antd's deprecated <List.Item>: a stacked row with the same bottom divider antd rendered.
+const LibraryItem = styled.li`
+    display: flex;
+    flex-direction: column;
+    padding: 5px 1rem;
+    border-block-end: 1px solid rgba(5, 5, 5, 0.06);
+`;
+
+const EmptyText = styled.div`
+    padding: 1rem;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.25);
 `;
 
 const ALL_CHILDREN_ALLOWED_KEY = '__all__';
@@ -193,7 +214,7 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
         ];
 
         return (
-            <List.Item style={{flexDirection: 'column', padding: '5px 1rem'}}>
+            <LibraryItem key={item.library.id}>
                 <ListItemPart style={{justifyContent: 'space-between'}}>
                     <EntityCard entity={itemIdentity} size={PreviewSize.SMALL} />
                     {!readOnly && (
@@ -205,7 +226,7 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
                     )}
                 </ListItemPart>
                 <Collapse size="small" style={{width: '100%', margin: '0.5rem'}} items={collapseItems} />
-            </List.Item>
+            </LibraryItem>
         );
     };
 
@@ -219,13 +240,12 @@ function TreeLibrariesForm({onChange, extra, readOnly}: ITreeLibrariesFormProps)
     return (
         <>
             <FieldsGroup label={groupLabel} style={{padding: 0}}>
-                <List
-                    dataSource={libraries}
-                    renderItem={renderListItem}
-                    footer={listFooter}
-                    locale={{emptyText: t('trees.no_linked_libraries')}}
-                    style={{padding: 0}}
-                />
+                {libraries.length > 0 ? (
+                    <LibrariesList>{libraries.map(renderListItem)}</LibrariesList>
+                ) : (
+                    <EmptyText>{t('trees.no_linked_libraries')}</EmptyText>
+                )}
+                {listFooter}
             </FieldsGroup>
             {isLibraryPickerOpen && (
                 <LibraryPicker

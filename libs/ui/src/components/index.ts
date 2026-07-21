@@ -20,7 +20,6 @@ export * from './ImageLoading';
 export * from './ImageMissing';
 export * from './ImportModal';
 export * from './LibraryPicker';
-export * from './List';
 export * from './Loading';
 export * from './Notifications';
 export * from './RecordCard';
