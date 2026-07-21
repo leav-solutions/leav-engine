@@ -308,6 +308,80 @@ describe('treeRepo', () => {
                     expect(records).toEqual([record1, record2, null, record1, record2, null]);
                 });
             });
+
+            describe('getElementAncestors', () => {
+                let element1: ITreeNodeLight;
+                let element2: ITreeNodeLight;
+                let element3: ITreeNodeLight;
+
+                beforeEach(async () => {
+                    element1 = await treeRepo.addElement({
+                        treeId,
+                        element: {
+                            id: record1.id,
+                            library: libraryId,
+                        },
+                        parent: null,
+                        ctx,
+                    });
+                    element2 = await treeRepo.addElement({
+                        treeId,
+                        element: {
+                            id: record2.id,
+                            library: libraryId,
+                        },
+                        parent: element1.id,
+                        order: 5,
+                        ctx,
+                    });
+                    element3 = await treeRepo.addElement({
+                        treeId,
+                        element: {
+                            id: record1.id,
+                            library: libraryId,
+                        },
+                        parent: element2.id,
+                        order: 7,
+                        ctx,
+                    });
+                });
+
+                it('should return ancestors from root to element, element included, root excluded', async () => {
+                    const ancestors = await treeRepo.getElementAncestors({
+                        treeId,
+                        nodeId: element3.id,
+                        ctx,
+                    });
+
+                    // order carried by an ancestor is actually the order of its child in this path,
+                    // the element itself always comes back with order 0
+                    expect(ancestors).toEqual([
+                        {id: element1.id, order: 5, record: record1},
+                        {id: element2.id, order: 7, record: record2},
+                        {id: element3.id, order: 0, record: record1},
+                    ]);
+                });
+
+                it('should return only the element itself when it is a direct child of root', async () => {
+                    const ancestors = await treeRepo.getElementAncestors({
+                        treeId,
+                        nodeId: element1.id,
+                        ctx,
+                    });
+
+                    expect(ancestors).toEqual([{id: element1.id, order: 0, record: record1}]);
+                });
+
+                it('should return an empty array when nodeId is empty', async () => {
+                    const ancestors = await treeRepo.getElementAncestors({
+                        treeId,
+                        nodeId: '',
+                        ctx,
+                    });
+
+                    expect(ancestors).toEqual([]);
+                });
+            });
         });
     });
 });
