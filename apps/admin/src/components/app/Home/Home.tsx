@@ -2,9 +2,9 @@ import useLocalStorage from '../../../hooks/useLocalStorage';
 import styled from 'styled-components';
 import {Outlet} from 'react-router-dom';
 import {NavigationMenu} from '../../../modules/navigation-menu/NavigationMenu';
-import Header from '../Header';
+import {Header} from '../../../modules/layout/Header';
 
-const headerHeight = '3rem';
+const headerHeight = '48px';
 
 const Content = styled.div`
     grid-area: content;

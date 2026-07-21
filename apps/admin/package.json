@@ -48,6 +48,7 @@
         "react-dnd": "14.0.5",
         "react-dnd-html5-backend": "14.1.0",
         "react-dom": "18.2.0",
+        "react-flag-kit": "1.1.1",
         "react-i18next": "12",
         "react-markdown": "5.0.3",
         "react-redux": "7.2.9",

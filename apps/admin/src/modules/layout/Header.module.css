@@ -1,0 +1,16 @@
+.header {
+    height: 100%;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: calc(var(--general-spacing-xs) * 1px);
+}
+
+.logo img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+}

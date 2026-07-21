@@ -8,8 +8,8 @@ vi.mock('react-router-dom', async () => ({
     },
 }));
 
-vi.mock('../Header', () => ({
-    default: function Header() {
+vi.mock('../../../modules/layout/Header', () => ({
+    Header: function Header() {
         return <div>Header</div>;
     },
 }));
@@ -22,6 +22,7 @@ vi.mock('../../../modules/navigation-menu/NavigationMenu', () => ({
 
 vi.mock('../../../constants', () => ({
     APP_BASE_URL: '',
+    GLOBAL_BASE_URL: '',
 }));
 
 describe('Home', () => {
