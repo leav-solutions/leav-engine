@@ -80,7 +80,6 @@ export const mockEventsManagerDomain: Mockify<IEventsManagerDomain> = {
     sendPubSubEvent: vi.fn(),
     subscribe: vi.fn(),
     initPubSubEventsConsumer: vi.fn(),
-    initCustomConsumer: vi.fn(),
     registerEventActions: vi.fn(),
     getActions: vi.fn(),
 };

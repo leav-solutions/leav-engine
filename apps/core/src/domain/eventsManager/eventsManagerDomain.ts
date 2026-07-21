@@ -1,6 +1,5 @@
-import {type IAmqpService} from '@leav/message-broker';
+import {type AmqpMessageHandler} from '@leav/message-broker';
 import {EventAction, type IPubSubEvent, type IPubSubPayload} from '@leav/utils';
-import type * as amqp from 'amqplib';
 import {PubSub} from 'graphql-subscriptions';
 import Joi from 'joi';
 import {type IUtils} from '../../utils/utils';
@@ -9,7 +8,7 @@ import type * as Config from '../../_types/config';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {Errors} from '../../_types/errors';
 import {type IDbPayloadInternal} from '../../_types/events';
-import * as crypto from 'node:crypto';
+import {type IEventsManagerRabbitMQ} from '../../infra/eventsManager/eventsManagerRabbitMQ';
 
 export interface IEventsManagerDomain {
     sendDatabaseEvent<DBPayloadAction extends EventAction | unknown>(
@@ -19,25 +18,20 @@ export interface IEventsManagerDomain {
     sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos): Promise<void>;
     subscribe(triggersName: string[]): AsyncIterator<any>;
     initPubSubEventsConsumer(): Promise<void>;
-    initCustomConsumer(
-        queueName: string,
-        routinKey: string,
-        onMessage: (msg: amqp.ConsumeMessage, channel: amqp.ConfirmChannel) => Promise<void>,
-    ): Promise<void>;
     registerEventActions(actions: string[], prefix: string, ctx: IQueryInfos): void;
     getActions(): string[];
 }
 
 export interface IEventsManagerDomainDeps {
     config: Config.IConfig;
-    'core.infra.amqpService': IAmqpService;
+    'core.infra.eventsManager.rabbitMQ': IEventsManagerRabbitMQ;
     'core.utils.logger': ILogger;
     'core.utils': IUtils;
 }
 
 export default function ({
     config,
-    'core.infra.amqpService': amqpService,
+    'core.infra.eventsManager.rabbitMQ': eventsManagerRabbitMQ,
     'core.utils.logger': logger,
     'core.utils': utils,
 }: IEventsManagerDomainDeps): IEventsManagerDomain {
@@ -66,8 +60,11 @@ export default function ({
         }
     };
 
-    const _onPubSubMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
-        amqpService.consumer.channel.ack(msg);
+    // No manual ack here anymore: resolving acks, throwing nacks (discard, no requeue) - handled by
+    // createAmqpConnection's default contract. An unparseable message now fails the handler and gets
+    // cleanly nacked/logged instead of being acked first and only logged on a later uncaught throw -
+    // same practical outcome (never reprocessed), just traced through the standard error path.
+    const _onPubSubMessage: AmqpMessageHandler = async msg => {
         const msgContent = msg.content.toString();
 
         const pubSubEvent: IPubSubEvent = JSON.parse(msgContent);
@@ -75,6 +72,7 @@ export default function ({
         try {
             _validateMsg(pubSubEvent);
         } catch (e) {
+            // Logged only, processing still continues below - unchanged from previous behavior.
             logger.error(`Invalid message because ${e.message}`, {msgContent});
         }
 
@@ -87,59 +85,33 @@ export default function ({
         await pubsub.publish(pubSubEvent.payload.triggerName, publishedPayload);
     };
 
-    const _send = (routingKey: string, payload: any, ctx: IQueryInfos): Promise<void> =>
-        amqpService
-            .publish(
-                config.amqp.exchange,
-                routingKey,
-                JSON.stringify({
-                    time: Date.now(),
-                    instanceId: config.instanceId,
-                    userId: ctx.userId,
-                    queryId: ctx.queryId,
-                    emitter: utils.getProcessIdentifier(),
-                    trigger: ctx.trigger,
-                    payload,
-                }),
-            )
-            .catch(e => {
-                logger.error(`Error while sending event to rabbitMQ: ${e.stack}`);
-            });
+    const _buildEventEnvelope = (payload: any, ctx: IQueryInfos): string =>
+        JSON.stringify({
+            time: Date.now(),
+            instanceId: config.instanceId,
+            userId: ctx.userId,
+            queryId: ctx.queryId,
+            emitter: utils.getProcessIdentifier(),
+            trigger: ctx.trigger,
+            payload,
+        });
 
     return {
         async initPubSubEventsConsumer() {
-            // Generate a unique queue name to allow each instance to receive all events
-            // It's used for websocket to ensure each instance forward subscribed events for theirs current websoket connections
-            const uniqueQueueName = `${config.instanceId}_${config.eventsManager.queues.pubsub_events_prefix}-${crypto.randomUUID()}`;
-            // listening pubsub events
-            await amqpService.consumer.channel.assertQueue(uniqueQueueName, {durable: false, autoDelete: true});
-            await amqpService.consumer.channel.bindQueue(
-                uniqueQueueName,
-                config.amqp.exchange,
-                config.eventsManager.routingKeys.pubsub_events,
-            );
-
-            await amqpService.consume(
-                uniqueQueueName,
-                config.eventsManager.routingKeys.pubsub_events,
-                _onPubSubMessage,
-            );
-        },
-        async initCustomConsumer(queue, routingKey, onMessage) {
-            // listening pubsub events
-            await amqpService.consumer.channel.assertQueue(queue);
-            await amqpService.consumer.channel.bindQueue(queue, config.amqp.exchange, routingKey);
-
-            await amqpService.consume(queue, routingKey, msg => onMessage(msg, amqpService.consumer.channel));
+            await eventsManagerRabbitMQ.consumePubSubEvents(_onPubSubMessage);
         },
         sendDatabaseEvent<DBPayloadAction extends EventAction | unknown>(
             payload: IDbPayloadInternal<DBPayloadAction>,
             ctx: IQueryInfos,
         ) {
-            return _send(config.eventsManager.routingKeys.data_events, payload, ctx);
+            return eventsManagerRabbitMQ
+                .publishDatabaseEvent(_buildEventEnvelope(payload, ctx))
+                .catch(e => logger.error(`Error while sending event to rabbitMQ: ${e.stack}`));
         },
         sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos) {
-            return _send(config.eventsManager.routingKeys.pubsub_events, payload, ctx);
+            return eventsManagerRabbitMQ
+                .publishPubSubEvent(_buildEventEnvelope(payload, ctx))
+                .catch(e => logger.error(`Error while sending event to rabbitMQ: ${e.stack}`));
         },
         subscribe(triggersName: string[]): AsyncIterator<any> {
             return pubsub.asyncIterator(triggersName);

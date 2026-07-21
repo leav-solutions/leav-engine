@@ -87,6 +87,7 @@ export interface IAutomation {
     queues: {
         events: string;
     };
+    prefetch?: number;
 }
 
 export interface IAutomationCache {
@@ -279,6 +280,8 @@ export interface IAmqp {
     exchange: string;
     type: string;
     prefetch?: number;
+    /** ADR-007: setting for the resilient createAmqpConnection, used alongside amqpService. */
+    heartbeatInSeconds?: number;
 }
 
 export interface IRedis {
@@ -314,6 +317,7 @@ export interface IEventsManager {
     queues: {
         pubsub_events_prefix: string;
     };
+    pubsubPrefetch?: number;
 }
 
 export interface IIndexationManager {

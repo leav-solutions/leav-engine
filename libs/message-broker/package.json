@@ -27,6 +27,7 @@
     },
     "dependencies": {
         "@leav/logger": "workspace:libs/logger",
+        "amqp-connection-manager": "5.0.0",
         "amqplib": "2.0.1"
     },
     "stableVersion": "1.0.0"

@@ -1,6 +1,6 @@
 import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {SystemTrees} from '../../../_constants/systemTrees';
-import {amqpService} from '@leav/message-broker';
+import {amqpService, createAmqpConnection} from '@leav/message-broker';
 import {logger} from '@leav/logger';
 import {appRootPath} from '../../../rootPath';
 import fsremaned from 'fs';
@@ -58,10 +58,16 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
     const redis = await initRedis({config: conf});
     const mailer = await initMailer({config: conf});
     const oidcClient = conf.auth.oidc.enable ? await initOIDCClient(conf) : undefined;
+    const amqpConnection = createAmqpConnection({
+        connOpt: conf.amqp.connOpt,
+        heartbeatInSeconds: conf.amqp.heartbeatInSeconds,
+        connectionName: conf.instanceId,
+    });
 
     const {coreContainer, pluginsContainer} = await initDI({
         translator,
         'core.infra.amqpService': amqp,
+        'core.infra.amqp.connection': amqpConnection,
         'core.infra.redis': redis,
         'core.infra.mailer': mailer,
         'core.infra.oidcClient': oidcClient,
