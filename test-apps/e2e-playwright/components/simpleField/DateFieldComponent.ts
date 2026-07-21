@@ -17,8 +17,8 @@ export class DateFieldComponent {
         this.input = this.page.locator(`#standardfield-${STANDARD_FIELD_ATTRIBUTE_DATE_ID}`).locator('input');
         // DS clear icons are FontAwesome svgs carrying `aria-label="clear"`.
         this.deleteBtn = this.page.locator(`#standardfield-${STANDARD_FIELD_ATTRIBUTE_DATE_ID}`).getByLabel('clear');
-        this.yearField = this.page.getByRole('button', {name: 'year panel'});
-        this.decadeField = this.page.getByRole('button', {name: 'decade panel'});
+        this.yearField = this.page.getByRole('button', {name: 'Choisissez une année'});
+        this.decadeField = this.page.getByRole('button', {name: 'Choisissez une décennie'});
     }
 
     private getDecade(decade: string) {
