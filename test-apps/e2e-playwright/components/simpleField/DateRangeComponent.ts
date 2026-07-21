@@ -21,8 +21,8 @@ export class DateRangeComponent {
         this.deleteBtn = this.page
             .locator(`#standardfield-${STANDARD_FIELD_ATTRIBUTE_DATE_RANGE_ID}`)
             .getByLabel('clear');
-        this.yearField = this.page.getByRole('button', {name: 'year panel'}).first();
-        this.decadeField = this.page.getByRole('button', {name: 'decade panel'});
+        this.yearField = this.page.getByRole('button', {name: 'Choisissez une année'}).first();
+        this.decadeField = this.page.getByRole('button', {name: 'Choisissez une décennie'});
     }
 
     private getDecade(decade: string) {
