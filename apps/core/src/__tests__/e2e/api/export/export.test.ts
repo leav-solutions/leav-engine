@@ -23,7 +23,7 @@ import {waitEmailNotification, waitWebSocketNotification} from '../notificationU
 
 describe('Export', () => {
     const exportLibName = 'export_lib';
-    const testTreeId = 'test_tree';
+    const testTreeId = 'export_test_tree';
     const advancedAttrId = 'test_advanced_attr';
     const advancedLinkAttrId = 'test_advanced_link_attr';
     const treeAttrId = 'test_tree_attr';

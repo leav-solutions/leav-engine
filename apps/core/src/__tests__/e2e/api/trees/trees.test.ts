@@ -11,7 +11,7 @@ import {
 } from '../e2eUtils';
 
 describe('Trees', () => {
-    const testTreeName = 'test_tree';
+    const testTreeName = 'trees_test_tree';
     const testTreeName2 = 'test_tree2';
     const testLibName = 'trees_library_test';
     const attrTreeName = 'trees_attribute_test_tree';

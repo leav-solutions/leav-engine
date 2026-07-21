@@ -118,6 +118,16 @@ Pré-requis : core tourne, ArangoDB joignable. Config Vitest : [`vitest.e2e-api.
 
 Les répertoires [`filesManager/`](filesManager/) et [`indexationManager/`](indexationManager/) ont leurs propres configs Vitest (`vitest.e2e-filesManager.config.ts`, `vitest.e2e-indexationManager.config.ts`) et leurs propres scripts (`yarn run test:e2e:filesManager`, `yarn run test:e2e:indexationManager`). Le SDK GraphQL généré est partagé — la config codegen scanne `src/__tests__/e2e/**/*.graphql`.
 
+## Isolation & ids de fixture (piège flakiness)
+
+Le job `e2e-api` tourne sur **une base ArangoDB partagée** (`leav_test`), clear/migrée **une seule fois** au boot par [`api/globalSetup.ts`](api/globalSetup.ts) et **jamais reset entre fichiers**, avec **parallélisme de fichiers** ([`vitest.e2e-api.config.ts`](../../../vitest.e2e-api.config.ts) → `maxWorkers: 2`, pool `forks`). Plusieurs fichiers de test s'exécutent donc **simultanément contre la même base**.
+
+> ⚠️ **Toujours préfixer les ids de fixture (arbre / library / attribut) par le nom du fichier ou du domaine** — jamais d'id générique comme `test_tree` ou `test_lib`.
+>
+> Deux fichiers qui déclarent le **même** id se marchent dessus : un `deleteTree`/`deleteLibrary` en `afterAll` d'un fichier détruit la fixture d'un autre **en plein run**, produisant un flake du type `NODE_NOT_IN_TREE` / `Node X not present in tree` — non reproductible en local, sensible à la planification des workers CI.
+>
+> Convention : `trees_test_tree`, `records_test_tree`, `export_test_tree`, `tree_permissions_test_tree`, … (préfixe unique par fichier). Idem pour libraries et attributs de fixture.
+
 ## À éviter (pattern legacy)
 
 **N'utilise jamais ces APIs dans un nouveau test :**
