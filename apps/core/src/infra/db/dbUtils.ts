@@ -276,12 +276,12 @@ export default function ({
                 }
             }
 
-            if (!!sort) {
+            if (sort) {
                 const field = sort.field === 'id' ? '_key' : sort.field;
                 queryParts.push(aql`SORT el.${field} ${sort.order}`);
             }
 
-            if (!!pagination) {
+            if (pagination) {
                 queryParts.push(aql`LIMIT ${pagination.offset || 0}, ${pagination.limit}`);
             }
 

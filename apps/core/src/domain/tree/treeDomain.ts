@@ -708,7 +708,7 @@ export default function ({
                     errors.element = Errors.ELEMENT_ALREADY_PRESENT_IN_ANCESTORS;
                 }
 
-                if (!!Object.keys(errors).length) {
+                if (Object.keys(errors).length) {
                     throw new ValidationError(errors, Object.values(errors).join(', '));
                 }
             }
@@ -743,7 +743,7 @@ export default function ({
                 errors.element = Errors.UNKNOWN_ELEMENT;
             }
 
-            if (!!Object.keys(errors).length) {
+            if (Object.keys(errors).length) {
                 throw new ValidationError(errors, Object.values(errors).join(', '));
             }
 

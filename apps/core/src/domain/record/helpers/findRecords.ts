@@ -245,7 +245,7 @@ export default function ({
                 // Set reverse links if necessary.
                 const attrsRepo = (await Promise.all(
                     attributes.map(async a =>
-                        !!a.reverse_link
+                        a.reverse_link
                             ? {
                                   ...a,
                                   reverse_link: await attributeDomain.getAttributeProperties({
@@ -317,7 +317,7 @@ export default function ({
 
                     const sortAttributesRepo = (await Promise.all(
                         sortAttributes.map(async a =>
-                            !!a.reverse_link
+                            a.reverse_link
                                 ? {
                                       ...a,
                                       reverse_link: await attributeDomain.getAttributeProperties({

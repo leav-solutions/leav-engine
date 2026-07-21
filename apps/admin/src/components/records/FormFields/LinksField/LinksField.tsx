@@ -89,7 +89,7 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
     const _handleOpenAddRecordModal = () => setIsOpenAddRecordModal(true);
 
     const _handleCloseAddRecordModal = (record?: RecordIdentity_whoAmI) => {
-        if (!!record) {
+        if (record) {
             onChange(
                 {
                     linkValue: {

@@ -169,7 +169,7 @@ const TreeExplorerView = ({
         (params?: {parent: string; library: string; recordId?: string; path: string[]}) => () => {
             setOpenAddElementModal(false);
             setEditRecordModalOpen(true);
-            if (!!params) {
+            if (params) {
                 setEditionState(params);
             }
         };

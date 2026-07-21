@@ -389,7 +389,7 @@ export default function ({
 
         const isValid = msgBodySchema.validate(msg);
 
-        if (!!isValid.error) {
+        if (isValid.error) {
             const errorMsg = isValid.error.details.map(e => e.message).join(', ');
             throw new Error(errorMsg);
         }
@@ -422,7 +422,7 @@ export default function ({
                     detail: findRecordParams.map(e => e.library).join(','),
                 },
                 priority: TaskPriority.MEDIUM,
-                startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                startAt: task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
                 ...(!!task?.callbacks && {callbacks: task.callbacks}),
             },
             params.ctx,

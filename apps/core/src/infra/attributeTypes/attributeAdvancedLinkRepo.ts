@@ -104,16 +104,16 @@ export default function ({
 
             // Create the link between records and add some metadata on it.
 
-            const _from = !!attribute.reverse_link
+            const _from = attribute.reverse_link
                 ? attribute.linked_library + '/' + value.payload
                 : library + '/' + recordId;
 
-            const toLibrary = !!attribute.reverse_link ? library : attribute.linked_library;
-            const toRecordId = !!attribute.reverse_link ? recordId : value.payload;
+            const toLibrary = attribute.reverse_link ? library : attribute.linked_library;
+            const toRecordId = attribute.reverse_link ? recordId : value.payload;
 
             const _to = toLibrary + '/' + toRecordId;
 
-            const edgeDataAttr = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
+            const edgeDataAttr = attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
 
             const edgeData: any = {
                 _from,
@@ -139,7 +139,7 @@ export default function ({
             });
 
             const savedEdge = resEdge.length ? resEdge[0] : null;
-            const savedValue = !!attribute.reverse_link ? savedEdge?.edge?._from : savedEdge?.edge?._to;
+            const savedValue = attribute.reverse_link ? savedEdge?.edge?._from : savedEdge?.edge?._to;
 
             return _buildLinkValue(
                 {...savedEdge?.linkedRecord, ...utils.decomposeValueEdgeDestination(savedValue)},
@@ -170,15 +170,15 @@ export default function ({
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             // Update value's metadata on records link.r
-            const _from = !!attribute.reverse_link
+            const _from = attribute.reverse_link
                 ? attribute.linked_library + '/' + value.payload
                 : library + '/' + recordId;
 
-            const toLibrary = !!attribute.reverse_link ? library : attribute.linked_library;
-            const toRecordId = !!attribute.reverse_link ? recordId : value.payload;
+            const toLibrary = attribute.reverse_link ? library : attribute.linked_library;
+            const toRecordId = attribute.reverse_link ? recordId : value.payload;
             const _to = toLibrary + '/' + toRecordId;
 
-            const edgeDataAttr = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
+            const edgeDataAttr = attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
 
             const edgeData: any = {
                 _from,
@@ -205,7 +205,7 @@ export default function ({
             });
 
             const savedEdge = resEdge.length ? resEdge[0] : null;
-            const savedValue = !!attribute.reverse_link ? savedEdge?.edge?._from : savedEdge?.edge?._to;
+            const savedValue = attribute.reverse_link ? savedEdge?.edge?._from : savedEdge?.edge?._to;
 
             return _buildLinkValue(
                 {...savedEdge?.linkedRecord, ...utils.decomposeValueEdgeDestination(savedValue)},
@@ -270,8 +270,8 @@ export default function ({
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
             const queryParts = [];
 
-            const edgeAttribute = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
-            const direction = !!attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
+            const edgeAttribute = attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
+            const direction = attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
 
             queryParts.push(aql`
                 FOR linkedRecord, edge
@@ -317,8 +317,8 @@ export default function ({
             }
 
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
-            const edgeAttribute = !!attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
-            const direction = !!attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
+            const edgeAttribute = attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
+            const direction = attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
 
             const recordsList = recordIds.map(id => library + '/' + id);
 
@@ -466,12 +466,12 @@ export default function ({
         async getValueById({library, recordId, attribute, valueId, ctx}): Promise<ILinkValue> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
-            const edgeAttribute = !!attribute.reverse_link
+            const edgeAttribute = attribute.reverse_link
                 ? typeof attribute.reverse_link === 'string'
                     ? attribute.reverse_link
                     : attribute.reverse_link.id
                 : attribute.id;
-            const direction = !!attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
+            const direction = attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
 
             const query = aql` FOR linkedRecord, edge
                     IN 1 ${direction} ${library + '/' + recordId}
@@ -497,10 +497,10 @@ export default function ({
                   ? {...attributes[1], id: '_key'}
                   : attributes[1];
 
-            const eAttribute = !!attributes[0].reverse_link
+            const eAttribute = attributes[0].reverse_link
                 ? (attributes[0].reverse_link as IAttribute)?.id
                 : attributes[0].id;
-            const direction = !!attributes[0].reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
+            const direction = attributes[0].reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
 
             let linkedValue = aql`FIRST(
                 FOR v, e IN 1 ${direction} r._id

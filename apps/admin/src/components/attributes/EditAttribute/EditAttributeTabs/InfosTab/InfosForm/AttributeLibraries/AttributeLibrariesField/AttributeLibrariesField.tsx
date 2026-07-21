@@ -9,7 +9,7 @@ interface IAttributeLibrariesFieldProps extends FormDropdownProps {
 
 function AttributeLibrariesField({libraries, ...fieldProps}: IAttributeLibrariesFieldProps): JSX.Element {
     const availableLanguages = useLang().lang;
-    const options = !!libraries
+    const options = libraries
         ? libraries.map(l => ({key: l.id, value: l.id, text: localizedLabel(l.label, availableLanguages)}))
         : [];
 

@@ -148,7 +148,7 @@ function DependenciesLibraryItem({
                 </ItemHeader>
                 {mustShowChildren && (
                     <>
-                        {!!allowedLibraries.length ? (
+                        {allowedLibraries.length ? (
                             <AllowedChildrenWrapper data-testid="allowed-children">
                                 <div>{t('trees.allow_children')}:</div>
                                 {allowedLibraries.map(allowedLibrary => (

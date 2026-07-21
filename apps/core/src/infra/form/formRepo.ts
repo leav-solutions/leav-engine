@@ -48,7 +48,7 @@ export default function ({
             const initializedParams = {...defaultParams, ...params};
 
             // Convert ID filter if any
-            if (!!initializedParams?.filters?.id) {
+            if (initializedParams?.filters?.id) {
                 initializedParams.filters.id = Array.isArray(initializedParams.filters.id)
                     ? initializedParams.filters.id.map(filterId =>
                           _generateKey({

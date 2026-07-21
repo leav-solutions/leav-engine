@@ -77,7 +77,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
         output_types: (attributeData, _, ctx) => attributeDomain.getOutputTypes({attrData: attributeData, ctx}),
         compute: (attributeData, _, ctx) => attributeDomain.doesCompute(attributeData),
         metadata_fields: async (attributeData: IAttribute, _, ctx) =>
-            !!attributeData.metadata_fields
+            attributeData.metadata_fields
                 ? Promise.all(
                       attributeData.metadata_fields.map(attrId =>
                           attributeDomain.getAttributeProperties({id: attrId, ctx}),

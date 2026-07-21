@@ -11,7 +11,7 @@ function VersionProfilesSelectorField({profiles, ...fieldProps}: IVersionProfile
     const {lang} = useLang();
     const options = profiles.map(l => ({key: l.id, value: l.id, text: localizedTranslation(l.label, lang)}));
 
-    if (!!fieldProps.clearable) {
+    if (fieldProps.clearable) {
         options.unshift({key: '', value: '', text: ''});
     }
 

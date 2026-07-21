@@ -23,7 +23,7 @@ export default function ({
 }: IDeps): UpdateTaskProgress {
     // return new percent of progress
     return async (taskId, currPercent, ctx, upData) => {
-        const newPercent = !!upData.position ? Math.ceil((upData.position.index / upData.position.total) * 100) : null;
+        const newPercent = upData.position ? Math.ceil((upData.position.index / upData.position.total) * 100) : null;
 
         if (!!upData.position || !!upData.translationKey) {
             await tasksManagerDomain.updateProgress(

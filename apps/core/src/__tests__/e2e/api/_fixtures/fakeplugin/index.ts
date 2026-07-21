@@ -85,7 +85,7 @@ export default function ({
             const {library, recordId, attribute} = ctx;
 
             let reverseLink: IAttribute;
-            if (!!attribute.reverse_link) {
+            if (attribute.reverse_link) {
                 reverseLink = await attributeDomain.getAttributeProperties({
                     id: attribute.reverse_link as string,
                     ctx,

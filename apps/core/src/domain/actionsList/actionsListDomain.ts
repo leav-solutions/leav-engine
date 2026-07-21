@@ -97,7 +97,7 @@ export default function ({'core.depsManager': depsManager, translator}: IActions
             let resultAction = nonEmptyValues;
 
             for (const action of actions) {
-                const params: ActionsListParams<string> = !!action.params
+                const params: ActionsListParams<string> = action.params
                     ? action.params.reduce((all, p) => {
                           all[p.name] = p.value;
                           return all;

@@ -403,7 +403,7 @@ export default function ({
         filters.pop();
 
         return filters.map((m: IMatch & {operator: Operator}) => {
-            if (!!m.operator) {
+            if (m.operator) {
                 return {operator: m.operator};
             }
 
@@ -736,7 +736,7 @@ export default function ({
                             type: TaskType.IMPORT_CONFIG,
                         },
                         priority: TaskPriority.MEDIUM,
-                        startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                        startAt: task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
                         ...(!!task?.callbacks && {callbacks: task.callbacks}),
                     },
                     ctx,
@@ -871,7 +871,7 @@ export default function ({
                             type: TaskType.IMPORT_DATA,
                         },
                         priority: TaskPriority.MEDIUM,
-                        startAt: !!task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
+                        startAt: task?.startAt ? task.startAt : Math.floor(Date.now() / 1000),
                         ...(!!task?.callbacks && {callbacks: task.callbacks}),
                     },
                     ctx,

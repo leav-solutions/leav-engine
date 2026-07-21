@@ -162,7 +162,7 @@ export default function ({
 
         const isValid = msgBodySchema.validate(msg);
 
-        if (!!isValid.error) {
+        if (isValid.error) {
             const errorMsg = isValid.error.details.map(e => e.message).join(', ');
             throw new Error(errorMsg);
         }
@@ -172,7 +172,7 @@ export default function ({
         for (const n of nodes) {
             records.push(n.record);
 
-            if (!!n.children) {
+            if (n.children) {
                 records = _extractChildrenFromNodes(n.children, records);
             }
         }
@@ -265,7 +265,7 @@ export default function ({
             // default path is root path
             let path = '.';
 
-            if (!!recordNode) {
+            if (recordNode) {
                 const libProperties = await libraryDomain.getLibraryProperties(recordNode.library, ctx);
 
                 if (libProperties.behavior !== LibraryBehavior.DIRECTORIES) {
@@ -342,7 +342,7 @@ export default function ({
             // default path is root path
             let path = '.';
 
-            if (!!recordNode) {
+            if (recordNode) {
                 const libProperties = await libraryDomain.getLibraryProperties(recordNode.library, ctx);
 
                 if (libProperties.behavior !== LibraryBehavior.DIRECTORIES) {

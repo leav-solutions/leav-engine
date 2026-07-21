@@ -58,7 +58,7 @@ export default function ({
 
         const isValid = msgBodySchema.validate(msg);
 
-        if (!!isValid.error) {
+        if (isValid.error) {
             const errorMsg = isValid.error.details.map(e => e.message).join(', ');
             throw new Error(errorMsg);
         }

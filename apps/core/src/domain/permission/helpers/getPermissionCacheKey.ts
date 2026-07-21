@@ -11,9 +11,9 @@ export default function (
     let k = `${PERMISSIONS_CACHE_HEADER}`;
 
     k += !!groupsId && groupsId?.length ? `:${groupsId.sort().join('+')}` : ':';
-    k += !!permissionType ? `:${permissionType}` : ':';
+    k += permissionType ? `:${permissionType}` : ':';
     k += !!applyTo && applyTo !== '' ? `:${applyTo}` : ':';
-    k += !!permissionAction ? `:${permissionAction}` : ':';
+    k += permissionAction ? `:${permissionAction}` : ':';
     k += !!key && key !== '' ? `:${key}` : ':';
 
     return k;

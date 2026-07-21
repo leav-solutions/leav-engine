@@ -88,7 +88,7 @@ export const checkEvent = async (event: string, path: string, params: IParamsExt
 };
 
 export const manageInode = async (path: string, stats?: Stats) => {
-    if (!!stats) {
+    if (stats) {
         // Get the inode from the stats (events: add, addDir, Change)
         return stats.ino;
     } else if (pathsTmp[path]) {
@@ -211,7 +211,7 @@ export const handleEvent = async (
 
             break;
         case 'move':
-            if (!!oldPath) {
+            if (oldPath) {
                 if (!oldPathAllowed && pathAllowed) {
                     // hidden to not hidden -> create new
                     await handleCreate(path, inode, amqp, isDirectory, hashFile);

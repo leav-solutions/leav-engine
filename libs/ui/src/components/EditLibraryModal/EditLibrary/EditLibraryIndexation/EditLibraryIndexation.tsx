@@ -83,7 +83,7 @@ function EditLibraryIndexation({library, indexationTask, readOnly}: IEditLibrary
 
     return (
         <Space style={{display: 'flex'}} direction="vertical">
-            {!!indexationTask ? (
+            {indexationTask ? (
                 <Alert
                     message={t('libraries.indexation_in_progress')}
                     type="warning"

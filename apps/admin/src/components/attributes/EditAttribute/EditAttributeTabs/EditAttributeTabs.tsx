@@ -65,7 +65,7 @@ function EditAttributeTabs({
         },
     ];
 
-    if (!!attribute) {
+    if (attribute) {
         const isMetadataAllowed = [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(
             attribute.type,
         );

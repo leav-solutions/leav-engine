@@ -103,7 +103,7 @@ export default function (): IActionsListFunction {
             const computedValues = values.map(elementValue => {
                 // Joi might convert value before testing. raw() force it to send back the value we passed in
                 const validationRes = formatSchema.validate(elementValue.payload);
-                if (!!validationRes.error) {
+                if (validationRes.error) {
                     errors.push({
                         errorType: Errors.FORMAT_ERROR,
                         attributeValue: elementValue,

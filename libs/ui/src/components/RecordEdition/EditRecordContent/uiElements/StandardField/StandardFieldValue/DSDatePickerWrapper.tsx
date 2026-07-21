@@ -71,14 +71,14 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
             return;
         }
 
-        if (!!datePickerDate) {
+        if (datePickerDate) {
             datePickerDate = setDateToUTCNoon(datePickerDate);
         }
 
         onChange(datePickerDate, ...antOnChangeParams);
 
         let dateToSave = '';
-        if (!!datePickerDate) {
+        if (datePickerDate) {
             dateToSave = String(datePickerDate.unix());
         }
 

@@ -115,7 +115,7 @@ export default function ({
                     if (properties?.linked_library) {
                         currReturnValue = values
                             .map(v =>
-                                !!v?.payload
+                                v?.payload
                                     ? {
                                           library: properties?.linked_library,
                                           recordId: v.payload.id,

@@ -62,7 +62,7 @@ const CreateRecordForm = ({
 
     const submitRef = useRef<RecordEdition.SubmitFunc | null>(null);
     useEffect(() => {
-        if (!!setSubmitFuncRef) {
+        if (setSubmitFuncRef) {
             setSubmitFuncRef(submitRef);
         }
     }, [setSubmitFuncRef]);

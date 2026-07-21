@@ -10,7 +10,7 @@ interface IAttributesSelectorFieldProps extends DropdownProps {
 
 const TreesSelectorField = ({trees, ...fieldProps}: IAttributesSelectorFieldProps): JSX.Element => {
     const availableLanguages = useLang().lang;
-    const options = !!trees
+    const options = trees
         ? trees.map(a => ({key: a.id, value: a.id, text: localizedLabel(a.label, availableLanguages)}))
         : [];
 
