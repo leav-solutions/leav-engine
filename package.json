@@ -29,7 +29,7 @@
         "commit": "cz"
     },
     "devDependencies": {
-        "@aristid/eslint-plugin": "2.2.1",
+        "@aristid/eslint-plugin": "2.3.0",
         "@commitlint/cli": "19.8.1",
         "@commitlint/config-conventional": "19.8.1",
         "commitizen": "4.3.2",
