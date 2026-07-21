@@ -9,17 +9,18 @@ export default defineConfig({
     // svgr: components import SVGs as React components; react: JSX automatic runtime + RTL.
     plugins: [svgr(), react()],
     test: {
-        environment: 'jsdom',
+        environment: 'happy-dom',
+        pool: 'threads',
         globals: true,
         setupFiles: ['./tests/setupTests.ts'],
         // app-studio uses both conventions: *.spec.{ts,tsx} (majority) and a few *.test.{ts,tsx}.
         include: ['src/**/*.{spec,test}.{ts,tsx}'],
         /*
-         * aristid-ds ships a UMD bundle and @uidotdev/usehooks / @babel/runtime are ESM-only;
-         * inline them so Vitest transforms them. antd is inlined to keep its ESM subpaths resolvable.
-         * Mirrors the babel-jest transformIgnorePatterns whitelist of the former jest config.
+         * aristid-ds ships a UMD bundle: inline it so Vitest transforms it.
+         * We no longer inline antd / @babel/runtime / @uidotdev/usehooks — Vitest resolves their
+         * ESM natively, and inlining antd only forced needless transforms.
          */
-        server: {deps: {inline: ['aristid-ds', 'antd', '@babel/runtime', '@uidotdev/usehooks']}},
+        server: {deps: {inline: ['aristid-ds']}},
         // Replaces ts-jest-mock-import-meta: expose the VITE_* vars the app reads via import.meta.env.
         env: {
             VITE_APPLICATION_ID: 'my-app',

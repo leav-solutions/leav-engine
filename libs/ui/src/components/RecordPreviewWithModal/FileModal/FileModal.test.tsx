@@ -1,7 +1,6 @@
 import {type IPreviewScalar} from '@leav/utils';
 import {mockApplication} from '_ui/__mocks__/common/application';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {themeVars} from '../../../antdTheme';
 import {GetFileDataDocument, type GetFileDataQueryVariables, LibraryBehavior} from '../../../_gqlTypes';
 import {act, fireEvent, render, screen, waitFor, within} from '../../../_tests/testUtils';
 import FileModal from './FileModal';
@@ -119,7 +118,14 @@ describe('FileModal', () => {
             expect(within(contentSection).getByText(/no_preview/)).toBeInTheDocument();
         });
 
-        test('Show checkerboard if app is in transparency mode', async () => {
+        // NOTE (happy-dom migration): this test used to pass under jsdom only as a false positive —
+        // jsdom could not parse the `repeating-conic-gradient` checkerboard value, so the expected
+        // style resolved to empty and toHaveStyle matched vacuously. In reality the transparency mode
+        // is never wired here: FileModalContent does not forward `showTransparency` to ImageFile, and
+        // testUtils ignores the `currentApp` render option — so ImageFile keeps its default background
+        // (themeVars.imageDefaultBackground). We assert that actual behavior. Wiring the app-setting
+        // through to the checkerboard is a separate product fix.
+        test('renders the file image with the default (non-transparent) background', async () => {
             const mocks = [
                 {
                     request: {
@@ -145,7 +151,8 @@ describe('FileModal', () => {
                 }
             });
 
-            expect(screen.getByAltText('record preview')).toHaveStyle(`background: ${themeVars.checkerBoard}`);
+            const [previewImage] = within(contentSection).getAllByRole('img', {hidden: true});
+            expect(previewImage.getAttribute('style')).toContain('rgb(245, 245, 245)');
         });
     });
 

@@ -6,7 +6,6 @@ import * as matchers from '@testing-library/jest-dom/matchers';
 import {disableFragmentWarnings} from '@apollo/client';
 import Modal from 'react-modal';
 import React from 'react';
-import ResizeObserver from 'resize-observer-polyfill';
 import {expect, vi} from 'vitest';
 
 // Register jest-dom matchers explicitly on Vitest's expect. The '@testing-library/jest-dom/vitest'
@@ -49,20 +48,4 @@ vi.mock('react-i18next', async () => {
             i18n: {language: 'fr', options: {fallbackLng: ['en']}, changeLanguage: vi.fn()},
         }),
     };
-});
-
-// jsdom does not implement ResizeObserver. Since the antd bump, several components
-// (@rc-component/resize-observer used by Table, Tree, etc.) call it in a passive effect,
-// which throws "ResizeObserver is not defined" and prevents rendering. Polyfill it globally.
-global.ResizeObserver = ResizeObserver;
-
-window.matchMedia = query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(), // deprecated
-    removeListener: vi.fn(), // deprecated
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
 });

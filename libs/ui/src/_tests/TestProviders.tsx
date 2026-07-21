@@ -1,6 +1,6 @@
 import {InMemoryCache, type InMemoryCacheConfig} from '@apollo/client';
 import {MockedProvider, type MockedResponse} from '@apollo/client/testing';
-import {AntApp, KitApp} from 'aristid-ds';
+import {AntApp, AntConfigProvider, KitApp} from 'aristid-ds';
 import {type PropsWithChildren} from 'react';
 import {MemoryRouter, type MemoryRouterProps} from 'react-router-dom';
 import {gqlPossibleTypes} from '_ui/gqlPossibleTypes';
@@ -27,7 +27,16 @@ export const TestProviders = ({children, mocks, cacheSettings, routerProps}: Pro
                 <MockedProvider mocks={allMocks} cache={mockCache}>
                     <MemoryRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}} {...routerProps}>
                         <AntApp>
-                            <KitApp>{children ?? <></>}</KitApp>
+                            {/*
+                             * Disable antd motion in tests: happy-dom never fires the CSS
+                             * transition/animation end events, so overlays (Dropdown, Select…) would
+                             * stay stuck in their "appear-start" state (opacity: 0) and be reported as
+                             * not visible by toBeVisible. Setting motion to false makes them render in
+                             * their final state synchronously.
+                             */}
+                            <AntConfigProvider theme={{token: {motion: false}}}>
+                                <KitApp>{children ?? <></>}</KitApp>
+                            </AntConfigProvider>
                         </AntApp>
                     </MemoryRouter>
                 </MockedProvider>

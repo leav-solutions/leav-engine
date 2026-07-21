@@ -7,6 +7,6 @@ describe('TextBlock', () => {
         render(<TextBlock settings={{content: '**test_content**'}} />);
 
         expect(screen.getByTestId('text-block-content')).toHaveTextContent('test_content');
-        expect(screen.getByText('test_content')).toHaveStyle({fontWeight: 'bold'});
+        expect(screen.getByText('test_content').tagName).toBe('STRONG');
     });
 });

@@ -220,7 +220,9 @@ describe('DSRichTextWrapper', () => {
 
             const input = screen.getByRole('textbox');
             await user.click(input);
-            await user.clear(input);
+            // The rich text field is a contenteditable; user.clear() cannot select its content under
+            // happy-dom (Selection API on contenteditable is incomplete). Select-all + Delete instead.
+            await user.type(input, '{Control>}a{/Control}{Delete}');
             await user.click(document.body);
 
             expect(mockOnChange).toHaveBeenCalled();
@@ -269,7 +271,9 @@ describe('DSRichTextWrapper', () => {
 
                 const input = screen.getByRole('textbox');
                 await user.click(input);
-                await user.clear(input);
+                // The rich text field is a contenteditable; user.clear() cannot select its content
+                // under happy-dom (Selection API on contenteditable is incomplete). Select-all + Delete.
+                await user.type(input, '{Control>}a{/Control}{Delete}');
                 await user.click(document.body);
 
                 expect(mockOnChange).toHaveBeenCalledWith(newValue);
