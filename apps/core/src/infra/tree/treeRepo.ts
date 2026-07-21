@@ -681,8 +681,16 @@ export default function ({
             }> = await dbService.execute({query, ctx});
 
             return res.reverse().map(elem => {
-                elem.record.library = elem.record?._id ? getLibraryFromDbId(elem.record._id) : null;
-                return {id: elem.id, order: elem.order, record: dbUtils.cleanup(elem.record)};
+                return {
+                    id: elem.id,
+                    order: elem.order,
+                    record: elem.record
+                        ? dbUtils.cleanup({
+                              ...elem.record,
+                              library: getLibraryFromDbId(elem.record._id),
+                          })
+                        : null,
+                };
             });
         },
         async getLinkedRecords({treeId, attribute, nodeId, ctx}): Promise<IRecord[]> {
