@@ -65,7 +65,7 @@
         "happy-dom": "20.11.0",
         "lightningcss": "1.32.0",
         "styled-components": "6.0.8",
-        "typescript": "6.0.3",
+        "typescript": "7.0.2",
         "vite": "7.3.6",
         "vite-plugin-dynamic-base": "1.4.1",
         "vite-plugin-svgr": "4.5.0",

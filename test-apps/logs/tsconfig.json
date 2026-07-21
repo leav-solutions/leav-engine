@@ -6,7 +6,6 @@
         "isolatedModules": true,
         "strict": true,
         "strictNullChecks": true,
-        "skipLibCheck": true,
-        "suppressImplicitAnyIndexErrors": false
+        "skipLibCheck": true
     }
 }
