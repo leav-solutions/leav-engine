@@ -1,5 +1,6 @@
 import {type IAttribute} from './attribute';
 import {type IQueryInfos} from './queryInfos';
+import {type IRecord} from './record';
 
 export type SDOAction = 'CREATE' | 'UPDATE';
 
@@ -68,6 +69,12 @@ export interface ISDOMappingLibrary {
         [sdoAttributePath: string]: ISDOMappingAttribute;
     };
     additionalLibraryTriggers?: ISDOAdditionalLibraryTrigger[];
+    /**
+     * Name of a plugin-registered function (see registerExtendSDOFunctions) invoked at the end of the
+     * SDO build to extend the whole SDO — e.g. inject aggregated data the generic attribute mapping
+     * can't express. Called with the full record and the built SDO.
+     */
+    extendSDOFunction?: string;
 }
 
 export interface ISDOMapping {
@@ -93,3 +100,11 @@ export interface ISDOSettings {
 export type ISDOMappingFunction = (value: unknown, attributeProps: IAttribute, ctx: IQueryInfos) => Promise<unknown>;
 
 export type ISDOMappingFunctions<Keys extends string = string> = Record<Keys, ISDOMappingFunction>;
+
+/**
+ * Plugin function extending a whole SDO export. Receives the full LEAV record and the
+ * SDO built from the generic attribute mapping, returns the (possibly extended) SDO.
+ */
+export type IExtendSDOFunction = (record: IRecord, sdo: ISDO, ctx: IQueryInfos) => Promise<ISDO>;
+
+export type IExtendSDOFunctions<Keys extends string = string> = Record<Keys, IExtendSDOFunction>;

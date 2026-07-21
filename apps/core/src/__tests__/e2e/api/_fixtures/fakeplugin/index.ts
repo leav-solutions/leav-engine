@@ -13,7 +13,16 @@ import {type INotificationDomain} from '../../../../../domain/notification/notif
 import {TaskPriority} from '../../../../../_types/tasksManager';
 import {type TTrpc} from '../../../../../app/trpc/trpcApp';
 import {type IEventsManagerDomain} from '../../../../../domain/eventsManager/eventsManagerDomain';
+import {type IRecordDomain} from '../../../../../domain/record/recordDomain';
+import {type ISDO} from '../../../../../_types/sdo';
+import {type IRecord, AttributeCondition} from '../../../../../_types/record';
+import {type IQueryInfos} from '../../../../../_types/queryInfos';
 import {fakePluginAutomationAction} from './domain/fakeAutomationAction';
+import {
+    SDO_EXPORTS_EXTEND_FUNCTION_NAME,
+    SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
+    SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID,
+} from '../../sdo/sdoConfig';
 
 interface IDeps {
     translator: i18n;
@@ -22,6 +31,7 @@ interface IDeps {
     'core.domain.tasksManager': ITasksManagerDomain;
     'core.domain.notification': INotificationDomain;
     'core.domain.eventsManager': IEventsManagerDomain;
+    'core.domain.record': IRecordDomain;
     'fakeplugin.domain': IFakeDomain;
 }
 
@@ -72,8 +82,36 @@ export default function ({
     'core.domain.tasksManager': tasksManagerDomain,
     'core.domain.notification': notificationDomain,
     'core.domain.eventsManager': eventsManagerDomain,
+    'core.domain.record': recordDomain,
     'fakeplugin.domain': fakeDomain,
 }: IDeps): IPluginInitModule {
+    const _extendSdoWithTriggers = async (record: IRecord, sdo: ISDO, ctx: IQueryInfos): Promise<ISDO> => {
+        const {list} = await recordDomain.find({
+            params: {
+                library: SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
+                filters: [
+                    {
+                        field: SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID,
+                        value: record.id,
+                        condition: AttributeCondition.EQUAL,
+                    },
+                ],
+            },
+            ctx,
+        });
+
+        return {
+            ...sdo,
+            content: {
+                ...sdo.content,
+                info: {
+                    ...((sdo.content.info as Record<string, unknown>) ?? {}),
+                    triggeredBy: list.map(triggerRecord => triggerRecord.uuid),
+                },
+            },
+        };
+    };
+
     const _fakeReplaceValueAction = {
         id: 'fakeReplaceValue',
         name: 'replace saved value',
@@ -227,6 +265,10 @@ export default function ({
             extensionPoints.registerStart(async () => fakeDomain.startPlugin());
 
             extensionPoints.registerAutomationAction(fakePluginAutomationAction);
+
+            extensionPoints.registerExtendSDOFunctions({
+                [SDO_EXPORTS_EXTEND_FUNCTION_NAME]: _extendSdoWithTriggers,
+            });
         },
     };
 }

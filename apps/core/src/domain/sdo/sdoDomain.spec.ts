@@ -710,6 +710,77 @@ describe('sdoDomain', () => {
             });
         });
 
+        it('[+] Should extend the whole SDO with a registered extend SDO function', async () => {
+            jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
+            mockRecordDomain.find.mockResolvedValueOnce({
+                list: [{id: 'entity', ...mockRecordSystemData}],
+            } as unknown as IListWithCursor<IRecord>);
+            mockRecordDomain.getRecordFieldValue.mockResolvedValueOnce(mockStandardAttributeRecordFieldValues);
+            mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                [uuidAttribute, {id: 'simpleAttribute', type: AttributeTypes.SIMPLE}].find(a => a.id === attributePath),
+            );
+
+            const extendFunction = vi.fn(async (record: IRecord, sdo: ISDO) => ({
+                ...sdo,
+                content: {...sdo.content, extendedFrom: record.id},
+            }));
+            _sdoDomain.registerExtendSDOFunctions({extendSdo: extendFunction});
+
+            const mappingWithExtendFunction: ISDOMapping = {
+                [mockSDO.name]: {
+                    ...mockSDOMapping[mockSDO.name],
+                    extendSDOFunction: 'extendSdo',
+                    sdoAttributes: {
+                        simpleMapping: {leavAttributeId: 'simpleAttribute', valueRequired: false, format: 'string'},
+                    },
+                },
+            };
+
+            const sdo = await _sdoDomain.getRecordSDO(
+                mockSDOMapping[mockSDO.name].leavLibraryId,
+                'entity',
+                mappingWithExtendFunction,
+                'CREATE',
+                mockSystemQueryContext,
+            );
+
+            // The function receives the full record and the SDO built from the generic mapping.
+            expect(extendFunction).toHaveBeenCalledWith(
+                expect.objectContaining({id: 'entity'}),
+                expect.objectContaining({name: mockSDO.name, action: 'CREATE'}),
+                mockSystemQueryContext,
+            );
+            expect((sdo as ISDO).content).toMatchObject({extendedFrom: 'entity'});
+        });
+
+        it('[-] Should throw when extendSDOFunction is referenced but not registered', async () => {
+            jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
+            mockRecordDomain.find.mockResolvedValueOnce({
+                list: [{id: 'entity', ...mockRecordSystemData}],
+            } as unknown as IListWithCursor<IRecord>);
+            mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                [uuidAttribute].find(a => a.id === attributePath),
+            );
+
+            const mappingWithUnknownFunction: ISDOMapping = {
+                [mockSDO.name]: {
+                    ...mockSDOMapping[mockSDO.name],
+                    extendSDOFunction: 'notRegistered',
+                    sdoAttributes: {},
+                },
+            };
+
+            await expect(
+                _sdoDomain.getRecordSDO(
+                    mockSDOMapping[mockSDO.name].leavLibraryId,
+                    'entity',
+                    mappingWithUnknownFunction,
+                    'CREATE',
+                    mockSystemQueryContext,
+                ),
+            ).rejects.toThrow('Unknown extend SDO function');
+        });
+
         it('[-] Should throw error when attribute is not in LEAV', async () => {
             mockRecordDomain.find.mockResolvedValueOnce({
                 list: [{id: 'entity', attribute: 'attribute value'}],

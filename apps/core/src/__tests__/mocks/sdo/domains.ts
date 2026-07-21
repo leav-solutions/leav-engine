@@ -10,6 +10,8 @@ export const mockSdoDomain: Mockify<ISDODomain> = {
     getRecordSDO: vi.fn(),
     resolveAdditionalLibraryTriggerTargets: vi.fn(),
     sendLog: vi.fn(),
+    registerSDOExportMappingFunctions: vi.fn(),
+    registerExtendSDOFunctions: vi.fn(),
 };
 
 export const mockImportDomain: Mockify<ISDOImportDomain> = {
