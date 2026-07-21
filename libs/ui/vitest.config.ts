@@ -3,17 +3,17 @@ import {defineConfig} from 'vitest/config';
 
 export default defineConfig({
     test: {
-        environment: 'jsdom',
+        environment: 'happy-dom',
+        pool: 'threads',
         globals: true,
         setupFiles: ['./src/_tests/setupTests.ts'],
         include: ['src/**/*.test.{ts,tsx}'],
         /*
-         * aristid-ds ships a UMD bundle and @uidotdev/usehooks / @babel/runtime are ESM-only;
-         * inline them so Vitest transforms them. antd is inlined as well to keep its ESM subpaths
-         * resolvable. @ant-design / @rc-component / rc-* / color-convert / color-name (whitelisted
-         * for babel-jest) are NOT needed here: Vitest handles their ESM natively.
+         * aristid-ds ships a UMD bundle: inline it so Vitest transforms it.
+         * We no longer inline antd / @babel/runtime / @uidotdev/usehooks — Vitest resolves their
+         * ESM natively, and inlining antd only forced needless transforms.
          */
-        server: {deps: {inline: ['aristid-ds', 'antd', '@babel/runtime', '@uidotdev/usehooks']}},
+        server: {deps: {inline: ['aristid-ds']}},
         testTimeout: 90_000,
         typecheck: {tsconfig: './tsconfig.spec.json'},
     },

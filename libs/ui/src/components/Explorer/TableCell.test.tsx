@@ -260,19 +260,21 @@ describe('TableCell component', () => {
 
                 expect(_getTagRoot('Light')).toHaveStyle({backgroundColor: '#f8e58c'});
                 expect(_getTagRoot('Light')).not.toHaveClass('kit-tag-primary');
-                expect(screen.getByText('Light')).toHaveStyle({
-                    '--kit-typography-color': 'var(--general-colors-neutral-black)',
-                });
+                // Read the literal custom property from the inline style: happy-dom's
+                // getComputedStyle (used by toHaveStyle) resolves var() to its computed value.
+                expect(screen.getByText('Light').style.getPropertyValue('--kit-typography-color')).toBe(
+                    'var(--general-colors-neutral-black)',
+                );
 
                 expect(_getTagRoot('Dark')).toHaveStyle({backgroundColor: '#000080'});
-                expect(screen.getByText('Dark')).toHaveStyle({
-                    '--kit-typography-color': 'var(--general-colors-neutral-white)',
-                });
+                expect(screen.getByText('Dark').style.getPropertyValue('--kit-typography-color')).toBe(
+                    'var(--general-colors-neutral-white)',
+                );
 
                 expect(_getTagRoot('Default')).toHaveClass('kit-tag-primary');
-                expect(screen.getByText('Default')).toHaveStyle({
-                    '--kit-typography-color': 'var(--general-colors-neutral-white)',
-                });
+                expect(screen.getByText('Default').style.getPropertyValue('--kit-typography-color')).toBe(
+                    'var(--general-colors-neutral-white)',
+                );
             });
 
             test('For tree attribute, colors the tag and contrasts the text with the identity card color', async () => {
@@ -292,19 +294,21 @@ describe('TableCell component', () => {
 
                 expect(_getTagRoot('Light')).toHaveStyle({backgroundColor: '#f8e58c'});
                 expect(_getTagRoot('Light')).not.toHaveClass('kit-tag-primary');
-                expect(screen.getByText('Light')).toHaveStyle({
-                    '--kit-typography-color': 'var(--general-colors-neutral-black)',
-                });
+                // Read the literal custom property from the inline style: happy-dom's
+                // getComputedStyle (used by toHaveStyle) resolves var() to its computed value.
+                expect(screen.getByText('Light').style.getPropertyValue('--kit-typography-color')).toBe(
+                    'var(--general-colors-neutral-black)',
+                );
 
                 expect(_getTagRoot('Dark')).toHaveStyle({backgroundColor: '#000080'});
-                expect(screen.getByText('Dark')).toHaveStyle({
-                    '--kit-typography-color': 'var(--general-colors-neutral-white)',
-                });
+                expect(screen.getByText('Dark').style.getPropertyValue('--kit-typography-color')).toBe(
+                    'var(--general-colors-neutral-white)',
+                );
 
                 expect(_getTagRoot('Default')).toHaveClass('kit-tag-primary');
-                expect(screen.getByText('Default')).toHaveStyle({
-                    '--kit-typography-color': 'var(--general-colors-neutral-white)',
-                });
+                expect(screen.getByText('Default').style.getPropertyValue('--kit-typography-color')).toBe(
+                    'var(--general-colors-neutral-white)',
+                );
             });
         });
     });

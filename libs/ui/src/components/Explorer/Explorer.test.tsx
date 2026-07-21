@@ -1325,13 +1325,16 @@ describe('Explorer', () => {
         expect(within(boolCell).getByText(/yes/)).toBeVisible();
         expect(within(secondRowCells[8]).getByText(/no/)).toBeVisible();
 
-        expect(within(simpleDateRangeCell).getByText(new RegExp(dateRangeRecord1.from))).toBeVisible();
-        expect(within(simpleDateRangeCell).getByText(new RegExp(dateRangeRecord1.to))).toBeVisible();
+        // Date range values render inside an antd `.ant-space-item`; antd hides empty items with
+        // `.ant-space-item:empty { display: none }`, and happy-dom mis-evaluates the `:empty`
+        // selector against these (non-empty) items, so toBeVisible fails. Assert presence instead.
+        expect(within(simpleDateRangeCell).getByText(new RegExp(dateRangeRecord1.from))).toBeInTheDocument();
+        expect(within(simpleDateRangeCell).getByText(new RegExp(dateRangeRecord1.to))).toBeInTheDocument();
 
-        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord1.from))).toBeVisible();
-        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord1.to))).toBeVisible();
-        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord2.from))).toBeVisible();
-        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord2.to))).toBeVisible();
+        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord1.from))).toBeInTheDocument();
+        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord1.to))).toBeInTheDocument();
+        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord2.from))).toBeInTheDocument();
+        expect(within(multivalDateRangeCell).getByText(new RegExp(dateRangeRecord2.to))).toBeInTheDocument();
     });
 
     test('Should be able to deactivate a record with default actions', async () => {

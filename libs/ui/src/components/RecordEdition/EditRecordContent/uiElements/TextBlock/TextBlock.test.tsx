@@ -7,6 +7,6 @@ describe('TextBlock', () => {
         render(<TextBlock {...mockCommonFormElementProps} element={mockFormElementTextBlock} />);
 
         expect(screen.getByText(/text content/i)).toBeInTheDocument();
-        expect(screen.getByText('text content')).toHaveStyle('font-weight: bold');
+        expect(screen.getByText('text content').tagName).toBe('STRONG');
     });
 });

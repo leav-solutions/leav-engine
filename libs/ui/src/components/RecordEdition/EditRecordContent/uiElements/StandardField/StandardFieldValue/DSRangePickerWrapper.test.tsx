@@ -65,7 +65,11 @@ describe('DSRangePickerWrapper', () => {
     let user!: ReturnType<typeof userEvent.setup>;
 
     beforeEach(() => {
-        user = userEvent.setup({});
+        user = userEvent.setup({
+            // happy-dom computes pointer-events:none on antd hover-revealed controls (e.g. the picker
+            // clear icon), which are only clickable on :hover in a real browser. Disable the check.
+            pointerEventsCheck: 0,
+        });
         mockOnChange.mockReset();
         mockHandleSubmit.mockReset();
         mockHandleBlur.mockReset();

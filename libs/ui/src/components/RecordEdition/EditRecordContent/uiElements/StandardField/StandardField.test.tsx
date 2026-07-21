@@ -331,7 +331,7 @@ describe('StandardField', () => {
 
                 const deleteAllButton = screen.getByRole('button', {name: 'record_edition.delete_all'});
                 await userEvent.click(deleteAllButton);
-                expect(screen.getByText('record_edition.delete_all_values')).toBeVisible();
+                expect(await screen.findByText('record_edition.delete_all_values')).toBeVisible();
                 const cancelDeleteAllButton = screen.getByText('global.cancel');
                 await userEvent.click(cancelDeleteAllButton);
                 expect(mockHandleMultipleValues).not.toHaveBeenCalled();
@@ -358,7 +358,7 @@ describe('StandardField', () => {
 
                 const deleteAllButton = screen.getByRole('button', {name: 'record_edition.delete_all'});
                 await userEvent.click(deleteAllButton);
-                expect(screen.getByText('record_edition.delete_all_values')).toBeVisible();
+                expect(await screen.findByText('record_edition.delete_all_values')).toBeVisible();
                 const confirmDeleteAllButton = screen.getByText('global.confirm');
                 await userEvent.click(confirmDeleteAllButton);
                 expect(mockHandleMultipleValues).toHaveBeenCalledWith(

@@ -5,7 +5,8 @@ import {defineConfig} from 'vitest/config';
 export default defineConfig({
     plugins: [svgr()],
     test: {
-        environment: 'jsdom',
+        environment: 'happy-dom',
+        pool: 'threads',
         globals: true,
         setupFiles: ['./src/__tests__/setupTests.ts'],
         include: ['src/**/*.test.{ts,tsx}'],
