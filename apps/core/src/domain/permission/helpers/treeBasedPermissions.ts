@@ -90,7 +90,7 @@ export default function (deps: ITreeBasedPermissionsDeps): ITreeBasedPermissionH
     ): Promise<boolean> => {
         const {type, action, applyTo, treeValues, permissions_conf, getDefaultPermission} = params;
 
-        const userGroupsPaths = !!ctx.groupsId
+        const userGroupsPaths = ctx.groupsId
             ? await Promise.all(
                   ctx.groupsId.map(async groupId =>
                       elementAncestorsHelper.getCachedElementAncestors({

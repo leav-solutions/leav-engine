@@ -95,7 +95,7 @@ const TasksList = ({
                                 return 0;
                             })
                             .map(task => {
-                                const actions = !!actionsBtn ? actionsBtn(task) : null;
+                                const actions = actionsBtn ? actionsBtn(task) : null;
 
                                 return (
                                     <Table.Row

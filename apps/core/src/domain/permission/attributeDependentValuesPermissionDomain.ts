@@ -86,7 +86,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
                 recordId,
             );
 
-            const userGroupsPaths = !!ctx.groupsId
+            const userGroupsPaths = ctx.groupsId
                 ? await Promise.all(
                       ctx.groupsId.map(async groupId =>
                           elementAncestorsHelper.getCachedElementAncestors({
@@ -238,7 +238,7 @@ export default function (deps: IRecordAttributePermissionDomainDeps): IAttribute
                 });
             }
 
-            const userGroupsPaths = !!ctx.groupsId
+            const userGroupsPaths = ctx.groupsId
                 ? await Promise.all(
                       ctx.groupsId.map(async groupId =>
                           elementAncestorsHelper.getCachedElementAncestors({

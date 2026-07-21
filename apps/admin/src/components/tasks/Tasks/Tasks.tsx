@@ -78,7 +78,7 @@ const Tasks = (): JSX.Element => {
         task.status === TaskStatus.CANCELED || task.status === TaskStatus.DONE || task.status === TaskStatus.FAILED;
 
     useEffect(() => {
-        if (!!tasks) {
+        if (tasks) {
             setInProgressTasks(
                 Object.values(tasks)
                     .filter(_isInProgressTask)
@@ -161,7 +161,7 @@ const Tasks = (): JSX.Element => {
                             'archive',
                         ]}
                         actionsBtn={task => [
-                            ...(!!task.link
+                            ...(task.link
                                 ? [
                                       <Button
                                           basic

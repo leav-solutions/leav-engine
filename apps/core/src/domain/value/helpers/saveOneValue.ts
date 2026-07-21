@@ -78,7 +78,7 @@ export default async (
     }
 
     let reverseLink: IAttribute;
-    if (!!attribute.reverse_link) {
+    if (attribute.reverse_link) {
         reverseLink = await deps.attributeDomain.getAttributeProperties({
             id: attribute.reverse_link as string,
             ctx,

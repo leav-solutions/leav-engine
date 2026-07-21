@@ -162,7 +162,7 @@ export function getFieldError<T>(
         inputFieldError = get(inputErrors, fieldName, '') as string;
     }
 
-    if (!!serverErrors) {
+    if (serverErrors) {
         serverFieldError = get(serverErrors, fieldName, '');
     }
 

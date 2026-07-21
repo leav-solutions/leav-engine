@@ -147,7 +147,7 @@ function CreateRecordFormContainer({
                 variables: {
                     library: library.id,
                     recordId: idRecord,
-                    version: !!valueVersion ? versionObjToGraphql(valueVersion) : null,
+                    version: valueVersion ? versionObjToGraphql(valueVersion) : null,
                     values: submittedValues,
                 },
             });

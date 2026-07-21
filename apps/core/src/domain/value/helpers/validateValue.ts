@@ -45,7 +45,7 @@ const _validateLinkedRecord = async (
         ctx,
     });
 
-    return !!record
+    return record
         ? {isValid: true}
         : {
               isValid: false,
@@ -199,7 +199,7 @@ export default async (params: IValidateValueParams): Promise<ErrorFieldDetail<IS
         }
     }
 
-    if (!!value.version) {
+    if (value.version) {
         const badElements = await _validateVersion(value, deps, ctx);
         if (Object.keys(badElements).length) {
             for (const badVersion of Object.keys(badElements)) {

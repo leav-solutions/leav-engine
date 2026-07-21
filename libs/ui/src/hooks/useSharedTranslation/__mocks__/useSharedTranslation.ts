@@ -10,7 +10,7 @@ const mockI18n: Mockify<i18n> = {
     changeLanguage: vi.fn(),
 };
 
-const mockT = (arg, variables) => `${[arg, ...(!!variables ? Object.values(variables) : [])].join('|')}`;
+const mockT = (arg, variables) => `${[arg, ...(variables ? Object.values(variables) : [])].join('|')}`;
 
 export default () => {
     const mock = {t: mockT as TFunction<any>, i18n: mockI18n as i18n, ready: true};

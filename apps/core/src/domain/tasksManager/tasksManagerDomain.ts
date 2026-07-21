@@ -287,7 +287,7 @@ export default function ({
 
         const isValid = msgBodySchema.validate(msg);
 
-        if (!!isValid.error) {
+        if (isValid.error) {
             const errorMsg = isValid.error.details.map(e => e.message).join(', ');
             throw new Error(errorMsg);
         }
@@ -428,7 +428,7 @@ export default function ({
 
         if (!task) {
             throw new Error('Task not found');
-        } else if (!!task.workerId) {
+        } else if (task.workerId) {
             throw new Error(
                 `Cannot delete: task ${id} is still attached to worker ${task.workerId}, status ${task.status}.`,
             );

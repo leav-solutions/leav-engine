@@ -358,7 +358,7 @@ export const validateConfig = (conf: IConfig) => {
 
     const isValid = configSchema.validate(conf);
 
-    if (!!isValid.error) {
+    if (isValid.error) {
         const errorMsg = isValid.error.details.map(e => e.message).join(', ');
         throw new Error(errorMsg);
     }

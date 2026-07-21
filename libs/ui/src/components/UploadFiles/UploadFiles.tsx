@@ -55,7 +55,7 @@ function UploadFiles({
     const [selectedDir, setSelectedDir] = useState<{path: string; name: string} | null>();
     const [files, setFiles] = useState<Array<UploadFile & {replace?: boolean}>>([]);
     const [status, setStatus] = useState<StepsProps['status']>('process');
-    const [currentStep, setCurrentStep] = useState(!!defaultSelectedNode ? 1 : 0);
+    const [currentStep, setCurrentStep] = useState(defaultSelectedNode ? 1 : 0);
     const [filesTreeId, setFilesTreeId] = useState<string>();
     const [directoriesLibraryId, setdirectoriesLibraryId] = useState<string>();
     const [errorMsg, setErrorMsg] = useState<string>();

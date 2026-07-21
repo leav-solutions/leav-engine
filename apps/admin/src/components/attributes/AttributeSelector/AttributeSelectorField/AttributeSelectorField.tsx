@@ -13,7 +13,7 @@ function AttributeSelectorField({attributes = [], ...fieldProps}: IAttributeSele
         .map(l => ({key: l.id, value: l.id, text: localizedLabel(l.label, availableLanguages)}))
         .sort((a, b) => a.text.localeCompare(b.text));
 
-    if (!!fieldProps.clearable) {
+    if (fieldProps.clearable) {
         options.unshift({key: '', value: '', text: ''});
     }
 

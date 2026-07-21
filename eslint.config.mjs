@@ -33,7 +33,6 @@ export default defineConfig([
         rules: {
             // eslint / typescript-eslint recommended
             '@typescript-eslint/no-unused-vars': 'off',
-            'no-extra-boolean-cast': 'off',
             'no-case-declarations': 'off',
             'no-async-promise-executor': 'off',
             // react recommended

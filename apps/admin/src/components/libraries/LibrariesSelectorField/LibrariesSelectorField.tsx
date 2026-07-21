@@ -10,7 +10,7 @@ interface ILibrariesSelectorFieldProps extends DropdownProps {
 
 const LibrariesSelectorField = ({loading, libraries, ...fieldProps}: ILibrariesSelectorFieldProps): JSX.Element => {
     const availableLanguages = useLang().lang;
-    const options = !!libraries
+    const options = libraries
         ? libraries.map(l => ({key: l.id, value: l.id, text: localizedLabel(l.label, availableLanguages)}))
         : [];
 

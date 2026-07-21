@@ -42,7 +42,7 @@ export default function ({
             let results: IDbDocument[];
             if (recordId) {
                 queryParts.push(aql`FILTER (r.id == ${recordId})`);
-            } else if (!!fileInode) {
+            } else if (fileInode) {
                 queryParts.push(aql`FILTER (r.${FilesAttributes.INODE} == ${fileInode}
                         OR (r.${FilesAttributes.FILE_PATH} == ${filePath} AND r.${FilesAttributes.FILE_NAME} == ${fileName})
                     )`);

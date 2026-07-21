@@ -262,7 +262,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                 case AttributeFormat.boolean:
                     const valueToDisplay = value.valuePayload ? t('global.yes') : t('global.no');
                     content = (
-                        <KitTag key={attributeProperties.id} type={!!value.valuePayload ? 'primary' : 'neutral'}>
+                        <KitTag key={attributeProperties.id} type={value.valuePayload ? 'primary' : 'neutral'}>
                             <KitTypography.Text>{valueToDisplay}</KitTypography.Text>
                         </KitTag>
                     );

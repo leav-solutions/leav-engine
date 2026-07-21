@@ -111,7 +111,7 @@ function Container({elementData, state, dispatch}: IContainerProps): JSX.Element
 
     return (
         <ContainerWrapper $isOver={isOver} $isRootContainer={elementData.id === defaultContainerId} ref={dropRef}>
-            {!!content.length ? (
+            {content.length ? (
                 content.map((c, i) => (
                     <FormElementWrapper key={c.id} element={c} index={i} state={state} dispatch={dispatch} />
                 ))

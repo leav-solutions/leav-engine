@@ -41,7 +41,7 @@ export default function ({
             {type, applyTo, action, getDefaultGlobalPermission = defaultPermHelper.getDefaultPermission},
             ctx,
         ): Promise<boolean> {
-            const userGroupsPaths = !!ctx.groupsId
+            const userGroupsPaths = ctx.groupsId
                 ? await Promise.all(
                       ctx.groupsId.map(async groupId =>
                           elementAncestorsHelper.getCachedElementAncestors({

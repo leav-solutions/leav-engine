@@ -291,7 +291,7 @@ const valueDomain = function ({
             });
 
             v = values.filter(val => val.id_value === value.id_value).pop();
-        } else if (!!value?.id_value) {
+        } else if (value?.id_value) {
             // Multi-valued attribute, general case: the caller must identify which value by id.
             v = await valueRepo.getValueById({
                 library,
@@ -457,7 +457,7 @@ const valueDomain = function ({
         }
 
         let reverseLink: IAttribute | undefined;
-        if (!!attributeProps.reverse_link) {
+        if (attributeProps.reverse_link) {
             reverseLink = await attributeDomain.getAttributeProperties({
                 id: attributeProps.reverse_link as string,
                 ctx,
@@ -1095,7 +1095,7 @@ const valueDomain = function ({
             }
 
             let reverseLink: IAttribute | undefined;
-            if (!!attribute.reverse_link) {
+            if (attribute.reverse_link) {
                 reverseLink = await attributeDomain.getAttributeProperties({
                     id: attribute.reverse_link as string,
                     ctx,
@@ -1129,7 +1129,7 @@ const valueDomain = function ({
                             .filter(v => v.value !== null)
                             .map(v => (v.value as IRecord).id);
 
-                        if (!!joinAttributeProps.reverse_link) {
+                        if (joinAttributeProps.reverse_link) {
                             joinAttributeProps.reverse_link = await attributeDomain.getAttributeProperties({
                                 id: joinAttributeProps.reverse_link as string,
                                 ctx,

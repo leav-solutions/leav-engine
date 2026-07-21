@@ -45,7 +45,7 @@ export default function ({
         const attr = await attributeDomain.getAttributeProperties({id: attribute, ctx});
 
         let reverseLink: IAttribute;
-        if (!!attr.reverse_link) {
+        if (attr.reverse_link) {
             reverseLink = await attributeDomain.getAttributeProperties({id: attr.reverse_link as string, ctx});
         }
 

@@ -24,7 +24,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
     const [selectedNodeKey, setSelectedNodeKey] = useState<string>(defaultSelectedKey);
     const [directoryName, setDirectoryName] = useState<string>();
     const [status, setStatus] = useState<StepsProps['status']>('wait');
-    const [currentStep, setCurrentStep] = useState(!!defaultSelectedKey ? 1 : 0);
+    const [currentStep, setCurrentStep] = useState(defaultSelectedKey ? 1 : 0);
     const [treeId, setTreeId] = useState<string>();
     const {modal} = App.useApp();
 

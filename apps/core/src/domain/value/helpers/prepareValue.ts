@@ -26,7 +26,7 @@ export default async (params: IPrepareValueParams): Promise<ISaveValue[]> => {
     const {attributeProps, value, library, recordId, deps, ctx} = params;
 
     // Execute actions list. Output value might be different from input value
-    const preparedValues = !!attributeProps.actions_list?.saveValue
+    const preparedValues = attributeProps.actions_list?.saveValue
         ? ((await deps.actionsListDomain.runActionsList(attributeProps.actions_list.saveValue, [value], {
               ...ctx,
               attribute: attributeProps,
