@@ -1,33 +1,16 @@
-import {type IAmqpService} from '@leav/message-broker';
-import type * as amqp from 'amqplib';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type ILibraryDomain} from '../library/libraryDomain';
 import {type IRecordDomain} from '../record/recordDomain';
 import {type IConfig} from '../../_types/config';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import indexationManager, {type IIndexationManagerDomainDeps} from './indexationManagerDomain';
+import {type IIndexationManagerRabbitMQ} from '../../infra/indexationManager/indexationManagerRabbitMQ';
 import {type IIndexationService} from '../../infra/indexation/indexationService';
 import {AttributeCondition} from '../../_types/record';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type ILogger} from '@leav/logger';
 import {type ToAny} from '../../utils/utils';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
-
-const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
-    assertExchange: vi.fn(),
-    checkExchange: vi.fn(),
-    assertQueue: vi.fn(),
-    bindQueue: vi.fn(),
-    consume: vi.fn(),
-    publish: vi.fn(),
-    waitForConfirms: vi.fn(),
-    prefetch: vi.fn(),
-};
-
-const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
-    close: vi.fn(),
-    createConfirmChannel: vi.fn().mockReturnValue(mockAmqpChannel),
-};
 
 const mockEventsManager: Mockify<IEventsManagerDomain> = {
     sendPubSubEvent: global.__mockPromise(),
@@ -43,7 +26,7 @@ const mockLogger: Mockify<ILogger> = {
 };
 
 const depsBase: ToAny<IIndexationManagerDomainDeps> = {
-    'core.infra.amqpService': vi.fn(),
+    'core.infra.indexationManager.rabbitMQ': vi.fn(),
     'core.domain.record': vi.fn(),
     'core.domain.library': vi.fn(),
     'core.domain.attribute': vi.fn(),
@@ -87,12 +70,9 @@ describe('Indexation Manager', () => {
     } satisfies Mockify<IAdminPermissionDomain>;
 
     test('Init message listening', async () => {
-        const mockAmqpService: Mockify<IAmqpService> = {
-            consume: vi.fn(),
-            consumer: {
-                connection: mockAmqpConnection as amqp.ChannelModel,
-                channel: mockAmqpChannel as amqp.ConfirmChannel,
-            },
+        const mockIndexationManagerRabbitMQ: Mockify<IIndexationManagerRabbitMQ> = {
+            consumeEvents: vi.fn(),
+            close: vi.fn(),
         };
 
         const mockIndexationService: Mockify<IIndexationService> = {
@@ -102,14 +82,14 @@ describe('Indexation Manager', () => {
         const indexation = indexationManager({
             ...depsBase,
             config: conf as IConfig,
-            'core.infra.amqpService': mockAmqpService as IAmqpService,
+            'core.infra.indexationManager.rabbitMQ': mockIndexationManagerRabbitMQ as IIndexationManagerRabbitMQ,
             'core.utils.logger': mockLogger as ILogger,
             'core.infra.indexation.indexationService': mockIndexationService as IIndexationService,
         });
 
         await indexation.init();
 
-        expect(mockAmqpService.consume).toBeCalledTimes(1);
+        expect(mockIndexationManagerRabbitMQ.consumeEvents).toBeCalledTimes(1);
         expect(mockIndexationService.init).toBeCalledTimes(1);
     });
 

@@ -221,6 +221,7 @@ export const validateConfig = (conf: IConfig) => {
                 events: Joi.string().required(),
             }),
             fuzzySearch: Joi.boolean().required(),
+            prefetch: Joi.number().required(),
         }),
         tasksManager: Joi.object().keys({
             checkingInterval: Joi.number().required(),

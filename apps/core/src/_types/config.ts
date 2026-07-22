@@ -326,6 +326,7 @@ export interface IIndexationManager {
         events: string;
     };
     fuzzySearch: boolean;
+    prefetch?: number;
 }
 
 export interface ITasksManager {

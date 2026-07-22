@@ -1,6 +1,5 @@
-import {type IAmqpService} from '@leav/message-broker';
+import {type AmqpMessageHandler} from '@leav/message-broker';
 import {EventAction, type IDbEvent} from '@leav/utils';
-import type * as amqp from 'amqplib';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type ILibraryDomain} from '../library/libraryDomain';
@@ -15,6 +14,7 @@ import {type ILogger} from '@leav/logger';
 import type * as Config from '../../_types/config';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IValue} from '../../_types/value';
+import {type IIndexationManagerRabbitMQ} from '../../infra/indexationManager/indexationManagerRabbitMQ';
 import {type IIndexationService} from '../../infra/indexation/indexationService';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {TriggerNames} from '../../_types/eventsManager';
@@ -40,7 +40,7 @@ export interface IIndexationManagerDomain {
 
 export interface IIndexationManagerDomainDeps {
     config: Config.IConfig;
-    'core.infra.amqpService': IAmqpService;
+    'core.infra.indexationManager.rabbitMQ': IIndexationManagerRabbitMQ;
     'core.domain.record': IRecordDomain;
     'core.domain.library': ILibraryDomain;
     'core.domain.attribute': IAttributeDomain;
@@ -55,7 +55,7 @@ export interface IIndexationManagerDomainDeps {
 
 export default function ({
     config,
-    'core.infra.amqpService': amqpService,
+    'core.infra.indexationManager.rabbitMQ': indexationManagerRabbitMQ,
     'core.domain.record': recordDomain,
     'core.domain.library': libraryDomain,
     'core.domain.attribute': attributeDomain,
@@ -220,102 +220,71 @@ export default function ({
         }
     };
 
-    const _onMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
-        try {
-            const event: IDbEvent = JSON.parse(msg.content.toString());
-            const ctx = getSystemQueryContext('indexationManager:onMessage');
+    const _onMessage: AmqpMessageHandler = async msg => {
+        const event: IDbEvent = JSON.parse(msg.content.toString());
+        const ctx = getSystemQueryContext('indexationManager:onMessage');
 
-            _validateMsg(event);
+        _validateMsg(event);
 
-            const payload = event.payload;
-            switch (event.payload.action) {
-                case EventAction.RECORD_SAVE:
-                case EventAction.RECORD_INIT: {
-                    await _indexDatabase({
-                        findRecordParams: {
-                            library: payload.topic.record.libraryId,
-                            filters: [
-                                {
-                                    field: CommonAttributes.ID,
-                                    condition: AttributeCondition.EQUAL,
-                                    value: payload.topic.record.id,
-                                },
-                            ],
-                            retrieveInactive: true,
-                        },
-                        ctx,
-                        forceNoTask: true,
-                    });
-
-                    break;
-                }
-                case EventAction.LIBRARY_SAVE: {
-                    const oldSettings = payload.before;
-                    const newSettings = payload.after;
-                    const attrsToDel = difference(
-                        oldSettings?.fullTextAttributes,
-                        newSettings?.fullTextAttributes,
-                    ) as string[];
-                    const attrsToAdd = difference(
-                        newSettings?.fullTextAttributes,
-                        oldSettings?.fullTextAttributes,
-                    ) as string[];
-
-                    if (!isEqual(oldSettings?.fullTextAttributes?.sort(), newSettings?.fullTextAttributes?.sort())) {
-                        await _indexDatabase({
-                            findRecordParams: {library: payload.topic.library, retrieveInactive: true},
-                            ctx,
-                            attributes: {up: attrsToAdd, del: attrsToDel},
-                        });
-                    }
-
-                    // if label change we re-index all linked libraries
-                    if (newSettings.recordIdentityConf?.label !== newSettings?.recordIdentityConf?.label) {
-                        await _indexLinkedLibraries(newSettings.id, ctx);
-                    }
-
-                    break;
-                }
-                case EventAction.VALUE_SAVE: {
-                    const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(
-                        payload.topic.library,
-                        ctx,
-                    );
-
-                    const isActivated = payload.topic.attribute === 'active' && payload.after.value === true;
-                    const isAttrToIndex = fullTextAttributes.map(a => a.id).includes(payload.topic.attribute);
-
-                    if (isActivated || isAttrToIndex) {
-                        await _indexDatabase({
-                            findRecordParams: {
-                                library: payload.topic.library,
-                                filters: [
-                                    {
-                                        field: CommonAttributes.ID,
-                                        condition: AttributeCondition.EQUAL,
-                                        value: payload.topic.record.id,
-                                    },
-                                ],
-                                retrieveInactive: true,
+        const payload = event.payload;
+        switch (event.payload.action) {
+            case EventAction.RECORD_SAVE:
+            case EventAction.RECORD_INIT: {
+                await _indexDatabase({
+                    findRecordParams: {
+                        library: payload.topic.record.libraryId,
+                        filters: [
+                            {
+                                field: CommonAttributes.ID,
+                                condition: AttributeCondition.EQUAL,
+                                value: payload.topic.record.id,
                             },
-                            ctx,
-                            attributes: isActivated || !isAttrToIndex ? null : {up: [payload.topic.attribute]},
-                            forceNoTask: true,
-                        });
-                    }
+                        ],
+                        retrieveInactive: true,
+                    },
+                    ctx,
+                    forceNoTask: true,
+                });
 
-                    // if the new attribute's value is the label of the library
-                    // we have to re-index all linked libraries
-                    const library = await libraryDomain.getLibraryProperties(payload.topic.library, ctx);
-                    if (library.recordIdentityConf?.label === payload.topic.attribute) {
-                        await _indexLinkedLibraries(payload.topic.library, ctx, payload.topic.record.id);
-                    }
+                break;
+            }
+            case EventAction.LIBRARY_SAVE: {
+                const oldSettings = payload.before;
+                const newSettings = payload.after;
+                const attrsToDel = difference(
+                    oldSettings?.fullTextAttributes,
+                    newSettings?.fullTextAttributes,
+                ) as string[];
+                const attrsToAdd = difference(
+                    newSettings?.fullTextAttributes,
+                    oldSettings?.fullTextAttributes,
+                ) as string[];
 
-                    break;
+                if (!isEqual(oldSettings?.fullTextAttributes?.sort(), newSettings?.fullTextAttributes?.sort())) {
+                    await _indexDatabase({
+                        findRecordParams: {library: payload.topic.library, retrieveInactive: true},
+                        ctx,
+                        attributes: {up: attrsToAdd, del: attrsToDel},
+                    });
                 }
-                case EventAction.VALUE_DELETE: {
-                    const attrProps = await attributeDomain.getAttributeProperties({id: payload.topic.attribute, ctx});
 
+                // if label change we re-index all linked libraries
+                if (newSettings.recordIdentityConf?.label !== newSettings?.recordIdentityConf?.label) {
+                    await _indexLinkedLibraries(newSettings.id, ctx);
+                }
+
+                break;
+            }
+            case EventAction.VALUE_SAVE: {
+                const fullTextAttributes = await attributeDomain.getLibraryFullTextAttributes(
+                    payload.topic.library,
+                    ctx,
+                );
+
+                const isActivated = payload.topic.attribute === 'active' && payload.after.value === true;
+                const isAttrToIndex = fullTextAttributes.map(a => a.id).includes(payload.topic.attribute);
+
+                if (isActivated || isAttrToIndex) {
                     await _indexDatabase({
                         findRecordParams: {
                             library: payload.topic.library,
@@ -329,31 +298,51 @@ export default function ({
                             retrieveInactive: true,
                         },
                         ctx,
-                        attributes: attrProps.multiple_values
-                            ? {up: [payload.topic.attribute]}
-                            : {del: [payload.topic.attribute]},
+                        attributes: isActivated || !isAttrToIndex ? null : {up: [payload.topic.attribute]},
                         forceNoTask: true,
                     });
-
-                    // if the updated/deleted attribute is the label of the library
-                    // we have to re-index all linked libraries
-                    const library = await libraryDomain.getLibraryProperties(payload.topic.library, ctx);
-                    if (library.recordIdentityConf?.label === payload.topic.attribute) {
-                        await _indexLinkedLibraries(payload.topic.library, ctx, payload.topic.record.id);
-                    }
-
-                    break;
                 }
+
+                // if the new attribute's value is the label of the library
+                // we have to re-index all linked libraries
+                const library = await libraryDomain.getLibraryProperties(payload.topic.library, ctx);
+                if (library.recordIdentityConf?.label === payload.topic.attribute) {
+                    await _indexLinkedLibraries(payload.topic.library, ctx, payload.topic.record.id);
+                }
+
+                break;
             }
-        } catch (e) {
-            logger.error(`Indexation Manager - Error while processing message: ${e.stack}`, {
-                msg: {
-                    ...msg,
-                    content: msg.content.toString(),
-                },
-            });
-        } finally {
-            amqpService.consumer.channel.ack(msg);
+            case EventAction.VALUE_DELETE: {
+                const attrProps = await attributeDomain.getAttributeProperties({id: payload.topic.attribute, ctx});
+
+                await _indexDatabase({
+                    findRecordParams: {
+                        library: payload.topic.library,
+                        filters: [
+                            {
+                                field: CommonAttributes.ID,
+                                condition: AttributeCondition.EQUAL,
+                                value: payload.topic.record.id,
+                            },
+                        ],
+                        retrieveInactive: true,
+                    },
+                    ctx,
+                    attributes: attrProps.multiple_values
+                        ? {up: [payload.topic.attribute]}
+                        : {del: [payload.topic.attribute]},
+                    forceNoTask: true,
+                });
+
+                // if the updated/deleted attribute is the label of the library
+                // we have to re-index all linked libraries
+                const library = await libraryDomain.getLibraryProperties(payload.topic.library, ctx);
+                if (library.recordIdentityConf?.label === payload.topic.attribute) {
+                    await _indexLinkedLibraries(payload.topic.library, ctx, payload.topic.record.id);
+                }
+
+                break;
+            }
         }
     };
 
@@ -463,19 +452,7 @@ export default function ({
 
     return {
         async init(): Promise<void> {
-            // Init rabbitmq
-            await amqpService.consumer.channel.assertQueue(config.indexationManager.queues.events);
-            await amqpService.consumer.channel.bindQueue(
-                config.indexationManager.queues.events,
-                config.amqp.exchange,
-                config.eventsManager.routingKeys.data_events,
-            );
-
-            await amqpService.consume(
-                config.indexationManager.queues.events,
-                config.eventsManager.routingKeys.data_events,
-                _onMessage,
-            );
+            await indexationManagerRabbitMQ.consumeEvents(_onMessage);
 
             await indexationService.init();
 

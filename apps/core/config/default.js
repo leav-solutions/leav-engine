@@ -229,6 +229,7 @@ module.exports = {
             events: 'indexation_events',
         },
         fuzzySearch: envToBool(process.env.INDEXATION_FUZZY_SEARCH, true),
+        prefetch: envToNumber(process.env.INDEXATION_MANAGER_PREFETCH, 5),
     },
     debug: envToBool(process.env.DEBUG, false),
     defaultUserId: '2', // Used for DB migration and any other action that is not bound to a real user
