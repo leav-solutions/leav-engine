@@ -75,6 +75,7 @@ export interface ISdo {
     export: {
         enable: boolean;
         dataEventsQueue?: string;
+        dataEventsPrefetch?: number;
     };
     /**
      * Add debug log for each SDO import/export operation

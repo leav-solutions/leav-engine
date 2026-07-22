@@ -313,6 +313,7 @@ module.exports = {
         export: {
             enable: envToBool(process.env.SDO_EXPORT_ENABLE, false),
             dataEventsQueue: process.env.SDO_EXPORT_DATA_EVENTS_QUEUE || 'sdo_data_events_queue',
+            dataEventsPrefetch: envToNumber(process.env.SDO_EXPORT_DATA_EVENTS_PREFETCH, 1),
         },
     },
 };

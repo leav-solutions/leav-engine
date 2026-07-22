@@ -355,6 +355,7 @@ export const validateConfig = (conf: IConfig) => {
             export: Joi.object().keys({
                 enable: Joi.boolean().required(),
                 dataEventsQueue: Joi.string().required(),
+                dataEventsPrefetch: Joi.number().required(),
             }),
             debug: Joi.boolean().required(),
         }),

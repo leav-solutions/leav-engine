@@ -1,5 +1,5 @@
 import {type ConsumeMessage} from 'amqplib';
-import {type IRabbitMQ} from '../../infra/sdo/rabbitMQ/rabbitMQ';
+import {type IRabbitMQ} from '../../infra/sdo/sdoRabbitMQ';
 import {type ISDOImportDomain} from '../../domain/sdo/import/sdoImportDomain';
 import {type ISDO} from '../../_types/sdo';
 import {type ISDODomain} from '../../domain/sdo/sdoDomain';

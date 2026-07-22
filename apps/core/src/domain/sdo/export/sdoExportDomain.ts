@@ -12,7 +12,7 @@ import {
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IConfig} from '../../../_types/config';
 import {CommonAttributes} from '../../../_constants/systemAttributes';
-import {type IRabbitMQ} from '../../../infra/sdo/rabbitMQ/rabbitMQ';
+import {type IRabbitMQ} from '../../../infra/sdo/sdoRabbitMQ';
 import {type ISDOUtils} from '../../../utils/sdo/sdo';
 import {type IRecordSDORepo} from '../../../infra/sdo/recordsSDORepo/recordSDORepo';
 import {type GetSystemQueryContext} from '../../../utils/helpers/getSystemQueryContext';

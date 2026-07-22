@@ -1,7 +1,8 @@
+import {type IAmqpChannel} from '@leav/message-broker';
 import {type ConfirmChannel} from 'amqplib';
-import {type IRabbitMQ} from '../../../infra/sdo/rabbitMQ/rabbitMQ';
+import {type IRabbitMQ} from '../../../infra/sdo/sdoRabbitMQ';
 
-const amqpFn: Mockify<ConfirmChannel> = {
+const sdoConnectionChannel: Mockify<ConfirmChannel> = {
     ack: vi.fn(),
     nack: vi.fn(),
     publish: vi.fn(),
@@ -11,6 +12,15 @@ const amqpFn: Mockify<ConfirmChannel> = {
     waitForConfirms: vi.fn(),
 };
 
+const leavDataEventChannel: Mockify<IAmqpChannel> = {
+    ack: vi.fn(),
+    nack: vi.fn(),
+    consume: vi.fn(),
+    publish: vi.fn(),
+    cancel: vi.fn(),
+    close: vi.fn(),
+};
+
 const mockRabbitMQService: Mockify<IRabbitMQ> = {
     getSDOExportChannel: vi.fn(),
     getLeavDataEventChannel: vi.fn(),
@@ -18,9 +28,9 @@ const mockRabbitMQService: Mockify<IRabbitMQ> = {
 };
 
 export function setupMockRabbitMQService() {
-    mockRabbitMQService.getSDOExportChannel.mockResolvedValue(amqpFn as ConfirmChannel);
-    mockRabbitMQService.getLeavDataEventChannel.mockResolvedValue(amqpFn as ConfirmChannel);
-    mockRabbitMQService.getSDOImportChannel.mockResolvedValue(amqpFn as ConfirmChannel);
+    mockRabbitMQService.getSDOExportChannel.mockResolvedValue(sdoConnectionChannel as ConfirmChannel);
+    mockRabbitMQService.getLeavDataEventChannel.mockResolvedValue(leavDataEventChannel as IAmqpChannel);
+    mockRabbitMQService.getSDOImportChannel.mockResolvedValue(sdoConnectionChannel as ConfirmChannel);
 }
 
 export default mockRabbitMQService;
