@@ -48,12 +48,17 @@ export default defineConfig({
             testMatch: /global\.teardown\.ts/,
         },
         {
+            name: 'auth-setup',
+            testMatch: /auth\.setup\.ts/,
+            use: {...devices['Desktop Chrome']},
+        },
+        {
             name: 'tests',
             use: {
                 ...devices['Desktop Chrome'],
-                // storageState: 'storage/.auth/user.json'
+                storageState: 'storage/.auth/user.json',
             },
-            dependencies: ['setup leav'],
+            dependencies: ['setup leav', 'auth-setup'],
         },
     ],
 });
