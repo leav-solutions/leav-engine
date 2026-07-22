@@ -1,4 +1,4 @@
-import {type Options} from 'amqplib';
+import {type IAmqpConnectionOptions} from '@leav/message-broker';
 import {type IKeyValue} from './shared';
 import {
     type PermissionsActions,
@@ -53,7 +53,7 @@ export interface IConfig {
 }
 
 export interface ISdo {
-    amqp: Options.Connect;
+    amqp: IAmqpConnectionOptions;
     /**
      * AMP application clientId (like cm-galec-fr-staging), export in SDO export
      */
@@ -277,7 +277,7 @@ export interface IPermissions {
 }
 
 export interface IAmqp {
-    connOpt: Options.Connect;
+    connOpt: IAmqpConnectionOptions;
     exchange: string;
     type: string;
     prefetch?: number;

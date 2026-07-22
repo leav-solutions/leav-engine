@@ -1,7 +1,6 @@
 import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {SystemTrees} from '../../../_constants/systemTrees';
-import {createAmqpConnection} from '@leav/message-broker';
-import amqplib from 'amqplib';
+import {createAmqpConnection, type IAmqpConnection} from '@leav/message-broker';
 import {logger} from '@leav/logger';
 import {appRootPath} from '../../../rootPath';
 import fsremaned from 'fs';
@@ -31,12 +30,10 @@ import {type ICorePluginsApp} from '../../../app/core/pluginsApp';
 import {type TestProject} from 'vitest/node';
 import {CommonAttributes, UsersAttributes} from '../../../_constants/systemAttributes';
 
-const _resetTasksExecOrdersQueue = async (conf: IConfig): Promise<void> => {
-    const connection = await amqplib.connect(conf.amqp.connOpt);
-    const channel = await connection.createChannel();
+const _resetTasksExecOrdersQueue = async (amqpConnection: IAmqpConnection, conf: IConfig): Promise<void> => {
+    const channel = amqpConnection.createChannel({name: 'test:resetExecOrders', confirm: false});
     await channel.deleteQueue(conf.tasksManager.queues.execOrders);
     await channel.close();
-    await connection.close();
 };
 
 const _setupFakePlugin = async () => {
@@ -92,7 +89,7 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
     await sessionRepo.deleteAll();
 
     // reset worker queue
-    await _resetTasksExecOrdersQueue(conf);
+    await _resetTasksExecOrdersQueue(amqpConnection, conf);
 
     await initPlugins(conf.pluginsPath, pluginsContainer);
     await pluginsApp.startPlugins();

@@ -1,5 +1,4 @@
-import {createAmqpConnection} from '@leav/message-broker';
-import amqplib from 'amqplib';
+import {createAmqpConnection, type IAmqpConnection} from '@leav/message-broker';
 import {getConfig} from '../../config';
 import i18nextInit from '../../i18nextInit';
 import {initDI} from '../../depsManager';
@@ -13,12 +12,10 @@ import {type IConfig} from '../../_types/config';
 
 let taskManagerMasterTimer: NodeJS.Timeout;
 
-const _resetTasksExecOrdersQueue = async (conf: IConfig): Promise<void> => {
-    const connection = await amqplib.connect(conf.amqp.connOpt);
-    const channel = await connection.createChannel();
+const _resetTasksExecOrdersQueue = async (amqpConnection: IAmqpConnection, conf: IConfig): Promise<void> => {
+    const channel = amqpConnection.createChannel({name: 'test:resetExecOrders', confirm: false});
     await channel.deleteQueue(conf.tasksManager.queues.execOrders);
     await channel.close();
-    await connection.close();
 };
 
 export async function setup() {
@@ -46,7 +43,7 @@ export async function setup() {
         await dbUtils.migrate(coreContainer);
 
         // reset worker queue
-        await _resetTasksExecOrdersQueue(conf);
+        await _resetTasksExecOrdersQueue(amqpConnection, conf);
 
         const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
 

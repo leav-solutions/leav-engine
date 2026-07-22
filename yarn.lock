@@ -11500,7 +11500,6 @@ __metadata:
     "@types/nodemailer": "npm:6.4.24"
     "@types/ws": "npm:8.18.1"
     add-filename-increment: "npm:1.0.0"
-    amqplib: "npm:2.0.1"
     arangojs: "npm:8.8.1"
     awilix: "npm:12.1.1"
     axios: "npm:1.18.1"
