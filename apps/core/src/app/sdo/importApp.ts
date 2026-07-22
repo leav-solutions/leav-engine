@@ -1,5 +1,4 @@
-import {type ConsumeMessage} from 'amqplib';
-import {type IRabbitMQ} from '../../infra/sdo/sdoRabbitMQ';
+import {type AmqpMessageHandler} from '@leav/message-broker';
 import {type ISDOImportDomain} from '../../domain/sdo/import/sdoImportDomain';
 import {type ISDO} from '../../_types/sdo';
 import {type ISDODomain} from '../../domain/sdo/sdoDomain';
@@ -10,7 +9,6 @@ import {logger} from '@leav/logger';
 import {type IConfig} from '../../_types/config';
 
 export interface IImportAppDeps {
-    'core.infra.sdo.rabbitMQ': IRabbitMQ;
     'core.domain.sdo': ISDODomain;
     'core.domain.sdo.import': ISDOImportDomain;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
@@ -18,11 +16,10 @@ export interface IImportAppDeps {
 }
 
 export interface ISDOImportApp {
-    onSDOEvent: (msg: ConsumeMessage) => Promise<void>;
+    onSDOEvent: AmqpMessageHandler;
 }
 
 export default function ({
-    'core.infra.sdo.rabbitMQ': rabbitMQService,
     'core.domain.sdo': sdoDomain,
     'core.domain.sdo.import': sdoImportDomain,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
@@ -30,7 +27,7 @@ export default function ({
 }: IImportAppDeps): ISDOImportApp {
     const debug = config.sdo.debug ?? false;
 
-    const onSDOEvent = async (msg: ConsumeMessage): Promise<void> => {
+    const onSDOEvent: AmqpMessageHandler = async msg => {
         const _systemQueryContext = getSystemQueryContext('sdo::importApp:onSDOEvent');
         let sdo: ISDO;
 
@@ -40,14 +37,12 @@ export default function ({
 
             if (sdo.clientId && sdo.clientId === config.sdo.clientId) {
                 debug && logger.debug('Import: ignoring own SDO message', {sdo});
-                (await rabbitMQService.getSDOImportChannel()).ack(msg);
                 return;
             }
 
             const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(_systemQueryContext);
 
             if (sdoGlobalSettings.importEnable === false) {
-                (await rabbitMQService.getSDOImportChannel()).ack(msg);
                 return;
             }
 
@@ -66,7 +61,6 @@ export default function ({
                     throw new Error('Unexpected action');
             }
 
-            (await rabbitMQService.getSDOImportChannel()).ack(msg);
             await sdoDomain.sendLog({
                 action: EventAction.SDO_LOG_IMPORT_RECORD,
                 sdo,
@@ -77,7 +71,7 @@ export default function ({
                 errorId: error.errorId,
                 stack: error.stack,
             });
-            (await rabbitMQService.getSDOImportChannel()).nack(msg, false, false);
+
             await sdoDomain.sendLog({
                 action: EventAction.SDO_LOG_ERROR,
                 error:
@@ -97,6 +91,10 @@ export default function ({
                 sdo,
                 ctx: _systemQueryContext,
             });
+
+            // Rethrow: createAmqpConnection's default contract nacks the message (no requeue) on
+            // throw - ack/nack is no longer handled manually here.
+            throw error;
         }
     };
 

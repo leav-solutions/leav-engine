@@ -1,5 +1,4 @@
 import {type IAmqpMessage} from '@leav/message-broker';
-import {type ConsumeMessage} from 'amqplib';
 import {type ISDO, type ISDOMapping, type ISDOSettings} from '../../../_types/sdo';
 
 export const mockDataEvent = {
@@ -35,7 +34,7 @@ export const mockDataEventMessage = {
 
 export const mockImportMessage = {
     content: Buffer.from(JSON.stringify(mockSDO)),
-} as ConsumeMessage;
+} as IAmqpMessage;
 
 export const mockSDOMapping: ISDOMapping = {
     ['test']: {
