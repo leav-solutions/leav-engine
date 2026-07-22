@@ -1,7 +1,7 @@
-import {type Channel} from 'amqplib';
+import {type IAmqpChannel, type IAmqpConnectionOptions} from '@leav/message-broker';
 
 export interface IAmqpParams {
-    channel?: Channel;
+    channel?: IAmqpChannel;
     exchange?: string;
     routingKey?: string;
 }
@@ -33,11 +33,8 @@ export interface IConfig {
         port: number;
     };
     amqp?: {
-        protocol: string;
-        hostname: string;
-        port: number;
-        username: string;
-        password: string;
+        connOpt: IAmqpConnectionOptions;
+        heartbeatInSeconds?: number;
         queue: string;
         exchange: string;
         routingKey: string;

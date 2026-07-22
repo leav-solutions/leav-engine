@@ -410,6 +410,7 @@ services:
       - *volume-automate_scan-modules
       - *volume-config_manager-modules
       - *volume-logger-modules
+      - *volume-message_broker-modules
       - *volume-monitoring_server-modules
       - *volume-utils-modules
       - *mount_point-yarn_releases

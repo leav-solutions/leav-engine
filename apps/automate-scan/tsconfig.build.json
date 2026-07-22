@@ -16,6 +16,9 @@
             "path": "../../libs/logger/tsconfig.build.json"
         },
         {
+            "path": "../../libs/message-broker/tsconfig.build.json"
+        },
+        {
             "path": "../../libs/utils/tsconfig.json"
         },
         {

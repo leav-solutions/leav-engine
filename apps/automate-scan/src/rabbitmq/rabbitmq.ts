@@ -1,18 +1,16 @@
 import {logger} from '@leav/logger';
 import {type IAmqpParams, type IMessageSend} from './../types';
 
-export const sendToRabbitMQ = (msg: string, amqp?: IAmqpParams) => {
+export const sendToRabbitMQ = async (msg: string, amqp?: IAmqpParams): Promise<void> => {
     if (amqp && amqp.channel && amqp.exchange && amqp.routingKey) {
         const {channel, exchange, routingKey} = amqp;
 
         try {
-            // if we had channel, send message to rabbitmq
-            channel.publish(exchange, routingKey, Buffer.from(msg), {
-                persistent: true,
-            });
-        } catch {
-            logger.error("105 - Can't publish to rabbitMQ");
-            process.exit(105);
+            await channel.publish(exchange, routingKey, msg, {persistent: true});
+        } catch (e) {
+            // createAmqpConnection reconnects automatically - a failed publish just loses this one
+            // event (sync-scan's reconciliation catches up on it later), not worth crashing for.
+            logger.error(`Can't publish to rabbitMQ because ${(e as Error).message}`);
         }
     } else {
         // else just display the infos
