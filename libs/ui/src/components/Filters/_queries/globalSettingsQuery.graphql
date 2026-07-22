@@ -1,5 +1,0 @@
-query GlobalSettings {
-    globalSettings {
-        settings
-    }
-}
