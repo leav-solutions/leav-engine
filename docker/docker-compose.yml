@@ -255,6 +255,8 @@ services:
 
   admin:
     image: node:24.18.0-alpine3.24
+    stdin_open: true
+    tty: true
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.admin.rule=(Host(`core.leav.localhost`) &&

@@ -77,6 +77,7 @@ export const commonConfig = rootPath => ({
     server: {
         port: 3000,
         host: true,
+        allowedHosts: 'all',
         watch: shouldUsePolling()
             ? {
                   usePolling: true,
