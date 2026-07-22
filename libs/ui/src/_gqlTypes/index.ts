@@ -2191,11 +2191,6 @@ export type ValuesOccurrencesForDependencyQueryVariables = Exact<{
 
 export type ValuesOccurrencesForDependencyQuery = { listDistinctValues?: Array<{ treeNode?: { id: string, record: { id: string, whoAmI: { label?: string | null } } } | null }> | null };
 
-export type GlobalSettingsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GlobalSettingsQuery = { globalSettings: { settings?: any | null } };
-
 export type TreeFiltersDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID']['input'];
   startAt?: InputMaybe<Scalars['ID']['input']>;
@@ -6543,48 +6538,6 @@ export type ValuesOccurrencesForDependencyQueryHookResult = ReturnType<typeof us
 export type ValuesOccurrencesForDependencyLazyQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencyLazyQuery>;
 export type ValuesOccurrencesForDependencySuspenseQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencySuspenseQuery>;
 export type ValuesOccurrencesForDependencyQueryResult = Apollo.QueryResult<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>;
-export const GlobalSettingsDocument = gql`
-    query GlobalSettings {
-  globalSettings {
-    settings
-  }
-}
-    `;
-
-/**
- * __useGlobalSettingsQuery__
- *
- * To run a query within a React component, call `useGlobalSettingsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGlobalSettingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGlobalSettingsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGlobalSettingsQuery(baseOptions?: Apollo.QueryHookOptions<GlobalSettingsQuery, GlobalSettingsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GlobalSettingsQuery, GlobalSettingsQueryVariables>(GlobalSettingsDocument, options);
-      }
-export function useGlobalSettingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GlobalSettingsQuery, GlobalSettingsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GlobalSettingsQuery, GlobalSettingsQueryVariables>(GlobalSettingsDocument, options);
-        }
-// @ts-ignore
-export function useGlobalSettingsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GlobalSettingsQuery, GlobalSettingsQueryVariables>): Apollo.UseSuspenseQueryResult<GlobalSettingsQuery, GlobalSettingsQueryVariables>;
-export function useGlobalSettingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GlobalSettingsQuery, GlobalSettingsQueryVariables>): Apollo.UseSuspenseQueryResult<GlobalSettingsQuery | undefined, GlobalSettingsQueryVariables>;
-export function useGlobalSettingsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GlobalSettingsQuery, GlobalSettingsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GlobalSettingsQuery, GlobalSettingsQueryVariables>(GlobalSettingsDocument, options);
-        }
-export type GlobalSettingsQueryHookResult = ReturnType<typeof useGlobalSettingsQuery>;
-export type GlobalSettingsLazyQueryHookResult = ReturnType<typeof useGlobalSettingsLazyQuery>;
-export type GlobalSettingsSuspenseQueryHookResult = ReturnType<typeof useGlobalSettingsSuspenseQuery>;
-export type GlobalSettingsQueryResult = Apollo.QueryResult<GlobalSettingsQuery, GlobalSettingsQueryVariables>;
 export const TreeFiltersDataQueryDocument = gql`
     query TreeFiltersDataQuery($treeId: ID!, $startAt: ID, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
   treeContent(

@@ -323,11 +323,8 @@ describe('CommonFilterItem', () => {
             await userEvent.click(screen.getByRole('button', {name: /date/}));
             expect(screen.queryByRole('textbox')).toBeInTheDocument();
 
-            const select = screen.getByRole('combobox');
-            await userEvent.click(select);
-
-            const emptyOption = screen.getAllByText(/between/).pop()!;
-            await userEvent.click(emptyOption);
+            const betweenOption = screen.getAllByText(/between/).pop()!;
+            await userEvent.click(betweenOption);
 
             expect(screen.queryAllByRole('textbox').length).toBe(2);
         });
