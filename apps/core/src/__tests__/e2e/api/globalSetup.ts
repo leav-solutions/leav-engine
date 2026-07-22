@@ -1,6 +1,7 @@
 import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {SystemTrees} from '../../../_constants/systemTrees';
-import {amqpService, createAmqpConnection} from '@leav/message-broker';
+import {createAmqpConnection} from '@leav/message-broker';
+import amqplib from 'amqplib';
 import {logger} from '@leav/logger';
 import {appRootPath} from '../../../rootPath';
 import fsremaned from 'fs';
@@ -30,6 +31,14 @@ import {type ICorePluginsApp} from '../../../app/core/pluginsApp';
 import {type TestProject} from 'vitest/node';
 import {CommonAttributes, UsersAttributes} from '../../../_constants/systemAttributes';
 
+const _resetTasksExecOrdersQueue = async (conf: IConfig): Promise<void> => {
+    const connection = await amqplib.connect(conf.amqp.connOpt);
+    const channel = await connection.createChannel();
+    await channel.deleteQueue(conf.tasksManager.queues.execOrders);
+    await channel.close();
+    await connection.close();
+};
+
 const _setupFakePlugin = async () => {
     // Copy fake plugin to appropriate folder
     const pluginsFolder = path.resolve('./plugins/');
@@ -53,8 +62,6 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
     // Init i18next
     const translator = await i18nextInit(conf);
 
-    // Init AMQP
-    const amqp = await amqpService({config: conf.amqp});
     const redis = await initRedis({config: conf});
     const mailer = await initMailer({config: conf});
     const oidcClient = conf.auth.oidc.enable ? await initOIDCClient(conf) : undefined;
@@ -66,7 +73,6 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
 
     const {coreContainer, pluginsContainer} = await initDI({
         translator,
-        'core.infra.amqpService': amqp,
         'core.infra.amqp.connection': amqpConnection,
         'core.infra.redis': redis,
         'core.infra.mailer': mailer,
@@ -86,7 +92,7 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
     await sessionRepo.deleteAll();
 
     // reset worker queue
-    await amqp.consumer.channel.deleteQueue(conf.tasksManager.queues.execOrders);
+    await _resetTasksExecOrdersQueue(conf);
 
     await initPlugins(conf.pluginsPath, pluginsContainer);
     await pluginsApp.startPlugins();

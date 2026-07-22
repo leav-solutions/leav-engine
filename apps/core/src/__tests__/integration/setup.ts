@@ -1,4 +1,4 @@
-import {amqpService, createAmqpConnection} from '@leav/message-broker';
+import {createAmqpConnection} from '@leav/message-broker';
 import {getConfig} from '../../config';
 import i18nextInit from '../../i18nextInit';
 import {initDI} from '../../depsManager';
@@ -20,10 +20,6 @@ beforeAll(async () => {
         await initDb(conf);
         const redis = await initRedis({config: conf});
         const mailer = await initMailer({config: conf});
-        const amqp = await amqpService({
-            // limit prefetch to one for task cancel to avoid multiple tasks being started in parallel
-            config: {...conf.amqp, prefetch: 1},
-        });
         const amqpConnection = createAmqpConnection({
             connOpt: conf.amqp.connOpt,
             heartbeatInSeconds: conf.amqp.heartbeatInSeconds,
@@ -33,7 +29,6 @@ beforeAll(async () => {
         const {coreContainer} = await initDI({
             translator,
             'core.infra.redis': redis,
-            'core.infra.amqpService': amqp,
             'core.infra.amqp.connection': amqpConnection,
             'core.infra.mailer': mailer,
         });

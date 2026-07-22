@@ -1,4 +1,4 @@
-import {amqpService, createAmqpConnection} from '@leav/message-broker';
+import {createAmqpConnection} from '@leav/message-broker';
 import fsremaned from 'fs';
 import {getConfig} from '../../../config';
 import {initDI} from '../../../depsManager';
@@ -49,8 +49,6 @@ export async function setup(project: TestProject) {
         // Init i18next
         const translator = await i18nextInit(conf);
 
-        // Init AMQP
-        const amqp = await amqpService({config: conf.amqp});
         const redis = await initRedis({config: conf});
         const mailer = await initMailer({config: conf});
         const oidcClient = conf.auth.oidc.enable ? await initOIDCClient(conf) : undefined;
@@ -62,7 +60,6 @@ export async function setup(project: TestProject) {
 
         const {coreContainer} = await initDI({
             translator,
-            'core.infra.amqpService': amqp,
             'core.infra.amqp.connection': amqpConnection,
             'core.infra.redis': redis,
             'core.infra.mailer': mailer,
