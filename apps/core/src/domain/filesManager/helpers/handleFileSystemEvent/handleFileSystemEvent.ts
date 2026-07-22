@@ -1,10 +1,10 @@
-import {type IAmqpService} from '@leav/message-broker';
 import {type UpdateRecordLastModifFunc} from '../../../helpers/updateRecordLastModif';
 import {type ILibraryDomain} from '../../../library/libraryDomain';
 import {type SendRecordUpdateEventHelper} from '../../../record/helpers/sendRecordUpdateEvent';
 import {type IRecordDomain} from '../../../record/recordDomain';
 import {type ITreeDomain} from '../../../tree/treeDomain';
 import {type IValueDomain} from '../../../value/valueDomain';
+import {type IFilesManagerRabbitMQ} from '../../../../infra/filesManager/filesManagerRabbitMQ';
 import {type IFilesManagerRepo} from '../../../../infra/filesManager/filesManagerRepo';
 import {type IRecordRepo} from '../../../../infra/record/recordRepo';
 import {type IUtils} from '../../../../utils/utils';
@@ -25,7 +25,7 @@ export interface IFileSystemEventDeps {
     'core.domain.helpers.updateRecordLastModif': UpdateRecordLastModifFunc;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.infra.record': IRecordRepo;
-    'core.infra.amqpService': IAmqpService;
+    'core.infra.filesManager.rabbitMQ': IFilesManagerRabbitMQ;
     'core.infra.filesManager': IFilesManagerRepo;
     'core.utils.logger': ILogger;
     'core.utils': IUtils;
@@ -41,7 +41,7 @@ export default function (deps: IFileSystemEventDeps): HandleFileSystemEventFunc 
         'core.domain.helpers.updateRecordLastModif': updateRecordLastModif,
         'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
         'core.infra.record': recordRepo,
-        'core.infra.amqpService': amqpService,
+        'core.infra.filesManager.rabbitMQ': filesManagerRabbitMQ,
         'core.infra.filesManager': filesManagerRepo,
         'core.utils.logger': logger,
         'core.utils': utils,
@@ -57,7 +57,7 @@ export default function (deps: IFileSystemEventDeps): HandleFileSystemEventFunc 
             treeDomain,
             recordRepo,
             filesManagerRepo,
-            amqpService,
+            filesManagerRabbitMQ,
             updateRecordLastModif,
             sendRecordUpdateEvent,
             logger,

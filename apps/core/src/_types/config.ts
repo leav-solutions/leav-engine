@@ -308,6 +308,7 @@ export interface IFilesManager {
     };
     allowFilesList: string;
     ignoreFilesList: string;
+    prefetch?: number;
 }
 
 export interface IEventsManager {

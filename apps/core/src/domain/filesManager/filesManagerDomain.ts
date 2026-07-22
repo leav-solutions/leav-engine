@@ -1,8 +1,7 @@
 import {CommonAttributes, FilesAttributes} from '../../_constants/systemAttributes';
-import {type IAmqpService} from '@leav/message-broker';
+import {type AmqpMessageHandler} from '@leav/message-broker';
 import {isFileAllowed, PreviewPriority} from '@leav/utils';
 import increment from 'add-filename-increment';
-import type * as amqp from 'amqplib';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type CreateDirectoryFunc} from '../helpers/createDirectory';
 import {type StoreUploadFileFunc} from '../helpers/storeUploadFile';
@@ -15,6 +14,7 @@ import {type IValueDomain} from '../value/valueDomain';
 
 import {type FileUpload} from 'graphql-upload/Upload.mjs';
 import {type i18n} from 'i18next';
+import {type IFilesManagerRabbitMQ} from '../../infra/filesManager/filesManagerRabbitMQ';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
 import Joi from 'joi';
 import * as Path from 'path';
@@ -91,7 +91,7 @@ export interface IFilesManagerDomain {
 export interface IFilesManagerDomainDeps {
     config: Config.IConfig;
     'core.utils': IUtils;
-    'core.infra.amqpService': IAmqpService;
+    'core.infra.filesManager.rabbitMQ': IFilesManagerRabbitMQ;
     'core.utils.logger': ILogger;
     'core.domain.record': IRecordDomain;
     'core.domain.value': IValueDomain;
@@ -112,7 +112,7 @@ export interface IFilesManagerDomainDeps {
 export default function ({
     config,
     'core.utils': utils,
-    'core.infra.amqpService': amqpService,
+    'core.infra.filesManager.rabbitMQ': filesManagerRabbitMQ,
     'core.utils.logger': logger,
     'core.domain.record': recordDomain,
     'core.domain.value': valueDomain,
@@ -129,19 +129,10 @@ export default function ({
     'core.utils.getSystemQueryContext': getSystemQueryContext,
     translator,
 }: IFilesManagerDomainDeps): IFilesManagerDomain {
-    const _onMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
-        amqpService.consumer.channel.ack(msg);
+    const _onMessage: AmqpMessageHandler = async msg => {
+        const msgBody: IFileEventData = JSON.parse(msg.content.toString());
+        _validateMsg(msgBody);
 
-        let msgBody: IFileEventData;
-
-        try {
-            msgBody = JSON.parse(msg.content.toString());
-            _validateMsg(msgBody);
-        } catch (e) {
-            logger.error(`[FilesManager] Invalid message: ${e.stack}.`, {msgContent: msg.content.toString()});
-
-            return;
-        }
         messagesHandler.handleMessage(msgBody, getSystemQueryContext('filesManager:onMessage'));
     };
 
@@ -220,15 +211,8 @@ export default function ({
 
     return {
         async init(): Promise<void> {
-            await amqpService.consumer.channel.assertQueue(config.filesManager.queues.events);
-            await amqpService.consumer.channel.bindQueue(
-                config.filesManager.queues.events,
-                config.amqp.exchange,
-                config.filesManager.routingKeys.events,
-            );
-
-            await initPreviewResponseHandler(config, logger, getSystemQueryContext('filesManager:init'), {
-                amqpService,
+            await initPreviewResponseHandler(logger, getSystemQueryContext('filesManager:init'), {
+                filesManagerRabbitMQ,
                 libraryDomain,
                 recordDomain,
                 valueDomain,
@@ -240,11 +224,7 @@ export default function ({
                 utils,
             });
 
-            await amqpService.consume(
-                config.filesManager.queues.events,
-                config.filesManager.routingKeys.events,
-                _onMessage,
-            );
+            await filesManagerRabbitMQ.consumeEvents(_onMessage);
 
             logger.info('Files Manager is ready. Waiting for messages... 👀');
         },
@@ -609,7 +589,7 @@ export default function ({
                         libraryId: r.library,
                         priority: PreviewPriority.MEDIUM,
                         versions,
-                        deps: {amqpService, config, logger},
+                        deps: {filesManagerRabbitMQ, logger},
                     });
                     generationRequested++;
                 }

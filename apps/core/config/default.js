@@ -197,6 +197,7 @@ module.exports = {
         },
         allowFilesList: process.env.ALLOW_FILES_LIST || '',
         ignoreFilesList: process.env.IGNORE_FILES_LIST || '',
+        prefetch: envToNumber(process.env.FILES_MANAGER_PREFETCH, 5),
     },
     tasksManager: {
         checkingInterval: 3000,

@@ -1,5 +1,5 @@
-import {type IAmqpService} from '@leav/message-broker';
-import type * as amqp from 'amqplib';
+import {type AmqpMessageHandler} from '@leav/message-broker';
+import {type IFilesManagerRabbitMQ} from '../../../infra/filesManager/filesManagerRabbitMQ';
 import {type UpdateRecordLastModifFunc} from '../../helpers/updateRecordLastModif';
 import {type ILibraryDomain} from '../../library/libraryDomain';
 import {type SendRecordUpdateEventHelper} from '../../record/helpers/sendRecordUpdateEvent';
@@ -19,7 +19,7 @@ import {updateRecordFile} from './handleFileUtilsHelper';
 import {type ILogger} from '@leav/logger';
 
 export interface IHandlePreviewResponseDeps {
-    amqpService: IAmqpService;
+    filesManagerRabbitMQ: IFilesManagerRabbitMQ;
     libraryDomain: ILibraryDomain;
     recordDomain: IRecordDomain;
     valueDomain: IValueDomain;
@@ -32,26 +32,12 @@ export interface IHandlePreviewResponseDeps {
 }
 
 const _onMessage = async (
-    msg: amqp.ConsumeMessage,
+    msg: Parameters<AmqpMessageHandler>[0],
     logger: ILogger,
     ctx: IQueryInfos,
     deps: IHandlePreviewResponseDeps,
 ) => {
-    deps.amqpService.consumer.channel.ack(msg);
-
-    let previewResponse: IPreviewResponse;
-
-    try {
-        previewResponse = JSON.parse(msg.content.toString());
-    } catch (e) {
-        logger.error(`[FilesManager] Preview return invalid message: ${e.stack}`, {
-            msg: {
-                ...msg,
-                content: msg.content.toString(),
-            },
-        });
-        return;
-    }
+    const previewResponse: IPreviewResponse = JSON.parse(msg.content.toString());
 
     const {library, recordId} = previewResponse.context;
     const libraryProps = await deps.libraryDomain.getLibraryProperties(library, ctx);
@@ -105,21 +91,9 @@ const _onMessage = async (
 };
 
 export const initPreviewResponseHandler = async (
-    config: Config.IConfig,
     logger: ILogger,
     ctx: IQueryInfos,
     deps: IHandlePreviewResponseDeps,
 ) => {
-    await deps.amqpService.consumer.channel.assertQueue(config.filesManager.queues.previewResponse);
-    await deps.amqpService.consumer.channel.bindQueue(
-        config.filesManager.queues.previewResponse,
-        config.amqp.exchange,
-        config.filesManager.routingKeys.previewResponse,
-    );
-
-    await deps.amqpService.consume(
-        config.filesManager.queues.previewResponse,
-        config.filesManager.routingKeys.previewResponse,
-        (msg: amqp.ConsumeMessage) => _onMessage(msg, logger, ctx, deps),
-    );
+    await deps.filesManagerRabbitMQ.consumePreviewResponses(msg => _onMessage(msg, logger, ctx, deps));
 };

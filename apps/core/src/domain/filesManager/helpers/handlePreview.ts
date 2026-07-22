@@ -1,21 +1,15 @@
-import {type IAmqpService} from '@leav/message-broker';
 import {PreviewPriority} from '@leav/utils';
 import {type ILogger} from '@leav/logger';
-import type * as Config from '../../../_types/config';
+import {type IFilesManagerRabbitMQ} from '../../../infra/filesManager/filesManagerRabbitMQ';
 import {type IPreviewMessage, type IPreviewResponseContext, type IPreviewVersion} from '../../../_types/filesManager';
 
 export const sendPreviewMessage = async (
     previewMessage: IPreviewMessage,
     priority: PreviewPriority,
-    deps: {amqpService: IAmqpService; config: Config.IConfig},
+    deps: {filesManagerRabbitMQ: IFilesManagerRabbitMQ},
 ) => {
     const msg = JSON.stringify(previewMessage);
-    await deps.amqpService.publish(
-        deps.config.amqp.exchange,
-        deps.config.filesManager.routingKeys.previewRequest,
-        msg,
-        priority,
-    );
+    await deps.filesManagerRabbitMQ.publishPreviewRequest(msg, priority);
 };
 
 export const generatePreviewMsg = (
@@ -62,7 +56,7 @@ export const requestPreviewGeneration = async ({
     libraryId: string;
     versions: IPreviewVersion[];
     priority?: PreviewPriority;
-    deps: {logger: ILogger; amqpService: IAmqpService; config: Config.IConfig};
+    deps: {logger: ILogger; filesManagerRabbitMQ: IFilesManagerRabbitMQ};
 }): Promise<void> => {
     const context: IPreviewResponseContext = {library: libraryId, recordId};
 

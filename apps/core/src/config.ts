@@ -215,6 +215,7 @@ export const validateConfig = (conf: IConfig) => {
             }),
             allowFilesList: Joi.string().required().allow(''),
             ignoreFilesList: Joi.string().required().allow(''),
+            prefetch: Joi.number().required(),
         }),
         indexationManager: Joi.object().keys({
             queues: Joi.object().keys({
