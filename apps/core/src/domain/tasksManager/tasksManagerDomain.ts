@@ -1,11 +1,9 @@
-import {type IAmqpService} from '@leav/message-broker';
+import {type AmqpMessageHandler} from '@leav/message-broker';
 import {EventAction} from '@leav/utils';
-import type * as amqp from 'amqplib';
 import {type AwilixContainer} from 'awilix';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 import Joi from 'joi';
-import {nanoid} from 'nanoid';
 import process from 'process';
 import {type IUtils} from '../../utils/utils';
 import * as crypto from 'node:crypto';
@@ -17,6 +15,7 @@ import {type ISystemTranslation} from '../../_types/systemTranslation';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import PermissionError from '../../errors/PermissionError';
 import {type ITaskRepo} from '../../infra/task/taskRepo';
+import {type ITasksManagerRabbitMQ} from '../../infra/tasksManager/tasksManagerRabbitMQ';
 import {type IPubSubTaskData, TriggerNames} from '../../_types/eventsManager';
 import {type IList, SortOrder} from '../../_types/list';
 import {
@@ -78,7 +77,7 @@ export interface ITasksManagerDomain {
 
 export interface ITasksManagerDomainDeps {
     config: Config.IConfig;
-    'core.infra.amqpService': IAmqpService;
+    'core.infra.tasksManager.rabbitMQ': ITasksManagerRabbitMQ;
     'core.infra.task': ITaskRepo;
     'core.depsManager': AwilixContainer;
     'core.domain.eventsManager': IEventsManagerDomain;
@@ -92,7 +91,7 @@ type DepsManagerFunc = <T extends any[]>(...args: [...args: T, task: ITaskFuncPa
 
 export default function ({
     config,
-    'core.infra.amqpService': amqpService,
+    'core.infra.tasksManager.rabbitMQ': tasksManagerRabbitMQ,
     'core.infra.task': taskRepo,
     'core.depsManager': depsManager,
     'core.domain.eventsManager': eventsManager,
@@ -102,8 +101,6 @@ export default function ({
     'core.utils.getSystemQueryContext': getSystemQueryContext,
 }: ITasksManagerDomainDeps): ITasksManagerDomain {
     let _pluginTypes: string[] = [];
-
-    const tag = `${process.pid}_${nanoid(3)}`;
 
     // Protect multiple listeners in worker mode, to allow listen after cancel task
     let workerListeningExecOrders = false;
@@ -124,7 +121,7 @@ export default function ({
                 const taskWithPendingCallbacks = (await taskRepo.getTasksWithPendingCallbacks(ctx))?.list[0];
 
                 if (taskToCancel) {
-                    await _sendOrder(config.tasksManager.routingKeys.cancelOrders, taskToCancel, ctx);
+                    await _sendOrder('cancelOrders', taskToCancel, ctx);
                 }
 
                 if (taskWithPendingCallbacks) {
@@ -133,7 +130,7 @@ export default function ({
 
                 if (taskToExecute) {
                     await _updateTask(taskToExecute.id, {status: TaskStatus.PENDING}, ctx);
-                    await _sendOrder(config.tasksManager.routingKeys.execOrders, taskToExecute, ctx);
+                    await _sendOrder('execOrders', taskToExecute, ctx);
                 }
             } catch (e) {
                 logger.error(`Error monitoring tasks because ${e.stack}`);
@@ -451,46 +448,44 @@ export default function ({
     };
 
     const _exit = async () => {
-        await amqpService.close();
+        await tasksManagerRabbitMQ.close();
         process.exit();
     };
 
-    const _onExecMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
+    const _onExecMessage: AmqpMessageHandler = async msg => {
         const order: ITaskOrder = JSON.parse(msg.content.toString());
 
         try {
             _validateMsg(order);
         } catch (e) {
             logger.error(`Invalid task exec message because ${e.stack}`, {msgContent: msg.content.toString()});
-            amqpService.consumer.channel.ack(msg);
         }
 
         // We stop listening to the execution order queue because if we ack the message we receive a new task.
         // We can't wait for the task to finish before the ack because it can be long and exceed the rabbitmq timeout.
         workerListeningExecOrders = false;
-        amqpService.consumer.channel.cancel(tag);
-        amqpService.consumer.channel.ack(msg);
+        await tasksManagerRabbitMQ.pauseExecOrders();
+        tasksManagerRabbitMQ.ackExecOrder(msg);
 
         const task = order.payload as ITask;
 
         await _executeTask(task, {userId: task.created_by});
 
         if (config.tasksManager.restartWorker) {
-            return _exit();
+            await _exit();
+            return;
         }
 
         await _listenExecOrders();
     };
 
-    const _onCancelMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
+    const _onCancelMessage: AmqpMessageHandler = async msg => {
         const order: ITaskOrder = JSON.parse(msg.content.toString());
 
         try {
             _validateMsg(order);
         } catch (e) {
             logger.error(`Invalid task cancel message because ${e.stack}`, {msgContent: msg.content.toString()});
-        } finally {
-            amqpService.consumer.channel.ack(msg);
         }
 
         // create new ctx for each task cancel
@@ -517,12 +512,15 @@ export default function ({
         await _listenExecOrders();
     };
 
-    const _sendOrder = async (routingKey: string, payload: Payload, ctx: IQueryInfos): Promise<void> => {
-        await amqpService.publish(
-            config.amqp.exchange,
-            routingKey,
-            JSON.stringify({time: utils.getUnixTime(), userId: ctx.userId, payload}),
-        );
+    const _sendOrder = async (
+        kind: 'execOrders' | 'cancelOrders',
+        payload: Payload,
+        ctx: IQueryInfos,
+    ): Promise<void> => {
+        const body = JSON.stringify({time: utils.getUnixTime(), userId: ctx.userId, payload});
+        await (kind === 'execOrders'
+            ? tasksManagerRabbitMQ.publishExecOrder(body)
+            : tasksManagerRabbitMQ.publishCancelOrder(body));
     };
 
     const _listenExecOrders = async () => {
@@ -531,14 +529,7 @@ export default function ({
         }
         workerListeningExecOrders = true;
 
-        await amqpService.consumer.channel.assertQueue(config.tasksManager.queues.execOrders);
-
-        await amqpService.consume(
-            config.tasksManager.queues.execOrders,
-            config.tasksManager.routingKeys.execOrders,
-            _onExecMessage,
-            tag,
-        );
+        await tasksManagerRabbitMQ.resumeExecOrders();
     };
 
     return {
@@ -568,13 +559,7 @@ export default function ({
         },
         // Master
         async initMaster(): Promise<NodeJS.Timeout> {
-            // Create exec queue
-            await amqpService.consumer.channel.assertQueue(config.tasksManager.queues.execOrders);
-            await amqpService.consumer.channel.bindQueue(
-                config.tasksManager.queues.execOrders,
-                config.amqp.exchange,
-                config.tasksManager.routingKeys.execOrders,
-            );
+            await tasksManagerRabbitMQ.assertExecOrdersTopology();
             return _monitorTasksWithTimer({
                 userId: config.defaultUserId,
                 queryId: 'TasksManagerDomain',
@@ -583,25 +568,10 @@ export default function ({
 
         // Workers
         async initWorker(): Promise<void> {
-            await _listenExecOrders();
+            await tasksManagerRabbitMQ.consumeExecOrders(_onExecMessage);
+            workerListeningExecOrders = true;
 
-            // wait for cancel orders
-            const cancelOrdersQueue = `${config.tasksManager.queues.cancelOrders}_${tag}`;
-            await amqpService.consumer.channel.assertQueue(cancelOrdersQueue, {
-                autoDelete: true,
-                durable: false,
-                exclusive: true,
-            });
-            await amqpService.consumer.channel.bindQueue(
-                cancelOrdersQueue,
-                config.amqp.exchange,
-                config.tasksManager.routingKeys.cancelOrders,
-            );
-            await amqpService.consume(
-                cancelOrdersQueue,
-                config.tasksManager.routingKeys.cancelOrders,
-                _onCancelMessage,
-            );
+            await tasksManagerRabbitMQ.consumeCancelOrders(_onCancelMessage);
         },
         async updateProgress(
             taskId: string,

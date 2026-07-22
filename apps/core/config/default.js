@@ -201,7 +201,7 @@ module.exports = {
     },
     tasksManager: {
         checkingInterval: 3000,
-        workerPrefetch: 1,
+        workerPrefetch: envToNumber(process.env.TM_WORKER_PREFETCH, 1),
         restartWorker: envToBool(process.env.TM_RESTART_WORKER, false),
         queues: {
             execOrders: process.env.TM_EXEC_ORDERS_QUEUE || 'tasks_exec_orders',

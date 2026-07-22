@@ -102,8 +102,7 @@ export interface IConsumeOptions {
     consumerTag?: string;
     /**
      * false (default): resolve => ack; throw => nack(discard).
-     * true: the app calls ack()/nack() itself (needed for tasksManager's pause/resume pattern,
-     * not covered by this iteration).
+     * true: the app calls ack()/nack() itself (used by tasksManager's pause/resume pattern).
      */
     manualAck?: boolean;
     /**

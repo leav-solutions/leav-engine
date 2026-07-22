@@ -1,7 +1,8 @@
-import {type IAmqpService} from '@leav/message-broker';
-import type * as amqp from 'amqplib';
+import {type AmqpMessageHandler} from '@leav/message-broker';
+import {type ILogger} from '@leav/logger';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type ITaskRepo} from '../../infra/task/taskRepo';
+import {type ITasksManagerRabbitMQ} from '../../infra/tasksManager/tasksManagerRabbitMQ';
 import {type IUtils, type ToAny} from '../../utils/utils';
 import {type IServer, type IConfig} from '../../_types/config';
 import {TaskCallbackStatus, TaskStatus} from '../../_types/tasksManager';
@@ -10,29 +11,41 @@ import {mockTask} from '../../__tests__/mocks/task';
 import tasksManager, {type ITasksManagerDomainDeps} from './tasksManagerDomain';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 
-const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
-    assertExchange: vi.fn(),
-    checkExchange: vi.fn(),
-    assertQueue: vi.fn(),
-    bindQueue: vi.fn(),
-    consume: vi.fn(),
-    publish: vi.fn(),
-    waitForConfirms: vi.fn(),
-    prefetch: vi.fn(),
+let capturedExecHandler: AmqpMessageHandler | undefined;
+let capturedCancelHandler: AmqpMessageHandler | undefined;
+
+const mockTasksManagerRabbitMQ: Mockify<ITasksManagerRabbitMQ> = {
+    assertExecOrdersTopology: global.__mockPromise(),
+    publishExecOrder: global.__mockPromise(),
+    publishCancelOrder: global.__mockPromise(),
+    consumeExecOrders: vi.fn().mockImplementation(handler => {
+        capturedExecHandler = handler;
+        return Promise.resolve();
+    }),
+    pauseExecOrders: global.__mockPromise(),
+    resumeExecOrders: global.__mockPromise(),
+    ackExecOrder: vi.fn(),
+    consumeCancelOrders: vi.fn().mockImplementation(handler => {
+        capturedCancelHandler = handler;
+        return Promise.resolve();
+    }),
+    close: global.__mockPromise(),
 };
 
-const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
-    close: vi.fn(),
-    createConfirmChannel: vi.fn().mockReturnValue(mockAmqpChannel),
-};
+const fakeMsg = (content: string): any => ({content: Buffer.from(content), fields: {}, properties: {}});
 
 const mockAdminPermissionDomain = {
     getAdminPermission: global.__mockPromise(true),
 };
 
+const mockLogger: Mockify<ILogger> = {
+    debug: vi.fn(),
+    error: vi.fn(),
+};
+
 const depsBase: ToAny<ITasksManagerDomainDeps> = {
     config: {},
-    'core.infra.amqpService': vi.fn(),
+    'core.infra.tasksManager.rabbitMQ': mockTasksManagerRabbitMQ,
     'core.infra.task': vi.fn(),
     'core.depsManager': vi.fn(),
     'core.domain.eventsManager': vi.fn(),
@@ -45,6 +58,8 @@ const depsBase: ToAny<ITasksManagerDomainDeps> = {
 describe('Tasks Manager', () => {
     afterEach(() => {
         vi.clearAllMocks();
+        capturedExecHandler = undefined;
+        capturedCancelHandler = undefined;
     });
 
     const conf = {
@@ -209,15 +224,6 @@ describe('Tasks Manager', () => {
     test('Init Master / Task to execute', async () => {
         vi.setConfig({testTimeout: conf.tasksManager.checkingInterval + 500});
 
-        const mockAmqpService = {
-            consume: vi.fn(),
-            consumer: {
-                connection: mockAmqpConnection as amqp.ChannelModel,
-                channel: mockAmqpChannel as amqp.ConfirmChannel,
-            },
-            publish: vi.fn(),
-        } satisfies Mockify<IAmqpService>;
-
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
             getTasksToExecute: global.__mockPromise({totalCount: 1, list: [mockTask]}),
@@ -233,7 +239,6 @@ describe('Tasks Manager', () => {
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
-            'core.infra.amqpService': mockAmqpService,
             'core.infra.task': mockTaskRepo,
             'core.domain.eventsManager': mockEventsManager,
             'core.utils': mockUtils,
@@ -244,8 +249,7 @@ describe('Tasks Manager', () => {
 
         await new Promise(r => setTimeout(r, conf.tasksManager.checkingInterval + 1));
 
-        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(1);
-        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
+        expect(mockTasksManagerRabbitMQ.assertExecOrdersTopology).toHaveBeenCalledTimes(1);
 
         expect(mockTaskRepo.updateTask).toBeCalledWith(
             {id: mockTask.id, status: TaskStatus.PENDING},
@@ -256,22 +260,13 @@ describe('Tasks Manager', () => {
         );
 
         expect(mockEventsManager.sendPubSubEvent).toBeCalled();
-        expect(mockAmqpService.publish).toBeCalled();
+        expect(mockTasksManagerRabbitMQ.publishExecOrder).toBeCalled();
 
         clearInterval(Number(timerId));
     });
 
     test('Init Master / Task to cancel', async () => {
         vi.setConfig({testTimeout: conf.tasksManager.checkingInterval + 500});
-
-        const mockAmqpService = {
-            consume: vi.fn(),
-            consumer: {
-                connection: mockAmqpConnection as amqp.ChannelModel,
-                channel: mockAmqpChannel as amqp.ConfirmChannel,
-            },
-            publish: vi.fn(),
-        } satisfies Mockify<IAmqpService>;
 
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasksToExecute: global.__mockPromise({totalCount: 0, list: []}),
@@ -286,7 +281,6 @@ describe('Tasks Manager', () => {
         const tm = tasksManager({
             ...depsBase,
             config: conf,
-            'core.infra.amqpService': mockAmqpService,
             'core.infra.task': mockTaskRepo,
             'core.domain.eventsManager': mockEventsManager,
             'core.utils': mockUtils,
@@ -296,25 +290,14 @@ describe('Tasks Manager', () => {
 
         await new Promise(r => setTimeout(r, conf.tasksManager.checkingInterval + 1));
 
-        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(1);
-        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
-
-        expect(mockAmqpService.publish).toBeCalled();
+        expect(mockTasksManagerRabbitMQ.assertExecOrdersTopology).toHaveBeenCalledTimes(1);
+        expect(mockTasksManagerRabbitMQ.publishCancelOrder).toBeCalled();
 
         clearInterval(Number(timerId));
     });
 
     test('Init Master / Pending callback', async () => {
         vi.setConfig({testTimeout: conf.tasksManager.checkingInterval + 500});
-
-        const mockAmqpService = {
-            consume: vi.fn(),
-            consumer: {
-                connection: mockAmqpConnection as amqp.ChannelModel,
-                channel: mockAmqpChannel as amqp.ConfirmChannel,
-            },
-            publish: vi.fn(),
-        } satisfies Mockify<IAmqpService>;
 
         const mockTaskRepo: Mockify<ITaskRepo> = {
             getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
@@ -334,7 +317,6 @@ describe('Tasks Manager', () => {
         const tm = tasksManager({
             ...depsBase,
             config: conf,
-            'core.infra.amqpService': mockAmqpService,
             'core.infra.task': mockTaskRepo,
             'core.domain.eventsManager': mockEventsManager,
             'core.utils': mockUtils,
@@ -345,8 +327,7 @@ describe('Tasks Manager', () => {
 
         await new Promise(r => setTimeout(r, conf.tasksManager.checkingInterval + 1));
 
-        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(1);
-        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
+        expect(mockTasksManagerRabbitMQ.assertExecOrdersTopology).toHaveBeenCalledTimes(1);
 
         expect(mockTaskRepo.updateTask).toBeCalledWith(
             {id: mockTask.id, callbacks: [{...mockTask.callbacks?.[0], status: TaskCallbackStatus.RUNNING}]},
@@ -360,35 +341,118 @@ describe('Tasks Manager', () => {
     });
 
     test('Init Worker', async () => {
-        const mockAmqpService = {
-            consume: vi.fn(),
-            consumer: {
-                connection: mockAmqpConnection as amqp.ChannelModel,
-                channel: mockAmqpChannel as amqp.ConfirmChannel,
-            },
-            publish: vi.fn(),
-        } satisfies Mockify<IAmqpService>;
-
         const tm = tasksManager({
             ...depsBase,
             config: conf as IConfig,
-            'core.infra.amqpService': mockAmqpService,
         } as ToAny<ITasksManagerDomainDeps>);
 
         await tm.initWorker();
 
-        expect(mockAmqpService.consume).toHaveBeenCalledTimes(2);
-        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenCalledTimes(2);
-        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenNthCalledWith(
-            1,
-            conf.tasksManager.queues.execOrders,
-        );
-        expect(mockAmqpService.consumer.channel.assertQueue).toHaveBeenNthCalledWith(
-            2,
-            expect.stringMatching(conf.tasksManager.queues.cancelOrders),
-            {autoDelete: true, durable: false, exclusive: true},
-        );
-        expect(mockAmqpService.consumer.channel.bindQueue).toHaveBeenCalledTimes(1);
+        expect(mockTasksManagerRabbitMQ.consumeExecOrders).toHaveBeenCalledTimes(1);
+        expect(mockTasksManagerRabbitMQ.consumeCancelOrders).toHaveBeenCalledTimes(1);
+    });
+
+    describe('exec order handler', () => {
+        test('pauses consumption, acks immediately, executes the task, then resumes', async () => {
+            const mockTaskRepo: Mockify<ITaskRepo> = {
+                getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
+                updateTask: global.__mockPromise(mockTask),
+            };
+
+            const mockDepsManager = {
+                resolve: vi.fn(() => ({name: vi.fn().mockResolvedValue(undefined)})),
+            };
+
+            const mockUtils: Mockify<IUtils> = {
+                getUnixTime: vi.fn(() => Math.floor(Date.now() / 1000)),
+            };
+
+            const tm = tasksManager({
+                ...depsBase,
+                config: conf as IConfig,
+                'core.infra.task': mockTaskRepo,
+                'core.domain.eventsManager': mockEventsManager,
+                'core.depsManager': mockDepsManager,
+                'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                'core.utils.logger': mockLogger as ILogger,
+                'core.utils': mockUtils as IUtils,
+            } as ToAny<ITasksManagerDomainDeps>);
+
+            await tm.initWorker();
+
+            const msg = fakeMsg(JSON.stringify({time: Date.now(), userId: '1', payload: mockTask}));
+            await capturedExecHandler!(msg);
+
+            expect(mockTasksManagerRabbitMQ.pauseExecOrders).toHaveBeenCalledTimes(1);
+            expect(mockTasksManagerRabbitMQ.ackExecOrder).toHaveBeenCalledWith(msg);
+            // _listenExecOrders() resumes listening once the task is done (restartWorker: false)
+            expect(mockTasksManagerRabbitMQ.resumeExecOrders).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('cancel order handler', () => {
+        test('ignores a cancel order for a task owned by another worker', async () => {
+            const mockTaskRepo: Mockify<ITaskRepo> = {
+                updateTask: global.__mockPromise(),
+            };
+
+            const tm = tasksManager({
+                ...depsBase,
+                config: conf as IConfig,
+                'core.infra.task': mockTaskRepo,
+                'core.domain.eventsManager': mockEventsManager,
+            } as ToAny<ITasksManagerDomainDeps>);
+
+            await tm.initWorker();
+
+            const msg = fakeMsg(
+                JSON.stringify({
+                    time: Date.now(),
+                    userId: '1',
+                    payload: {...mockTask, workerId: process.pid + 1},
+                }),
+            );
+            await capturedCancelHandler!(msg);
+
+            expect(mockTaskRepo.updateTask).not.toHaveBeenCalled();
+        });
+
+        test('marks its own running task canceled and resumes listening', async () => {
+            const mockTaskRepo: Mockify<ITaskRepo> = {
+                getTasks: global.__mockPromise({totalCount: 1, list: [mockTask]}),
+                updateTask: global.__mockPromise(mockTask),
+            };
+
+            const mockUtils: Mockify<IUtils> = {
+                getUnixTime: vi.fn(() => Math.floor(Date.now() / 1000)),
+            };
+
+            const tm = tasksManager({
+                ...depsBase,
+                config: conf as IConfig,
+                'core.infra.task': mockTaskRepo,
+                'core.domain.eventsManager': mockEventsManager,
+                'core.utils': mockUtils,
+                'core.domain.permission.admin': mockAdminPermissionDomain as IAdminPermissionDomain,
+                'core.utils.logger': mockLogger as ILogger,
+            } as ToAny<ITasksManagerDomainDeps>);
+
+            await tm.initWorker();
+
+            const msg = fakeMsg(
+                JSON.stringify({
+                    time: Date.now(),
+                    userId: '1',
+                    payload: {...mockTask, workerId: process.pid},
+                }),
+            );
+            await capturedCancelHandler!(msg);
+
+            expect(mockTaskRepo.updateTask).toHaveBeenCalledWith(
+                expect.objectContaining({status: TaskStatus.CANCELED}),
+                expect.anything(),
+            );
+        });
     });
 
     test('Update progress', async () => {
