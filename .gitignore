@@ -115,4 +115,5 @@ graphql.config.yml
 /test-apps/e2e-playwright/test-results/
 /test-apps/e2e-playwright/playwright-report/
 /test-apps/e2e-playwright/imports/
+/test-apps/e2e-playwright/storage/
 

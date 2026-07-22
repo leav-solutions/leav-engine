@@ -23,12 +23,9 @@ test.describe('Standard type field scenario', () => {
     test.beforeEach(async ({page}) => {
         await page.goto(config.baseUrl);
 
-        expect(page.url()).toContain(`${config.baseUrl}/app/login`);
-
         const portalPage = new PortalPage(page);
 
-        portalPage.login({id: config.auth.username, password: config.auth.password});
-
+        // Authentication is handled once by the `auth-setup` project (reused via storageState).
         await expect(portalPage.pageTitle).toBeVisible({timeout: 10000});
 
         await portalPage.accessExplorerStudio();
