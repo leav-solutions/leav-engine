@@ -462,4 +462,5 @@ export interface IMatomo {
 
 export interface ILogsCollector {
     queue: string;
+    prefetch?: number;
 }

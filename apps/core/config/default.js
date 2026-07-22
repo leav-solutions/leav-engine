@@ -275,6 +275,7 @@ module.exports = {
     },
     logsCollector: {
         queue: process.env.LOGS_MANAGER_QUEUE || 'logs_events',
+        prefetch: envToNumber(process.env.LOGS_COLLECTOR_PREFETCH, 1),
     },
     pluginsPath: envToStringArray(process.env.PLUGINS_PATH),
     automation: {

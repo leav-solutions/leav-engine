@@ -284,6 +284,7 @@ export const validateConfig = (conf: IConfig) => {
         }),
         logsCollector: Joi.object().keys({
             queue: Joi.string().required(),
+            prefetch: Joi.number().required(),
         }),
         notification: Joi.object().keys({
             enable: Joi.boolean().required(),
