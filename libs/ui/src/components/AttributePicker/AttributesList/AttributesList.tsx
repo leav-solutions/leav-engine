@@ -167,7 +167,7 @@ function AttributesList({
         const relevantSorter = Array.isArray(sorter) ? sorter[0] : sorter;
         if (relevantSorter.column && relevantSorter.order) {
             const newSort = {
-                field: AttributesSortableFields[relevantSorter.columnKey],
+                field: AttributesSortableFields[String(relevantSorter.columnKey)],
                 order: relevantSorter.order === 'ascend' ? SortOrder.asc : SortOrder.desc,
             };
             setSort(newSort);
