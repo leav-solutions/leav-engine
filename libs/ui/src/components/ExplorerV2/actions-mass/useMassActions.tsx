@@ -154,7 +154,7 @@ export const useMassActions = ({
                                 label: t('explorer.massAction.toggle_selection.deselect_page', {count: view.pageSize}),
                                 onClick: () =>
                                     _setSelectedKeys(
-                                        [...view.massSelection].filter(key => allVisibleKeys.includes[key]),
+                                        [...view.massSelection].filter(key => !allVisibleKeys.includes(String(key))),
                                     ),
                             }
                           : {

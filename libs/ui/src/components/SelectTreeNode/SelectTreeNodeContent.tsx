@@ -132,7 +132,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         if (e.nativeEvent.target instanceof HTMLButtonElement) {
             return;
         }
-        const node = treeMap[e.node.key];
+        const node = treeMap[String(e.node.key)];
         const isRoot = node.id === tree.id;
 
         if (
@@ -178,7 +178,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
         }
 
         const checkedKeys = _isObjectSelection(selection) ? selection.checked : selection;
-        const nodes = checkedKeys.map(key => treeMap[key]);
+        const nodes = checkedKeys.map(key => treeMap[String(key)]);
 
         onCheck(nodes);
     };
