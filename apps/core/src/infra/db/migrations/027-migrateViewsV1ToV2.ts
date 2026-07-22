@@ -28,6 +28,19 @@ export default function ({
     'core.utils.logger': logger = null,
     config = null,
 }: IDeps = {}): IMigration {
+    // V1 stocke la cible d'un filtre/tri comme un chemin joint par `.`. V2 le stocke scindé en
+    // segments (chacun résolu individuellement comme un attribut par le résolveur GetViewV2).
+    const _splitFieldPath = (field: string): string[] => field.split('.');
+
+    // Les filtres retirent en plus le segment whoAmI `id` terminal, comme une vue V2 sauvegardée
+    // nativement (getUIFilterPathKey dans useViewFiltersConverter) : le `.id` est un suffixe
+    // ré-appliqué à la requête par prepareFiltersForRequest, pas une partie du chemin stocké.
+    const _toFilterAttributes = (field: string): string[] => {
+        const segments = _splitFieldPath(field);
+        const stripped = segments.filter(segment => segment !== 'id');
+        return stripped.length > 0 ? stripped : segments;
+    };
+
     /**
      * Map a single V1 view to the V2 repo create payload. Returns `null` (and logs) when the view
      * can't be represented in V2 (missing `library`, which is mandatory).
@@ -45,7 +58,7 @@ export default function ({
             .filter(f => f.field && f.condition)
             .map(f => ({
                 pinned: true,
-                attributes: [f.field],
+                attributes: _toFilterAttributes(f.field as string),
                 // Mirror the front save path (getUIFilterValues in useViewFiltersConverter):
                 // a set value → [value], no value → [] (never [null]).
                 values: f.value !== null && f.value !== undefined ? [f.value] : [],
@@ -66,7 +79,7 @@ export default function ({
 
         const sorts: IViewV2Sort[] = (v1.sort ?? []).map(s => ({
             activated: true,
-            attributes: [s.field],
+            attributes: _splitFieldPath(s.field),
             order: s.order as SortOrder,
         }));
 
