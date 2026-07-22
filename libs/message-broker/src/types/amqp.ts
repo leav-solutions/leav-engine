@@ -121,6 +121,9 @@ export interface IAmqpChannel {
     nack(msg: IAmqpMessage, requeue?: boolean): void;
     cancel(consumerTag: string): Promise<void>;
     close(): Promise<void>;
+    /** Test/ops utility - not part of the app topology contract (never replayed on reconnect). */
+    purgeQueue(queue: string): Promise<void>;
+    deleteQueue(queue: string): Promise<void>;
 }
 
 export interface IAmqpConnection {

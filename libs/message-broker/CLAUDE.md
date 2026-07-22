@@ -45,7 +45,7 @@ await broker.close();
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `createAmqpConnection`  | Factory — une instance = une connexion résiliente vers **un** broker                                                      |
 | `IAmqpConnection`       | `createChannel()`, `getConnectionState()`, `close()`                                                                      |
-| `IAmqpChannel`          | `publish()`, `consume()`, `ack()`, `nack()`, `cancel()`, `close()`                                                        |
+| `IAmqpChannel`          | `publish()`, `consume()`, `ack()`, `nack()`, `cancel()`, `close()`, `purgeQueue()`, `deleteQueue()`                       |
 | `IAmqpConnectionConfig` | `connOpt`, `heartbeatInSeconds` (défaut 30, **jamais 0** — piège amqplib 2.0), `reconnectTimeInSeconds`, `connectionName` |
 | `IAmqpMessage`          | Sous-ensemble typé de `amqp.ConsumeMessage` (pas de fuite du type amqplib)                                                |
 | `IAmqpTopology`         | Passé au `setup` d'un channel : `assertExchange`/`assertQueue`/`bindQueue`/`prefetch`                                     |
@@ -60,6 +60,11 @@ Un channel = un usage fonctionnel (ex. `automation:events`, `sdo:export`…). La
 (re)connexion. Le contrat `consume()` par défaut : le handler résout → `ack` automatique ;
 il jette → `nack` automatique sans requeue (configurable via `requeueOnError`). Pour les cas où
 l'app doit gérer elle-même l'ack/nack (ex. pattern pause/reprise), `manualAck: true`.
+
+`purgeQueue()`/`deleteQueue()` sont des utilitaires ad hoc (test/ops) — volontairement absents de
+`IAmqpTopology`/`setup` : ce sont des opérations destructives, jamais quelque chose qu'on veut
+rejouer automatiquement à chaque reconnexion. La topologie applicative normale (déclarative,
+rejouée au reconnect) reste `assertExchange`/`assertQueue`/`bindQueue`/`prefetch` via `setup`.
 
 ```ts
 import {createAmqpConnection} from '@leav/message-broker';

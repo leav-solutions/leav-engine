@@ -23,6 +23,9 @@ const mockChannelWrapper = {
     nack: vi.fn(),
     cancel: vi.fn().mockResolvedValue(undefined),
     close: vi.fn().mockResolvedValue(undefined),
+    purgeQueue: vi.fn().mockResolvedValue({messageCount: 0}),
+    deleteQueue: vi.fn().mockResolvedValue({messageCount: 0}),
+    waitForConnect: vi.fn().mockResolvedValue(undefined),
 };
 
 const connectionManagerListeners: Record<string, Array<(...args: any[]) => void>> = {};
@@ -156,13 +159,31 @@ describe('createAmqpConnection', () => {
         expect(mockChannelWrapper.nack).not.toHaveBeenCalled();
     });
 
-    test('close() settles all channels and the connection even if one rejects (Promise.allSettled)', async () => {
+    test('purgeQueue waits for connect then delegates to the underlying channel', async () => {
+        const channel = connection.createChannel({name: 'c'});
+
+        await expect(channel.purgeQueue('q')).resolves.toBeUndefined();
+
+        expect(mockChannelWrapper.waitForConnect).toHaveBeenCalled();
+        expect(mockChannelWrapper.purgeQueue).toHaveBeenCalledWith('q');
+    });
+
+    test('deleteQueue waits for connect then delegates to the underlying channel', async () => {
+        const channel = connection.createChannel({name: 'c'});
+
+        await expect(channel.deleteQueue('q')).resolves.toBeUndefined();
+
+        expect(mockChannelWrapper.waitForConnect).toHaveBeenCalled();
+
+        expect(mockChannelWrapper.deleteQueue).toHaveBeenCalledWith('q');
+    });
+
+    test('close() never throws even if the connection manager rejects', async () => {
         connection.createChannel({name: 'c1'});
-        mockChannelWrapper.close.mockRejectedValueOnce(new Error('channel close failed'));
+        mockConnectionManager.close.mockRejectedValueOnce(new Error('close failed'));
 
         await expect(connection.close()).resolves.toBeUndefined();
 
-        expect(mockChannelWrapper.close).toHaveBeenCalled();
         expect(mockConnectionManager.close).toHaveBeenCalled();
     });
 

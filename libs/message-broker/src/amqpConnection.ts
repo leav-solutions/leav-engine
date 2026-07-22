@@ -74,6 +74,16 @@ const _createChannel = (channelWrapper: ChannelWrapper, connectionName: string, 
         nack: (msg, requeue = false) => channelWrapper.nack(msg as unknown as amqp.Message, false, requeue),
         cancel: consumerTag => channelWrapper.cancel(consumerTag),
         close: () => channelWrapper.close(),
+        // purgeQueue/deleteQueue throw "Not connected" if called before the channel finishes its
+        // first connect (unlike publish/consume, which queue internally) - wait for it explicitly.
+        purgeQueue: async queue => {
+            await channelWrapper.waitForConnect();
+            await channelWrapper.purgeQueue(queue);
+        },
+        deleteQueue: async queue => {
+            await channelWrapper.waitForConnect();
+            await channelWrapper.deleteQueue(queue);
+        },
     };
 };
 
@@ -103,8 +113,6 @@ export function createAmqpConnection(config: IAmqpConnectionConfig): IAmqpConnec
         logger.warn(`[${connectionName}] AMQP connect attempt failed: ${err?.message}`);
     });
 
-    const channels: ChannelWrapper[] = [];
-
     const createChannel = (params: ICreateChannelParams): IAmqpChannel => {
         const topologySetup = params.setup;
 
@@ -126,23 +134,20 @@ export function createAmqpConnection(config: IAmqpConnectionConfig): IAmqpConnec
                 : undefined,
         });
 
-        channels.push(channelWrapper);
-
         return _createChannel(channelWrapper, connectionName, params.name);
     };
 
+    // connectionManager.close() already closes every channel it tracks (in order, swallowing
+    // channel-close errors) before closing the connection itself - closing channels ourselves
+    // in parallel here would race that internal sequencing and could leave the connection close
+    // hanging forever (channel-close RPC still in flight when the connection disappears under it).
     const close = async (): Promise<void> => {
-        const results = await Promise.allSettled([
-            ...channels.map(channel => channel.close()),
-            connectionManager.close(),
-        ]);
-        currentState = 'closed';
-        const rejected = results.filter((r): r is PromiseRejectedResult => r.status === 'rejected');
-        if (rejected.length) {
-            logger.error(
-                `[${connectionName}] Error(s) while closing AMQP connection: ${rejected.map(r => r.reason?.message ?? r.reason).join(', ')}`,
-            );
+        try {
+            await connectionManager.close();
+        } catch (e) {
+            logger.error(`[${connectionName}] Error while closing AMQP connection: ${e.message}`);
         }
+        currentState = 'closed';
     };
 
     return {
