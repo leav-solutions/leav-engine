@@ -43,8 +43,8 @@ describe('tRPC router', () => {
     describe('getStatus (query)', () => {
         test('returns input echoed back', async () => {
             const client = await createClient();
-            const result = await client.getStatus.query('c1');
-            expect(result).toMatchObject({input: 'c1'});
+            const result = await client.getStatus.query('query_c1');
+            expect(result).toMatchObject({input: 'query_c1'});
         });
     });
 
@@ -53,7 +53,7 @@ describe('tRPC router', () => {
             const client = await createClient();
             await expect(
                 // @ts-expect-error — intentionally testing an invalid status
-                client.updateStatus.mutate({campaignId: 'c1', status: 'invalid'}),
+                client.updateStatus.mutate({campaignId: 'update_c2', status: 'invalid'}),
             ).rejects.toMatchObject({data: {code: 'BAD_REQUEST'}});
         });
 
@@ -69,10 +69,10 @@ describe('tRPC router', () => {
             'returns updated data for status "%s"',
             async status => {
                 const client = await createClient();
-                const result = await client.updateStatus.mutate({campaignId: 'c1', status});
+                const result = await client.updateStatus.mutate({campaignId: `update_c3_${status}`, status});
 
                 expect(result).toMatchObject({
-                    campaignId: 'c1',
+                    campaignId: `update_c3_${status}`,
                     status,
                     updatedAt: expect.any(String),
                 });
@@ -86,14 +86,21 @@ describe('tRPC router', () => {
             let subscription;
 
             const promise = new Promise<void>(async (resolve, reject) => {
-                subscription = client.onStatusChange.subscribe(undefined, {onData: resolve, onError: reject});
+                subscription = client.onStatusChange.subscribe(undefined, {
+                    onData: data => {
+                        if (data.campaignId === 'subscribe_c4') {
+                            resolve(data);
+                        }
+                    },
+                    onError: reject,
+                });
             }).finally(() => subscription.unsubscribe());
 
             // Trigger a status update
-            client.updateStatus.mutate({campaignId: 'c1', status: 'in_progress'});
+            client.updateStatus.mutate({campaignId: 'subscribe_c4', status: 'in_progress'});
 
             expect(await promise).toMatchObject({
-                campaignId: 'c1',
+                campaignId: 'subscribe_c4',
                 status: 'in_progress',
                 updatedAt: expect.any(String),
             });
@@ -104,6 +111,6 @@ describe('tRPC router', () => {
         const client = createTRPCClient<FakePluginRouter>({
             links: [httpBatchLink({url: 'http://127.0.0.1:1/trpc'})],
         });
-        await expect(client.getStatus.query('c1')).rejects.toThrow(TRPCClientError);
+        await expect(client.getStatus.query('error_c5')).rejects.toThrow(TRPCClientError);
     });
 });
