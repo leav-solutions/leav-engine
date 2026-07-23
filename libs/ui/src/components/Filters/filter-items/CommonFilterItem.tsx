@@ -8,7 +8,9 @@ import {type TFunction} from 'i18next';
 import {nullValueConditions} from '../conditionsHelper';
 import {
     isUIFilterStandard,
+    isUIFilterThrough,
     isUIFilterTree,
+    isUIFilterValueList,
     isUIFilterWithSmartFilter,
     type IUIFilterStandard,
     type UIFilter,
@@ -21,6 +23,33 @@ import dayjs from 'dayjs';
 const FilterStyled = styled(KitFilter)`
     flex: 0 0 auto;
 `;
+
+const conditionSymbols: Partial<Record<RecordFilterCondition, string>> = {
+    [AttributeConditionFilter.EQUAL]: '=',
+    [AttributeConditionFilter.NOT_EQUAL]: '≠',
+    [AttributeConditionFilter.GREATER_THAN]: '>',
+    [AttributeConditionFilter.LESS_THAN]: '<',
+};
+
+/**
+ * Builds the operator prefix (glued to the value) shown on the filter chip, e.g. `= `, `≠ `, `> `,
+ * or a translated label (`Contient `) for text conditions without a natural symbol.
+ * Returns `''` when there is no meaningful operator (null condition, e.g. boolean).
+ */
+const getConditionPrefix = (filter: UIFilter, t: TFunction): string => {
+    const condition = isUIFilterThrough(filter) ? filter.subCondition : filter.condition;
+    if (!condition) {
+        return '';
+    }
+
+    const symbol = conditionSymbols[condition as RecordFilterCondition];
+    if (symbol) {
+        return `${symbol} `;
+    }
+
+    const conditionOption = getAttributeConditionOptions(t).find(option => option.value === condition);
+    return conditionOption?.label ? `${conditionOption.label} ` : '';
+};
 
 const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
     if (filter.condition && nullValueConditions.includes(filter.condition as RecordFilterCondition)) {
@@ -45,6 +74,20 @@ const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
         return [...filterValues, ...(filter.formattedValue ?? [])];
     }
 
+    // A "through" filter is rendered as a counting badge (see showSingleValue below): feed one entry
+    // into `values` so the badge (and its tooltip) has something to display. Its effective condition is
+    // the SUB-condition; a no-value one (IS_EMPTY, IS_NOT_EMPTY…) is active WITHOUT a value, so feed its
+    // label so the badge still counts (1) — otherwise `filter.value` alone would leave the chip badge-less.
+    if (isUIFilterThrough(filter)) {
+        if (filter.subCondition && nullValueConditions.includes(filter.subCondition as RecordFilterCondition)) {
+            const conditionOption = getAttributeConditionOptions(t).find(
+                option => option.value === filter.subCondition,
+            );
+            return [...filterValues, conditionOption?.label ?? String(filter.subCondition)];
+        }
+        return filter.value ? [...filterValues, String(filter.value)] : filterValues;
+    }
+
     if (
         isUIFilterStandard(filter) &&
         [AttributeFormat.date, AttributeFormat.boolean].includes(filter.attribute.format)
@@ -52,24 +95,40 @@ const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
         if (!filter.formattedValue) {
             return filterValues;
         }
-        if (filter.condition === AttributeConditionFilter.LESS_THAN) {
-            return [`< ${filter.formattedValue ? filter.formattedValue : filterValues}`];
-        } else if (filter.condition === AttributeConditionFilter.GREATER_THAN) {
-            return [`> ${filter.formattedValue ? filter.formattedValue : filterValues}`];
-        }
-        return [...filterValues, filter.formattedValue];
+        // Boolean selection is stored with an EQUAL condition (BooleanAttributeDropDown), but its
+        // operator is not user-chosen, so it must stay unprefixed ("Oui"/"Non"). Only dates are prefixed.
+        const prefix = filter.attribute.format === AttributeFormat.date ? getConditionPrefix(filter, t) : '';
+        return [...filterValues, `${prefix}${filter.formattedValue}`];
     }
 
     const valuesList = filter.attribute.valuesList;
-    if (!valuesList || !('linkedValues' in valuesList) || !filter.value) {
-        return filterValues;
+
+    // Values-list filters have a fixed condition (EQUAL) → no operator prefix. Link value lists map
+    // their selected ids to labels; standard value lists keep their previous (label-less) behavior.
+    if (isUIFilterValueList(filter)) {
+        if (!valuesList || !('linkedValues' in valuesList) || !filter.value) {
+            return filterValues;
+        }
+        const valuesFilter = Array.isArray(filter.value) ? filter.value : [filter.value];
+        const labels = (valuesList.linkedValues ?? [])
+            .filter(val => valuesFilter.includes(val?.id))
+            .map(val => val?.whoAmI?.label ?? '');
+        return [...filterValues, ...labels];
     }
 
-    const valuesFilter = Array.isArray(filter.value) ? filter.value : [filter.value];
-    const labels = (valuesList.linkedValues ?? [])
-        .filter(val => valuesFilter.includes(val?.id))
-        .map(val => val?.whoAmI?.label ?? '');
-    return [...filterValues, ...labels];
+    // numeric / text / rich_text / raw link / through: render the raw value, prefixed with its operator.
+    if (!filter.value) {
+        return filterValues;
+    }
+    const rawValues = (Array.isArray(filter.value) ? filter.value : [filter.value]) as string[];
+    const prefix = getConditionPrefix(filter, t);
+    // Prefix only the single-value display (a multi-value filter is rendered as a counting badge).
+    return [
+        ...filterValues,
+        ...rawValues.map((value, index) =>
+            rawValues.length === 1 && index === 0 ? `${prefix}${value}` : String(value),
+        ),
+    ];
 };
 
 export interface ICommonFilterProps {
@@ -120,7 +179,7 @@ export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
                     <FilterDropDown filter={effectiveFilter} canReset={canReset} canRemove={!isPinned} />
                 ),
             }}
-            showSingleValue
+            showSingleValue={!isUIFilterThrough(effectiveFilter)}
         />
     );
 };

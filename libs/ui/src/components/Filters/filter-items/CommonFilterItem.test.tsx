@@ -12,7 +12,12 @@ import {type Mockify} from '_ui/__mocks__/utils';
 import {filtersReducer as filtersReducerBase, type IUIFiltersState} from '../context/filtersReducer';
 import {FiltersContext} from '../context/filtersContext';
 import {useFiltersContext} from '../useFiltersContext';
-import {type IUIFilterStandardValueList, type IUIFilterValueList, type UIFilter} from '../_types';
+import {
+    type IUIFilterStandard,
+    type IUIFilterStandardValueList,
+    type IUIFilterValueList,
+    type UIFilter,
+} from '../_types';
 import {filtersInitialState} from '../context/filtersInitialState';
 
 const getAllConditionOptions = (base: ReturnType<typeof render>['baseElement']) =>
@@ -546,6 +551,53 @@ describe('CommonFilterItem', () => {
         });
     });
 
+    describe('through filter chip', () => {
+        test('renders a counting badge instead of the raw value in text', () => {
+            const filter: UIFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'link filter',
+                    id: 'link_attr',
+                    type: AttributeType.advanced_link,
+                    linkedLibrary: {id: 'link_library'},
+                },
+                field: 'link_attr',
+                value: 'test value',
+                condition: AttributeConditionFilter.THROUGH,
+                subCondition: AttributeConditionFilter.EQUAL,
+                subField: 'sub_attr',
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+
+            // The chip shows a badge (count) rather than the long value in plain text.
+            expect(screen.getByText('1')).toBeVisible();
+            expect(screen.queryByText('test value')).not.toBeInTheDocument();
+        });
+
+        test('shows the counting badge for a no-value sub-condition (IS_EMPTY), which carries no value', () => {
+            const filter: UIFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'link filter',
+                    id: 'link_attr',
+                    type: AttributeType.advanced_link,
+                    linkedLibrary: {id: 'link_library'},
+                },
+                field: 'link_attr',
+                value: null,
+                condition: AttributeConditionFilter.THROUGH,
+                subCondition: AttributeConditionFilter.IS_EMPTY,
+                subField: 'sub_attr',
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+
+            // No value on the filter, but the active IS_EMPTY sub-condition must still count as (1).
+            expect(screen.getByText('1')).toBeVisible();
+        });
+    });
+
     describe('tree filter', () => {
         it('should render tree filter', async () => {
             const mockUseTreeDataQueryQuery: Mockify<typeof gqlTypes.useTreeDataQueryQuery> = {
@@ -742,6 +794,164 @@ describe('CommonFilterItem', () => {
 
             await userEvent.click(alpha);
             expect(alpha.closest('[role="button"]')).toHaveAttribute('aria-pressed', 'true');
+        });
+    });
+
+    describe('chip value display (operator prefix)', () => {
+        const numericFilter = (condition: RecordFilterCondition): IUIFilterStandard => ({
+            id: 'test',
+            attribute: {
+                label: 'Année',
+                id: 'year',
+                format: gqlTypes.AttributeFormat.numeric,
+                type: AttributeType.simple,
+            },
+            field: 'year',
+            value: '2026',
+            condition,
+        });
+
+        test.each([
+            [AttributeConditionFilter.EQUAL, '= 2026'],
+            [AttributeConditionFilter.NOT_EQUAL, '≠ 2026'],
+            [AttributeConditionFilter.GREATER_THAN, '> 2026'],
+            [AttributeConditionFilter.LESS_THAN, '< 2026'],
+        ])('numeric filter with %s shows the value prefixed with its operator symbol', (condition, expected) => {
+            render(<CommonFilterItem filter={numericFilter(condition)} />);
+            expect(screen.getByText(expected)).toBeVisible();
+        });
+
+        test('text filter with CONTAINS shows the translated condition label before the value', () => {
+            const filter: UIFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'text filter',
+                    id: 'text_attr',
+                    format: gqlTypes.AttributeFormat.text,
+                    type: AttributeType.simple,
+                },
+                field: 'text_attr',
+                value: 'hello',
+                condition: AttributeConditionFilter.CONTAINS,
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            // t() returns the raw i18n key in tests → the label is the "filters.contains" key.
+            expect(screen.getByText('filters.contains hello')).toBeVisible();
+        });
+
+        test('text filter with EQUAL shows the "=" symbol before the value', () => {
+            const filter: UIFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'text filter',
+                    id: 'text_attr',
+                    format: gqlTypes.AttributeFormat.text,
+                    type: AttributeType.simple,
+                },
+                field: 'text_attr',
+                value: 'hello',
+                condition: AttributeConditionFilter.EQUAL,
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            expect(screen.getByText('= hello')).toBeVisible();
+        });
+
+        test('raw link filter (no values list) shows its value prefixed', () => {
+            const filter: UIFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'link filter',
+                    id: 'link_attr',
+                    type: AttributeType.advanced_link,
+                },
+                field: 'link_attr',
+                value: 'bar',
+                condition: AttributeConditionFilter.EQUAL,
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            expect(screen.getByText('= bar')).toBeVisible();
+        });
+
+        describe('date filter', () => {
+            const dateFilter = (condition: RecordFilterCondition): IUIFilterStandard => ({
+                id: 'test',
+                attribute: {
+                    label: 'date filter',
+                    id: 'date_attr',
+                    format: gqlTypes.AttributeFormat.date,
+                    type: AttributeType.simple,
+                },
+                field: 'date_attr',
+                value: '1730761200',
+                formattedValue: '2024-11-04',
+                condition,
+            });
+
+            test.each([
+                [AttributeConditionFilter.EQUAL, '= 2024-11-04'],
+                [AttributeConditionFilter.NOT_EQUAL, '≠ 2024-11-04'],
+                [AttributeConditionFilter.LESS_THAN, '< 2024-11-04'],
+                [AttributeConditionFilter.GREATER_THAN, '> 2024-11-04'],
+            ])('with %s shows the formatted value prefixed', (condition, expected) => {
+                render(<CommonFilterItem filter={dateFilter(condition)} />);
+                expect(screen.getByText(expected)).toBeVisible();
+            });
+        });
+
+        test('boolean filter shows its value without any operator prefix (non-regression)', () => {
+            const filter: UIFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'boolean filter',
+                    id: 'bool_attr',
+                    format: gqlTypes.AttributeFormat.boolean,
+                    type: AttributeType.simple,
+                },
+                field: 'bool_attr',
+                value: 'true',
+                formattedValue: 'Oui',
+                // BooleanAttributeDropDown stores an EQUAL condition, but the chip must stay unprefixed.
+                condition: AttributeConditionFilter.EQUAL,
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            expect(screen.getByText('Oui')).toBeVisible();
+            expect(screen.queryByText('= Oui')).not.toBeInTheDocument();
+        });
+
+        test('link value list shows the label without any operator prefix (non-regression)', async () => {
+            const filter: IUIFilterValueList = {
+                id: 'test',
+                attribute: {
+                    label: 'link value list',
+                    id: 'link_attr',
+                    type: AttributeType.advanced_link,
+                    linkedLibrary: {id: 'link_library'},
+                    valuesList: {
+                        enable: true,
+                        linkedValues: [
+                            {
+                                id: '1',
+                                whoAmI: {
+                                    id: '1',
+                                    label: 'Officiel',
+                                    library: {id: 'link_library'},
+                                },
+                            },
+                        ],
+                    },
+                },
+                field: 'link_attr',
+                value: ['1'],
+                condition: RecordFilterCondition.EQUAL,
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+            expect(await screen.findByText('Officiel')).toBeVisible();
+            expect(screen.queryByText('= Officiel')).not.toBeInTheDocument();
         });
     });
 });

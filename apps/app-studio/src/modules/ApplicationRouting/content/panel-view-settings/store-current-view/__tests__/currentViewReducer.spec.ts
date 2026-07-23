@@ -443,6 +443,112 @@ describe('viewReducer (display actions)', () => {
         });
     });
 
+    describe('REPATH_FILTER', () => {
+        it('re-paths a bare link to a through, preserving pinned and position', () => {
+            const view = makeView({
+                filters: [
+                    {
+                        attributes: [{id: 'status', label: {en: 'STATUS'}}],
+                        condition: RecordFilterCondition.EQUAL,
+                        values: [],
+                        pinned: true,
+                    },
+                    {
+                        attributes: [{id: 'link', label: {en: 'LINK'}}],
+                        condition: RecordFilterCondition.EQUAL,
+                        values: [],
+                        pinned: true,
+                    },
+                ],
+            });
+
+            const next = viewReducer(view, {
+                type: 'REPATH_FILTER',
+                payload: {
+                    oldId: 'link',
+                    attributes: [{id: 'link'}, {id: 'subAttr'}],
+                    condition: RecordFilterCondition.CONTAINS,
+                    values: ['x'],
+                },
+            });
+
+            // Position preserved (still index 1), id now the through path, pinned kept.
+            expect(filterIds(next)).toEqual(['status', 'link/subAttr']);
+            expect(next.filters[1].pinned).toBe(true);
+            expect(next.filters[1].condition).toBe(RecordFilterCondition.CONTAINS);
+            expect(next.filters[1].values).toEqual(['x']);
+        });
+
+        it('preserves the label of the base segment (reuses the existing attribute[0])', () => {
+            const view = makeView({
+                filters: [
+                    {
+                        attributes: [{id: 'link', label: {en: 'LINK'}}],
+                        condition: RecordFilterCondition.EQUAL,
+                        values: [],
+                        pinned: true,
+                    },
+                ],
+            });
+
+            const next = viewReducer(view, {
+                type: 'REPATH_FILTER',
+                payload: {
+                    oldId: 'link',
+                    attributes: [{id: 'link'}, {id: 'subAttr'}],
+                    condition: RecordFilterCondition.EQUAL,
+                    values: [],
+                },
+            });
+
+            // Base segment keeps its label from the existing filter; the descended segment carries just its id.
+            expect(next.filters[0].attributes[0]).toEqual({id: 'link', label: {en: 'LINK'}});
+            expect(next.filters[0].attributes[1]).toEqual({id: 'subAttr'});
+        });
+
+        it('is a no-op when the old id is unknown', () => {
+            const view = makeView({filters: makeFilters(['status'])});
+            const next = viewReducer(view, {
+                type: 'REPATH_FILTER',
+                payload: {
+                    oldId: 'nope',
+                    attributes: [{id: 'nope'}, {id: 'sub'}],
+                    condition: RecordFilterCondition.EQUAL,
+                    values: [],
+                },
+            });
+            expect(next).toBe(view);
+        });
+
+        it('returns the same view reference when path and config are unchanged (idempotent)', () => {
+            const view = makeView({
+                filters: [
+                    {
+                        attributes: [
+                            {id: 'link', label: {en: 'LINK'}},
+                            {id: 'subAttr', label: {en: 'SUB'}},
+                        ],
+                        condition: RecordFilterCondition.CONTAINS,
+                        values: ['x'],
+                        pinned: true,
+                    },
+                ],
+            });
+
+            const next = viewReducer(view, {
+                type: 'REPATH_FILTER',
+                payload: {
+                    oldId: 'link/subAttr',
+                    attributes: [{id: 'link'}, {id: 'subAttr'}],
+                    condition: RecordFilterCondition.CONTAINS,
+                    values: ['x'],
+                },
+            });
+
+            expect(next).toBe(view);
+        });
+    });
+
     describe('SET_AVAILABLE_FILTERS', () => {
         it('keeps still-selected filters (order, pinned, condition, values), appends new ones, drops the rest', () => {
             const view = makeView({

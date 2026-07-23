@@ -1,10 +1,11 @@
 import {type ComponentProps, type FunctionComponent, useEffect, useRef, useState} from 'react';
 import styled from 'styled-components';
-import {KitInput, KitSelect} from 'aristid-ds';
+import {KitInput, type KitSelect} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type IFilterChildrenDropDownProps} from './_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
+import {FilterSelect} from './FilterSelect';
 
 const InputStyled = styled(KitInput)`
     width: 100%;
@@ -17,6 +18,7 @@ export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
     filter,
     onFilterChange,
     selectDropDownRef,
+    allowClearCondition,
 }) => {
     const {t} = useSharedTranslation();
     const {conditionOptionsByType} = useConditionsOptionsByType(filter);
@@ -64,10 +66,11 @@ export const TextAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
 
     return (
         <>
-            <KitSelect
+            <FilterSelect
                 options={conditionOptionsByType}
                 onChange={_onConditionChanged}
                 value={filter.condition}
+                allowClear={allowClearCondition}
                 getPopupContainer={() => selectDropDownRef?.current ?? document.body}
                 aria-label={String(t('explorer.filter-condition'))}
             />

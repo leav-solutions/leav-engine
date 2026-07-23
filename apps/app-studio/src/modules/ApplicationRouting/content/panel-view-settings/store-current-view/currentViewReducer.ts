@@ -278,6 +278,53 @@ const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction):
                 filters: view.filters.toSpliced(index, 1, {...current, condition, values, withEmptyValues}),
             };
         }
+        // Re-paths a filter whose attribute path changed in place (bare link → through, or one
+        // sub-attribute swapped for another). Located by its OLD id, replaced in place so its `pinned`
+        // flag AND position survive — the toolbar chip is not dropped. Mirror of SET_FILTER_CONFIG,
+        // but the identity (attributes) changes too.
+        case 'REPATH_FILTER': {
+            const {oldId, attributes, condition, values, withEmptyValues} = action.payload;
+            const index = view.filters.findIndex(filter => getFilterId(filter) === oldId);
+
+            if (index === -1) {
+                return view;
+            }
+
+            const current = view.filters[index];
+            const newId = attributes.map(attribute => attribute.id).join('/');
+            // G1-style idempotency guard: if the path and config already match, return the SAME view
+            // ref so the useReducer bail-out holds and the hub↔spoke round-trip cannot loop.
+            if (
+                getFilterId(current) === newId &&
+                current.condition === condition &&
+                !!current.withEmptyValues === !!withEmptyValues &&
+                current.values.length === values.length &&
+                current.values.every((value, valueIndex) => value === values[valueIndex])
+            ) {
+                return view;
+            }
+
+            // Preserve the label of the base segment: the SerializedFilter emitted by ExplorerV2
+            // carries `attributes: [{id}]` WITHOUT labels. Reuse `current.attributes[0]` (with its
+            // label) for the base segment and keep only the id for descended segments (the
+            // sub-attribute label resolves on the next reload; the toolbar chip resolves its own
+            // label from libs/ui attribute metadata, so it is unaffected).
+            const repathedAttributes = attributes.map((attribute, attributeIndex) =>
+                attributeIndex === 0 && current.attributes[0] ? current.attributes[0] : attribute,
+            );
+
+            return {
+                ...view,
+                filters: view.filters.toSpliced(index, 1, {
+                    ...current,
+                    attributes: repathedAttributes,
+                    condition,
+                    values,
+                    withEmptyValues,
+                    pinned: current.pinned,
+                }),
+            };
+        }
         // Admin gear: the desired set of attribute paths available as filters. Reconcile against the
         // current list (keyed by `getFilterId`): keep still-selected filters as-is (preserving order,
         // pinned, condition and values), append newly-selected paths (EQUAL/empty by default), drop
