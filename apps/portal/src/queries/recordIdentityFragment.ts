@@ -10,7 +10,6 @@ const recordIdentityFragment = gql`
             color
             library {
                 id
-                behavior
                 label
             }
             preview

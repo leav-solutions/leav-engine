@@ -20,6 +20,7 @@ describe('Attributes', () => {
                 result: {
                     data: {
                         attributes: {
+                            totalCount: 1,
                             list: [mockAttrSimple],
                         },
                     },

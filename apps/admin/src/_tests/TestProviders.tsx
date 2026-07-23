@@ -53,7 +53,12 @@ export const TestProviders = ({
                                 {noRouter ? (
                                     (children as ReactElement)
                                 ) : (
-                                    <MemoryRouter {...routerProps}>{children as ReactElement}</MemoryRouter>
+                                    <MemoryRouter
+                                        future={{v7_startTransition: true, v7_relativeSplatPath: true}}
+                                        {...routerProps}
+                                    >
+                                        {children as ReactElement}
+                                    </MemoryRouter>
                                 )}
                             </KitApp>
                         </ApplicationContext.Provider>

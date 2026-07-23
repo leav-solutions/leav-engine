@@ -41,7 +41,7 @@ function LibraryPicker({
             width={800}
             title={t('libraries.select_libraries')}
             onOk={_handleSubmit}
-            destroyOnClose
+            destroyOnHidden
             okText={t('global.submit')}
             cancelText={t('global.cancel')}
             centered

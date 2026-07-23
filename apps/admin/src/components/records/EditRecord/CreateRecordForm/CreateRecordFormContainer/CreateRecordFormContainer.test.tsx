@@ -1,6 +1,5 @@
 // import {MockedProvider} from '@apollo/client/testing';
 // import {mount} from 'enzyme';
-// import {act} from 'react-dom/test-utils';
 // import {getRecordDataQuery} from '../../../../../queries/records/recordDataQuery';
 // import {type IValue, type RecordData} from '../../../../../_types/records';
 // import {mockAttrSimple} from '../../../../../__mocks__/attributes';

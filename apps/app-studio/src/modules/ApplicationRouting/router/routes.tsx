@@ -15,63 +15,77 @@ import {NotFound} from '../NotFound';
 // panelWithFlap route need to be before the panel route because router will match the first route that matches the path
 const panelPaths = [AbsolutePaths.panelWithFlap, AbsolutePaths.panel];
 
-export const firstLevelRoutes: RouteObject[] = [
-    {
-        path: UnreachablePaths.workspace,
-        element: <RedirectToFirstPanel />,
-    },
-    {
-        element: <WorkspacesNavigationMenu />,
-        children: [
-            ...panelPaths.map(panelPath => ({
-                path: panelPath,
-                element: (
-                    <RedirectToPreviousPanel>
-                        <WorkspacePanelContainer>
-                            <Panel />
-                        </WorkspacePanelContainer>
-                    </RedirectToPreviousPanel>
-                ),
-            })),
-        ],
-    },
-    {
-        element: <WorkspacesNavigationMenu />,
-        children: [
-            {
-                path: AbsolutePaths.notFound,
-                element: <NotFound />,
-            },
-        ],
-    },
-    {
-        path: '*',
-        element: <RedirectToFirstWorkspace />,
-    },
-];
-
 // recordWherePanelWithFlap route need to be before the recordWherePanel because router will match the first route that matches the path
 const recordWherePanelPaths = [UnreachablePaths.recordWherePanelWithFlap, UnreachablePaths.recordWherePanel];
 
 const unreachableRecordPaths = [UnreachablePaths.recordWhere, UnreachablePaths.record];
 
-export const nextLevelRoutes: RouteObject[] = [
-    ...unreachableRecordPaths.map(unreachableRecordPath => ({
-        path: unreachableRecordPath,
-        element: <RedirectToFirstRecordPanel />,
-    })),
-    ...recordWherePanelPaths.map(recordWherePanelPath => ({
-        path: recordWherePanelPath,
-        element: (
-            <RedirectToPreviousPanel>
-                <RedirectToFirstRecordPanelAllowedInCompactMode>
-                    <RedirectCreationFormPanelToPopup>
-                        <PanelContainer>
-                            <Panel />
-                        </PanelContainer>
-                    </RedirectCreationFormPanelToPopup>
-                </RedirectToFirstRecordPanelAllowedInCompactMode>
-            </RedirectToPreviousPanel>
-        ),
-    })),
-];
+// The route arrays instantiate `<Panel />` JSX. `Panel` and this module form an intentional cycle
+// (recursive routing: a panel renders the next level's routes, which render panels). Building the
+// arrays lazily — instead of at module-eval time — defers `<Panel />` creation to render time, when
+// `Panel` is guaranteed to be defined regardless of which side of the cycle is the entry point.
+// Both consumers call these at render, and the result is cached so the reference stays stable.
+let firstLevelRoutesCache: RouteObject[] | null = null;
+let nextLevelRoutesCache: RouteObject[] | null = null;
+
+export const getFirstLevelRoutes = (): RouteObject[] => {
+    firstLevelRoutesCache ??= [
+        {
+            path: UnreachablePaths.workspace,
+            element: <RedirectToFirstPanel />,
+        },
+        {
+            element: <WorkspacesNavigationMenu />,
+            children: [
+                ...panelPaths.map(panelPath => ({
+                    path: panelPath,
+                    element: (
+                        <RedirectToPreviousPanel>
+                            <WorkspacePanelContainer>
+                                <Panel />
+                            </WorkspacePanelContainer>
+                        </RedirectToPreviousPanel>
+                    ),
+                })),
+            ],
+        },
+        {
+            element: <WorkspacesNavigationMenu />,
+            children: [
+                {
+                    path: AbsolutePaths.notFound,
+                    element: <NotFound />,
+                },
+            ],
+        },
+        {
+            path: '*',
+            element: <RedirectToFirstWorkspace />,
+        },
+    ];
+    return firstLevelRoutesCache;
+};
+
+export const getNextLevelRoutes = (): RouteObject[] => {
+    nextLevelRoutesCache ??= [
+        ...unreachableRecordPaths.map(unreachableRecordPath => ({
+            path: unreachableRecordPath,
+            element: <RedirectToFirstRecordPanel />,
+        })),
+        ...recordWherePanelPaths.map(recordWherePanelPath => ({
+            path: recordWherePanelPath,
+            element: (
+                <RedirectToPreviousPanel>
+                    <RedirectToFirstRecordPanelAllowedInCompactMode>
+                        <RedirectCreationFormPanelToPopup>
+                            <PanelContainer>
+                                <Panel />
+                            </PanelContainer>
+                        </RedirectCreationFormPanelToPopup>
+                    </RedirectToFirstRecordPanelAllowedInCompactMode>
+                </RedirectToPreviousPanel>
+            ),
+        })),
+    ];
+    return nextLevelRoutesCache;
+};

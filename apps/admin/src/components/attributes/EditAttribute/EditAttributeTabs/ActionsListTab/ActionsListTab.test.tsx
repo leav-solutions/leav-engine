@@ -20,7 +20,7 @@ describe('ActionsListTab', () => {
     test('adds the available actions ', async () => {
         render(
             <DndProvider backend={TestBackend}>
-                <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK} addTypename={false}>
+                <MockedProvider mocks={AVAILABLE_ACTIONS_MOCK}>
                     <ActionsListTab attribute={mockAttrSimple} />
                 </MockedProvider>
             </DndProvider>,
@@ -32,7 +32,7 @@ describe('ActionsListTab', () => {
     test("renders even when there's no action", async () => {
         render(
             <DndProvider backend={TestBackend}>
-                <MockedProvider mocks={NO_AVAILABLE_ACTION_MOCK} addTypename={false}>
+                <MockedProvider mocks={NO_AVAILABLE_ACTION_MOCK}>
                     <ActionsListTab attribute={mockAttrSimple} />
                 </MockedProvider>
             </DndProvider>,

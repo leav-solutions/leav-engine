@@ -116,7 +116,7 @@ export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
             values={getFilterValues(effectiveFilter, t)}
             dropDownProps={{
                 placement: 'bottomLeft',
-                dropdownRender: () => (
+                popupRender: () => (
                     <FilterDropDown filter={effectiveFilter} canReset={canReset} canRemove={!isPinned} />
                 ),
             }}

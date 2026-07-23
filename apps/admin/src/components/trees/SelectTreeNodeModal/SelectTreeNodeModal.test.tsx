@@ -51,6 +51,7 @@ describe('SelectTreeNodeModal', () => {
                                         },
                                     },
                                 ],
+                                settings: null,
                                 permissions_conf: null,
                             },
                         ],

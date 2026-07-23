@@ -130,7 +130,12 @@ describe('EditVersionProfile', () => {
                     saveCalled = true;
                     return {
                         data: {
-                            saveVersionProfiles: mockVersionProfile,
+                            saveVersionProfile: {
+                                __typename: 'VersionProfile',
+                                ...mockVersionProfile,
+                                description: {fr: ''},
+                                trees: [],
+                            },
                         },
                     };
                 },
@@ -147,7 +152,20 @@ describe('EditVersionProfile', () => {
     test('Autofill ID with label on new attribute', async () => {
         mockUseParams.mockReturnValueOnce({id: undefined});
 
-        render(<EditVersionProfile />, {apolloMocks: mocks});
+        const mocksWithIdCheck = [
+            ...mocks,
+            {
+                // The ID uniqueness check fires on every keystroke of the auto-filled ID, querying
+                // intermediate IDs we can't enumerate. Match any variables and return an empty list
+                // (ID available) for all of them.
+                request: {query: GetVersionProfilesDocument},
+                variableMatcher: () => true,
+                maxUsageCount: Number.POSITIVE_INFINITY,
+                result: {data: {versionProfiles: {list: []}}},
+            },
+        ];
+
+        render(<EditVersionProfile />, {apolloMocks: mocksWithIdCheck});
 
         await userEvent.type(screen.getByRole('textbox', {name: 'label.fr'}), 'labelfr', {delay: 5});
 
@@ -282,6 +300,10 @@ describe('EditVersionProfile', () => {
             await userEvent.click(await screen.findByText('OK'));
 
             await waitFor(() => expect(saveAttributeCalled).toBe(true));
+
+            // The unlink writes the updated profile back to the Apollo cache, which re-renders the
+            // form (incl. TreesSelector). Wait for that settled state so the update stays inside act.
+            await waitFor(() => expect(screen.queryByText('Attribut 1')).not.toBeInTheDocument());
         });
     });
 });

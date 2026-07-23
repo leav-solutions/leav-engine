@@ -258,7 +258,7 @@ function AttributesList({library, readOnly, onDeleteAttribute, onAddAttributes}:
                 dataSource={tableData}
                 bordered
                 pagination={{
-                    position: ['bottomCenter'],
+                    placement: ['bottomCenter'],
                     pageSize,
                     current: currentPage,
                     total: data?.attributes?.totalCount ?? 0,

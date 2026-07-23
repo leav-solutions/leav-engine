@@ -130,6 +130,7 @@ function SizesEditor({sizes, readOnly, onChange}: ISizesEditorProps): JSX.Elemen
                         okText={t('global.submit')}
                         cancelText={t('global.cancel')}
                         okButtonProps={{'aria-label': 'delete-confirm'}}
+                        getPopupContainer={triggerNode => triggerNode.parentElement ?? document.body}
                     >
                         <BasicButton
                             shape="circle"

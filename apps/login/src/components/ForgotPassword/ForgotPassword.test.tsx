@@ -21,7 +21,7 @@ window.matchMedia = query => ({
 const _renderComponent = () =>
     render(
         <KitApp>
-            <MemoryRouter>
+            <MemoryRouter future={{v7_startTransition: true, v7_relativeSplatPath: true}}>
                 <ForgotPassword />
             </MemoryRouter>
         </KitApp>,

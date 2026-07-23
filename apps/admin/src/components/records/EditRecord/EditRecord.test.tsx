@@ -1,5 +1,4 @@
 // import {mount} from 'enzyme';
-// import {act} from 'react-dom/test-utils';
 // import {wait} from '../../../utils/testUtils';
 // import {getLibByIdQuery} from '../../../queries/libraries/getLibraryById';
 // import {mockLibrary} from '../../../__mocks__/libraries';

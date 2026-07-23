@@ -170,7 +170,7 @@ const App = (): JSX.Element => {
                         <ApplicationContext.Provider value={applicationContextData}>
                             <div className="App height100">
                                 <MessagesDisplay />
-                                <RouterProvider router={adminRouter} />
+                                <RouterProvider router={adminRouter} future={{v7_startTransition: true}} />
                             </div>
                         </ApplicationContext.Provider>
                     </UserContext.Provider>

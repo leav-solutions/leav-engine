@@ -195,8 +195,8 @@ export const AvailableAttributesDropdown = ({facet}: {facet: AvailableAttributes
             open={open}
             onOpenChange={setOpen}
             placement="bottomRight"
-            overlayClassName={dropdownOverlay}
-            dropdownRender={() => (
+            classNames={{root: dropdownOverlay}}
+            popupRender={() => (
                 <div className={dropdownContent}>
                     <div className={header}>
                         <KitTypography.Text weight="bold" size="fontSize5">

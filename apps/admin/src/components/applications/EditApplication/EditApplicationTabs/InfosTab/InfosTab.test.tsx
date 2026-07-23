@@ -6,6 +6,7 @@ import {
     GetApplicationModulesDocument,
     SaveApplicationDocument,
 } from '../../../../../_gqlTypes';
+import {getApplicationByIdQuery} from '../../../../../queries/applications/getApplicationByIdQuery';
 import {act, fireEvent, render, screen, waitFor, within} from '../../../../../_tests/testUtils';
 import {mockApplicationDetails, mockApplicationsModules} from '../../../../../__mocks__/common/applications';
 import InfosTab from './InfosTab';
@@ -127,12 +128,14 @@ describe('InfosTab', () => {
     test('Display form for a new app, edit value and submit', async () => {
         let saveCalled = false;
         const checkIdUnicityMock = {
+            // The ID uniqueness check fires repeatedly while the ID auto-fills, querying intermediate
+            // IDs we can't enumerate. Match any variables and return an empty list (ID available).
+            // The component checks unicity through the legacy getApplicationByIdQuery document.
             request: {
-                query: GetApplicationByIdDocument,
-                variables: {
-                    id: 'myapp',
-                },
+                query: getApplicationByIdQuery,
             },
+            variableMatcher: () => true,
+            maxUsageCount: Number.POSITIVE_INFINITY,
             result: {
                 data: {
                     applications: {
@@ -143,10 +146,6 @@ describe('InfosTab', () => {
         };
 
         const mocks = [
-            checkIdUnicityMock, // Will be called once per letter of the 'myapp' id
-            checkIdUnicityMock,
-            checkIdUnicityMock,
-            checkIdUnicityMock,
             checkIdUnicityMock,
             {
                 request: {

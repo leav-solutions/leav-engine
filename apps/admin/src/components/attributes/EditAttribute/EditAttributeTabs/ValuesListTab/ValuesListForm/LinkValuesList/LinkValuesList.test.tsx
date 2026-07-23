@@ -1,6 +1,5 @@
 // import {shallow} from 'enzyme';
 // import React from 'react';
-// import {act} from 'react-dom/test-utils';
 // import {wait} from '../../../../../../../utils/testUtils';
 // import {type ILinkValuesList} from '../../../../../../../_types/attributes';
 // import LinkValuesList from './LinkValuesList';

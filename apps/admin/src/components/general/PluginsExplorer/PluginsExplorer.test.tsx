@@ -1,7 +1,6 @@
 // import {MockedProvider} from '@apollo/client/testing';
 // import {mount} from 'enzyme';
 // import {getPluginsQuery} from '../../../queries/plugins/getPluginsQuery';
-// import {act} from 'react-dom/test-utils';
 // import {BrowserRouter as Router} from 'react-router-dom-v5';
 // import MockedLangContextProvider from '../../../__mocks__/MockedLangContextProvider';
 // import MockedUserContextProvider from '../../../__mocks__/MockedUserContextProvider';

@@ -66,7 +66,7 @@ export const UserFilter = ({loading, value, onChange, onReset}: UserFilterProps)
             values={selectedLabel ? [selectedLabel] : []}
             dropDownProps={{
                 onOpenChange: _handleOpenChange,
-                dropdownRender: menuNode => (
+                popupRender: menuNode => (
                     <FilterDropdownContainer>
                         <FilterDropdownSearch key={resetKey} onSearch={setSearch} disabled={usersLoading} />
                         {usersLoading ? <KitLoader /> : menuNode}

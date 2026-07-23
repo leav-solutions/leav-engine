@@ -67,9 +67,9 @@ describe('EditRecordContent', () => {
             },
             result: {
                 data: {
-                    userData: {
+                    saveUserData: {
                         global: false,
-                        data: ['123465'],
+                        data: ['123456'],
                     },
                 },
             },

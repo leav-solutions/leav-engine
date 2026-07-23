@@ -10,6 +10,7 @@ export const AVAILABLE_ACTIONS_MOCK = [
             data: {
                 availableActions: [
                     {
+                        __typename: 'Action',
                         id: 'validateFormat',
                         name: 'Validate Format',
                         description: 'Check if value matches attribute format',
@@ -18,6 +19,7 @@ export const AVAILABLE_ACTIONS_MOCK = [
                         params: null,
                     },
                     {
+                        __typename: 'Action',
                         id: 'maskValue',
                         name: 'Mask Value',
                         description: 'Mask any value by replacing with dots or empty string if no value',
@@ -41,6 +43,8 @@ export const ONE_AVAILABLE_ACTION_MOCK = [
             data: {
                 availableActions: [
                     {
+                        __typename: 'Action',
+                        id: 'validateFormat',
                         name: 'validateFormat',
                         description: 'Check if value matches attribute format',
                         input_types: ['string', 'number', 'boolean', 'object'],

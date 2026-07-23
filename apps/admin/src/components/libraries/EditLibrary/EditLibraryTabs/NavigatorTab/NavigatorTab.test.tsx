@@ -1,6 +1,5 @@
 // import {mount} from 'enzyme';
 // import React from 'react';
-// import {act} from 'react-dom/test-utils';
 // import {mockLibrary} from '../../../../../__mocks__/libraries';
 // import MockedLangContextProvider from '../../../../../__mocks__/MockedLangContextProvider';
 // import NavigatorTab from './NavigatorTab';

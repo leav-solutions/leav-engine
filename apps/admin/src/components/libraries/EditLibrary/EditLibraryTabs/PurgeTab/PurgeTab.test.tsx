@@ -14,6 +14,8 @@ describe('PurgeTab', () => {
                 filters: [{field: 'active', condition: 'EQUAL', value: 'false'}],
             },
         },
+        // The inactive-records count is re-fetched after a purge, so the query fires more than once.
+        maxUsageCount: Number.POSITIVE_INFINITY,
         result: {
             data: {
                 records: {
@@ -86,10 +88,10 @@ describe('PurgeTab', () => {
 
         expect(await screen.findByText(/1337/)).toBeInTheDocument();
 
-        userEvent.click(screen.getByRole('button', {name: /purge/i}));
+        await userEvent.click(screen.getByRole('button', {name: /purge/i}));
 
         expect(await screen.findByText(/confirm/i)).toBeInTheDocument();
-        userEvent.click(screen.getByRole('button', {name: /submit/i})); // Confirm
+        await userEvent.click(screen.getByRole('button', {name: /submit/i})); // Confirm
 
         await waitFor(() => expect(purgeCalled).toBe(true));
     });

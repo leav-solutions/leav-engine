@@ -5,10 +5,10 @@ import {localizedTranslation} from '@leav/utils';
 import {FloatButton} from 'antd';
 import {useApplicationsPermissions} from '../../hooks/useApplicationsPermissions';
 import {getApplicationsQuery} from '../../queries/applications/getApplicationsQuery';
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {styled} from 'styled-components';
-import {type GET_APPLICATIONS, type GET_APPLICATIONS_applications_list} from '../../_gqlTypes/GET_APPLICATIONS';
+import {type GET_APPLICATIONS} from '../../_gqlTypes/GET_APPLICATIONS';
 import ApplicationsList from './ApplicationsList';
 import ApplicationsSearch from './ApplicationsSearch';
 import {EditApplicationModal} from './EditApplicationModal';
@@ -21,24 +21,33 @@ const PrimaryFloatButton = styled(FloatButton)`
     }
 `;
 
+const hiddenApps = ['portal', 'login'];
+
 function Applications(): JSX.Element {
     const {t} = useTranslation();
 
-    const hiddenApps = ['portal', 'login'];
     const {lang} = useLang();
-    const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery, {
-        onCompleted: dataRes => {
-            const apps = (dataRes?.applications.list ?? []).filter(
-                app => app.permissions.access_application && !hiddenApps.includes(app.id),
-            );
-            setApplications(apps);
-        },
-    });
+    const {loading, error, data} = useQuery<GET_APPLICATIONS>(getApplicationsQuery);
     const {loading: permissionsLoading, canCreate, error: permissionsError} = useApplicationsPermissions();
     const [showEditApplicationModal, setShowEditApplicationModal] = useState(false);
+    const [search, setSearch] = useState('');
 
-    const allApps = data?.applications.list ?? [];
-    const [applications, setApplications] = useState<GET_APPLICATIONS_applications_list[]>([]);
+    const applications = useMemo(() => {
+        const visibleApps = (data?.applications.list ?? []).filter(
+            app => app.permissions.access_application && !hiddenApps.includes(app.id),
+        );
+
+        if (!search) {
+            return visibleApps;
+        }
+
+        return visibleApps.filter(app => {
+            const label = localizedTranslation(app.label, lang);
+            const description = localizedTranslation(app.description, lang);
+
+            return label.match(new RegExp(search, 'i')) || description.match(new RegExp(search, 'i'));
+        });
+    }, [data, search, lang]);
 
     if (loading || permissionsLoading) {
         return <Loading />;
@@ -48,18 +57,8 @@ function Applications(): JSX.Element {
         return <ErrorDisplay message={error?.message || permissionsError?.message} />;
     }
 
-    const _handleSearch = (search: string) => {
-        const filteredApps = allApps.filter(app => {
-            if (!app.permissions.access_application || hiddenApps.includes(app.id)) {
-                return false;
-            }
-
-            const label = localizedTranslation(app.label, lang);
-            const description = localizedTranslation(app.description, lang);
-
-            return label.match(new RegExp(search, 'i')) || description.match(new RegExp(search, 'i'));
-        });
-        setApplications(filteredApps);
+    const _handleSearch = (value: string) => {
+        setSearch(value);
     };
 
     const _handleClickCreateApplication = () => {

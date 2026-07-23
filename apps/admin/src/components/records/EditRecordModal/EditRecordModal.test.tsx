@@ -1,6 +1,5 @@
 // import {mount} from 'enzyme';
 // import React from 'react';
-// import {act} from 'react-dom/test-utils';
 // import {wait} from '../../../utils/testUtils';
 // import EditRecordModal from './EditRecordModal';
 

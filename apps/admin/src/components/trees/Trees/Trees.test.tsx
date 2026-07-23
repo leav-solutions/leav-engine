@@ -20,7 +20,8 @@ describe('Trees', () => {
                 },
                 result: {
                     data: {
-                        attributes: {
+                        trees: {
+                            totalCount: 1,
                             list: [mockTree],
                         },
                     },

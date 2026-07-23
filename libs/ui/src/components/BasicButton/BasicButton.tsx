@@ -1,4 +1,5 @@
 import {Button, type ButtonProps} from 'antd';
+import {forwardRef} from 'react';
 import styled from 'styled-components';
 import {themeVars} from '../../antdTheme';
 
@@ -22,12 +23,14 @@ interface IBasicButtonProps extends ButtonProps {
     centered?: boolean;
 }
 
-function BasicButton({children, bordered, centered, ...props}: IBasicButtonProps): JSX.Element {
-    return (
-        <StyledBtn {...props} $bordered={bordered} $centered={centered}>
+const BasicButton = forwardRef<HTMLAnchorElement | HTMLButtonElement, IBasicButtonProps>(
+    ({children, bordered, centered, ...props}, ref) => (
+        <StyledBtn ref={ref} {...props} $bordered={bordered} $centered={centered}>
             {children}
         </StyledBtn>
-    );
-}
+    ),
+);
+
+BasicButton.displayName = 'BasicButton';
 
 export default BasicButton;

@@ -17,6 +17,7 @@ import {getMainDefinition} from '@apollo/client/utilities';
 import fetch from 'cross-fetch';
 import {CloseCode, createClient} from 'graphql-ws';
 import useRedirectToLogin from '../../../hooks/useRedirectToLogin';
+import {cacheTypePolicies} from './cacheTypePolicies';
 import {type FunctionComponent, type PropsWithChildren} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useDispatch} from 'react-redux';
@@ -136,36 +137,7 @@ const ApolloHandler: FunctionComponent<PropsWithChildren> = ({children}) => {
                 const idValue = responseObject._id || responseObject.id;
                 return `${responseObject.__typename}:${String(idValue)}`;
             },
-            typePolicies: {
-                Query: {
-                    fields: {
-                        attributes: {
-                            merge: true,
-                        },
-                    },
-                },
-                RecordIdentity: {
-                    keyFields: ['id', 'library', ['id']],
-                },
-                Library: {
-                    fields: {
-                        attributes: {
-                            merge(existing, incoming) {
-                                return incoming;
-                            },
-                        },
-                    },
-                },
-                VersionProfile: {
-                    fields: {
-                        linkedAttributes: {
-                            merge(existing, incoming) {
-                                return incoming;
-                            },
-                        },
-                    },
-                },
-            },
+            typePolicies: cacheTypePolicies,
             possibleTypes: gqlPossibleTypes,
         }),
     });

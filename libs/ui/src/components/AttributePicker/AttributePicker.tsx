@@ -46,7 +46,7 @@ function AttributePicker({
             width={800}
             title={t('attributes.select_attributes')}
             onOk={_handleSubmit}
-            destroyOnClose
+            destroyOnHidden
             okText={t('global.submit')}
             cancelText={t('global.cancel')}
             confirmLoading={isLoading}

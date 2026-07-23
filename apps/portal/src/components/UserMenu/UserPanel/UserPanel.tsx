@@ -63,7 +63,7 @@ const UserPanel: FunctionComponent<IUserPanelProps> = ({isVisible, onClose}) => 
                                             key={l}
                                             style={{padding: '5 5px'}}
                                             onClick={() => setLang(l)}
-                                            icon={getFlagByLang(l)}
+                                            icon={<span>{getFlagByLang(l)}</span>}
                                         />
                                     ))}
                                 </div>

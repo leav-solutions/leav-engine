@@ -43,7 +43,7 @@ function TreePicker({
             width={800}
             title={t('trees.select_trees')}
             onOk={_handleSubmit}
-            destroyOnClose
+            destroyOnHidden
             okText={t('global.submit')}
             cancelText={t('global.cancel')}
             confirmLoading={isLoading}

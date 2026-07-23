@@ -1,7 +1,6 @@
 // import {MockedProvider} from '@apollo/client/testing';
 // import {mount} from 'enzyme';
 // import React from 'react';
-// import {act} from 'react-dom/test-utils';
 // import SortableTree from 'react-sortable-tree';
 // import {getAttributesQuery} from '../../../../../queries/attributes/getAttributesQuery';
 // import {type GET_ATTRIBUTES_attributes_list} from '../../../../../_gqlTypes/GET_ATTRIBUTES';
