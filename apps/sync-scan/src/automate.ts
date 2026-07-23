@@ -1,4 +1,4 @@
-import {type IAmqpService} from '@leav/message-broker';
+import {type IAmqpChannel} from '@leav/message-broker';
 import {groupDbFilesByDatas, groupFsFilesByDatas} from './utils';
 import * as events from './events';
 import {type FilesystemContent, type IFileContent, type IFilesystemDatas} from './_types/filesystem';
@@ -98,7 +98,7 @@ const _sendCommand = async (
     match: string,
     fsFile: IFileContent | null,
     dbFile: IRecord | null,
-    amqp: IAmqpService,
+    amqp: IAmqpChannel,
     dbSettings: IDbLibrariesSettings,
 ) => {
     switch (match) {
@@ -170,7 +170,7 @@ const _process = async (
     fsFilesByData: IFilesystemDatas,
     dbFilesByData: IDbFilesDatas,
     dbSettings: IDbLibrariesSettings,
-    amqp: IAmqpService,
+    amqp: IAmqpChannel,
 ): Promise<void> => {
     const fsLevels = Object.keys(fsFilesByData.filesByLevel);
     fsLevels.sort();
@@ -193,7 +193,7 @@ export default async (
     fsFiles: FilesystemContent,
     dbFiles: IRecord[],
     dbSettings: IDbLibrariesSettings,
-    amqp: IAmqpService,
+    amqp: IAmqpChannel,
 ): Promise<void> => {
     const fsFilesByData = groupFsFilesByDatas(fsFiles);
     const dbFilesByData = groupDbFilesByDatas(dbFiles);

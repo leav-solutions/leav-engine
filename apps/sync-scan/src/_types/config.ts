@@ -1,4 +1,4 @@
-import {type Options} from 'amqplib';
+import {type IAmqpConnectionOptions} from '@leav/message-broker';
 
 export interface IConfig {
     allowFilesList: string;
@@ -19,11 +19,11 @@ export interface IConfigFilesystem {
 }
 
 export interface IConfigAmqp {
-    connOpt: Options.Connect;
+    connOpt: IAmqpConnectionOptions;
+    heartbeatInSeconds?: number;
     exchange: string;
     type: string;
     routingKey: string;
     rootKey: string;
     queue?: string;
-    prefetch?: number;
 }
