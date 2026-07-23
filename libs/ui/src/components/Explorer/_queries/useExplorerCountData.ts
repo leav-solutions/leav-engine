@@ -20,7 +20,11 @@ export const useExplorerCountData = ({
     const activeFilter = filters.find(f => f.field === 'active');
     const preparedFilters = prepareFiltersForRequest(activeFilter ? [...defaultFilters, activeFilter] : defaultFilters);
 
-    const {data: countData, refetch: refetchCount} = useExplorerLibraryCountDataQuery({
+    const {
+        data: countData,
+        loading,
+        refetch: refetchCount,
+    } = useExplorerLibraryCountDataQuery({
         fetchPolicy: 'network-only',
         skip: skip || !isLibrary,
         variables: {
@@ -33,6 +37,7 @@ export const useExplorerCountData = ({
 
     return {
         countData: memoizedCountData,
+        loading,
         refetchCount,
     };
 };

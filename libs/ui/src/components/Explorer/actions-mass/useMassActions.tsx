@@ -16,6 +16,7 @@ import {ResultsCount} from './ResultsCount';
  * Hook used to manage mass selection as the snackbar and all kind of selection (manual, all in page, all in filters)
  *
  * @param isEnabled - whether the selection is present
+ * @param loading - whether results are reloading; disables selection interactions while true
  * @param view - represent the current view
  * @param dispatch - method to change the current view
  * @param totalCountFiltered - number of results with the current filters
@@ -26,6 +27,7 @@ import {ResultsCount} from './ResultsCount';
  */
 export const useMassActions = ({
     isEnabled,
+    loading,
     store: {dispatch, view},
     filtersStore: {filters, filtersOperator},
     totalCountFiltered,
@@ -35,6 +37,7 @@ export const useMassActions = ({
     snackbarId,
 }: {
     isEnabled: boolean;
+    loading: boolean;
     store: {
         view: IViewSettingsState;
         dispatch: Dispatch<IViewSettingsAction>;
@@ -111,6 +114,7 @@ export const useMassActions = ({
     useEffect(() => () => closeKitSnackBar(snackbarId), []);
 
     const isOnePage = view.pageSize > totalCountFiltered;
+    const isSelectionInteractionDisabled = loading || totalCountFiltered === 0;
     const hasSelectedAllAvailableItems =
         view.massSelection === MASS_SELECTION_ALL || view.massSelection.length === totalCountFiltered;
     const hasSelectedAllVisibleItems =
@@ -126,6 +130,7 @@ export const useMassActions = ({
             aria-checked={hasSelectedSomeItems ? 'mixed' : hasSelectedAllAvailableItems ? 'true' : 'false'}
             indeterminate={hasSelectedSomeItems}
             checked={hasSelectedAllAvailableItems}
+            disabled={isSelectionInteractionDisabled}
             onChange={_ => {
                 if (hasSelectedAllAvailableItems) {
                     _setSelectedKeys([]);
@@ -152,6 +157,7 @@ export const useMassActions = ({
                           ? {
                                 key: 'toggle_page_selection',
                                 label: t('explorer.massAction.toggle_selection.deselect_page', {count: view.pageSize}),
+                                disabled: isSelectionInteractionDisabled,
                                 onClick: () =>
                                     _setSelectedKeys(
                                         [...view.massSelection].filter(key => !allVisibleKeys.includes(String(key))),
@@ -160,6 +166,7 @@ export const useMassActions = ({
                           : {
                                 key: 'toggle_page_selection',
                                 label: t('explorer.massAction.toggle_selection.select_page', {count: view.pageSize}),
+                                disabled: isSelectionInteractionDisabled,
                                 onClick: () =>
                                     _setSelectedKeys([...new Set([...view.massSelection, ...allVisibleKeys])]),
                             },
@@ -167,6 +174,7 @@ export const useMassActions = ({
                         ? {
                               key: 'select_all_selection',
                               label: t('explorer.massAction.toggle_selection.select_all', {count: totalCountFiltered}),
+                              disabled: isSelectionInteractionDisabled,
                               onClick: async () => {
                                   _setSelectedKeys(MASS_SELECTION_ALL);
                               },
@@ -177,6 +185,7 @@ export const useMassActions = ({
                         ? {
                               key: 'deselect_all_selection',
                               label: t('explorer.massAction.toggle_selection.deselect_all'),
+                              disabled: isSelectionInteractionDisabled,
                               onClick: async () => {
                                   _setSelectedKeys([]);
                               },
