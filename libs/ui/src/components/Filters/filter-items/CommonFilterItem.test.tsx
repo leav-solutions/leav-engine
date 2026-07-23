@@ -574,6 +574,28 @@ describe('CommonFilterItem', () => {
             expect(screen.getByText('1')).toBeVisible();
             expect(screen.queryByText('test value')).not.toBeInTheDocument();
         });
+
+        test('shows the counting badge for a no-value sub-condition (IS_EMPTY), which carries no value', () => {
+            const filter: UIFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'link filter',
+                    id: 'link_attr',
+                    type: AttributeType.advanced_link,
+                    linkedLibrary: {id: 'link_library'},
+                },
+                field: 'link_attr',
+                value: null,
+                condition: AttributeConditionFilter.THROUGH,
+                subCondition: AttributeConditionFilter.IS_EMPTY,
+                subField: 'sub_attr',
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+
+            // No value on the filter, but the active IS_EMPTY sub-condition must still count as (1).
+            expect(screen.getByText('1')).toBeVisible();
+        });
     });
 
     describe('tree filter', () => {

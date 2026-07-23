@@ -74,6 +74,16 @@ export type CurrentViewAction =
               withEmptyValues?: boolean;
           };
       }
+    | {
+          type: 'REPATH_FILTER';
+          payload: {
+              oldId: string;
+              attributes: AvailableAttribute[];
+              condition: RecordFilterCondition;
+              values: Array<string | null>;
+              withEmptyValues?: boolean;
+          };
+      }
     | {type: 'TOGGLE_SHORTCUT'; payload: {shortcut: ViewV2Shortcut}}
     | {type: 'SET_AVAILABLE_COLUMNS'; payload: {attributes: AvailableAttribute[]}}
     | {type: 'SET_AVAILABLE_SORTS'; payload: {sorts: Array<{attributes: AvailableAttribute[]}>}}

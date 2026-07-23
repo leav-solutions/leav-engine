@@ -74,9 +74,17 @@ const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
         return [...filterValues, ...(filter.formattedValue ?? [])];
     }
 
-    // A "through" filter is rendered as a counting badge (see showSingleValue below): only feed its
-    // value into `values` so the badge (and its tooltip) has something to display.
+    // A "through" filter is rendered as a counting badge (see showSingleValue below): feed one entry
+    // into `values` so the badge (and its tooltip) has something to display. Its effective condition is
+    // the SUB-condition; a no-value one (IS_EMPTY, IS_NOT_EMPTY…) is active WITHOUT a value, so feed its
+    // label so the badge still counts (1) — otherwise `filter.value` alone would leave the chip badge-less.
     if (isUIFilterThrough(filter)) {
+        if (filter.subCondition && nullValueConditions.includes(filter.subCondition as RecordFilterCondition)) {
+            const conditionOption = getAttributeConditionOptions(t).find(
+                option => option.value === filter.subCondition,
+            );
+            return [...filterValues, conditionOption?.label ?? String(filter.subCondition)];
+        }
         return filter.value ? [...filterValues, String(filter.value)] : filterValues;
     }
 

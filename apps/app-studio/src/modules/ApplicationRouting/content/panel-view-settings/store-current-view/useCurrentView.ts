@@ -72,6 +72,17 @@ export const useCurrentView = () => {
         [dispatch],
     );
 
+    const rePathFilter = useCallback(
+        (
+            oldId: string,
+            attributes: AvailableAttribute[],
+            condition: RecordFilterCondition,
+            values: Array<string | null>,
+            withEmptyValues?: boolean,
+        ) => dispatch({type: 'REPATH_FILTER', payload: {oldId, attributes, condition, values, withEmptyValues}}),
+        [dispatch],
+    );
+
     const setAvailableFilters = useCallback(
         (filters: Array<{attributes: AvailableAttribute[]}>) =>
             dispatch({type: 'SET_AVAILABLE_FILTERS', payload: {filters}}),
@@ -227,6 +238,7 @@ export const useCurrentView = () => {
         moveFilter,
         toggleFilterPinned,
         setFilterConfig,
+        rePathFilter,
         setAvailableFilters,
         setLabel,
         setShared,

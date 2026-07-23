@@ -4,11 +4,11 @@ import {type ExplorerV2, type SerializedFilter, type SerializedViewV2, useLang, 
 import {retrievePanelDetails} from '../../utils/retrievePanelDetails';
 import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {type AppStudioInternalEvent} from '../../types';
-import {RecordFilterCondition} from '../../../../__generated__';
 import {CurrentViewContext} from '../panel-view-settings/store-current-view/CurrentViewContext';
 import {useCurrentView} from '../panel-view-settings/store-current-view/useCurrentView';
 import {matomo} from '../../../../services/analytics';
 import {matomoEvents} from '../../../../services/analytics/constants/matomoEvents';
+import {reconcileToolbarFilters} from './reconcileToolbarFilters';
 
 /**
  * app-studio is the source of truth for views (ADR-006): the `CurrentViewStoreProvider` (mounted in
@@ -32,29 +32,31 @@ export const useViewSettingsProps = (): {
 
     const {serializedView} = useContext(CurrentViewContext);
     const {dispatch} = usePanelEventHandlers<AppStudioInternalEvent>();
-    const {setFilterConfig, toggleFilterPinned, pinnedFilters} = useCurrentView();
+    const {setFilterConfig, rePathFilter, toggleFilterPinned, filters: hubFilters} = useCurrentView();
 
-    // Reconcile the WHOLE lean set emitted by ExplorerV2's filter store against the hub: update present
-    // filters; a pinned filter ABSENT from the set was removed from the toolbar → unpin it. The store's
-    // echo-suppression (G3) guarantees this only fires on a genuine toolbar edit/removal, and `setFilterConfig`
-    // is a no-op for unchanged filters (G1), so the hub↔spoke round-trip converges (no loop).
+    // Reconcile the WHOLE lean set emitted by ExplorerV2's filter store against the hub (see
+    // `reconcileToolbarFilters`): update present filters (setConfig); re-path a filter whose attribute
+    // path changed in place (bare link → through, or sub-attribute swap) so its chip survives instead
+    // of being dropped; unpin a pinned filter that genuinely vanished from the toolbar. The store's
+    // echo-suppression (G3) guarantees this only fires on a genuine toolbar edit/removal, and the
+    // reducer guards (G1) are no-ops for unchanged filters, so the hub↔spoke round-trip converges.
     const onFiltersChange = useCallback(
         ({filters}: {filters: SerializedFilter[]}) => {
-            const incomingIds = new Set(
-                filters.map(filter => filter.attributes.map(attribute => attribute.id).join('/')),
+            const ops = reconcileToolbarFilters(
+                filters,
+                hubFilters.map(filter => ({id: filter.id, pinned: filter.pinned})),
             );
-            filters.forEach(filter => {
-                const id = filter.attributes.map(attribute => attribute.id).join('/');
-                setFilterConfig(
-                    id,
-                    filter.condition ?? RecordFilterCondition.EQUAL,
-                    filter.values,
-                    filter.withEmptyValues,
-                );
-            });
-            pinnedFilters.forEach(pinnedFilter => {
-                if (!incomingIds.has(pinnedFilter.id)) {
-                    toggleFilterPinned(pinnedFilter.id);
+            ops.forEach(op => {
+                switch (op.type) {
+                    case 'setConfig':
+                        setFilterConfig(op.id, op.condition, op.values, op.withEmptyValues);
+                        break;
+                    case 'rePath':
+                        rePathFilter(op.oldId, op.attributes, op.condition, op.values, op.withEmptyValues);
+                        break;
+                    case 'unpin':
+                        toggleFilterPinned(op.id);
+                        break;
                 }
             });
 
@@ -64,7 +66,7 @@ export const useViewSettingsProps = (): {
                 matomo.trackInteractionEvent(filterInteractionAction, currentPanel, lang);
             }
         },
-        [setFilterConfig, toggleFilterPinned, pinnedFilters, currentPanel, lang],
+        [setFilterConfig, rePathFilter, toggleFilterPinned, hubFilters, currentPanel, lang],
     );
 
     if (!application.enableViewSettings) {
