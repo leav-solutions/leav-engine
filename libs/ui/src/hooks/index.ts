@@ -17,3 +17,4 @@ export * from './usePanelMessenger';
 export {useGetRecordIdCard} from './useGetRecordIdCard';
 export {useConfirmModal} from './useConfirmModal/useConfirmModal';
 export {useDelayedLoading} from './useDelayedLoading';
+export {useStickyValue} from './useStickyValue';

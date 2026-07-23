@@ -2,6 +2,7 @@ import {forwardRef, type ReactNode, useId, useImperativeHandle, useMemo} from 'r
 import {KitEmpty, KitSnackBarProvider, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useStickyValue} from '_ui/hooks/useStickyValue';
 import {Loading} from '_ui/components/Loading';
 import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {useControlledFilterStore} from '_ui/components/Filters/useControlledFilterStore';
@@ -323,15 +324,20 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             columnsToDisplay: !joinLibraryContext ? view.attributesIds : [],
         });
 
-        const totalCountFiltered = data?.totalCount ?? 0;
+        const totalCountFiltered = useStickyValue(data?.totalCount ?? 0, loadingData);
 
-        const {countData: totalCountLibrary, refetchCount} = useExplorerCountData({
+        const {
+            countData: rawTotalCountLibrary,
+            loading: countLoading,
+            refetchCount,
+        } = useExplorerCountData({
             entrypoint,
             libraryId: view.libraryId,
             defaultFilters: hiddenFilters,
             filters: requestFilters,
             skip: !isViewReady,
         });
+        const totalCountLibrary = useStickyValue(rawTotalCountLibrary, countLoading);
 
         const hasNoResults = data === null || data.totalCount === 0;
 
@@ -415,9 +421,9 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {setSelectedKeys, selectAllButton} = useMassActions({
             isEnabled:
-                totalCountFiltered > 0 &&
                 !_isSelectionDisable &&
                 (isNotEmpty(defaultMassActions) || isNotEmpty(massActions) || !!defaultCallbacks?.item?.select),
+            loading: loadingData,
             store: {view, dispatch: viewSettingsDispatch},
             filtersStore,
             totalCountFiltered,
