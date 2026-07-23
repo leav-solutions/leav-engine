@@ -13,22 +13,25 @@ else
   echo "Dependencies already installed, skipping yarn install."
 fi
 
-# Install plugins dependencies
-find $PLUGINS_DIR_PATH -name package.json -not -path "*/node_modules/*" | while read -r pkg_file; do
-  plugin_dir=$(dirname "$pkg_file")
-  cd "$plugin_dir" 
-  echo "🚧 Install dependencies for plugin $plugin_dir"
-  if [ ! -f $YARN_INSTALL_DONE ] || [ $YARN_INSTALL_DONE -ot $PLUGINS_YARN_LOCK ]; then
-    yarn install
-    if [ ! -d $(dirname "$YARN_INSTALL_DONE") ]; then
-      mkdir -p $(dirname "$YARN_INSTALL_DONE")
+# Disable for https://gitlab.aristid.com/dev/xstream/engine/xstream/-/merge_requests/1213
+if [ -z "$SKIP_PLUGINS_INSTALL" ]; then
+  # Install plugins dependencies
+  find $PLUGINS_DIR_PATH -name package.json -not -path "*/node_modules/*" | while read -r pkg_file; do
+    plugin_dir=$(dirname "$pkg_file")
+    cd "$plugin_dir" 
+    echo "🚧 Install dependencies for plugin $plugin_dir"
+    if [ ! -f $YARN_INSTALL_DONE ] || [ $YARN_INSTALL_DONE -ot $PLUGINS_YARN_LOCK ]; then
+      yarn install
+      if [ ! -d $(dirname "$YARN_INSTALL_DONE") ]; then
+        mkdir -p $(dirname "$YARN_INSTALL_DONE")
+      fi
+      touch $YARN_INSTALL_DONE
+    else
+      echo "Dependencies already installed for plugin $plugin_dir, skipping yarn install."
     fi
-    touch $YARN_INSTALL_DONE
-  else
-    echo "Dependencies already installed for plugin $plugin_dir, skipping yarn install."
-  fi
-  cd -
-done
+    cd -
+  done
+fi
 
 echo "📚 Run migration scripts"
 yarn run db:migrate:dev
