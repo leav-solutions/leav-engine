@@ -21,7 +21,7 @@ export const HistoryDetailsHeader = ({historyData}: HistoryDetailsHeaderProps) =
         {labelKey: 'logs.open-history-details.action', value: historyData.action},
         {labelKey: 'logs.open-history-details.object', value: historyData.object},
         {labelKey: 'logs.open-history-details.entity', value: historyData.entity},
-        {labelKey: 'logs.open-history-details.open-history-details', value: historyData.details},
+        {labelKey: 'logs.open-history-details.details', value: historyData.details},
         {labelKey: 'logs.open-history-details.query_id', value: historyData.queryId, copyable: true},
     ];
 

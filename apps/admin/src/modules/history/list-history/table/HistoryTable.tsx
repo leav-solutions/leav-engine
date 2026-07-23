@@ -60,7 +60,7 @@ export const HistoryTable = ({
             render: (entity: string) => <HistoryCell value={entity} />,
         },
         {
-            title: t('logs.table.column.open-history-details'),
+            title: t('logs.table.column.details'),
             dataIndex: 'details',
             key: 'details',
             render: (details: string) => <HistoryCell value={details} />,
