@@ -15,6 +15,10 @@ import {
     SDO_EXPORTS_TREE_ID,
     SDO_EXPORTS_TREE_MONO_ATTRIBUTE_ID,
     SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID,
+    SDO_EXPORTS_EXTENDED_LIBRARY_ID,
+    SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID,
+    SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
+    SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID,
 } from './sdoConfig';
 import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
@@ -148,6 +152,39 @@ describe('SDO Exports', () => {
             },
         });
 
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID,
+                type: AttributeType.simple,
+                format: AttributeFormat.text,
+                label: {fr: 'SDO export extended value', en: 'SDO export extended value'},
+            },
+        });
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: SDO_EXPORTS_EXTENDED_LIBRARY_ID,
+                label: {fr: 'Test SDO étendu', en: 'Test SDO extended'},
+                attributes: [SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID],
+                recordIdentityConf: {label: 'id'},
+            },
+        });
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID,
+                type: AttributeType.simple_link,
+                linked_library: SDO_EXPORTS_EXTENDED_LIBRARY_ID,
+                label: {fr: 'SDO export extend trigger link', en: 'SDO export extend trigger link'},
+            },
+        });
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
+                label: {fr: 'Test SDO extend trigger', en: 'Test SDO extend trigger'},
+                attributes: [SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID],
+                recordIdentityConf: {label: 'id'},
+            },
+        });
+
         await adminUserSdk.SaveGlobalSettings({
             settings: {
                 settings: {
@@ -172,10 +209,10 @@ describe('SDO Exports', () => {
         await rabbitmqClient.purgeQueue(TEST_GET_EXPORT_MSG_QUEUE);
     });
 
-    const waitForSdo = (recordUUID: string, timeoutMs = SDO_EXPORT_TIMER * 10): Promise<ISDO> =>
+    const waitForSdoOf = (libraryId: string, recordUUID: string, timeoutMs = SDO_EXPORT_TIMER * 10): Promise<ISDO> =>
         rabbitmqClient.waitForMessage<ISDO>(
             TEST_GET_EXPORT_MSG_QUEUE,
-            m => m.name === SDO_EXPORTS_LIBRARY_ID && String((m.content as any).system?.systemId) === recordUUID,
+            m => m.name === libraryId && String((m.content as any).system?.systemId) === recordUUID,
             timeoutMs,
         );
 
@@ -187,7 +224,7 @@ describe('SDO Exports', () => {
         const {id: recordId, uuid: recordUUID} = createRecord.record;
         const nonAdminUserUUID = e2eNonAdminUser().userUUID;
 
-        const msg = await waitForSdo(recordUUID);
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         expect(msg).toMatchObject({
             name: SDO_EXPORTS_LIBRARY_ID,
@@ -222,7 +259,7 @@ describe('SDO Exports', () => {
         });
         const {uuid: recordUUID} = createRecord.record;
 
-        const msg = await waitForSdo(recordUUID);
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         const {records} = await adminUserSdk.GetRecordByUUID({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
@@ -246,7 +283,7 @@ describe('SDO Exports', () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const {id: recordId, uuid: recordUUID} = createRecord.record;
 
-        await waitForSdo(recordUUID); // wait for the CREATE export before triggering an update
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID); // wait for the CREATE export before triggering an update
 
         await adminUserSdk.SaveValue({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
@@ -255,7 +292,7 @@ describe('SDO Exports', () => {
             value: {payload: 'v1'},
         });
 
-        const msg = await waitForSdo(recordUUID);
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         expect(msg).toMatchObject({
             name: SDO_EXPORTS_LIBRARY_ID,
@@ -271,7 +308,7 @@ describe('SDO Exports', () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const {id: recordId, uuid: recordUUID} = createRecord.record;
 
-        await waitForSdo(recordUUID); // CREATE export
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID); // CREATE export
 
         await adminUserSdk.SaveValue({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
@@ -279,7 +316,7 @@ describe('SDO Exports', () => {
             attributeId: SDO_EXPORTS_TEST_ATTRIBUTE_ID,
             value: {payload: 'v1'},
         });
-        await waitForSdo(recordUUID); // first UPDATE export, content now has info.value === 'v1'
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID); // first UPDATE export, content now has info.value === 'v1'
 
         await adminUserSdk.SaveValue({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
@@ -288,21 +325,21 @@ describe('SDO Exports', () => {
             value: {payload: 'v1'},
         });
 
-        await expect(waitForSdo(recordUUID, SDO_EXPORT_TIMER * 4)).rejects.toThrow();
+        await expect(waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID, SDO_EXPORT_TIMER * 4)).rejects.toThrow();
     });
 
     test('deactivating a record triggers an UPDATE export message with systemActive: false', async () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const {id: recordId, uuid: recordUUID} = createRecord.record;
 
-        await waitForSdo(recordUUID); // wait for the CREATE export before deactivating
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID); // wait for the CREATE export before deactivating
 
         await adminUserSdk.DeactivateRecords({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
             recordsIds: [recordId],
         });
 
-        const msg = await waitForSdo(recordUUID);
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         expect(msg).toMatchObject({
             name: SDO_EXPORTS_LIBRARY_ID,
@@ -318,7 +355,7 @@ describe('SDO Exports', () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const {id: recordId, uuid: recordUUID} = createRecord.record;
 
-        await waitForSdo(recordUUID);
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         await adminUserSdk.SaveValue({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
@@ -327,7 +364,7 @@ describe('SDO Exports', () => {
             value: {payload: linked.record.id},
         });
 
-        const msg = await waitForSdo(recordUUID);
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         expect(msg).toMatchObject({
             action: 'UPDATE',
@@ -343,7 +380,7 @@ describe('SDO Exports', () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const {id: recordId, uuid: recordUUID} = createRecord.record;
 
-        await waitForSdo(recordUUID);
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         await adminUserSdk.SaveValue({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
@@ -352,7 +389,7 @@ describe('SDO Exports', () => {
             value: {payload: linked.record.id},
         });
 
-        const msg = await waitForSdo(recordUUID);
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         expect(msg).toMatchObject({
             action: 'UPDATE',
@@ -369,7 +406,7 @@ describe('SDO Exports', () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const {id: recordId, uuid: recordUUID} = createRecord.record;
 
-        await waitForSdo(recordUUID);
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         await adminUserSdk.SaveValue({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
@@ -384,7 +421,7 @@ describe('SDO Exports', () => {
             value: {payload: linkedB.record.id},
         });
 
-        const msg = await waitForSdo(recordUUID);
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         expect((msg.content as any).info?.advancedLinkMulti).toEqual(
             expect.arrayContaining([linkedA.record.uuid, linkedB.record.uuid]),
@@ -395,7 +432,7 @@ describe('SDO Exports', () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const {id: recordId, uuid: recordUUID} = createRecord.record;
 
-        await waitForSdo(recordUUID);
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         await adminUserSdk.SaveValue({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
@@ -404,7 +441,7 @@ describe('SDO Exports', () => {
             value: {payload: 'advanced-v1'},
         });
 
-        const msg = await waitForSdo(recordUUID);
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         expect(msg).toMatchObject({
             action: 'UPDATE',
@@ -419,7 +456,7 @@ describe('SDO Exports', () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const {id: recordId, uuid: recordUUID} = createRecord.record;
 
-        await waitForSdo(recordUUID);
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         await adminUserSdk.SaveValue({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
@@ -434,7 +471,7 @@ describe('SDO Exports', () => {
             value: {payload: 'advanced-b'},
         });
 
-        const msg = await waitForSdo(recordUUID);
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         expect((msg.content as any).info?.advancedMulti).toEqual(expect.arrayContaining(['advanced-a', 'advanced-b']));
     });
@@ -449,7 +486,7 @@ describe('SDO Exports', () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const {id: recordId, uuid: recordUUID} = createRecord.record;
 
-        await waitForSdo(recordUUID);
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         await adminUserSdk.SaveValue({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
@@ -458,7 +495,7 @@ describe('SDO Exports', () => {
             value: {payload: treeElement.id},
         });
 
-        const msg = await waitForSdo(recordUUID);
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         expect(msg).toMatchObject({
             action: 'UPDATE',
@@ -484,7 +521,7 @@ describe('SDO Exports', () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const {id: recordId, uuid: recordUUID} = createRecord.record;
 
-        await waitForSdo(recordUUID);
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         await adminUserSdk.SaveValue({
             libraryId: SDO_EXPORTS_LIBRARY_ID,
@@ -499,17 +536,46 @@ describe('SDO Exports', () => {
             value: {payload: nodeB.id},
         });
 
-        const msg = await waitForSdo(recordUUID);
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
 
         expect((msg.content as any).info?.treeMulti).toEqual(
             expect.arrayContaining([linkedA.record.uuid, linkedB.record.uuid]),
         );
     });
 
-    // The additionalLibraryTriggers mechanism is covered by integration tests
-    // (resolveAdditionalLibraryTriggerTargets.test.ts) rather than e2e because the
-    // trigger-driven re-export produces identical target content and is swallowed by sendSDO's
-    // content-based dedup, so it isn't observable at the RabbitMQ edge.
+    test('a plugin extend SDO function extends the content, making an additionalLibraryTrigger observable', async () => {
+        // Bare resolution of additionalLibraryTriggers is covered by integration
+        // (getSDOExportTargets.test.ts). Here we exercise the plugin extend SDO function: the
+        // fakeplugin aggregates trigger records into info.triggeredBy, so linking a trigger record
+        // genuinely changes the target's content and the re-export survives sendSDO's dedup.
+        const {createRecord: target} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_EXTENDED_LIBRARY_ID});
+        const {uuid: targetUUID} = target.record;
+
+        const createMsg = await waitForSdoOf(SDO_EXPORTS_EXTENDED_LIBRARY_ID, targetUUID);
+        // No trigger yet: the plugin function aggregates an empty list.
+        expect(createMsg).toMatchObject({
+            action: 'CREATE',
+            content: {system: {systemId: targetUUID}, info: {triggeredBy: []}},
+        });
+
+        const {createRecord: trigger} = await adminUserSdk.CreateRecord({
+            library: SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
+        });
+        await adminUserSdk.SaveValue({
+            libraryId: SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
+            recordId: trigger.record.id,
+            attributeId: SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID,
+            value: {payload: target.record.id},
+        });
+
+        // additionalLibraryTriggers re-exports the target; the plugin function now aggregates the
+        // linked trigger record → content changes → export is emitted (not deduped).
+        const updateMsg = await waitForSdoOf(SDO_EXPORTS_EXTENDED_LIBRARY_ID, targetUUID);
+        expect(updateMsg).toMatchObject({
+            action: 'UPDATE',
+            content: {system: {systemId: targetUUID}, info: {triggeredBy: [trigger.record.uuid]}},
+        });
+    });
 
     // Unlink/relink of a trigger attribute is a known limitation: resolution reads the CURRENT DB
     // state, so the OLD target is no longer reachable and won't be re-exported (possible follow-up

@@ -17,6 +17,13 @@ export const SDO_EXPORTS_TREE_ID = 'test_sdo_exports_tree';
 export const SDO_EXPORTS_TREE_MONO_ATTRIBUTE_ID = 'sdo_export_test_tree_mono';
 export const SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID = 'sdo_export_test_tree_multi';
 
+// To test extendSDOFunction and additionalLibraryTriggers features
+export const SDO_EXPORTS_EXTENDED_LIBRARY_ID = 'test_sdo_exports_extended';
+export const SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID = 'sdo_export_extended_value';
+export const SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID = 'test_sdo_exports_extend_trigger';
+export const SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID = 'sdo_export_extend_trigger_link';
+export const SDO_EXPORTS_EXTEND_FUNCTION_NAME = 'fakeplugin_extendWithTriggers';
+
 // IMPORT
 export const SDO_IMPORTS_LIBRARY_ID = 'test_sdo_imports';
 export const SDO_TEST_ATTRIBUTE_ID = 'sdo_test_value';
@@ -75,6 +82,23 @@ export const sdoGlobalSettings: ISDOSettings = {
                     leavAttributeId: SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID,
                     valueRequired: false,
                     format: 'array',
+                },
+            },
+        },
+        [SDO_EXPORTS_EXTENDED_LIBRARY_ID]: {
+            leavLibraryId: SDO_EXPORTS_EXTENDED_LIBRARY_ID,
+            extendSDOFunction: SDO_EXPORTS_EXTEND_FUNCTION_NAME,
+            additionalLibraryTriggers: [
+                {
+                    leavLibraryId: SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
+                    leavAttributePath: SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID,
+                },
+            ],
+            sdoAttributes: {
+                'info.value': {
+                    leavAttributeId: SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'string',
                 },
             },
         },

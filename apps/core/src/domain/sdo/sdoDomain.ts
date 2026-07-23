@@ -13,6 +13,8 @@ import {
     type ISDOSettings,
     type ISDOMappingFunctions,
     type ISDOMappingFunction,
+    type IExtendSDOFunctions,
+    type IExtendSDOFunction,
     type ISDOTriggerTarget,
 } from '../../_types/sdo';
 import {type IGlobalSettings} from '../../_types/globalSettings';
@@ -73,6 +75,7 @@ export interface ISDODomain {
         ctx: IQueryInfos;
     }): Promise<void>;
     registerSDOExportMappingFunctions: (mappingFunctions: ISDOMappingFunctions) => void;
+    registerExtendSDOFunctions: (extendSDOFunctions: IExtendSDOFunctions) => void;
 }
 
 export default function ({
@@ -88,6 +91,7 @@ export default function ({
     const debug = config.sdo.debug ?? false;
 
     const exportMappingFunctions: Map<string, ISDOMappingFunction> = new Map();
+    const extendSDOFunctions: Map<string, IExtendSDOFunction> = new Map();
 
     const sendLog = async ({action, record, sdo, error, ctx}): Promise<void> => {
         await eventsManager.sendDatabaseEvent(
@@ -384,6 +388,7 @@ export default function ({
                 const mappingFunction = exportMappingFunctions.get(
                     mappingAttribute.exportFunction,
                 ) as ISDOMappingFunction;
+
                 if (mappingAttribute.leavAttributeId && !mappingFunction && mappingAttribute.exportFunction) {
                     throw new LeavError(
                         ErrorTypes.INTERNAL_ERROR,
@@ -406,7 +411,21 @@ export default function ({
             }),
         );
 
-        return sdo;
+        // Extend SDO function: extend the whole SDO with plugin logic that the
+        // generic attribute mapping can't express (e.g. aggregate linked/trigger data). Called last so
+        // it sees the fully-mapped SDO; its result is still validated by schemaValidation in getRecordSDO.
+        const extendSDOFn = sdoMappingLibrary.extendSDOFunction
+            ? extendSDOFunctions.get(sdoMappingLibrary.extendSDOFunction)
+            : undefined;
+
+        if (sdoMappingLibrary.extendSDOFunction && !extendSDOFn) {
+            throw new LeavError(
+                ErrorTypes.INTERNAL_ERROR,
+                `Unknown extend SDO function ${sdoMappingLibrary.extendSDOFunction} for library ${sdoMappingLibrary.leavLibraryId}`,
+            );
+        }
+
+        return extendSDOFn ? extendSDOFn(record, sdo, ctx) : sdo;
     };
 
     const _cleanValue = (val, type) => {
@@ -446,6 +465,16 @@ export default function ({
             debug &&
                 logger.debug(
                     `Registered ${Object.keys(mappingFunctions).length} (${Array.from(exportMappingFunctions.keys()).join(', ')}) SDO export mapping functions`,
+                );
+        },
+
+        registerExtendSDOFunctions: (fns: IExtendSDOFunctions) => {
+            for (const [functionName, extendSDOFunction] of Object.entries(fns)) {
+                extendSDOFunctions.set(functionName, extendSDOFunction);
+            }
+            debug &&
+                logger.debug(
+                    `Registered ${Object.keys(fns).length} (${Array.from(extendSDOFunctions.keys()).join(', ')}) extend SDO functions`,
                 );
         },
     };
