@@ -1,13 +1,12 @@
+import {type IAmqpConnectionOptions} from '@leav/message-broker';
+
 export interface IConfig {
     inputRootPath: string;
     outputRootPath: string;
     ICCPath: string;
     amqp: {
-        protocol: string;
-        hostname: string;
-        port: number;
-        username: string;
-        password: string;
+        connOpt: IAmqpConnectionOptions;
+        heartbeatInSeconds?: number;
         type: string;
         consume: {
             queue: string;

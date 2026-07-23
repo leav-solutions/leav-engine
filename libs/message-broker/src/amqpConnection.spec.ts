@@ -68,7 +68,7 @@ describe('createAmqpConnection', () => {
             name: 'test-channel',
             setup: async t => {
                 await t.assertExchange('ex', 'direct');
-                await t.assertQueue('q', {durable: true});
+                await t.assertQueue('q', {durable: true, maxPriority: 5});
                 await t.bindQueue('q', 'ex', 'rk');
                 await t.prefetch(3);
             },
@@ -78,7 +78,7 @@ describe('createAmqpConnection', () => {
         await capturedSetup!(mockRawChannel);
 
         expect(mockRawChannel.assertExchange).toHaveBeenCalledWith('ex', 'direct', undefined);
-        expect(mockRawChannel.assertQueue).toHaveBeenCalledWith('q', {durable: true});
+        expect(mockRawChannel.assertQueue).toHaveBeenCalledWith('q', {durable: true, maxPriority: 5});
         expect(mockRawChannel.bindQueue).toHaveBeenCalledWith('q', 'ex', 'rk');
         expect(mockRawChannel.prefetch).toHaveBeenCalledWith(3);
     });

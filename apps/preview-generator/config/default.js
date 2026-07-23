@@ -5,11 +5,14 @@ module.exports = {
     outputRootPath: process.env.OUTPUT_ROOT_PATH,
     ICCPath: process.env.ICC_PATH,
     amqp: {
-        protocol: 'amqp',
-        hostname: process.env.AMQP_HOST,
-        port: envToNumber(process.env.AMQP_PORT, 5672),
-        username: process.env.AMQP_USERNAME,
-        password: process.env.AMQP_PWD,
+        connOpt: {
+            protocol: 'amqp',
+            hostname: process.env.AMQP_HOST,
+            port: envToNumber(process.env.AMQP_PORT, 5672),
+            username: process.env.AMQP_USERNAME,
+            password: process.env.AMQP_PWD,
+        },
+        heartbeatInSeconds: envToNumber(process.env.AMQP_HEARTBEAT, 30),
         type: process.env.AMQP_TYPE || 'direct',
         consume: {
             queue: process.env.AMQP_QUEUE_IN || 'files_preview_request',

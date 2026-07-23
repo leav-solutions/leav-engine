@@ -1,7 +1,6 @@
-import {type Channel, type ConsumeMessage, type Options} from 'amqplib';
+import {createAmqpConnection, type IAmqpChannel, type IAmqpMessage} from '@leav/message-broker';
 import * as fs from 'fs';
 import * as path from 'path';
-import {getChannel} from '../../amqp/getChannel/getChannel';
 import {getConfig} from '../../getConfig/getConfig';
 import {type IConfig, type IMessageConsume} from '../../types/types';
 
@@ -373,33 +372,33 @@ describe('test preview generation', () => {
         }));
 });
 
-const sendTestMessage = async (config: IConfig, msg: IMessageConsume) => {
+const sendTestMessage = async (config: IConfig, msg: IMessageConsume): Promise<void> => {
     const {exchange, routingKey} = config.amqp.consume;
 
-    const amqpConfig: Options.Connect = {
-        protocol: config.amqp.protocol,
-        hostname: config.amqp.hostname,
-        username: config.amqp.username,
-        password: config.amqp.password,
-    };
+    const connection = createAmqpConnection({
+        connOpt: config.amqp.connOpt,
+        connectionName: 'preview-generator-test-producer',
+    });
+    const channel = connection.createChannel({name: 'test:producer'});
 
-    const channel: Channel = await getChannel(amqpConfig);
-
-    const buffer = Buffer.from(JSON.stringify(msg));
-    return channel.publish(exchange, routingKey, buffer, {persistent: true});
+    await channel.publish(exchange, routingKey, JSON.stringify(msg), {persistent: true});
 };
 
-const consumeResponse = async (config: IConfig, consume: (msg: ConsumeMessage, channel: Channel) => void) => {
-    const amqpConfig: Options.Connect = {
-        protocol: config.amqp.protocol,
-        hostname: config.amqp.hostname,
-        username: config.amqp.username,
-        password: config.amqp.password,
-    };
-
-    const channel: Channel = await getChannel(amqpConfig);
-
-    return channel.consume(config.amqp.publish.queue, msg => {
-        consume(msg, channel);
+const consumeResponse = async (
+    config: IConfig,
+    consume: (msg: IAmqpMessage, channel: IAmqpChannel) => void,
+): Promise<void> => {
+    const connection = createAmqpConnection({
+        connOpt: config.amqp.connOpt,
+        connectionName: 'preview-generator-test-consumer',
     });
+    const channel = connection.createChannel({name: 'test:consumer', confirm: false});
+
+    await channel.consume(
+        config.amqp.publish.queue,
+        async msg => {
+            consume(msg, channel);
+        },
+        {manualAck: true},
+    );
 };

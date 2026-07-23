@@ -8,7 +8,11 @@ vi.mock('../handleDocument/handleDocument', () => ({handleDocument: vi.fn(() => 
 vi.mock('../getConfig/getConfig');
 
 describe('generatePreview', () => {
-    const mockconf = {inputRootPath: 'input_path', outputRootPath: 'output_path', amqp: {hostname: 'localhost'}};
+    const mockconf = {
+        inputRootPath: 'input_path',
+        outputRootPath: 'output_path',
+        amqp: {connOpt: {hostname: 'localhost'}},
+    };
 
     const msgContent: IMessageConsume = {
         input: 'test.jpg',

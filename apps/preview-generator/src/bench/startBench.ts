@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import {type ConsumeMessage} from 'amqplib';
+import {type IAmqpMessage} from '@leav/message-broker';
 import {processPreview} from '../processPreview/processPreview';
 import {type IConfig} from '../types/types';
 import {logger} from '@leav/logger';
@@ -29,7 +29,7 @@ export const startBench = async (jsonFile: string, dest: string, config: IConfig
                 ],
             }),
         );
-        await processPreview({content} as ConsumeMessage, config);
+        await processPreview({content} as IAmqpMessage, config);
     }
 
     logger.info(`Time elapsed: ${(Date.now() - begin) / 1_000}`);

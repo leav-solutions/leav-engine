@@ -72,7 +72,10 @@ export type AmqpMessageHandler = (msg: IAmqpMessage) => Promise<void>;
 
 export interface IAmqpTopology {
     assertExchange(exchange: string, type: string, opts?: {durable?: boolean}): Promise<void>;
-    assertQueue(queue: string, opts?: {durable?: boolean; exclusive?: boolean; autoDelete?: boolean}): Promise<void>;
+    assertQueue(
+        queue: string,
+        opts?: {durable?: boolean; exclusive?: boolean; autoDelete?: boolean; maxPriority?: number},
+    ): Promise<void>;
     bindQueue(queue: string, exchange: string, routingKey: string): Promise<void>;
     prefetch(count: number): Promise<void>;
 }
