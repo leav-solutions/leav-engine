@@ -74,6 +74,12 @@ const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
         return [...filterValues, ...(filter.formattedValue ?? [])];
     }
 
+    // A "through" filter is rendered as a counting badge (see showSingleValue below): only feed its
+    // value into `values` so the badge (and its tooltip) has something to display.
+    if (isUIFilterThrough(filter)) {
+        return filter.value ? [...filterValues, String(filter.value)] : filterValues;
+    }
+
     if (
         isUIFilterStandard(filter) &&
         [AttributeFormat.date, AttributeFormat.boolean].includes(filter.attribute.format)
@@ -165,7 +171,7 @@ export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
                     <FilterDropDown filter={effectiveFilter} canReset={canReset} canRemove={!isPinned} />
                 ),
             }}
-            showSingleValue
+            showSingleValue={!isUIFilterThrough(effectiveFilter)}
         />
     );
 };

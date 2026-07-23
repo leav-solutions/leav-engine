@@ -1,5 +1,5 @@
 import {type ComponentProps, type FunctionComponent, useEffect, useState} from 'react';
-import {KitInput, KitSelect} from 'aristid-ds';
+import {KitInput, type KitSelect} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
 import {AttributeConditionFilter, ThroughConditionFilter} from '_ui/types';
@@ -10,6 +10,7 @@ import {useLang} from '_ui/hooks';
 import {FilterDropdownContent} from './FilterDropdownContent';
 import {type IFilterChildrenLinkDropDownProps} from './_types';
 import {isUIFilterThrough, type IUIFilterThrough, type UIFilter} from '../../_types';
+import {FilterSelect} from './FilterSelect';
 
 const InputStyled = styled(KitInput)`
     width: 100%;
@@ -41,7 +42,11 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
     };
 
     const _onSubFieldAttributeChange: ComponentProps<typeof KitSelect>['onChange'] = attributeId => {
-        setSelectedSubField(attributeId);
+        setSelectedSubField(attributeId ?? null);
+        if (!attributeId) {
+            // Clearing the sub-attribute resets the through configuration (sub-field / condition / value).
+            onFilterChange({...filter, subField: null, subCondition: null, value: null} as IUIFilterThrough);
+        }
     };
 
     const _onInputChanged: ComponentProps<typeof KitInput>['onChange'] = event => {
@@ -88,10 +93,12 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
 
     return (
         <>
-            <KitSelect
+            <FilterSelect
                 options={availableConditionsOptions}
                 onChange={_onConditionChanged}
                 value={filter.condition}
+                // Top-level link condition is never cleared; a nested "through" sub-condition stays clearable.
+                allowClear={removeThroughCondition}
                 getPopupContainer={() => selectDropDownRef?.current ?? document.body}
                 aria-label={String(t('explorer.filter-link-condition'))}
             />
@@ -104,12 +111,14 @@ export const LinkAttributeDropDown: FunctionComponent<IFilterChildrenLinkDropDow
             )}
             {filter.condition === AttributeConditionFilter.THROUGH && (
                 <>
-                    <KitSelect
+                    <FilterSelect
                         options={linkAttributesOptions}
                         onChange={_onSubFieldAttributeChange}
                         value={libraryAttributesLoading ? null : selectedSubField}
                         placeholder={libraryAttributesLoading ? t('global.loading') : null}
                         loading={libraryAttributesLoading}
+                        // The sub-attribute is a step in the through configuration, so it can be cleared.
+                        allowClear
                         getPopupContainer={() => selectDropDownRef?.current ?? document.body}
                         aria-label={String(t('explorer.filter-link-attribute'))}
                     />

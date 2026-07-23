@@ -11,6 +11,7 @@ export interface IFilterChildrenDropDownProps {
     filter: IUIFilterStandard;
     onFilterChange: (filterData: IUIFilterStandard) => void;
     selectDropDownRef?: RefObject<HTMLDivElement>;
+    allowClearCondition?: boolean;
 }
 
 export interface IFilterChildrenLinkDropDownProps {

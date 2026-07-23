@@ -551,6 +551,31 @@ describe('CommonFilterItem', () => {
         });
     });
 
+    describe('through filter chip', () => {
+        test('renders a counting badge instead of the raw value in text', () => {
+            const filter: UIFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'link filter',
+                    id: 'link_attr',
+                    type: AttributeType.advanced_link,
+                    linkedLibrary: {id: 'link_library'},
+                },
+                field: 'link_attr',
+                value: 'test value',
+                condition: AttributeConditionFilter.THROUGH,
+                subCondition: AttributeConditionFilter.EQUAL,
+                subField: 'sub_attr',
+            };
+
+            render(<CommonFilterItem filter={filter} />);
+
+            // The chip shows a badge (count) rather than the long value in plain text.
+            expect(screen.getByText('1')).toBeVisible();
+            expect(screen.queryByText('test value')).not.toBeInTheDocument();
+        });
+    });
+
     describe('tree filter', () => {
         it('should render tree filter', async () => {
             const mockUseTreeDataQueryQuery: Mockify<typeof gqlTypes.useTreeDataQueryQuery> = {

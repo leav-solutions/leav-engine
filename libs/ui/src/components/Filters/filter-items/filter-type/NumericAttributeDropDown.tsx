@@ -1,10 +1,11 @@
 import {type ComponentProps, type FunctionComponent} from 'react';
 import styled from 'styled-components';
-import {KitInputNumber, KitSelect} from 'aristid-ds';
+import {KitInputNumber, type KitSelect} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type IFilterChildrenDropDownProps} from './_types';
 import {useConditionsOptionsByType} from './useConditionOptionsByType';
+import {FilterSelect} from './FilterSelect';
 
 const InputNumberStyled = styled(KitInputNumber)`
     width: 100%;
@@ -14,6 +15,7 @@ export const NumericAttributeDropDown: FunctionComponent<IFilterChildrenDropDown
     filter,
     onFilterChange,
     selectDropDownRef,
+    allowClearCondition,
 }) => {
     const {t} = useSharedTranslation();
 
@@ -31,10 +33,11 @@ export const NumericAttributeDropDown: FunctionComponent<IFilterChildrenDropDown
 
     return (
         <>
-            <KitSelect
+            <FilterSelect
                 options={conditionOptionsByType}
                 onChange={_onConditionChanged}
                 value={filter.condition}
+                allowClear={allowClearCondition}
                 getPopupContainer={() => selectDropDownRef?.current ?? document.body}
             />
             {showInput && (

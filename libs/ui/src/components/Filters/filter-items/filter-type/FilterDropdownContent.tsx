@@ -50,6 +50,9 @@ export const FilterDropdownContent: FunctionComponent<{
             filter,
             onFilterChange,
             selectDropDownRef,
+            // removeThroughCondition is true exactly when this content is a "through" sub-dropdown:
+            // in that case the sub-condition operator select keeps its clear button.
+            allowClearCondition: removeThroughCondition,
         };
         const standardFormatDropdown: Record<AttributeFormat, JSX.Element> = {
             [AttributeFormat.text]: <TextAttributeDropDown {...commonDropDownProps} />,
