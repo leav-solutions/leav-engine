@@ -93,7 +93,7 @@ describe('handleFileSystemEvent', () => {
         'core.domain.helpers.updateRecordLastModif': vi.fn(),
         'core.domain.record.helpers.sendRecordUpdateEvent': vi.fn(),
         'core.infra.record': vi.fn(),
-        'core.infra.amqpService': vi.fn(),
+        'core.infra.filesManager.rabbitMQ': vi.fn(),
         'core.infra.filesManager': vi.fn(),
         'core.utils.logger': vi.fn(),
         'core.utils': vi.fn(),

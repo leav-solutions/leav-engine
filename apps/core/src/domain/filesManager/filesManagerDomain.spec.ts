@@ -1,6 +1,4 @@
-import {type IAmqpService} from '@leav/message-broker';
 import {PreviewPriority} from '@leav/utils';
-import type * as amqp from 'amqplib';
 import {type CreateDirectoryFunc} from '../helpers/createDirectory';
 import {type StoreUploadFileFunc} from '../helpers/storeUploadFile';
 import {type ILibraryDomain} from '../library/libraryDomain';
@@ -20,6 +18,7 @@ import {mockFileRecord, mockRecord} from '../../__tests__/mocks/record';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import {mockFilesTree, mockTree} from '../../__tests__/mocks/tree';
 import filesManager, {type IFilesManagerDomainDeps, type IStoreFilesParams} from './filesManagerDomain';
+import {type IFilesManagerRabbitMQ} from '../../infra/filesManager/filesManagerRabbitMQ';
 import {requestPreviewGeneration} from './helpers/handlePreview';
 import {systemPreviewsSettings} from './_constants';
 import {mockSystemQueryContext} from '../../__tests__/mocks/shared';
@@ -54,26 +53,6 @@ const mockConfig: Mockify<Config.IConfig> = {
     },
 };
 
-const mockAmqpChannel: Mockify<amqp.ConfirmChannel> = {
-    assertExchange: vi.fn(),
-    checkExchange: vi.fn(),
-    assertQueue: vi.fn(),
-    bindQueue: vi.fn(),
-    consume: vi.fn(),
-    publish: vi.fn(),
-    waitForConfirms: vi.fn(),
-    prefetch: vi.fn(),
-};
-
-const mockAmqpConnection: Mockify<amqp.ChannelModel> = {
-    close: vi.fn(),
-    createConfirmChannel: vi.fn().mockReturnValue(mockAmqpChannel),
-};
-
-vi.mock('amqplib', () => ({
-    connect: vi.fn().mockImplementation(() => mockAmqpConnection),
-}));
-
 const logger: Mockify<ILogger> = {
     info: vi.fn((...args) => console.log(args)),
     error: vi.fn((...args) => console.log(args)),
@@ -87,7 +66,7 @@ vi.mock('./helpers/handlePreview', () => ({
 const depsBase: ToAny<IFilesManagerDomainDeps> = {
     config: {},
     'core.utils': vi.fn(),
-    'core.infra.amqpService': vi.fn(),
+    'core.infra.filesManager.rabbitMQ': vi.fn(),
     'core.utils.logger': vi.fn(),
     'core.domain.record': vi.fn(),
     'core.domain.value': vi.fn(),
@@ -120,13 +99,12 @@ describe('FilesManager', () => {
         getInheritedLibraryPermission: vi.fn().mockReturnValue(true),
     } satisfies Mockify<ILibraryPermissionDomain>;
 
-    const mockAmqpService = {
-        consume: vi.fn(),
-        consumer: {
-            connection: mockAmqpConnection as amqp.ChannelModel,
-            channel: mockAmqpChannel as amqp.ConfirmChannel,
-        },
-    } satisfies Mockify<IAmqpService>;
+    const mockFilesManagerRabbitMQ = {
+        consumeEvents: vi.fn(),
+        consumePreviewResponses: vi.fn(),
+        publishPreviewRequest: vi.fn(),
+        close: vi.fn(),
+    } satisfies Mockify<IFilesManagerRabbitMQ>;
 
     const mockTreeDomain: Mockify<ITreeDomain> = {
         getNodesByRecord: vi.fn(),
@@ -141,15 +119,14 @@ describe('FilesManager', () => {
             ...depsBase,
             config: mockConfig,
             'core.utils.logger': logger,
-            'core.infra.amqpService': mockAmqpService,
+            'core.infra.filesManager.rabbitMQ': mockFilesManagerRabbitMQ,
             'core.domain.tree': mockTreeDomain,
         } as ToAny<IFilesManagerDomainDeps>);
 
         await files.init();
 
-        expect(mockAmqpService.consume).toBeCalled();
-        expect(mockAmqpService.consumer.channel.assertQueue).toBeCalled();
-        expect(mockAmqpService.consumer.channel.bindQueue).toBeCalled();
+        expect(mockFilesManagerRabbitMQ.consumeEvents).toBeCalled();
+        expect(mockFilesManagerRabbitMQ.consumePreviewResponses).toBeCalled();
     });
 
     describe('forcePreviewsGeneration', () => {
@@ -185,7 +162,7 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService,
+                'core.infra.filesManager.rabbitMQ': mockFilesManagerRabbitMQ,
                 'core.domain.permission.library': mockLibraryPermissionDomain,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
@@ -203,7 +180,7 @@ describe('FilesManager', () => {
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
+                deps: {filesManagerRabbitMQ: mockFilesManagerRabbitMQ, logger},
             });
         });
 
@@ -229,7 +206,7 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService,
+                'core.infra.filesManager.rabbitMQ': mockFilesManagerRabbitMQ,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.permission.library': mockLibraryPermissionDomain,
             } as ToAny<IFilesManagerDomainDeps>);
@@ -310,7 +287,7 @@ describe('FilesManager', () => {
                 'core.domain.tree': mockTreeDomainSpecific as ITreeDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService,
+                'core.infra.filesManager.rabbitMQ': mockFilesManagerRabbitMQ,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.permission.library': mockLibraryPermissionDomain,
             } as ToAny<IFilesManagerDomainDeps>);
@@ -325,7 +302,7 @@ describe('FilesManager', () => {
                 libraryId: 'lib2',
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
+                deps: {filesManagerRabbitMQ: mockFilesManagerRabbitMQ, logger},
             });
 
             expect(requestPreviewGeneration).toHaveBeenNthCalledWith(2, {
@@ -334,7 +311,7 @@ describe('FilesManager', () => {
                 libraryId: 'lib2',
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
+                deps: {filesManagerRabbitMQ: mockFilesManagerRabbitMQ, logger},
             });
         });
 
@@ -359,7 +336,7 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService,
+                'core.infra.filesManager.rabbitMQ': mockFilesManagerRabbitMQ,
                 'core.domain.permission.library': mockLibraryPermissionDomain,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
@@ -374,7 +351,7 @@ describe('FilesManager', () => {
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
+                deps: {filesManagerRabbitMQ: mockFilesManagerRabbitMQ, logger},
             });
 
             expect(requestPreviewGeneration).toHaveBeenNthCalledWith(2, {
@@ -383,7 +360,7 @@ describe('FilesManager', () => {
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
+                deps: {filesManagerRabbitMQ: mockFilesManagerRabbitMQ, logger},
             });
         });
 
@@ -423,7 +400,7 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService,
+                'core.infra.filesManager.rabbitMQ': mockFilesManagerRabbitMQ,
                 'core.domain.permission.library': mockLibraryPermissionDomain,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
             } as ToAny<IFilesManagerDomainDeps>);
@@ -438,7 +415,7 @@ describe('FilesManager', () => {
                 libraryId: mockLibraryFiles.id,
                 priority: PreviewPriority.MEDIUM,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
+                deps: {filesManagerRabbitMQ: mockFilesManagerRabbitMQ, logger},
             });
         });
 
@@ -468,7 +445,7 @@ describe('FilesManager', () => {
                 'core.domain.library': mockLibraryDomain as ILibraryDomain,
                 'core.domain.helpers.updateRecordLastModif': mockUpdateLastRecordModif,
                 'core.domain.record.helpers.sendRecordUpdateEvent': mockSendRecordUpdate,
-                'core.infra.amqpService': mockAmqpService,
+                'core.infra.filesManager.rabbitMQ': mockFilesManagerRabbitMQ,
                 'core.infra.record': mockRecordRepo as IRecordRepo,
                 'core.domain.permission.library': mockLibraryPermissionDomain,
             } as ToAny<IFilesManagerDomainDeps>);
@@ -501,7 +478,7 @@ describe('FilesManager', () => {
                 priority: PreviewPriority.MEDIUM,
                 libraryId: mockLibraryFiles.id,
                 versions: systemPreviewsSettings,
-                deps: {amqpService: mockAmqpService, config: mockConfig, logger},
+                deps: {filesManagerRabbitMQ: mockFilesManagerRabbitMQ, logger},
             });
         });
     });

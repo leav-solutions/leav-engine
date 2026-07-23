@@ -102,8 +102,7 @@ export interface IConsumeOptions {
     consumerTag?: string;
     /**
      * false (default): resolve => ack; throw => nack(discard).
-     * true: the app calls ack()/nack() itself (needed for tasksManager's pause/resume pattern,
-     * not covered by this iteration).
+     * true: the app calls ack()/nack() itself (used by tasksManager's pause/resume pattern).
      */
     manualAck?: boolean;
     /**
@@ -122,6 +121,9 @@ export interface IAmqpChannel {
     nack(msg: IAmqpMessage, requeue?: boolean): void;
     cancel(consumerTag: string): Promise<void>;
     close(): Promise<void>;
+    /** Test/ops utility - not part of the app topology contract (never replayed on reconnect). */
+    purgeQueue(queue: string): Promise<void>;
+    deleteQueue(queue: string): Promise<void>;
 }
 
 export interface IAmqpConnection {

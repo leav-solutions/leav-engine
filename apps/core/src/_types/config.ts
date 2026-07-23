@@ -1,4 +1,4 @@
-import {type Options} from 'amqplib';
+import {type IAmqpConnectionOptions} from '@leav/message-broker';
 import {type IKeyValue} from './shared';
 import {
     type PermissionsActions,
@@ -53,7 +53,7 @@ export interface IConfig {
 }
 
 export interface ISdo {
-    amqp: Options.Connect;
+    amqp: IAmqpConnectionOptions;
     /**
      * AMP application clientId (like cm-galec-fr-staging), export in SDO export
      */
@@ -75,6 +75,7 @@ export interface ISdo {
     export: {
         enable: boolean;
         dataEventsQueue?: string;
+        dataEventsPrefetch?: number;
     };
     /**
      * Add debug log for each SDO import/export operation
@@ -276,7 +277,7 @@ export interface IPermissions {
 }
 
 export interface IAmqp {
-    connOpt: Options.Connect;
+    connOpt: IAmqpConnectionOptions;
     exchange: string;
     type: string;
     prefetch?: number;
@@ -307,6 +308,7 @@ export interface IFilesManager {
     };
     allowFilesList: string;
     ignoreFilesList: string;
+    prefetch?: number;
 }
 
 export interface IEventsManager {
@@ -325,6 +327,7 @@ export interface IIndexationManager {
         events: string;
     };
     fuzzySearch: boolean;
+    prefetch?: number;
 }
 
 export interface ITasksManager {
@@ -462,4 +465,5 @@ export interface IMatomo {
 
 export interface ILogsCollector {
     queue: string;
+    prefetch?: number;
 }

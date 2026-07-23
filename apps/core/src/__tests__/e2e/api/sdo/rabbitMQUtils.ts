@@ -1,48 +1,66 @@
-import amqp, {type Channel, type ChannelModel} from 'amqplib';
+import {createAmqpConnection, type IAmqpConnection, type IAmqpChannel} from '@leav/message-broker';
 import {getConfig} from '../../../../config';
 
 export class RabbitMqClient {
-    private connection?: ChannelModel;
-    private channel?: Channel;
+    private connection?: IAmqpConnection;
+    private channel?: IAmqpChannel;
 
     public async connect(): Promise<void> {
         const conf = await getConfig();
 
-        this.connection = await amqp.connect(conf.amqp.connOpt);
-        this.channel = await this.connection.createChannel();
+        this.connection = createAmqpConnection({
+            connOpt: conf.amqp.connOpt,
+            connectionName: `${conf.instanceId}-e2e-test-utils`,
+        });
     }
 
     public async close(): Promise<void> {
-        await this.channel?.close();
         await this.connection?.close();
-        this.channel = undefined;
         this.connection = undefined;
+        this.channel = undefined;
     }
 
-    private getChannel(): Channel {
-        if (!this.channel) {
+    private getConnection(): IAmqpConnection {
+        if (!this.connection) {
             throw new Error('RabbitMqClient: call connect() before any operation.');
+        }
+        return this.connection;
+    }
+
+    private getChannel(): IAmqpChannel {
+        if (!this.channel) {
+            throw new Error('RabbitMqClient: call assertExchangeAndBindQueue() or publishToExchange() first.');
         }
         return this.channel;
     }
 
     public async publishToExchange<T = unknown>(exchange: string, payload: T): Promise<void> {
-        const channel = this.getChannel();
-        await channel.assertExchange(exchange, 'fanout', {durable: true});
-        channel.publish(exchange, '', Buffer.from(JSON.stringify(payload)));
+        if (!this.channel) {
+            this.channel = this.getConnection().createChannel({
+                name: 'e2e:rabbitMqUtils',
+                setup: async t => {
+                    await t.assertExchange(exchange, 'fanout', {durable: true});
+                },
+            });
+        }
+        await this.channel.publish(exchange, '', Buffer.from(JSON.stringify(payload)));
     }
 
     public async assertExchangeAndBindQueue(queue: string, exchange: string, type = 'fanout'): Promise<void> {
-        const channel = this.getChannel();
-        await channel.assertExchange(exchange, type, {durable: true});
-        await channel.assertQueue(queue, {durable: true});
-        await channel.bindQueue(queue, exchange, '');
+        if (!this.channel) {
+            this.channel = this.getConnection().createChannel({
+                name: 'e2e:rabbitMqUtils',
+                setup: async t => {
+                    await t.assertExchange(exchange, type, {durable: true});
+                    await t.assertQueue(queue, {durable: true});
+                    await t.bindQueue(queue, exchange, '');
+                },
+            });
+        }
     }
 
     public async purgeQueue(queue: string): Promise<void> {
-        const channel = this.getChannel();
-        await channel.assertQueue(queue, {durable: true});
-        await channel.purgeQueue(queue);
+        await this.getChannel().purgeQueue(queue);
     }
 
     public async waitForMessage<T = unknown>(
@@ -51,7 +69,6 @@ export class RabbitMqClient {
         timeoutMs = 30_000,
     ): Promise<T> {
         const channel = this.getChannel();
-        //await channel.assertQueue(queue, {durable: true});
 
         return new Promise<T>((resolve, reject) => {
             let consumerTag: string | undefined;
@@ -70,22 +87,22 @@ export class RabbitMqClient {
             };
 
             channel
-                .consume(queue, msg => {
-                    if (!msg) {
-                        return;
-                    }
+                .consume(
+                    queue,
+                    async msg => {
+                        const content = JSON.parse(msg.content.toString()) as T;
 
-                    const content = JSON.parse(msg.content.toString()) as T;
-
-                    if (predicate(content)) {
-                        channel.ack(msg);
-                        void stop();
-                        resolve(content);
-                    } else {
-                        channel.nack(msg, false, false);
-                    }
-                })
-                .then(({consumerTag: tag}) => {
+                        if (predicate(content)) {
+                            channel.ack(msg);
+                            void stop();
+                            resolve(content);
+                        } else {
+                            channel.nack(msg);
+                        }
+                    },
+                    {manualAck: true},
+                )
+                .then(tag => {
                     consumerTag = tag;
                 })
                 .catch(reject);

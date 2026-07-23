@@ -59,15 +59,7 @@ import {type ICorePluginsApp} from './app/core/pluginsApp';
     // Init services
     const [translator, amqp, redis, mailer, oidcClient] = await Promise.all([
         i18nextInit(conf),
-        amqpService({
-            config: {
-                ...conf.amqp,
-                ...(conf.coreModes.length === 1 &&
-                    conf.coreModes[0] === CoreMode.TASKS_MANAGER_WORKER && {
-                        prefetch: conf.tasksManager.workerPrefetch,
-                    }),
-            },
-        }),
+        amqpService({config: conf.amqp}),
         initRedis({config: conf}),
         initMailer({config: conf}),
         conf.auth.oidc.enable ? initOIDCClient(conf) : undefined,

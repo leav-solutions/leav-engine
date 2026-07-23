@@ -1,9 +1,9 @@
-import {type IAmqpService} from '@leav/message-broker';
+import {type AmqpMessageHandler} from '@leav/message-broker';
 import {getLogsIndexName, type IDbEvent} from '@leav/utils';
-import type * as amqp from 'amqplib';
 import Joi from 'joi';
 import {type ILogger} from '@leav/logger';
 import type * as Config from '../../_types/config';
+import {type ILogsCollectorRabbitMQ} from '../../infra/logsCollector/logsCollectorRabbitMQ';
 import {type IIndexationService} from '../../infra/indexation/indexationService';
 import {type IElasticsearchService} from '../../infra/elasticsearch/elasticsearchService';
 
@@ -13,7 +13,7 @@ export interface ILogsCollectorDomain {
 
 export interface ILogsCollectorDomainDeps {
     config: Config.IConfig;
-    'core.infra.amqpService': IAmqpService;
+    'core.infra.logsCollector.rabbitMQ': ILogsCollectorRabbitMQ;
     'core.infra.indexation.indexationService': IIndexationService;
     'core.utils.logger': ILogger;
     'core.infra.elasticsearch.service': IElasticsearchService;
@@ -21,7 +21,7 @@ export interface ILogsCollectorDomainDeps {
 
 export default function ({
     config,
-    'core.infra.amqpService': amqpService,
+    'core.infra.logsCollector.rabbitMQ': logsCollectorRabbitMQ,
     'core.infra.indexation.indexationService': indexationService,
     'core.utils.logger': logger,
     'core.infra.elasticsearch.service': esService,
@@ -64,9 +64,7 @@ export default function ({
         }
     };
 
-    const _onMessage = async (msg: amqp.ConsumeMessage): Promise<void> => {
-        amqpService.consumer.channel.ack(msg);
-
+    const _onMessage: AmqpMessageHandler = async msg => {
         const event: IDbEvent = JSON.parse(msg.content.toString());
 
         try {
@@ -94,18 +92,7 @@ export default function ({
 
     return {
         async init(): Promise<void> {
-            await amqpService.consumer.channel.assertQueue(config.logsCollector.queue);
-            await amqpService.consumer.channel.bindQueue(
-                config.logsCollector.queue,
-                config.amqp.exchange,
-                config.eventsManager.routingKeys.data_events,
-            );
-
-            await amqpService.consume(
-                config.logsCollector.queue,
-                config.eventsManager.routingKeys.data_events,
-                _onMessage,
-            );
+            await logsCollectorRabbitMQ.consumeEvents(_onMessage);
 
             await indexationService.init();
 

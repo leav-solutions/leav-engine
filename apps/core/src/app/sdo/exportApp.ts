@@ -1,7 +1,6 @@
-import {type ConsumeMessage} from 'amqplib';
 import {type IDbEvent, EventAction} from '@leav/utils';
+import {type AmqpMessageHandler} from '@leav/message-broker';
 import {type ISDOExportDomain} from '../../domain/sdo/export/sdoExportDomain';
-import {type IRabbitMQ} from '../../infra/sdo/rabbitMQ/rabbitMQ';
 import {type ISDODomain} from '../../domain/sdo/sdoDomain';
 import {systemUserId} from '../../_constants/users';
 import LeavError from '../../errors/LeavError';
@@ -13,27 +12,25 @@ import {type IConfig} from '../../_types/config';
 
 export interface IExportAppDeps {
     'core.domain.sdo.export': ISDOExportDomain;
-    'core.infra.sdo.rabbitMQ': IRabbitMQ;
     'core.domain.sdo': ISDODomain;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
     config: IConfig;
 }
 
 export interface IExportApp {
-    onDataEvent: (msg: ConsumeMessage) => Promise<void>;
+    onDataEvent: AmqpMessageHandler;
     extensionPoints?: IExtensionPoints;
 }
 
 export default function ({
     'core.domain.sdo.export': sdoExportDomain,
-    'core.infra.sdo.rabbitMQ': rabbitMQService,
     'core.domain.sdo': sdoDomain,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
     config,
 }: IExportAppDeps): IExportApp {
     const debug = config.sdo.debug ?? false;
 
-    const onDataEvent = async (msg: ConsumeMessage) => {
+    const onDataEvent: AmqpMessageHandler = async msg => {
         const _systemQueryContext = getSystemQueryContext('sdo::exportApp:onDataEvent');
 
         try {
@@ -44,14 +41,12 @@ export default function ({
             if (data.userId === systemUserId) {
                 // TODO: log event
                 debug && logger.debug('Export skipped, event triggered by systemUserId');
-                (await rabbitMQService.getLeavDataEventChannel()).ack(msg);
                 return;
             }
 
             // If feature flag is specified in global settings, we override the SDO default config
             const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(_systemQueryContext);
             if (sdoGlobalSettings.exportEnable === false) {
-                (await rabbitMQService.getLeavDataEventChannel()).ack(msg);
                 return;
             }
 
@@ -96,15 +91,12 @@ export default function ({
 
                 throw failures[0].reason;
             }
-
-            (await rabbitMQService.getLeavDataEventChannel()).ack(msg);
         } catch (error) {
             logger.error('Error while processing a data event', {
                 errorId: error.errorId,
                 stack: error.stack,
             });
 
-            (await rabbitMQService.getLeavDataEventChannel()).nack(msg, false, false);
             await sdoDomain.sendLog({
                 action: EventAction.SDO_LOG_ERROR,
                 error:
@@ -123,6 +115,10 @@ export default function ({
                           },
                 ctx: _systemQueryContext,
             });
+
+            // Rethrow: createAmqpConnection's default contract nacks the message (no requeue) on
+            // throw - ack/nack is no longer handled manually here.
+            throw error;
         }
     };
 

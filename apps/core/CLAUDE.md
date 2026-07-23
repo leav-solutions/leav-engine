@@ -67,6 +67,21 @@ src/
 
 ---
 
+## Configuration (`src/_types/config.ts` + `src/config.ts`)
+
+Toute nouvelle clé de config vit dans **deux fichiers qui doivent rester synchronisés** :
+
+- `src/_types/config.ts` — le type TypeScript (`IConfig` et ses sous-interfaces)
+- `src/config.ts` — le schéma **Joi** (`validateConfig`) qui valide la config au boot
+
+⚠️ **Ajouter un champ dans l'un sans l'autre casse le démarrage du core** : un champ ajouté
+uniquement au type TS n'est jamais validé (silencieux, mais incohérent) ; un champ requis
+uniquement dans le schéma Joi mais absent du type TS fait échouer `validateConfig()` au démarrage
+dès que `apps/core/config/default.js` ne le fournit pas. Toujours modifier les deux fichiers dans
+le même changement.
+
+---
+
 ## Modèle de données LEAV
 
 ### Library (`src/domain/library/`, `src/_types/library.ts`)

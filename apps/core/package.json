@@ -80,7 +80,6 @@
         "@rjsf/utils": "6.7.0",
         "@trpc/server": "11.16.0",
         "add-filename-increment": "1.0.0",
-        "amqplib": "2.0.1",
         "arangojs": "8.8.1",
         "awilix": "12.1.1",
         "bcryptjs": "2.4.3",

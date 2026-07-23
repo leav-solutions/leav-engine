@@ -197,10 +197,11 @@ module.exports = {
         },
         allowFilesList: process.env.ALLOW_FILES_LIST || '',
         ignoreFilesList: process.env.IGNORE_FILES_LIST || '',
+        prefetch: envToNumber(process.env.FILES_MANAGER_PREFETCH, 5),
     },
     tasksManager: {
         checkingInterval: 3000,
-        workerPrefetch: 1,
+        workerPrefetch: envToNumber(process.env.TM_WORKER_PREFETCH, 1),
         restartWorker: envToBool(process.env.TM_RESTART_WORKER, false),
         queues: {
             execOrders: process.env.TM_EXEC_ORDERS_QUEUE || 'tasks_exec_orders',
@@ -229,6 +230,7 @@ module.exports = {
             events: 'indexation_events',
         },
         fuzzySearch: envToBool(process.env.INDEXATION_FUZZY_SEARCH, true),
+        prefetch: envToNumber(process.env.INDEXATION_MANAGER_PREFETCH, 5),
     },
     debug: envToBool(process.env.DEBUG, false),
     defaultUserId: '2', // Used for DB migration and any other action that is not bound to a real user
@@ -275,6 +277,7 @@ module.exports = {
     },
     logsCollector: {
         queue: process.env.LOGS_MANAGER_QUEUE || 'logs_events',
+        prefetch: envToNumber(process.env.LOGS_COLLECTOR_PREFETCH, 1),
     },
     pluginsPath: envToStringArray(process.env.PLUGINS_PATH),
     automation: {
@@ -312,6 +315,7 @@ module.exports = {
         export: {
             enable: envToBool(process.env.SDO_EXPORT_ENABLE, false),
             dataEventsQueue: process.env.SDO_EXPORT_DATA_EVENTS_QUEUE || 'sdo_data_events_queue',
+            dataEventsPrefetch: envToNumber(process.env.SDO_EXPORT_DATA_EVENTS_PREFETCH, 1),
         },
     },
 };

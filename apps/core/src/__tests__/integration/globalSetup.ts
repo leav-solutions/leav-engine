@@ -1,4 +1,4 @@
-import {amqpService, createAmqpConnection} from '@leav/message-broker';
+import {createAmqpConnection, type IAmqpConnection} from '@leav/message-broker';
 import {getConfig} from '../../config';
 import i18nextInit from '../../i18nextInit';
 import {initDI} from '../../depsManager';
@@ -8,8 +8,15 @@ import {initRedis} from '../../infra/cache';
 import {type IDbService} from '../../infra/db/dbService';
 import {type ITasksManagerInterface} from '../../interface/tasksManager';
 import {type IRedis} from '../../infra/cache/redis';
+import {type IConfig} from '../../_types/config';
 
 let taskManagerMasterTimer: NodeJS.Timeout;
+
+const _resetTasksExecOrdersQueue = async (amqpConnection: IAmqpConnection, conf: IConfig): Promise<void> => {
+    const channel = amqpConnection.createChannel({name: 'test:resetExecOrders', confirm: false});
+    await channel.deleteQueue(conf.tasksManager.queues.execOrders);
+    await channel.close();
+};
 
 export async function setup() {
     try {
@@ -18,10 +25,6 @@ export async function setup() {
 
         await initDb(conf);
         const redis = await initRedis({config: conf});
-        const amqp = await amqpService({
-            // limit prefetch to one for task cancel to avoid multiple tasks being started in parallel
-            config: {...conf.amqp, prefetch: 1},
-        });
         const amqpConnection = createAmqpConnection({
             connOpt: conf.amqp.connOpt,
             heartbeatInSeconds: conf.amqp.heartbeatInSeconds,
@@ -31,7 +34,6 @@ export async function setup() {
         const {coreContainer} = await initDI({
             translator,
             'core.infra.redis': redis,
-            'core.infra.amqpService': amqp,
             'core.infra.amqp.connection': amqpConnection,
         });
 
@@ -41,7 +43,7 @@ export async function setup() {
         await dbUtils.migrate(coreContainer);
 
         // reset worker queue
-        await amqp.consumer.channel.deleteQueue(conf.tasksManager.queues.execOrders);
+        await _resetTasksExecOrdersQueue(amqpConnection, conf);
 
         const tasksManager: ITasksManagerInterface = coreContainer.cradle['core.interface.tasksManager'];
 

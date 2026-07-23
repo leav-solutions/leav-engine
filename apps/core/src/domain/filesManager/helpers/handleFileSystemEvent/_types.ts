@@ -1,10 +1,10 @@
-import {type IAmqpService} from '@leav/message-broker';
 import {type UpdateRecordLastModifFunc} from '../../../helpers/updateRecordLastModif';
 import {type ILibraryDomain} from '../../../library/libraryDomain';
 import {type SendRecordUpdateEventHelper} from '../../../record/helpers/sendRecordUpdateEvent';
 import {type IRecordDomain} from '../../../record/recordDomain';
 import {type ITreeDomain} from '../../../tree/treeDomain';
 import {type IValueDomain} from '../../../value/valueDomain';
+import {type IFilesManagerRabbitMQ} from '../../../../infra/filesManager/filesManagerRabbitMQ';
 import {type IFilesManagerRepo} from '../../../../infra/filesManager/filesManagerRepo';
 import {type IRecordRepo} from '../../../../infra/record/recordRepo';
 import {type IUtils} from '../../../../utils/utils';
@@ -19,7 +19,7 @@ export interface IHandleFileSystemEventDeps {
     valueDomain: IValueDomain;
     treeDomain: ITreeDomain;
     recordRepo: IRecordRepo;
-    amqpService: IAmqpService;
+    filesManagerRabbitMQ: IFilesManagerRabbitMQ;
     updateRecordLastModif: UpdateRecordLastModifFunc;
     logger: ILogger;
     config: IConfig;

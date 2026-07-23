@@ -215,12 +215,14 @@ export const validateConfig = (conf: IConfig) => {
             }),
             allowFilesList: Joi.string().required().allow(''),
             ignoreFilesList: Joi.string().required().allow(''),
+            prefetch: Joi.number().required(),
         }),
         indexationManager: Joi.object().keys({
             queues: Joi.object().keys({
                 events: Joi.string().required(),
             }),
             fuzzySearch: Joi.boolean().required(),
+            prefetch: Joi.number().required(),
         }),
         tasksManager: Joi.object().keys({
             checkingInterval: Joi.number().required(),
@@ -284,6 +286,7 @@ export const validateConfig = (conf: IConfig) => {
         }),
         logsCollector: Joi.object().keys({
             queue: Joi.string().required(),
+            prefetch: Joi.number().required(),
         }),
         notification: Joi.object().keys({
             enable: Joi.boolean().required(),
@@ -354,6 +357,7 @@ export const validateConfig = (conf: IConfig) => {
             export: Joi.object().keys({
                 enable: Joi.boolean().required(),
                 dataEventsQueue: Joi.string().required(),
+                dataEventsPrefetch: Joi.number().required(),
             }),
             debug: Joi.boolean().required(),
         }),

@@ -12,7 +12,7 @@ import {
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IConfig} from '../../../_types/config';
 import {CommonAttributes} from '../../../_constants/systemAttributes';
-import {type IRabbitMQ} from '../../../infra/sdo/rabbitMQ/rabbitMQ';
+import {type IRabbitMQ} from '../../../infra/sdo/sdoRabbitMQ';
 import {type ISDOUtils} from '../../../utils/sdo/sdo';
 import {type IRecordSDORepo} from '../../../infra/sdo/recordsSDORepo/recordSDORepo';
 import {type GetSystemQueryContext} from '../../../utils/helpers/getSystemQueryContext';
@@ -147,8 +147,7 @@ export default function ({
 
         // Send sdo to rabbitmq
         const exportChannel = await rabbitMQService.getSDOExportChannel();
-        exportChannel.publish(config.sdo.exchange, '', Buffer.from(JSON.stringify(sdo)));
-        await exportChannel.waitForConfirms();
+        await exportChannel.publish(config.sdo.exchange, '', Buffer.from(JSON.stringify(sdo)));
 
         // Send log to ELK about sdo sent
         logger.verbose(`SDO Export record ${libraryId}/${recordUUID}/${recordId}`);

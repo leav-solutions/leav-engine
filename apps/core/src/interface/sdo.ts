@@ -2,7 +2,7 @@ import {logger} from '@leav/logger';
 import {type IConfig} from '../_types/config';
 import {type ISDOImportApp} from '../app/sdo/importApp';
 import {type IExportApp} from '../app/sdo/exportApp';
-import {type IRabbitMQ} from '../infra/sdo/rabbitMQ/rabbitMQ';
+import {type IRabbitMQ} from '../infra/sdo/sdoRabbitMQ';
 import {type GetSystemQueryContext} from '../utils/helpers/getSystemQueryContext';
 
 export interface ISDOInterface {
