@@ -1,7 +1,6 @@
 // import {MockedProvider} from '@apollo/client/testing';
 // import {mount} from 'enzyme';
 // import React from 'react';
-// import {act} from 'react-dom/test-utils';
 // import {wait} from '../../../utils/testUtils';
 // import {getLibsQuery} from '../../../queries/libraries/getLibrariesQuery';
 // import {mockLibrary} from '../../../__mocks__/libraries';

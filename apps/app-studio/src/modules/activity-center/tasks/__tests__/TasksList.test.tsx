@@ -317,13 +317,17 @@ describe('TasksList', () => {
         });
 
         it('should call archiveUserTasks when archive all button is clicked and confirmed', async () => {
-            const task = createMockTask({
+            const taskProps = {
                 status: TaskStatus.DONE,
                 startedAt: 1700000100,
                 completedAt: 1700000400,
                 progress: {description: null, percent: 100},
-            });
-            const tasks = [task, task, task];
+            };
+            const tasks = [
+                createMockTask({...taskProps, id: 'task-1'}),
+                createMockTask({...taskProps, id: 'task-2'}),
+                createMockTask({...taskProps, id: 'task-3'}),
+            ];
             mockUseGetUserTasks.mockReturnValue({
                 userTasks: tasks,
                 loading: false,

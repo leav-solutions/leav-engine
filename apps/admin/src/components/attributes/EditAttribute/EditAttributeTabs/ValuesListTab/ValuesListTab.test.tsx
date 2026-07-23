@@ -1,5 +1,4 @@
 // import {mount} from 'enzyme';
-// import {act} from 'react-dom/test-utils';
 // import {wait} from '../../../../../utils/testUtils';
 // import {getAttributeValuesListQuery} from '../../../../../queries/attributes/getAttributeValuesListQuery';
 // import {mockAttrSimple} from '../../../../../__mocks__/attributes';

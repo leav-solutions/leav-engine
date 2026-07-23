@@ -65,6 +65,7 @@ describe('BreadcrumbNavigator', () => {
                                             },
                                         },
                                     ],
+                                    settings: null,
                                     permissions_conf: null,
                                 },
                             ],

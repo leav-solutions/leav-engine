@@ -29,27 +29,18 @@ describe('InfosTab', () => {
 
     const commonMocks = [
         {
+            // The lib ID uniqueness check (getLibById, no-cache) fires on every keystroke of the
+            // auto-filled ID, so it queries intermediate IDs we can't enumerate. Match any variables
+            // and return an empty list (ID available) for all of them.
             request: {
                 query: GetLibByIdDocument,
-                variables: {id: 'mon_libelle'},
             },
+            variableMatcher: () => true,
+            maxUsageCount: Number.POSITIVE_INFINITY,
             result: {
                 data: {
                     libraries: {
-                        list: [{...mockLibrary, id: 'mon_libelle'}],
-                    },
-                },
-            },
-        },
-        {
-            request: {
-                query: GetLibByIdDocument,
-                variables: {id: 'my_new_label'},
-            },
-            result: {
-                data: {
-                    libraries: {
-                        list: [{...mockLibrary, id: 'my_new_label'}],
+                        list: [],
                     },
                 },
             },

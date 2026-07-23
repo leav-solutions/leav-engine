@@ -47,7 +47,7 @@ function FileModal({fileId, libraryId, open, onClose}: IFileModalProps): JSX.Ele
     return (
         <StyledModal
             open={open}
-            destroyOnClose
+            destroyOnHidden
             okText={t('global.close')}
             onCancel={onClose}
             width="90vw"

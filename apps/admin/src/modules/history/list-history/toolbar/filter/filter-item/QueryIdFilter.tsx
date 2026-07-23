@@ -54,7 +54,7 @@ export const QueryIdFilter = ({loading, value, onChange, onReset}: QueryIdFilter
             disabled={loading}
             values={value ? [value] : []}
             dropDownProps={{
-                dropdownRender: () => (
+                popupRender: () => (
                     <FilterDropdownContainer>
                         <div className={filterItemContainer}>
                             <KitTypography.Text size="fontSize6">{t('logs.filters.query_id.label')}</KitTypography.Text>

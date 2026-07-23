@@ -72,7 +72,7 @@ describe('EditLibraryPreviewsSettings', () => {
         expect(deleteButtons[0]).toBeDisabled(); // System version, cannot delete
 
         await userEvent.click(deleteButtons[1]);
-        userEvent.click(await screen.findByRole('button', {name: /submit/i}));
+        await userEvent.click(await screen.findByRole('button', {name: /submit/i}));
 
         await waitFor(() => expect(mockSaveLibraryMutation).toBeCalled());
     });

@@ -15,10 +15,12 @@ import {
 
 vi.mock('../../../config/router/adminRouter', async () => {
     const {createMemoryRouter} = await vi.importActual<{
-        createMemoryRouter: (routes: RouteObject[]) => unknown;
+        createMemoryRouter: (routes: RouteObject[], opts?: {future?: Record<string, boolean>}) => unknown;
     }>('react-router-dom');
     return {
-        adminRouter: createMemoryRouter([{path: '/', element: 'Home'}]),
+        adminRouter: createMemoryRouter([{path: '/', element: 'Home'}], {
+            future: {v7_startTransition: true, v7_relativeSplatPath: true},
+        }),
     };
 });
 
@@ -118,6 +120,9 @@ test('Renders app', async () => {
                         __typename: 'GlobalSettings',
                         name: 'my app',
                         icon: null,
+                        favicon: null,
+                        settings: null,
+                        defaultApp: 'admin',
                     },
                 },
             },

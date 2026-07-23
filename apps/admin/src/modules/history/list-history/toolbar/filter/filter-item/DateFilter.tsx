@@ -84,9 +84,9 @@ export const DateFilter = ({loading, value, onChange, onReset}: DateFilterProps)
                 disabled={loading}
                 values={[displayLabel]}
                 dropDownProps={{
-                    overlayClassName: filterDropdownContainer,
+                    classNames: {root: filterDropdownContainer},
                     onOpenChange: _handleOpenChange,
-                    dropdownRender: () => (
+                    popupRender: () => (
                         <>
                             <KitDatePicker.RangePicker
                                 open

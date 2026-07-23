@@ -1,4 +1,4 @@
-import {act} from 'react-dom/test-utils';
+import {act} from '@testing-library/react';
 import {render, screen} from '../../../_tests/testUtils';
 import {mockAttrAdv} from '../../../__mocks__/attributes';
 import EditAttribute from './EditAttribute';

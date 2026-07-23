@@ -24,7 +24,7 @@ vi.mock('react-router-dom', async () => ({
 const _renderComponent = (url = '/') =>
     render(
         <KitApp>
-            <MemoryRouter initialEntries={[url]}>
+            <MemoryRouter initialEntries={[url]} future={{v7_startTransition: true, v7_relativeSplatPath: true}}>
                 <ResetPassword />
             </MemoryRouter>
         </KitApp>,

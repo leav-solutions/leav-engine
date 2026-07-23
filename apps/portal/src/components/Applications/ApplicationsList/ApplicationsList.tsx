@@ -5,7 +5,7 @@ import {message} from 'antd';
 import {KitDivider} from 'aristid-ds';
 import {getUserDataQuery} from '../../../queries/userData/getUserData';
 import {saveUserData} from '../../../queries/userData/saveUserData';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import styled from 'styled-components';
 import {type GET_APPLICATIONS_applications_list} from '../../../_gqlTypes/GET_APPLICATIONS';
@@ -39,20 +39,28 @@ function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
     const [favorites, setFavorites] = useState<string[]>([]);
     const [consulted, setConsulted] = useState<string[]>([]);
 
-    const {loading: userDataLoading} = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
+    const {
+        data: userData,
+        loading: userDataLoading,
+        error: userDataError,
+    } = useQuery<GET_USER_DATA, GET_USER_DATAVariables>(getUserDataQuery, {
         variables: {
             keys: [FAVORITES_APPS_KEY, CONSULTED_APPS_KEY],
         },
-        onCompleted: data => {
-            if (data.userData) {
-                setFavorites(data.userData.data[FAVORITES_APPS_KEY] ?? []);
-                setConsulted(data.userData.data[CONSULTED_APPS_KEY] ?? []);
-            }
-        },
-        onError: error => {
-            message.error(t('favorites_loading_error', {message: error.message}));
-        },
     });
+
+    useEffect(() => {
+        if (userData?.userData) {
+            setFavorites(userData.userData.data[FAVORITES_APPS_KEY] ?? []);
+            setConsulted(userData.userData.data[CONSULTED_APPS_KEY] ?? []);
+        }
+    }, [userData]);
+
+    useEffect(() => {
+        if (userDataError) {
+            message.error(t('favorites_loading_error', {message: userDataError.message}));
+        }
+    }, [userDataError, t]);
 
     const [saveFavorites] = useMutation<SAVE_USER_DATA, SAVE_USER_DATAVariables>(saveUserData);
 

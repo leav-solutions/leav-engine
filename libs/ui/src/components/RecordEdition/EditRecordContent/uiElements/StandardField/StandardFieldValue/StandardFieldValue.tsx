@@ -97,9 +97,12 @@ function StandardFieldValue({
         }
     }
 
+    // React 18.3 warns when a spread props object carries `key` — antd's FormListFieldData does.
+    const {key: listFieldKey, ...listFieldRest} = listField ?? {};
+
     return (
         attributeFormatsWithDS.includes(attribute.format) && (
-            <Form.Item name={attribute.id} {...listField} noStyle>
+            <Form.Item key={listFieldKey} name={attribute.id} {...listFieldRest} noStyle>
                 {valueContent}
             </Form.Item>
         )

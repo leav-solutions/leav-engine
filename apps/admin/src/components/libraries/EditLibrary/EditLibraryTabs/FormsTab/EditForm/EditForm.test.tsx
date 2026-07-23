@@ -1,5 +1,4 @@
 // import {mount} from 'enzyme';
-// import {act} from 'react-dom/test-utils';
 // import {wait} from '../../../../../../utils/testUtils';
 // import {getFormQuery} from '../../../../../../queries/forms/getFormQuery';
 // import {mockFormFull} from '../../../../../../__mocks__/forms';

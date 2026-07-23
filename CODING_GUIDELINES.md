@@ -211,7 +211,7 @@ const _handleSubmit = () => { /* Handle submit... */ };
 
 - Use [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/) through the wrapper available in `_tests/testUtils.tsx`. It includes automatically all global providers (like Apollo or Redux)
 - Simulate user interactions with `userEvent` (`@testing-library/user-event`), not `fireEvent`. Set up the instance once with `const user = userEvent.setup()` and `await` each interaction (`await user.click(...)`, `await user.type(...)`); the surrounding test must be `async`. `fireEvent` dispatches a single raw DOM event, whereas `userEvent` replays the full sequence a real user triggers (focus, keydown/keyup, etc.), so it catches more bugs.
-- Wrap interactions that trigger React state updates in `await act(async () => {...})` (`act` is re-exported from `_tests/testUtils`) to avoid "not wrapped in act(...)" warnings.
+- `await`-ing each `userEvent` interaction is usually enough to keep React state updates inside `act`. A manual `await act(async () => {...})` (`act` is re-exported from `_tests/testUtils`) only helps for updates you trigger directly — it does **not** silence updates coming from Ant Design internals (overlay/motion, see the happy-dom gotchas below). For those, wait on the DOM (e.g. `waitForElementToBeRemoved`), not on an extra `act`.
 - Prefer using `getByRole` : it encourages using accessibility best practices (possible roles are available [here](https://www.w3.org/TR/html-aria/#docconformance))
 - Use the [Testing Playground](https://testing-playground.com/) to find the best selector for your use case
 - Use `getByTestId` only on last resort
@@ -249,6 +249,29 @@ expect(current.value).toBe(42);
 const {result} = renderHook(() => useMyHook());
 expect(result.current.value).toBe(42);
 ```
+
+### happy-dom — known gotchas
+
+Front tests run on **happy-dom**, which does not implement layout or CSS transitions. This produces
+misleading warnings/stderr that are test-environment artifacts, not product bugs. Prefer a **scoped**
+fix (in the test file) over a global one, and never change correct product code just to silence them.
+
+- **Unmeasured layout → `NaN` sizes.** `scrollHeight` and `getComputedStyle` return unusable values,
+  so any auto-sizing widget (e.g. an Ant Design `Input.TextArea` with `autoSize`) computes
+  `NaN` and logs `NaN is an invalid value for the height css style property`. Stub the measurement in
+  the test (e.g. a numeric `HTMLElement.prototype.scrollHeight` getter) or mock the sizing child.
+- **Overlay close animations fire outside `act`.** Popconfirm / Tooltip / Dropdown (`@rc-component/trigger`
+  → `Popup` → `CSSMotion`) run their leave transition asynchronously after your assertion, causing
+  `An update to CSSMotion inside a test was not wrapped in act(...)`. Wait for the popup to actually
+  disappear (`await waitForElementToBeRemoved(() => screen.queryByRole('button', {name: /submit/i}))`),
+  not just for the business effect (the mutation call).
+- **Apollo mock result key must be the operation's root field.** A mutation selecting `saveUserData`
+  needs `result.data.saveUserData`, not `result.data.userData`; a mismatch throws Apollo invariant #13
+  ("Missing field 'X' while writing result"), logged as an error on stderr.
+- **Circular imports only break at the entry point.** A cycle where module A instantiates JSX from B
+  at module-eval time logs `React.jsx: type is invalid ... got: undefined` — but only when the test
+  enters the cycle through the not-yet-defined side. Break the cycle (defer the JSX to call time) or,
+  in a test, mock the imported module to short-circuit it.
 
 ## Folder structure
 

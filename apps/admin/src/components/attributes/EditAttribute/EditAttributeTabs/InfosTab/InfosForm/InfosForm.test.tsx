@@ -1,6 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import {act} from 'react-dom/test-utils';
-import {fireEvent, render, screen, waitFor, within} from '../../../../../../_tests/testUtils';
+import {act, fireEvent, render, screen, waitFor, within} from '../../../../../../_tests/testUtils';
 import {mockLibrary} from '../../../../../../__mocks__/libraries';
 import {
     AttributeType,
@@ -39,6 +38,7 @@ describe('InfosForm', () => {
             query: GetLibrariesWithAttributesDocument,
             variables: {},
         },
+        maxUsageCount: Number.POSITIVE_INFINITY,
         result: {
             data: {
                 libraries: {
@@ -96,6 +96,7 @@ describe('InfosForm', () => {
                     onSubmitInfos={onSubmit}
                     onCheckIdExists={onCheckIdExists}
                 />,
+                {apolloMocks: [mockLibrariesWithAttributes]},
             );
         });
 
@@ -112,6 +113,7 @@ describe('InfosForm', () => {
                     onSubmitInfos={onSubmit}
                     onCheckIdExists={onCheckIdExists}
                 />,
+                {apolloMocks: [mockLibrariesWithAttributes]},
             );
         });
 
@@ -123,6 +125,7 @@ describe('InfosForm', () => {
         await act(async () => {
             render(
                 <InfosForm attribute={attribute} readonly onSubmitInfos={onSubmit} onCheckIdExists={onCheckIdExists} />,
+                {apolloMocks: [mockLibrariesWithAttributes]},
             );
         });
 
@@ -159,12 +162,11 @@ describe('InfosForm', () => {
                     onSubmitInfos={onSubmit}
                     onCheckIdExists={onCheckIdExists}
                 />,
+                {apolloMocks: [mockLibrariesWithAttributes]},
             );
         });
 
-        await act(async () => {
-            await userEvent.type(screen.getByRole('textbox', {name: 'label.fr'}), 'labelfr', {delay: 5});
-        });
+        await userEvent.type(screen.getByRole('textbox', {name: 'label.fr'}), 'labelfr');
 
         expect(screen.getByRole('textbox', {name: 'id'})).toHaveValue('labelfr');
     });
@@ -175,12 +177,11 @@ describe('InfosForm', () => {
         await act(async () => {
             render(
                 <InfosForm attribute={null} readonly={false} onSubmitInfos={onSubmit} onCheckIdExists={_idNotUnique} />,
+                {apolloMocks: [mockLibrariesWithAttributes]},
             );
         });
 
-        await act(async () => {
-            await userEvent.type(screen.getByRole('textbox', {name: 'id'}), 'test');
-        });
+        await userEvent.type(screen.getByRole('textbox', {name: 'id'}), 'test');
 
         expect(_idNotUnique).toHaveBeenCalled();
     });
@@ -195,6 +196,7 @@ describe('InfosForm', () => {
                     onCheckIdExists={onCheckIdExists}
                     forcedType={AttributeType.advanced}
                 />,
+                {apolloMocks: [mockLibrariesWithAttributes]},
             );
         });
 
@@ -217,7 +219,15 @@ describe('InfosForm', () => {
                 result: () => {
                     saveLibCalled = true;
 
-                    return {};
+                    return {
+                        data: {
+                            saveLibrary: {
+                                __typename: 'Library',
+                                id: 'categories',
+                                attributes: [],
+                            },
+                        },
+                    };
                 },
             },
         ];
@@ -238,10 +248,8 @@ describe('InfosForm', () => {
 
         expect(await within(librariesWrapper).findByText('Produits')).toBeInTheDocument();
 
-        await act(async () => {
-            await userEvent.type(within(librariesWrapper).getByRole('textbox'), 'categ', {delay: 5});
-            userEvent.click(within(librariesWrapper).getByText('Categories'));
-        });
+        await userEvent.type(within(librariesWrapper).getByRole('textbox'), 'categ');
+        await userEvent.click(within(librariesWrapper).getByText('Categories'));
 
         await waitFor(() => {
             expect(saveLibCalled).toBe(true);

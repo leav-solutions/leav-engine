@@ -87,7 +87,7 @@ export const TableNameCell = ({item, itemActions}: ITableNameCellProps) => {
                     <KitDropDown
                         placement="bottomRight"
                         getPopupContainer={() => containerRef.current || document.body}
-                        destroyPopupOnHide={true}
+                        destroyOnHidden={true}
                         menu={{
                             items: itemActionsWithCallback
                                 .slice(2)

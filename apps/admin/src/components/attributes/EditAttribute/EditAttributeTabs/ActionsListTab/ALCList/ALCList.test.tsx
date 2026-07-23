@@ -2,7 +2,6 @@
 // import React from 'react';
 // import {DndProvider} from 'react-dnd';
 // import {TestBackend} from 'react-dnd-test-backend';
-// import {act} from 'react-dom/test-utils';
 // import {wait} from '../../../../../../utils/testUtils';
 // import ALCList from './ALCList';
 

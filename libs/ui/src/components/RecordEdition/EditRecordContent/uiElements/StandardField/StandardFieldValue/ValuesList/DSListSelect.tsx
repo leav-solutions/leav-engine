@@ -188,14 +188,15 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
             disabled={readonly}
             options={options}
             status={errors.length > 0 && 'error'}
-            showSearch
-            onDropdownVisibleChange={_handleDropdownVisibleChange}
+            showSearch={{
+                onSearch: _handleOnSearch,
+            }}
+            onOpenChange={_handleDropdownVisibleChange}
             onSelect={_handleOnChange}
             onChange={onChange}
             onClear={_handleOnClear}
-            onSearch={_handleOnSearch}
             placeholder={t('record_edition.placeholder.select_an_option')}
-            dropdownRender={menu => (
+            popupRender={menu => (
                 <>
                     {searchedString !== '' && searchResultsCount > 0 && (
                         <div style={{paddingBottom: 'calc(var(--general-spacing-xs) * 1px)'}}>

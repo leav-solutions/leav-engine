@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import {onTestFinished} from 'vitest';
 import {render, screen, waitFor} from '@testing-library/react';
 import {KitApp} from 'aristid-ds';
 import {mockAttrSimple} from '../../../../../../../../../../__mocks__/attributes';
@@ -173,6 +174,35 @@ describe('SettingsEdition', () => {
     });
 
     test('RTE', async () => {
+        // happy-dom (CI) returns empty strings for the textarea's computed padding/border/line-height,
+        // so antd's `Input.TextArea` autoSize computes `NaN` for its height and React logs
+        // "`NaN` is an invalid value for the `height` css style property". Coerce every empty numeric
+        // value read through `getPropertyValue` to `0px` (product code is correct; this is purely a
+        // happy-dom measurement gap). The autoSize measurement can also fire in the setup-level
+        // afterEach act() flush, i.e. after the test body — restore through onTestFinished (which runs
+        // after all afterEach hooks), not at the end of the test body.
+        const realGetComputedStyle = window.getComputedStyle.bind(window);
+        const getComputedStyleSpy = vi
+            .spyOn(window, 'getComputedStyle')
+            .mockImplementation((element: Element, pseudoElement?: string | null) => {
+                const style = realGetComputedStyle(element, pseudoElement ?? undefined);
+                return new Proxy(style, {
+                    get(target, prop) {
+                        if (prop === 'getPropertyValue') {
+                            return (name: string) => {
+                                const value = target.getPropertyValue(name);
+                                return value === '' && /padding|border|width|height|size/.test(name) ? '0px' : value;
+                            };
+                        }
+                        const value = Reflect.get(target, prop);
+                        return typeof value === 'function' ? value.bind(target) : value;
+                    },
+                });
+            });
+        onTestFinished(() => {
+            getComputedStyleSpy.mockRestore();
+        });
+
         vi.spyOn(useFormBuilderReducer, 'useFormBuilderReducer').mockReturnValue({
             state: {
                 ...mockState,

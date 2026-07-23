@@ -61,7 +61,7 @@ export const ActionFilter = ({loading, value, onChange, onReset}: ActionFilterPr
             values={value}
             dropDownProps={{
                 onOpenChange: _handleOpenChange,
-                dropdownRender: menuNode => (
+                popupRender: menuNode => (
                     <FilterDropdownContainer>
                         <FilterDropdownSearch key={resetKey} onSearch={setSearch} />
                         {menuNode}

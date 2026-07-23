@@ -1,6 +1,5 @@
 // import {MockedProvider} from '@apollo/client/testing';
 // import {mount, type ReactWrapper} from 'enzyme';
-// import {act} from 'react-dom/test-utils';
 // import {LibraryBehavior, GetLibrariesDocument} from '../../_gqlTypes';
 // import {wait} from '../../utils/testUtils';
 // import RootSelector from './RootSelector';

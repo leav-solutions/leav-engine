@@ -25,7 +25,7 @@ const StyledTabs = styled(Tabs)`
 
 const FormTabs: FunctionComponent<IFormElementProps<IFormTabsSettings>> = ({element, ...elementProps}) => {
     const {lang} = useLang();
-    const tabPosition = element.settings.direction === TabsDirection.VERTICAL ? 'left' : 'top';
+    const tabPlacement = element.settings.direction === TabsDirection.VERTICAL ? 'start' : 'top';
 
     const tabItems = element.settings.tabs.map(({id, label}) => {
         const tabContainer: FormElement<unknown> = {
@@ -47,7 +47,7 @@ const FormTabs: FunctionComponent<IFormElementProps<IFormTabsSettings>> = ({elem
         };
     });
 
-    return <StyledTabs tabPosition={tabPosition} data-testid="form-tabs" items={tabItems} />;
+    return <StyledTabs tabPlacement={tabPlacement} data-testid="form-tabs" items={tabItems} />;
 };
 
 export default FormTabs;

@@ -1,6 +1,5 @@
 // import {mount} from 'enzyme';
 // import React from 'react';
-// import {act} from 'react-dom/test-utils';
 // import {wait} from '../../utils/testUtils';
 // import MockedLangContextProvider from '../../__mocks__/MockedLangContextProvider';
 // import ListPanel from './ListPanel';

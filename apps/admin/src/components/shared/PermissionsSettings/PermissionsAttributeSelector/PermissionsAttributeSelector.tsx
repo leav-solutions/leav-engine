@@ -26,20 +26,20 @@ function PermissionsAttributeSelector({
     const {t} = useTranslation();
     const [isListExpanded, setIsListExpanded] = useState(false);
 
-    const [getAttributes, {loading, error, data, called}] = useGetAttributesLazyQuery({
-        variables: {
-            libraries: library ? [library.id] : attribute ? attribute.libraries.map(l => l.id) : null,
-            type: [AttributeType.tree],
-        },
-    });
+    const [getAttributes, {loading, error, data, called}] = useGetAttributesLazyQuery();
 
     useEffect(() => {
         if (!isListExpanded || called) {
             return;
         }
 
-        getAttributes();
-    }, [isListExpanded, called]);
+        getAttributes({
+            variables: {
+                libraries: library ? [library.id] : attribute ? attribute.libraries.map(l => l.id) : null,
+                type: [AttributeType.tree],
+            },
+        });
+    }, [isListExpanded, called, library, attribute, getAttributes]);
 
     const _expandList = () => {
         setIsListExpanded(true);

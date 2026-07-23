@@ -272,7 +272,7 @@ function ImportModal({onClose, library, open, availableLibraries, resultExtraBut
                     styles={{body: {height: 'calc(100vh - 10rem)'}}}
                     okButtonProps={{disabled: !okBtn, className: 'submit-btn', title: buttonTitle}}
                     cancelButtonProps={{disabled: currentStep === ImportSteps.DONE}}
-                    destroyOnClose={true}
+                    destroyOnHidden={true}
                     footer={modalFooter}
                 >
                     <KitSteps current={currentStep} style={{marginBottom: '2em'}} items={stepsItems} />

@@ -19,7 +19,8 @@ describe('Libraries', () => {
                 },
                 result: {
                     data: {
-                        attributes: {
+                        libraries: {
+                            totalCount: 1,
                             list: [mockLibrary],
                         },
                     },

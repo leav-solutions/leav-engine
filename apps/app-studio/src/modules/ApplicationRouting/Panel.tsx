@@ -6,7 +6,7 @@ import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/typ
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {MODAL_EXTRA_RIGHT_PORTAL_ID} from '../../constants';
 import {PanelContent} from './content/PanelContent';
-import {nextLevelRoutes} from './router/routes';
+import {getNextLevelRoutes} from './router/routes';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {getIsViewSettingsVoletActive} from './utils/getIsViewSettingsVoletActive';
 import {useViewSettingsAutoClose} from './useViewSettingsAutoClose';
@@ -40,7 +40,7 @@ export const Panel: FunctionComponent = () => {
         recordPanelId,
         panelId,
     });
-    const NextLevelRoutes = useRoutes(nextLevelRoutes);
+    const NextLevelRoutes = useRoutes(getNextLevelRoutes());
     const match = useMatch(AbsolutePaths.recordPanel);
     const {fullscreenPanelId, enterFullscreen} = useFullscreen();
 

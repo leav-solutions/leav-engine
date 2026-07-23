@@ -1,6 +1,5 @@
 // import {InMemoryCache} from '@apollo/client';
 // import {mount} from 'enzyme';
-// import {act} from 'react-dom/test-utils';
 // import {wait} from '../../../../../utils/testUtils';
 // import {render, screen} from '../../../../../_tests/testUtils';
 // import {mockAttrAdv, mockAttrSimple} from '../../../../../__mocks__/attributes';

@@ -4388,7 +4388,7 @@ __metadata:
     "@types/react": "npm:18.3.31"
     "@types/react-dom": "npm:18.3.7"
     "@uidotdev/usehooks": "npm:2.4.1"
-    aristid-ds: "npm:17.0.0-4cff210"
+    aristid-ds: "npm:17.0.0-247cdcd"
     dayjs: "npm:^1.11.13"
     dompurify: "npm:3.4.12"
     graphql: "npm:16.14.2"
@@ -4412,7 +4412,7 @@ __metadata:
     zod: "npm:3.25.76"
   peerDependencies:
     "@apollo/client": ">=3.8.1"
-    aristid-ds: 17.0.0-4cff210
+    aristid-ds: 17.0.0-247cdcd
     i18next: ">=22.5.1"
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -7242,22 +7242,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^8.5.0":
-  version: 8.20.1
-  resolution: "@testing-library/dom@npm:8.20.1"
-  dependencies:
-    "@babel/code-frame": "npm:^7.10.4"
-    "@babel/runtime": "npm:^7.12.5"
-    "@types/aria-query": "npm:^5.0.1"
-    aria-query: "npm:5.1.3"
-    chalk: "npm:^4.1.0"
-    dom-accessibility-api: "npm:^0.5.9"
-    lz-string: "npm:^1.5.0"
-    pretty-format: "npm:^27.0.2"
-  checksum: 10/6c7a92fcc89931ef62a9a92dacec09b3e5ee5c3aba2171aa8de6c7504927b7c9364d73d2ed87b72447d6783108c1c92c207d16f788de64c69bc97059d7105e3c
-  languageName: node
-  linkType: hard
-
 "@testing-library/dom@npm:^9.0.0":
   version: 9.3.4
   resolution: "@testing-library/dom@npm:9.3.4"
@@ -7285,42 +7269,6 @@ __metadata:
     picocolors: "npm:^1.1.1"
     redent: "npm:^3.0.0"
   checksum: 10/409b4f519e4c68f4d31e3b0317338cc19098b9029513fca61aa2af8270086ae3956a1eaedd19bbce2d2c9e2cf9ff27a616c06556be7a26e101c0d529a0062233
-  languageName: node
-  linkType: hard
-
-"@testing-library/react-hooks@npm:8.0.1":
-  version: 8.0.1
-  resolution: "@testing-library/react-hooks@npm:8.0.1"
-  dependencies:
-    "@babel/runtime": "npm:^7.12.5"
-    react-error-boundary: "npm:^3.1.0"
-  peerDependencies:
-    "@types/react": ^16.9.0 || ^17.0.0
-    react: ^16.9.0 || ^17.0.0
-    react-dom: ^16.9.0 || ^17.0.0
-    react-test-renderer: ^16.9.0 || ^17.0.0
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-    react-dom:
-      optional: true
-    react-test-renderer:
-      optional: true
-  checksum: 10/f7b69373feebe99bc7d60595822cc5c00a1a5a4801bc4f99b597256a5c1d23c45a51f359051dd8a7bdffcc23b26f324c582e9433c25804934fd351a886812790
-  languageName: node
-  linkType: hard
-
-"@testing-library/react@npm:13.4.0":
-  version: 13.4.0
-  resolution: "@testing-library/react@npm:13.4.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.12.5"
-    "@testing-library/dom": "npm:^8.5.0"
-    "@types/react-dom": "npm:^18.0.0"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 10/788249aad25a0161b197b7d387011e2578701ab18451b69a987eb073b2d24eb1041f242581c3dd4800f5abcf4f11811f5f6b1e682a45f1840a08fdde3ce559b7
   languageName: node
   linkType: hard
 
@@ -7652,15 +7600,6 @@ __metadata:
   peerDependencies:
     "@tiptap/core": 3.26.0
   checksum: 10/799df6e8ab3a42c171d21178d55a06af1e2d3faf2b27a2dfe8897b2cb2403c955a436a89368ed9a63ca640dde367ee068934ee36288723f69ced77b56bc91fb4
-  languageName: node
-  linkType: hard
-
-"@tiptap/extension-underline@npm:3.23.6":
-  version: 3.23.6
-  resolution: "@tiptap/extension-underline@npm:3.23.6"
-  peerDependencies:
-    "@tiptap/core": 3.23.6
-  checksum: 10/9b15488de7854c2bcdd140c940ce4e5680affd85042ea8d232834ae6e68a1d5243c9ebfeca47489cca2441b351928906bf1606476086003bfd6b896848389849
   languageName: node
   linkType: hard
 
@@ -9403,7 +9342,7 @@ __metadata:
     "@types/styled-components": "npm:4.4.3"
     "@uiw/react-json-view": "npm:2.0.0-alpha.43"
     "@vitejs/plugin-react": "npm:5.2.0"
-    aristid-ds: "npm:17.0.0-4cff210"
+    aristid-ds: "npm:17.0.0-247cdcd"
     cross-fetch: "npm:3.2.0"
     dayjs: "npm:1.11.21"
     fomantic-ui-less: "npm:2.9.4"
@@ -9822,7 +9761,7 @@ __metadata:
     "@types/react-dom": "npm:18.3.7"
     "@types/styled-components": "npm:5.1.36"
     "@vitejs/plugin-react": "npm:5.2.0"
-    aristid-ds: "npm:17.0.0-4cff210"
+    aristid-ds: "npm:17.0.0-247cdcd"
     browserslist: "npm:4.28.6"
     classnames: "npm:2.5.1"
     dayjs: "npm:1.11.21"
@@ -9944,9 +9883,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:17.0.0-4cff210":
-  version: 17.0.0-4cff210
-  resolution: "aristid-ds@npm:17.0.0-4cff210"
+"aristid-ds@npm:17.0.0-247cdcd":
+  version: 17.0.0-247cdcd
+  resolution: "aristid-ds@npm:17.0.0-247cdcd"
   dependencies:
     "@fortawesome/fontawesome-svg-core": "npm:^7.1.0"
     "@fortawesome/free-regular-svg-icons": "npm:^7.1.0"
@@ -9959,7 +9898,6 @@ __metadata:
     "@tiptap/extension-mention": "npm:3.23.6"
     "@tiptap/extension-text-align": "npm:3.23.6"
     "@tiptap/extension-text-style": "npm:3.23.6"
-    "@tiptap/extension-underline": "npm:3.23.6"
     "@tiptap/extensions": "npm:3.23.6"
     "@tiptap/pm": "npm:3.23.6"
     "@tiptap/react": "npm:3.23.6"
@@ -9978,7 +9916,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10/794af26682f8e8a2ca3eda50d6743caeb97a09d5cc968e600ef8059c845f1316be184e19f2837fd09e43fcfd19a19cb46671d4090f098d6e7c52653778350b02
+  checksum: 10/f90236f9f0b5e686744f11ec6eedd7cacc2975857de539e225e47e356276edf85a167033e64b792780e739a1825bd5d284832a4f346a83e79db5dd26e5393fed
   languageName: node
   linkType: hard
 
@@ -16573,7 +16511,7 @@ __metadata:
     "@types/react": "npm:18.3.31"
     "@types/react-dom": "npm:18.3.7"
     "@vitejs/plugin-react": "npm:5.2.0"
-    aristid-ds: "npm:17.0.0-4cff210"
+    aristid-ds: "npm:17.0.0-247cdcd"
     graphql: "npm:16.14.2"
     happy-dom: "npm:20.11.0"
     i18next: "npm:22.5.1"
@@ -18121,16 +18059,16 @@ __metadata:
     "@graphql-codegen/typescript-react-apollo": "npm:4.4.2"
     "@leav/ui": "workspace:libs/ui"
     "@leav/utils": "workspace:libs/utils"
+    "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:6.9.1"
-    "@testing-library/react": "npm:13.4.0"
-    "@testing-library/react-hooks": "npm:8.0.1"
+    "@testing-library/react": "npm:16.3.2"
     "@testing-library/user-event": "npm:13.5.0"
     "@total-typescript/ts-reset": "npm:0.6.1"
     "@types/node": "npm:24.13.3"
     "@types/react": "npm:18.3.31"
     "@types/react-dom": "npm:18.3.7"
     "@vitejs/plugin-react": "npm:5.2.0"
-    aristid-ds: "npm:17.0.0-4cff210"
+    aristid-ds: "npm:17.0.0-247cdcd"
     cross-fetch: "npm:3.2.0"
     graphql: "npm:16.14.2"
     graphql-ws: "npm:5.16.2"
@@ -18668,17 +18606,6 @@ __metadata:
   peerDependencies:
     react: ^18.3.1
   checksum: 10/3f4b73a3aa083091173b29812b10394dd06f4ac06aff410b74702cfb3aa29d7b0ced208aab92d5272919b612e5cda21aeb1d54191848cf6e46e9e354f3541f81
-  languageName: node
-  linkType: hard
-
-"react-error-boundary@npm:^3.1.0":
-  version: 3.1.4
-  resolution: "react-error-boundary@npm:3.1.4"
-  dependencies:
-    "@babel/runtime": "npm:^7.12.5"
-  peerDependencies:
-    react: ">=16.13.1"
-  checksum: 10/7418637bf352b88f35ff3798e6faa094ee046df9d422fc08f54c017892c3c0738dac661ba3d64d97209464e7a60e7fbbeffdbeaee5edc38f3aaf5f1f4a8bf610
   languageName: node
   linkType: hard
 

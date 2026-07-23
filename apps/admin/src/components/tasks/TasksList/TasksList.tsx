@@ -32,8 +32,8 @@ const TasksList = ({
     enabledColumns,
     actionsBtn,
     footerBtn,
-    tasks,
-    loading,
+    tasks = [],
+    loading = false,
 }: ITasksListProps): JSX.Element => {
     const {t} = useTranslation();
     const lang = useLang().lang;
@@ -192,12 +192,6 @@ const TasksList = ({
             </Table>
         </div>
     );
-};
-
-TasksList.defaultProps = {
-    loading: false,
-    tasks: [],
-    filters: {},
 };
 
 export default TasksList;

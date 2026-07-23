@@ -5,6 +5,13 @@ import {GetFileDataDocument, type GetFileDataQueryVariables, LibraryBehavior} fr
 import {act, fireEvent, render, screen, waitFor, within} from '../../../_tests/testUtils';
 import FileModal from './FileModal';
 
+// Stub the real PDF <iframe> (happy-dom tries to load its src and throws DOMException),
+// while preserving the fallback branch used for documents without a pdf preview.
+vi.mock('./FileModalContent/DocumentFile/DocumentFile', () => ({
+    default: ({fileData, fallback}: {fileData?: {whoAmI?: {preview?: {pdf?: string}}}; fallback?: unknown}) =>
+        fileData?.whoAmI?.preview?.pdf ? <div data-testid="document-viewer" /> : fallback,
+}));
+
 describe('FileModal', () => {
     const mockFileData = {
         __typename: 'Record',
