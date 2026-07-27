@@ -29,9 +29,9 @@
     },
     "dependencies": {
         "@leav/config-manager": "workspace:libs/config-manager",
+        "@leav/message-broker": "workspace:libs/message-broker",
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
-        "amqplib": "2.0.1",
         "fast-xml-parser": "5.10.1"
     },
     "stableVersion": "1.0.0"

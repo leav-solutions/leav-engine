@@ -442,6 +442,7 @@ apps/preview-generator-unit-tests:
         - apps/preview-generator/**/*
         - libs/config-manager/**/*
         - libs/logger/**/*
+        - libs/message-broker/**/*
         - libs/monitoring-server/**/*
         - libs/utils/**/*
 

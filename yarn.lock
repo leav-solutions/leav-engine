@@ -18286,10 +18286,10 @@ __metadata:
   resolution: "preview-generator@workspace:apps/preview-generator"
   dependencies:
     "@leav/config-manager": "workspace:libs/config-manager"
+    "@leav/message-broker": "workspace:libs/message-broker"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
     "@types/node": "npm:24.13.3"
-    amqplib: "npm:2.0.1"
     fast-xml-parser: "npm:5.10.1"
     prettier: "npm:3.9.6"
     tsx: "npm:4.23.1"

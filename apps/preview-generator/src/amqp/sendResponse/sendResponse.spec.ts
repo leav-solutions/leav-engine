@@ -1,10 +1,10 @@
-import {type Channel} from 'amqplib';
+import {type IAmqpChannel} from '@leav/message-broker';
 import {type IResponse} from '../../types/types';
 import {sendResponse} from './sendResponse';
 
 describe('test sendResponse', () => {
-    const channel: Mockify<Channel> = {
-        publish: vi.fn(),
+    const channel: Mockify<IAmqpChannel> = {
+        publish: vi.fn().mockResolvedValue(undefined),
     };
 
     const response: IResponse = {
@@ -17,8 +17,8 @@ describe('test sendResponse', () => {
     const routingKey = 'routingKey';
 
     test('use channel publish', async () => {
-        await sendResponse(channel as Channel, {exchange, routingKey}, response);
+        await sendResponse(channel as IAmqpChannel, {exchange, routingKey}, response);
 
-        expect(channel.publish).toBeCalled();
+        expect(channel.publish).toBeCalledWith(exchange, routingKey, expect.any(String), {persistent: true});
     });
 });

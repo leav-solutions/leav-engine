@@ -1,4 +1,4 @@
-import {type Channel, type ConsumeMessage} from 'amqplib';
+import {type IAmqpChannel, type IAmqpMessage} from '@leav/message-broker';
 import {processPreview} from '../../processPreview/processPreview';
 import {type IConfig, type IResponse} from '../../types/types';
 import {sendResponse} from '../sendResponse/sendResponse';
@@ -7,18 +7,18 @@ import {consume, handleMsg} from './consume';
 vi.mock('../../processPreview/processPreview');
 vi.mock('../sendResponse/sendResponse');
 
-const config = {amqp: {hostname: 'localhost', consume: {queue: 'queue'}, publish: {}}};
+const config = {amqp: {connOpt: {hostname: 'localhost'}, consume: {queue: 'queue'}, publish: {}}};
 
 describe('test consume', () => {
     test('execution', async () => {
-        const channel: Mockify<Channel> = {
-            consume: vi.fn(),
-            prefetch: vi.fn(),
+        const requestChannel: Mockify<IAmqpChannel> = {
+            consume: vi.fn().mockResolvedValue('tag'),
         };
+        const responseChannel: Mockify<IAmqpChannel> = {};
 
-        await consume(channel as Channel, config as unknown as IConfig);
+        await consume(requestChannel as IAmqpChannel, responseChannel as IAmqpChannel, config as unknown as IConfig);
 
-        expect(channel.consume).toBeCalledWith(config.amqp.consume.queue, expect.anything(), expect.anything());
+        expect(requestChannel.consume).toBeCalledWith(config.amqp.consume.queue, expect.anything());
     });
 });
 
@@ -26,12 +26,9 @@ describe('test handleMsg', () => {
     test('call sendResponse', async () => {
         const context = 'context';
 
-        const channel: Mockify<Channel> = {
-            ack: vi.fn(),
-            prefetch: vi.fn(),
-        };
+        const responseChannel: Mockify<IAmqpChannel> = {};
 
-        const msg: Mockify<ConsumeMessage> = {
+        const msg: Mockify<IAmqpMessage> = {
             content: Buffer.from(
                 JSON.stringify({
                     input: 'test',
@@ -67,8 +64,19 @@ describe('test handleMsg', () => {
 
         vi.mocked(processPreview).mockReturnValue(response as any);
 
-        await handleMsg(msg as ConsumeMessage, channel as Channel, config as unknown as IConfig);
+        await handleMsg(msg as IAmqpMessage, responseChannel as IAmqpChannel, config as unknown as IConfig);
 
-        expect(sendResponse).toBeCalledWith(channel, config.amqp.publish, response);
+        expect(sendResponse).toBeCalledWith(responseChannel, config.amqp.publish, response);
+    });
+
+    test('a processPreview failure is logged, not thrown', async () => {
+        const responseChannel: Mockify<IAmqpChannel> = {};
+        const msg: Mockify<IAmqpMessage> = {content: Buffer.from('{}')};
+
+        vi.mocked(processPreview).mockRejectedValue(new Error('boom'));
+
+        await expect(
+            handleMsg(msg as IAmqpMessage, responseChannel as IAmqpChannel, config as unknown as IConfig),
+        ).resolves.toBeUndefined();
     });
 });

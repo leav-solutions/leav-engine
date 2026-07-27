@@ -1,11 +1,11 @@
 import {getFileType} from '@leav/utils';
-import {type ConsumeMessage} from 'amqplib';
+import {type IAmqpMessage} from '@leav/message-broker';
 import {handleCheck} from '../check/handleCheck';
 import {type IConfig, type IMessageConsume, type IResponse, type IResult} from '../types/types';
 import {generatePreview} from './../generatePreview/generatePreview';
 import {logger} from '@leav/logger';
 
-export const processPreview = async (msg: ConsumeMessage, config: IConfig): Promise<IResponse> => {
+export const processPreview = async (msg: IAmqpMessage, config: IConfig): Promise<IResponse> => {
     let msgContent: IMessageConsume;
     try {
         msgContent = JSON.parse(msg.content.toString());

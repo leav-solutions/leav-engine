@@ -1,4 +1,4 @@
-import {type Channel} from 'amqplib';
+import {type IAmqpChannel} from '@leav/message-broker';
 import {ErrorList} from '../../errors/ErrorList';
 import {type IResponse} from '../../types/types';
 
@@ -7,13 +7,15 @@ interface IProps {
     routingKey: string;
 }
 
-export const sendResponse = async (channel: Channel, {exchange, routingKey}: IProps, response: IResponse) => {
+export const sendResponse = async (
+    channel: IAmqpChannel,
+    {exchange, routingKey}: IProps,
+    response: IResponse,
+): Promise<void> => {
     // Add error_detail
     const resultsWithErrorReason = response.results.map(r => ({error_detail: ErrorList[r.error] ?? '', ...r}));
 
-    const buffer = Buffer.from(JSON.stringify({...response, results: resultsWithErrorReason}));
+    const payload = JSON.stringify({...response, results: resultsWithErrorReason});
 
-    return channel.publish(exchange, routingKey, buffer, {
-        persistent: true,
-    });
+    await channel.publish(exchange, routingKey, payload, {persistent: true});
 };

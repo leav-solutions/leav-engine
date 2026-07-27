@@ -1,4 +1,4 @@
-import {type ConsumeMessage} from 'amqplib';
+import {type IAmqpMessage} from '@leav/message-broker';
 import {generatePreview} from '../generatePreview/generatePreview';
 import {type IConfig} from '../types/types';
 import {handleCheck} from './../check/handleCheck';
@@ -36,7 +36,7 @@ describe('processPreview', () => {
         vi.mocked(handleCheck).mockReturnValue(Promise.resolve(undefined));
         vi.mocked(generatePreview).mockReturnValue(Promise.resolve(undefined));
 
-        await processPreview(msg as ConsumeMessage, config as IConfig);
+        await processPreview(msg as IAmqpMessage, config as IConfig);
 
         expect(handleCheck).toBeCalledWith(JSON.parse(msg.content.toString()), config);
         expect(generatePreview).toBeCalled();

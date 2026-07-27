@@ -49,11 +49,15 @@ Generate previews for images, video, pdf, etc.
     "outputRootPath": "/data/",
     "ICCPath": "/data/profile/",
     "amqp": {
-        "protocol": "amqp",
-        "hostname": "localhost",
-        "port": 15672,
-        "username": "guest",
-        "password": "guest",
+        "connOpt": {
+            "protocol": "amqp",
+            "hostname": "localhost",
+            "port": 5672,
+            "username": "guest",
+            "password": "guest"
+        },
+        "heartbeatInSeconds": 30,
+        "type": "direct",
         "consume": {
             "queue": "consume",
             "exchange": "preview",
@@ -74,12 +78,11 @@ Generate previews for images, video, pdf, etc.
 
 - rootPath: path use to get the absolute path from the input and output get in message
 - ICCPath: path to the folder that contains de profile (EuroscaleCoated.icc et srgb.icm)
-- amqp
-    - protocol: the protocol used to connect rabbitMQ
-    - hostname: hostname used to connect rabbitMQ
-    - port: port used to connect rabbitMQ
-    - username: username used to connect rabbitMQ
-    - password: password used to connect rabbitMQ
+- amqp: connection is resilient (auto-reconnect with backoff via `@leav/message-broker`'s
+  `createAmqpConnection`) - connect/topology errors no longer crash the process
+    - connOpt: RabbitMQ connection options (protocol, hostname, port, username, password)
+    - heartbeatInSeconds: AMQP heartbeat interval, defaults to 30
+    - type: exchange type used for both consume and publish
     - consume
         - queue: queue use to get the message
         - exchange: exchange use to get the message
