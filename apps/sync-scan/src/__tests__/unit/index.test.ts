@@ -1,4 +1,4 @@
-import {type IAmqpService} from '@leav/message-broker';
+import {type IAmqpChannel} from '@leav/message-broker';
 import automate, {extractChildrenDbElements} from '../../automate';
 import * as events from '../../events';
 import * as scan from '../../scan';
@@ -22,7 +22,6 @@ beforeAll(async () => {
 
         const mockAmqp = {
             publish: vi.fn(),
-            consume: vi.fn(),
             close: vi.fn(),
         };
 
@@ -64,7 +63,7 @@ describe('unit tests', () => {
 
             const dbScan = extractChildrenDbElements(mockDbSettings, mockDbResult.treeContent);
 
-            await expect(automate(mockFsContent, dbScan, mockDbSettings, amqp as IAmqpService)).resolves.toStrictEqual(
+            await expect(automate(mockFsContent, dbScan, mockDbSettings, amqp as IAmqpChannel)).resolves.toStrictEqual(
                 undefined,
             );
 

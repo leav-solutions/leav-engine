@@ -1,4 +1,4 @@
-import {amqpService, type IAmqpService} from '@leav/message-broker';
+import {createAmqpConnection, type IAmqpChannel} from '@leav/message-broker';
 import fs from 'fs';
 import automate, {extractChildrenDbElements} from '../../automate';
 import {getConfig} from '../../config';
@@ -10,7 +10,10 @@ import test3Db from './database/test3';
 import test4Db from './database/test4';
 
 let cfg: IConfig;
-let amqp: IAmqpService;
+// Production-side, producer only - passed into automate() same way index.ts would.
+let eventsChannel: IAmqpChannel;
+// Test-side, asserts/binds the test queue itself to observe what gets published.
+let testConsumerChannel: IAmqpChannel;
 let inodes: {[ino: string]: any};
 
 const DB_SETTINGS = {
@@ -26,11 +29,26 @@ beforeAll(async () => {
     try {
         cfg = await getConfig();
 
-        amqp = await amqpService({config: cfg.amqp});
+        const connection = createAmqpConnection({connOpt: cfg.amqp.connOpt, connectionName: 'sync-scan-test'});
+        eventsChannel = connection.createChannel({
+            name: 'sync-scan:events',
+            setup: async t => {
+                await t.assertExchange(cfg.amqp.exchange, cfg.amqp.type, {durable: true});
+            },
+        });
 
-        // As queue is only used in tests to consume messages, it's not created in amqp.init. Thus, we have to do it here
-        await amqp.consumer.channel.assertQueue(cfg.amqp.queue);
-        await amqp.consumer.channel.bindQueue(cfg.amqp.queue, cfg.amqp.exchange, cfg.amqp.routingKey);
+        const testConnection = createAmqpConnection({
+            connOpt: cfg.amqp.connOpt,
+            connectionName: 'sync-scan-test-consumer',
+        });
+        testConsumerChannel = testConnection.createChannel({
+            name: 'test:consumer',
+            confirm: false,
+            setup: async t => {
+                await t.assertQueue(cfg.amqp.queue, {durable: true});
+                await t.bindQueue(cfg.amqp.queue, cfg.amqp.exchange, cfg.amqp.routingKey);
+            },
+        });
 
         // Create filesystem directory
         if (!fs.existsSync(cfg.filesystem.absolutePath)) {
@@ -43,7 +61,8 @@ beforeAll(async () => {
 
 afterAll(async () => {
     try {
-        await amqp.close();
+        await eventsChannel.close();
+        await testConsumerChannel.close();
 
         // Delete filesystem directory
         if (fs.existsSync(cfg.filesystem.absolutePath)) {
@@ -102,8 +121,6 @@ describe('e2e tests', () => {
 
             const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
 
-            await automate(fsc, dbScan, DB_SETTINGS, amqp);
-
             const expected = {
                 // pathAfter as keys
                 dir: 'CREATE',
@@ -113,23 +130,31 @@ describe('e2e tests', () => {
                 'dir/sdir/ssfile': 'CREATE',
             };
 
-            await new Promise<void>((resolve, reject) => {
-                amqp.consumer.channel
-                    .consume(
-                        cfg.amqp.queue,
-                        async msg => {
-                            const m = JSON.parse(msg.content.toString());
-                            expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathAfter]));
-                            expect(expected[m.pathAfter]).toEqual(m.event);
-                            if (m.pathAfter === 'dir/sdir/ssfile') {
-                                await amqp.consumer.channel.cancel('test3');
-                                resolve();
-                            }
-                        },
-                        {consumerTag: 'test3', noAck: true},
-                    )
-                    .catch(reject);
+            let resolveAll: () => void;
+            const gotAll = new Promise<void>(resolve => {
+                resolveAll = resolve;
             });
+
+            // Register (and fully await) the consumer before publishing: otherwise messages
+            // already sitting in the queue can be delivered in a burst right as the consumer
+            // registers, before cancel() below has a chance to take effect.
+            await testConsumerChannel.consume(
+                cfg.amqp.queue,
+                async msg => {
+                    const m = JSON.parse(msg.content.toString());
+                    expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathAfter]));
+                    expect(expected[m.pathAfter]).toEqual(m.event);
+                    if (m.pathAfter === 'dir/sdir/ssfile') {
+                        await testConsumerChannel.cancel('test3');
+                        resolveAll();
+                    }
+                },
+                {consumerTag: 'test3'},
+            );
+
+            await automate(fsc, dbScan, DB_SETTINGS, eventsChannel);
+
+            await gotAll;
         } catch (e) {
             console.error(e);
         }
@@ -152,8 +177,6 @@ describe('e2e tests', () => {
 
             const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
 
-            await automate(fsc, dbScan, DB_SETTINGS, amqp);
-
             const expected = {
                 // pathBefore as keys
                 file: {pathAfter: 'dir/file', event: 'MOVE'},
@@ -161,25 +184,30 @@ describe('e2e tests', () => {
                 'dir/sdir/ssfile': {pathAfter: 'dir/sdir/ssfile', event: 'UPDATE'},
             };
 
-            await new Promise<void>((resolve, reject) => {
-                amqp.consumer.channel
-                    .consume(
-                        cfg.amqp.queue,
-                        async msg => {
-                            const m = JSON.parse(msg.content.toString());
-                            expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
-                            expect(expected[m.pathBefore].pathAfter).toEqual(m.pathAfter);
-                            expect(expected[m.pathBefore].event).toEqual(m.event);
-                            if (m.pathAfter === 'dir/sdir/ssfile') {
-                                expect('f75b8179e4bbe7e2b4a074dcef62de95').toEqual(m.hash);
-                                await amqp.consumer.channel.cancel('test4');
-                                resolve();
-                            }
-                        },
-                        {consumerTag: 'test4', noAck: true},
-                    )
-                    .catch(reject);
+            let resolveAll: () => void;
+            const gotAll = new Promise<void>(resolve => {
+                resolveAll = resolve;
             });
+
+            await testConsumerChannel.consume(
+                cfg.amqp.queue,
+                async msg => {
+                    const m = JSON.parse(msg.content.toString());
+                    expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
+                    expect(expected[m.pathBefore].pathAfter).toEqual(m.pathAfter);
+                    expect(expected[m.pathBefore].event).toEqual(m.event);
+                    if (m.pathAfter === 'dir/sdir/ssfile') {
+                        expect('f75b8179e4bbe7e2b4a074dcef62de95').toEqual(m.hash);
+                        await testConsumerChannel.cancel('test4');
+                        resolveAll();
+                    }
+                },
+                {consumerTag: 'test4'},
+            );
+
+            await automate(fsc, dbScan, DB_SETTINGS, eventsChannel);
+
+            await gotAll;
         } catch (e) {
             console.error(e);
         }
@@ -199,7 +227,6 @@ describe('e2e tests', () => {
             };
 
             const dbScan = extractChildrenDbElements(DB_SETTINGS, dbs.treeContent);
-            await automate(fsc, dbScan, DB_SETTINGS, amqp);
 
             const expected = {
                 // pathBefore as keys
@@ -210,23 +237,28 @@ describe('e2e tests', () => {
                 'dir/sdir/ssfile': 'REMOVE',
             };
 
-            await new Promise<void>((resolve, reject) => {
-                amqp.consumer.channel
-                    .consume(
-                        cfg.amqp.queue,
-                        async msg => {
-                            const m = JSON.parse(msg.content.toString());
-                            expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
-                            expect(expected[m.pathBefore]).toEqual(m.event);
-                            if (m.pathBefore === 'dir/sdir/ssfile') {
-                                await amqp.consumer.channel.cancel('test5');
-                                resolve();
-                            }
-                        },
-                        {consumerTag: 'test5', noAck: true},
-                    )
-                    .catch(reject);
+            let resolveAll: () => void;
+            const gotAll = new Promise<void>(resolve => {
+                resolveAll = resolve;
             });
+
+            await testConsumerChannel.consume(
+                cfg.amqp.queue,
+                async msg => {
+                    const m = JSON.parse(msg.content.toString());
+                    expect(Object.keys(expected)).toEqual(expect.arrayContaining([m.pathBefore]));
+                    expect(expected[m.pathBefore]).toEqual(m.event);
+                    if (m.pathBefore === 'dir/sdir/ssfile') {
+                        await testConsumerChannel.cancel('test5');
+                        resolveAll();
+                    }
+                },
+                {consumerTag: 'test5'},
+            );
+
+            await automate(fsc, dbScan, DB_SETTINGS, eventsChannel);
+
+            await gotAll;
         } catch (e) {
             console.error(e);
         }

@@ -20579,7 +20579,6 @@ __metadata:
     "@leav/message-broker": "workspace:libs/message-broker"
     "@leav/utils": "workspace:*"
     "@types/node": "npm:24.13.3"
-    amqplib: "npm:2.0.1"
     apollo-cache-inmemory: "npm:1.6.6"
     apollo-client: "npm:2.6.10"
     apollo-link: "npm:1.2.14"

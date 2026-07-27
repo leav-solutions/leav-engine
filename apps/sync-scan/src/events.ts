@@ -1,4 +1,4 @@
-import {type IAmqpService} from '@leav/message-broker';
+import {type IAmqpChannel} from '@leav/message-broker';
 import {getConfig} from './config';
 import {EventTypes, type IEventMsg} from './_types/events';
 import {logger} from '@leav/logger';
@@ -30,7 +30,7 @@ const _getEventMsg = (
     ...(!!recordId && {recordId}),
 });
 
-export const create = async (path: string, inode: number, isDirectory: boolean, amqp: IAmqpService, hash?: string) => {
+export const create = async (path: string, inode: number, isDirectory: boolean, amqp: IAmqpChannel, hash?: string) => {
     const cfg = await getConfig();
 
     await amqp.publish(
@@ -47,7 +47,7 @@ export const remove = async (
     inode: number,
     isDirectory: boolean,
     recordId: string,
-    amqp: IAmqpService,
+    amqp: IAmqpChannel,
 ) => {
     const cfg = await getConfig();
 
@@ -68,7 +68,7 @@ export const move = async (
     inode: number,
     isDirectory: boolean,
     recordId: string,
-    amqp: IAmqpService,
+    amqp: IAmqpChannel,
 ) => {
     const cfg = await getConfig();
 
@@ -87,7 +87,7 @@ export const update = async (
     path: string,
     inode: number,
     isDirectory: boolean,
-    amqp: IAmqpService,
+    amqp: IAmqpChannel,
     hash: string,
     recordId: string,
 ) => {

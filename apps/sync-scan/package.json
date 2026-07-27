@@ -32,7 +32,6 @@
         "@leav/logger": "workspace:libs/logger",
         "@leav/message-broker": "workspace:libs/message-broker",
         "@leav/utils": "workspace:*",
-        "amqplib": "2.0.1",
         "apollo-cache-inmemory": "1.6.6",
         "apollo-client": "2.6.10",
         "apollo-link": "1.2.14",

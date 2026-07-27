@@ -21,7 +21,9 @@ Exécution en une passe : scan FS + scan GraphQL → algorithme de matching → 
 - Node.js + TypeScript
 - Apollo Client (requêtes GraphQL pour lire la base)
 - `walk` (traversal récursif du FS avec listes allow/ignore)
-- RabbitMQ / `@leav/message-broker`
+- RabbitMQ via `@leav/message-broker` (`createAmqpConnection`) — publication résiliente
+  (reconnexion automatique) ; job one-shot, donc attente bornée (30s) au démarrage puis échec
+  explicite si le broker est injoignable, plutôt qu'une attente indéfinie
 - Joi (validation de la config)
 
 ## Structure
