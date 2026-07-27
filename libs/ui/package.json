@@ -37,7 +37,7 @@
         "@total-typescript/ts-reset": "0.6.1",
         "@types/react": "18.3.31",
         "@types/react-dom": "18.3.7",
-        "aristid-ds": "17.0.0-247cdcd",
+        "aristid-ds": "17.1.0-ac42048",
         "graphql": "16.14.2",
         "happy-dom": "20.11.1",
         "i18next": "22.5.1",
@@ -54,7 +54,7 @@
     },
     "peerDependencies": {
         "@apollo/client": ">=3.8.1",
-        "aristid-ds": "17.0.0-247cdcd",
+        "aristid-ds": "17.1.0-d004430",
         "i18next": ">=22.5.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",

@@ -100,7 +100,8 @@ export const DSListSelect: FunctionComponent<IStandFieldValueContentProps<IKitSe
 
     if (allowFreeEntry) {
         if (!attribute.multiple_values) {
-            options = addOption(options, {value, label: value});
+            const stringValue = String(value ?? '');
+            options = addOption(options, {value: stringValue, label: stringValue});
         }
         options = addOption(options, {
             value: searchedString,
