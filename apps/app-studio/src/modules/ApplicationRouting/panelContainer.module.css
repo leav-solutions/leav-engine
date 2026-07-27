@@ -103,8 +103,10 @@
     & > section > div:nth-child(2) {
         padding: 0;
 
-        /* Panel header selector */
-        & > section > div:nth-child(1) {
+        /* Panel header selector: in a slider the panel header content is deported to the side panel
+           header, so this wrapper only holds the tabs and is empty when there is 0 or 1 tab.
+           Only pad it when it actually renders something. */
+        & > section > div:nth-child(1):has(*) {
             padding: calc(var(--general-spacing-s) * 1px) calc(var(--general-spacing-m) * 1px) 0
                 calc(var(--general-spacing-m) * 1px);
         }
