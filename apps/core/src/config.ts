@@ -359,6 +359,15 @@ export const validateConfig = (conf: IConfig) => {
                 dataEventsQueue: Joi.string().required(),
                 dataEventsPrefetch: Joi.number().required(),
             }),
+            dto: Joi.object().keys({
+                import: Joi.object().keys({
+                    enable: Joi.boolean().required(),
+                    exchange: Joi.string().required(),
+                    exchangeType: Joi.string().required(),
+                    queue: Joi.string().required(),
+                    prefetch: Joi.number().required(),
+                }),
+            }),
             debug: Joi.boolean().required(),
         }),
     });

@@ -2,6 +2,7 @@ import {logger} from '@leav/logger';
 import {type IConfig} from '../_types/config';
 import {type ISDOImportApp} from '../app/sdo/importApp';
 import {type IExportApp} from '../app/sdo/exportApp';
+import {type IDTOImportApp} from '../app/sdo/dtoImportApp';
 import {type IRabbitMQ} from '../infra/sdo/sdoRabbitMQ';
 import {type GetSystemQueryContext} from '../utils/helpers/getSystemQueryContext';
 
@@ -12,6 +13,7 @@ export interface ISDOInterface {
 interface IDeps {
     'core.app.sdo.import': ISDOImportApp;
     'core.app.sdo.export': IExportApp;
+    'core.app.sdo.dtoImport': IDTOImportApp;
     'core.infra.sdo.rabbitMQ': IRabbitMQ;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
     config: IConfig;
@@ -20,6 +22,7 @@ interface IDeps {
 export default function ({
     'core.app.sdo.import': importApp,
     'core.app.sdo.export': exportApp,
+    'core.app.sdo.dtoImport': dtoImportApp,
     'core.infra.sdo.rabbitMQ': rabbitMQService,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
     config,
@@ -40,6 +43,14 @@ export default function ({
                 logger.info(`SDO Export ready, waiting on queue ${config.sdo.export.dataEventsQueue}... 👀`);
             } else {
                 logger.info('SDO Export is disabled');
+            }
+
+            if (config.sdo.dto.import.enable) {
+                const dtoImportChannel = await rabbitMQService.getDTOImportChannel();
+                await dtoImportChannel.consume(config.sdo.dto.import.queue, dtoImportApp.onDTOEvent);
+                logger.info(`DTO Import ready, waiting on queue ${config.sdo.dto.import.queue}... 👀`);
+            } else {
+                logger.info('DTO Import is disabled');
             }
         },
     };

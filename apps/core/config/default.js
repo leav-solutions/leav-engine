@@ -317,5 +317,14 @@ module.exports = {
             dataEventsQueue: process.env.SDO_EXPORT_DATA_EVENTS_QUEUE || 'sdo_data_events_queue',
             dataEventsPrefetch: envToNumber(process.env.SDO_EXPORT_DATA_EVENTS_PREFETCH, 1),
         },
+        dto: {
+            import: {
+                enable: envToBool(process.env.DTO_IMPORT_ENABLE, false),
+                exchange: process.env.DTO_IMPORT_EXCHANGE || process.env.INSTANCE_ID + '_dto_import',
+                exchangeType: process.env.DTO_IMPORT_EXCHANGE_TYPE || 'fanout',
+                queue: process.env.DTO_IMPORT_QUEUE || process.env.INSTANCE_ID + '_dto_import',
+                prefetch: envToNumber(process.env.DTO_IMPORT_PREFETCH, 1),
+            },
+        },
     },
 };
