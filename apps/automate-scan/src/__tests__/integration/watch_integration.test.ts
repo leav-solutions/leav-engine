@@ -1,5 +1,5 @@
 import {afterEach, beforeEach, vi} from 'vitest';
-import * as amqp from 'amqplib';
+import {createAmqpConnection, type IAmqpConnection} from '@leav/message-broker';
 import {type FSWatcher} from 'chokidar';
 import * as fs from 'fs';
 import {startWatch} from '../../setupWatcher/setupWatcher';
@@ -15,7 +15,7 @@ describe('integration test automate-scan', () => {
     // Connections opened by the running test, closed in afterEach to avoid zombie connections
     // (e.g. when a test fails before its consumer received a message).
     let watcher: FSWatcher | undefined;
-    let consumerConnection: amqp.ChannelModel | undefined;
+    let consumerConnection: IAmqpConnection | undefined;
 
     beforeEach(async () => {
         const config = await getConfig();
@@ -35,7 +35,7 @@ describe('integration test automate-scan', () => {
         await watcher?.close();
         watcher = undefined;
 
-        await consumerConnection?.close().catch(() => undefined);
+        await consumerConnection?.close();
         consumerConnection = undefined;
 
         resetWatchState();
@@ -219,26 +219,22 @@ describe('integration test automate-scan', () => {
             _watcher.once('ready', () => resolve());
         });
 
-    const getAmqpConfig = async (): Promise<amqp.Options.Connect> => {
-        const config = await getConfig();
-
-        return {
-            protocol: config.amqp.protocol,
-            hostname: config.amqp.hostname,
-            username: config.amqp.username,
-            password: config.amqp.password,
-        };
-    };
-
     const purgeQueue = async () => {
         const config = await getConfig();
-        const connection = await amqp.connect(await getAmqpConfig());
+        const connection = createAmqpConnection({
+            connOpt: config.amqp.connOpt,
+            connectionName: 'automate-scan-test-purge',
+        });
 
         try {
-            const channel = await connection.createChannel();
-            await channel.assertQueue(config.amqp.queue, {durable: true});
+            const channel = connection.createChannel({
+                name: 'test:purgeQueue',
+                confirm: false,
+                setup: async t => {
+                    await t.assertQueue(config.amqp.queue, {durable: true});
+                },
+            });
             await channel.purgeQueue(config.amqp.queue);
-            await channel.close();
         } finally {
             await connection.close();
         }
@@ -247,24 +243,24 @@ describe('integration test automate-scan', () => {
     const initRabbitMQ = async (callback: (msg: string) => void) => {
         const config = await getConfig();
 
-        consumerConnection = await amqp.connect(await getAmqpConfig());
-        const channel = await consumerConnection.createChannel();
-
-        await channel.assertQueue(config.amqp.queue, {durable: true});
-        await channel.consume(
-            config.amqp.queue,
-            msg => {
-                if (!msg) {
-                    return;
-                }
-
-                try {
-                    callback(msg.content.toString());
-                } catch (e) {
-                    console.error(new Date(), '[RabbitMQ] Error processing message:', e);
-                }
+        consumerConnection = createAmqpConnection({
+            connOpt: config.amqp.connOpt,
+            connectionName: 'automate-scan-test-consumer',
+        });
+        const channel = consumerConnection.createChannel({
+            name: 'test:consumer',
+            confirm: false,
+            setup: async t => {
+                await t.assertQueue(config.amqp.queue, {durable: true});
             },
-            {noAck: true},
-        );
+        });
+
+        await channel.consume(config.amqp.queue, async msg => {
+            try {
+                callback(msg.content.toString());
+            } catch (e) {
+                console.error(new Date(), '[RabbitMQ] Error processing message:', e);
+            }
+        });
     };
 });

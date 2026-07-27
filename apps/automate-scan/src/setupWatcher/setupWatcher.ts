@@ -1,11 +1,11 @@
-import {type Channel, type Connection, type Options} from 'amqplib';
-import * as amqp from 'amqplib/callback_api';
+import {createAmqpConnection, type IAmqpChannel} from '@leav/message-broker';
 import * as Crypto from 'crypto';
 import * as fs from 'fs';
 import {getConfig} from '../config';
 import {createClient} from '../redis/redis';
 import {start} from '../watch/watch';
 import {logger} from '@leav/logger';
+import {type IConfig} from '../types';
 
 export const startWatch = async () => {
     const config = await getConfig();
@@ -23,19 +23,8 @@ export const startWatch = async () => {
     await createClient(config.redis.host, config.redis.port);
 
     if (config.amqp) {
-        const amqpConfig: Options.Connect = {
-            protocol: config.amqp.protocol,
-            hostname: config.amqp.hostname,
-            username: config.amqp.username,
-            password: config.amqp.password,
-        };
-
-        const exchange = config.amqp.exchange;
-        const queue = config.amqp.queue;
-        const routingKey = config.amqp.routingKey;
-        const type = config.amqp.type;
-
-        const channel: Channel = await getChannel(amqpConfig, exchange, queue, routingKey, type);
+        const {exchange, routingKey} = config.amqp;
+        const channel = getChannel(config.amqp, rootKey);
 
         let watchParams = {};
         if (config.watcher && config.watcher.awaitWriteFinish) {
@@ -54,43 +43,19 @@ export const startWatch = async () => {
     }
 };
 
-export const getChannel = async (
-    amqpConfig: Options.Connect,
-    exchange: string,
-    queue: string,
-    routingKey: string,
-    type: string,
-) =>
-    new Promise<Channel>(resolve =>
-        amqp.connect(amqpConfig, async (error0: any, connection: Connection | any) => {
-            if (error0) {
-                logger.error("101 - Can't connect to rabbitMQ");
-                process.exit(101);
-            }
+export const getChannel = (amqpConfig: NonNullable<IConfig['amqp']>, rootKey: string): IAmqpChannel => {
+    const connection = createAmqpConnection({
+        connOpt: amqpConfig.connOpt,
+        heartbeatInSeconds: amqpConfig.heartbeatInSeconds,
+        connectionName: `automate-scan-${rootKey}`,
+    });
 
-            const ch = await connection.createChannel();
-
-            try {
-                await ch.assertExchange(exchange, type, {durable: true});
-            } catch (e) {
-                logger.error(`102 - Error when assert exchange ${(e as Error).message}`);
-                process.exit(102);
-            }
-
-            try {
-                await ch.assertQueue(queue, {durable: true});
-            } catch (e) {
-                logger.error(`103 - Error when assert queue ${(e as Error).message}`);
-                process.exit(103);
-            }
-
-            try {
-                await ch.bindQueue(queue, exchange, routingKey);
-            } catch (e) {
-                logger.error(`104 - Error when bind queue ${(e as Error).message}`);
-                process.exit(104);
-            }
-
-            resolve(ch);
-        }),
-    );
+    return connection.createChannel({
+        name: 'automate-scan:files-events',
+        setup: async t => {
+            await t.assertExchange(amqpConfig.exchange, amqpConfig.type, {durable: true});
+            await t.assertQueue(amqpConfig.queue, {durable: true});
+            await t.bindQueue(amqpConfig.queue, amqpConfig.exchange, amqpConfig.routingKey);
+        },
+    });
+};

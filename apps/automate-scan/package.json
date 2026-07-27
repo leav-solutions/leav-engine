@@ -33,9 +33,9 @@
     "dependencies": {
         "@leav/config-manager": "workspace:libs/config-manager",
         "@leav/logger": "workspace:libs/logger",
+        "@leav/message-broker": "workspace:libs/message-broker",
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
-        "amqplib": "2.0.1",
         "chokidar": "4.0.3",
         "lodash": "4.18.1",
         "redis": "5.12.1"

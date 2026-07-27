@@ -3,12 +3,12 @@ import {generateMsgRabbitMQ, sendToRabbitMQ} from './rabbitmq';
 vi.mock('../index');
 
 describe('test sendToRabbitMQ', () => {
-    test('check if display msg', () => {
+    test('check if display msg', async () => {
         const channelMock: any = {
-            publish: vi.fn(),
+            publish: vi.fn().mockResolvedValue(undefined),
         };
 
-        sendToRabbitMQ(
+        await sendToRabbitMQ(
             JSON.stringify({
                 event: 'create',
                 time: Date.now(),
@@ -24,9 +24,9 @@ describe('test sendToRabbitMQ', () => {
         expect(channelMock.publish).not.toBeCalled();
     });
 
-    test('check if send to rabbitmq', () => {
+    test('check if send to rabbitmq', async () => {
         const channelMock: any = {
-            publish: vi.fn(),
+            publish: vi.fn().mockResolvedValue(undefined),
         };
 
         const msg = JSON.stringify({
@@ -41,13 +41,27 @@ describe('test sendToRabbitMQ', () => {
         const exchange = 'sendToRabbitMQ';
         const routingKey = '12345abc';
 
-        sendToRabbitMQ(msg, {
+        await sendToRabbitMQ(msg, {
             channel: channelMock,
             exchange,
             routingKey,
         });
 
-        expect(channelMock.publish).toBeCalledWith(exchange, routingKey, Buffer.from(msg), expect.anything());
+        expect(channelMock.publish).toBeCalledWith(exchange, routingKey, msg, expect.anything());
+    });
+
+    test('a failed publish is logged, not thrown', async () => {
+        const channelMock: any = {
+            publish: vi.fn().mockRejectedValue(new Error('broker unreachable')),
+        };
+
+        await expect(
+            sendToRabbitMQ('msg', {
+                channel: channelMock,
+                exchange: 'sendToRabbitMQ',
+                routingKey: '12345abc',
+            }),
+        ).resolves.toBeUndefined();
     });
 });
 

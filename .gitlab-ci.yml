@@ -365,6 +365,7 @@ apps/automate-scan-unit-tests:
         - apps/automate-scan/**/*
         - libs/config-manager/**/*
         - libs/logger/**/*
+        - libs/message-broker/**/*
         - libs/monitoring-server/**/*
         - libs/utils/**/*
 

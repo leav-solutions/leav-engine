@@ -6,14 +6,13 @@
     - `0`: User stop the app
     - `1`: Error uncaught
     - `2`: rootPath folder not found
-- Rabbitmq errors:
-    - `101`: Can't connect to RabbitMQ
-    - `102`: Error when assert exchange
-    - `103`: Error when assert queue
-    - `104`: Error when bind queue
-    - `105`: Can't publish to rabbitMQ
 - Redis errors:
     - `201`: Error with redis
+
+RabbitMQ connection is resilient (auto-reconnect with backoff via `@leav/message-broker`'s
+`createAmqpConnection`) - no exit code on AMQP connect/publish errors anymore. A failed publish is
+logged and the event is lost (rather than crashing the app); `sync-scan`'s periodic reconciliation
+catches up on any event missed this way.
 
 ## Message sent to RabbitMQ
 
