@@ -3921,7 +3921,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hono/node-server@npm:1.19.14, @hono/node-server@npm:^1.19.9":
+"@hono/node-server@npm:1.19.15":
+  version: 1.19.15
+  resolution: "@hono/node-server@npm:1.19.15"
+  peerDependencies:
+    hono: ^4
+  checksum: 10/7155b6c82de7e984c59a38a252f818e317c557f68997ac3d05af8f5bb54fe620ff3ab833738f4aa46ef57d7c0a705aacd8067f05c170e7e6d88dc65c29b7e56c
+  languageName: node
+  linkType: hard
+
+"@hono/node-server@npm:^1.19.9":
   version: 1.19.14
   resolution: "@hono/node-server@npm:1.19.14"
   peerDependencies:
@@ -4297,7 +4306,7 @@ __metadata:
   resolution: "@leav/config-manager@workspace:libs/config-manager"
   dependencies:
     "@types/node": "npm:24.13.3"
-    prettier: "npm:3.9.5"
+    prettier: "npm:3.9.6"
     typescript: "npm:7.0.2"
     vitest: "npm:4.1.10"
   languageName: unknown
@@ -4356,10 +4365,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/monitoring-server@workspace:libs/monitoring-server"
   dependencies:
-    "@hono/node-server": "npm:1.19.14"
+    "@hono/node-server": "npm:1.19.15"
     "@leav/logger": "workspace:libs/logger"
     "@types/node": "npm:24.13.3"
-    hono: "npm:4.12.31"
+    hono: "npm:4.12.32"
     prom-client: "npm:15.1.3"
     typescript: "npm:7.0.2"
     vitest: "npm:4.1.10"
@@ -4392,7 +4401,7 @@ __metadata:
     dayjs: "npm:^1.11.13"
     dompurify: "npm:3.4.12"
     graphql: "npm:16.14.2"
-    happy-dom: "npm:20.11.0"
+    happy-dom: "npm:20.11.1"
     html-react-parser: "npm:4.2.10"
     i18next: "npm:22.5.1"
     i18next-resources-to-backend: "npm:1.2.1"
@@ -6515,49 +6524,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rjsf/core@npm:6.7.0":
-  version: 6.7.0
-  resolution: "@rjsf/core@npm:6.7.0"
+"@rjsf/core@npm:6.7.1":
+  version: 6.7.1
+  resolution: "@rjsf/core@npm:6.7.1"
   dependencies:
     lodash: "npm:^4.18.1"
     lodash-es: "npm:^4.18.1"
     markdown-to-jsx: "npm:^9.8.2"
     prop-types: "npm:^15.8.1"
   peerDependencies:
-    "@rjsf/utils": ^6.7.0
+    "@rjsf/utils": ^6.7.1
     react: ">=18"
-  checksum: 10/0a5127c240a06fb83d96d43326d5508d83e3712de955ba97068b4a07f1466d5050b9225af4d4cd9c8a176c74a47c03f6df551c05f916136945b02052bf817d63
+  checksum: 10/5654c6d8cf82cf3171d2d37dca05a2bb3b29f8810dff6716ada0f9838fc5588c7875a56a65c28775280f86acb6d06c9bdab359ccf766027186104f3d4d4eae66
   languageName: node
   linkType: hard
 
-"@rjsf/utils@npm:6.7.0":
-  version: 6.7.0
-  resolution: "@rjsf/utils@npm:6.7.0"
+"@rjsf/utils@npm:6.7.1":
+  version: 6.7.1
+  resolution: "@rjsf/utils@npm:6.7.1"
   dependencies:
     "@x0k/json-schema-merge": "npm:^1.0.3"
     fast-equals: "npm:^6.0.0"
-    fast-uri: "npm:^4.0.0"
+    fast-uri: "npm:^4.1.1"
     jsonpointer: "npm:^5.0.1"
     lodash: "npm:^4.18.1"
     lodash-es: "npm:^4.18.1"
     react-is: "npm:^18.3.1"
   peerDependencies:
     react: ">=18"
-  checksum: 10/0bbb58e55e308501f9799406d76db4790b76bb6fd58a7d6cbea18104c4d5712200c982b337d24388ce9911955497365f3580779cff5c9b9a6f34eb395f8f838c
+  checksum: 10/703b918795fd78004c54688504c1dfac3041a67e71f766a78adc43428a22f9e2efa9a58c534789d78094ad2eafae626f7b59fe5dba5707daff9d08b7d5b8375b
   languageName: node
   linkType: hard
 
-"@rjsf/validator-ajv8@npm:6.7.0":
-  version: 6.7.0
-  resolution: "@rjsf/validator-ajv8@npm:6.7.0"
+"@rjsf/validator-ajv8@npm:6.7.1":
+  version: 6.7.1
+  resolution: "@rjsf/validator-ajv8@npm:6.7.1"
   dependencies:
     ajv: "npm:^8.20.0"
     ajv-formats: "npm:^2.1.1"
     lodash: "npm:^4.18.1"
     lodash-es: "npm:^4.18.1"
   peerDependencies:
-    "@rjsf/utils": ^6.7.0
-  checksum: 10/82cdb413332a0c4e69cf82db907021baa152ba93a7fc23a46542eb6b18b15baab025611ffa012878331934ee80e24eb349262f7831ff61c146e7cf981ef7eac2
+    "@rjsf/utils": ^6.7.1
+  checksum: 10/4774831730ab9b5dcbf2225fe6a0269492fa3ad0bd13ee09ba454f927286670ab576b7c432ae1fca7bb238a0af3b8567ebeda599b5137ab64fe7f0687782b147
   languageName: node
   linkType: hard
 
@@ -9325,9 +9334,9 @@ __metadata:
     "@leav/utils": "workspace:libs/utils"
     "@nosferatu500/react-sortable-tree": "npm:4.4.0"
     "@reduxjs/toolkit": "npm:1.9.7"
-    "@rjsf/core": "npm:6.7.0"
-    "@rjsf/utils": "npm:6.7.0"
-    "@rjsf/validator-ajv8": "npm:6.7.0"
+    "@rjsf/core": "npm:6.7.1"
+    "@rjsf/utils": "npm:6.7.1"
+    "@rjsf/validator-ajv8": "npm:6.7.1"
     "@semantic-ui-react/craco-less": "npm:2.0.2"
     "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:6.9.1"
@@ -9349,7 +9358,7 @@ __metadata:
     formik: "npm:1.5.8"
     graphql: "npm:16.14.2"
     graphql-ws: "npm:5.16.2"
-    happy-dom: "npm:20.11.0"
+    happy-dom: "npm:20.11.1"
     hex-rgba: "npm:1.0.2"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.2.2"
@@ -9762,12 +9771,12 @@ __metadata:
     "@types/styled-components": "npm:5.1.36"
     "@vitejs/plugin-react": "npm:5.2.0"
     aristid-ds: "npm:17.0.0-247cdcd"
-    browserslist: "npm:4.28.6"
+    browserslist: "npm:4.28.7"
     classnames: "npm:2.5.1"
     dayjs: "npm:1.11.21"
     graphql: "npm:16.14.2"
     graphql-ws: "npm:5.16.2"
-    happy-dom: "npm:20.11.0"
+    happy-dom: "npm:20.11.1"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.2.2"
     i18next-resources-to-backend: "npm:1.2.1"
@@ -10139,7 +10148,7 @@ __metadata:
     amqplib: "npm:2.0.1"
     chokidar: "npm:4.0.3"
     lodash: "npm:4.18.1"
-    prettier: "npm:3.9.5"
+    prettier: "npm:3.9.6"
     redis: "npm:5.12.1"
     tsx: "npm:4.23.1"
     typescript: "npm:7.0.2"
@@ -10308,12 +10317,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"baseline-browser-mapping@npm:^2.10.42":
-  version: 2.10.43
-  resolution: "baseline-browser-mapping@npm:2.10.43"
+"baseline-browser-mapping@npm:^2.10.44":
+  version: 2.11.4
+  resolution: "baseline-browser-mapping@npm:2.11.4"
   bin:
     baseline-browser-mapping: dist/cli.cjs
-  checksum: 10/de0f30c056425b1780917732851d06527519d49597608d4d7ff663aeb2feaf0e444f0b5fecb4ba8b37f0ef69fb8c5e815d7f6c120b3e5ff5d0a95da0cdf70a59
+  checksum: 10/40dfae493547aa02da0e20b86025ff4509f73993e19c53e451c3058817ebc342a7a6c4b67efbdeecbb53836d9cec910b65b951fc4369bf048178ac4dd8e0c06f
   languageName: node
   linkType: hard
 
@@ -10495,18 +10504,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:4.28.6":
-  version: 4.28.6
-  resolution: "browserslist@npm:4.28.6"
+"browserslist@npm:4.28.7":
+  version: 4.28.7
+  resolution: "browserslist@npm:4.28.7"
   dependencies:
-    baseline-browser-mapping: "npm:^2.10.42"
-    caniuse-lite: "npm:^1.0.30001803"
-    electron-to-chromium: "npm:^1.5.389"
+    baseline-browser-mapping: "npm:^2.10.44"
+    caniuse-lite: "npm:^1.0.30001806"
+    electron-to-chromium: "npm:^1.5.393"
     node-releases: "npm:^2.0.51"
     update-browserslist-db: "npm:^1.2.3"
   bin:
     browserslist: cli.js
-  checksum: 10/04c8c3ec37e067aa1773d21d9603b434cc10d3dee6a89f62bd05d3a7d60b30ddbca8f371f53735e5b798a82db0e0131bc78dea9c58b11affb9ce5675c9d8b67b
+  checksum: 10/4de67c9aa630a674572e790f32021237e61aaf69338d84f2875abeb793f87bdaaa2f9760129eeacd8292c50f0ec26fa15ddf02057c27940e1d76f1742bc600cb
   languageName: node
   linkType: hard
 
@@ -10723,10 +10732,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001803":
-  version: 1.0.30001805
-  resolution: "caniuse-lite@npm:1.0.30001805"
-  checksum: 10/2ce6f5d200846218e136a89a40a071d1b976fe5cfc3fbc01acb73db02839d9bf7370b88efb23295823bb6c2355772b52469121ef987f85062165a4ec5859fdca
+"caniuse-lite@npm:^1.0.30001806":
+  version: 1.0.30001806
+  resolution: "caniuse-lite@npm:1.0.30001806"
+  checksum: 10/25d4ed6a2f03f51519bf302739cbe53e5522205607e47455cfcf19fdde975f2fdb890b78ead7b18961d5635ee676f03c73dea1ef30e9ef1d3fe11b9f02485f86
   languageName: node
   linkType: hard
 
@@ -11485,7 +11494,7 @@ __metadata:
     "@opentelemetry/auto-instrumentations-node": "npm:0.78.0"
     "@opentelemetry/sdk-metrics": "npm:2.9.0"
     "@opentelemetry/sdk-node": "npm:0.220.0"
-    "@rjsf/utils": "npm:6.7.0"
+    "@rjsf/utils": "npm:6.7.1"
     "@trpc/client": "npm:11.16.0"
     "@trpc/server": "npm:11.16.0"
     "@types/cacache": "npm:20.0.1"
@@ -11538,7 +11547,7 @@ __metadata:
     node-cron: "npm:4.6.0"
     nodemailer: "npm:9.0.3"
     openid-client: "npm:5.7.1"
-    prettier: "npm:3.9.5"
+    prettier: "npm:3.9.6"
     progress-stream: "npm:2.0.0"
     redis: "npm:5.12.1"
     tsx: "npm:4.23.1"
@@ -12264,10 +12273,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-to-chromium@npm:^1.5.389":
-  version: 1.5.389
-  resolution: "electron-to-chromium@npm:1.5.389"
-  checksum: 10/fc47fc3b810e028088bea45f994de4cf7243bd8b0fa3abe17bfb6825d0cf95d185d1c98976b87af3f98c8e8ba7994776d2ad52148894baa802a9fa9a60ad8c0b
+"electron-to-chromium@npm:^1.5.393":
+  version: 1.5.396
+  resolution: "electron-to-chromium@npm:1.5.396"
+  checksum: 10/5f094c33c8f8da0ae3c98c32cf88af5f88658e1436510f37c25e8302315eb5e38a0b6dec592e5cd7c23245c4abfa0258c44c9855986f7b36215fcee50ca58403
   languageName: node
   linkType: hard
 
@@ -13409,7 +13418,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-uri@npm:^4.0.0":
+"fast-uri@npm:^4.1.1":
   version: 4.1.1
   resolution: "fast-uri@npm:4.1.1"
   checksum: 10/f8a186718e360ffb0888b812892dc2930902c4200b9a35ab15923678b4cbcece04a155d36edc74f1ed3e5a9f60893095cf195b6e0a2351282f7714bac0993445
@@ -14369,9 +14378,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"happy-dom@npm:20.11.0":
-  version: 20.11.0
-  resolution: "happy-dom@npm:20.11.0"
+"happy-dom@npm:20.11.1":
+  version: 20.11.1
+  resolution: "happy-dom@npm:20.11.1"
   dependencies:
     "@types/node": "npm:>=20.0.0"
     "@types/whatwg-mimetype": "npm:^3.0.2"
@@ -14380,7 +14389,7 @@ __metadata:
     entities: "npm:^7.0.1"
     whatwg-mimetype: "npm:^3.0.0"
     ws: "npm:^8.21.0"
-  checksum: 10/2bb7b05f8a4d73224cdd4b222d98e6536972519edd809f170b182db7f66512da06045ac4f77544a4b767e84b53fac812e8c4ac162e871f220d5f220ffc49987c
+  checksum: 10/a07d892f1fefe843cf3fcb0ed4ecb782fd1014c1ac27048f27f874f5d6b91ec0c25a777532145d0c041f524fd851d8ce5bf9779fc6f1ba0fed8b67d7ab96095f
   languageName: node
   linkType: hard
 
@@ -14515,10 +14524,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:4.12.31":
-  version: 4.12.31
-  resolution: "hono@npm:4.12.31"
-  checksum: 10/51183fb214e81617888fe379a0b1440e286f45f24fbb79eaaa3bd82f26de737afd1d68a22a4827624ce7617b772dd91ee0cb73516d9abf7f7454ee65f6aac2f7
+"hono@npm:4.12.32":
+  version: 4.12.32
+  resolution: "hono@npm:4.12.32"
+  checksum: 10/82fe817b875553bb35a2d02df1e2801e09feaa5b33685bde95dbee5f9f32f5948cf8e65d1ecf132d399b8a94d44999adea2e978a8cef971a57646e680bbfdda3
   languageName: node
   linkType: hard
 
@@ -15960,7 +15969,7 @@ __metadata:
     eslint-plugin-no-only-tests: "npm:3.4.0"
     husky: "npm:6.0.0"
     lint-staged: "npm:16.4.0"
-    prettier: "npm:3.9.5"
+    prettier: "npm:3.9.6"
     typescript: "npm:@typescript/typescript6@^6.0.2"
   languageName: unknown
   linkType: soft
@@ -16512,7 +16521,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:5.2.0"
     aristid-ds: "npm:17.0.0-247cdcd"
     graphql: "npm:16.14.2"
-    happy-dom: "npm:20.11.0"
+    happy-dom: "npm:20.11.1"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.2.2"
     i18next-resources-to-backend: "npm:1.2.1"
@@ -16727,7 +16736,7 @@ __metadata:
     "@types/express": "npm:5.0.6"
     "@types/node": "npm:24.13.3"
     express: "npm:4.22.2"
-    prettier: "npm:3.9.5"
+    prettier: "npm:3.9.6"
     tsx: "npm:4.23.1"
     typescript: "npm:7.0.2"
     vitest: "npm:4.1.10"
@@ -18071,7 +18080,7 @@ __metadata:
     cross-fetch: "npm:3.2.0"
     graphql: "npm:16.14.2"
     graphql-ws: "npm:5.16.2"
-    happy-dom: "npm:20.11.0"
+    happy-dom: "npm:20.11.1"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.2.2"
     i18next-resources-to-backend: "npm:1.2.1"
@@ -18149,12 +18158,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.9.5":
-  version: 3.9.5
-  resolution: "prettier@npm:3.9.5"
+"prettier@npm:3.9.6":
+  version: 3.9.6
+  resolution: "prettier@npm:3.9.6"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10/b6587f1582ba653ce5207ee227aff646500e5098646931088f176d1ab090b1f47d5a333f1facd634e9aa7dcb15c45940e2cec13a5962534cf0200617517b67b6
+  checksum: 10/1dd1a1e0e40ec3b91cda9d294c4a95022aef61880ca3f441aad99b1252279f58a766c4cece81132c01550dcff1fd445efbd8812ea4a2374313e7fc6c8136f11f
   languageName: node
   linkType: hard
 
@@ -18179,7 +18188,7 @@ __metadata:
     "@types/node": "npm:24.13.3"
     amqplib: "npm:2.0.1"
     fast-xml-parser: "npm:5.10.1"
-    prettier: "npm:3.9.5"
+    prettier: "npm:3.9.6"
     tsx: "npm:4.23.1"
     typescript: "npm:7.0.2"
     vitest: "npm:4.1.10"
@@ -20476,7 +20485,7 @@ __metadata:
     graphql: "npm:16.14.2"
     graphql-tag: "npm:2.12.7"
     joi: "npm:18.2.3"
-    prettier: "npm:3.9.5"
+    prettier: "npm:3.9.6"
     tsx: "npm:4.23.1"
     typescript: "npm:7.0.2"
     vitest: "npm:4.1.10"

@@ -58,7 +58,7 @@
         "axios": "1.18.1",
         "eventsource": "4.1.0",
         "graphql-request": "7.4.0",
-        "prettier": "3.9.5",
+        "prettier": "3.9.6",
         "tsx": "4.23.1",
         "typescript": "7.0.2",
         "vitest": "4.1.10"
@@ -77,7 +77,7 @@
         "@opentelemetry/auto-instrumentations-node": "0.78.0",
         "@opentelemetry/sdk-metrics": "2.9.0",
         "@opentelemetry/sdk-node": "0.220.0",
-        "@rjsf/utils": "6.7.0",
+        "@rjsf/utils": "6.7.1",
         "@trpc/server": "11.16.0",
         "add-filename-increment": "1.0.0",
         "arangojs": "8.8.1",

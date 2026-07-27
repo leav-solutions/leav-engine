@@ -39,7 +39,7 @@
         "@types/react-dom": "18.3.7",
         "aristid-ds": "17.0.0-247cdcd",
         "graphql": "16.14.2",
-        "happy-dom": "20.11.0",
+        "happy-dom": "20.11.1",
         "i18next": "22.5.1",
         "identity-obj-proxy": "3.0.0",
         "jest-styled-components": "7.4.0",
