@@ -40,7 +40,7 @@
         "eslint-plugin-no-only-tests": "3.4.0",
         "husky": "6.0.0",
         "lint-staged": "16.4.0",
-        "prettier": "3.9.5",
+        "prettier": "3.9.6",
         "typescript": "npm:@typescript/typescript6@^6.0.2"
     },
     "resolutions": {
