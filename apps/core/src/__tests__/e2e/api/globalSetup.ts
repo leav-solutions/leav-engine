@@ -135,6 +135,7 @@ const _createUsersAndGroups = async (coreContainer: AwilixContainer, project: Te
 
     project.provide('guestUser', {
         userId: guestUserRecord.record.id,
+        userUUID: guestUserRecord.record.uuid,
         groupsId: [],
     });
 

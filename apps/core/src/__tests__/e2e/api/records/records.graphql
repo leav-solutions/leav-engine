@@ -8,8 +8,8 @@ query GetRecord($libraryId: ID!, $recordId: String!) {
     }
 }
 
-mutation CreateRecord($library: ID!, $data: CreateRecordDataInput) {
-    createRecord(library: $library, data: $data) {
+mutation CreateRecord($library: ID!, $data: CreateRecordDataInput, $skipActivate: Boolean) {
+    createRecord(library: $library, data: $data, skipActivate: $skipActivate) {
         valuesErrors {
             attribute
             input
@@ -26,6 +26,14 @@ mutation CreateRecord($library: ID!, $data: CreateRecordDataInput) {
 mutation DeleteRecord($id: ID, $library: ID) {
     deleteRecord(id: $id, library: $library) {
         id
+    }
+}
+
+mutation ActivateNewRecord($library: ID!, $recordId: ID!) {
+    activateNewRecord(library: $library, recordId: $recordId) {
+        record {
+            id
+        }
     }
 }
 

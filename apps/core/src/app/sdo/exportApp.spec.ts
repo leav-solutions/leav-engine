@@ -111,6 +111,23 @@ describe('exportApp', () => {
             expect(mockExportDomain.sendSDO).toHaveBeenCalledWith('libId', 'recId', mockSDO);
         });
 
+        it('[+] Should not send the SDO when getRecordSDO returns null', async () => {
+            // getRecordSDO returns null for a record still in creation. The message must be acked
+            // (no throw): the export will happen on the event emitted by activateNewRecord.
+            mockExportDomain.getSDOExportTargets.mockResolvedValueOnce([
+                {leavLibraryId: 'libId', recordId: 'recId', action: 'CREATE'},
+            ]);
+            mockExportDomain.process.mockImplementation(async (libraryId, recordId, _timer, callback) => {
+                await callback(libraryId, recordId);
+            });
+            mockSdoDomain.getRecordSDO.mockResolvedValueOnce(null);
+
+            await expect(exportApp(depsBase).onDataEvent(mockDataEventMessage)).resolves.not.toThrow();
+
+            expect(mockSdoDomain.getRecordSDO).toHaveBeenCalledTimes(1);
+            expect(mockExportDomain.sendSDO).not.toHaveBeenCalled();
+        });
+
         it('[+] Should process every resolved target independently', async () => {
             mockExportDomain.getSDOExportTargets.mockResolvedValueOnce([
                 {leavLibraryId: 'campaigns', recordId: 'campaign1', action: 'UPDATE'},

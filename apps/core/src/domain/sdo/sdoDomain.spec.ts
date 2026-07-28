@@ -1,5 +1,5 @@
 import {type ToAny} from '../../utils/utils';
-import {AttributeCondition, type IRecord, type IRecordIdentity} from '../../_types/record';
+import {AttributeCondition, CORE_IN_CREATION_BY, type IRecord, type IRecordIdentity} from '../../_types/record';
 import jsonschema, {type ValidatorResult} from 'jsonschema';
 import sdoDomain, {type ISDODomain, type ISDODomainDeps} from './sdoDomain';
 import {mockSDO, mockSDOMapping, sdoGlobalSettings} from '../../__tests__/mocks/sdo/data';
@@ -22,7 +22,6 @@ import {
     type ISDO,
 } from '../../_types/sdo';
 import {EventAction} from '@leav/utils';
-import {SdoAttributes} from '../../_constants/systemAttributes';
 import {mockSDOUtils} from '../../__tests__/mocks/sdo/domains';
 import {type IGlobalSettings} from '../../_types/globalSettings';
 
@@ -160,6 +159,29 @@ describe('sdoDomain', () => {
             });
             expect(mockRecordDomain.getRecordFieldValue).not.toHaveBeenCalled();
             expect(mockValueDomain.saveValue).not.toHaveBeenCalled();
+        });
+
+        it('[+] should return null if the record is still in creation', async () => {
+            // A record is born inactive and flagged until activateNewRecord() clears the flag: the front
+            // creates the shell to display the creation form, then activates it on submit. Exporting at
+            // that point would push an empty/partial object for a record the user may still abandon.
+            mockRecordDomain.find.mockResolvedValueOnce({
+                list: [{id: 'record123', ...mockRecordSystemData, [CORE_IN_CREATION_BY]: 'userId'}],
+            } as unknown as IListWithCursor<IRecord>);
+
+            await expect(
+                _sdoDomain.getRecordSDO(
+                    mockSDOMapping[mockSDO.name].leavLibraryId,
+                    'record123',
+                    mockSDOMapping,
+                    'CREATE',
+                    mockSystemQueryContext,
+                ),
+            ).resolves.toBeNull();
+            expect(mockRecordDomain.find).toHaveBeenCalledTimes(1);
+            // Short-circuited before any mapping work
+            expect(mockRecordDomain.getRecordFieldValue).not.toHaveBeenCalled();
+            expect(jsonschemaSpy).not.toHaveBeenCalled();
         });
 
         it('[-] should throw an error if the jsonschema invalidate the data', async () => {

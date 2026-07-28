@@ -73,7 +73,9 @@ export default function ({
                                 _systemQueryContext,
                             );
 
-                            await sdoExportDomain.sendSDO(leavLibrary, recordId, sdo);
+                            if (sdo) {
+                                await sdoExportDomain.sendSDO(leavLibrary, recordId, sdo);
+                            }
                         },
                     ),
                 ),
