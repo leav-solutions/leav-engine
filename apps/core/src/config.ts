@@ -190,7 +190,6 @@ export const validateConfig = (conf: IConfig) => {
             connOpt: amqpConnOptSchema,
             exchange: Joi.string().required(),
             type: Joi.string().required(),
-            prefetch: Joi.number().required(),
             heartbeatInSeconds: Joi.number().required(),
         }),
         redis: Joi.object().keys({

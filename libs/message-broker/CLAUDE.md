@@ -2,44 +2,18 @@
 
 `@leav/message-broker` — Abstraction RabbitMQ partagée entre les apps backend.
 
-## Deux API en transition (ADR-007)
+`createAmqpConnection` enveloppe `amqp-connection-manager` au-dessus d'`amqplib` : reconnexion +
+backoff automatiques, heartbeat explicite, topologie (assert/bind) ré-appliquée automatiquement au
+reconnect, contrat ack/nack explicite pour `consume()`, `close()` résilient. Ne fuite jamais
+d'objet `amqplib` brut.
 
-La lib expose **deux** API en parallèle pendant la migration décrite par
-[ADR-007](../../docs/adr/ADR-007-amqp-resilience.md) :
-
-- **`amqpService`** (historique) — toujours utilisée par les domaines `apps/core` pas encore
-  migrés. Deux connexions `amqplib` brutes (publisher/consumer), **aucune résilience** (pas de
-  reconnexion/backoff/heartbeat), fuite les objets `connection`/`channel` bruts.
-- **`createAmqpConnection`** (nouvelle, ADR-007) — enveloppe `amqp-connection-manager` au-dessus
-  d'`amqplib`. Reconnexion + backoff automatiques, heartbeat explicite, topologie (assert/bind)
-  ré-appliquée automatiquement au reconnect, contrat ack/nack explicite pour `consume()`, `close()`
-  résilient (`Promise.allSettled`). Ne fuite jamais d'objet `amqplib` brut.
-
-`amqpService` sera supprimée une fois tous les domaines migrés vers `createAmqpConnection`
-(migration domaine par domaine, un `apps/core/src/infra/<domaine>/` à la fois).
+> L'ancienne API `amqpService`/`IAmqpService` (deux connexions `amqplib` brutes, sans résilience,
+> fuyant `connection`/`channel`) a été entièrement retirée — tous les domaines `apps/core` ainsi que
+> `apps/automate-scan`, `apps/preview-generator` et `apps/sync-scan` sont migrés vers
+> `createAmqpConnection`. Voir [ADR-007](../../docs/adr/ADR-007-amqp-resilience.md) pour le contexte
+> historique de cette migration.
 
 ## Exports clés
-
-### Historique (`amqpService`)
-
-| Export          | Description                                                              |
-| --------------- | ------------------------------------------------------------------------ |
-| `amqpService`   | Factory function — crée une instance `IAmqpService`                      |
-| `IAmqpService`  | Interface : `publisher`, `consumer`, `publish()`, `consume()`, `close()` |
-| `IAmqp`         | Config de connexion RabbitMQ                                             |
-| `IMessageBody`  | Type générique du corps d'un message                                     |
-| `OnMessageFunc` | Type du callback de réception de message                                 |
-
-```ts
-import amqpService from '@leav/message-broker';
-
-const broker = await amqpService({host, port, user, password, ...});
-await broker.publish(queue, message);
-await broker.consume(queue, (msg) => { /* handler */ });
-await broker.close();
-```
-
-### Nouvelle (`createAmqpConnection`, ADR-007)
 
 | Export                  | Description                                                                                                               |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------- |

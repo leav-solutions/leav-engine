@@ -170,7 +170,6 @@ module.exports = {
         },
         exchange: process.env.AMQP_EXCHANGE || 'leav_core',
         type: process.env.AMQP_TYPE || 'direct',
-        prefetch: envToNumber(process.env.AMQP_PREFETCH, 5),
         // ADR-007: only heartbeat setting (createAmqpConnection) - never 0 by default (amqplib 2.0
         // would disable heartbeats entirely, whereas "0" used to mean "no preference"/server value).
         heartbeatInSeconds: envToNumber(process.env.AMQP_HEARTBEAT, 30),
@@ -221,8 +220,7 @@ module.exports = {
             // Used to create a queue by instance to deliver websocket for all clients
             pubsub_events_prefix: 'pubsub_events-',
         },
-        // Dedicated prefetch for the pubsub relay channel (not config.amqp.prefetch, which was the
-        // old shared value for every domain before each got its own channel).
+        // Dedicated prefetch for the pubsub relay channel.
         pubsubPrefetch: envToNumber(process.env.PUBSUB_EVENTS_PREFETCH, 5),
     },
     indexationManager: {
@@ -287,8 +285,7 @@ module.exports = {
         queues: {
             events: process.env.AUTOMATIONS_EVENTS_QUEUE || 'automations_events',
         },
-        // Dedicated prefetch (not config.amqp.prefetch, which was the old shared value for every
-        // domain before each got its own channel) - defaults to 1, sequential automation processing.
+        // Dedicated prefetch - defaults to 1, sequential automation processing.
         prefetch: envToNumber(process.env.AUTOMATION_PREFETCH, 1),
     },
     sdo: {
