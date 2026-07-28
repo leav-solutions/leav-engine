@@ -1057,5 +1057,12 @@ build-npm-leav-config-manager:
     FOCUS: "@leav/config-manager"
     PATH_CHANGES: libs/config-manager/**/*
 
+build-npm-leav-message-broker:
+  <<: *build_npm
+  variables:
+    PKG: "@leav/message-broker"
+    FOCUS: "@leav/message-broker"
+    PATH_CHANGES: libs/message-broker/**/*
+
 ## Build npm packages
 ##########
