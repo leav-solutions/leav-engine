@@ -302,8 +302,6 @@ export interface IAmqp {
     connOpt: IAmqpConnectionOptions;
     exchange: string;
     type: string;
-    prefetch?: number;
-    /** ADR-007: setting for the resilient createAmqpConnection, used alongside amqpService. */
     heartbeatInSeconds?: number;
 }
 

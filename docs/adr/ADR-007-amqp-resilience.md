@@ -4,7 +4,7 @@ Date: 09/07/2026
 
 ## Status
 
-Proposed
+Accepted
 
 ## Context
 
@@ -94,9 +94,9 @@ et rendre `close()` résilient (`Promise.allSettled`).
 
 ## Open points
 
-| Subject                                                                                            | Status                        |
-| -------------------------------------------------------------------------------------------------- | ----------------------------- |
-| Valider `amqp-connection-manager` v5 contre `amqplib@2.0.1` (prototype) avant de figer la Decision | À faire                       |
-| Forme définitive d'`IAmqpService` (API admin, contrat ack/nack, `onConnectionStateChange`)         | À concevoir (étape suivante)  |
-| Migration de `apps/preview-generator` et `apps/automate-scan` vers l'interface partagée            | Différé (hors ce ticket)      |
-| Config `heartbeat` explicite (piège du breaking `heartbeat: 0` en amqplib 2.0)                     | À trancher à l'implémentation |
+| Subject                                                                                            | Status                                                                                                                                                 |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Valider `amqp-connection-manager` v5 contre `amqplib@2.0.1` (prototype) avant de figer la Decision | **Fait** — validé en usage réel sur tous les domaines migrés + tests e2e en conteneur                                                                  |
+| Forme définitive d'`IAmqpService` (API admin, contrat ack/nack, `onConnectionStateChange`)         | **Fait** — devenue `IAmqpConnection`/`IAmqpChannel` (`getConnectionState()` en remplacement d'`onConnectionStateChange`, pull plutôt que subscription) |
+| Migration de `apps/preview-generator` et `apps/automate-scan` vers l'interface partagée            | **Fait** — `apps/sync-scan` migré en plus, hors périmètre initial de ce ticket                                                                         |
+| Config `heartbeat` explicite (piège du breaking `heartbeat: 0` en amqplib 2.0)                     | **Fait** — `heartbeatInSeconds` explicite partout, jamais `0` implicite                                                                                |

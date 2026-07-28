@@ -1,25 +1,3 @@
-import type * as amqp from 'amqplib';
-
-export interface IAmqp {
-    connOpt: amqp.Options.Connect;
-    exchange: string;
-    type: string;
-    prefetch?: number;
-}
-
-export interface IAmqpConn {
-    connection: amqp.Connection;
-    channel: amqp.ConfirmChannel;
-}
-
-export interface IMessageBody {
-    [key: string]: any;
-}
-
-export type OnMessageFunc = (msg: amqp.ConsumeMessage) => Promise<void>;
-
-// --- ADR-007: resilient connection API, added alongside the above (kept for the domains not yet migrated) ---
-
 /**
  * Deliberately WITHOUT a `heartbeat` field: amqplib would accept it in `connOpt`, but we don't
  * expose it here so there's only one source of truth (IAmqpConnectionConfig.heartbeatInSeconds)
