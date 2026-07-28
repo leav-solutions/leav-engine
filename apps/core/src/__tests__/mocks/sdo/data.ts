@@ -1,5 +1,6 @@
 import {type IAmqpMessage} from '@leav/message-broker';
 import {type ISDO, type ISDOMapping, type ISDOSettings} from '../../../_types/sdo';
+import {type IDTO} from '../../../_types/dto';
 
 export const mockDataEvent = {
     payload: {},
@@ -27,6 +28,20 @@ export const mockSDO: ISDO = {
         advanced_link: ['1', '2', '3'],
     },
 };
+
+export const mockDTO: IDTO = {
+    dataModelRelease: 'dataModelRelease',
+    requestId: '0f8c1aa3-6351-4578-ace6-1fd6b55e4944',
+    operationId: 'a1559880-b232-449d-8027-b7e02faac354',
+    correlationId: 'b3ae252d-7a24-4109-a75d-28dc1007032d',
+    payloadType: 'test',
+    method: 'UPDATE',
+    payloadDocument: mockSDO.content,
+};
+
+export const mockDTOImportMessage = {
+    content: Buffer.from(JSON.stringify(mockDTO)),
+} as IAmqpMessage;
 
 export const mockDataEventMessage = {
     content: Buffer.from(JSON.stringify(mockDataEvent)),

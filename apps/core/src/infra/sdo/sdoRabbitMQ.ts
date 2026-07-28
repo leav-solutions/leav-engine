@@ -11,15 +11,17 @@ export interface IRabbitMQDeps {
 export interface IRabbitMQ {
     getSDOExportChannel: () => Promise<IAmqpChannel>;
     getSDOImportChannel: () => Promise<IAmqpChannel>;
+    getDTOImportChannel: () => Promise<IAmqpChannel>;
     getLeavDataEventChannel: () => Promise<IAmqpChannel>;
     close(): Promise<void>;
 }
 
 /**
  * getLeavDataEventChannel lives on the leav core AMQP connection (config.amqp /
- * core.infra.amqp.connection). getSDOExportChannel/getSDOImportChannel use a separate, dedicated
- * SDO broker connection (config.sdo.amqp), created lazily below: core.interface.sdo (hence this
- * factory) is resolved in every CoreMode process, but only SDO import/export ever calls them.
+ * core.infra.amqp.connection). getSDOExportChannel/getSDOImportChannel/getDTOImportChannel use a
+ * separate, dedicated SDO broker connection (config.sdo.amqp), created lazily below:
+ * core.interface.sdo (hence this factory) is resolved in every CoreMode process, but only SDO/DTO
+ * import/export ever calls them.
  */
 export default function rabbitMQ({
     'core.infra.amqp.connection': amqpConnection,
@@ -86,13 +88,37 @@ export default function rabbitMQ({
     };
     const getSDOImportChannel = async (): Promise<IAmqpChannel> => getSdoImportChannel();
 
+    let dtoImportChannel: IAmqpChannel | undefined;
+    const getDtoImportChannel = (): IAmqpChannel => {
+        if (!dtoImportChannel) {
+            const {exchange, exchangeType, queue, prefetch} = config.sdo.dto.import;
+
+            dtoImportChannel = getSdoConnection().createChannel({
+                name: 'dto:import',
+                // Consumer-only channel: no publish() call here, so no need for broker publish confirms.
+                confirm: false,
+                setup: async t => {
+                    await t.assertQueue(queue, {durable: true});
+                    await t.assertExchange(exchange, exchangeType);
+                    await t.bindQueue(queue, exchange, '');
+                    await t.prefetch(prefetch ?? 1);
+                },
+            });
+        }
+        return dtoImportChannel;
+    };
+    const getDTOImportChannel = async (): Promise<IAmqpChannel> => getDtoImportChannel();
+
     return {
         getLeavDataEventChannel,
         getSDOExportChannel,
         getSDOImportChannel,
+        getDTOImportChannel,
         close: async () => {
             await Promise.allSettled(
-                [sdoExportChannel, sdoImportChannel].filter((c): c is IAmqpChannel => !!c).map(c => c.close()),
+                [sdoExportChannel, sdoImportChannel, dtoImportChannel]
+                    .filter((c): c is IAmqpChannel => !!c)
+                    .map(c => c.close()),
             );
             await sdoConnection?.close();
         },

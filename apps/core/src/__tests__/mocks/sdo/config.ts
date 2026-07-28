@@ -22,5 +22,14 @@ export const mockConfig = {
             enable: true,
             dataEventsQueue: 'testDataEventsQueue',
         },
+        dto: {
+            import: {
+                enable: true,
+                exchange: 'testDtoImportExchange',
+                exchangeType: 'fanout',
+                queue: 'testDtoImportQueue',
+                prefetch: 1,
+            },
+        },
     },
 } as unknown as IConfig;

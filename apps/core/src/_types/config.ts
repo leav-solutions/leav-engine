@@ -77,10 +77,32 @@ export interface ISdo {
         dataEventsQueue?: string;
         dataEventsPrefetch?: number;
     };
+    dto: IDto;
     /**
      * Add debug log for each SDO import/export operation
      */
     debug: boolean;
+}
+
+/**
+ * DTO flow (import from the outside world, pushed by the Data Platform). It shares the SDO broker
+ * connection (`sdo.amqp`) but has its own exchange, distinct from the SDO one.
+ */
+export interface IDto {
+    import: {
+        enable: boolean;
+        /**
+         * Dedicated exchange the Data Platform pushes DTO operations on (`<client>_dto_import`),
+         * distinct from `sdo.exchange`
+         */
+        exchange: string;
+        exchangeType: string;
+        /**
+         * Single queue per destination application, bound to `exchange`
+         */
+        queue: string;
+        prefetch?: number;
+    };
 }
 
 export interface IAutomation {
