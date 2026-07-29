@@ -9703,6 +9703,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"apollo-upload-client@npm:18.0.1":
+  version: 18.0.1
+  resolution: "apollo-upload-client@npm:18.0.1"
+  dependencies:
+    extract-files: "npm:^13.0.0"
+  peerDependencies:
+    "@apollo/client": ^3.8.0
+    graphql: 14 - 16
+  checksum: 10/9c777f4fe4631a0983c39271b857358e3ecc49c6a8c979e9f71fd84beed12a42243482bf26333e94648e0c9d7d7c5678e434c2c605a24ebb927f0bc660f39d27
+  languageName: node
+  linkType: hard
+
 "apollo-utilities@npm:1.3.4, apollo-utilities@npm:^1.3.0, apollo-utilities@npm:^1.3.4":
   version: 1.3.4
   resolution: "apollo-utilities@npm:1.3.4"
@@ -9745,6 +9757,7 @@ __metadata:
     "@types/react-dom": "npm:18.3.7"
     "@types/styled-components": "npm:5.1.36"
     "@vitejs/plugin-react": "npm:5.2.0"
+    apollo-upload-client: "npm:18.0.1"
     aristid-ds: "npm:17.1.0-ac42048"
     browserslist: "npm:4.28.7"
     classnames: "npm:2.5.1"
@@ -13308,6 +13321,15 @@ __metadata:
     iconv-lite: "npm:^0.4.24"
     tmp: "npm:^0.0.33"
   checksum: 10/776dff1d64a1d28f77ff93e9e75421a81c062983fd1544279d0a32f563c0b18c52abbb211f31262e2827e48edef5c9dc8f960d06dd2d42d1654443b88568056b
+  languageName: node
+  linkType: hard
+
+"extract-files@npm:^13.0.0":
+  version: 13.0.0
+  resolution: "extract-files@npm:13.0.0"
+  dependencies:
+    is-plain-obj: "npm:^4.1.0"
+  checksum: 10/b6fa0eb69115416808b4e92bfdaf69895a50daf3b28320a1dd99bc8a3c9163ac0fa1c1f5494bff00c16bdc029f2b8a89b1b0b879e9a06d6148f6f6ec50305b7a
   languageName: node
   linkType: hard
 

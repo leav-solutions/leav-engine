@@ -2,10 +2,14 @@ import {CloseCode, createClient} from 'graphql-ws';
 import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {ApolloClient, from, HttpLink, InMemoryCache, type Observable, type ServerError, split} from '@apollo/client';
 import {onError} from '@apollo/client/link/error';
-import {type NextLink, type Operation} from '@apollo/client/link/core';
+import {ApolloLink, type NextLink, type Operation} from '@apollo/client/link/core';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {API_ENDPOINT, ORIGIN_URL, WS_URL} from '../../constants';
+
+// eslint-disable-next-line import/extensions
+import createUploadLink from 'apollo-upload-client/createUploadLink.mjs';
+import {i18n} from '../translation/initI18n';
 
 export const useInitApollo = (
     unauthorizedHandler: (forward: NextLink, operation: Operation) => Observable<unknown>,
@@ -50,22 +54,32 @@ export const useInitApollo = (
         }),
     );
 
-    // TODO: get lang from context
-    const httpLink = new HttpLink({
-        uri: (operation: Operation) => `${ORIGIN_URL}/${API_ENDPOINT}?lang=fr&opName=${operation.operationName}`,
+    const splitLink = split(({query}) => {
+        const definition = getMainDefinition(query);
+        return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+    }, wsLink);
+
+    // set uri in operation context because it is the only way for createUploadLink to have custom url by operation
+    const _setOperationUri = new ApolloLink((operation, forward) => {
+        operation.setContext({
+            ...operation.getContext(),
+            uri: `${ORIGIN_URL}/${API_ENDPOINT}?lang=${i18n.language}&opName=${operation.operationName}`,
+        });
+
+        return forward(operation);
     });
 
-    const splitLink = split(
-        ({query}) => {
-            const definition = getMainDefinition(query);
-            return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
-        },
-        wsLink,
-        httpLink,
-    );
-
     const client = new ApolloClient({
-        link: from([errorLink, splitLink]),
+        link: from([
+            errorLink,
+            splitLink,
+            _setOperationUri,
+            createUploadLink({
+                headers: {
+                    'Apollo-Require-Preflight': 'true', // Required to get upload working with Apollo Server v4+
+                },
+            }),
+        ]),
         devtools: {enabled: import.meta.env.DEV},
         cache: new InMemoryCache({
             possibleTypes: gqlPossibleTypes,
