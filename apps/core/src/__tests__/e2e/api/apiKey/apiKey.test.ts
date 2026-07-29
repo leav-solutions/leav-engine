@@ -1,6 +1,7 @@
 import {GraphQLClient} from 'graphql-request';
 import {getSdk} from '../../_gqlTypes';
 import {adminUserSdk, getGraphQLUrl} from '../e2eUtils';
+import {adminUserId} from '../../../../_constants/users';
 
 describe('ApiKeys', () => {
     const createSdKWithApiKey = (apiKey: string): ReturnType<typeof getSdk> =>
@@ -21,6 +22,8 @@ describe('ApiKeys', () => {
         expect(resSaveApiKey.saveApiKey.key).toBeTruthy();
         expect(resSaveApiKey.saveApiKey.expiresAt).toBeTruthy();
         expect(resSaveApiKey.saveApiKey.user.id).toBeTruthy();
+        expect(resSaveApiKey.saveApiKey.createdBy.id).toBe(adminUserId);
+        expect(resSaveApiKey.saveApiKey.modifiedBy.id).toBe(adminUserId);
         const keyId = resSaveApiKey.saveApiKey.id;
 
         // Get view

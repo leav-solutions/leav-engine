@@ -69,7 +69,7 @@ function EditApiKeyModal({apiKey, onClose, readonly}: IEditApiKeyModalProps): JS
                         <span>
                             {t('api_keys.creation_details', {
                                 date: new Date(currentApiKey.createdAt * 1000).toLocaleString(),
-                                user: currentApiKey.user.whoAmI.label,
+                                user: currentApiKey.createdBy?.whoAmI.label,
                                 interpolation: {escapeValue: false},
                             })}
                             ,
@@ -77,7 +77,7 @@ function EditApiKeyModal({apiKey, onClose, readonly}: IEditApiKeyModalProps): JS
                         <span>
                             {t('api_keys.modification_details', {
                                 date: new Date(currentApiKey.modifiedAt * 1000).toLocaleString(),
-                                user: currentApiKey.user.whoAmI.label,
+                                user: currentApiKey.modifiedBy?.whoAmI.label,
                                 interpolation: {escapeValue: false},
                             })}
                         </span>

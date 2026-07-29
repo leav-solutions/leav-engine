@@ -1261,12 +1261,12 @@ export type SaveApiKeyMutationVariables = Exact<{
 }>;
 
 
-export type SaveApiKeyMutation = { saveApiKey: { id: string, label?: string | null, key?: string | null, expiresAt?: number | null, user: { id: string } } };
+export type SaveApiKeyMutation = { saveApiKey: { id: string, label?: string | null, key?: string | null, expiresAt?: number | null, user?: { id: string } | null, createdBy?: { id: string } | null, modifiedBy?: { id: string } | null } };
 
 export type GetApiKeysQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetApiKeysQuery = { apiKeys: { list: Array<{ id: string, label?: string | null, key?: string | null, expiresAt?: number | null, user: { id: string } }> } };
+export type GetApiKeysQuery = { apiKeys: { list: Array<{ id: string, label?: string | null, key?: string | null, expiresAt?: number | null, user?: { id: string } | null }> } };
 
 export type DeleteApiKeyMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -1614,6 +1614,12 @@ export const SaveApiKeyDocument = gql`
     key
     expiresAt
     user {
+      id
+    }
+    createdBy {
+      id
+    }
+    modifiedBy {
       id
     }
   }

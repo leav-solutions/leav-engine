@@ -9,6 +9,7 @@ import {type IDbService} from '../../infra/db/dbService';
 import {type ITasksManagerInterface} from '../../interface/tasksManager';
 import {type IRedis} from '../../infra/cache/redis';
 import {type IConfig} from '../../_types/config';
+import {initMailer} from '../../infra/mailer';
 
 let taskManagerMasterTimer: NodeJS.Timeout;
 
@@ -25,6 +26,7 @@ export async function setup() {
 
         await initDb(conf);
         const redis = await initRedis({config: conf});
+        const mailer = await initMailer({config: conf});
         const amqpConnection = createAmqpConnection({
             connOpt: conf.amqp.connOpt,
             heartbeatInSeconds: conf.amqp.heartbeatInSeconds,
@@ -34,6 +36,7 @@ export async function setup() {
         const {coreContainer} = await initDI({
             translator,
             'core.infra.redis': redis,
+            'core.infra.mailer': mailer,
             'core.infra.amqp.connection': amqpConnection,
         });
 
