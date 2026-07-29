@@ -53,37 +53,6 @@ describe('AttributeSimpleRepo', () => {
         });
     });
 
-    describe('getValues', () => {
-        test('Should return values for index attribute', async function () {
-            const queryRes = ['test val', 'other val that should not be returned'];
-
-            const mockDbServ = {
-                db: new Database(),
-                execute: global.__mockPromise(queryRes),
-            };
-
-            const attrRepo = attributeSimpleRepo({'core.infra.db.dbService': mockDbServ});
-
-            const values = await attrRepo.getValues({
-                library: 'test_lib',
-                recordId: '123456',
-                attribute: mockAttribute,
-                ctx,
-            });
-
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
-
-            expect(values.length).toBe(1);
-            expect(values[0]).toMatchObject({
-                payload: 'test val',
-                attribute: 'test_attr',
-            });
-        });
-    });
-
     describe('deleteValue', () => {
         test('Should delete a value', async () => {
             const deletedValueData = {

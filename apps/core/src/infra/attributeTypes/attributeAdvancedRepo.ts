@@ -188,59 +188,6 @@ export default function ({
                 version: deletedEdge.version ?? null,
             };
         },
-        async getValues({
-            library,
-            recordId,
-            attribute,
-            forceGetAllValues = false,
-            options,
-            ctx,
-        }): Promise<IStandardValue[]> {
-            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
-
-            const queryParts = [
-                aql`
-                FOR value, edge
-                IN 1 OUTBOUND ${library + '/' + recordId}
-                ${edgeCollec}
-                FILTER edge.attribute == ${attribute.id}
-                `,
-            ];
-
-            if (!forceGetAllValues) {
-                if (options?.version) {
-                    queryParts.push(aql`FILTER edge.version == ${options.version}`);
-                } else {
-                    queryParts.push(aql`FILTER edge.version == null`);
-                }
-            }
-
-            const sortAndLimit = literal(
-                !attribute.multiple_values && !forceGetAllValues
-                    ? 'SORT edge.created_at DESC, edge._key DESC LIMIT 1'
-                    : '',
-            );
-
-            queryParts.push(aql`
-                ${sortAndLimit}
-                RETURN {value, edge}
-            `);
-
-            const query = join(queryParts);
-            const res = await dbService.execute({query, ctx});
-
-            return res.map(r => ({
-                id_value: r.value._key,
-                payload: r.value.value,
-                attribute: r.edge.attribute,
-                modified_at: r.edge.modified_at,
-                created_at: r.edge.created_at,
-                modified_by: r.edge.modified_by,
-                created_by: r.edge.created_by,
-                metadata: r.edge.metadata,
-                version: r.edge.version ?? null,
-            }));
-        },
         async getValuesBatch({library, recordIds, attribute, options, ctx}): Promise<IStandardValue[][]> {
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 

@@ -222,43 +222,6 @@ describe('attributeTreeRepo', () => {
                 });
             });
 
-            describe('getValues', () => {
-                test('Should return values for a record', async () => {
-                    const values = await attributeTreeRepo.getValues({
-                        library: libraryId,
-                        attribute: treeMonoAttribute,
-                        recordId: record1.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([record1Value]);
-                });
-
-                test('Should return empty array not existing record', async () => {
-                    const values = await attributeTreeRepo.getValues({
-                        library: libraryId,
-                        attribute: treeMonoAttribute,
-                        recordId: 'no-exists',
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-
-                test('Should return empty array record without attribute', async () => {
-                    const record3WithoutAttr = await createRecord({});
-
-                    const values = await attributeTreeRepo.getValues({
-                        library: libraryId,
-                        attribute: treeMonoAttribute,
-                        recordId: record3WithoutAttr.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-            });
-
             describe('one target node values do exists anymore', () => {
                 let recordForDelete: IRecord;
                 let remoteRecordForDelete: IRecord;
@@ -304,26 +267,6 @@ describe('attributeTreeRepo', () => {
                     });
 
                     expect(values).toEqual([[record1Value], [], [record2Value]]);
-                });
-
-                test('getValues should filter those values node', async () => {
-                    const values = await attributeTreeRepo.getValues({
-                        library: libraryId,
-                        attribute: treeMonoAttribute,
-                        recordId: recordForDelete.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-
-                    const values2 = await attributeTreeRepo.getValues({
-                        library: libraryId,
-                        attribute: treeMonoAttribute,
-                        recordId: record2.id,
-                        ctx,
-                    });
-
-                    expect(values2).toEqual([record2Value]);
                 });
 
                 test('listDistinctValues should count those values node', async () => {
@@ -540,45 +483,6 @@ describe('attributeTreeRepo', () => {
                     });
                 });
 
-                describe('getValues', () => {
-                    test('Should return values of a record for null version', async () => {
-                        const values = await attributeTreeRepo.getValues({
-                            library: libraryId,
-                            attribute: treeMonoAttribute,
-                            recordId: record1.id,
-                            options: {version: null},
-                            ctx,
-                        });
-
-                        expect(values).toEqual([record1Value]);
-                    });
-
-                    test('Should return values of a record for a specified version', async () => {
-                        const values = await attributeTreeRepo.getValues({
-                            library: libraryId,
-                            attribute: treeMonoAttribute,
-                            recordId: record1.id,
-                            options: {version: version1},
-                            ctx,
-                        });
-
-                        expect(values).toEqual([record1ValueV1]);
-                    });
-
-                    test('Should return all values of a record when use forceGetAllValues option', async () => {
-                        const values = await attributeTreeRepo.getValues({
-                            library: libraryId,
-                            attribute: treeMonoAttribute,
-                            recordId: record1.id,
-                            forceGetAllValues: true,
-                            ctx,
-                        });
-
-                        expect(values).toEqual(expect.arrayContaining([record1Value, record1ValueV1]));
-                        expect(values).toHaveLength(2);
-                    });
-                });
-
                 describe('listDistinctValues', () => {
                     test('Should return number of occurrences for each node (all, no version)', async () => {
                         const occurrences = await attributeTreeRepo.listDistinctValues({
@@ -724,44 +628,6 @@ describe('attributeTreeRepo', () => {
                 });
             });
 
-            describe('getValues', () => {
-                test('Should return values for a record', async () => {
-                    const values = await attributeTreeRepo.getValues({
-                        library: libraryId,
-                        attribute: treeMultiAttribute,
-                        recordId: record1.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
-                    expect(values).toHaveLength(2);
-                });
-
-                test('Should return empty array not existing record', async () => {
-                    const values = await attributeTreeRepo.getValues({
-                        library: libraryId,
-                        attribute: treeMultiAttribute,
-                        recordId: 'no-exists',
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-
-                test('Should return empty array record without attribute', async () => {
-                    const record3WithoutAttr = await createRecord({});
-
-                    const values = await attributeTreeRepo.getValues({
-                        library: libraryId,
-                        attribute: treeMultiAttribute,
-                        recordId: record3WithoutAttr.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-            });
-
             describe('listDistinctValues', () => {
                 let record3NoValue: IRecord;
                 let record4NoValue: IRecord;
@@ -895,26 +761,6 @@ describe('attributeTreeRepo', () => {
                     expect(values[1]).toHaveLength(1);
                     expect(values[2]).toHaveLength(2);
                 });
-
-                test('getValues should filter those values node', async () => {
-                    const values = await attributeTreeRepo.getValues({
-                        library: libraryId,
-                        attribute: treeMultiAttribute,
-                        recordId: recordForDelete.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([recordForDeleteValue2]);
-
-                    const values2 = await attributeTreeRepo.getValues({
-                        library: libraryId,
-                        attribute: treeMultiAttribute,
-                        recordId: record2.id,
-                        ctx,
-                    });
-
-                    expect(values2).toEqual(expect.arrayContaining([record2Value1, record2Value2]));
-                });
             });
 
             describe('add version values', () => {
@@ -983,46 +829,6 @@ describe('attributeTreeRepo', () => {
                         expect(values[1]).toHaveLength(3);
                     });
                 });
-
-                describe('getValues', () => {
-                    test('Should return values of a record for null version', async () => {
-                        const values = await attributeTreeRepo.getValues({
-                            library: libraryId,
-                            attribute: treeMultiAttribute,
-                            recordId: record1.id,
-                            options: {version: null},
-                            ctx,
-                        });
-
-                        expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
-                        expect(values).toHaveLength(2);
-                    });
-
-                    test('Should return values of a record for a specified version', async () => {
-                        const values = await attributeTreeRepo.getValues({
-                            library: libraryId,
-                            attribute: treeMultiAttribute,
-                            recordId: record1.id,
-                            options: {version: version1},
-                            ctx,
-                        });
-
-                        expect(values).toEqual([record1ValueV1]);
-                    });
-
-                    test('Should return all values of a record when use forceGetAllValues option', async () => {
-                        const values = await attributeTreeRepo.getValues({
-                            library: libraryId,
-                            attribute: treeMultiAttribute,
-                            recordId: record1.id,
-                            forceGetAllValues: true,
-                            ctx,
-                        });
-
-                        expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2, record1ValueV1]));
-                        expect(values).toHaveLength(3);
-                    });
-                });
             });
         });
 
@@ -1047,14 +853,14 @@ describe('attributeTreeRepo', () => {
                     ctx,
                 });
 
-                const values = await attributeTreeRepo.getValues({
+                const values = await attributeTreeRepo.getValuesBatch({
                     library: libraryId,
                     attribute: treeMultiAttribute,
-                    recordId: record.id,
+                    recordIds: [record.id],
                     ctx,
                 });
 
-                expect(values).toEqual([recordValue]);
+                expect(values[0]).toEqual([recordValue]);
             });
         });
     });

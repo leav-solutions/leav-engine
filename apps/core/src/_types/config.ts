@@ -405,15 +405,6 @@ export interface IDataLoaders {
              * Before enable, ensure that it has no side effects, for instance on saveValue/deleteValue mutations
              */
             enableCache: boolean;
-
-            /**
-             * @default true
-             *
-             * Enable: do batch arangodb query
-             * Disable: do one arangodb query per value, as before data loader use. For rollback if issue with batch query
-             * Temporary, to be removed in future
-             */
-            useBatch: boolean;
         } & ICommonDataLoaderConfig;
     };
 

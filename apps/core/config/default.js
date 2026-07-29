@@ -43,7 +43,6 @@ module.exports = {
         valueRepo: {
             getValues: {
                 enableCache: envToBool(process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_ENABLE_CACHE, false), // keep for test for now, may be remove in future
-                useBatch: envToBool(process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_USE_BATCH, true), // for rollback compatibility, keep it true
                 maxBatchSize: envToNumber(process.env.DATA_LOADERS_VALUE_REPO_GET_VALUES_MAX_BATCH_SIZE, 500),
             },
         },

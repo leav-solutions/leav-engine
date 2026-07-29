@@ -161,43 +161,6 @@ describe('attributeSimpleLinkRepo', () => {
                 });
             });
 
-            describe('getValues', () => {
-                test('Should return values for a record', async () => {
-                    const values = await attributeSimpleLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: simpleLinkAttribute,
-                        recordId: record1.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([record1Value]);
-                });
-
-                test('Should return empty array not existing record', async () => {
-                    const values = await attributeSimpleLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: simpleLinkAttribute,
-                        recordId: 'no-exists',
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-
-                test('Should return empty array record without attribute', async () => {
-                    const record3WithoutAttr = await createRecord({});
-
-                    const values = await attributeSimpleLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: simpleLinkAttribute,
-                        recordId: record3WithoutAttr.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-            });
-
             describe('listDistinctValues', () => {
                 let record3WithoutAttr: IRecord;
                 let record4WithoutAttr: IRecord;

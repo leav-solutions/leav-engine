@@ -92,7 +92,6 @@ export const validateConfig = (conf: IConfig) => {
             valueRepo: Joi.object().keys({
                 getValues: Joi.object().keys({
                     enableCache: Joi.boolean().required(),
-                    useBatch: Joi.boolean().required(),
                     maxBatchSize: Joi.number().optional(),
                 }),
             }),

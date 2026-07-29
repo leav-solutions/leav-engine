@@ -101,31 +101,6 @@ export default function ({
             };
         },
         // To get values from advanced reverse link attribute into simple link.
-        async getReverseValues({advancedLinkAttr, value, forceGetAllValues = false, ctx}): Promise<ILinkValue[]> {
-            const libCollec = dbService.db.collection(advancedLinkAttr.linked_library);
-            const queryParts = [];
-
-            queryParts.push(aql`
-                FOR r IN ${libCollec}
-                    FILTER r.${(advancedLinkAttr.reverse_link as IAttribute)?.id} == ${value}`);
-
-            const limitOne = literal(!advancedLinkAttr.multiple_values && !forceGetAllValues ? 'LIMIT 1' : '');
-
-            queryParts.push(aql`
-                ${limitOne}
-                RETURN r
-            `);
-
-            const query = join(queryParts);
-            const res = await dbService.execute({query, ctx});
-
-            // id value of advanced revert link is the id of the record
-            return res.map(r => {
-                const record = dbUtils.cleanup<IRecord>({...r, library: advancedLinkAttr.linked_library});
-                return {id_value: record.id, payload: record, created_by: null, modified_by: null};
-            });
-        },
-        // To get values from advanced reverse link attribute into simple link.
         async getReverseValuesBatch({
             advancedLinkAttr,
             values,
@@ -159,32 +134,6 @@ export default function ({
                     }) || []
                 );
             });
-        },
-        async getValues({library, recordId, attribute, ctx}): Promise<ILinkValue[]> {
-            const libCollec = dbService.db.collection(library);
-            const linkedLibCollec = dbService.db.collection(attribute.linked_library);
-
-            const res = await dbService.execute({
-                query: aql`
-                    FOR r IN ${libCollec}
-                        FILTER r._key == ${recordId}
-                        FOR l IN ${linkedLibCollec}
-                            FILTER r.${attribute.id} == l._key
-                            RETURN l
-                `,
-                ctx,
-            });
-
-            return res
-                .filter(r => !!r)
-                .slice(0, 1)
-                .map(r => ({
-                    id_value: null,
-                    payload: dbUtils.cleanup({...r, library: attribute.linked_library}),
-                    attribute: attribute.id,
-                    created_by: null,
-                    modified_by: null,
-                }));
         },
         async getValuesBatch({library, recordIds, attribute, ctx}): Promise<ILinkValue[][]> {
             const libCollec = dbService.db.collection(library);
