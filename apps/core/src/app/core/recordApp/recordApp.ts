@@ -34,6 +34,7 @@ import {type IIndexationManagerApp} from '../indexationManagerApp';
 import {type ICreateRecordParams, type IRecordsQueryVariables} from './_types';
 import {type IFindRecordParams} from '../../../domain/record/_types';
 import {type IAttributeDomain} from '../../../domain/attribute/attributeDomain';
+import {type IUserDomain} from '../../../domain/user/userDomain';
 import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 export type ICoreRecordApp = IGraphqlAppModule;
@@ -45,6 +46,7 @@ interface IDeps {
     'core.domain.permission': IPermissionDomain;
     'core.domain.library': ILibraryDomain;
     'core.domain.attribute': IAttributeDomain;
+    'core.domain.user': IUserDomain;
     'core.utils': IUtils;
     'core.app.graphql': IGraphqlApp;
     'core.app.core.indexationManager': IIndexationManagerApp;
@@ -59,6 +61,7 @@ export default function ({
     'core.domain.permission': permissionDomain,
     'core.domain.library': libraryDomain,
     'core.domain.attribute': attributeDomain,
+    'core.domain.user': userDomain,
     'core.utils': utils,
     'core.app.graphql': graphqlApp,
     'core.app.core.indexationManager': indexationManagerApp,
@@ -124,9 +127,9 @@ export default function ({
                         id: ID!,
                         uuid: ID!,
                         created_at: Int!,
-                        created_by: Record!,
+                        created_by: Record,
                         modified_at: Int!,
-                        modified_by: Record!,
+                        modified_by: Record,
                         active: Boolean!,
                         library: Library!,
                         whoAmI: RecordIdentity!,
@@ -512,6 +515,10 @@ export default function ({
                                 record: parent,
                                 attributeId,
                             })),
+                        created_by: async (parent: IRecord, _, ctx: IQueryInfos) =>
+                            userDomain.getUserRecord(parent[CommonAttributes.CREATED_BY], ctx),
+                        modified_by: async (parent: IRecord, _, ctx: IQueryInfos) =>
+                            userDomain.getUserRecord(parent[CommonAttributes.MODIFIED_BY], ctx),
                         permissions: (
                             record: IRecord,
                             _,

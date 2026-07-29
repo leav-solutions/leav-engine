@@ -12,7 +12,7 @@ import {
     gqlSaveValue,
     makeGraphQlCall,
 } from '../e2eUtils';
-import {adminUserId} from '../../../../_constants/users';
+import {adminUserId, systemUserId} from '../../../../_constants/users';
 import {AttributePermissionsActions} from '../../../../_types/permissions';
 import {FormElementTypes} from '../../../../_types/forms';
 
@@ -660,6 +660,27 @@ describe('Records', () => {
                     ],
                 },
             ]);
+        });
+
+        test('Get record with system properties', async () => {
+            const record = await adminUserSdk.GetRecordWithSystemProperties({
+                libraryId: SystemLibraries.USERS,
+                recordId: adminUserId,
+            });
+
+            expect(record.records.list[0]).toMatchObject({
+                id: adminUserId,
+                modified_at: expect.any(Number),
+                modified_by: {
+                    id: systemUserId,
+                },
+                created_at: expect.any(Number),
+                created_by: {
+                    id: systemUserId,
+                },
+                active: true,
+                uuid: expect.any(String),
+            });
         });
 
         test('Get record properties with record attribute permissions', async () => {

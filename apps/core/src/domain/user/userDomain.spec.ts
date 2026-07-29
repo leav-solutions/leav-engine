@@ -1,13 +1,17 @@
+import {SystemLibraries} from '../../_constants/systemLibraries';
 import {type IGlobalSettingsDomain} from '../globalSettings/globalSettingsDomain';
 import {type IPermissionDomain} from '../permission/permissionDomain';
+import {type IRecordDomain} from '../record/recordDomain';
 import {type i18n} from 'i18next';
 import {type IMailerService} from '../../infra/mailer/mailerService';
 import {type IUserDataRepo} from '../../infra/userData/userDataRepo';
 import {type IUtils, type ToAny} from '../../utils/utils';
 import {type IConfig} from '../../_types/config';
+import {LibraryPermissionsActions} from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
+import {mockRecord} from '../../__tests__/mocks/record';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {mockTranslator} from '../../__tests__/mocks/translator';
 import userDataDomain, {type IUserDomainDeps, UserCoreDataKeys} from './userDomain';
@@ -33,6 +37,67 @@ describe('UserDomain', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
+    });
+
+    describe('get user record', () => {
+        test('should return the user record', async function () {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({list: [mockRecord], totalCount: 1}),
+            };
+
+            const udd = userDataDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+            });
+
+            const res = await udd.getUserRecord('1', ctx);
+
+            expect(res).toBe(mockRecord);
+            expect(mockRecordDomain.find.mock.calls[0][0].params).toMatchObject({
+                library: SystemLibraries.USERS,
+                retrieveInactive: true,
+            });
+        });
+
+        test('should return null if the user does not exist', async function () {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({list: [], totalCount: 0}),
+            };
+
+            const udd = userDataDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+            });
+
+            await expect(udd.getUserRecord('unknown_user', ctx)).resolves.toBeNull();
+        });
+
+        test('should return null if the users library is not accessible', async function () {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: vi.fn().mockRejectedValue(new PermissionError(LibraryPermissionsActions.ACCESS_LIBRARY)),
+            };
+
+            const udd = userDataDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+            });
+
+            await expect(udd.getUserRecord('1', ctx)).resolves.toBeNull();
+        });
+
+        test('should not search anything if no user id is given', async function () {
+            const mockRecordDomain: Mockify<IRecordDomain> = {
+                find: global.__mockPromise({list: [mockRecord], totalCount: 1}),
+            };
+
+            const udd = userDataDomain({
+                ...depsBase,
+                'core.domain.record': mockRecordDomain as IRecordDomain,
+            });
+
+            await expect(udd.getUserRecord(undefined, ctx)).resolves.toBeNull();
+            expect(mockRecordDomain.find).not.toHaveBeenCalled();
+        });
     });
 
     describe('save user data', () => {

@@ -1,11 +1,10 @@
-import {SystemLibraries} from '../../_constants/systemLibraries';
-import {type IRecordDomain} from '../../domain/record/recordDomain';
+import {type IUserDomain} from '../../domain/user/userDomain';
 import {type IViewDomain} from '../../domain/view/viewDomain';
 import {type IUtils} from '../../utils/utils';
 import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {AttributeCondition, type IRecord} from '../../_types/record';
+import {type IRecord} from '../../_types/record';
 import {
     type IView,
     type IViewValuesVersionForGraphql,
@@ -16,10 +15,9 @@ import {
 } from '../../_types/views';
 import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
-import {CommonAttributes} from '../../_constants/systemAttributes';
 
 interface IDeps {
-    'core.domain.record': IRecordDomain;
+    'core.domain.user': IUserDomain;
     'core.domain.view': IViewDomain;
     'core.domain.attribute': IAttributeDomain;
     'core.utils': IUtils;
@@ -29,7 +27,7 @@ export type IViewApp = IGraphqlAppModule;
 
 export default function ({
     'core.domain.view': viewDomain,
-    'core.domain.record': recordDomain,
+    'core.domain.user': userDomain,
     'core.domain.attribute': attributeDomain,
     'core.utils': utils,
 }: IDeps): IViewApp {
@@ -68,7 +66,7 @@ export default function ({
                     type View {
                         id: String!,
                         library: String!,
-                        created_by: Record!,
+                        created_by: Record,
                         shared: Boolean!,
                         created_at: Int!,
                         modified_at: Int!,
@@ -157,23 +155,8 @@ export default function ({
                             viewDomain.deleteView(viewId, ctx),
                     },
                     View: {
-                        created_by: async (view: ViewFromGraphQL, _, ctx): Promise<IRecord | null> => {
-                            const record = await recordDomain.find({
-                                params: {
-                                    library: SystemLibraries.USERS,
-                                    filters: [
-                                        {
-                                            field: CommonAttributes.ID,
-                                            value: view.created_by,
-                                            condition: AttributeCondition.EQUAL,
-                                        },
-                                    ],
-                                },
-                                ctx,
-                            });
-
-                            return record.list.length ? record.list[0] : null;
-                        },
+                        created_by: async (view: ViewFromGraphQL, _, ctx): Promise<IRecord | null> =>
+                            userDomain.getUserRecord(view.created_by, ctx),
                         valuesVersions: (view: IView): IViewValuesVersionForGraphql[] | null => {
                             if (!view.valuesVersions) {
                                 return null;

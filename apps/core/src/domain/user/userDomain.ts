@@ -1,5 +1,5 @@
 import {SystemLibraries} from '../../_constants/systemLibraries';
-import {UsersAttributes} from '../../_constants/systemAttributes';
+import {CommonAttributes, UsersAttributes} from '../../_constants/systemAttributes';
 import * as bcrypt from 'bcryptjs';
 import ValidationError from '../../errors/ValidationError';
 import {type IGlobalSettingsDomain} from '../globalSettings/globalSettingsDomain';
@@ -19,6 +19,7 @@ import PermissionError from '../../errors/PermissionError';
 import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions';
 import {type IStandardValue} from '../../_types/value';
 import {type IValueDomain} from '../value/valueDomain';
+import {AttributeCondition, type IRecord} from '../../_types/record';
 
 interface ISaveUserDataParams {
     key: string;
@@ -29,6 +30,7 @@ interface ISaveUserDataParams {
 }
 
 export interface IUserDomain {
+    getUserRecord(userId: string, ctx: IQueryInfos): Promise<IRecord | null>;
     getUserIdentity(userId: string, ctx: IQueryInfos): Promise<IUserIdentity>;
     saveUserData(params: ISaveUserDataParams): Promise<IUserData>;
     getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
@@ -86,6 +88,40 @@ export default function ({
     };
 
     return {
+        /**
+         * Retrieve the record of a user, or null if it doesn't exist or if the current user is not
+         * allowed to access the users library.
+         */
+        async getUserRecord(userId: string, ctx: IQueryInfos): Promise<IRecord | null> {
+            if (!userId) {
+                return null;
+            }
+
+            let result: Awaited<ReturnType<IRecordDomain['find']>>;
+            try {
+                result = await recordDomain.find({
+                    params: {
+                        filters: [
+                            {
+                                field: CommonAttributes.ID,
+                                value: userId,
+                                condition: AttributeCondition.EQUAL,
+                            },
+                        ],
+                        library: SystemLibraries.USERS,
+                        retrieveInactive: true,
+                    },
+                    ctx,
+                });
+            } catch (error) {
+                if (error instanceof PermissionError) {
+                    return null;
+                }
+                throw error;
+            }
+
+            return result.list[0] ?? null;
+        },
         async getUserIdentity(userId: string, ctx: IQueryInfos): Promise<IUserIdentity> {
             const recordIdentity = await recordDomain.getRecordIdentity(
                 {

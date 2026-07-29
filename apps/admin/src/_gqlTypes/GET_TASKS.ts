@@ -58,7 +58,7 @@ export interface GET_TASKS_tasks_list {
     label: SystemTranslation;
     modified_at: number;
     created_at: number;
-    created_by: GET_TASKS_tasks_list_created_by;
+    created_by: GET_TASKS_tasks_list_created_by | null;
     startAt: number;
     status: TaskStatus;
     priority: any;

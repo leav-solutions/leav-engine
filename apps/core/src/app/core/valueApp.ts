@@ -1,7 +1,7 @@
 import {type IKeyValue, objectToNameValueArray} from '@leav/utils';
 import {type ConvertVersionFromGqlFormatFunc} from '../helpers/convertVersionFromGqlFormat';
 import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
-import {type IRecordDomain} from '../../domain/record/recordDomain';
+import {type IUserDomain} from '../../domain/user/userDomain';
 import {type IValueDomain} from '../../domain/value/valueDomain';
 import isEmptyValue from '../../domain/value/helpers/isEmptyValue';
 import {type IUtils} from '../../utils/utils';
@@ -16,21 +16,19 @@ import {
     type IValueVersion,
 } from '../../_types/value';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
-import {AttributeCondition, type IRecord, type IRecordFilterLight} from '../../_types/record';
+import {type IRecord, type IRecordFilterLight} from '../../_types/record';
 import {EMPTY_VALUE} from '../../infra/value/valueRepo';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type ISaveValueBulkTask} from '../../domain/value/tasks/saveValueBulk';
 import {type IPurgeMultipleValuesTask} from '../../domain/value/tasks/purgeMultipleValues';
 import {type ITreeNode} from '../../_types/tree';
-import {CommonAttributes} from '../../_constants/systemAttributes';
-import {SystemLibraries} from '../../_constants/systemLibraries';
 
 export type ICoreValueApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.value': IValueDomain;
     'core.domain.attribute': IAttributeDomain;
-    'core.domain.record': IRecordDomain;
+    'core.domain.user': IUserDomain;
     'core.domain.value.tasks.saveValueBulk': ISaveValueBulkTask;
     'core.app.helpers.convertVersionFromGqlFormat': ConvertVersionFromGqlFormatFunc;
     'core.utils': IUtils;
@@ -39,7 +37,7 @@ interface IDeps {
 
 export default function ({
     'core.domain.value': valueDomain,
-    'core.domain.record': recordDomain,
+    'core.domain.user': userDomain,
     'core.domain.value.tasks.saveValueBulk': saveValueBulkTask,
     'core.domain.attribute': attributeDomain,
     'core.app.helpers.convertVersionFromGqlFormat': convertVersionFromGqlFormat,
@@ -71,25 +69,13 @@ export default function ({
         return valueToSave;
     };
 
-    const _getUser = async (userId: string, ctx: IQueryInfos): Promise<IRecord> => {
-        const res = await recordDomain.find({
-            params: {
-                library: SystemLibraries.USERS,
-                filters: [{field: CommonAttributes.ID, condition: AttributeCondition.EQUAL, value: userId}],
-            },
-            ctx,
-        });
-
-        return res.list[0] ? res.list[0] : null;
-    };
-
     const commonValueResolvers = {
         attribute: (value: IValue, _, ctx: IQueryInfos): Promise<IAttribute> =>
             attributeDomain.getAttributeProperties({id: value.attribute, ctx}),
-        created_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord> =>
-            typeof value.created_by === 'undefined' ? null : _getUser(value.created_by, ctx),
-        modified_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord> =>
-            typeof value.modified_by === 'undefined' ? null : _getUser(value.modified_by, ctx),
+        created_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord | null> =>
+            userDomain.getUserRecord(value.created_by, ctx),
+        modified_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord | null> =>
+            userDomain.getUserRecord(value.modified_by, ctx),
         metadata: (value: IValue, _, ctx: IQueryInfos): Array<{name: string; value: IStandardValue}> =>
             value.metadata ? objectToNameValueArray(value.metadata as IKeyValue<IStandardValue>) : [],
         version: (value: IValue, _, ctx: IQueryInfos): Array<{treeId: string; treeNode: {id: string}}> =>
