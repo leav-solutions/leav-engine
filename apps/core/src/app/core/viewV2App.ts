@@ -56,12 +56,15 @@ export default function ({
 
                     type ViewV2DisplayAttribute {
                         attribute: Attribute!,
-                        visible: Boolean!
+                        visible: Boolean!,
+                        """ Generic marker: this attribute is the grouping axis (kanban columns, table grouping…). At most one per view. """
+                        isGroupBy: Boolean
                     }
 
                     input ViewV2DisplayAttributeInput {
                         attributeId: ID!,
-                        visible: Boolean!
+                        visible: Boolean!,
+                        isGroupBy: Boolean
                     }
 
                     type ViewV2Display {

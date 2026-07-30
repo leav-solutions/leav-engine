@@ -278,7 +278,7 @@ export default function ({
                     }
 
                     extend type Query {
-                        listDistinctValues(                     
+                        listDistinctValues(
                             library: ID!,
                             """ Attribute should be tree or link """
                             attribute: ID!,

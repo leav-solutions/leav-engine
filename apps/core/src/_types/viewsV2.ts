@@ -6,6 +6,7 @@ export enum ViewV2Types {
     LIST = 'list',
     CARDS = 'cards',
     TIMELINE = 'timeline',
+    KANBAN = 'kanban',
 }
 
 export enum ViewV2Shortcut {
@@ -18,6 +19,9 @@ export enum ViewV2Shortcut {
 export interface IViewV2DisplayAttribute {
     attributeId: string;
     visible: boolean;
+    // Generic, display-mode-agnostic marker designating this attribute as the grouping axis
+    // (kanban columns, table grouping…). At most one attribute per view carries it.
+    isGroupBy?: boolean;
 }
 
 export interface IViewV2Display {

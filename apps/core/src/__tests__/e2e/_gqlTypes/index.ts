@@ -1164,6 +1164,7 @@ export type ViewV2CreateInput = {
 
 export type ViewV2DisplayAttributeInput = {
   attributeId: Scalars['ID']['input'];
+  isGroupBy?: InputMaybe<Scalars['Boolean']['input']>;
   visible: Scalars['Boolean']['input'];
 };
 
@@ -1197,6 +1198,7 @@ export type ViewV2SortInput = {
 
 export enum ViewV2Types {
   cards = 'cards',
+  kanban = 'kanban',
   list = 'list',
   timeline = 'timeline'
 }
