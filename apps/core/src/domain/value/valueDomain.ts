@@ -13,7 +13,7 @@ import {type IValueRepo} from '../../infra/value/valueRepo';
 import {type IUtils} from '../../utils/utils';
 import {type ILogger} from '@leav/logger';
 import type * as Config from '../../_types/config';
-import {type IRecordFilterLight, type IRecord} from '../../_types/record';
+import {type IRecord, type IRecordFilterLight} from '../../_types/record';
 import PermissionError from '../../errors/PermissionError';
 import ValidationError from '../../errors/ValidationError';
 import {ActionsListEvents} from '../../_types/actionsList';
@@ -26,12 +26,12 @@ import {
 } from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {
-    type IValueVersion,
+    type IDistinctValue,
     type ISaveValue,
     type IStandardValue,
     type IValue,
     type IValuesOptions,
-    type IDistinctValue,
+    type IValueVersion,
 } from '../../_types/value';
 import {type IActionsListDomain} from '../actionsList/actionsListDomain';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
@@ -170,7 +170,7 @@ export interface IValueDomain {
         libraryId: string;
         attributeId: string;
         recordFilters: IRecordFilterLight[];
-        options?: {version?: IValueVersion};
+        options?: {version?: IValueVersion; fulltextSearch?: string};
         ctx: IQueryInfos;
     }): Promise<IDistinctValue>;
 }
@@ -1106,6 +1106,7 @@ const valueDomain = function ({
                 params: {
                     library: libraryId,
                     filters: recordFilters,
+                    fulltextSearch: options?.fulltextSearch,
                     options: {version: options?.version},
                     retrieveInactive: false,
                     withCount: false,
