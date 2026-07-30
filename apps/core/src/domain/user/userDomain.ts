@@ -30,7 +30,7 @@ interface ISaveUserDataParams {
 }
 
 export interface IUserDomain {
-    getUserRecord(userId: string, ctx: IQueryInfos): Promise<IRecord | null>;
+    getUserRecord(userId: string | undefined, ctx: IQueryInfos): Promise<IRecord | null>;
     getUserIdentity(userId: string, ctx: IQueryInfos): Promise<IUserIdentity>;
     saveUserData(params: ISaveUserDataParams): Promise<IUserData>;
     getUserData(keys: string[], global: boolean, ctx: IQueryInfos): Promise<IUserData>;
@@ -89,10 +89,13 @@ export default function ({
 
     return {
         /**
-         * Retrieve the record of a user, or null if it doesn't exist or if the current user is not
-         * allowed to access the users library.
+         * Retrieve the record of a user.
+         *
+         * Returns null when there is no resolvable user: no id given, no matching record, or the
+         * current user is not allowed to access the users library. Inactive users are returned
+         * normally.
          */
-        async getUserRecord(userId: string, ctx: IQueryInfos): Promise<IRecord | null> {
+        async getUserRecord(userId: string | undefined, ctx: IQueryInfos): Promise<IRecord | null> {
             if (!userId) {
                 return null;
             }
