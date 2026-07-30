@@ -21,7 +21,7 @@ import {type IGlobalSettings} from '../../_types/globalSettings';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IValue, type ILinkValue, type IStandardValue, type ITreeValue} from '../../_types/value';
 import {type IGlobalSettingsDomain} from '../globalSettings/globalSettingsDomain';
-import {AttributeCondition, type IRecord} from '../../_types/record';
+import {AttributeCondition, CORE_IN_CREATION_BY, type IRecord} from '../../_types/record';
 import {type IRecordDomain} from '../record/recordDomain';
 import {type ISDOUtils} from '../../utils/sdo/sdo';
 import {type GetAttributeByPath} from '../attribute/helpers/getAttributeByPath';
@@ -54,7 +54,7 @@ export interface ISDODomain {
         sdoGlobalSettingsMapping: ISDOMapping,
         sdoAction: SDOAction,
         ctx: IQueryInfos,
-    ): Promise<ISDO>;
+    ): Promise<ISDO | null>;
     resolveAdditionalLibraryTriggerTargets(
         sdoMapping: ISDOMapping,
         eventLibraryId: string,
@@ -152,7 +152,7 @@ export default function ({
         sdoMapping: ISDOMapping,
         sdoAction: SDOAction,
         ctx: IQueryInfos,
-    ): Promise<ISDO> => {
+    ): Promise<ISDO | null> => {
         // Find record in database
         const recordFilter = [
             {
@@ -170,6 +170,11 @@ export default function ({
         const record: IRecord = res?.list[0];
         if (!record || Object.keys(record).length === 0) {
             throw new Error(`Export sdo record not found ${recordId}`);
+        }
+
+        if (record[CORE_IN_CREATION_BY]) {
+            debug && logger.debug('[SDO] Export skipped, record in creation', {leavLibraryId, recordId});
+            return null;
         }
 
         let sdoLibraryId: string;

@@ -269,6 +269,18 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -348,6 +360,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -561,6 +575,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -945,12 +961,19 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1373,6 +1396,7 @@ export type GetRecordQuery = { records: { list: Array<{ id: string, modified_at:
 export type CreateRecordMutationVariables = Exact<{
   library: Scalars['ID']['input'];
   data?: InputMaybe<CreateRecordDataInput>;
+  skipActivate?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 
@@ -1385,6 +1409,14 @@ export type DeleteRecordMutationVariables = Exact<{
 
 
 export type DeleteRecordMutation = { deleteRecord: { id: string } };
+
+export type ActivateNewRecordMutationVariables = Exact<{
+  library: Scalars['ID']['input'];
+  recordId: Scalars['ID']['input'];
+}>;
+
+
+export type ActivateNewRecordMutation = { activateNewRecord: { record?: { id: string } | null } };
 
 export type DeactivateRecordsMutationVariables = Exact<{
   libraryId: Scalars['String']['input'];
@@ -1827,8 +1859,8 @@ export const GetRecordDocument = gql`
 }
     `;
 export const CreateRecordDocument = gql`
-    mutation CreateRecord($library: ID!, $data: CreateRecordDataInput) {
-  createRecord(library: $library, data: $data) {
+    mutation CreateRecord($library: ID!, $data: CreateRecordDataInput, $skipActivate: Boolean) {
+  createRecord(library: $library, data: $data, skipActivate: $skipActivate) {
     valuesErrors {
       attribute
       input
@@ -1846,6 +1878,15 @@ export const DeleteRecordDocument = gql`
     mutation DeleteRecord($id: ID, $library: ID) {
   deleteRecord(id: $id, library: $library) {
     id
+  }
+}
+    `;
+export const ActivateNewRecordDocument = gql`
+    mutation ActivateNewRecord($library: ID!, $recordId: ID!) {
+  activateNewRecord(library: $library, recordId: $recordId) {
+    record {
+      id
+    }
   }
 }
     `;
@@ -2240,6 +2281,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     DeleteRecord(variables?: DeleteRecordMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteRecordMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteRecordMutation>({ document: DeleteRecordDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteRecord', 'mutation', variables);
+    },
+    ActivateNewRecord(variables: ActivateNewRecordMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<ActivateNewRecordMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ActivateNewRecordMutation>({ document: ActivateNewRecordDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'ActivateNewRecord', 'mutation', variables);
     },
     DeactivateRecords(variables: DeactivateRecordsMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeactivateRecordsMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeactivateRecordsMutation>({ document: DeactivateRecordsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeactivateRecords', 'mutation', variables);

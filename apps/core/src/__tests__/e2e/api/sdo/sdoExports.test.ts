@@ -251,6 +251,38 @@ describe('SDO Exports', () => {
         });
     });
 
+    test('does not export a record while it is in creation, and exports it once activated', async () => {
+        const {createRecord} = await nonAdminUserSdk.CreateRecord({
+            library: SDO_EXPORTS_LIBRARY_ID,
+            skipActivate: true,
+        });
+
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
+        const nonAdminUserUUID = e2eNonAdminUser().userUUID;
+
+        await expect(waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID, SDO_EXPORT_TIMER * 4)).rejects.toThrow();
+
+        await nonAdminUserSdk.ActivateNewRecord({library: SDO_EXPORTS_LIBRARY_ID, recordId});
+
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+        expect(msg).toMatchObject({
+            name: SDO_EXPORTS_LIBRARY_ID,
+            dataModelRelease: 'dataModelRelease',
+            date: expect.any(Number),
+            action: 'UPDATE', // dont care because of delta sdo will come soon
+            clientId: conf.sdo.clientId,
+            content: {
+                system: {
+                    systemId: recordUUID,
+                    systemActive: true,
+                    systemCreator: nonAdminUserUUID,
+                    systemLastModificator: nonAdminUserUUID,
+                },
+            },
+        });
+    });
+
     test('exports a nested attribute path (modified_by.email) in the SDO content', async () => {
         // CREATE always triggers an export, regardless of hasSDOAttribute's exact-match limitation on
         // path-based leavAttributeId (see UPDATE trigger caveat noted in the plan/CLAUDE.md).
