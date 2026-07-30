@@ -65,12 +65,15 @@ describe('useLastUsedView', () => {
         const {result} = renderHook(() => useLastUsedView());
         result.current.saveLastUsedView('view-1');
 
-        expect(saveMutation).toHaveBeenCalledWith({
-            variables: {
-                key: userDataKey,
-                value: 'view-1',
-                global: false,
-            },
-        });
+        expect(saveMutation).toHaveBeenCalledWith(
+            expect.objectContaining({
+                variables: {
+                    key: userDataKey,
+                    value: 'view-1',
+                    global: false,
+                },
+                update: expect.any(Function),
+            }),
+        );
     });
 });

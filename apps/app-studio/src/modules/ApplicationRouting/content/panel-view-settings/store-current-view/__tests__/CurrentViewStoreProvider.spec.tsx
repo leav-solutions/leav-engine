@@ -11,9 +11,11 @@ vi.mock('@leav/ui', async () => ({
     usePanelEventHandlers: () => ({dispatch: vi.fn()}),
 }));
 
-// The store resolves its current view id from `lastUsedViewId ?? viewId`; pin lastUsedViewId off.
+// The store resolves its current view id from `selectedViewId ?? lastUsedViewId ?? viewId`.
+// Pilotable per test (default: off, so most tests fall back to the configured `viewId`).
+const mockUseLastUsedView = vi.fn();
 vi.mock('../../tabs/tab-catalog/useLastUsedView', () => ({
-    useLastUsedView: () => ({lastUsedViewId: undefined, saveLastUsedView: vi.fn()}),
+    useLastUsedView: (...args: unknown[]) => mockUseLastUsedView(...args),
 }));
 
 // Permission is resolved via an isAllowed query; stub the hook so the provider test stays isolated
@@ -76,9 +78,19 @@ const Wrapper = ({showVolet, providerKey = 'view-1'}: {showVolet: boolean; provi
     </CurrentViewStoreProvider>
 );
 
+// `useGetViewV2Query` resolved by the `viewId` variable actually received, so a test can seed several
+// candidate views (configured id vs. last-used id) and assert which one wins.
+const mockViewV2ById = (byId: Record<string, NonNullView | null>) => {
+    mockUseGetViewV2Query.mockImplementation((options: any) => ({
+        data: {viewV2: byId[options?.variables?.viewId] ?? null},
+        loading: false,
+    }));
+};
+
 beforeEach(() => {
     vi.clearAllMocks();
-    mockUseGetViewV2Query.mockReturnValue({data: {viewV2: makeView()}});
+    mockUseLastUsedView.mockReturnValue({lastUsedViewId: undefined, saveLastUsedView: vi.fn()});
+    mockViewV2ById({'view-1': makeView()});
 });
 
 describe('CurrentViewStoreProvider', () => {
@@ -194,5 +206,65 @@ describe('CurrentViewStoreProvider', () => {
         render(<Wrapper showVolet />);
 
         expect(screen.getByText('no-view')).toBeInTheDocument();
+    });
+
+    describe('last-used view resolution', () => {
+        const lastUsedView = makeView({
+            id: 'view-last',
+            display: {
+                type: ViewV2Types.list,
+                attributes: [{visible: true, attribute: {id: 'attribute_9', label: {fr: 'Attribut 9'}}}],
+            },
+        });
+
+        it('loads the last-used view in priority over the configured view id', async () => {
+            mockUseLastUsedView.mockReturnValue({lastUsedViewId: 'view-last', saveLastUsedView: vi.fn()});
+            mockViewV2ById({'view-1': makeView(), 'view-last': lastUsedView});
+
+            render(<Wrapper showVolet />);
+
+            expect(await screen.findByTestId('col-attribute_9')).toHaveTextContent('visible');
+            expect(screen.queryByTestId('col-attribute_2')).not.toBeInTheDocument();
+        });
+
+        it('falls back to the configured view id when the last-used id does not resolve, without flashing the empty state', async () => {
+            mockUseLastUsedView.mockReturnValue({lastUsedViewId: 'view-last-gone', saveLastUsedView: vi.fn()});
+            mockViewV2ById({'view-1': makeView()}); // 'view-last-gone' resolves to null (deleted/unshared)
+
+            render(<Wrapper showVolet />);
+
+            expect(screen.queryByText('empty-view')).not.toBeInTheDocument();
+            expect(await screen.findByTestId('col-attribute_2')).toHaveTextContent('visible');
+        });
+
+        it('falls back to the configured view id when the last-used view belongs to another library', async () => {
+            mockUseLastUsedView.mockReturnValue({lastUsedViewId: 'view-foreign', saveLastUsedView: vi.fn()});
+            mockViewV2ById({
+                'view-1': makeView({library: 'my_lib'}),
+                'view-foreign': makeView({id: 'view-foreign', library: 'other_lib'}),
+            });
+
+            render(
+                <CurrentViewStoreProvider viewId="view-1" displayedLibraryId="my_lib">
+                    <VoletChild />
+                </CurrentViewStoreProvider>,
+            );
+
+            expect(screen.queryByText('empty-view')).not.toBeInTheDocument();
+            expect(await screen.findByTestId('col-attribute_2')).toHaveTextContent('visible');
+        });
+
+        it('falls back to the empty state when the last-used id does not resolve and no view id is configured', () => {
+            mockUseLastUsedView.mockReturnValue({lastUsedViewId: 'view-last-gone', saveLastUsedView: vi.fn()});
+            mockViewV2ById({}); // nothing resolves
+
+            render(
+                <CurrentViewStoreProvider viewId={undefined}>
+                    <VoletChild />
+                </CurrentViewStoreProvider>,
+            );
+
+            expect(screen.getByText('empty-view')).toBeInTheDocument();
+        });
     });
 });

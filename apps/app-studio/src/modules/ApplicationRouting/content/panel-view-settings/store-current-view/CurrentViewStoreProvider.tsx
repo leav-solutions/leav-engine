@@ -42,8 +42,17 @@ export const CurrentViewStoreProvider = ({
 
     const {lastUsedViewId} = useLastUsedView();
 
+    // A memorized id can go stale between visits (view deleted, unshared, moved to another library).
+    // Rather than dropping to the empty state, forget it once and fall back to the configured view
+    // (LEAVC-1087). Keyed by id (not a one-shot latch), so a new `lastUsedViewId` is re-evaluated normally.
+    const [staleLastUsedViewId, setStaleLastUsedViewId] = useState<string | undefined>(undefined);
+    const usableLastUsedViewId = lastUsedViewId === staleLastUsedViewId ? undefined : lastUsedViewId;
+
     // Derived (not stored) so the async-resolved `lastUsedViewId` is taken into account on each render.
-    const currentViewId = selectedViewId ?? lastUsedViewId ?? viewId;
+    // Order: runtime selection → last-used view → configured view. Deviation from LEAVC-807 (which puts
+    // the configured view first): the user's explicit choice must survive navigation (LEAVC-1087).
+    const currentViewId = selectedViewId ?? usableLastUsedViewId ?? viewId;
+    const resolvedFromLastUsed = !selectedViewId && Boolean(usableLastUsedViewId);
 
     const {data, loading} = useGetViewV2Query({
         variables: {viewId: currentViewId as string},
@@ -65,7 +74,19 @@ export const CurrentViewStoreProvider = ({
     // panel falls back to its default (empty) state: the catalog stays reachable so a view can be
     // selected, and the header renders read-only.
     const viewUnresolvable = Boolean(currentViewId) && !loading && (!data?.viewV2 || isForeignView);
-    const isEmptyView = !currentViewId || viewUnresolvable;
+
+    // The memorized id failed to resolve and a configured view is available: keep the panel OUT of its
+    // empty state during the switch, to avoid a one-tick flash of the empty view / admin draft.
+    const lastUsedFallbackPending =
+        viewUnresolvable && resolvedFromLastUsed && Boolean(viewId) && viewId !== currentViewId;
+
+    const isEmptyView = !currentViewId || (viewUnresolvable && !lastUsedFallbackPending);
+
+    useEffect(() => {
+        if (lastUsedFallbackPending) {
+            setStaleLastUsedViewId(currentViewId);
+        }
+    }, [lastUsedFallbackPending, currentViewId]);
 
     // Load the freshly-fetched view whenever a DIFFERENT view arrives. Guarding on the last loaded
     // id (rather than a one-shot flag) lets the catalog switch views while still ignoring background
