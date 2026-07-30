@@ -393,6 +393,7 @@ import {container} from './styles.module.css';
 - Run `yarn graphql-generate` after adding or modifying an operation to regenerate `_gqlTypes/index.ts`.
 - **Never modify `_gqlTypes/index.ts` by hand** — it is fully regenerated on each run.
 - Each app/lib requiring codegen has an `apolloApiKey.js.example`. Copy it to `apolloApiKey.js` and fill in a valid token (generate one in the admin API keys panel).
+- The schema is obtained by **HTTP introspection of the locally running instance**, which loads the plugins declared in `apps/core/config/local.js`. The regenerated file therefore embeds types and enum values coming from those plugins (xstream…), unrelated to the operation you added — this is expected output, **do not hand-clean the diff**. These files are marked `linguist-generated` in `.gitattributes`, so they are collapsed in GitLab MR diffs.
 
 ## Fragments
 

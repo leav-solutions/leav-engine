@@ -1,12 +1,13 @@
 import {SystemLibraries} from '../../_constants/systemLibraries';
 import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
+import {type IUserDomain} from '../../domain/user/userDomain';
 import {type IViewV2Domain} from '../../domain/viewV2/viewV2Domain';
 import {type IUtils} from '../../utils/utils';
 import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IList} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {AttributeCondition, type IRecordIdentity} from '../../_types/record';
+import {type IRecordIdentity} from '../../_types/record';
 import {type i18n} from 'i18next';
 import {
     type IViewV2,
@@ -20,11 +21,11 @@ import {
     ViewV2Types,
 } from '../../_types/viewsV2';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
-import {CommonAttributes} from '../../_constants/systemAttributes';
 
 interface IDeps {
     'core.domain.attribute': IAttributeDomain;
     'core.domain.record': IRecordDomain;
+    'core.domain.user': IUserDomain;
     'core.domain.viewV2': IViewV2Domain;
     'core.utils': IUtils;
     translator: i18n;
@@ -36,6 +37,7 @@ export default function ({
     'core.domain.attribute': attributeDomain,
     'core.domain.viewV2': viewV2Domain,
     'core.domain.record': recordDomain,
+    'core.domain.user': userDomain,
     'core.utils': utils,
     translator,
 }: IDeps): IViewV2App {
@@ -236,22 +238,10 @@ export default function ({
                     },
                     ViewV2Creator: {
                         whoAmI: async ({id}: {id: string}, _: unknown, ctx: IQueryInfos): Promise<IRecordIdentity> => {
-                            const found = await recordDomain.find({
-                                params: {
-                                    library: SystemLibraries.USERS,
-                                    filters: [
-                                        {
-                                            field: CommonAttributes.ID,
-                                            value: id,
-                                            condition: AttributeCondition.EQUAL,
-                                        },
-                                    ],
-                                },
-                                ctx,
-                            });
+                            const user = await userDomain.getUserRecord(id, ctx);
 
-                            if (found.list.length) {
-                                return recordDomain.getRecordIdentity(found.list[0], ctx);
+                            if (user) {
+                                return recordDomain.getRecordIdentity(user, ctx);
                             }
 
                             // Creator record not found (hidden / no access): return a minimal identity

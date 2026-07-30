@@ -110,7 +110,7 @@ const TasksList = ({
                                             <Table.Cell>{localizedTranslation(task.label, lang)}</Table.Cell>
                                         )}
                                         {enabledColumns.includes('created_by') && (
-                                            <Table.Cell>{task.created_by.whoAmI.label}</Table.Cell>
+                                            <Table.Cell>{task.created_by?.whoAmI.label}</Table.Cell>
                                         )}
                                         {enabledColumns.includes('created_at') && (
                                             <Table.Cell>{new Date(task.created_at * 1000).toLocaleString()}</Table.Cell>

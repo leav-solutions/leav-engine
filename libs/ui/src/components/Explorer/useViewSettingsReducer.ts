@@ -155,7 +155,7 @@ export const useViewSettingsReducer = (
             const savedViews = (viewData?.views.list ?? []).map(
                 ({id, label, shared, display, filters, sort, attributes, created_by}) => ({
                     id,
-                    ownerId: created_by.id,
+                    ownerId: created_by?.id ?? null,
                     label,
                     shared,
                     display: {type: display.type, size: display.size || ViewSizes.MEDIUM},

@@ -3,6 +3,7 @@ import {SystemTrees} from '../../../../_constants/systemTrees';
 import {CommonAttributes, UsersAttributes} from '../../../../_constants/systemAttributes';
 import {aql} from 'arangojs';
 import * as bcrypt from 'bcryptjs';
+import {randomUUID} from 'crypto';
 import {type i18n} from 'i18next';
 import {type IPermissionRepo} from '../../../permission/permissionRepo';
 import dayjs from 'dayjs';
@@ -99,6 +100,7 @@ export default function ({
                 password: adminPwd,
                 group: [adminsGroupId],
                 active: true,
+                uuid: randomUUID(),
             },
             {
                 _key: systemUserId,
@@ -108,6 +110,7 @@ export default function ({
                 password: systemUserPwd,
                 group: [filesAdminsGroupId],
                 active: true,
+                uuid: randomUUID(),
             },
         ];
 
@@ -202,7 +205,8 @@ export default function ({
                             created_by: ${ctx.userId},
                             modified_by: ${ctx.userId},
                             label: ${group.label},
-                            active: true
+                            active: true,
+                            uuid: ${randomUUID()}
                         } IN ${usersGroupsLibCollec}
                         RETURN NEW
                     `,

@@ -89,9 +89,7 @@ function ApiKeysList({
                                         ? new Date(key.expiresAt * 1000).toLocaleString()
                                         : t('api_keys.never')}
                                 </Table.Cell>
-                                <Table.Cell>
-                                    <RecordCard record={key.user.whoAmI} />
-                                </Table.Cell>
+                                <Table.Cell>{key.user && <RecordCard record={key.user.whoAmI} />}</Table.Cell>
                                 <Table.Cell textAlign="right" width={1} className="actions">
                                     {actions.map((child, i) =>
                                         React.cloneElement(child as React.ReactElement<any>, {key: i, apiKey: key}),

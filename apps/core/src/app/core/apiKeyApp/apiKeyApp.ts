@@ -1,24 +1,22 @@
-import {SystemLibraries} from '../../../_constants/systemLibraries';
 import {type IApiKeyDomain} from '../../../domain/apiKey/apiKeyDomain';
-import {type IRecordDomain} from '../../../domain/record/recordDomain';
+import {type IUserDomain} from '../../../domain/user/userDomain';
 import {type IApiKey} from '../../../_types/apiKey';
 import {type IAppGraphQLSchema} from '../../../_types/graphql';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {AttributeCondition, type IRecord} from '../../../_types/record';
+import {type IRecord} from '../../../_types/record';
 import {type IApiKeysArgs, type IDeleteApiKeyArgs, type ISaveApiKeyArgs} from './_types';
 import {type IGraphqlAppModule} from '../../graphql/graphqlApp';
-import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 export type ICoreVersionProfileApp = IGraphqlAppModule;
 
 interface IDeps {
     'core.domain.apiKey': IApiKeyDomain;
-    'core.domain.record': IRecordDomain;
+    'core.domain.user': IUserDomain;
 }
 
 export default function ({
     'core.domain.apiKey': apiKeyDomain,
-    'core.domain.record': recordDomain,
+    'core.domain.user': userDomain,
 }: IDeps): ICoreVersionProfileApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -29,11 +27,11 @@ export default function ({
                         label: String,
                         key: String,
                         createdAt: Int!,
-                        createdBy: Record!,
+                        createdBy: Record,
                         modifiedAt: Int!,
-                        modifiedBy: Record!
+                        modifiedBy: Record
                         expiresAt: Int,
-                        user: Record!
+                        user: Record
                     }
 
                     input ApiKeyInput {
@@ -100,57 +98,12 @@ export default function ({
                         },
                     },
                     ApiKey: {
-                        async user(apiKey: IApiKey, _, ctx: IQueryInfos): Promise<IRecord> {
-                            const result = await recordDomain.find({
-                                params: {
-                                    library: SystemLibraries.USERS,
-                                    filters: [
-                                        {
-                                            field: CommonAttributes.ID,
-                                            condition: AttributeCondition.EQUAL,
-                                            value: apiKey.userId,
-                                        },
-                                    ],
-                                },
-                                ctx,
-                            });
-
-                            return result.list?.[0] ?? null;
-                        },
-                        async createdBy(apiKey: IApiKey, _, ctx: IQueryInfos): Promise<IRecord> {
-                            const result = await recordDomain.find({
-                                params: {
-                                    library: SystemLibraries.USERS,
-                                    filters: [
-                                        {
-                                            field: CommonAttributes.ID,
-                                            condition: AttributeCondition.EQUAL,
-                                            value: apiKey.createdBy,
-                                        },
-                                    ],
-                                },
-                                ctx,
-                            });
-
-                            return result.list?.[0] ?? null;
-                        },
-                        async modifiedBy(apiKey: IApiKey, _, ctx: IQueryInfos): Promise<IRecord> {
-                            const result = await recordDomain.find({
-                                params: {
-                                    library: SystemLibraries.USERS,
-                                    filters: [
-                                        {
-                                            field: CommonAttributes.ID,
-                                            condition: AttributeCondition.EQUAL,
-                                            value: apiKey.modifiedBy,
-                                        },
-                                    ],
-                                },
-                                ctx,
-                            });
-
-                            return result.list?.[0] ?? null;
-                        },
+                        user: async (apiKey: IApiKey, _, ctx: IQueryInfos): Promise<IRecord | null> =>
+                            userDomain.getUserRecord(apiKey.userId, ctx),
+                        createdBy: async (apiKey: IApiKey, _, ctx: IQueryInfos): Promise<IRecord | null> =>
+                            userDomain.getUserRecord(apiKey.createdBy, ctx),
+                        modifiedBy: async (apiKey: IApiKey, _, ctx: IQueryInfos): Promise<IRecord | null> =>
+                            userDomain.getUserRecord(apiKey.modifiedBy, ctx),
                     },
                 },
             };

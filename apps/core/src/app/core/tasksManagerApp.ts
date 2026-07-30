@@ -1,6 +1,5 @@
-import {SystemLibraries} from '../../_constants/systemLibraries';
 import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
-import {type IRecordDomain} from '../../domain/record/recordDomain';
+import {type IUserDomain} from '../../domain/user/userDomain';
 import {withFilter} from 'graphql-subscriptions';
 import {type IUtils} from '../../utils/utils';
 import {type ILogger} from '@leav/logger';
@@ -8,7 +7,7 @@ import {type IConfig} from '../../_types/config';
 import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IList, type IPaginationParams, type ISortParams} from '../../_types/list';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {type IRecord, AttributeCondition} from '../../_types/record';
+import {type IRecord} from '../../_types/record';
 import {type ITasksManagerDomain} from '../../domain/tasksManager/tasksManagerDomain';
 import {type IPubSubTaskData, TriggerNames} from '../../_types/eventsManager';
 import {type ITask, TaskPriority, TaskStatus} from '../../_types/tasksManager';
@@ -18,7 +17,6 @@ import {AdminPermissionsActions} from '../../_types/permissions';
 import {type IExtensionPoints} from '../../_types/extensionPoints';
 import {type ICronTasksManagerDomain} from '../../domain/tasksManager/cronTasksManagerDomain';
 import {type RegisterCronTask} from '../../_types/cronTask';
-import {CommonAttributes} from '../../_constants/systemAttributes';
 
 export interface ITasksManagerApp extends IGraphqlAppModule {
     initMaster(): Promise<NodeJS.Timeout>;
@@ -32,7 +30,7 @@ interface IDeps {
     'core.utils.logger'?: ILogger;
     config?: IConfig;
     'core.utils'?: IUtils;
-    'core.domain.record'?: IRecordDomain;
+    'core.domain.user'?: IUserDomain;
     'core.domain.eventsManager'?: IEventsManagerDomain;
     'core.domain.permission.admin'?: IAdminPermissionDomain;
 }
@@ -48,24 +46,12 @@ export interface IGetTasksArgs {
 }
 
 export default function ({
-    'core.domain.record': recordDomain = null,
+    'core.domain.user': userDomain = null,
     'core.domain.tasksManager': tasksManagerDomain = null,
     'core.domain.tasksManager.cron': cronTasksManagerDomain = null,
     'core.domain.eventsManager': eventsManager = null,
     'core.domain.permission.admin': adminPermissionDomain = null,
 }: IDeps): ITasksManagerApp {
-    const _getUser = async (userId: string, ctx: IQueryInfos): Promise<IRecord> => {
-        const record = await recordDomain.find({
-            params: {
-                library: SystemLibraries.USERS,
-                filters: [{field: CommonAttributes.ID, value: userId, condition: AttributeCondition.EQUAL}],
-            },
-            ctx,
-        });
-
-        return record.list.length ? record.list[0] : null;
-    };
-
     return {
         initMaster: async () => {
             const res = await tasksManagerDomain.initMaster();
@@ -101,7 +87,7 @@ export default function ({
                         label: SystemTranslation!,
                         modified_at: Int!,
                         created_at: Int!,
-                        created_by: Record!,
+                        created_by: Record,
                         startAt: Int!,
                         status: TaskStatus!,
                         priority: TaskPriority!,
@@ -157,14 +143,10 @@ export default function ({
                 resolvers: {
                     TaskPriority,
                     Task: {
-                        created_by: async (task: ITask, _, ctx): Promise<IRecord> => _getUser(task.created_by, ctx),
-                        canceledBy: async (task: ITask, _, ctx): Promise<IRecord> => {
-                            if (!task.canceledBy) {
-                                return null;
-                            }
-
-                            return _getUser(task.canceledBy, ctx);
-                        },
+                        created_by: async (task: ITask, _, ctx): Promise<IRecord | null> =>
+                            userDomain.getUserRecord(task.created_by, ctx),
+                        canceledBy: async (task: ITask, _, ctx): Promise<IRecord | null> =>
+                            userDomain.getUserRecord(task.canceledBy, ctx),
                     },
                     Query: {
                         async tasks(

@@ -1,4 +1,3 @@
-import {SystemLibraries} from '../../_constants/systemLibraries';
 import {type IApplicationDomain} from '../../domain/application/applicationDomain';
 import {type IAttributeDomain} from '../../domain/attribute/attributeDomain';
 import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
@@ -18,6 +17,7 @@ import {type IFormatLogValueHelper} from '../../domain/value/helpers/formatLogVa
 import {AttributeCondition} from '../../_types/record';
 import {type i18n} from 'i18next';
 import {type IRecordDomain} from '../../domain/record/recordDomain';
+import {type IUserDomain} from '../../domain/user/userDomain';
 import {AttributeTypes} from '../../_types/attribute';
 import {type IConfig} from '../../_types/config';
 import {CommonAttributes} from '../../_constants/systemAttributes';
@@ -35,6 +35,7 @@ interface IDeps {
     'core.domain.application': IApplicationDomain;
     'core.domain.automation': IAutomationDomain;
     'core.domain.record': IRecordDomain;
+    'core.domain.user': IUserDomain;
     translator: i18n;
     config: IConfig;
 }
@@ -50,6 +51,7 @@ export default function ({
     'core.domain.application': applicationDomain,
     'core.domain.automation': automationDomain,
     'core.domain.record': recordDomain,
+    'core.domain.user': userDomain,
     translator,
     config,
 }: IDeps): ICoreLogApp {
@@ -57,6 +59,12 @@ export default function ({
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             const toSystemTranslation = (key: string, id: string) =>
                 Object.fromEntries(config.lang.available.map(lang => [lang, translator.t(key, {lng: lang, id})]));
+
+            const _unknownUser = (userId: string) => ({
+                _isUnknown: true,
+                id: userId,
+                label: toSystemTranslation('logs.unknown_user', userId),
+            });
 
             const baseSchema = {
                 typeDefs: `
@@ -210,37 +218,11 @@ export default function ({
                     },
                     Log: {
                         user: async (log: Log, _, ctx: IQueryInfos) => {
+                            // Never let a single unresolvable user break the whole log list
                             try {
-                                const result = await recordDomain.find({
-                                    params: {
-                                        filters: [
-                                            {
-                                                field: CommonAttributes.ID,
-                                                value: log.userId,
-                                                condition: AttributeCondition.EQUAL,
-                                            },
-                                        ],
-                                        library: SystemLibraries.USERS,
-                                        retrieveInactive: true,
-                                    },
-                                    ctx,
-                                });
-
-                                if (result.list.length === 0) {
-                                    return {
-                                        _isUnknown: true,
-                                        id: log.userId,
-                                        label: toSystemTranslation('logs.unknown_user', log.userId),
-                                    };
-                                }
-
-                                return result.list[0];
+                                return (await userDomain.getUserRecord(log.userId, ctx)) ?? _unknownUser(log.userId);
                             } catch {
-                                return {
-                                    _isUnknown: true,
-                                    id: log.userId,
-                                    label: toSystemTranslation('logs.unknown_user', log.userId),
-                                };
+                                return _unknownUser(log.userId);
                             }
                         },
                         time: (log: Log) => Math.trunc(log.time / 1000),

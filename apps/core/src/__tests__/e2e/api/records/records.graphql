@@ -8,6 +8,24 @@ query GetRecord($libraryId: ID!, $recordId: String!) {
     }
 }
 
+query GetRecordWithSystemProperties($libraryId: ID!, $recordId: String!) {
+    records(library: $libraryId, filters: [{field: "id", condition: EQUAL, value: $recordId}]) {
+        list {
+            id
+            active
+            uuid
+            created_at
+            created_by {
+                id
+            }
+            modified_at
+            modified_by {
+                id
+            }
+        }
+    }
+}
+
 mutation CreateRecord($library: ID!, $data: CreateRecordDataInput, $skipActivate: Boolean) {
     createRecord(library: $library, data: $data, skipActivate: $skipActivate) {
         valuesErrors {

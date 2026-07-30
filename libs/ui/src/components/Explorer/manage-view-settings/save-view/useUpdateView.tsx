@@ -55,7 +55,7 @@ export const useUpdateView = () => {
                 type: ViewSettingsActionTypes.UPDATE_VIEWS,
                 payload: {
                     id: data.updateView.id,
-                    ownerId: data.updateView.created_by.id,
+                    ownerId: data.updateView.created_by?.id ?? null,
                     label: data.updateView.label,
                     shared: data.updateView.shared,
                     filters: validFilters,

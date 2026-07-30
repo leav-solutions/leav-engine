@@ -1261,12 +1261,12 @@ export type SaveApiKeyMutationVariables = Exact<{
 }>;
 
 
-export type SaveApiKeyMutation = { saveApiKey: { id: string, label?: string | null, key?: string | null, expiresAt?: number | null, user: { id: string } } };
+export type SaveApiKeyMutation = { saveApiKey: { id: string, label?: string | null, key?: string | null, expiresAt?: number | null, user?: { id: string } | null, createdBy?: { id: string } | null, modifiedBy?: { id: string } | null } };
 
 export type GetApiKeysQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetApiKeysQuery = { apiKeys: { list: Array<{ id: string, label?: string | null, key?: string | null, expiresAt?: number | null, user: { id: string } }> } };
+export type GetApiKeysQuery = { apiKeys: { list: Array<{ id: string, label?: string | null, key?: string | null, expiresAt?: number | null, user?: { id: string } | null }> } };
 
 export type DeleteApiKeyMutationVariables = Exact<{
   id: Scalars['String']['input'];
@@ -1392,6 +1392,14 @@ export type GetRecordQueryVariables = Exact<{
 
 
 export type GetRecordQuery = { records: { list: Array<{ id: string, modified_at: number }> } };
+
+export type GetRecordWithSystemPropertiesQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  recordId: Scalars['String']['input'];
+}>;
+
+
+export type GetRecordWithSystemPropertiesQuery = { records: { list: Array<{ id: string, active: boolean, uuid: string, created_at: number, modified_at: number, created_by?: { id: string } | null, modified_by?: { id: string } | null }> } };
 
 export type CreateRecordMutationVariables = Exact<{
   library: Scalars['ID']['input'];
@@ -1606,6 +1614,12 @@ export const SaveApiKeyDocument = gql`
     key
     expiresAt
     user {
+      id
+    }
+    createdBy {
+      id
+    }
+    modifiedBy {
       id
     }
   }
@@ -1854,6 +1868,28 @@ export const GetRecordDocument = gql`
     list {
       id
       modified_at
+    }
+  }
+}
+    `;
+export const GetRecordWithSystemPropertiesDocument = gql`
+    query GetRecordWithSystemProperties($libraryId: ID!, $recordId: String!) {
+  records(
+    library: $libraryId
+    filters: [{field: "id", condition: EQUAL, value: $recordId}]
+  ) {
+    list {
+      id
+      active
+      uuid
+      created_at
+      created_by {
+        id
+      }
+      modified_at
+      modified_by {
+        id
+      }
     }
   }
 }
@@ -2275,6 +2311,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetRecord(variables: GetRecordQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecordQuery>({ document: GetRecordDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecord', 'query', variables);
+    },
+    GetRecordWithSystemProperties(variables: GetRecordWithSystemPropertiesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordWithSystemPropertiesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetRecordWithSystemPropertiesQuery>({ document: GetRecordWithSystemPropertiesDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordWithSystemProperties', 'query', variables);
     },
     CreateRecord(variables: CreateRecordMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<CreateRecordMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateRecordMutation>({ document: CreateRecordDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'CreateRecord', 'mutation', variables);

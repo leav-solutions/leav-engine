@@ -7,6 +7,12 @@ mutation SaveApiKey($apiKey: ApiKeyInput!) {
         user {
             id
         }
+        createdBy {
+            id
+        }
+        modifiedBy {
+            id
+        }
     }
 }
 
