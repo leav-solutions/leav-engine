@@ -79,6 +79,20 @@ et les dispatchers : `setViewType`, `toggleVisibility`, `moveAttribute`, `moveSo
   chemin joint par `/`) ; `pinnedFilters` garde l'ordre vue, `unpinnedFilters` est trié alpha — miroir
   exact des sélecteurs de tris.
 
+### Dernière vue utilisée (`tabs/tab-catalog/useLastUsedView.ts`)
+
+Mémorisée côté **user data serveur** (pas `localStorage`), sous la clé
+`last_used_view_<APP_ENDPOINT>_<displayedLibraryId>_<panelId|recordPanelId>`.
+
+- **Ordre de résolution** dans `CurrentViewStoreProvider` : `selectedViewId ?? lastUsedViewId ?? viewId`
+  (sélection runtime → dernière vue utilisée → vue configurée dans app-studio). Si `lastUsedViewId` ne résout pas (vue
+  supprimée, dé-partagée, autre bibliothèque) et qu'un `viewId` configuré existe, on l'ignore une fois et
+  on retombe dessus plutôt que sur l'état vide.
+- **Piège cache** : `UserData` n'est pas normalisé (ni `id` ni `keyFields`, aucun `typePolicies` dans
+  `useInitApollo`). Toute écriture de user data doit donc mettre à jour l'entrée
+  `ROOT_QUERY.userData(...)` à la main (`update` sur la mutation, cf. `useLastUsedView.ts`) — sinon la
+  lecture `cache-first` sert du périmé jusqu'au prochain rechargement de page.
+
 ---
 
 ## Onglets (`tabs/`)
@@ -86,7 +100,7 @@ et les dispatchers : `setViewType`, `toggleVisibility`, `moveAttribute`, `moveSo
 | Onglet         | Statut | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | -------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `tab-display/` | ✅     | Colonnes visibles/cachées (DnD dnd-kit) + sélecteur de type de vue                                                                                                                                                                                                                                                                                                                                                                                   |
-| `tab-catalog/` | ✅     | `useViewCatalog` scinde `myViews` / `sharedViews` ; dernière vue via localStorage ; modale unsaved                                                                                                                                                                                                                                                                                                                                                   |
+| `tab-catalog/` | ✅     | `useViewCatalog` scinde `myViews` / `sharedViews` ; dernière vue via **user data serveur** (`useLastUsedView`, cf. § Dernière vue utilisée) ; modale unsaved                                                                                                                                                                                                                                                                                         |
 | `tab-sorts/`   | ✅     | Tris réordonnables (DnD dnd-kit) + bascule asc/desc (`KitFilter`) ; ordre du tableau = priorité                                                                                                                                                                                                                                                                                                                                                      |
 | `tab-filters/` | ✅     | Filtres épinglables/réordonnables (DnD) + recherche. Pinned **et** non-pinned sont édités via `CommonFilterItem` branché sur le **store de filtres du volet** (`VoletFiltersProvider`, Spoke A, cf. ci-dessous) — seul le pin change (bouton dédié, icône `faThumbtack`/`faThumbtackSlash`, cf. `FilterItem.tsx`) : un filtre non épinglé reste éditable et s'applique quand même à la requête, il n'apparaît juste pas en chip toolbar (LEAVC-588). |
 

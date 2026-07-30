@@ -1,5 +1,5 @@
 import {useParams} from 'react-router-dom';
-import {useGetUserDataQuery, useSaveUserDataMutation} from '_ui/_gqlTypes';
+import {GetUserDataDocument, useGetUserDataQuery, useSaveUserDataMutation} from '_ui/_gqlTypes';
 import {APP_ENDPOINT} from '../../../../../../constants';
 import {useApplicationSettingsContext} from '../../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from '../../../../utils/retrievePanelDetails';
@@ -32,6 +32,18 @@ export const useLastUsedView = () => {
                     key: userDataKey,
                     value: viewId,
                     global: false,
+                },
+                update: (cache, {data: updatedData}) => {
+                    if (!updatedData?.saveUserData) {
+                        return;
+                    }
+
+                    cache.writeQuery({
+                        query: GetUserDataDocument,
+                        // Must match the read's variables exactly, or this writes a separate cache entry.
+                        variables: {keys: [userDataKey]},
+                        data: {userData: updatedData.saveUserData},
+                    });
                 },
             }),
     };
