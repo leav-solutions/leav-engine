@@ -243,14 +243,27 @@ export default function ({
         return nestedValues.flat();
     };
 
+    // Read a sub-field inside a payload, which may be stored (or formatted by a GET_VALUE action list,
+    // e.g. `toJSON` on extended attributes) as a JSON string rather than an object.
+    const _readSubField = (payload: unknown, subSegments: string[]): unknown => {
+        const parsed = typeof payload === 'string' ? JSON.parse(payload) : payload;
+        return subSegments.reduce((acc, segment) => acc?.[segment], parsed);
+    };
+
     // Navigate the remaining path inside the payload object (extended sub-fields, or `.from` / `.to`
-    // for date ranges).
-    const _navigateSubFields = (values: IValue[], subSegments: string[]): IValue[] =>
+    // for date ranges). `raw_payload` is navigated as well, independently: it holds the value before
+    // its GET_VALUE action list ran (so it can have another shape), and consumers such as the SDO
+    // export read the sub-field from there. It is left untouched when absent (`options.skipActions`).
+    const _navigateSubFields = (values: IStandardValue[], subSegments: string[]): IValue[] =>
         values
             .map(v => {
-                const parsed = typeof v.payload === 'string' ? JSON.parse(v.payload) : v.payload;
-                const subValue = subSegments.reduce((acc, segment) => acc?.[segment], parsed);
-                return {...v, payload: subValue ?? null};
+                const navigated: IStandardValue = {...v, payload: _readSubField(v.payload, subSegments) ?? null};
+
+                if (typeof v.raw_payload !== 'undefined') {
+                    navigated.raw_payload = _readSubField(v.raw_payload, subSegments) ?? null;
+                }
+
+                return navigated;
             })
             .filter(v => v.payload !== null && typeof v.payload !== 'undefined');
 
@@ -289,7 +302,7 @@ export default function ({
         }
 
         if (attrProps.format === AttributeFormats.EXTENDED || attrProps.format === AttributeFormats.DATE_RANGE) {
-            return _navigateSubFields(currentValues, remainingSegments);
+            return _navigateSubFields(currentValues as IStandardValue[], remainingSegments);
         }
 
         // Any other type cannot be traversed further.

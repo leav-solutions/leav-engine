@@ -16,6 +16,9 @@ const SIMPLE_ATTR = 'gabp_simple';
 const SIMPLE_LINK_ATTR = 'gabp_simple_link';
 const TREE_ATTR = 'gabp_tree_attr';
 const TARGET_LABEL_ATTR = 'gabp_target_label';
+const DATE_RANGE_ATTR = 'gabp_date_range';
+const EXTENDED_ATTR = 'gabp_extended';
+const UNDECLARED_EXTENDED_ATTR = 'gabp_extended_undeclared';
 
 describe('getAttributeByPath (integration)', () => {
     let libraryDomain: ILibraryDomain;
@@ -41,8 +44,19 @@ describe('getAttributeByPath (integration)', () => {
             ctx,
         });
 
-        // libTarget must exist before libSource (link/tree attributes reference it)
-        await libraryDomain.saveLibrary({id: libTarget, attributes: [targetLabelAttr]}, ctx);
+        const dateRangeAttr = await attributeDomain.saveAttribute({
+            attrData: {
+                id: DATE_RANGE_ATTR,
+                type: AttributeTypes.SIMPLE,
+                format: AttributeFormats.DATE_RANGE,
+                label: {en: 'Date range'},
+            },
+            ctx,
+        });
+
+        // libTarget must exist before libSource (link/tree attributes reference it). It also carries the
+        // date range attribute, to cover a sub-field path reached through a link.
+        await libraryDomain.saveLibrary({id: libTarget, attributes: [targetLabelAttr, dateRangeAttr]}, ctx);
 
         // Tree referencing libTarget (no actual nodes needed: getAttributeByPath only reads the tree's
         // configured libraries, not its content)
@@ -85,7 +99,42 @@ describe('getAttributeByPath (integration)', () => {
             ctx,
         });
 
-        await libraryDomain.saveLibrary({id: libSource, attributes: [simpleAttr, simpleLinkAttr, treeAttr]}, ctx);
+        const extendedAttr = await attributeDomain.saveAttribute({
+            attrData: {
+                id: EXTENDED_ATTR,
+                type: AttributeTypes.SIMPLE,
+                format: AttributeFormats.EXTENDED,
+                label: {en: 'Extended'},
+                embedded_fields: [
+                    {id: 'street', format: AttributeFormats.TEXT},
+                    {
+                        id: 'city',
+                        format: AttributeFormats.EXTENDED,
+                        embedded_fields: [{id: 'zipcode', format: AttributeFormats.TEXT}],
+                    },
+                ],
+            },
+            ctx,
+        });
+
+        // Declaring embedded_fields is optional: such an attribute must accept any sub-path
+        const undeclaredExtendedAttr = await attributeDomain.saveAttribute({
+            attrData: {
+                id: UNDECLARED_EXTENDED_ATTR,
+                type: AttributeTypes.SIMPLE,
+                format: AttributeFormats.EXTENDED,
+                label: {en: 'Extended without embedded fields'},
+            },
+            ctx,
+        });
+
+        await libraryDomain.saveLibrary(
+            {
+                id: libSource,
+                attributes: [simpleAttr, simpleLinkAttr, treeAttr, dateRangeAttr, extendedAttr, undeclaredExtendedAttr],
+            },
+            ctx,
+        );
     });
 
     test('resolves a terminal attribute directly', async () => {
@@ -136,5 +185,108 @@ describe('getAttributeByPath (integration)', () => {
         await expect(
             getAttributeByPath({libraryId: libSource, attributePath: `${TREE_ATTR}.not_an_attribute`, ctx}),
         ).rejects.toThrow('not found in any library linked to tree');
+    });
+
+    describe('sub-fields of extended / date range attributes (allowSubFields)', () => {
+        test.each(['from', 'to'])(
+            'resolves a "%s" sub-field of a date range attribute to its carrier',
+            async subField => {
+                const attribute = await getAttributeByPath({
+                    libraryId: libSource,
+                    attributePath: `${DATE_RANGE_ATTR}.${subField}`,
+                    allowSubFields: true,
+                    ctx,
+                });
+
+                // A sub-field is not an attribute of its own: the carrier attribute is returned
+                expect(attribute).toMatchObject({id: DATE_RANGE_ATTR, format: AttributeFormats.DATE_RANGE});
+            },
+        );
+
+        test('resolves a nested embedded field of an extended attribute to its carrier', async () => {
+            const attribute = await getAttributeByPath({
+                libraryId: libSource,
+                attributePath: `${EXTENDED_ATTR}.city.zipcode`,
+                allowSubFields: true,
+                ctx,
+            });
+
+            expect(attribute).toMatchObject({id: EXTENDED_ATTR, format: AttributeFormats.EXTENDED});
+        });
+
+        test('resolves any sub-path of an extended attribute declaring no embedded fields', async () => {
+            const attribute = await getAttributeByPath({
+                libraryId: libSource,
+                attributePath: `${UNDECLARED_EXTENDED_ATTR}.whatever.nested`,
+                allowSubFields: true,
+                ctx,
+            });
+
+            expect(attribute.id).toBe(UNDECLARED_EXTENDED_ATTR);
+        });
+
+        test('resolves a sub-field reached through a link', async () => {
+            const attribute = await getAttributeByPath({
+                libraryId: libSource,
+                attributePath: `${SIMPLE_LINK_ATTR}.${DATE_RANGE_ATTR}.from`,
+                allowSubFields: true,
+                ctx,
+            });
+
+            expect(attribute.id).toBe(DATE_RANGE_ATTR);
+        });
+
+        test('throws on an unknown sub-field of a date range attribute', async () => {
+            await expect(
+                getAttributeByPath({
+                    libraryId: libSource,
+                    attributePath: `${DATE_RANGE_ATTR}.startDate`,
+                    allowSubFields: true,
+                    ctx,
+                }),
+            ).rejects.toThrow('is not a sub-field of date range attribute');
+        });
+
+        test('throws when a date range sub-field path goes deeper than one level', async () => {
+            await expect(
+                getAttributeByPath({
+                    libraryId: libSource,
+                    attributePath: `${DATE_RANGE_ATTR}.from.deeper`,
+                    allowSubFields: true,
+                    ctx,
+                }),
+            ).rejects.toThrow('is not a sub-field of date range attribute');
+        });
+
+        test('throws on an undeclared embedded field of an extended attribute', async () => {
+            await expect(
+                getAttributeByPath({
+                    libraryId: libSource,
+                    attributePath: `${EXTENDED_ATTR}.city.not_a_field`,
+                    allowSubFields: true,
+                    ctx,
+                }),
+            ).rejects.toThrow('is not an embedded field of extended attribute');
+        });
+
+        test('still refuses sub-fields of a plain attribute', async () => {
+            await expect(
+                getAttributeByPath({
+                    libraryId: libSource,
+                    attributePath: `${SIMPLE_ATTR}.something`,
+                    allowSubFields: true,
+                    ctx,
+                }),
+            ).rejects.toThrow('is not a link, tree, extended or date range attribute');
+        });
+
+        test.each([DATE_RANGE_ATTR, EXTENDED_ATTR])(
+            'refuses a sub-field path on "%s" when the option is off (default)',
+            async attributeId => {
+                await expect(
+                    getAttributeByPath({libraryId: libSource, attributePath: `${attributeId}.from`, ctx}),
+                ).rejects.toThrow('is not a link or tree attribute');
+            },
+        );
     });
 });
