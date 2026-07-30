@@ -21,7 +21,11 @@ import {FullscreenAlert} from './content/FullscreenAlert';
 import {useFullscreen} from '../../hooks/useFullscreen';
 import {firstPanel, firstPanelContent, fullscreenPanel, panel, panelContent, panelHeader} from './panel.module.css';
 
-export const Panel: FunctionComponent = () => {
+type PanelProps = {
+    sliderVoletHostElement?: HTMLElement | null;
+};
+
+export const Panel: FunctionComponent<PanelProps> = ({sliderVoletHostElement = null}) => {
     const [modalExtraRightElement, setModalExtraRightElement] = useState<HTMLElement>();
     const [application] = useApplicationSettingsContext();
     const {
@@ -54,18 +58,16 @@ export const Panel: FunctionComponent = () => {
     const isTreeExplorerPanel = currentPanel.type === 'treeExplorer';
 
     const isViewSettingsVoletActive = getIsViewSettingsVoletActive(currentPanel);
-    const viewSettingsContainerComponent = modalExtraRightElement ? (
-        createPortal(<ViewSettingsContainer />, modalExtraRightElement)
-    ) : (
-        <ViewSettingsContainer />
-    );
 
-    // The view settings volet is a floating overlay: it never shifts the panel content and is
-    // only shown while its explorer is in the foreground. A flap is an auxiliary panel over the SAME
-    // explorer, so it does not hide the volet (the volet floats on top of it). It is never shown when
-    // the explorer itself is displayed in a `slider`.
+    // The view settings volet is a floating overlay: it never shifts the panel content and is only shown
+    // while its explorer is in the foreground. A flap is an auxiliary panel over the SAME explorer, so it
+    // does not hide the volet (the volet floats on top of it).
+    // In a `slider` the volet is portaled into the host zone `PanelContainer` renders next to the
+    // KitSidePanel (LEAVC-1089): rendering it inline would drop it inside the slider's scrollable content,
+    // where it would be clipped. Until that host is published we render nothing rather than fall back
+    // inline.
     const hasNextLevelPanel = NextLevelRoutes !== null;
-    const isForegroundPanel = !isPanelInSlider && !hasNextLevelPanel;
+    const canRenderViewSettings = !hasNextLevelPanel && (!isPanelInSlider || sliderVoletHostElement !== null);
 
     const isPanelFullscreen = fullscreenPanelId === currentPanel?.id;
     // Should this panel show its own fullscreen toggle? It depends on how the next-level panel opened.
@@ -109,6 +111,13 @@ export const Panel: FunctionComponent = () => {
             setModalExtraRightElement(undefined);
         }
     }, [needsModalExtraRightPortal, recordPanelId]);
+
+    const viewSettingsHostElement = isPanelInSlider ? sliderVoletHostElement : modalExtraRightElement;
+    const viewSettingsContainerComponent = viewSettingsHostElement ? (
+        createPortal(<ViewSettingsContainer />, viewSettingsHostElement)
+    ) : (
+        <ViewSettingsContainer />
+    );
 
     const setFlapRef = useCallback(
         (flapRef: KitSidePanelRef | null) => {
@@ -177,7 +186,7 @@ export const Panel: FunctionComponent = () => {
                 slider/popup opened over the panel. */}
             {showFullscreenButton && <FullscreenToggleButton panelId={currentPanel.id} />}
             {hasFlapPanel && flapContainerComponent}
-            {isViewSettingsVoletActive && isForegroundPanel && viewSettingsContainerComponent}
+            {isViewSettingsVoletActive && canRenderViewSettings && viewSettingsContainerComponent}
         </>
     );
 

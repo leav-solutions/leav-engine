@@ -145,8 +145,8 @@ Définissent comment s'ouvre un record. Un seul `onRowClick: true` par explorate
 Étend un panneau à tout l'écran. À ne pas confondre avec les modes d'affichage ci-dessus, qui sont figés dans la config JSON.
 
 - **Bouton** `FullscreenToggleButton` (`header/action-button/`) affiché dans l'en-tête des panneaux
-  **au premier plan** (`isForegroundPanel = !isPanelInSlider && !hasNextLevelPanel`) ou déjà en plein
-  écran. Câblage dans [`Panel.tsx`](src/modules/ApplicationRouting/Panel.tsx).
+  selon `showFullscreenButton` (déjà en plein écran, ou aucun panneau en plein écran et pas de
+  remplacement par un panneau `fullpage`). Câblage dans [`Panel.tsx`](src/modules/ApplicationRouting/Panel.tsx).
 - **Plein écran « CSS », pas l'API Fullscreen native.** L'API native place uniquement le sous-arbre
   dans le top layer → les portails montés sur `document.body` (dropdowns/tooltips/modales du design
   system, portails de l'Explorer) deviennent invisibles/non cliquables. On bascule donc une classe
@@ -205,6 +205,12 @@ Système de configuration de vues (épic LEAVC-762), derrière le **feature flag
   (l'app custom seule connaît ses params de route), et non lue dans une config statique.
   La vue porte alors une **`origin`** (= panelId, `null` pour l'explorer) qui **scope le catalogue** par
   kind. Détails dans `panel-view-settings/CLAUDE.md` (§ Panels custom & origine).
+- **Volet accessible en `slider`** (LEAVC-1089). `PanelContainer` rend une div hôte, sœur DOM du
+  `KitSidePanel` du slider, passée à `Panel` via un render-prop (`children(sliderVoletHostElement)`,
+  `Panel` étant le seul enfant de `PanelContainer`) ; `Panel` y portale le volet au lieu de le rendre
+  inline (sinon il serait clippé par le contenu scrollable du slider). Le volet **recouvre** toujours
+  le slider (comme en popup/fullpage), **quel que soit le niveau** — décision produit : pas de
+  décalage du slider, même au 1er niveau. Voir ADR-006 (§ Positioning) pour le détail.
 
 > 📖 Détails (architecture d'état, onglets, distinction admin/utilisateur, tris) :
 > [`panel-view-settings/CLAUDE.md`](src/modules/ApplicationRouting/content/panel-view-settings/CLAUDE.md).

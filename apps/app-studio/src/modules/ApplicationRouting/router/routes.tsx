@@ -78,9 +78,7 @@ export const getNextLevelRoutes = (): RouteObject[] => {
                 <RedirectToPreviousPanel>
                     <RedirectToFirstRecordPanelAllowedInCompactMode>
                         <RedirectCreationFormPanelToPopup>
-                            <PanelContainer>
-                                <Panel />
-                            </PanelContainer>
+                            <PanelContainer>{children => <Panel sliderVoletHostElement={children} />}</PanelContainer>
                         </RedirectCreationFormPanelToPopup>
                     </RedirectToFirstRecordPanelAllowedInCompactMode>
                 </RedirectToPreviousPanel>
