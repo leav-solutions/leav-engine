@@ -111,57 +111,6 @@ exports[`AttributeTreeRepo > getValueByID > Should return value 2`] = `
 }
 `;
 
-exports[`AttributeTreeRepo > getValues > Should return all values if forced 1`] = `
-"FOR vertex, edge IN 1 OUTBOUND @value0
-                    @@value1, @@value2
-                    LET record = DOCUMENT(
-                        vertex.libraryId,
-                        vertex.recordId
-                    )
-                    FILTER edge.attribute == @value3
-                 
-                
-                RETURN {id: vertex._key, record, edge}
-            "
-`;
-
-exports[`AttributeTreeRepo > getValues > Should return linked tree element 1`] = `
-"FOR vertex, edge IN 1 OUTBOUND @value0
-                    @@value1, @@value2
-                    LET record = DOCUMENT(
-                        vertex.libraryId,
-                        vertex.recordId
-                    )
-                    FILTER edge.attribute == @value3
-                 FILTER edge.version == null 
-                
-                RETURN {id: vertex._key, record, edge}
-            "
-`;
-
-exports[`AttributeTreeRepo > getValues > Should return linked tree element 2`] = `
-{
-  "@value1": "core_edge_values_links",
-  "@value2": "core_edge_tree_test_tree",
-  "value0": "test_lib/123456",
-  "value3": "test_tree_attr",
-}
-`;
-
-exports[`AttributeTreeRepo > getValues > Should return linked tree element filtered by version 1`] = `
-"FOR vertex, edge IN 1 OUTBOUND @value0
-                    @@value1, @@value2
-                    LET record = DOCUMENT(
-                        vertex.libraryId,
-                        vertex.recordId
-                    )
-                    FILTER edge.attribute == @value3
-                 FILTER edge.version == @value4 
-                SORT edge.created_at DESC, edge._key DESC LIMIT 1
-                RETURN {id: vertex._key, record, edge}
-            "
-`;
-
 exports[`AttributeTreeRepo > sortQueryPart > Should return tree filter 1`] = `
 {
   "_source": [Function],

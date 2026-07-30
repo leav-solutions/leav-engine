@@ -125,27 +125,6 @@ export interface IAttributeTypeRepo<
     }): Promise<boolean>;
 
     /**
-     * Get all values for given record and attribute
-     *
-     * @return Array<{}>    Return an empty array if no value found
-     */
-    getValues({
-        library,
-        recordId,
-        attribute,
-        forceGetAllValues,
-        options,
-        ctx,
-    }: {
-        library: string;
-        recordId: string;
-        attribute: IAttributeWithRevLink;
-        forceGetAllValues?: boolean;
-        options?: IGetValuesOptions;
-        ctx: IQueryInfos;
-    }): Promise<Value[]>;
-
-    /**
      * Get all values for given records and attribute
      *
      * @return Array<{}>    Return an empty array if no value found for each record
@@ -163,21 +142,6 @@ export interface IAttributeTypeRepo<
         options?: IGetValuesOptions;
         ctx: IQueryInfos;
     }): Promise<Value[][]>;
-
-    /**
-     * Get all reverse values for given attribute / value
-     *
-     * @return Array<{}>    Return an empty array if no value found
-     */
-    getReverseValues?({
-        advancedLinkAttr,
-        ctx,
-    }: {
-        advancedLinkAttr: IAttributeWithRevLink;
-        value: string;
-        forceGetAllValues: boolean;
-        ctx: IQueryInfos;
-    }): Promise<Value[]>;
 
     /**
      * Get all reverse values for given attribute / values

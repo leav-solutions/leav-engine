@@ -179,43 +179,6 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
             });
 
-            describe('getValues', () => {
-                test('Should return values for a record', async () => {
-                    const values = await attributeAdvancedLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedLinkMonoAttribute,
-                        recordId: record1.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([record1Value]);
-                });
-
-                test('Should return empty array not existing record', async () => {
-                    const values = await attributeAdvancedLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedLinkMonoAttribute,
-                        recordId: 'no-exists',
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-
-                test('Should return empty array record without attribute', async () => {
-                    const record3WithoutAttr = await createRecord({});
-
-                    const values = await attributeAdvancedLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedLinkMonoAttribute,
-                        recordId: record3WithoutAttr.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-            });
-
             describe('listDistinctValues', () => {
                 let record3WithoutAttr: IRecord;
                 let record4WithLink1: IRecord;
@@ -342,45 +305,6 @@ describe('attributeAdvancedLinkRepo', () => {
                         ]);
                         expect(values[0]).toHaveLength(2);
                         expect(values[1]).toHaveLength(2);
-                    });
-                });
-
-                describe('getValues', () => {
-                    test('Should return values of a record for null version', async () => {
-                        const values = await attributeAdvancedLinkRepo.getValues({
-                            library: libraryId,
-                            attribute: advancedLinkMonoAttribute,
-                            recordId: record1.id,
-                            options: {version: null},
-                            ctx,
-                        });
-
-                        expect(values).toEqual([record1Value]);
-                    });
-
-                    test('Should return values of a record for a specified version', async () => {
-                        const values = await attributeAdvancedLinkRepo.getValues({
-                            library: libraryId,
-                            attribute: advancedLinkMonoAttribute,
-                            recordId: record1.id,
-                            options: {version: version1},
-                            ctx,
-                        });
-
-                        expect(values).toEqual([record1ValueV1]);
-                    });
-
-                    test('Should return all values of a record when use forceGetAllValues option', async () => {
-                        const values = await attributeAdvancedLinkRepo.getValues({
-                            library: libraryId,
-                            attribute: advancedLinkMonoAttribute,
-                            recordId: record1.id,
-                            forceGetAllValues: true,
-                            ctx,
-                        });
-
-                        expect(values).toEqual(expect.arrayContaining([record1Value, record1ValueV1]));
-                        expect(values).toHaveLength(2);
                     });
                 });
 
@@ -526,44 +450,6 @@ describe('attributeAdvancedLinkRepo', () => {
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
-                });
-            });
-
-            describe('getValues', () => {
-                test('Should return values for a record', async () => {
-                    const values = await attributeAdvancedLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedLinkMultiAttribute,
-                        recordId: record1.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
-                    expect(values).toHaveLength(2);
-                });
-
-                test('Should return empty array not existing record', async () => {
-                    const values = await attributeAdvancedLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedLinkMultiAttribute,
-                        recordId: 'no-exists',
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-
-                test('Should return empty array record without attribute', async () => {
-                    const record3WithoutAttr = await createRecord({});
-
-                    const values = await attributeAdvancedLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedLinkMultiAttribute,
-                        recordId: record3WithoutAttr.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
                 });
             });
 
@@ -719,46 +605,6 @@ describe('attributeAdvancedLinkRepo', () => {
                         expect(values[1]).toHaveLength(3);
                     });
                 });
-
-                describe('getValues', () => {
-                    test('Should return values of a record for null version', async () => {
-                        const values = await attributeAdvancedLinkRepo.getValues({
-                            library: libraryId,
-                            attribute: advancedLinkMultiAttribute,
-                            recordId: record1.id,
-                            options: {version: null},
-                            ctx,
-                        });
-
-                        expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
-                        expect(values).toHaveLength(2);
-                    });
-
-                    test('Should return values of a record for a specified version', async () => {
-                        const values = await attributeAdvancedLinkRepo.getValues({
-                            library: libraryId,
-                            attribute: advancedLinkMultiAttribute,
-                            recordId: record1.id,
-                            options: {version: version1},
-                            ctx,
-                        });
-
-                        expect(values).toEqual([record1ValueV1]);
-                    });
-
-                    test('Should return all values of a record when use forceGetAllValues option', async () => {
-                        const values = await attributeAdvancedLinkRepo.getValues({
-                            library: libraryId,
-                            attribute: advancedLinkMultiAttribute,
-                            recordId: record1.id,
-                            forceGetAllValues: true,
-                            ctx,
-                        });
-
-                        expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2, record1ValueV1]));
-                        expect(values).toHaveLength(3);
-                    });
-                });
             });
         });
 
@@ -884,44 +730,6 @@ describe('attributeAdvancedLinkRepo', () => {
                 });
             });
 
-            describe('getValues', () => {
-                test('Should return values for a record', async () => {
-                    const values = await attributeAdvancedLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedLinkReverseAttribute,
-                        recordId: record1.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
-                    expect(values).toHaveLength(2);
-                });
-
-                test('Should return empty array not existing record', async () => {
-                    const values = await attributeAdvancedLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedLinkReverseAttribute,
-                        recordId: 'no-exists',
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-
-                test('Should return empty array record without attribute', async () => {
-                    const record3WithoutAttr = await createRecord({});
-
-                    const values = await attributeAdvancedLinkRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedLinkReverseAttribute,
-                        recordId: record3WithoutAttr.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-            });
-
             describe('listDistinctValues', () => {
                 let record3WithoutAttr: IRecord;
                 let record4WithoutAttr: IRecord;
@@ -1005,14 +813,14 @@ describe('attributeAdvancedLinkRepo', () => {
                     ctx,
                 });
 
-                const values = await attributeAdvancedLinkRepo.getValues({
+                const values = await attributeAdvancedLinkRepo.getValuesBatch({
                     library: libraryId,
                     attribute: advancedLinkMultiAttribute,
-                    recordId: record.id,
+                    recordIds: [record.id],
                     ctx,
                 });
 
-                expect(values).toEqual([value2]);
+                expect(values[0]).toEqual([value2]);
             });
         });
     });

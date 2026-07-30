@@ -71,22 +71,6 @@ exports[`AttributeSimpleRepo > filterValueQueryPart > Should query to retrieve v
 }
 `;
 
-exports[`AttributeSimpleRepo > getValues > Should return values for index attribute 1`] = `
-"
-                FOR r IN @@value0
-                    FILTER r._key == @value1
-                    RETURN r.@value2
-            "
-`;
-
-exports[`AttributeSimpleRepo > getValues > Should return values for index attribute 2`] = `
-{
-  "@value0": "test_lib",
-  "value1": "123456",
-  "value2": "test_attr",
-}
-`;
-
 exports[`AttributeSimpleRepo > sortQueryPart > Should return simple sort 1`] = `
 {
   "_source": [Function],

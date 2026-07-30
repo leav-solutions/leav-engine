@@ -179,7 +179,6 @@ export default function ({
     };
 
     const enableGetValueDataLoadersCache = config?.dataLoaders.valueRepo.getValues.enableCache ?? false;
-    const useBatchGetValueDataLoaders = config?.dataLoaders.valueRepo.getValues.useBatch ?? true;
     const maxBatchSizeGetValueDataLoaders = config?.dataLoaders.valueRepo.getValues.maxBatchSize;
     const getValuesDataLoader = (
         libraryId: string,
@@ -195,26 +194,13 @@ export default function ({
                 new DataLoader<string, IValue[]>(
                     async (recordIds: readonly string[]) => {
                         const typeRepo = attributeTypesRepo.getTypeRepo(attribute);
-                        return useBatchGetValueDataLoaders
-                            ? typeRepo.getValuesBatch({
-                                  library: libraryId,
-                                  attribute,
-                                  recordIds: recordIds as string[],
-                                  options,
-                                  ctx,
-                              })
-                            : Promise.all(
-                                  recordIds.map(recordId =>
-                                      typeRepo.getValues({
-                                          library: libraryId,
-                                          recordId,
-                                          attribute,
-                                          forceGetAllValues: options.forceGetAllValues,
-                                          options,
-                                          ctx,
-                                      }),
-                                  ),
-                              );
+                        return typeRepo.getValuesBatch({
+                            library: libraryId,
+                            attribute,
+                            recordIds: recordIds as string[],
+                            options,
+                            ctx,
+                        });
                     },
                     {
                         cache: enableGetValueDataLoadersCache,

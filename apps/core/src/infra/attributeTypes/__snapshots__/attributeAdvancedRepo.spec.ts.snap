@@ -83,50 +83,6 @@ exports[`AttributeStandardRepo > filterValueQueryPart > Should return queyr to r
 }
 `;
 
-exports[`AttributeStandardRepo > getValues > Should return all values if forced 1`] = `
-"
-                FOR value, edge
-                IN 1 OUTBOUND @value0
-                @@value1
-                FILTER edge.attribute == @value2
-                 
-                
-                RETURN {value, edge}
-            "
-`;
-
-exports[`AttributeStandardRepo > getValues > Should return values filtered by version 1`] = `
-"
-                FOR value, edge
-                IN 1 OUTBOUND @value0
-                @@value1
-                FILTER edge.attribute == @value2
-                 FILTER edge.version == @value3 
-                SORT edge.created_at DESC, edge._key DESC LIMIT 1
-                RETURN {value, edge}
-            "
-`;
-
-exports[`AttributeStandardRepo > getValues > Should return values for advanced attribute 1`] = `
-"
-                FOR value, edge
-                IN 1 OUTBOUND @value0
-                @@value1
-                FILTER edge.attribute == @value2
-                 FILTER edge.version == null 
-                
-                RETURN {value, edge}
-            "
-`;
-
-exports[`AttributeStandardRepo > getValues > Should return values for advanced attribute 2`] = `
-{
-  "@value1": "core_edge_values_links",
-  "value0": "test_lib/123456",
-  "value2": "test_attr",
-}
-`;
-
 exports[`AttributeStandardRepo > sortQueryPart > Should return advanced filter 1`] = `
 {
   "_source": [Function],

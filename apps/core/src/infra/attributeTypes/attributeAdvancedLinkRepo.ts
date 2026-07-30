@@ -250,61 +250,6 @@ export default function ({
                 !!attribute.reverse_link,
             );
         },
-        async getValues({
-            library,
-            recordId,
-            attribute,
-            forceGetAllValues = false,
-            options,
-            ctx,
-        }): Promise<ILinkValue[]> {
-            // If reverse_link is a simple link we call attributeSimpleLinkRepo instead.
-            if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
-                return attributeSimpleLinkRepo.getReverseValues({
-                    advancedLinkAttr: attribute,
-                    value: recordId,
-                    forceGetAllValues,
-                    ctx,
-                });
-            }
-            const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
-            const queryParts = [];
-
-            const edgeAttribute = attribute.reverse_link ? (attribute.reverse_link as IAttribute).id : attribute.id;
-            const direction = attribute.reverse_link ? aql`INBOUND` : aql`OUTBOUND`;
-
-            queryParts.push(aql`
-                FOR linkedRecord, edge
-                    IN 1 ${direction} ${library + '/' + recordId}
-                    ${edgeCollec}
-                    FILTER edge.attribute == ${edgeAttribute}
-                `);
-
-            if (!forceGetAllValues) {
-                if (options?.version) {
-                    queryParts.push(aql`FILTER edge.version == ${options.version}`);
-                } else {
-                    queryParts.push(aql`FILTER edge.version == null`);
-                }
-            }
-
-            const sortAndLimit = literal(
-                !attribute.multiple_values && !forceGetAllValues
-                    ? 'SORT edge.created_at DESC, edge._key DESC LIMIT 1'
-                    : '',
-            );
-
-            queryParts.push(aql`
-                ${sortAndLimit}
-                RETURN {linkedRecord, edge}
-            `);
-
-            const query = join(queryParts);
-
-            const res = await dbService.execute({query, ctx});
-
-            return res.map(r => _buildLinkValue(r.linkedRecord, r.edge, !!attribute.reverse_link));
-        },
         async getValuesBatch({library, recordIds, attribute, options, ctx}): Promise<ILinkValue[][]> {
             if ((attribute.reverse_link as IAttribute)?.type === AttributeTypes.SIMPLE_LINK) {
                 const results = await attributeSimpleLinkRepo.getReverseValuesBatch({

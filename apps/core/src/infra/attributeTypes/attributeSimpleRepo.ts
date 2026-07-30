@@ -103,18 +103,6 @@ export default function ({
 
             return res.length > 0;
         },
-        async getValues({library, recordId, attribute, ctx}): Promise<IStandardValue[]> {
-            const query = aql`
-                FOR r IN ${dbService.db.collection(library)}
-                    FILTER r._key == ${String(recordId)}
-                    RETURN r.${attribute.id}
-            `;
-            const res = await dbService.execute({query, ctx});
-
-            return res[0] !== null && res[0] !== undefined
-                ? [{payload: res[0], attribute: attribute.id, modified_by: null, created_by: null}]
-                : [];
-        },
         async getValuesBatch({library, recordIds, attribute, ctx}): Promise<IStandardValue[][]> {
             const coll = dbService.db.collection(library);
             const query = aql`

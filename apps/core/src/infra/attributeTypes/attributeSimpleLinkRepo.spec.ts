@@ -26,7 +26,6 @@ describe('AttributeSimpleLinkRepo', () => {
         updateValue: null,
         deleteValue: null,
         getValueById: null,
-        getValues: null,
         sortQueryPart: null,
         clearAllValues: null,
     };
@@ -143,71 +142,6 @@ describe('AttributeSimpleLinkRepo', () => {
                 payload: {
                     id: 'old_value_record_id',
                     library: 'test_linked_lib',
-                },
-            });
-        });
-    });
-
-    describe('getValues', () => {
-        test('Should return values for simple link attribute', async function () {
-            const queryRes = [
-                {
-                    _key: '987654',
-                    _id: 'images/987654',
-                    _rev: '_WgJhrXO--_',
-                    created_at: 1521475225,
-                    modified_at: 1521475225,
-                },
-                {
-                    _key: '987655',
-                    _id: 'images/987655',
-                    _rev: '_WgJhrXO--_',
-                    created_at: 1521475225,
-                    modified_at: 1521475225,
-                },
-            ];
-
-            const mockDbServ = {
-                db: new Database(),
-                execute: global.__mockPromise(queryRes),
-            };
-
-            const mockCleanupRes = vi.fn().mockReturnValue({
-                id: 987654,
-                created_at: 1521475225,
-                modified_at: 1521475225,
-            });
-
-            const mockDbUtils: Mockify<IDbUtils> = {
-                cleanup: mockCleanupRes,
-            };
-
-            const attrRepo = attributeSimpleLinkRepo({
-                'core.infra.db.dbService': mockDbServ,
-                'core.infra.db.dbUtils': mockDbUtils as IDbUtils,
-            });
-
-            const values = await attrRepo.getValues({
-                library: 'test_lib',
-                recordId: '123456',
-                attribute: mockAttribute,
-                ctx,
-            });
-
-            expect(mockDbServ.execute.mock.calls.length).toBe(1);
-            expect(typeof mockDbServ.execute.mock.calls[0][0]).toBe('object'); // AqlQuery
-            expect(mockDbServ.execute.mock.calls[0][0].query).toMatchSnapshot();
-            expect(mockDbServ.execute.mock.calls[0][0].bindVars).toMatchSnapshot();
-            expect(mockDbUtils.cleanup.mock.calls.length).toBe(1);
-
-            expect(values.length).toBe(1);
-
-            expect(values[0]).toMatchObject({
-                id_value: null,
-                payload: {
-                    id: 987654,
-                    created_at: 1521475225,
-                    modified_at: 1521475225,
                 },
             });
         });

@@ -141,43 +141,6 @@ describe('attributeAdvancedRepo', () => {
 
                 expect(values).toEqual([[record1Value], [record2Value], []]);
             });
-
-            describe('getValues', () => {
-                test('Should return values for a record', async () => {
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMonoAttribute,
-                        recordId: record1.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([record1Value]);
-                });
-
-                test('Should return empty array not existing record', async () => {
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMonoAttribute,
-                        recordId: 'no-exists',
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-
-                test('Should return empty array record without attribute', async () => {
-                    const record3WithoutAttr = await createRecord({});
-
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMonoAttribute,
-                        recordId: record3WithoutAttr.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-            });
         });
 
         describe('listDistinctValues', () => {
@@ -297,45 +260,6 @@ describe('attributeAdvancedRepo', () => {
                     ]);
                     expect(values[0]).toHaveLength(2);
                     expect(values[1]).toHaveLength(2);
-                });
-            });
-
-            describe('getValues', () => {
-                test('Should return values of a record for null version', async () => {
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMonoAttribute,
-                        recordId: record1.id,
-                        options: {version: null},
-                        ctx,
-                    });
-
-                    expect(values).toEqual([record1Value]);
-                });
-
-                test('Should return values of a record for a specified version', async () => {
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMonoAttribute,
-                        recordId: record1.id,
-                        options: {version: version1},
-                        ctx,
-                    });
-
-                    expect(values).toEqual([record1ValueV1]);
-                });
-
-                test('Should return all values of a record when use forceGetAllValues option', async () => {
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMonoAttribute,
-                        recordId: record1.id,
-                        forceGetAllValues: true,
-                        ctx,
-                    });
-
-                    expect(values).toEqual(expect.arrayContaining([record1Value, record1ValueV1]));
-                    expect(values).toHaveLength(2);
                 });
             });
 
@@ -521,44 +445,6 @@ describe('attributeAdvancedRepo', () => {
                 expect(values[0]).toHaveLength(2);
                 expect(values[1]).toHaveLength(2);
             });
-
-            describe('getValues', () => {
-                test('Should return values for a record', async () => {
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMultiAttribute,
-                        recordId: record1.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
-                    expect(values).toHaveLength(2);
-                });
-
-                test('Should return empty array not existing record', async () => {
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMultiAttribute,
-                        recordId: 'no-exists',
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-
-                test('Should return empty array record without attribute', async () => {
-                    const record3WithoutAttr = await createRecord({});
-
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMultiAttribute,
-                        recordId: record3WithoutAttr.id,
-                        ctx,
-                    });
-
-                    expect(values).toEqual([]);
-                });
-            });
         });
 
         describe('listDistinctValues', () => {
@@ -690,46 +576,6 @@ describe('attributeAdvancedRepo', () => {
                     ]);
                     expect(values[0]).toHaveLength(3);
                     expect(values[1]).toHaveLength(3);
-                });
-            });
-
-            describe('getValues', () => {
-                test('Should return values for a record for null version', async () => {
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMultiAttribute,
-                        recordId: record1.id,
-                        options: {version: null},
-                        ctx,
-                    });
-
-                    expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2]));
-                    expect(values).toHaveLength(2);
-                });
-
-                test('Should return values array record for specified version', async () => {
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMultiAttribute,
-                        recordId: record1.id,
-                        options: {version: version1},
-                        ctx,
-                    });
-
-                    expect(values).toEqual([record1ValueV1]);
-                });
-
-                test('Should return all values array record when use forceGetAllValues option', async () => {
-                    const values = await attributeAdvancedRepo.getValues({
-                        library: libraryId,
-                        attribute: advancedTextMultiAttribute,
-                        recordId: record1.id,
-                        forceGetAllValues: true,
-                        ctx,
-                    });
-
-                    expect(values).toEqual(expect.arrayContaining([record1Value1, record1Value2, record1ValueV1]));
-                    expect(values).toHaveLength(3);
                 });
             });
 
@@ -880,14 +726,14 @@ describe('attributeAdvancedRepo', () => {
                         ctx,
                     });
 
-                    const values = await attributeAdvancedRepo.getValues({
+                    const values = await attributeAdvancedRepo.getValuesBatch({
                         library: libraryId,
                         attribute: advancedTextMultiAttribute,
-                        recordId: record3.id,
+                        recordIds: [record3.id],
                         ctx,
                     });
 
-                    expect(values).toEqual([record3Value2]);
+                    expect(values[0]).toEqual([record3Value2]);
                 });
             });
         });
