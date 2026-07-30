@@ -33,6 +33,7 @@ export default function ({config, 'core.utils.logger': logger = null}: IDeps): I
     return {
         createExpressHandler(initContext) {
             return createExpressMiddleware({
+                allowMethodOverride: true,
                 router: t.mergeRouters(...trpcRouters),
                 createContext: opts =>
                     initContext(opts).catch(() => {
