@@ -24,6 +24,16 @@ Accepted
 > **native** React (messenger wiring for iframes deferred, but the lean contract is message-ready). Closes
 > the "User filters in the volet" open point.
 
+> **Revision 30/07/2026 (LEAVC-1089) — volet reachable in `slider`.** The volet used to be gated out of
+> `slider` entirely (`isForegroundPanel = !isPanelInSlider && !hasNextLevelPanel`), so a linked explorer
+> opened in a `recordPanel` slider had no way to reach view settings. Fixed by giving the slider its own
+> host zone instead of excluding it: `PanelContainer` renders an unstyled sibling div next to the
+> slider's `KitSidePanel` and passes its ref down to `Panel` as a render-prop argument (`Panel` is
+> `PanelContainer`'s only child, so a prop is enough — no context needed); `Panel` portals the volet
+> there instead of rendering it inline. The render gate is now `!hasChildPanel` (a flap is not a
+> child panel), plus — in `slider` only — waiting for that host to be published. See the updated
+> _Consequences_ below (render gate and _Positioning_).
+
 ## Context
 
 Currently, when a user lands on an Explorer in a business app (e.g. Campaigns Manager), a view
@@ -184,8 +194,10 @@ choice — see open points (injectable sub-panels are out of scope for this vers
   **not** a separate routable panel type and is not rendered inside `PanelContent`.
 - `ViewSettingsContainer` (wrapping `PanelViewSettings`) is rendered by `Panel` when the resolved
   `explorer` panel has `isViewSettingsActive === true` **and** the panel is in the foreground
-  (`!hasChildPanel && !isPanelInSlider`). Opening a child panel (a record in a `popup`, `slider` or
-  `fullpage` — a deeper route match) **closes the volet for good**: `Panel` resets that panel's
+  (`!hasChildPanel`) — in a `slider`, additionally gated on the host zone `PanelContainer` publishes
+  next to the `KitSidePanel` being available (LEAVC-1089; see _Positioning_ below). Opening a child
+  panel (a record in a `popup`, `slider` or `fullpage` — a deeper route match) **closes the volet for
+  good**: `Panel` resets that panel's
   view-settings state in the application context, rather than only hiding it. This keeps the volet
   strictly scoped to the foreground explorer — no stale volet showing another library, no zombie
   state reappearing when the child closes; re-opening is explicit. A `flap` is not a child panel and
@@ -196,10 +208,18 @@ choice — see open points (injectable sub-panels are out of scope for this vers
   hook, which uses `useLayoutEffect` (not `useEffect`): the reset runs after DOM mutations but
   before the browser paints, so when a flap opens over an active volet the volet is removed from the
   shared `extraRight` portal before the two can flash on the same frame.
-- Positioning: the volet is a **floating** `KitSidePanel` (hover overlay) — it never shifts the panel
-  content. When the explorer is hosted in a `popup`/`fullpage` modal it is portaled into the modal's
-  `extraRight` zone so it overlays within the modal; at the first navigation level it renders inline.
-  When a `flap` is also open, both are shown and the volet floats on top of the (docked) flap.
+- Positioning: the volet is a **floating** `KitSidePanel` (hover overlay). When the explorer is hosted
+  in a `popup`/`fullpage` modal it is portaled into the modal's `extraRight` zone so it overlays within
+  the modal; at the first navigation level it renders inline. When a `flap` is also open, both are
+  shown and the volet floats on top of the (docked) flap.
+  In a `slider` (LEAVC-1089) `PanelContainer` renders an unstyled host div as a DOM sibling of the
+  slider's `KitSidePanel` and passes it down to `Panel` as a render-prop argument (`Panel` is
+  `PanelContainer`'s only child); `Panel` portals the volet there. The host has no `position` of its
+  own, so the volet's absolutely-positioned section anchors
+  on the same positioned ancestor as the slider and lands at the same `right: 0` spot — it simply
+  **overlays** the slider, same as the popup/fullpage case above, **at every navigation level**
+  (a product decision: the slider is never shifted aside, even at the first level, so the volet
+  behaves identically regardless of where the slider was opened from).
 - The single `currentView` prop + the app-studio-owned `CurrentViewStoreProvider` are foundational
   — nothing else in this EPIC can be built without them. ExplorerV2 no longer loads any view by
   itself; data queries skip until `currentView` arrives.

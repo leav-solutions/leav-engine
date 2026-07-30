@@ -1,4 +1,4 @@
-import {type FunctionComponent, type PropsWithChildren, useCallback, useEffect, useRef, useState} from 'react';
+import {type FunctionComponent, type ReactNode, useCallback, useEffect, useRef, useState} from 'react';
 import {useMatch, useNavigate, useParams} from 'react-router-dom';
 import cn from 'classnames';
 import {Explorer, SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
@@ -20,6 +20,7 @@ import {
     fullpageOverlay,
     modalExtraRightPortal,
     modalExtraRightPortalWithFlap,
+    sliderVoletHost,
 } from './panelContainer.module.css';
 import {WORKSPACE_PANEL_CONTAINER_ID, MODAL_EXTRA_RIGHT_PORTAL_ID} from '../../constants';
 import {createPortal} from 'react-dom';
@@ -28,8 +29,13 @@ import {consumePanelCloseCallback} from './utils/panelCloseCallbacks';
 
 const MODAL_FULLSCREEN_INDEX = 998;
 
-export const PanelContainer: FunctionComponent<PropsWithChildren> = ({children}) => {
+type PanelContainerProps = {
+    children: (sliderVoletHostElement: HTMLElement | null) => ReactNode;
+};
+
+export const PanelContainer: FunctionComponent<PanelContainerProps> = ({children}) => {
     const [modalExtraRightElement, setModalExtraRightElement] = useState<HTMLElement>();
+    const [sliderVoletHostElement, setSliderVoletHostElement] = useState<HTMLElement | null>(null);
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
         useParams();
@@ -154,7 +160,7 @@ export const PanelContainer: FunctionComponent<PropsWithChildren> = ({children})
             >
                 <div className={popupContent} ref={explorerContainerRef}>
                     <Explorer.EditSettingsContextProvider panelElement={() => explorerContainerRef.current}>
-                        {children}
+                        {children(null)}
                     </Explorer.EditSettingsContextProvider>
                 </div>
             </KitModal>
@@ -164,38 +170,43 @@ export const PanelContainer: FunctionComponent<PropsWithChildren> = ({children})
     if (isPanelInSlider) {
         const isSelfContainingPanel = currentPanel.type === 'custom' && currentPanel.isSelfContaining;
 
-        const sliderPanelComponent = isSelfContainingPanel ? (
-            <KitSidePanel
-                className={selfContainingPanel}
-                ref={setPanelRef}
-                size="l"
-                onCloseAfterAnimation={closeContainer}
-                floating
-                useChildrenOnly
-                closeOnEsc
-            >
-                {children}
-            </KitSidePanel>
-        ) : (
-            <KitSidePanel
-                className={sliderPanel}
-                ref={setPanelRef}
-                size="l"
-                headerExtra={
-                    <PanelHeader
-                        actionPosition="right"
-                        hidePanelTabs
-                        hidePanelDisplayModeSelector={isCreationFormPanel}
-                    />
-                }
-                onCloseAfterAnimation={closeContainer}
-                floating
-                closable
-                showSeparator
-                closeOnEsc
-            >
-                {children}
-            </KitSidePanel>
+        const sliderPanelComponent = (
+            <>
+                {isSelfContainingPanel ? (
+                    <KitSidePanel
+                        className={selfContainingPanel}
+                        ref={setPanelRef}
+                        size="l"
+                        onCloseAfterAnimation={closeContainer}
+                        floating
+                        useChildrenOnly
+                        closeOnEsc
+                    >
+                        {children(sliderVoletHostElement)}
+                    </KitSidePanel>
+                ) : (
+                    <KitSidePanel
+                        className={sliderPanel}
+                        ref={setPanelRef}
+                        size="l"
+                        headerExtra={
+                            <PanelHeader
+                                actionPosition="right"
+                                hidePanelTabs
+                                hidePanelDisplayModeSelector={isCreationFormPanel}
+                            />
+                        }
+                        onCloseAfterAnimation={closeContainer}
+                        floating
+                        closable
+                        showSeparator
+                        closeOnEsc
+                    >
+                        {children(sliderVoletHostElement)}
+                    </KitSidePanel>
+                )}
+                <div ref={setSliderVoletHostElement} className={sliderVoletHost} />
+            </>
         );
 
         if (modalExtraRightElement) {

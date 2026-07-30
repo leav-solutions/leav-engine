@@ -140,4 +140,33 @@ describe('useViewSettingsAutoClose', () => {
 
         expect(mockSetApplication).toHaveBeenCalled();
     });
+
+    describe('in a slider', () => {
+        it('should not reset the volet when active in a slider with no next-level panel nor flap', () => {
+            spyUseParams.mockReturnValue({panelId: 'p', recordPanelId, where: 'slider'});
+
+            renderHook(() => useViewSettingsAutoClose(false));
+
+            expect(mockSetApplication).not.toHaveBeenCalled();
+        });
+
+        it('should reset the volet when a flap opens over it in a slider', () => {
+            spyUseParams.mockReturnValue({panelId: 'p', recordPanelId, where: 'slider'});
+            const {rerender} = renderHook(() => useViewSettingsAutoClose(false));
+            expect(mockSetApplication).not.toHaveBeenCalled();
+
+            spyUseParams.mockReturnValue({panelId: 'p', recordPanelId, where: 'slider', flapPanelId: 'fp'});
+            rerender();
+
+            expect(mockSetApplication).toHaveBeenCalled();
+        });
+
+        it('should reset the volet when a next-level panel opens in a slider', () => {
+            spyUseParams.mockReturnValue({panelId: 'p', recordPanelId, where: 'slider'});
+
+            renderHook(() => useViewSettingsAutoClose(true));
+
+            expect(mockSetApplication).toHaveBeenCalled();
+        });
+    });
 });
