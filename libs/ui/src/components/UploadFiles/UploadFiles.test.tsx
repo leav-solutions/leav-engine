@@ -1,5 +1,5 @@
 import userEvent from '@testing-library/user-event';
-import {LibraryBehavior, TreeBehavior, UploadUpdateDocument} from '_ui/_gqlTypes';
+import {GetDirectoryDataDocument, LibraryBehavior, TreeBehavior, UploadUpdateDocument} from '_ui/_gqlTypes';
 import * as gqlTypes from '_ui/_gqlTypes';
 import {doesFileExistAsChild} from '_ui/_queries/records/doesFileExistAsChild';
 import {getTreeLibraries} from '_ui/_queries/trees/getTreeLibraries';
@@ -9,7 +9,12 @@ import {mockTreeSimple} from '_ui/__mocks__/common/tree';
 import UploadFiles from './UploadFiles';
 
 vi.mock('_ui/components/SelectTreeNode', () => ({
-    SelectTreeNode: () => <div>SelectTreeNode</div>,
+    SelectTreeNode: ({onSelect}: {onSelect: (node: any, selected: boolean) => void}) => (
+        <>
+            <button onClick={() => onSelect({id: 'node1', record: {id: 'dir1'}}, true)}>select dir1</button>
+            <button onClick={() => onSelect({id: 'node2', record: {id: 'dir2'}}, true)}>select dir2</button>
+        </>
+    ),
 }));
 
 describe('UploadFiles', () => {
@@ -77,6 +82,44 @@ describe('UploadFiles', () => {
             },
         },
     ];
+
+    const directoryDataMock = (directoryId: string, path: string, name: string) => ({
+        request: {
+            query: GetDirectoryDataDocument,
+            variables: {library: 'files_directories', directoryId},
+        },
+        result: {
+            data: {
+                records: {
+                    __typename: 'RecordsList',
+                    list: [
+                        {
+                            __typename: 'Record',
+                            id: directoryId,
+                            whoAmI: {__typename: 'RecordIdentity', ...mockRecord},
+                            created_at: [{__typename: 'Value', value: '2020-01-01T00:00:00.000Z'}],
+                            created_by: [
+                                {
+                                    __typename: 'LinkValue',
+                                    value: {__typename: 'Record', id: '1', whoAmI: mockRecord},
+                                },
+                            ],
+                            modified_at: [{__typename: 'Value', value: '2020-01-02T00:00:00.000Z'}],
+                            modified_by: [
+                                {
+                                    __typename: 'LinkValue',
+                                    value: {__typename: 'Record', id: '1', whoAmI: mockRecord},
+                                },
+                            ],
+                            file_name: [{__typename: 'Value', value: name}],
+                            file_path: [{__typename: 'Value', value: path}],
+                            library: {__typename: 'Library', behavior: LibraryBehavior.directories},
+                        },
+                    ],
+                },
+            },
+        },
+    });
 
     test('Should display upload modal on first step', async () => {
         render(<UploadFiles libraryId="files" onClose={vi.fn()} />, {mocks: commonMocks});
@@ -164,5 +207,33 @@ describe('UploadFiles', () => {
         await waitFor(() => expect(screen.queryByTestId('upload-btn')).not.toBeInTheDocument());
 
         expect(await screen.findByTestId('close-btn')).toBeInTheDocument();
+    });
+
+    test('Should display the selected directory path without crashing', async () => {
+        render(
+            <UploadFiles defaultSelectedNode={{id: 'node1', recordId: 'dir1'}} libraryId="files" onClose={vi.fn()} />,
+            {mocks: [...commonMocks, directoryDataMock('dir1', 'path/to', 'my_dir')]},
+        );
+
+        expect(await screen.findByText('path/to/my_dir')).toBeInTheDocument();
+        expect(screen.getByTestId('dragger')).toBeInTheDocument();
+    });
+
+    test('Should refresh the displayed path when another directory is selected', async () => {
+        const user = userEvent.setup();
+        render(<UploadFiles libraryId="files" onClose={vi.fn()} />, {
+            mocks: [
+                ...commonMocks,
+                directoryDataMock('dir1', 'path/to', 'first_dir'),
+                directoryDataMock('dir2', 'path/to', 'second_dir'),
+            ],
+        });
+
+        await user.click(await screen.findByText('select dir1'));
+        expect(await screen.findByText('path/to/first_dir')).toBeInTheDocument();
+
+        await user.click(screen.getByText('select dir2'));
+        expect(await screen.findByText('path/to/second_dir')).toBeInTheDocument();
+        expect(screen.queryByText('path/to/first_dir')).not.toBeInTheDocument();
     });
 });
