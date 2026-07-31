@@ -5672,10 +5672,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@photostructure/tz-lookup@npm:^11.5.0":
-  version: 11.5.0
-  resolution: "@photostructure/tz-lookup@npm:11.5.0"
-  checksum: 10/065fe42bea45ed46d1742fa063db83dc8a6ea550d1679b85b9df58ef9848e4f829cfb292261e56be9e6e22ee82aa56d483381f34fa00f374745e42c6a5b03d5c
+"@photostructure/tz-lookup@npm:^11.6.0":
+  version: 11.6.0
+  resolution: "@photostructure/tz-lookup@npm:11.6.0"
+  checksum: 10/fec02c8c67ca85a42d44bde0586b777fcdd8f4698238722a5a08fd5f189d8aa4f7054cf9569cd526ac1b4f20316728e2ba609eae901197a354c6664c915ba734
   languageName: node
   linkType: hard
 
@@ -10275,10 +10275,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"batch-cluster@npm:^18.0.0":
-  version: 18.0.0
-  resolution: "batch-cluster@npm:18.0.0"
-  checksum: 10/b62862ebc9ae1182c083091e722095f9e1e45be3246606be704ab2c157bfa9112da49f0ff99661d48f971d0023800e21f17296cd0b123cc94eb05c434d30df54
+"batch-cluster@npm:^19.0.0":
+  version: 19.0.0
+  resolution: "batch-cluster@npm:19.0.0"
+  checksum: 10/26e3e422f6b8994fd05bacff9a98504942b7c336d172f9cbdec607850745b35b21685677a2b1e3a52266020b14aba43f097f6e51b2ae09abbee9f54f4b2454d4
   languageName: node
   linkType: hard
 
@@ -11431,7 +11431,7 @@ __metadata:
     dayjs: "npm:1.11.21"
     eventsource: "npm:4.1.0"
     exceljs: "npm:4.4.0"
-    exiftool-vendored: "npm:36.1.0"
+    exiftool-vendored: "npm:37.1.0"
     express: "npm:4.22.2"
     express-useragent: "npm:1.0.15"
     form-data: "npm:4.0.6"
@@ -13066,13 +13066,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"exiftool-vendored@npm:36.1.0":
-  version: 36.1.0
-  resolution: "exiftool-vendored@npm:36.1.0"
+"exiftool-vendored@npm:37.1.0":
+  version: 37.1.0
+  resolution: "exiftool-vendored@npm:37.1.0"
   dependencies:
-    "@photostructure/tz-lookup": "npm:^11.5.0"
+    "@photostructure/tz-lookup": "npm:^11.6.0"
     "@types/luxon": "npm:^3.7.2"
-    batch-cluster: "npm:^18.0.0"
+    batch-cluster: "npm:^19.0.0"
     exiftool-vendored.exe: "npm:13.59.0"
     exiftool-vendored.pl: "npm:13.59.0"
     he: "npm:^1.2.0"
@@ -13082,7 +13082,7 @@ __metadata:
       optional: true
     exiftool-vendored.pl:
       optional: true
-  checksum: 10/f1c4f7d99935e1972dcda884457d367a4a763309edbf506a63706766702637ecb5fe948b720c2383d4254246b70a2c9cdfd809adce3c523ecb1a469f7fd7ac57
+  checksum: 10/7dd516f9deceadf44d76f21e9349cba3bc7947b8ea366357da3153e7d24d3374b69255fad6bfceeccd811374527a0b7e7558785cea15c5d5246c67c82973c04c
   languageName: node
   linkType: hard
 
