@@ -5,9 +5,11 @@ import {
     type ChildrenAsRecordValuePermissionFilterInput,
     type RecordFormAttributeTreeAttributeFragment,
 } from '_ui/_gqlTypes';
+import {SelectTreeNodeModalV2} from '_ui/components/SelectTreeNodeV2';
 import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {arrayValueVersionToObject} from '_ui/_utils';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useTreeAttributeV2Flags} from '_ui/hooks/useTreeAttributeV2Flags';
 import {
     APICallStatus,
     type DeleteMultipleValuesFunc,
@@ -48,8 +50,12 @@ export const useManageTreeNodeSelection = ({
 }: IUseManageTreeNodeSelectionProps) => {
     const {t} = useSharedTranslation();
     const form = AntForm.useFormInstance();
+    const {isModalV2Enabled} = useTreeAttributeV2Flags();
 
     const [isModalHidden, setIsModalHidden] = useState(true);
+
+    // Props are identical, the V2 only accepts the tree selection configuration on top of them
+    const ModalComponent = isModalV2Enabled ? SelectTreeNodeModalV2 : SelectTreeNodeModal;
 
     // Used to force the input error display when a value is set
     AntForm.useWatch(attribute.id, form);
@@ -194,7 +200,7 @@ export const useManageTreeNodeSelection = ({
         },
         actionButtonLabel: label,
         SelectTreeNodeModal: isModalHidden ? null : (
-            <SelectTreeNodeModal
+            <ModalComponent
                 open
                 title={label}
                 attribute={attribute}

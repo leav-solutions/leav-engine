@@ -38,11 +38,34 @@ export interface IAttribute extends ICoreEntity {
     permissions_conf_dependent_values?: ITreePermissionsDependentValuesConf;
 
     /**
+     * only for tree attribute
+     */
+    tree_selection_conf?: ITreeSelectionConf;
+
+    /**
      * only for link attribute
      */
     smart_filter?: {
         enable: boolean;
     };
+}
+
+export enum TreeSelectableNodes {
+    ALL_NODES = 'all_nodes',
+    LEAVES_ONLY = 'leaves_only',
+}
+
+/**
+ * Selection behavior of a tree attribute, in the record form field and in the selection modal.
+ * All fields are optional: a missing field means "system default".
+ */
+export interface ITreeSelectionConf {
+    selectableNodes?: TreeSelectableNodes;
+    defaultExpanded?: boolean;
+    displayRootNode?: string;
+    maxDepth?: number;
+    showSelectChildrenButton?: boolean;
+    showSelectDescendantsButton?: boolean;
 }
 
 export enum ValueVersionMode {

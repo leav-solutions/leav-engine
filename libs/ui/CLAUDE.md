@@ -164,9 +164,20 @@ yarn graphql-generate    # Régénère _gqlTypes/index.ts
 
 ## Styling — styled-components & CSS Modules
 
-Deux approches coexistent. **styled-components** reste majoritaire ; les **CSS Modules**
-(`*.module.css`) sont supportés et à privilégier pour le nouveau code (alignement avec
-`app-studio`, AMP et xStream, tous en Vite + lightningcss).
+Deux approches coexistent. **styled-components** reste majoritaire dans l'existant, mais les
+**CSS Modules** (`*.module.css`) sont la cible : alignement avec `app-studio`, AMP et xStream
+(tous en Vite + lightningcss), et pas de coût runtime.
+
+**Règle :**
+
+- **Nouveau composant** → CSS Modules, jamais de `styled-components`.
+- **Composant existant** → dès qu'on y ajoute ou modifie du style, le passer en CSS Modules quand
+  c'est raisonnablement possible (styles locaux au fichier, pas de composant styled exporté ni
+  d'interpolation de props complexe). Pas de migration « big bang » : on migre au fil des touches.
+  Si le style à ajouter s'insère dans un `styled` existant trop imbriqué pour être extrait
+  proprement, rester cohérent avec le fichier plutôt que mélanger les deux dans le même bloc.
+- Un style conditionnel se traduit par un **choix de classe** (`className={cond ? a : b}` ou
+  `undefined`), pas par une interpolation de props.
 
 - **Import** : toujours en **named import**, classes en **camelCase** —
   `import {tagsGroup} from './X.module.css'`, jamais `import styles from …`. Le camelCase est

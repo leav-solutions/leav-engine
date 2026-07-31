@@ -172,6 +172,8 @@ export type AttributeInput = {
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
   /**  only for link or standard attribute  */
   smart_filter?: InputMaybe<SmartFilterConfInput>;
+  /**  only for tree attribute  */
+  tree_selection_conf?: InputMaybe<TreeSelectionConfInput>;
   type?: InputMaybe<AttributeType>;
   unique?: InputMaybe<Scalars['Boolean']['input']>;
   values_list?: InputMaybe<ValuesListConfInput>;
@@ -472,17 +474,6 @@ export enum FormsSortableFields {
   id = 'id',
   library = 'library',
   system = 'system'
-}
-
-export enum GenerationStatus {
-  DONE = 'DONE',
-  GENERATION_FAILED = 'GENERATION_FAILED',
-  GENERATION_IN_PROGRESS = 'GENERATION_IN_PROGRESS',
-  GENERATION_IN_PROGRESS_WITH_FAILURE = 'GENERATION_IN_PROGRESS_WITH_FAILURE',
-  PREPARATION_FAILED = 'PREPARATION_FAILED',
-  PREPARATION_IN_PROGRESS = 'PREPARATION_IN_PROGRESS',
-  TRANSMISSION_FAILED = 'TRANSMISSION_FAILED',
-  TRANSMISSION_IN_PROGRESS = 'TRANSMISSION_IN_PROGRESS'
 }
 
 export type GlobalSettingsFileInput = {
@@ -1039,6 +1030,20 @@ export type TreePermissionsDependentValuesConfInput = {
   dependenciesTreeAttributes: Array<Scalars['ID']['input']>;
 };
 
+export enum TreeSelectableNodes {
+  all_nodes = 'all_nodes',
+  leaves_only = 'leaves_only'
+}
+
+export type TreeSelectionConfInput = {
+  defaultExpanded?: InputMaybe<Scalars['Boolean']['input']>;
+  displayRootNode?: InputMaybe<Scalars['ID']['input']>;
+  maxDepth?: InputMaybe<Scalars['Int']['input']>;
+  selectableNodes?: InputMaybe<TreeSelectableNodes>;
+  showSelectChildrenButton?: InputMaybe<Scalars['Boolean']['input']>;
+  showSelectDescendantsButton?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type TreepermissionsConfInput = {
   permissionTreeAttributes: Array<Scalars['ID']['input']>;
   relation: PermissionsRelation;
@@ -1189,6 +1194,7 @@ export type ViewV2CreateInput = {
   filters?: InputMaybe<Array<ViewV2FilterInput>>;
   label: Scalars['SystemTranslation']['input'];
   library: Scalars['ID']['input'];
+  origin?: InputMaybe<Scalars['String']['input']>;
   shared: Scalars['Boolean']['input'];
   shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
@@ -1203,6 +1209,7 @@ export type ViewV2DisplayAttributeInput = {
 export type ViewV2DisplayInput = {
   /**  The whoAmI column should never be included in attributes because is already hard-coded to be present */
   attributes?: InputMaybe<Array<ViewV2DisplayAttributeInput>>;
+  settings?: InputMaybe<Scalars['JSONObject']['input']>;
   type: ViewV2Types;
 };
 
@@ -1211,6 +1218,7 @@ export type ViewV2FilterInput = {
   condition: RecordFilterCondition;
   pinned: Scalars['Boolean']['input'];
   values: Array<InputMaybe<Scalars['String']['input']>>;
+  withEmptyValues?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export enum ViewV2Shortcut {
@@ -1221,9 +1229,9 @@ export enum ViewV2Shortcut {
 }
 
 export type ViewV2SortInput = {
+  activated: Scalars['Boolean']['input'];
   attributes: Array<Scalars['ID']['input']>;
   order: SortOrder;
-  pinned: Scalars['Boolean']['input'];
 };
 
 export enum ViewV2Types {
@@ -1239,6 +1247,7 @@ export type ViewV2UpdateInput = {
   id: Scalars['ID']['input'];
   label?: InputMaybe<Scalars['SystemTranslation']['input']>;
   library?: InputMaybe<Scalars['ID']['input']>;
+  origin?: InputMaybe<Scalars['String']['input']>;
   shared?: InputMaybe<Scalars['Boolean']['input']>;
   shortcuts?: InputMaybe<Array<ViewV2Shortcut>>;
   sorts?: InputMaybe<Array<ViewV2SortInput>>;
@@ -1269,7 +1278,7 @@ export type AttributeDetailsStandardAttributeFragment = { unique?: boolean | nul
       | { id: string, label?: any | null, linked_tree?: { id: string } | null }
     > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null };
 
-export type AttributeDetailsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
+export type AttributeDetailsTreeAttributeFragment = { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, tree_selection_conf?: { selectableNodes?: TreeSelectableNodes | null, defaultExpanded?: boolean | null, displayRootNode?: string | null, maxDepth?: number | null, showSelectChildrenButton?: boolean | null, showSelectDescendantsButton?: boolean | null } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
       | { id: string, label?: any | null }
       | { id: string, label?: any | null, linked_tree?: { id: string } | null }
     > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1314,7 +1323,7 @@ export type LibraryDetailsFragment = { id: string, system?: boolean | null, labe
           | { id: string, label?: any | null }
           | { id: string, label?: any | null, linked_tree?: { id: string } | null }
         > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-    | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
+    | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, tree_selection_conf?: { selectableNodes?: TreeSelectableNodes | null, defaultExpanded?: boolean | null, displayRootNode?: string | null, maxDepth?: number | null, showSelectChildrenButton?: boolean | null, showSelectDescendantsButton?: boolean | null } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
           | { id: string, label?: any | null }
           | { id: string, label?: any | null, linked_tree?: { id: string } | null }
         > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1490,7 +1499,7 @@ export type GetAttributeByIdQuery = { attributes?: { totalCount: number, list: A
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
+      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, tree_selection_conf?: { selectableNodes?: TreeSelectableNodes | null, defaultExpanded?: boolean | null, displayRootNode?: string | null, maxDepth?: number | null, showSelectChildrenButton?: boolean | null, showSelectDescendantsButton?: boolean | null } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1560,7 +1569,7 @@ export type SaveAttributeMutation = { saveAttribute:
           | { id: string, label?: any | null }
           | { id: string, label?: any | null, linked_tree?: { id: string } | null }
         > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-    | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
+    | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, tree_selection_conf?: { selectableNodes?: TreeSelectableNodes | null, defaultExpanded?: boolean | null, displayRootNode?: string | null, maxDepth?: number | null, showSelectChildrenButton?: boolean | null, showSelectDescendantsButton?: boolean | null } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
           | { id: string, label?: any | null }
           | { id: string, label?: any | null, linked_tree?: { id: string } | null }
         > } | null, values_list?: { enable: boolean, allowFreeEntry?: boolean | null, allowListUpdate?: boolean | null, treeValues?: Array<{ id: string, record: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null }> | null } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1669,7 +1678,7 @@ export type GetLibByIdQuery = { libraries?: { list: Array<{ id: string, system?:
               | { id: string, label?: any | null }
               | { id: string, label?: any | null, linked_tree?: { id: string } | null }
             > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-        | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
+        | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, tree_selection_conf?: { selectableNodes?: TreeSelectableNodes | null, defaultExpanded?: boolean | null, displayRootNode?: string | null, maxDepth?: number | null, showSelectChildrenButton?: boolean | null, showSelectDescendantsButton?: boolean | null } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
               | { id: string, label?: any | null }
               | { id: string, label?: any | null, linked_tree?: { id: string } | null }
             > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1704,7 +1713,7 @@ export type SaveLibraryAttributesMutation = { saveLibrary: { id: string, attribu
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
+      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, tree_selection_conf?: { selectableNodes?: TreeSelectableNodes | null, defaultExpanded?: boolean | null, displayRootNode?: string | null, maxDepth?: number | null, showSelectChildrenButton?: boolean | null, showSelectDescendantsButton?: boolean | null } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -1728,7 +1737,7 @@ export type SaveLibraryMutation = { saveLibrary: { id: string, system?: boolean 
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, versions_conf?: { versionable: boolean, mode?: ValueVersionMode | null, profile?: { id: string, label: any, trees: Array<{ id: string, label?: any | null }> } | null } | null, libraries?: Array<{ id: string, label?: any | null }> | null }
-      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
+      | { id: string, type: AttributeType, format?: AttributeFormat | null, system: boolean, readonly: boolean, required: boolean, label?: any | null, description?: any | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, settings?: any | null, linked_tree?: { id: string } | null, tree_selection_conf?: { selectableNodes?: TreeSelectableNodes | null, defaultExpanded?: boolean | null, displayRootNode?: string | null, maxDepth?: number | null, showSelectChildrenButton?: boolean | null, showSelectDescendantsButton?: boolean | null } | null, permissions_conf_dependent_values?: { allowByDefault: boolean, dependenciesTreeAttributes: Array<
             | { id: string, label?: any | null }
             | { id: string, label?: any | null, linked_tree?: { id: string } | null }
           > } | null, metadata_fields?: Array<{ id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null }> | null, permissions_conf?: { relation: PermissionsRelation, permissionTreeAttributes: Array<
@@ -2203,6 +2212,14 @@ export const AttributeDetailsFragmentDoc = gql`
   ... on TreeAttribute {
     linked_tree {
       id
+    }
+    tree_selection_conf {
+      selectableNodes
+      defaultExpanded
+      displayRootNode
+      maxDepth
+      showSelectChildrenButton
+      showSelectDescendantsButton
     }
     permissions_conf_dependent_values {
       dependenciesTreeAttributes {

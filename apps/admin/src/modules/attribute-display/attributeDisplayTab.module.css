@@ -1,0 +1,31 @@
+.displayTab {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-l) * 1px);
+    padding: calc(var(--general-spacing-s) * 1px);
+    max-width: 480px;
+}
+
+.treeSelectionSection {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xs) * 1px);
+}
+
+.treeSelectionSectionFields {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-m) * 1px);
+}
+
+.switchField {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+}
+
+/* antd sizes a Select on its content: without this the node labels — and the dropdown, whose width
+   follows the Select — are truncated. */
+.fullWidthField {
+    width: 100%;
+}

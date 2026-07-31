@@ -1,0 +1,30 @@
+.treeNodeLine {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: calc(var(--general-spacing-xs) * 1px);
+}
+
+.treeNodeLineSection {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+    min-width: 0;
+}
+
+:global(.ant-tree-title):has(.treeNodeLine),
+:global(.ant-select-tree-title):has(.treeNodeLine) {
+    flex: 1;
+    min-width: 0;
+}
+
+.groupButtons {
+    display: none;
+}
+
+:global(.ant-tree-node-content-wrapper):hover .groupButtons,
+:global(.ant-select-tree-node-content-wrapper):hover .groupButtons {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+}

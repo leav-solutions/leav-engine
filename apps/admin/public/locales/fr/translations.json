@@ -167,6 +167,27 @@
         "linked_attribute": "Attribut lié",
         "multi_tree_display_option": "Option d’affichage des valeurs d’arbre",
         "multi_link_display_option": "Option d’affichage des valeurs liées multiples",
+        "tree_selection": {
+            "title": "Affichage",
+            "section_explorer": "Explorer",
+            "section_form": "Formulaire",
+            "selectable_nodes": "Niveau de sélection",
+            "selectable_nodes_all_nodes": "Tous les niveaux",
+            "selectable_nodes_leaves_only": "Feuilles uniquement",
+            "default_expanded": "État initial",
+            "default_expanded_closed": "Fermé",
+            "default_expanded_open": "Ouvert",
+            "display_root_node": "Nœud racine",
+            "display_root_node_helper": "Vide : l’arbre est affiché depuis sa racine",
+            "display_root_node_placeholder": "Racine de l’arbre",
+            "max_depth": "Profondeur",
+            "max_depth_helper": "Vide : profondeur illimitée",
+            "max_depth_placeholder": "Illimitée",
+            "show_select_children_button": "Bouton de sélection des enfants",
+            "show_select_descendants_button": "Bouton de sélection des descendants",
+            "save_error": "Impossible d’enregistrer la configuration de sélection",
+            "display_option_save_error": "Impossible d’enregistrer le mode d’affichage"
+        },
         "smart_filter": {
             "enable": "Activer le filtre intelligent"
         },

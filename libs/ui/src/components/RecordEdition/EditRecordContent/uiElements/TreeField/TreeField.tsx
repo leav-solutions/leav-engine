@@ -106,17 +106,22 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         allowedSelectors: ['.kit-modal-wrapper'],
     });
 
+    // The attribute of the field itself, not `state.activeAttribute`, which only gets set on interaction
     const childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput = {
         libraryId: state.libraryId,
-        attributeId: state.activeAttribute?.attribute?.id,
+        attributeId: attribute.id,
         action: RecordPermissionsActions.create_record,
     };
 
-    const dependentValuesPermissionFilter: DependentValuesPermissionFilterInput = {
-        libraryId: state.libraryId,
-        attributeId: state.activeAttribute?.attribute?.id,
-        recordId: state.record?.id,
-    };
+    // Without a record (creation before the draft), there is no value to depend on: the core treats
+    // a missing filter as "no filtering" (`treeApp.ts`, `treeContent` resolver)
+    const dependentValuesPermissionFilter: DependentValuesPermissionFilterInput | undefined = state.record?.id
+        ? {
+              libraryId: state.libraryId,
+              attributeId: attribute.id,
+              recordId: state.record.id,
+          }
+        : undefined;
 
     const {openModal, removeTreeNode, actionButtonLabel, SelectTreeNodeModal, RemoveAllTreeNodes} =
         useManageTreeNodeSelection({

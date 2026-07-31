@@ -1,4 +1,4 @@
-import {type FunctionComponent, useEffect} from 'react';
+import {type FunctionComponent, useEffect, useMemo} from 'react';
 import {FORM_ROOT_CONTAINER_ID, FormUIElementTypes} from '@leav/utils';
 import {Form, type FormInstance} from 'antd';
 import styled from 'styled-components';
@@ -88,18 +88,19 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
         }
     }, [recordForm, loading]);
 
+    const computeAttributeIds = useMemo(
+        () =>
+            recordForm
+                ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
+                : [],
+        [recordForm],
+    );
+
     const {
         data: computeFieldsData,
         error: computeFieldsError,
         refetch: refetchComputeFields,
-    } = useGetRecordValuesQuery(
-        library,
-        recordForm
-            ? recordForm.elements.filter(element => element.attribute?.compute).map(element => element.attribute.id)
-            : [],
-        [record?.id],
-        true,
-    );
+    } = useGetRecordValuesQuery(library, computeAttributeIds, [record?.id], true);
 
     useEffect(() => {
         if (state.refreshRequested) {
@@ -137,7 +138,11 @@ const EditRecordContent: FunctionComponent<IEditRecordContentProps> = ({
 
         _checkDependencyChange(element[0].attribute.id);
 
-        await refetchComputeFields([record.id]);
+        // No compute attribute on this form: skip the round-trip entirely instead of refetching an
+        // empty column list.
+        if (computeAttributeIds.length > 0) {
+            await refetchComputeFields([record.id]);
+        }
 
         return submitRes;
     };

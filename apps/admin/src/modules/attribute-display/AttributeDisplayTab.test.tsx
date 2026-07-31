@@ -1,0 +1,272 @@
+import userEvent from '@testing-library/user-event';
+import {type MockedResponse} from '@apollo/client/testing';
+import {ENABLE_TREE_ATTRIBUTE_V2_FORM} from '@leav/utils';
+import {mockAttrTree, mockAttrTreeMultival} from '../../__mocks__/attributes';
+import {
+    MultiDisplayOption,
+    SaveAttributeDocument,
+    TreeSelectableNodes,
+    type TreeSelectionConfInput,
+} from '../../_gqlTypes';
+import {render, screen, waitFor} from '../../_tests/testUtils';
+import {AttributeDisplayTab} from './AttributeDisplayTab';
+import {rootNodeOptionsQuery} from './root-node-options/rootNodeOptionsQuery';
+
+const defaultConf: Required<TreeSelectionConfInput> = {
+    selectableNodes: TreeSelectableNodes.all_nodes,
+    defaultExpanded: false,
+    displayRootNode: null,
+    maxDepth: null,
+    showSelectChildrenButton: false,
+    showSelectDescendantsButton: false,
+};
+
+const treeNodesMock: MockedResponse = {
+    request: {
+        query: rootNodeOptionsQuery(),
+        variables: {treeId: mockAttrTree.linked_tree.id},
+    },
+    result: {
+        data: {
+            treeContent: [
+                {
+                    __typename: 'TreeNode',
+                    id: 'node_a',
+                    childrenCount: 1,
+                    record: {
+                        __typename: 'Record',
+                        id: 'record_a',
+                        whoAmI: {
+                            __typename: 'RecordIdentity',
+                            id: 'record_a',
+                            label: 'Node A',
+                            library: {__typename: 'Library', id: 'test_lib'},
+                        },
+                    },
+                    children: [
+                        {
+                            __typename: 'TreeNode',
+                            id: 'node_a_1',
+                            childrenCount: 0,
+                            record: {
+                                __typename: 'Record',
+                                id: 'record_a_1',
+                                whoAmI: {
+                                    __typename: 'RecordIdentity',
+                                    id: 'record_a_1',
+                                    label: 'Node A1',
+                                    library: {__typename: 'Library', id: 'test_lib'},
+                                },
+                            },
+                            children: [],
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+};
+
+/**
+ * Mocked responses only match on exact variables, so a matched mock proves the whole configuration
+ * was sent under `attrData: {id, tree_selection_conf}` and nothing else.
+ */
+const saveConfMock = (conf: Required<TreeSelectionConfInput>, onCalled: () => void): MockedResponse => ({
+    request: {
+        query: SaveAttributeDocument,
+        variables: {attrData: {id: mockAttrTree.id, tree_selection_conf: conf}},
+    },
+    result: () => {
+        onCalled();
+        return {
+            data: {
+                saveAttribute: {...mockAttrTree, __typename: 'TreeAttribute', tree_selection_conf: conf},
+            },
+        };
+    },
+});
+
+/** The Form section is behind the V2 flags: without them the tab only shows the Explorer section. */
+const _renderTab = (
+    attribute: typeof mockAttrTree,
+    {
+        apolloMocks = [treeNodesMock],
+        formV2Enabled = true,
+    }: {apolloMocks?: MockedResponse[]; formV2Enabled?: boolean} = {},
+) =>
+    render(<AttributeDisplayTab attribute={attribute} />, {
+        apolloMocks,
+        globalSettings: {
+            defaultApp: 'admin',
+            name: 'My App',
+            icon: null,
+            favicon: null,
+            settings: formV2Enabled ? {[ENABLE_TREE_ATTRIBUTE_V2_FORM]: true} : {},
+        },
+    });
+
+describe('AttributeDisplayTab', () => {
+    test('Display the six settings with their default values', async () => {
+        _renderTab(mockAttrTree);
+
+        expect(screen.getByText('attributes.tree_selection.selectable_nodes_all_nodes')).toBeInTheDocument();
+        expect(screen.getByText('attributes.tree_selection.default_expanded_closed')).toBeInTheDocument();
+        expect(screen.getByText('attributes.tree_selection.display_root_node')).toBeInTheDocument();
+        expect(screen.getByText('attributes.tree_selection.max_depth')).toBeInTheDocument();
+        expect(screen.getAllByText('admin.no')).toHaveLength(2);
+
+        const switches = screen.getAllByRole('switch');
+        expect(switches).toHaveLength(4);
+        switches.forEach(switchElement => expect(switchElement).not.toBeChecked());
+    });
+
+    test('Reflect the stored configuration', async () => {
+        const attribute = {
+            ...mockAttrTree,
+            tree_selection_conf: {
+                selectableNodes: TreeSelectableNodes.leaves_only,
+                defaultExpanded: true,
+                displayRootNode: 'node_a',
+                maxDepth: 3,
+                showSelectChildrenButton: true,
+                showSelectDescendantsButton: false,
+            },
+        };
+
+        _renderTab(attribute);
+
+        expect(screen.getByText('attributes.tree_selection.selectable_nodes_leaves_only')).toBeInTheDocument();
+        expect(screen.getByText('attributes.tree_selection.default_expanded_open')).toBeInTheDocument();
+        expect(screen.getByRole('spinbutton')).toHaveValue('3');
+        expect(screen.getByText('admin.yes')).toBeInTheDocument();
+        expect(screen.getByText('admin.no')).toBeInTheDocument();
+        await waitFor(() => expect(screen.getByText('Node A')).toBeInTheDocument());
+    });
+
+    test('Save the whole configuration when a switch is toggled', async () => {
+        let saveCalled = false;
+        _renderTab(mockAttrTree, {
+            apolloMocks: [
+                treeNodesMock,
+                saveConfMock({...defaultConf, selectableNodes: TreeSelectableNodes.leaves_only}, () => {
+                    saveCalled = true;
+                }),
+            ],
+        });
+
+        await userEvent.click(screen.getAllByRole('switch')[0]);
+
+        expect(screen.getByText('attributes.tree_selection.selectable_nodes_leaves_only')).toBeInTheDocument();
+        await waitFor(() => expect(saveCalled).toBe(true));
+    });
+
+    test('Save the depth on blur only, not on each keystroke', async () => {
+        let saveCalled = false;
+        _renderTab(mockAttrTree, {
+            apolloMocks: [
+                treeNodesMock,
+                saveConfMock({...defaultConf, maxDepth: 12}, () => {
+                    saveCalled = true;
+                }),
+            ],
+        });
+
+        const depthInput = screen.getByRole('spinbutton');
+
+        // Typing "12" goes through the intermediate value 1: no mock matches it, so a mutation
+        // fired on keystroke would leave `saveCalled` false at the end
+        await userEvent.type(depthInput, '12');
+        expect(saveCalled).toBe(false);
+
+        await userEvent.tab();
+        await waitFor(() => expect(saveCalled).toBe(true));
+    });
+
+    test('Revert the displayed value when the save fails', async () => {
+        _renderTab(mockAttrTree, {
+            apolloMocks: [
+                treeNodesMock,
+                {
+                    request: {
+                        query: SaveAttributeDocument,
+                        variables: {
+                            attrData: {
+                                id: mockAttrTree.id,
+                                tree_selection_conf: {...defaultConf, defaultExpanded: true},
+                            },
+                        },
+                    },
+                    error: new Error('Save failed'),
+                },
+            ],
+        });
+
+        await userEvent.click(screen.getAllByRole('switch')[1]);
+
+        await waitFor(() =>
+            expect(screen.getByText('attributes.tree_selection.default_expanded_closed')).toBeInTheDocument(),
+        );
+        expect(screen.getAllByRole('switch')[1]).not.toBeChecked();
+    });
+
+    test('Show both sections on a multi-valued tree attribute', async () => {
+        _renderTab(mockAttrTreeMultival);
+
+        expect(screen.getByText('attributes.tree_selection.section_explorer')).toBeInTheDocument();
+        expect(screen.getByText('attributes.tree_selection.section_form')).toBeInTheDocument();
+        // Nothing stored on the attribute falls back to the option the rendering already defaults to
+        expect(screen.getByText('attributes.multi_display_options.avatar')).toBeInTheDocument();
+    });
+
+    test('Hide the Explorer section on a mono-valued attribute', async () => {
+        _renderTab(mockAttrTree);
+
+        expect(screen.queryByText('attributes.tree_selection.section_explorer')).not.toBeInTheDocument();
+        expect(screen.getByText('attributes.tree_selection.section_form')).toBeInTheDocument();
+    });
+
+    test('Hide the Form section when both V2 flags are off', async () => {
+        _renderTab(mockAttrTreeMultival, {formV2Enabled: false});
+
+        expect(screen.getByText('attributes.tree_selection.section_explorer')).toBeInTheDocument();
+        expect(screen.queryByText('attributes.tree_selection.section_form')).not.toBeInTheDocument();
+        expect(screen.queryByRole('switch')).not.toBeInTheDocument();
+    });
+
+    test('Save the display option as a root field of the attribute, not inside tree_selection_conf', async () => {
+        let saveCalled = false;
+        _renderTab(mockAttrTreeMultival, {
+            formV2Enabled: false,
+            apolloMocks: [
+                {
+                    request: {
+                        query: SaveAttributeDocument,
+                        variables: {
+                            attrData: {
+                                id: mockAttrTreeMultival.id,
+                                multi_tree_display_option: MultiDisplayOption.tag,
+                            },
+                        },
+                    },
+                    result: () => {
+                        saveCalled = true;
+                        return {
+                            data: {
+                                saveAttribute: {
+                                    ...mockAttrTreeMultival,
+                                    __typename: 'TreeAttribute',
+                                    multi_tree_display_option: MultiDisplayOption.tag,
+                                },
+                            },
+                        };
+                    },
+                },
+            ],
+        });
+
+        await userEvent.click(screen.getByRole('combobox'));
+        await userEvent.click(await screen.findByText('attributes.multi_display_options.tag'));
+
+        await waitFor(() => expect(saveCalled).toBe(true));
+    });
+});

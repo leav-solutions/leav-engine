@@ -167,6 +167,27 @@
         "linked_attribute": "Linked attribute",
         "multi_tree_display_option": "Displayed option of tree values",
         "multi_link_display_option": "Displayed option of linked values",
+        "tree_selection": {
+            "title": "Display",
+            "section_explorer": "Explorer",
+            "section_form": "Form",
+            "selectable_nodes": "Selection level",
+            "selectable_nodes_all_nodes": "All levels",
+            "selectable_nodes_leaves_only": "Leaves only",
+            "default_expanded": "Initial state",
+            "default_expanded_closed": "Collapsed",
+            "default_expanded_open": "Expanded",
+            "display_root_node": "Root node",
+            "display_root_node_helper": "Empty: the tree is displayed from its own root",
+            "display_root_node_placeholder": "Tree root",
+            "max_depth": "Depth",
+            "max_depth_helper": "Empty: unlimited depth",
+            "max_depth_placeholder": "Unlimited",
+            "show_select_children_button": "Select children button",
+            "show_select_descendants_button": "Select descendants button",
+            "save_error": "Could not save the selection configuration",
+            "display_option_save_error": "Could not save the display mode"
+        },
         "smart_filter": {
             "enable": "Enable smart filter"
         },

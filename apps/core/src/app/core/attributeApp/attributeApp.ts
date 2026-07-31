@@ -18,6 +18,7 @@ import {
     AttributeFormats,
     AttributeTypes,
     MultiDisplayOption,
+    TreeSelectableNodes,
     type IAttribute,
     type IAttributeFilterOptions,
     type IAttributeVersionsConf,
@@ -167,6 +168,10 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         ${Object.values(MultiDisplayOption).join(' ')}
                     }
 
+                    enum TreeSelectableNodes {
+                        ${Object.values(TreeSelectableNodes).join(' ')}
+                    }
+
                     enum ValueVersionMode {
                         simple
                         smart
@@ -234,11 +239,31 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         nodeId: ID
                     }
 
+                    type TreeSelectionConf {
+                        selectableNodes: TreeSelectableNodes
+                        defaultExpanded: Boolean
+                        displayRootNode: ID
+                        maxDepth: Int
+                        showSelectChildrenButton: Boolean
+                        showSelectDescendantsButton: Boolean
+                    }
+
+                    input TreeSelectionConfInput {
+                        selectableNodes: TreeSelectableNodes
+                        defaultExpanded: Boolean
+                        displayRootNode: ID
+                        maxDepth: Int
+                        showSelectChildrenButton: Boolean
+                        showSelectDescendantsButton: Boolean
+                    }
+
                     type TreeAttribute implements Attribute {
                         ${attributesInterfaceSchema}
                         linked_tree: Tree,
                         values_list: TreeValuesListConf,
                         permissions_conf_dependent_values: TreePermissionsDependentValuesConf
+                        """ Selection behavior of this tree attribute (form field and selection modal) """
+                        tree_selection_conf: TreeSelectionConf
                         """ List of all tree nodes with their allowed dependent values for this attribute, include null node for root if applicable."""
                         tree_values(attributeDependentValue: AttributeDependentValueInput): [TreeDependentValuesNode!]
                     }
@@ -257,6 +282,8 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         actions_list: ActionsListConfigurationInput,
                         permissions_conf: Treepermissions_confInput,
                         permissions_conf_dependent_values: TreePermissionsDependentValuesConfInput,
+                        """ only for tree attribute """
+                        tree_selection_conf: TreeSelectionConfInput,
                         multiple_values: Boolean,
                         versions_conf: ValuesVersionsConfInput,
                         metadata_fields: [String!],
