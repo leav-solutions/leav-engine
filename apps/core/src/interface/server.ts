@@ -33,6 +33,9 @@ import {type IAppModule} from '../_types/shared';
 import {apolloTracerPlugin} from './plugins/apolloTracerPlugin';
 import ApplicationError from '../errors/ApplicationError';
 import {type ITRPCApp} from '../app/trpc/trpcApp';
+import path from 'node:path';
+import {appRootPath} from '../rootPath';
+import {MAIL_ASSETS_ENDPOINT} from '../utils/helpers/getMailTemplateAssets';
 
 export interface IServer {
     init(): Promise<void>;
@@ -153,6 +156,12 @@ export default function ({
                 ]);
                 baseRouter.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);
                 baseRouter.use(`/${config.import.endpoint}`, [_checkAuth, express.static(config.import.directory)]);
+
+                // Mail template images are loaded by mail clients, without any session: must stay public
+                baseRouter.use(
+                    `/${MAIL_ASSETS_ENDPOINT}`,
+                    express.static(path.resolve(appRootPath, '../../assets/mail'), {maxAge: '1d'}),
+                );
 
                 // Handling errors
                 baseRouter.use(
