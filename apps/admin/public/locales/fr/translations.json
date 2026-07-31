@@ -165,12 +165,11 @@
         "validation_regex": "Règle de Validation",
         "reverse_link": "Lien inverse",
         "linked_attribute": "Attribut lié",
-        "multi_tree_display_option": "Option d’affichage des valeurs d’arbre",
-        "multi_link_display_option": "Option d’affichage des valeurs liées multiples",
-        "tree_selection": {
+        "display": {
             "title": "Affichage",
             "section_explorer": "Explorer",
             "section_form": "Formulaire",
+            "display_option": "Option d’affichage des valeurs",
             "selectable_nodes": "Niveau de sélection",
             "selectable_nodes_all_nodes": "Tous les niveaux",
             "selectable_nodes_leaves_only": "Feuilles uniquement",
@@ -193,6 +192,7 @@
         },
         "multi_display_options": {
             "avatar": "Avatar",
+            "avatar_mono": "Carte d’identité",
             "tag": "Tag",
             "badge_qty": "Badge numérique"
         },

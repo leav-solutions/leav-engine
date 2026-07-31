@@ -34,6 +34,39 @@ describe('TableCell component', () => {
                 expect(screen.getByText('Record A')).toBeVisible();
                 expect(screen.getByText('Sub Label A')).toBeVisible();
             });
+
+            test('Should display a tag when the display option is tag', async () => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    type: AttributeType.advanced_link,
+                    multiple_values: false,
+                    multi_link_display_option: MultiDisplayOption.tag,
+                };
+
+                render(<TableCell values={linkValue} attributeProperties={attributeProperties} />);
+
+                expect(screen.getAllByText('Record A')[0]).toBeVisible();
+                expect(screen.queryByRole('img')).not.toBeInTheDocument();
+                expect(screen.queryByText('Sub Label A')).not.toBeInTheDocument();
+            });
+
+            test.each([
+                ['avatar', MultiDisplayOption.avatar],
+                ['badge_qty', MultiDisplayOption.badge_qty],
+                ['omitted', undefined],
+            ])('Should display IdCard when the display option is %s', async (_, multiLinkDisplayOption) => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    type: AttributeType.advanced_link,
+                    multiple_values: false,
+                    multi_link_display_option: multiLinkDisplayOption,
+                };
+
+                render(<TableCell values={linkValue} attributeProperties={attributeProperties} />);
+
+                expect(screen.getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
+                expect(screen.getByText('Record A')).toBeVisible();
+            });
         });
 
         describe('For tree attribute', () => {
@@ -57,6 +90,39 @@ describe('TableCell component', () => {
                 expect(screen.getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
                 expect(screen.getByText('Record A')).toBeVisible();
                 expect(screen.getByText('Sub Label A')).toBeVisible();
+            });
+
+            test('Should display a tag when the display option is tag', async () => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    type: AttributeType.tree,
+                    multiple_values: false,
+                    multi_tree_display_option: MultiDisplayOption.tag,
+                };
+
+                render(<TableCell values={treeValue} attributeProperties={attributeProperties} />);
+
+                expect(screen.getAllByText('Record A')[0]).toBeVisible();
+                expect(screen.queryByRole('img')).not.toBeInTheDocument();
+                expect(screen.queryByText('Sub Label A')).not.toBeInTheDocument();
+            });
+
+            test.each([
+                ['avatar', MultiDisplayOption.avatar],
+                ['badge_qty', MultiDisplayOption.badge_qty],
+                ['omitted', undefined],
+            ])('Should display IdCard when the display option is %s', async (_, multiTreeDisplayOption) => {
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    type: AttributeType.tree,
+                    multiple_values: false,
+                    multi_tree_display_option: multiTreeDisplayOption,
+                };
+
+                render(<TableCell values={treeValue} attributeProperties={attributeProperties} />);
+
+                expect(screen.getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
+                expect(screen.getByText('Record A')).toBeVisible();
             });
         });
     });
@@ -309,6 +375,44 @@ describe('TableCell component', () => {
                 expect(screen.getByText('Default').style.getPropertyValue('--kit-typography-color')).toBe(
                     'var(--general-colors-neutral-white)',
                 );
+            });
+
+            test('For a mono-valued link attribute, colors the tag with the identity card color', async () => {
+                const linkValue: PropertyValueLinkValueFragment[] = [
+                    {linkPayload: {id: 'r1', whoAmI: {...mockRecord, label: 'Light', color: '#f8e58c'}}},
+                ];
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    multiple_values: false,
+                    multi_link_display_option: MultiDisplayOption.tag,
+                    type: AttributeType.advanced_link,
+                };
+
+                render(<TableCell values={linkValue} attributeProperties={attributeProperties} />);
+
+                // happy-dom leaves KitTag.Group's hidden measure block in the DOM (LEAVC-875 known
+                // pitfall), hence getAllByText rather than getByText even for a single tag.
+                expect(screen.getAllByText('Light')[0].closest('.ant-tag')).toHaveStyle({
+                    backgroundColor: '#f8e58c',
+                });
+            });
+
+            test('For a mono-valued tree attribute, colors the tag with the identity card color', async () => {
+                const treeValue: PropertyValueTreeValueFragment[] = [
+                    {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, label: 'Light', color: '#f8e58c'}}}},
+                ];
+                const attributeProperties: AttributePropertiesFragment = {
+                    id: 'default',
+                    multiple_values: false,
+                    multi_tree_display_option: MultiDisplayOption.tag,
+                    type: AttributeType.tree,
+                };
+
+                render(<TableCell values={treeValue} attributeProperties={attributeProperties} />);
+
+                expect(screen.getAllByText('Light')[0].closest('.ant-tag')).toHaveStyle({
+                    backgroundColor: '#f8e58c',
+                });
             });
         });
     });

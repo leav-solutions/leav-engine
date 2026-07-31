@@ -6,13 +6,13 @@
     max-width: 480px;
 }
 
-.treeSelectionSection {
+.displaySection {
     display: flex;
     flex-direction: column;
     gap: calc(var(--general-spacing-xs) * 1px);
 }
 
-.treeSelectionSectionFields {
+.displaySectionFields {
     display: flex;
     flex-direction: column;
     gap: calc(var(--general-spacing-m) * 1px);

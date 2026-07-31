@@ -17,14 +17,14 @@ export const useSaveTreeSelectionConf = (attributeId: string) => {
             });
 
             if (errors) {
-                displaySaveErrorAlert(t('attributes.tree_selection.save_error'), errors[0].message);
+                displaySaveErrorAlert(t('attributes.display.save_error'), errors[0].message);
                 return false;
             }
 
             return true;
         } catch (error) {
             displaySaveErrorAlert(
-                t('attributes.tree_selection.save_error'),
+                t('attributes.display.save_error'),
                 error instanceof Error ? error.message : String(error),
             );
             return false;

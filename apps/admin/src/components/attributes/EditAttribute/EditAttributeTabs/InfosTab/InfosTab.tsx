@@ -71,7 +71,6 @@ function InfosTab({attribute, onPostSave, forcedType, redirectAfterCreate = true
                     mode: dataToSave?.versions_conf?.mode,
                     profile: dataToSave?.versions_conf?.profile,
                 },
-                multi_link_display_option: dataToSave.multi_link_display_option,
                 smart_filter:
                     (dataToSave.smart_filter && {
                         enable: dataToSave.smart_filter.enable ?? false,
