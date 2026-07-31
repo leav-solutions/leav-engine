@@ -9,7 +9,11 @@ import {
 } from '../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils/utils';
-import {AttributeType, type AttributeDetailsTreeAttributeFragment} from '../../../../_gqlTypes';
+import {
+    AttributeType,
+    type AttributeDetailsLinkAttributeFragment,
+    type AttributeDetailsTreeAttributeFragment,
+} from '../../../../_gqlTypes';
 import {type OnAttributePostSaveFunc} from '../EditAttribute';
 import ActionsListTab from './ActionsListTab';
 import EmbeddedFieldsTab from './EmbeddedFieldsTab';
@@ -73,7 +77,11 @@ function EditAttributeTabs({
 
         const isDependenciesAllowed = attribute.type === AttributeType.tree && !attribute.multiple_values;
 
-        const isDisplayTabAllowed = attribute.type === AttributeType.tree;
+        const isDisplayTabAllowed = [
+            AttributeType.tree,
+            AttributeType.simple_link,
+            AttributeType.advanced_link,
+        ].includes(attribute.type);
 
         const isFormatExtended = attribute.format === 'extended';
 
@@ -111,12 +119,14 @@ function EditAttributeTabs({
         }
 
         if (isDisplayTabAllowed) {
+            type DisplayTabAttribute = AttributeDetailsLinkAttributeFragment | AttributeDetailsTreeAttributeFragment;
+
             panes.push({
-                key: 'tree_selection',
-                menuItem: t('attributes.tree_selection.title'),
+                key: 'display',
+                menuItem: t('attributes.display.title'),
                 render: () => (
-                    <Tab.Pane key="tree_selection" className="grow flex-col">
-                        <AttributeDisplayTab attribute={attribute as AttributeDetailsTreeAttributeFragment} />
+                    <Tab.Pane key="display" className="grow flex-col">
+                        <AttributeDisplayTab attribute={attribute as DisplayTabAttribute} />
                     </Tab.Pane>
                 ),
             });

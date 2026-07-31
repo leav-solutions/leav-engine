@@ -309,16 +309,27 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
             }
         }
 
+        // Only `tag` switches the rendering: `avatar` (any other value, including `badge_qty`, falls
+        // back to it too) keeps the identity card, the historical mono-valued rendering. Multivalued
+        // `avatar`, by contrast, renders a bare `KitAvatar.Group` — same stored value, deliberately
+        // different rendering.
         if (isTreeValue(value, attributeProperties)) {
-            content = value.treePayload?.record.whoAmI.label ? (
-                <IdCard key={attributeProperties.id} item={value.treePayload.record.whoAmI} />
-            ) : null;
+            const whoAmI = value.treePayload?.record.whoAmI;
+            content = !whoAmI?.label ? null : attributeProperties.multi_tree_display_option ===
+              MultiDisplayOption.tag ? (
+                <TableTagGroup tags={[_buildLinkTreeTag(whoAmI.label, whoAmI.color)]} />
+            ) : (
+                <IdCard key={attributeProperties.id} item={whoAmI} />
+            );
         }
 
         if (isLinkValue(value, attributeProperties)) {
-            content = value.linkPayload?.whoAmI ? (
-                <IdCard key={attributeProperties.id} item={value.linkPayload.whoAmI} />
-            ) : null;
+            const whoAmI = value.linkPayload?.whoAmI;
+            content = !whoAmI ? null : attributeProperties.multi_link_display_option === MultiDisplayOption.tag ? (
+                <TableTagGroup tags={[_buildLinkTreeTag(whoAmI.label, whoAmI.color)]} />
+            ) : (
+                <IdCard key={attributeProperties.id} item={whoAmI} />
+            );
         }
 
         return <StyledCenteringWrapper>{content}</StyledCenteringWrapper>;

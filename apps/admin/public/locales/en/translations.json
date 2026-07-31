@@ -165,12 +165,11 @@
         "validation_regex": "Validation Rule",
         "reverse_link": "Reverse link",
         "linked_attribute": "Linked attribute",
-        "multi_tree_display_option": "Displayed option of tree values",
-        "multi_link_display_option": "Displayed option of linked values",
-        "tree_selection": {
+        "display": {
             "title": "Display",
             "section_explorer": "Explorer",
             "section_form": "Form",
+            "display_option": "Values display option",
             "selectable_nodes": "Selection level",
             "selectable_nodes_all_nodes": "All levels",
             "selectable_nodes_leaves_only": "Leaves only",
@@ -193,6 +192,7 @@
         },
         "multi_display_options": {
             "avatar": "Avatar",
+            "avatar_mono": "Identity card",
             "tag": "Tag",
             "badge_qty": "Quantity badge"
         },

@@ -19,7 +19,6 @@ import {
     AttributeFormat,
     AttributeType,
     ValueVersionMode,
-    MultiDisplayOption,
     usePurgeMultipleValuesMutation,
 } from '../../../../../../_gqlTypes';
 import {ErrorTypes, type IFormError} from '../../../../../../_types/errors';
@@ -68,7 +67,6 @@ const defaultAttributeData: AttributeInfosFormValues = {
         profile: null,
     },
     libraries: [],
-    multi_link_display_option: MultiDisplayOption.avatar,
     smart_filter: null,
 };
 
@@ -227,7 +225,6 @@ function InfosForm({
         const isTreeAttribute = AttributeType.tree === values.type;
         const isStandardAttribute = [AttributeType.advanced, AttributeType.simple].includes(values.type);
         const isTextAttribute = [AttributeFormat.text, AttributeFormat.rich_text].includes(values.format);
-        const isMultiValuesLinkAttribute = AttributeType.advanced_link === values.type && !!values.multiple_values;
         const purgeMultipleValuesActionAvailable =
             [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(values.type) &&
             !attribute?.multiple_values;
@@ -476,22 +473,6 @@ function InfosForm({
                                 <Icon name="trash alternate outline" /> {t('attributes.purge_multiple_values')}
                             </Button>
                         </ConfirmedButton>
-                    </FormFieldWrapper>
-                )}
-                {isMultiValuesLinkAttribute && (
-                    <FormFieldWrapper error={_getErrorByField('multi_link_display_option')}>
-                        <Form.Select
-                            label={t('attributes.multi_link_display_option')}
-                            disabled={readonly}
-                            width="4"
-                            name="multi_link_display_option"
-                            onChange={_handleChangeWithSubmit}
-                            options={Object.keys(MultiDisplayOption).map(format => ({
-                                text: t('attributes.multi_display_options.' + format),
-                                value: format,
-                            }))}
-                            value={values.multi_link_display_option ?? ''}
-                        />
                     </FormFieldWrapper>
                 )}
                 {(isLinkAttribute || (isStandardAttribute && values.format === AttributeFormat.text)) && (

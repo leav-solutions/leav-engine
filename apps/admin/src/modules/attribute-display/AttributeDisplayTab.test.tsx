@@ -1,8 +1,10 @@
 import userEvent from '@testing-library/user-event';
 import {type MockedResponse} from '@apollo/client/testing';
 import {ENABLE_TREE_ATTRIBUTE_V2_FORM} from '@leav/utils';
-import {mockAttrTree, mockAttrTreeMultival} from '../../__mocks__/attributes';
+import {mockAttrAdvLink, mockAttrSimpleLink, mockAttrTree, mockAttrTreeMultival} from '../../__mocks__/attributes';
 import {
+    type AttributeDetailsLinkAttributeFragment,
+    type AttributeDetailsTreeAttributeFragment,
     MultiDisplayOption,
     SaveAttributeDocument,
     TreeSelectableNodes,
@@ -10,7 +12,7 @@ import {
 } from '../../_gqlTypes';
 import {render, screen, waitFor} from '../../_tests/testUtils';
 import {AttributeDisplayTab} from './AttributeDisplayTab';
-import {rootNodeOptionsQuery} from './root-node-options/rootNodeOptionsQuery';
+import {treeSelectionNodesQuery} from './get-tree-selection-nodes/treeSelectionNodesQuery';
 
 const defaultConf: Required<TreeSelectionConfInput> = {
     selectableNodes: TreeSelectableNodes.all_nodes,
@@ -23,7 +25,7 @@ const defaultConf: Required<TreeSelectionConfInput> = {
 
 const treeNodesMock: MockedResponse = {
     request: {
-        query: rootNodeOptionsQuery(),
+        query: treeSelectionNodesQuery(),
         variables: {treeId: mockAttrTree.linked_tree.id},
     },
     result: {
@@ -86,9 +88,9 @@ const saveConfMock = (conf: Required<TreeSelectionConfInput>, onCalled: () => vo
     },
 });
 
-/** The Form section is behind the V2 flags: without them the tab only shows the Explorer section. */
+/** The Form section is behind the V2 flags and only ever applies to a tree attribute. */
 const _renderTab = (
-    attribute: typeof mockAttrTree,
+    attribute: AttributeDetailsLinkAttributeFragment | AttributeDetailsTreeAttributeFragment,
     {
         apolloMocks = [treeNodesMock],
         formV2Enabled = true,
@@ -109,10 +111,10 @@ describe('AttributeDisplayTab', () => {
     test('Display the six settings with their default values', async () => {
         _renderTab(mockAttrTree);
 
-        expect(screen.getByText('attributes.tree_selection.selectable_nodes_all_nodes')).toBeInTheDocument();
-        expect(screen.getByText('attributes.tree_selection.default_expanded_closed')).toBeInTheDocument();
-        expect(screen.getByText('attributes.tree_selection.display_root_node')).toBeInTheDocument();
-        expect(screen.getByText('attributes.tree_selection.max_depth')).toBeInTheDocument();
+        expect(screen.getByText('attributes.display.selectable_nodes_all_nodes')).toBeInTheDocument();
+        expect(screen.getByText('attributes.display.default_expanded_closed')).toBeInTheDocument();
+        expect(screen.getByText('attributes.display.display_root_node')).toBeInTheDocument();
+        expect(screen.getByText('attributes.display.max_depth')).toBeInTheDocument();
         expect(screen.getAllByText('admin.no')).toHaveLength(2);
 
         const switches = screen.getAllByRole('switch');
@@ -135,8 +137,8 @@ describe('AttributeDisplayTab', () => {
 
         _renderTab(attribute);
 
-        expect(screen.getByText('attributes.tree_selection.selectable_nodes_leaves_only')).toBeInTheDocument();
-        expect(screen.getByText('attributes.tree_selection.default_expanded_open')).toBeInTheDocument();
+        expect(screen.getByText('attributes.display.selectable_nodes_leaves_only')).toBeInTheDocument();
+        expect(screen.getByText('attributes.display.default_expanded_open')).toBeInTheDocument();
         expect(screen.getByRole('spinbutton')).toHaveValue('3');
         expect(screen.getByText('admin.yes')).toBeInTheDocument();
         expect(screen.getByText('admin.no')).toBeInTheDocument();
@@ -156,7 +158,7 @@ describe('AttributeDisplayTab', () => {
 
         await userEvent.click(screen.getAllByRole('switch')[0]);
 
-        expect(screen.getByText('attributes.tree_selection.selectable_nodes_leaves_only')).toBeInTheDocument();
+        expect(screen.getByText('attributes.display.selectable_nodes_leaves_only')).toBeInTheDocument();
         await waitFor(() => expect(saveCalled).toBe(true));
     });
 
@@ -203,33 +205,97 @@ describe('AttributeDisplayTab', () => {
 
         await userEvent.click(screen.getAllByRole('switch')[1]);
 
-        await waitFor(() =>
-            expect(screen.getByText('attributes.tree_selection.default_expanded_closed')).toBeInTheDocument(),
-        );
+        await waitFor(() => expect(screen.getByText('attributes.display.default_expanded_closed')).toBeInTheDocument());
         expect(screen.getAllByRole('switch')[1]).not.toBeChecked();
     });
 
     test('Show both sections on a multi-valued tree attribute', async () => {
         _renderTab(mockAttrTreeMultival);
 
-        expect(screen.getByText('attributes.tree_selection.section_explorer')).toBeInTheDocument();
-        expect(screen.getByText('attributes.tree_selection.section_form')).toBeInTheDocument();
+        expect(screen.getByText('attributes.display.section_explorer')).toBeInTheDocument();
+        expect(screen.getByText('attributes.display.section_form')).toBeInTheDocument();
         // Nothing stored on the attribute falls back to the option the rendering already defaults to
         expect(screen.getByText('attributes.multi_display_options.avatar')).toBeInTheDocument();
     });
 
-    test('Hide the Explorer section on a mono-valued attribute', async () => {
+    test('Show the Explorer section on a mono-valued tree attribute', async () => {
         _renderTab(mockAttrTree);
 
-        expect(screen.queryByText('attributes.tree_selection.section_explorer')).not.toBeInTheDocument();
-        expect(screen.getByText('attributes.tree_selection.section_form')).toBeInTheDocument();
+        expect(screen.getByText('attributes.display.section_explorer')).toBeInTheDocument();
+        expect(screen.getByText('attributes.display.section_form')).toBeInTheDocument();
+    });
+
+    test('Offer only the identity card and the tag on a mono-valued attribute', async () => {
+        _renderTab(mockAttrTree, {formV2Enabled: false});
+
+        // Nothing stored on the attribute falls back to `avatar`, labelled as identity card in mono
+        expect(screen.getByText('attributes.multi_display_options.avatar_mono')).toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole('combobox'));
+
+        expect(await screen.findByText('attributes.multi_display_options.tag')).toBeInTheDocument();
+        expect(screen.queryByText('attributes.multi_display_options.avatar')).not.toBeInTheDocument();
+        expect(screen.queryByText('attributes.multi_display_options.badge_qty')).not.toBeInTheDocument();
+    });
+
+    test('Offer the avatar group and the quantity badge on a multi-valued attribute', async () => {
+        _renderTab(mockAttrTreeMultival, {formV2Enabled: false});
+
+        await userEvent.click(screen.getByRole('combobox'));
+
+        expect(screen.getAllByText('attributes.multi_display_options.avatar').length).toBeGreaterThan(0);
+        expect(await screen.findByText('attributes.multi_display_options.badge_qty')).toBeInTheDocument();
+        expect(screen.queryByText('attributes.multi_display_options.avatar_mono')).not.toBeInTheDocument();
+    });
+
+    test.each([
+        ['a simple_link attribute', mockAttrSimpleLink],
+        ['an advanced_link attribute', mockAttrAdvLink],
+    ])('Save multi_link_display_option for %s', async (_label, attribute) => {
+        let saveCalled = false;
+        _renderTab(attribute, {
+            apolloMocks: [
+                {
+                    request: {
+                        query: SaveAttributeDocument,
+                        variables: {
+                            attrData: {id: attribute.id, multi_link_display_option: MultiDisplayOption.tag},
+                        },
+                    },
+                    result: () => {
+                        saveCalled = true;
+                        return {
+                            data: {
+                                saveAttribute: {
+                                    ...attribute,
+                                    __typename: 'LinkAttribute',
+                                    multi_link_display_option: MultiDisplayOption.tag,
+                                },
+                            },
+                        };
+                    },
+                },
+            ],
+        });
+
+        await userEvent.click(screen.getByRole('combobox'));
+        await userEvent.click(await screen.findByText('attributes.multi_display_options.tag'));
+
+        await waitFor(() => expect(saveCalled).toBe(true));
+    });
+
+    test('Hide the Form section on a link attribute', async () => {
+        _renderTab(mockAttrAdvLink);
+
+        expect(screen.getByText('attributes.display.section_explorer')).toBeInTheDocument();
+        expect(screen.queryByText('attributes.display.section_form')).not.toBeInTheDocument();
     });
 
     test('Hide the Form section when both V2 flags are off', async () => {
         _renderTab(mockAttrTreeMultival, {formV2Enabled: false});
 
-        expect(screen.getByText('attributes.tree_selection.section_explorer')).toBeInTheDocument();
-        expect(screen.queryByText('attributes.tree_selection.section_form')).not.toBeInTheDocument();
+        expect(screen.getByText('attributes.display.section_explorer')).toBeInTheDocument();
+        expect(screen.queryByText('attributes.display.section_form')).not.toBeInTheDocument();
         expect(screen.queryByRole('switch')).not.toBeInTheDocument();
     });
 

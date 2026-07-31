@@ -1,6 +1,12 @@
 import {ENABLE_TREE_ATTRIBUTE_V2_FORM, ENABLE_TREE_ATTRIBUTE_V2_MODAL} from '@leav/utils';
 import {render, screen, within} from '../../../../_tests/testUtils';
-import {mockAttrAdv, mockAttrSimple, mockAttrTree} from '../../../../__mocks__/attributes';
+import {
+    mockAttrAdv,
+    mockAttrAdvLink,
+    mockAttrSimple,
+    mockAttrSimpleLink,
+    mockAttrTree,
+} from '../../../../__mocks__/attributes';
 import EditAttributeTabs from './EditAttributeTabs';
 
 vi.mock('../../../../utils/utils', () => ({
@@ -107,11 +113,24 @@ describe('EditAttributeTabs', () => {
                 globalSettings: {defaultApp: 'admin', name: 'My App', icon: null, favicon: null, settings},
             });
 
-            expect(screen.getByText(/tree_selection/)).toBeInTheDocument();
+            expect(screen.getByText(/display/)).toBeInTheDocument();
         });
 
-        test('Hide the display tab for a non-tree attribute even when the V2 flags are on', async () => {
-            render(<EditAttributeTabs attribute={{...mockAttrSimple}} />, {
+        test.each([
+            ['a tree attribute', mockAttrTree],
+            ['a simple_link attribute', mockAttrSimpleLink],
+            ['an advanced_link attribute', mockAttrAdvLink],
+        ])('Show the display tab for %s', async (_, attribute) => {
+            render(<EditAttributeTabs attribute={{...attribute}} />);
+
+            expect(screen.getByText(/display/)).toBeInTheDocument();
+        });
+
+        test.each([
+            ['a simple attribute', mockAttrSimple],
+            ['an advanced attribute', mockAttrAdv],
+        ])('Hide the display tab for %s even when the V2 flags are on', async (_, attribute) => {
+            render(<EditAttributeTabs attribute={{...attribute}} />, {
                 globalSettings: {
                     defaultApp: 'admin',
                     name: 'My App',
@@ -121,7 +140,7 @@ describe('EditAttributeTabs', () => {
                 },
             });
 
-            expect(screen.queryByText(/tree_selection/)).not.toBeInTheDocument();
+            expect(screen.queryByText(/display/)).not.toBeInTheDocument();
         });
 
         test('should open the tab in anchor', async () => {
