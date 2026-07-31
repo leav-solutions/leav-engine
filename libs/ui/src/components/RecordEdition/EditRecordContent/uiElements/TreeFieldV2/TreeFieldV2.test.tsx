@@ -498,6 +498,40 @@ describe('TreeFieldV2', () => {
         expect(onValueSubmit).not.toHaveBeenCalled();
     });
 
+    /** Antd hides a node whose children are all checked unless `showCheckedStrategy` says otherwise. */
+    test('Keeps the tag of a node whose children are all selected (LEAVC-996)', async () => {
+        const fullBranchMocks = [
+            _contentMock([_node('branch', [_node('leaf1'), _node('leaf2')]), _node('otherLeaf')]),
+            treeDataMock,
+        ];
+        const {container} = _renderField({
+            element: _element({
+                multipleValues: true,
+                treeSelectionConf: {defaultExpanded: true},
+                values: [
+                    _backendValue('branch', 'value1'),
+                    _backendValue('leaf1', 'value2'),
+                    _backendValue('leaf2', 'value3'),
+                ],
+            }),
+            treeMocks: fullBranchMocks,
+        });
+
+        const _tagLabels = () =>
+            Array.from(container.querySelectorAll('.ant-select-content .kit-id-card-description')).map(
+                tag => tag.textContent,
+            );
+
+        // Before the tree is loaded antd knows no hierarchy, so this only pins the starting state
+        await waitFor(() => expect(_tagLabels()).toHaveLength(3));
+
+        // Opening loads the tree: antd now knows `branch` holds `leaf1` and `leaf2`
+        await _openDropdown();
+
+        await waitFor(() => expect(_tagLabels()).toEqual(expect.arrayContaining(['branch', 'leaf1', 'leaf2'])));
+        expect(_tagLabels()).toHaveLength(3);
+    });
+
     describe('Group selection buttons', () => {
         /** `branch` needs more than one child for a group selection to prove anything. */
         const groupMocks = [
