@@ -55,7 +55,7 @@ describe('Breadcrumb', () => {
             </EditRecordReducerContext.Provider>,
         );
 
-        expect(screen.queryByText(/record_summary.entity_overview|Test Lib/)).not.toBeInTheDocument();
+        expect(screen.queryByLabelText(/record_summary.entity_overview|Test Lib/)).not.toBeInTheDocument();
     });
 
     describe('sidebarContent is valueDetails', () => {
@@ -66,8 +66,8 @@ describe('Breadcrumb', () => {
                 </EditRecordReducerContext.Provider>,
             );
 
-            expect(screen.getByText(/record_summary.entity_overview|Test Lib/)).toBeVisible();
-            expect(screen.queryByText(/record_summary.attribute/)).toBeVisible();
+            expect(screen.getByLabelText(/record_summary.entity_overview|Test Lib/)).toBeVisible();
+            expect(screen.queryByLabelText(/record_summary.attribute/)).toBeVisible();
         });
 
         it('should set sidebarContent to summary on click on first level', async () => {
@@ -77,7 +77,7 @@ describe('Breadcrumb', () => {
                 </EditRecordReducerContext.Provider>,
             );
 
-            await userEvent.click(screen.getByText(/record_summary.entity_overview|Test Lib/));
+            await userEvent.click(screen.getByLabelText(/record_summary.entity_overview|Test Lib/));
             expect(dispatchMock).toHaveBeenCalledWith({
                 type: EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT,
                 content: 'summary',
@@ -93,8 +93,8 @@ describe('Breadcrumb', () => {
                 </EditRecordReducerContext.Provider>,
             );
 
-            expect(screen.getByText(/record_summary.entity_overview|Test Lib/)).toBeVisible();
-            expect(screen.queryByText(/record_summary.attribute/)).not.toBeInTheDocument();
+            expect(screen.getByLabelText(/record_summary.entity_overview|Test Lib/)).toBeVisible();
+            expect(screen.queryByLabelText(/record_summary.attribute/)).not.toBeInTheDocument();
         });
     });
 });
