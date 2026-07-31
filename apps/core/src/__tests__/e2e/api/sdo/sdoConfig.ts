@@ -34,6 +34,12 @@ export const SDO_TEST_ATTRIBUTE_ID = 'sdo_test_value';
 // `email` attribute — used to cover export/import of path-based mappings end-to-end.
 export const SDO_EDITOR_EMAIL_LEAV_ATTRIBUTE_PATH = `${CommonAttributes.MODIFIED_BY}.${UsersAttributes.EMAIL}`;
 
+// DTO IMPORT
+// The DTO import reuses the SDO import domain, hence the same mapping structure. It gets its own
+// library so it can't interfere with the SDO import tests running in parallel.
+export const DTO_IMPORTS_LIBRARY_ID = 'test_dto_imports';
+export const DTO_TEST_ATTRIBUTE_ID = 'dto_test_value';
+
 export const sdoGlobalSettings: ISDOSettings = {
     timer: SDO_EXPORT_TIMER,
     mapping: {
@@ -129,6 +135,12 @@ export const sdoGlobalSettings: ISDOSettings = {
                     valueRequired: false,
                     format: 'string',
                 },
+            },
+        },
+        [DTO_IMPORTS_LIBRARY_ID]: {
+            leavLibraryId: DTO_IMPORTS_LIBRARY_ID,
+            sdoAttributes: {
+                'info.value': {leavAttributeId: DTO_TEST_ATTRIBUTE_ID, valueRequired: false, format: 'string'},
             },
         },
     },

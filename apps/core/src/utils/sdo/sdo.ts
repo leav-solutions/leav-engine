@@ -9,11 +9,11 @@ export interface ISDOAdditionalLibraryTriggerMatch {
 export interface ISDOUtils {
     getLibraryMapping: (sdoGlobalSettingsMapping: ISDOMapping, libraryId: string) => ISDOMappingLibrary | undefined;
     getAdditionalLibraryTriggers: (mapping: ISDOMapping, eventLibraryId: string) => ISDOAdditionalLibraryTriggerMatch[];
-    getLeavLibraryId: (mapping: ISDOMapping, sdo: ISDO) => string;
+    getLeavLibraryId: (mapping: ISDOMapping, sdo: Pick<ISDO, 'name'>) => string;
     hasSDOLibrary: (mapping: ISDOMapping, leavLibraryId: string) => boolean;
     hasSDOAttribute: (sdoLibrary: ISDOMappingLibrary, attribute: string) => boolean;
     getSDOLibrary: (sdoLibrary: ISDOMapping, leavLibraryId: string) => ISDOMappingLibrary;
-    getRecordUUIDFromSDO: (sdo: ISDO) => string;
+    getRecordUUIDFromSDO: (sdo: Pick<ISDO, 'content'>) => string;
     tmpRecordIdToUuid: (recordId: string) => string;
 }
 
@@ -53,7 +53,7 @@ export default function (): ISDOUtils {
         return lib;
     };
 
-    const getLeavLibraryId = (mapping: ISDOMapping, sdo: ISDO) => mapping[sdo.name]?.leavLibraryId;
+    const getLeavLibraryId = (mapping: ISDOMapping, sdo: Pick<ISDO, 'name'>) => mapping[sdo.name]?.leavLibraryId;
     const hasSDOLibrary = (mapping: ISDOMapping, leavLibraryId: string): boolean =>
         Object.values(mapping).some(sdoLibrary => sdoLibrary?.leavLibraryId === leavLibraryId);
 
@@ -65,7 +65,7 @@ export default function (): ISDOUtils {
             ({leavAttributeId}) => leavAttributeId.split('.')[0] === attribute,
         );
 
-    const getRecordUUIDFromSDO = (sdo: ISDO): string => {
+    const getRecordUUIDFromSDO = (sdo: Pick<ISDO, 'content'>): string => {
         const recordUuid = _.get(sdo.content, sdoPathIdentifierUuid);
 
         if (!recordUuid || typeof recordUuid !== 'string') {
