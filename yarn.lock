@@ -11446,7 +11446,7 @@ __metadata:
     jsonwebtoken: "npm:9.0.3"
     lodash: "npm:4.18.1"
     ms: "npm:2.1.3"
-    nanoid: "npm:3.3.16"
+    nanoid: "npm:6.0.0"
     node-cron: "npm:4.6.0"
     nodemailer: "npm:9.0.3"
     openid-client: "npm:5.7.1"
@@ -16977,7 +16977,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:3.3.16, nanoid@npm:^3.3.16":
+"nanoid@npm:6.0.0":
+  version: 6.0.0
+  resolution: "nanoid@npm:6.0.0"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 10/ac39c3fc955353bdadb2b675a7ea3642a9aa13838c97f0bdf8153c6d3811096038f620258a00218c3f992f30141015d71ea20dd0e26b1edd86a69e897b83f7c6
+  languageName: node
+  linkType: hard
+
+"nanoid@npm:^3.3.16":
   version: 3.3.16
   resolution: "nanoid@npm:3.3.16"
   bin:
