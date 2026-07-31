@@ -270,6 +270,10 @@ describe('UserDomain', () => {
             await udd.sendResetPasswordEmail('email@domain.com', 'token', 'login', 'firefox', 'Os X', 'fr', mockCtx);
 
             expect(mockMailerService.sendEmail.mock.calls.length).toBe(1);
+
+            const sentHtml = mockMailerService.sendEmail.mock.calls[0][0].html;
+            expect(sentHtml).toContain('firefox');
+            expect(sentHtml).toContain('Os X');
         });
     });
 });

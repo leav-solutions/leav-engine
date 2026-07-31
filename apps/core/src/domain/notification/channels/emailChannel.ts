@@ -8,6 +8,7 @@ import handlebars from 'handlebars';
 import {type IGlobalSettingsDomain} from '../../globalSettings/globalSettingsDomain';
 import {type IConfig} from '../../../_types/config';
 import {NOTIFICATION_EMAIL_TASK_ID_HEADER} from '../../../_constants/notifications';
+import {getMailTemplateAssets} from '../../../utils/helpers/getMailTemplateAssets';
 
 export interface INotificationByEmailChannelDeps {
     config: IConfig;
@@ -55,9 +56,13 @@ export default function ({
 
         const htmlWithData = template({
             appName: globalSettings.name,
-            publicUrl: config.server.publicUrl,
+            heading: notification.title,
             message: notification.message,
             links: [...(notification.relatedEntities || []), ...(notification.attachments || [])],
+            ...getMailTemplateAssets({
+                publicUrl: config.server.publicUrl,
+                hasGlobalIcon: Boolean(globalSettings.icon),
+            }),
         });
 
         await mailerService.sendEmail(

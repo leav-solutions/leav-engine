@@ -20,6 +20,7 @@ import {AdminPermissionsActions, PermissionTypes} from '../../_types/permissions
 import {type IStandardValue} from '../../_types/value';
 import {type IValueDomain} from '../value/valueDomain';
 import {AttributeCondition, type IRecord} from '../../_types/record';
+import {getMailTemplateAssets} from '../../utils/helpers/getMailTemplateAssets';
 
 interface ISaveUserDataParams {
     key: string;
@@ -156,10 +157,16 @@ export default function ({
 
             const htmlWithData = template({
                 login,
+                heading: translator.t('mailer.reset_password_subject', {lng: lang}),
                 resetPasswordUrl: `${config.server.publicUrl}/${loginAppEndpoint}/reset-password/${token}`,
                 supportEmail: config.server.supportEmail,
                 browser,
+                os,
                 appName: globalSettings.name,
+                ...getMailTemplateAssets({
+                    publicUrl: config.server.publicUrl,
+                    hasGlobalIcon: Boolean(globalSettings.icon),
+                }),
             });
 
             await mailerService.sendEmail(
