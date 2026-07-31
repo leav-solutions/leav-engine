@@ -8205,12 +8205,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/nodemailer@npm:6.4.24":
-  version: 6.4.24
-  resolution: "@types/nodemailer@npm:6.4.24"
+"@types/nodemailer@npm:8.0.1":
+  version: 8.0.1
+  resolution: "@types/nodemailer@npm:8.0.1"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10/659be5cc6b379ba8d772d8117c67e5d401df97b729e22c41feb5f560637f704e1d6e56556055322dd9d24d91999be74197b11a83b90f14147ac5421d4f9ac1af
+  checksum: 10/ec2d9783387a0b24de0cfa76a8da6beab7342e97329fe1e2cf7a26d05e57b241f8dd45276385f1ee5bd089000f35b60beb8f31a9e2e7deaec5486ff1c640e641
   languageName: node
   linkType: hard
 
@@ -11408,7 +11408,7 @@ __metadata:
     "@types/lodash": "npm:4.17.24"
     "@types/ms": "npm:2.1.0"
     "@types/node": "npm:24.13.3"
-    "@types/nodemailer": "npm:6.4.24"
+    "@types/nodemailer": "npm:8.0.1"
     "@types/ws": "npm:8.18.1"
     add-filename-increment: "npm:1.0.0"
     arangojs: "npm:8.8.1"

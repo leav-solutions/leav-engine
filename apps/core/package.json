@@ -51,7 +51,7 @@
         "@types/lodash": "4.17.24",
         "@types/ms": "2.1.0",
         "@types/node": "24.13.3",
-        "@types/nodemailer": "6.4.24",
+        "@types/nodemailer": "8.0.1",
         "@types/ws": "8.18.1",
         "axios": "1.19.0",
         "eventsource": "4.1.0",
