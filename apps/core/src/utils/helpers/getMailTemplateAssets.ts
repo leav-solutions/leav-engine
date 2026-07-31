@@ -19,7 +19,8 @@ export const getMailTemplateAssets = ({
         brandLogoUrl: `${assetsUrl}/logo-aristid.png`,
         illustrationUrl: `${assetsUrl}/illustration-notification.png`,
         // The global icon route falls back to an SVG, which mail clients do not render: use a PNG
-        // fallback instead when no icon is configured on the instance.
+        // fallback instead when no icon is configured on the instance. Instances without a global icon
+        // override that PNG in their own image (/app/assets/mail/), see docs/mail-templates.md.
         productLogoUrl: hasGlobalIcon ? `${publicUrl}/global-icon/medium` : `${assetsUrl}/logo-product-default.png`,
     };
 };
