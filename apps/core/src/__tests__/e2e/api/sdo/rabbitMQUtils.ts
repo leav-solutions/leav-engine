@@ -34,12 +34,17 @@ export class RabbitMqClient {
         return this.channel;
     }
 
-    public async publishToExchange<T = unknown>(exchange: string, payload: T): Promise<void> {
+    /**
+     * `type` must match the type the core asserts for that exchange, otherwise the broker answers
+     * PRECONDITION_FAILED and closes the channel (SDO import/export is `fanout`, DTO import is
+     * `direct`).
+     */
+    public async publishToExchange<T = unknown>(exchange: string, payload: T, type = 'fanout'): Promise<void> {
         if (!this.channel) {
             this.channel = this.getConnection().createChannel({
                 name: 'e2e:rabbitMqUtils',
                 setup: async t => {
-                    await t.assertExchange(exchange, 'fanout', {durable: true});
+                    await t.assertExchange(exchange, type, {durable: true});
                 },
             });
         }

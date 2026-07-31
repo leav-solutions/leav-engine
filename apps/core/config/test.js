@@ -103,7 +103,7 @@ module.exports = {
             import: {
                 enable: true,
                 exchange: 'test_dto_import_exchange',
-                exchangeType: 'fanout',
+                exchangeType: 'direct',
                 queue: 'test_dto_import_queue',
             },
         },

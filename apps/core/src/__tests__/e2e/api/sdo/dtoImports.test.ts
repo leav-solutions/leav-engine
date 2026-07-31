@@ -51,7 +51,12 @@ describe('DTO Imports', () => {
         ...overrides,
     });
 
-    const _publish = (dto: unknown) => rabbitmqClient.publishToExchange(conf.sdo.dto.import.exchange, dto);
+    const _publish = (dto: unknown) =>
+        rabbitmqClient.publishToExchange(
+            conf.sdo.dto.import.exchange,
+            dto,
+            conf.sdo.dto.import.exchangeType, // `direct`, unlike the SDO fanout exchange
+        );
 
     const _findRecords = async (recordUUID: string) =>
         (
