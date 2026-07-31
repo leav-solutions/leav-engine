@@ -29,7 +29,6 @@
         "vitest": "4.1.10"
     },
     "dependencies": {
-        "@leav/config-manager": "workspace:libs/config-manager",
         "@leav/logger": "workspace:libs/logger",
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@modelcontextprotocol/sdk": "1.30.0",

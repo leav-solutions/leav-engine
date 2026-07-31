@@ -4310,7 +4310,6 @@ __metadata:
   resolution: "@leav/config-manager@workspace:libs/config-manager"
   dependencies:
     "@types/node": "npm:24.13.3"
-    prettier: "npm:3.9.6"
     typescript: "npm:7.0.2"
     vitest: "npm:4.1.10"
   languageName: unknown
@@ -4326,12 +4325,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/e2e-test-utils@workspace:libs/e2e-test-utils"
   dependencies:
-    "@graphql-codegen/add": "npm:5.0.3"
     "@graphql-codegen/cli": "npm:6.3.1"
-    "@graphql-codegen/client-preset": "npm:4.8.3"
     "@graphql-codegen/typescript": "npm:5.0.10"
     "@graphql-codegen/typescript-graphql-request": "npm:6.4.0"
     "@graphql-codegen/typescript-operations": "npm:5.1.0"
+    "@graphql-typed-document-node/core": "npm:3.2.0"
     "@playwright/test": "npm:1.62.1"
     "@types/node": "npm:24.13.3"
     graphql: "npm:16.14.2"
@@ -10120,7 +10118,6 @@ __metadata:
     "@leav/utils": "workspace:*"
     "@types/node": "npm:24.13.3"
     chokidar: "npm:4.0.3"
-    lodash: "npm:4.18.1"
     prettier: "npm:3.9.6"
     redis: "npm:5.12.1"
     tsx: "npm:4.23.1"
@@ -11679,13 +11676,6 @@ __metadata:
   version: 3.2.3
   resolution: "csstype@npm:3.2.3"
   checksum: 10/ad41baf7e2ffac65ab544d79107bf7cd1a4bb9bab9ac3302f59ab4ba655d5e30942a8ae46e10ba160c6f4ecea464cc95b975ca2fefbdeeacd6ac63f12f99fe1f
-  languageName: node
-  linkType: hard
-
-"cuint@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "cuint@npm:0.2.2"
-  checksum: 10/c1b98971f4a1b32ce71ec82eac87df87b54ee85d982e3967a6dd89f19ffd3ebbbdb82e3738e489f475611b6ed126c0deba05ed9ecffea0a721a4d43773ce0670
   languageName: node
   linkType: hard
 
@@ -16662,7 +16652,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mcp-runtime@workspace:apps/mcp-runtime"
   dependencies:
-    "@leav/config-manager": "workspace:libs/config-manager"
     "@leav/logger": "workspace:libs/logger"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@modelcontextprotocol/sdk": "npm:1.30.0"
@@ -18084,6 +18073,7 @@ __metadata:
   resolution: "preview-generator@workspace:apps/preview-generator"
   dependencies:
     "@leav/config-manager": "workspace:libs/config-manager"
+    "@leav/logger": "workspace:libs/logger"
     "@leav/message-broker": "workspace:libs/message-broker"
     "@leav/monitoring-server": "workspace:libs/monitoring-server"
     "@leav/utils": "workspace:*"
@@ -20375,7 +20365,6 @@ __metadata:
     apollo-client: "npm:2.6.10"
     apollo-link: "npm:1.2.14"
     apollo-link-http: "npm:1.5.17"
-    arangojs: "npm:8.8.1"
     graphql: "npm:16.14.2"
     graphql-tag: "npm:2.12.7"
     joi: "npm:18.2.3"
@@ -20384,7 +20373,6 @@ __metadata:
     typescript: "npm:7.0.2"
     vitest: "npm:4.1.10"
     walk: "npm:2.3.15"
-    xxhashjs: "npm:0.2.2"
   languageName: unknown
   linkType: soft
 
@@ -21944,15 +21932,6 @@ __metadata:
   version: 4.0.2
   resolution: "xtend@npm:4.0.2"
   checksum: 10/ac5dfa738b21f6e7f0dd6e65e1b3155036d68104e67e5d5d1bde74892e327d7e5636a076f625599dc394330a731861e87343ff184b0047fef1360a7ec0a5a36a
-  languageName: node
-  linkType: hard
-
-"xxhashjs@npm:0.2.2":
-  version: 0.2.2
-  resolution: "xxhashjs@npm:0.2.2"
-  dependencies:
-    cuint: "npm:^0.2.2"
-  checksum: 10/974dba1b7dd10f550714456366135fc70ba809e6e4db26e18a760a1f57e18dbc7fa6732738abc3f8fee27bb6a28d185240356ff4a57d7ce54282049e1da99886
   languageName: node
   linkType: hard
 

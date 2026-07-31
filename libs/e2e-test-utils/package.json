@@ -20,14 +20,13 @@
         "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"
     },
     "dependencies": {
+        "@graphql-typed-document-node/core": "3.2.0",
         "graphql": "16.14.2",
         "graphql-request": "7.4.0",
         "graphql-tag": "2.12.7"
     },
     "devDependencies": {
-        "@graphql-codegen/add": "5.0.3",
         "@graphql-codegen/cli": "6.3.1",
-        "@graphql-codegen/client-preset": "4.8.3",
         "@graphql-codegen/typescript": "5.0.10",
         "@graphql-codegen/typescript-graphql-request": "6.4.0",
         "@graphql-codegen/typescript-operations": "5.1.0",
