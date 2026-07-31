@@ -13,6 +13,7 @@ import {
     type TreePermissionsActions,
     type AttributeDependentValuesPermissionsActions,
 } from './permissions';
+import type ms from 'ms';
 
 export interface IConfig {
     coreModes: CoreMode[];
@@ -204,8 +205,8 @@ export interface IAuth {
     scheme: string;
     key: string;
     algorithm: string;
-    tokenExpiration: string;
-    refreshTokenExpiration: string;
+    tokenExpiration: ms.StringValue;
+    refreshTokenExpiration: ms.StringValue;
     cookie: {
         sameSite: 'none' | 'lax' | 'strict';
         secure: boolean;
@@ -225,7 +226,7 @@ export interface IAuth {
               postLogoutRedirectUri?: string;
               skipLogoutConfirmationPage?: boolean;
               idTokenUserClaim?: string;
-              verificationKeysExpiration: string;
+              verificationKeysExpiration: ms.StringValue;
           }
         | {
               enable: true;
@@ -237,7 +238,7 @@ export interface IAuth {
               idTokenUserUuidClaim: string;
               enableAutoProvisioning: boolean;
               retryAuthenticationFlowAfterExpiry: boolean;
-              verificationKeysExpiration: string;
+              verificationKeysExpiration: ms.StringValue;
           };
     testApiKey?: string;
 
@@ -431,7 +432,7 @@ export interface IPreview {
 
 export interface IApplicationsConfig {
     rootFolder: string;
-    assetsMaxAge?: string; // string with ms format
+    assetsMaxAge?: ms.StringValue; // string with ms format
 }
 
 export interface IFilesConfig {
