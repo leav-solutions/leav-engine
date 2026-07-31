@@ -35,6 +35,13 @@
             "automerge": true
         },
         {
+            "description": "Update Playwright (npm + Docker image, MR commune)",
+            "matchPackageNames": ["@playwright/test", "mcr.microsoft.com/playwright"],
+            "matchManagers": ["gitlabci", "npm"],
+            "groupName": "playwright",
+            "enabled": true
+        },
+        {
             "description": "Ignore aristid-ds dependencies",
             "matchPackageNames": ["aristid-ds"],
             "enabled": false
