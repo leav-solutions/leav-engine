@@ -4559,12 +4559,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@npmcli/fs@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "@npmcli/fs@npm:5.0.0"
+"@npmcli/fs@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@npmcli/fs@npm:6.0.0"
   dependencies:
     semver: "npm:^7.3.5"
-  checksum: 10/4935c7719d17830d0f9fa46c50be17b2a3c945cec61760f6d0909bce47677c42e1810ca673305890f9e84f008ec4d8e841182f371e42100a8159d15f22249208
+  checksum: 10/caa9f71860a9fdca0e89e7882a1c4ec2537a7d24e8b20e7e67521ce8e0a6dd9d89b77e146cafd77b026f4969eeb18a8ba2292b85aadbe355ff4b8a44320e3635
   languageName: node
   linkType: hard
 
@@ -5672,10 +5672,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@photostructure/tz-lookup@npm:^11.5.0":
-  version: 11.5.0
-  resolution: "@photostructure/tz-lookup@npm:11.5.0"
-  checksum: 10/065fe42bea45ed46d1742fa063db83dc8a6ea550d1679b85b9df58ef9848e4f829cfb292261e56be9e6e22ee82aa56d483381f34fa00f374745e42c6a5b03d5c
+"@photostructure/tz-lookup@npm:^11.6.0":
+  version: 11.6.0
+  resolution: "@photostructure/tz-lookup@npm:11.6.0"
+  checksum: 10/fec02c8c67ca85a42d44bde0586b777fcdd8f4698238722a5a08fd5f189d8aa4f7054cf9569cd526ac1b4f20316728e2ba609eae901197a354c6664c915ba734
   languageName: node
   linkType: hard
 
@@ -10275,10 +10275,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"batch-cluster@npm:^18.0.0":
-  version: 18.0.0
-  resolution: "batch-cluster@npm:18.0.0"
-  checksum: 10/b62862ebc9ae1182c083091e722095f9e1e45be3246606be704ab2c157bfa9112da49f0ff99661d48f971d0023800e21f17296cd0b123cc94eb05c434d30df54
+"batch-cluster@npm:^19.0.0":
+  version: 19.0.0
+  resolution: "batch-cluster@npm:19.0.0"
+  checksum: 10/26e3e422f6b8994fd05bacff9a98504942b7c336d172f9cbdec607850745b35b21685677a2b1e3a52266020b14aba43f097f6e51b2ae09abbee9f54f4b2454d4
   languageName: node
   linkType: hard
 
@@ -10554,11 +10554,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cacache@npm:20.0.4":
-  version: 20.0.4
-  resolution: "cacache@npm:20.0.4"
+"cacache@npm:21.0.1":
+  version: 21.0.1
+  resolution: "cacache@npm:21.0.1"
   dependencies:
-    "@npmcli/fs": "npm:^5.0.0"
+    "@npmcli/fs": "npm:^6.0.0"
     fs-minipass: "npm:^3.0.0"
     glob: "npm:^13.0.0"
     lru-cache: "npm:^11.1.0"
@@ -10567,8 +10567,8 @@ __metadata:
     minipass-flush: "npm:^1.0.5"
     minipass-pipeline: "npm:^1.2.4"
     p-map: "npm:^7.0.2"
-    ssri: "npm:^13.0.0"
-  checksum: 10/02c1b4c57dc2473e6f4654220c9405b73ae5fcdb392f82a7cf535468a52b842690cdb3694861d13bbe4dc067d5f8abe9697b4f791ae5b65cd73d62abad1e3e54
+    ssri: "npm:^14.0.0"
+  checksum: 10/b75cdcb71fc2dfa6f9684e97f743f5d46570390cde7c747f82009a09ba6c743ebe401b0127e243f1b6426bd31a4e361df3fa85d429aab361a88d38a06b43d94d
   languageName: node
   linkType: hard
 
@@ -11080,7 +11080,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:14.0.3, commander@npm:^14.0.3":
+"commander@npm:15.0.0":
+  version: 15.0.0
+  resolution: "commander@npm:15.0.0"
+  checksum: 10/a5dab1f5c3f1bf2ea19e8089f650f7fb65c3ed88e13ddde62e490d34b20057bcb2cd3de5b6ddc8aae93286083f8256ca0b812df842f574cbebe0e40f5b2f98f7
+  languageName: node
+  linkType: hard
+
+"commander@npm:^14.0.3":
   version: 14.0.3
   resolution: "commander@npm:14.0.3"
   checksum: 10/dfa9ebe2a433d277de5cb0252d23b10a543d245d892db858d23b516336a835c50fd4f52bee4cd13c705cc8acb6f03dc632c73dd806f7d06d3353eb09953dd17a
@@ -11415,8 +11422,8 @@ __metadata:
     awilix: "npm:12.1.1"
     axios: "npm:1.19.0"
     bcryptjs: "npm:2.4.3"
-    cacache: "npm:20.0.4"
-    commander: "npm:14.0.3"
+    cacache: "npm:21.0.1"
+    commander: "npm:15.0.0"
     compression: "npm:1.8.1"
     cookie-parser: "npm:1.4.7"
     cors: "npm:2.8.6"
@@ -11424,7 +11431,7 @@ __metadata:
     dayjs: "npm:1.11.21"
     eventsource: "npm:4.1.0"
     exceljs: "npm:4.4.0"
-    exiftool-vendored: "npm:36.1.0"
+    exiftool-vendored: "npm:37.1.0"
     express: "npm:4.22.2"
     express-useragent: "npm:1.0.15"
     form-data: "npm:4.0.6"
@@ -11446,7 +11453,7 @@ __metadata:
     jsonwebtoken: "npm:9.0.3"
     lodash: "npm:4.18.1"
     ms: "npm:2.1.3"
-    nanoid: "npm:3.3.16"
+    nanoid: "npm:6.0.0"
     node-cron: "npm:4.6.0"
     nodemailer: "npm:9.0.3"
     openid-client: "npm:5.7.1"
@@ -13059,13 +13066,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"exiftool-vendored@npm:36.1.0":
-  version: 36.1.0
-  resolution: "exiftool-vendored@npm:36.1.0"
+"exiftool-vendored@npm:37.1.0":
+  version: 37.1.0
+  resolution: "exiftool-vendored@npm:37.1.0"
   dependencies:
-    "@photostructure/tz-lookup": "npm:^11.5.0"
+    "@photostructure/tz-lookup": "npm:^11.6.0"
     "@types/luxon": "npm:^3.7.2"
-    batch-cluster: "npm:^18.0.0"
+    batch-cluster: "npm:^19.0.0"
     exiftool-vendored.exe: "npm:13.59.0"
     exiftool-vendored.pl: "npm:13.59.0"
     he: "npm:^1.2.0"
@@ -13075,7 +13082,7 @@ __metadata:
       optional: true
     exiftool-vendored.pl:
       optional: true
-  checksum: 10/f1c4f7d99935e1972dcda884457d367a4a763309edbf506a63706766702637ecb5fe948b720c2383d4254246b70a2c9cdfd809adce3c523ecb1a469f7fd7ac57
+  checksum: 10/7dd516f9deceadf44d76f21e9349cba3bc7947b8ea366357da3153e7d24d3374b69255fad6bfceeccd811374527a0b7e7558785cea15c5d5246c67c82973c04c
   languageName: node
   linkType: hard
 
@@ -16977,7 +16984,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:3.3.16, nanoid@npm:^3.3.16":
+"nanoid@npm:6.0.0":
+  version: 6.0.0
+  resolution: "nanoid@npm:6.0.0"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 10/ac39c3fc955353bdadb2b675a7ea3642a9aa13838c97f0bdf8153c6d3811096038f620258a00218c3f992f30141015d71ea20dd0e26b1edd86a69e897b83f7c6
+  languageName: node
+  linkType: hard
+
+"nanoid@npm:^3.3.16":
   version: 3.3.16
   resolution: "nanoid@npm:3.3.16"
   bin:
@@ -19834,12 +19850,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ssri@npm:^13.0.0":
-  version: 13.0.1
-  resolution: "ssri@npm:13.0.1"
+"ssri@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "ssri@npm:14.0.0"
   dependencies:
     minipass: "npm:^7.0.3"
-  checksum: 10/ae560d0378d074006a71b06af71bfbe84a3fe1ac6e16c1f07575f69e670d40170507fe52b21bcc23399429bc6a15f4bc3ea8d9bc88e9dfd7e87de564e6da6a72
+  checksum: 10/a1dfa938f05c6e6d3638b2e78f21cf67da96ad8f6963cd5cbc1adc9a52929a9bb82d4cd0bf2ba9d2205cfee27f66a271e0fd2f36b2fa072a66ab722eadaacc14
   languageName: node
   linkType: hard
 
