@@ -7736,26 +7736,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trpc/client@npm:11.16.0":
-  version: 11.16.0
-  resolution: "@trpc/client@npm:11.16.0"
+"@trpc/client@npm:11.18.0":
+  version: 11.18.0
+  resolution: "@trpc/client@npm:11.18.0"
   peerDependencies:
-    "@trpc/server": 11.16.0
+    "@trpc/server": 11.18.0
     typescript: ">=5.7.2"
   bin:
     intent: bin/intent.js
-  checksum: 10/c3f282dae928846e80f339f2f4cc43ba093f3f7b9662e27abeef4d0a63a8ca379c8a705ce0435a8b1a96301da7a11bcf696a2a436f0c678e2ec33fdd6ba80073
+  checksum: 10/a2763774023834305ed645a37542d9bb96f33389587feee86202b1323ae80313e429a4db782b54af6ccd3a42b979dd551a07fb5ad1e8246f0adc8c9d798e7384
   languageName: node
   linkType: hard
 
-"@trpc/server@npm:11.16.0":
-  version: 11.16.0
-  resolution: "@trpc/server@npm:11.16.0"
+"@trpc/server@npm:11.18.0":
+  version: 11.18.0
+  resolution: "@trpc/server@npm:11.18.0"
   peerDependencies:
     typescript: ">=5.7.2"
   bin:
     intent: bin/intent.js
-  checksum: 10/abed9f3e9aafb8b964b9b51a75bba018601d935f4b44c5ae5faa29d0cf4fbdf74ad7cb3287eaebb44efe70c552dfac9c5cc07a0565642b489dadde37eeda57eb
+  checksum: 10/a633cc8ef1296eb99ab742a97a563056fe31320fbca2ed2e97dce4af06168080cfd4fe12923857d5fb622660009ddeba4361ff37f97226369126a26836800806
   languageName: node
   linkType: hard
 
@@ -11466,8 +11466,8 @@ __metadata:
     "@opentelemetry/sdk-metrics": "npm:2.10.0"
     "@opentelemetry/sdk-node": "npm:0.221.0"
     "@rjsf/utils": "npm:6.7.1"
-    "@trpc/client": "npm:11.16.0"
-    "@trpc/server": "npm:11.16.0"
+    "@trpc/client": "npm:11.18.0"
+    "@trpc/server": "npm:11.18.0"
     "@types/cacache": "npm:20.0.1"
     "@types/compression": "npm:1.8.1"
     "@types/debug": "npm:0.0.31"
