@@ -40,6 +40,32 @@ l'app doit gérer elle-même l'ack/nack (ex. pattern pause/reprise), `manualAck:
 rejouer automatiquement à chaque reconnexion. La topologie applicative normale (déclarative,
 rejouée au reconnect) reste `assertExchange`/`assertQueue`/`bindQueue`/`prefetch` via `setup`.
 
+## Piège : rien ne garantit l'ordre entre les `setup` de deux canaux
+
+Un `setup` est **asynchrone et non attendu** à la création du canal : `createChannel()` retourne
+immédiatement. `publish()` attend le `setup` de **son** canal (les messages sont mis en file en
+interne), mais **jamais celui d'un autre canal**. Deux conséquences :
+
+- **Chaque canal doit asserter tout ce dont il dépend.** Un canal qui fait `bindQueue` doit asserter
+  lui-même l'exchange visé (idempotent si un autre canal l'assert aussi avec les mêmes arguments) :
+  sinon, sur un broker où l'exchange n'existe pas encore, le `bindQueue` renvoie un `404` — traité
+  comme **irrécupérable** par `amqp-connection-manager`, qui ferme le canal et ne le recrée jamais
+  tant que la connexion vit. Consumer mort silencieusement.
+- **`await consume()` ne garantit pas que le consumer soit enregistré côté broker.** Si la connexion
+  n'est pas encore établie, le consumer est mémorisé et rejoué au premier `connect` — l'appel résout
+  quand même (avec un `consumerTag` valide). Publier juste après un `await consume()` n'assure donc
+  rien.
+
+Dans un test qui publie immédiatement après avoir déclaré sa topologie, poser une **barrière
+explicite** : `await channel.purgeQueue(queue)` attend le `waitForConnect()` interne du canal, donc
+son `setup` appliqué (queue assertée **et** bindée) — tout en vidant les messages résiduels d'un run
+précédent. Cf. [`apps/sync-scan/src/__tests__/e2e/index.test.ts`](../../apps/sync-scan/src/__tests__/e2e/index.test.ts)
+et [`apps/automate-scan/src/__tests__/integration/watch_integration.test.ts`](../../apps/automate-scan/src/__tests__/integration/watch_integration.test.ts).
+
+> ⚠️ Ne jamais asserter dans un handler `consume()` : la lib rattrape toute exception du handler
+> (log + `nack`). Un `expect()` en échec y devient un **timeout de test opaque** au lieu d'un diff.
+> Collecter les messages dans le handler, asserter dans le corps du test.
+
 ```ts
 import {createAmqpConnection} from '@leav/message-broker';
 
