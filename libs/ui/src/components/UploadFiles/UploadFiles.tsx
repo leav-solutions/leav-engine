@@ -52,7 +52,6 @@ function UploadFiles({
     const {modal} = App.useApp();
 
     const [selectedNode, setSelectedNode] = useState<{id: string; recordId?: string}>(defaultSelectedNode);
-    const [selectedDir, setSelectedDir] = useState<{path: string; name: string} | null>();
     const [files, setFiles] = useState<Array<UploadFile & {replace?: boolean}>>([]);
     const [status, setStatus] = useState<StepsProps['status']>('process');
     const [currentStep, setCurrentStep] = useState(defaultSelectedNode ? 1 : 0);
@@ -83,21 +82,11 @@ function UploadFiles({
         },
     });
 
-    useEffect(() => {
-        if (!directoryData) {
-            return;
-        }
-
-        const dirData = directoryData.records.list[0];
-        if (!dirData) {
-            return;
-        }
-
-        setSelectedDir({
-            path: dirData.file_path.values[0].value,
-            name: dirData.file_name.values[0].value,
-        });
-    }, [directoryData]);
+    // Derived from the query: no local state to resync when the selected node changes.
+    const dirData = directoryData?.records.list[0];
+    const selectedDir = dirData
+        ? {path: dirData.file_path?.[0]?.value ?? '', name: dirData.file_name?.[0]?.value ?? ''}
+        : null;
 
     const props = {
         name: 'files',
@@ -239,6 +228,10 @@ function UploadFiles({
 
     const _onClose = () => {
         setFiles([]);
+        setSelectedNode(defaultSelectedNode);
+        setStatus('process');
+        setCurrentStep(defaultSelectedNode ? 1 : 0);
+        setErrorMsg(undefined);
         onClose();
     };
 
@@ -255,13 +248,7 @@ function UploadFiles({
     };
 
     const onSelectPath = async (node: ITreeNodeWithRecord, selected: boolean) => {
-        const newSelectedNode = !selected ? undefined : {id: node.id, recordId: node.record?.id};
-
-        setSelectedNode(newSelectedNode);
-
-        if (!newSelectedNode?.recordId) {
-            setSelectedDir(null);
-        }
+        setSelectedNode(!selected ? undefined : {id: node.id, recordId: node.record?.id});
     };
 
     const Dragger = (
@@ -310,7 +297,7 @@ function UploadFiles({
     const renderPathTitle = () => {
         const title = selectedNode
             ? selectedDir
-                ? `${selectedDir?.path}/${selectedDir?.name}`.replace('./', '')
+                ? [selectedDir.path, selectedDir.name].filter(Boolean).join('/').replace('./', '')
                 : filesTreeId
             : t('upload.select_path_step_title');
 
