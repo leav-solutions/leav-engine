@@ -12,7 +12,7 @@ describe('OIDCClientService', () => {
                 verificationKeysExpiration: '10',
             },
         },
-    } as IConfig;
+    } as unknown as IConfig;
 
     let oidcClientMock: Mockify<OidcClient & BaseClient>;
     let sessionRepoMock: Mockify<ISessionRepo>;

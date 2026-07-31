@@ -134,11 +134,9 @@ export default function ({
     ): [AuthCookieName, string, CookieOptions] => {
         const cookieExpires =
             ms(
-                String(
-                    cookieName === ACCESS_TOKEN_COOKIE_NAME
-                        ? config.auth.tokenExpiration
-                        : config.auth.refreshTokenExpiration,
-                ),
+                cookieName === ACCESS_TOKEN_COOKIE_NAME
+                    ? config.auth.tokenExpiration
+                    : config.auth.refreshTokenExpiration,
             ) - ONE_MINUTE; // we subtract one minute to avoid overlapping the access token
         if (config.auth.cookie.withDomain && !host) {
             throw new AuthenticationError('Missing host, cannot scope cookie domain.');
