@@ -1,5 +1,5 @@
 import {type ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
-import {AntForm, KitLoader, KitTreeSelect} from 'aristid-ds';
+import {AntForm, AntTreeSelect, KitLoader, KitTreeSelect} from 'aristid-ds';
 import {type FunctionComponent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
     type ChildrenAsRecordValuePermissionFilterInput,
@@ -85,6 +85,10 @@ type TreeFieldV2Props = IFormElementProps<ICommonFieldsSettings>;
  * `@rc-component/tree-select`), which would put the buttons inside the tags and inside the closed
  * field: `treeNodeLabelProp` points the selector at a separate plain-text `label` instead. The search
  * filters on that same `label`, since the title is no longer text.
+ *
+ * On a multivalued attribute, `showCheckedStrategy` is forced to `SHOW_ALL`: antd's default
+ * `SHOW_CHILD` strategy hides the tag of a node once every one of its children is also checked,
+ * even though that node is a saved value of its own in LEAV.
  */
 const TreeFieldV2: FunctionComponent<TreeFieldV2Props> = ({
     element,
@@ -284,6 +288,11 @@ const TreeFieldV2: FunctionComponent<TreeFieldV2Props> = ({
                         // Without it antd checks the whole subtree, whereas selecting an intermediate
                         // node is a value of its own in LEAV
                         treeCheckStrictly={attribute.multiple_values}
+                        // In LEAV every checked node is a value of its own, never a shortcut for its
+                        // children: antd's default `SHOW_CHILD` strategy drops from the displayed tags
+                        // any node whose children are all checked (`formatStrategyValues` in
+                        // `@rc-component/tree-select`), while the value stays saved.
+                        showCheckedStrategy={AntTreeSelect.SHOW_ALL}
                         // While searching, antd unfolds the matching nodes on its own
                         treeExpandedKeys={searchValue ? undefined : (expandedKeys ?? autoExpandedKeys)}
                         onTreeExpand={setExpandedKeys}
