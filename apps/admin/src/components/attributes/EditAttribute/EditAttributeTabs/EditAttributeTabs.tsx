@@ -9,7 +9,7 @@ import {
 } from '../../../../_gqlTypes/GET_ATTRIBUTE_BY_ID';
 import useLang from '../../../../hooks/useLang';
 import {localizedLabel} from '../../../../utils/utils';
-import {AttributeType} from '../../../../_gqlTypes';
+import {AttributeType, type AttributeDetailsTreeAttributeFragment} from '../../../../_gqlTypes';
 import {type OnAttributePostSaveFunc} from '../EditAttribute';
 import ActionsListTab from './ActionsListTab';
 import EmbeddedFieldsTab from './EmbeddedFieldsTab';
@@ -20,6 +20,7 @@ import ValuesListTab from './ValuesListTab';
 import CustomConfigTab from './CustomConfigTab';
 import DependenciesTab from './DependenciesTab';
 import {useCurrentApplicationContext} from '../../../../context/CurrentApplicationContext';
+import {AttributeDisplayTab} from '../../../../modules/attribute-display';
 
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
@@ -72,6 +73,8 @@ function EditAttributeTabs({
 
         const isDependenciesAllowed = attribute.type === AttributeType.tree && !attribute.multiple_values;
 
+        const isDisplayTabAllowed = attribute.type === AttributeType.tree;
+
         const isFormatExtended = attribute.format === 'extended';
 
         panes.push(
@@ -102,6 +105,18 @@ function EditAttributeTabs({
                 render: () => (
                     <Tab.Pane key="dependencies" className="" style={{display: 'grid'}}>
                         <DependenciesTab attribute={attribute as GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute} />
+                    </Tab.Pane>
+                ),
+            });
+        }
+
+        if (isDisplayTabAllowed) {
+            panes.push({
+                key: 'tree_selection',
+                menuItem: t('attributes.tree_selection.title'),
+                render: () => (
+                    <Tab.Pane key="tree_selection" className="grow flex-col">
+                        <AttributeDisplayTab attribute={attribute as AttributeDetailsTreeAttributeFragment} />
                     </Tab.Pane>
                 ),
             });

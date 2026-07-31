@@ -71,6 +71,14 @@ export const attributeDetailsFragment = gql`
             linked_tree {
                 id
             }
+            tree_selection_conf {
+                selectableNodes
+                defaultExpanded
+                displayRootNode
+                maxDepth
+                showSelectChildrenButton
+                showSelectDescendantsButton
+            }
             permissions_conf_dependent_values {
                 dependenciesTreeAttributes {
                     id

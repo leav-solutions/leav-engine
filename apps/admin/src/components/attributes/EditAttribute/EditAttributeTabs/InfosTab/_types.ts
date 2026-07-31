@@ -9,8 +9,12 @@ export type AttributeInfosFormValuesVersionsConf = Override<
     {profile: string}
 >;
 
+/**
+ * `multi_tree_display_option` is left out on purpose: it is edited and saved by the display tab of a
+ * tree attribute, so carrying it here would let a save of this form write back a stale value.
+ */
 export type AttributeInfosFormValues = Override<
-    GET_ATTRIBUTE_BY_ID_attributes_list,
+    Omit<GET_ATTRIBUTE_BY_ID_attributes_list, 'multi_tree_display_option'>,
     {
         linked_library?: string;
         linked_tree?: string;

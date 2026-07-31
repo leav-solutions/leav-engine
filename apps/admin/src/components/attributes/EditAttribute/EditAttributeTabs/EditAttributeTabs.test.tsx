@@ -1,5 +1,6 @@
+import {ENABLE_TREE_ATTRIBUTE_V2_FORM, ENABLE_TREE_ATTRIBUTE_V2_MODAL} from '@leav/utils';
 import {render, screen, within} from '../../../../_tests/testUtils';
-import {mockAttrAdv, mockAttrSimple} from '../../../../__mocks__/attributes';
+import {mockAttrAdv, mockAttrSimple, mockAttrTree} from '../../../../__mocks__/attributes';
 import EditAttributeTabs from './EditAttributeTabs';
 
 vi.mock('../../../../utils/utils', () => ({
@@ -95,6 +96,32 @@ describe('EditAttributeTabs', () => {
             render(<EditAttributeTabs attribute={{...mockAttrAdv}} />);
 
             expect(screen.getByText(/metadata/)).toBeInTheDocument();
+        });
+
+        test.each([
+            ['both V2 flags are off', {}],
+            ['the modal V2 flag is on', {[ENABLE_TREE_ATTRIBUTE_V2_MODAL]: true}],
+            ['the form V2 flag is on', {[ENABLE_TREE_ATTRIBUTE_V2_FORM]: true}],
+        ])('Show the display tab for a tree attribute when %s', async (_, settings) => {
+            render(<EditAttributeTabs attribute={{...mockAttrTree}} />, {
+                globalSettings: {defaultApp: 'admin', name: 'My App', icon: null, favicon: null, settings},
+            });
+
+            expect(screen.getByText(/tree_selection/)).toBeInTheDocument();
+        });
+
+        test('Hide the display tab for a non-tree attribute even when the V2 flags are on', async () => {
+            render(<EditAttributeTabs attribute={{...mockAttrSimple}} />, {
+                globalSettings: {
+                    defaultApp: 'admin',
+                    name: 'My App',
+                    icon: null,
+                    favicon: null,
+                    settings: {[ENABLE_TREE_ATTRIBUTE_V2_FORM]: true, [ENABLE_TREE_ATTRIBUTE_V2_MODAL]: true},
+                },
+            });
+
+            expect(screen.queryByText(/tree_selection/)).not.toBeInTheDocument();
         });
 
         test('should open the tab in anchor', async () => {

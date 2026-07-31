@@ -1,5 +1,13 @@
+import {AttributeTypes} from '../../../../_types/attribute';
 import {AttributeFormat, type AttributeInput, AttributeType, LibraryBehavior, type LibraryInput} from '../../_gqlTypes';
-import {adminUserSdk, makeGraphQlCall} from '../e2eUtils';
+import {
+    adminUserSdk,
+    gqlAddElemToTree,
+    gqlCreateRecord,
+    gqlSaveAttribute,
+    gqlSaveTree,
+    makeGraphQlCall,
+} from '../e2eUtils';
 
 describe('Attributes', () => {
     const testAttrName = 'test_attribute';
@@ -342,6 +350,135 @@ describe('Attributes', () => {
                     },
                 }),
             );
+        });
+    });
+
+    describe('Tree selection configuration', () => {
+        const treeSelectionLibId = 'test_attribute_tree_selection_library';
+        const treeSelectionTreeId = 'test_attribute_tree_selection_tree';
+        const treeSelectionAttrId = 'test_attribute_tree_selection';
+        let treeSelectionNodeId: string;
+
+        const _saveTreeSelectionConf = (conf: string) =>
+            makeGraphQlCall(`mutation {
+                saveAttribute(attribute: {id: "${treeSelectionAttrId}", tree_selection_conf: ${conf}}) {
+                    ... on TreeAttribute {
+                        tree_selection_conf {
+                            selectableNodes
+                            defaultExpanded
+                            displayRootNode
+                            maxDepth
+                            showSelectChildrenButton
+                            showSelectDescendantsButton
+                        }
+                    }
+                }
+            }`);
+
+        beforeAll(async () => {
+            await adminUserSdk.SaveLibrary({library: {id: treeSelectionLibId, label: {en: 'Test lib'}}});
+            await gqlSaveTree(treeSelectionTreeId, 'Test tree selection', [treeSelectionLibId]);
+
+            const recordId = await gqlCreateRecord(treeSelectionLibId);
+            treeSelectionNodeId = await gqlAddElemToTree(treeSelectionTreeId, {
+                id: recordId,
+                library: treeSelectionLibId,
+            });
+
+            await gqlSaveAttribute({
+                id: treeSelectionAttrId,
+                type: AttributeTypes.TREE,
+                linkedTree: treeSelectionTreeId,
+                label: 'Test attr tree selection',
+            });
+        });
+
+        test('Should be null when never configured', async () => {
+            const res = await makeGraphQlCall(`{
+                attributes(filters: {id: "${treeSelectionAttrId}"}) {
+                    list {
+                        ... on TreeAttribute {
+                            tree_selection_conf { selectableNodes maxDepth }
+                        }
+                    }
+                }
+            }`);
+
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.attributes.list[0].tree_selection_conf).toBeNull();
+        });
+
+        test('Should save and retrieve the whole configuration', async () => {
+            const conf = {
+                selectableNodes: 'leaves_only',
+                defaultExpanded: true,
+                displayRootNode: treeSelectionNodeId,
+                maxDepth: 2,
+                showSelectChildrenButton: true,
+                showSelectDescendantsButton: true,
+            };
+
+            const res = await _saveTreeSelectionConf(`{
+                selectableNodes: leaves_only,
+                defaultExpanded: true,
+                displayRootNode: "${treeSelectionNodeId}",
+                maxDepth: 2,
+                showSelectChildrenButton: true,
+                showSelectDescendantsButton: true
+            }`);
+
+            expect(res.status).toBe(200);
+            expect(res.data.errors).toBeUndefined();
+            expect(res.data.data.saveAttribute.tree_selection_conf).toEqual(conf);
+
+            // Make sure it has actually been persisted
+            const getRes = await makeGraphQlCall(`{
+                attributes(filters: {id: "${treeSelectionAttrId}"}) {
+                    list {
+                        ... on TreeAttribute {
+                            tree_selection_conf {
+                                selectableNodes
+                                defaultExpanded
+                                displayRootNode
+                                maxDepth
+                                showSelectChildrenButton
+                                showSelectDescendantsButton
+                            }
+                        }
+                    }
+                }
+            }`);
+
+            expect(getRes.data.errors).toBeUndefined();
+            expect(getRes.data.data.attributes.list[0].tree_selection_conf).toEqual(conf);
+        });
+
+        test('Should reject a maxDepth lower than 1', async () => {
+            await expect(_saveTreeSelectionConf('{maxDepth: 0}')).rejects.toThrow(
+                /Invalid tree selection configuration on field maxDepth/,
+            );
+        });
+
+        test('Should reject a displayRootNode which is not in the linked tree', async () => {
+            await expect(_saveTreeSelectionConf('{displayRootNode: "unknown_node"}')).rejects.toThrow(/Unknown node/);
+        });
+
+        test('Should reject a configuration on a non tree attribute', async () => {
+            const nonTreeAttrId = 'test_attribute_tree_selection_on_simple';
+            await gqlSaveAttribute({
+                id: nonTreeAttrId,
+                type: AttributeTypes.SIMPLE,
+                label: 'Test attr not a tree',
+            });
+
+            await expect(
+                makeGraphQlCall(`mutation {
+                    saveAttribute(attribute: {id: "${nonTreeAttrId}", tree_selection_conf: {defaultExpanded: true}}) {
+                        id
+                    }
+                }`),
+            ).rejects.toThrow(/must be of type tree/);
         });
     });
 });

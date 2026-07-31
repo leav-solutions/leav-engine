@@ -6,7 +6,7 @@ import FormTabs from './FormTabs';
 import LinkField from './LinkField';
 import StandardField from './StandardField';
 import TextBlock from './TextBlock';
-import TreeField from './TreeField';
+import TreeFieldSwitch from './TreeFieldSwitch';
 import Frame from './Frame';
 
 export const formComponents: {
@@ -18,7 +18,7 @@ export const formComponents: {
     [FormFieldTypes.CHECKBOX]: StandardField,
     [FormFieldTypes.ENCRYPTED]: StandardField,
     [FormFieldTypes.LINK]: LinkField,
-    [FormFieldTypes.TREE]: TreeField,
+    [FormFieldTypes.TREE]: TreeFieldSwitch,
     [FormUIElementTypes.TABS]: FormTabs,
     [FormUIElementTypes.TEXT_BLOCK]: TextBlock,
     [FormUIElementTypes.DIVIDER]: FormDivider,

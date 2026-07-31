@@ -18,3 +18,4 @@ export {useGetRecordIdCard} from './useGetRecordIdCard';
 export {useConfirmModal} from './useConfirmModal/useConfirmModal';
 export {useDelayedLoading} from './useDelayedLoading';
 export {useStickyValue} from './useStickyValue';
+export {useTreeAttributeV2Flags} from './useTreeAttributeV2Flags';

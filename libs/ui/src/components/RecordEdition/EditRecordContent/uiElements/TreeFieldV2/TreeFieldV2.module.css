@@ -1,0 +1,9 @@
+/* No bottom margin in metadata edition, where the field is laid out by its container */
+.fieldWrapper {
+    margin-bottom: 1.5em;
+}
+
+.inputExtraAlignLeft {
+    margin-right: auto;
+    line-height: 12px;
+}

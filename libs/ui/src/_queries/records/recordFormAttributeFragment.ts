@@ -78,6 +78,14 @@ export const recordFormAttributeFragment = gql`
                 id
                 label
             }
+            tree_selection_conf {
+                selectableNodes
+                defaultExpanded
+                displayRootNode
+                maxDepth
+                showSelectChildrenButton
+                showSelectDescendantsButton
+            }
             treeValuesList: values_list {
                 enable
                 allowFreeEntry

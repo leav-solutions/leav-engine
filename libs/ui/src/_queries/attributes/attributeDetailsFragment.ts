@@ -61,6 +61,14 @@ export const attributeDetailsFragment = gql`
                 id
                 label
             }
+            tree_selection_conf {
+                selectableNodes
+                defaultExpanded
+                displayRootNode
+                maxDepth
+                showSelectChildrenButton
+                showSelectDescendantsButton
+            }
             permissions_conf_dependent_values {
                 dependenciesTreeAttributes {
                     id

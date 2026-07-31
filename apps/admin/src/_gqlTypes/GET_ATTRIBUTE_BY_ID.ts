@@ -3,7 +3,14 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import {AttributeType, AttributeFormat, PermissionsRelation, ValueVersionMode, MultiDisplayOption} from './index';
+import {
+    AttributeType,
+    AttributeFormat,
+    PermissionsRelation,
+    ValueVersionMode,
+    MultiDisplayOption,
+    TreeSelectableNodes,
+} from './index';
 
 // ====================================================
 // GraphQL query operation: GET_ATTRIBUTE_BY_ID
@@ -225,6 +232,15 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_linked_tree {
     id: string;
 }
 
+export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_tree_selection_conf {
+    selectableNodes: TreeSelectableNodes | null;
+    defaultExpanded: boolean | null;
+    displayRootNode: string | null;
+    maxDepth: number | null;
+    showSelectChildrenButton: boolean | null;
+    showSelectDescendantsButton: boolean | null;
+}
+
 export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute {
     id: string;
     type: AttributeType;
@@ -244,6 +260,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute {
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_versions_conf | null;
     libraries: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_libraries[] | null;
     linked_tree: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_linked_tree | null;
+    tree_selection_conf?: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_tree_selection_conf | null;
     smart_filter: null;
 }
 

@@ -635,7 +635,9 @@
         "title_many": "Select one or many tree nodes",
         "show_more": "Next items...",
         "select_children": "Select all N-1 children",
-        "unselect_children": "Unselect all N-1 children"
+        "unselect_children": "Unselect all N-1 children",
+        "select_descendants": "Select all descendants",
+        "unselect_descendants": "Unselect all descendants"
     },
     "files": {
         "generate_previews": "Generate previews",

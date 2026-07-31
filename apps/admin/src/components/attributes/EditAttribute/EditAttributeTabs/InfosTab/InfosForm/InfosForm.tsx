@@ -69,7 +69,6 @@ const defaultAttributeData: AttributeInfosFormValues = {
     },
     libraries: [],
     multi_link_display_option: MultiDisplayOption.avatar,
-    multi_tree_display_option: MultiDisplayOption.avatar,
     smart_filter: null,
 };
 
@@ -229,7 +228,6 @@ function InfosForm({
         const isStandardAttribute = [AttributeType.advanced, AttributeType.simple].includes(values.type);
         const isTextAttribute = [AttributeFormat.text, AttributeFormat.rich_text].includes(values.format);
         const isMultiValuesLinkAttribute = AttributeType.advanced_link === values.type && !!values.multiple_values;
-        const isMultiValuesTreeAttribute = isTreeAttribute && !!values.multiple_values;
         const purgeMultipleValuesActionAvailable =
             [AttributeType.advanced, AttributeType.advanced_link, AttributeType.tree].includes(values.type) &&
             !attribute?.multiple_values;
@@ -478,22 +476,6 @@ function InfosForm({
                                 <Icon name="trash alternate outline" /> {t('attributes.purge_multiple_values')}
                             </Button>
                         </ConfirmedButton>
-                    </FormFieldWrapper>
-                )}
-                {isMultiValuesTreeAttribute && (
-                    <FormFieldWrapper error={_getErrorByField('multi_tree_display_option')}>
-                        <Form.Select
-                            label={t('attributes.multi_tree_display_option')}
-                            disabled={readonly}
-                            width="4"
-                            name="multi_tree_display_option"
-                            onChange={_handleChangeWithSubmit}
-                            options={Object.keys(MultiDisplayOption).map(format => ({
-                                text: t('attributes.multi_display_options.' + format),
-                                value: format,
-                            }))}
-                            value={values.multi_tree_display_option ?? ''}
-                        />
                     </FormFieldWrapper>
                 )}
                 {isMultiValuesLinkAttribute && (

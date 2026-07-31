@@ -635,7 +635,9 @@
         "title_many": "Sélectionner un ou plusieurs nœuds de l'arbre",
         "show_more": "Éléments suivants...",
         "select_children": "Sélectionner tous les éléments N-1",
-        "unselect_children": "Désélectionner tous les éléments N-1"
+        "unselect_children": "Désélectionner tous les éléments N-1",
+        "select_descendants": "Sélectionner tous les éléments descendants",
+        "unselect_descendants": "Désélectionner tous les éléments descendants"
     },
     "files": {
         "generate_previews": "Générer les aperçus",

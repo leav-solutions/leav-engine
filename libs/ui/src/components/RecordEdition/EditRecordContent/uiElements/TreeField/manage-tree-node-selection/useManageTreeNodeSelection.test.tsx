@@ -39,6 +39,17 @@ vi.mock('./SelectTreeNodeModal', () => ({
     ),
 }));
 
+vi.mock('_ui/components/SelectTreeNodeV2', () => ({
+    SelectTreeNodeModalV2: () => <div data-testid="select-tree-node-modal-v2" />,
+}));
+
+// Read at call time, so each test can set the flags before rendering
+let mockTreeAttributeV2Flags = {isFormV2Enabled: false, isModalV2Enabled: false};
+
+vi.mock('_ui/hooks/useTreeAttributeV2Flags', () => ({
+    useTreeAttributeV2Flags: () => mockTreeAttributeV2Flags,
+}));
+
 vi.mock('../../shared/DeleteAllValuesButton', () => ({
     DeleteAllValuesButton: ({handleDelete, disabled, danger, children}) => (
         <button
@@ -162,6 +173,7 @@ describe('useManageTreeNodeSelection', () => {
     beforeEach(() => {
         user = userEvent.setup();
         mockSelectedNodeOnConfirm = [mockSelectedNode1, mockSelectedNode2];
+        mockTreeAttributeV2Flags = {isFormV2Enabled: false, isModalV2Enabled: false};
 
         vi.mocked(useSharedTranslation).mockReturnValue({
             t: vi.fn(key => key),
@@ -183,6 +195,21 @@ describe('useManageTreeNodeSelection', () => {
         await waitFor(() => {
             expect(screen.queryByTestId('select-tree-node-modal')).not.toBeInTheDocument();
         });
+    });
+
+    it.each([
+        [{isFormV2Enabled: false, isModalV2Enabled: false}, 'select-tree-node-modal'],
+        [{isFormV2Enabled: true, isModalV2Enabled: false}, 'select-tree-node-modal'],
+        [{isFormV2Enabled: false, isModalV2Enabled: true}, 'select-tree-node-modal-v2'],
+        [{isFormV2Enabled: true, isModalV2Enabled: true}, 'select-tree-node-modal-v2'],
+    ])('should open the modal matching the flags %o', async (flags, expectedTestId) => {
+        mockTreeAttributeV2Flags = flags;
+
+        render(<TestComponent hookProps={hookProps} />);
+
+        await user.click(screen.getByTestId('open-modal'));
+
+        expect(screen.getByTestId(expectedTestId)).toBeInTheDocument();
     });
 
     it('should add tree nodes successfully', async () => {

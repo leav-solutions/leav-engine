@@ -1,13 +1,23 @@
 import * as useGetRecordForm from '_ui/hooks/useGetRecordForm';
+import * as useGetRecordValuesQueryModule from '_ui/hooks/useGetRecordValuesQuery/useGetRecordValuesQuery';
 import * as gqlTypes from '_ui/_gqlTypes';
-import {mockRecordForm} from '_ui/__mocks__/common/form';
+import {mockFormElementInput, mockRecordForm} from '_ui/__mocks__/common/form';
+import {mockFormAttributeCompute} from '_ui/__mocks__/common/attribute';
 import {mockRecord} from '_ui/__mocks__/common/record';
-import {render, screen} from '../../../_tests/testUtils';
+import {render, screen, waitFor} from '../../../_tests/testUtils';
 import EditRecordContent from './EditRecordContent';
 import {Form} from 'antd';
 import {type ComponentProps, type FunctionComponent} from 'react';
+import {APICallStatus} from './_types';
 
-vi.mock('./uiElements/StandardField', () => ({default: () => <div>StandardField</div>}));
+let capturedStandardFieldProps: ComponentProps<any>;
+
+vi.mock('./uiElements/StandardField', () => ({
+    default: (props: any) => {
+        capturedStandardFieldProps = props;
+        return <div>StandardField</div>;
+    },
+}));
 
 const EditRecordContentWithForm: FunctionComponent<
     Omit<ComponentProps<typeof EditRecordContent>, 'antdForm'>
@@ -174,5 +184,98 @@ describe('EditRecordContent', () => {
             formId: 'test',
             version: null,
         });
+    });
+
+    // `settings` has to be the array shape `extractFormElements` expects, not `mockFormElementInput`'s
+    // plain object — same fixup `mockRecordForm.elements` already applies.
+    const inputElement = {...mockFormElementInput, settings: [{key: 'my_settings', value: 'value'}]};
+    const computeElement = {...inputElement, id: 'compute_element', attribute: mockFormAttributeCompute};
+
+    const _mockRecordFormWithElements = (elements: typeof mockRecordForm.elements) => ({
+        dependencyAttributes: [],
+        id: mockRecordForm.id,
+        recordId: '123456',
+        library: mockRecordForm.library,
+        system: false,
+        elements,
+        sidePanel: mockRecordForm.sidePanel,
+    });
+
+    test('Skips the compute values refetch after a submit when the form has no compute attribute (LEAVC-996)', async () => {
+        vi.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
+            loading: false,
+            error: null,
+            recordForm: _mockRecordFormWithElements([inputElement]),
+            refetch: vi.fn(),
+        }));
+
+        const refetchComputeFields = vi.fn();
+        vi.spyOn(useGetRecordValuesQueryModule, 'useGetRecordValuesQuery').mockReturnValue({
+            data: undefined,
+            error: undefined,
+            refetch: refetchComputeFields,
+        } as any);
+
+        render(
+            <EditRecordContentWithForm
+                record={mockRecord}
+                isFormCreationMode={false}
+                library={mockRecord.library.id}
+                onRecordSubmit={vi.fn()}
+                onValueDelete={vi.fn()}
+                onValueSubmit={vi.fn().mockResolvedValue({status: APICallStatus.SUCCESS})}
+                onDeleteMultipleValues={vi.fn()}
+                readonly={false}
+            />,
+            {mocks},
+        );
+
+        await screen.findAllByText('StandardField');
+
+        await capturedStandardFieldProps.onValueSubmit(
+            [{attribute: inputElement.attribute, value: 'new value', idValue: 'value1'}],
+            null,
+        );
+
+        expect(refetchComputeFields).not.toHaveBeenCalled();
+    });
+
+    test('Refetches the compute values after a submit when the form has a compute attribute', async () => {
+        vi.spyOn(useGetRecordForm, 'default').mockImplementation(() => ({
+            loading: false,
+            error: null,
+            recordForm: _mockRecordFormWithElements([inputElement, computeElement]),
+            refetch: vi.fn(),
+        }));
+
+        const refetchComputeFields = vi.fn().mockResolvedValue({data: {}});
+        vi.spyOn(useGetRecordValuesQueryModule, 'useGetRecordValuesQuery').mockReturnValue({
+            data: undefined,
+            error: undefined,
+            refetch: refetchComputeFields,
+        } as any);
+
+        render(
+            <EditRecordContentWithForm
+                record={mockRecord}
+                isFormCreationMode={false}
+                library={mockRecord.library.id}
+                onRecordSubmit={vi.fn()}
+                onValueDelete={vi.fn()}
+                onValueSubmit={vi.fn().mockResolvedValue({status: APICallStatus.SUCCESS})}
+                onDeleteMultipleValues={vi.fn()}
+                readonly={false}
+            />,
+            {mocks},
+        );
+
+        await screen.findAllByText('StandardField');
+
+        await capturedStandardFieldProps.onValueSubmit(
+            [{attribute: inputElement.attribute, value: 'new value', idValue: 'value1'}],
+            null,
+        );
+
+        await waitFor(() => expect(refetchComputeFields).toHaveBeenCalledWith([mockRecord.id]));
     });
 });

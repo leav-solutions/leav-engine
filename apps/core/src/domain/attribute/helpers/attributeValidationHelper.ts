@@ -219,6 +219,58 @@ const _validateDependentValuesPermissionsConf = async (
 };
 
 /**
+ * Check if tree_selection_conf is consistent: only on a tree attribute, with a valid depth
+ * and a root node belonging to the linked tree
+ *
+ * @param attrData
+ * @param deps
+ */
+const _validateTreeSelectionConf = async (
+    attrData: IAttribute,
+    deps: {treeRepo: ITreeRepo},
+    ctx: IQueryInfos,
+): Promise<ErrorFieldDetail<IAttribute>> => {
+    const treeSelectionConfErrors: ErrorFieldDetail<IAttribute> = {};
+
+    if (!attrData.tree_selection_conf) {
+        // No configuration means default behavior: nothing to validate
+        return treeSelectionConfErrors;
+    }
+
+    if (attrData.type !== AttributeTypes.TREE) {
+        throw new ValidationError({
+            tree_selection_conf: {
+                msg: Errors.CANNOT_SAVE_TREE_SELECTION_CONF,
+                vars: {type: attrData.type},
+            },
+        });
+    }
+
+    const {maxDepth, displayRootNode} = attrData.tree_selection_conf;
+
+    if (maxDepth !== null && maxDepth !== undefined && maxDepth < 1) {
+        treeSelectionConfErrors.tree_selection_conf = {
+            msg: Errors.INVALID_TREE_SELECTION_CONF,
+            vars: {field: 'maxDepth'},
+        };
+    }
+
+    if (displayRootNode && attrData.linked_tree) {
+        const isNodeInTree = await deps.treeRepo.isNodePresent({
+            treeId: attrData.linked_tree,
+            nodeId: displayRootNode,
+            ctx,
+        });
+
+        if (!isNodeInTree) {
+            treeSelectionConfErrors.tree_selection_conf = Errors.UNKNOWN_NODE;
+        }
+    }
+
+    return treeSelectionConfErrors;
+};
+
+/**
  * Check if attribute has are required fields based on its type and format
  *
  * @param attrData
@@ -328,6 +380,7 @@ export const validateAttributeData = async (
         _validateRequiredActions(attrData, deps),
         _validateVersionProfile(attrData, deps, ctx),
         _validateDependentValuesPermissionsConf(attrData, deps, ctx),
+        _validateTreeSelectionConf(attrData, deps, ctx),
     ];
 
     const validationRes = await Promise.all(validationFuncs);

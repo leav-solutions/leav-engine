@@ -253,6 +253,7 @@ Voir [`CODING_GUIDELINES.md`](CODING_GUIDELINES.md) — source de vérité pour 
 - **AMP → instance `app-studio`** — objectif long terme de faire d'AMP une instance de `app-studio` (comme `explorer-studio`). `app-studio` devra être enrichi pour couvrir les besoins d'AMP. Permettra un nouveau cycle de nettoyage de `@leav/ui`.
 - **DX plugins `core`** — simplifier le développement des plugins core pour les consommateurs externes. Situation actuelle : imports incorrects dans `xstream/apps/plugins/`, nécessite un `git sparse-checkout` ; AMP utilise `core` via image Docker. Chantier porté par l'équipe core (Sébastien / Jérémy).
 - **Migration TypeScript `strict`** — `tsconfig.json` a `strict: true` mais court-circuité par 6 overrides (`strictNullChecks: false`, `noImplicitAny: false`, etc.). À activer progressivement, app par app — jamais en une seule PR globale.
+- **Cleanup attribut Arbre V2** (LEAVC-1077) — supprimer les feature flags `enableTreeAttributeV2Form` / `enableTreeAttributeV2Modal`, la V1 du champ arbre et de la modale de sélection, et retirer le suffixe `V2` des composants. Checklist ordonnée : [`docs/cleanup/tree-attribute-v2-cleanup.md`](docs/cleanup/tree-attribute-v2-cleanup.md).
 
 ---
 
