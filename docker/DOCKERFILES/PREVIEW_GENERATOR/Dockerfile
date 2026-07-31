@@ -1,4 +1,4 @@
-FROM node:24.18.0-alpine3.24
+FROM node:24.18.1-alpine3.24
 
 # imagemagick is used to convert images
 # ffmpeg is used to convert videos

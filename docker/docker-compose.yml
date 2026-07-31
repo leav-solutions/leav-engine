@@ -254,7 +254,7 @@ services:
     command: [sh, -c, "yarn run start:watch"]
 
   admin:
-    image: node:24.18.0-alpine3.24
+    image: node:24.18.1-alpine3.24
     stdin_open: true
     tty: true
     labels:
@@ -283,7 +283,7 @@ services:
     command: [sh, -c, "yarn run start"]
 
   app-studio:
-    image: node:24.18.0-alpine3.24
+    image: node:24.18.1-alpine3.24
     stdin_open: true
     tty: true
     labels:
@@ -313,7 +313,7 @@ services:
     command: [sh, -c, "yarn run start"]
 
   login:
-    image: node:24.18.0-alpine3.24
+    image: node:24.18.1-alpine3.24
     stdin_open: true
     tty: true
     labels:
@@ -342,7 +342,7 @@ services:
     command: [sh, -c, "yarn run start"]
 
   portal:
-    image: node:24.18.0-alpine3.24
+    image: node:24.18.1-alpine3.24
     stdin_open: true
     tty: true
     labels:
@@ -370,7 +370,7 @@ services:
 
   mcp-runtime:
     profiles: ["mcp"]
-    image: node:24.18.0-alpine3.24
+    image: node:24.18.1-alpine3.24
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.mcp-runtime.rule=Host(`mcp.leav.localhost`)"
@@ -397,7 +397,7 @@ services:
 
   automate-scan:
     profiles: ["automate"]
-    image: node:24.18.0-alpine3.24
+    image: node:24.18.1-alpine3.24
     restart: always
     environment:
       <<: [*env-logger, *env-automate-scan, *env-amqp]
@@ -455,7 +455,7 @@ services:
   # You need to have a GRAPHQL_API_KEY defined as environment variables (eg. in a .env file)
   sync-scan:
     profiles: ["automate"]
-    image: node:24.18.0-alpine3.24
+    image: node:24.18.1-alpine3.24
     labels:
       - traefik.enable=true
     environment:
