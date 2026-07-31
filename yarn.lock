@@ -4399,7 +4399,7 @@ __metadata:
     "@types/react": "npm:18.3.31"
     "@types/react-dom": "npm:18.3.7"
     "@uidotdev/usehooks": "npm:2.4.1"
-    aristid-ds: "npm:17.1.0-6be80dd"
+    aristid-ds: "npm:17.1.0-63930cf"
     dayjs: "npm:^1.11.13"
     dompurify: "npm:3.4.12"
     graphql: "npm:16.14.2"
@@ -4422,7 +4422,7 @@ __metadata:
     zod: "npm:3.25.76"
   peerDependencies:
     "@apollo/client": ">=3.8.1"
-    aristid-ds: 17.1.0-6be80dd
+    aristid-ds: 17.1.0-63930cf
     i18next: ">=22.5.1"
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -9296,7 +9296,7 @@ __metadata:
     "@types/styled-components": "npm:4.4.3"
     "@uiw/react-json-view": "npm:2.0.0-alpha.43"
     "@vitejs/plugin-react": "npm:5.2.0"
-    aristid-ds: "npm:17.1.0-6be80dd"
+    aristid-ds: "npm:17.1.0-63930cf"
     cross-fetch: "npm:3.2.0"
     dayjs: "npm:1.11.21"
     fomantic-ui-less: "npm:2.9.4"
@@ -9720,7 +9720,7 @@ __metadata:
     "@types/styled-components": "npm:5.1.36"
     "@vitejs/plugin-react": "npm:5.2.0"
     apollo-upload-client: "npm:18.0.1"
-    aristid-ds: "npm:17.1.0-6be80dd"
+    aristid-ds: "npm:17.1.0-63930cf"
     browserslist: "npm:4.28.7"
     classnames: "npm:2.5.1"
     dayjs: "npm:1.11.21"
@@ -9849,9 +9849,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aristid-ds@npm:17.1.0-6be80dd":
-  version: 17.1.0-6be80dd
-  resolution: "aristid-ds@npm:17.1.0-6be80dd"
+"aristid-ds@npm:17.1.0-63930cf":
+  version: 17.1.0-63930cf
+  resolution: "aristid-ds@npm:17.1.0-63930cf"
   dependencies:
     "@fortawesome/fontawesome-svg-core": "npm:^7.1.0"
     "@fortawesome/free-regular-svg-icons": "npm:^7.1.0"
@@ -9882,7 +9882,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10/ec926b22c438dc3e4e2017aed9daa2a87248b51cbab1c71ddbcb6a847b818af865ab62409fef1bcbfbc929ef4d0f4a1aab8cca34c1b56fe47a512373997fe444
+  checksum: 10/10a059b998fcaff4f46bc85250790ce70864bbd3773e4e1463e7a64530d05075a38a77b3cd695fb10c25b507982e57b792f54d2a5a0a455758a515561534624f
   languageName: node
   linkType: hard
 
@@ -16353,7 +16353,7 @@ __metadata:
     "@types/react": "npm:18.3.31"
     "@types/react-dom": "npm:18.3.7"
     "@vitejs/plugin-react": "npm:5.2.0"
-    aristid-ds: "npm:17.1.0-6be80dd"
+    aristid-ds: "npm:17.1.0-63930cf"
     graphql: "npm:16.14.2"
     happy-dom: "npm:20.11.1"
     i18next: "npm:22.5.1"
@@ -17897,7 +17897,7 @@ __metadata:
     "@types/react": "npm:18.3.31"
     "@types/react-dom": "npm:18.3.7"
     "@vitejs/plugin-react": "npm:5.2.0"
-    aristid-ds: "npm:17.1.0-6be80dd"
+    aristid-ds: "npm:17.1.0-63930cf"
     cross-fetch: "npm:3.2.0"
     graphql: "npm:16.14.2"
     graphql-ws: "npm:5.16.2"
