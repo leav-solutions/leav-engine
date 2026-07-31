@@ -16,6 +16,8 @@ export const SDO_EXPORTS_ADVANCED_MULTI_ATTRIBUTE_ID = 'sdo_export_test_advanced
 export const SDO_EXPORTS_TREE_ID = 'test_sdo_exports_tree';
 export const SDO_EXPORTS_TREE_MONO_ATTRIBUTE_ID = 'sdo_export_test_tree_mono';
 export const SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID = 'sdo_export_test_tree_multi';
+export const SDO_EXPORTS_DATE_RANGE_ATTRIBUTE_ID = 'sdo_export_test_date_range';
+export const SDO_EXPORTS_EMBEDDED_ATTRIBUTE_ID = 'sdo_export_test_embedded';
 
 // To test extendSDOFunction and additionalLibraryTriggers features
 export const SDO_EXPORTS_EXTENDED_LIBRARY_ID = 'test_sdo_exports_extended';
@@ -82,6 +84,22 @@ export const sdoGlobalSettings: ISDOSettings = {
                     leavAttributeId: SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID,
                     valueRequired: false,
                     format: 'array',
+                },
+                // Sub-fields of a period (date_range) and of an extended attribute (LEAVC-786)
+                'info.startDate': {
+                    leavAttributeId: `${SDO_EXPORTS_DATE_RANGE_ATTRIBUTE_ID}.from`,
+                    valueRequired: false,
+                    format: 'number',
+                },
+                'info.endDate': {
+                    leavAttributeId: `${SDO_EXPORTS_DATE_RANGE_ATTRIBUTE_ID}.to`,
+                    valueRequired: false,
+                    format: 'number',
+                },
+                'info.zipcode': {
+                    leavAttributeId: `${SDO_EXPORTS_EMBEDDED_ATTRIBUTE_ID}.city.zipcode`,
+                    valueRequired: false,
+                    format: 'string',
                 },
             },
         },

@@ -242,6 +242,10 @@ export default function ({
                         attributeProperty = await getAttributeByPath({
                             libraryId: leavLibraryId,
                             attributePath,
+                            // A mapping can target a sub-field of a period/extended attribute
+                            // (e.g. "campaign_dates.from"); the carrier attribute is returned, and
+                            // getRecordFieldValue navigates the payload down to that sub-field.
+                            allowSubFields: true,
                             ctx,
                         });
                     } catch (e) {

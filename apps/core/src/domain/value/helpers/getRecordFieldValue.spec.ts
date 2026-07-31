@@ -5,7 +5,7 @@ import {type GetValuesHelper} from './getValues';
 import {type IRecordRepo} from '../../../infra/record/recordRepo';
 import {type ToAny} from '../../../utils/utils';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {type IValueVersion, type IValue} from '../../../_types/value';
+import {type IStandardValue, type IValueVersion, type IValue} from '../../../_types/value';
 import {AttributeFormats, AttributeTypes} from '../../../_types/attribute';
 import {mockAttrAdv, mockAttrSimple, mockAttrSimpleLink} from '../../../__tests__/mocks/attribute';
 import {mockRecord} from '../../../__tests__/mocks/record';
@@ -425,6 +425,105 @@ describe('getRecordFieldValue', () => {
                 ctx,
             });
             expect(toValues[0].payload).toBe('T');
+        });
+
+        test('Should navigate raw_payload of an EXTENDED attribute, even when payload is a JSON string', async () => {
+            const extAttr = {...mockAttrSimple, id: 'ext_attr', format: AttributeFormats.EXTENDED};
+
+            const getRecordFieldValue = makeHelper({
+                'core.domain.attribute': {
+                    getLibraryAttributes: global.__mockPromise([extAttr]),
+                    getAttributeProperties: global.__mockPromise(extAttr),
+                } as unknown as IAttributeDomain,
+                // Mimic the real GET_VALUE pipeline of an extended attribute: raw_payload keeps the
+                // object, `toJSON` turns payload into a JSON string. Both must be navigated.
+                'core.domain.value.helpers.runActionsList': (async ({values}) =>
+                    values.map(value => ({
+                        ...value,
+                        raw_payload: value.payload,
+                        payload: JSON.stringify(value.payload),
+                    }))) as RunActionsListHelper,
+            });
+
+            const record = {...mockRecordWithValues, ext_attr: {a: {b: 'deep'}}};
+            const values = await getRecordFieldValue({
+                library: 'test_lib',
+                record,
+                attributePath: 'ext_attr.a.b',
+                ctx,
+            });
+
+            expect(values).toHaveLength(1);
+            expect(values[0].payload).toBe('deep');
+            expect((values[0] as IStandardValue).raw_payload).toBe('deep');
+        });
+
+        test('Should navigate raw_payload of a DATE_RANGE attribute', async () => {
+            const dateRangeAttr = {...mockAttrSimple, id: 'date_range_attr', format: AttributeFormats.DATE_RANGE};
+
+            const getRecordFieldValue = makeHelper({
+                'core.domain.attribute': {
+                    getLibraryAttributes: global.__mockPromise([dateRangeAttr]),
+                    getAttributeProperties: global.__mockPromise(dateRangeAttr),
+                } as unknown as IAttributeDomain,
+                'core.domain.value.helpers.runActionsList': (async ({values}) =>
+                    values.map(value => ({...value, raw_payload: value.payload}))) as RunActionsListHelper,
+            });
+
+            const record = {...mockRecordWithValues, date_range_attr: {from: 1000, to: 2000}};
+            const values = await getRecordFieldValue({
+                library: 'test_lib',
+                record,
+                attributePath: 'date_range_attr.from',
+                ctx,
+            });
+
+            expect(values).toHaveLength(1);
+            expect(values[0].payload).toBe(1000);
+            expect((values[0] as IStandardValue).raw_payload).toBe(1000);
+        });
+
+        test('Should leave raw_payload absent when the value carries none', async () => {
+            const dateRangeAttr = {...mockAttrSimple, id: 'date_range_attr', format: AttributeFormats.DATE_RANGE};
+
+            const getRecordFieldValue = makeHelper({
+                'core.domain.attribute': {
+                    getLibraryAttributes: global.__mockPromise([dateRangeAttr]),
+                    getAttributeProperties: global.__mockPromise(dateRangeAttr),
+                } as unknown as IAttributeDomain,
+            });
+
+            const record = {...mockRecordWithValues, date_range_attr: {from: 1000, to: 2000}};
+            const values = await getRecordFieldValue({
+                library: 'test_lib',
+                record,
+                attributePath: 'date_range_attr.to',
+                ctx,
+            });
+
+            expect(values[0].payload).toBe(2000);
+            expect(values[0]).not.toHaveProperty('raw_payload');
+        });
+
+        test('Should return an empty array when the requested sub-field does not exist', async () => {
+            const dateRangeAttr = {...mockAttrSimple, id: 'date_range_attr', format: AttributeFormats.DATE_RANGE};
+
+            const getRecordFieldValue = makeHelper({
+                'core.domain.attribute': {
+                    getLibraryAttributes: global.__mockPromise([dateRangeAttr]),
+                    getAttributeProperties: global.__mockPromise(dateRangeAttr),
+                } as unknown as IAttributeDomain,
+            });
+
+            const record = {...mockRecordWithValues, date_range_attr: {from: 1000, to: 2000}};
+            const values = await getRecordFieldValue({
+                library: 'test_lib',
+                record,
+                attributePath: 'date_range_attr.unknown_sub_field',
+                ctx,
+            });
+
+            expect(values).toEqual([]);
         });
 
         test('Should propagate options (version) through each hop', async () => {

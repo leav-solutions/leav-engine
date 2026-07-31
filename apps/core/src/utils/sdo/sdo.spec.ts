@@ -1,8 +1,42 @@
-import {type ISDOMapping} from '../../_types/sdo';
+import {type ISDOMapping, type ISDOMappingLibrary} from '../../_types/sdo';
 import sdoUtils from './sdo';
 
 describe('sdoUtils', () => {
-    const {getAdditionalLibraryTriggers} = sdoUtils();
+    const {getAdditionalLibraryTriggers, hasSDOAttribute} = sdoUtils();
+
+    describe('hasSDOAttribute', () => {
+        const mappingLibrary: ISDOMappingLibrary = {
+            leavLibraryId: 'campaigns',
+            sdoAttributes: {
+                'info.label': {leavAttributeId: 'campaigns_label', valueRequired: false, format: 'string'},
+                'info.startDate': {leavAttributeId: 'campaigns_dates.from', valueRequired: false, format: 'number'},
+                'info.editorEmail': {leavAttributeId: 'modified_by.email', valueRequired: false, format: 'string'},
+            },
+        };
+
+        test('matches a directly mapped attribute', () => {
+            expect(hasSDOAttribute(mappingLibrary, 'campaigns_label')).toBe(true);
+        });
+
+        test('matches the carrier attribute of a mapped sub-field path', () => {
+            // A database event carries the saved attribute id ("campaigns_dates"), never the mapped path
+            expect(hasSDOAttribute(mappingLibrary, 'campaigns_dates')).toBe(true);
+            expect(hasSDOAttribute(mappingLibrary, 'modified_by')).toBe(true);
+        });
+
+        test('does not match an attribute that is not mapped', () => {
+            expect(hasSDOAttribute(mappingLibrary, 'campaigns_comment')).toBe(false);
+        });
+
+        test('does not match on a partial segment', () => {
+            expect(hasSDOAttribute(mappingLibrary, 'campaigns_date')).toBe(false);
+            expect(hasSDOAttribute(mappingLibrary, 'campaigns_dates.from')).toBe(false);
+        });
+
+        test('does not crash when sdoAttributes is undefined', () => {
+            expect(hasSDOAttribute({leavLibraryId: 'campaigns'} as ISDOMappingLibrary, 'campaigns_label')).toBe(false);
+        });
+    });
 
     describe('getAdditionalLibraryTriggers', () => {
         test('returns an empty array when no mapping declares additionalLibraryTriggers', () => {

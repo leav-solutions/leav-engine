@@ -57,8 +57,13 @@ export default function (): ISDOUtils {
     const hasSDOLibrary = (mapping: ISDOMapping, leavLibraryId: string): boolean =>
         Object.values(mapping).some(sdoLibrary => sdoLibrary?.leavLibraryId === leavLibraryId);
 
+    // A mapped leavAttributeId can be a path ("modified_by.email", "campaign_dates.from") while a
+    // database event only ever carries the id of the attribute that was saved. Match on the path's
+    // first segment, otherwise saving the carrier attribute would trigger no export at all.
     const hasSDOAttribute = (sdoLibrary: ISDOMappingLibrary, attribute: string): boolean =>
-        Object.values(sdoLibrary.sdoAttributes ?? {}).some(({leavAttributeId}) => leavAttributeId === attribute);
+        Object.values(sdoLibrary.sdoAttributes ?? {}).some(
+            ({leavAttributeId}) => leavAttributeId.split('.')[0] === attribute,
+        );
 
     const getRecordUUIDFromSDO = (sdo: ISDO): string => {
         const recordUuid = _.get(sdo.content, sdoPathIdentifierUuid);

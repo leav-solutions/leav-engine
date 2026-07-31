@@ -15,6 +15,8 @@ import {
     SDO_EXPORTS_TREE_ID,
     SDO_EXPORTS_TREE_MONO_ATTRIBUTE_ID,
     SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID,
+    SDO_EXPORTS_DATE_RANGE_ATTRIBUTE_ID,
+    SDO_EXPORTS_EMBEDDED_ATTRIBUTE_ID,
     SDO_EXPORTS_EXTENDED_LIBRARY_ID,
     SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID,
     SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
@@ -134,6 +136,31 @@ describe('SDO Exports', () => {
             },
         });
 
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_EXPORTS_DATE_RANGE_ATTRIBUTE_ID,
+                type: AttributeType.simple,
+                format: AttributeFormat.date_range,
+                label: {fr: 'SDO export test période', en: 'SDO export test date range'},
+            },
+        });
+
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_EXPORTS_EMBEDDED_ATTRIBUTE_ID,
+                type: AttributeType.simple,
+                format: AttributeFormat.extended,
+                label: {fr: 'SDO export test étendu', en: 'SDO export test extended'},
+                embedded_fields: [
+                    {
+                        id: 'city',
+                        format: AttributeFormat.extended,
+                        embedded_fields: [{id: 'zipcode', format: AttributeFormat.text}],
+                    },
+                ],
+            },
+        });
+
         await adminUserSdk.SaveLibrary({
             library: {
                 id: SDO_EXPORTS_LIBRARY_ID,
@@ -147,6 +174,8 @@ describe('SDO Exports', () => {
                     SDO_EXPORTS_ADVANCED_MULTI_ATTRIBUTE_ID,
                     SDO_EXPORTS_TREE_MONO_ATTRIBUTE_ID,
                     SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID,
+                    SDO_EXPORTS_DATE_RANGE_ATTRIBUTE_ID,
+                    SDO_EXPORTS_EMBEDDED_ATTRIBUTE_ID,
                 ],
                 recordIdentityConf: {label: 'id'},
             },
@@ -573,6 +602,59 @@ describe('SDO Exports', () => {
         expect((msg.content as any).info?.treeMulti).toEqual(
             expect.arrayContaining([linkedA.record.uuid, linkedB.record.uuid]),
         );
+    });
+
+    test('exports the "from" / "to" sub-fields of a period (date_range) attribute', async () => {
+        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+        const from = 1735689600; // 2025-01-01
+        const to = 1767225600; // 2026-01-01
+
+        await adminUserSdk.SaveValue({
+            libraryId: SDO_EXPORTS_LIBRARY_ID,
+            recordId,
+            attributeId: SDO_EXPORTS_DATE_RANGE_ATTRIBUTE_ID,
+            value: {payload: JSON.stringify({from, to})},
+        });
+
+        // Saving the carrier attribute must trigger the export, even though the mapping only
+        // references its sub-fields
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+        expect(msg).toMatchObject({
+            action: 'UPDATE',
+            content: {
+                system: {systemId: recordUUID},
+                info: {startDate: from, endDate: to},
+            },
+        });
+    });
+
+    test('exports a nested embedded field of an extended attribute', async () => {
+        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+        await adminUserSdk.SaveValue({
+            libraryId: SDO_EXPORTS_LIBRARY_ID,
+            recordId,
+            attributeId: SDO_EXPORTS_EMBEDDED_ATTRIBUTE_ID,
+            value: {payload: JSON.stringify({city: {zipcode: '38000'}})},
+        });
+
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+        expect(msg).toMatchObject({
+            action: 'UPDATE',
+            content: {
+                system: {systemId: recordUUID},
+                info: {zipcode: '38000'},
+            },
+        });
     });
 
     test('a plugin extend SDO function extends the content, making an additionalLibraryTrigger observable', async () => {
