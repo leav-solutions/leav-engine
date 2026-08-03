@@ -1,8 +1,8 @@
-import {type ISDOMapping, type ISDOMappingLibrary} from '../../_types/sdo';
+import {type ISDO, type ISDOMapping, type ISDOMappingLibrary} from '../../_types/sdo';
 import sdoUtils from './sdo';
 
 describe('sdoUtils', () => {
-    const {getAdditionalLibraryTriggers, hasSDOAttribute} = sdoUtils();
+    const {getAdditionalLibraryTriggers, hasSDOAttribute, getMissingRequiredSDOAttributes} = sdoUtils();
 
     describe('hasSDOAttribute', () => {
         const mappingLibrary: ISDOMappingLibrary = {
@@ -110,6 +110,75 @@ describe('sdoUtils', () => {
             };
 
             expect(getAdditionalLibraryTriggers(mapping, 'structure_items')).toEqual([]);
+        });
+    });
+
+    describe('getMissingRequiredSDOAttributes', () => {
+        const mappingLibrary: ISDOMappingLibrary = {
+            leavLibraryId: 'campaigns',
+            sdoAttributes: {
+                'info.label': {leavAttributeId: 'campaigns_label', valueRequired: true, format: 'string'},
+                'info.year': {leavAttributeId: 'campaigns_year', valueRequired: true, format: 'number'},
+                'info.stores': {leavAttributeId: 'campaigns_stores', valueRequired: true, format: 'array'},
+                'info.comment': {leavAttributeId: 'campaigns_comment', valueRequired: false, format: 'string'},
+            },
+        };
+
+        const _content = (info: Record<string, unknown>): ISDO['content'] =>
+            ({system: {systemId: 'uuid'}, info}) as unknown as ISDO['content'];
+
+        test('returns nothing when every required attribute carries a value', () => {
+            const content = _content({label: 'campaign', year: 2026, stores: ['1']});
+
+            expect(getMissingRequiredSDOAttributes(mappingLibrary, content, 'CREATE')).toEqual([]);
+            expect(getMissingRequiredSDOAttributes(mappingLibrary, content, 'UPDATE')).toEqual([]);
+        });
+
+        test('returns the required attributes absent from a CREATE', () => {
+            const content = _content({label: 'campaign'});
+
+            expect(getMissingRequiredSDOAttributes(mappingLibrary, content, 'CREATE')).toEqual([
+                'info.year',
+                'info.stores',
+            ]);
+        });
+
+        test('ignores required attributes absent from an UPDATE, since it is a patch', () => {
+            expect(getMissingRequiredSDOAttributes(mappingLibrary, _content({comment: 'patched'}), 'UPDATE')).toEqual(
+                [],
+            );
+        });
+
+        test.each([
+            ['null', null],
+            ['an empty string', ''],
+            ['an empty array', []],
+        ])('returns a required attribute explicitly emptied with %s on an UPDATE', (_label, emptyValue) => {
+            expect(getMissingRequiredSDOAttributes(mappingLibrary, _content({label: emptyValue}), 'UPDATE')).toEqual([
+                'info.label',
+            ]);
+        });
+
+        test('does not consider a falsy but meaningful value as missing', () => {
+            const content = _content({label: 'campaign', year: 0, stores: [false]});
+
+            expect(getMissingRequiredSDOAttributes(mappingLibrary, content, 'CREATE')).toEqual([]);
+        });
+
+        test('ignores attributes which are not flagged valueRequired', () => {
+            const content = _content({label: 'campaign', year: 2026, stores: ['1'], comment: ''});
+
+            expect(getMissingRequiredSDOAttributes(mappingLibrary, content, 'CREATE')).toEqual([]);
+        });
+
+        test('does not crash when sdoAttributes is undefined', () => {
+            expect(
+                getMissingRequiredSDOAttributes(
+                    {leavLibraryId: 'campaigns'} as ISDOMappingLibrary,
+                    _content({}),
+                    'CREATE',
+                ),
+            ).toEqual([]);
         });
     });
 });

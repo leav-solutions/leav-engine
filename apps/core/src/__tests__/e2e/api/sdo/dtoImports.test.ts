@@ -4,7 +4,12 @@ import {getConfig} from '../../../../config';
 import {RabbitMqClient} from './rabbitMQUtils';
 import {type IConfig} from '../../../../_types/config';
 import {adminUserSdk} from '../e2eUtils';
-import {DTO_IMPORTS_LIBRARY_ID, DTO_TEST_ATTRIBUTE_ID, sdoGlobalSettings} from './sdoConfig';
+import {
+    DTO_IMPORTS_LIBRARY_ID,
+    DTO_TEST_ATTRIBUTE_ID,
+    DTO_TEST_MANDATORY_ATTRIBUTE_ID,
+    sdoGlobalSettings,
+} from './sdoConfig';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes';
 
 /**
@@ -21,7 +26,7 @@ describe('DTO Imports', () => {
      * `payloadDocument` has the same shape as an SDO `content` and is validated against the generic
      * SDO JSON schema, which still requires the whole `system` bookkeeping block.
      */
-    const _payloadDocument = (systemId: string, value: string): ISDO['content'] => {
+    const _payloadDocument = (systemId: string, value: string, info: Record<string, unknown> = {}): ISDO['content'] => {
         const nowSec = Math.round(Date.now() / 1000); // in seconds
         const editorUUID = crypto.randomUUID();
 
@@ -36,7 +41,9 @@ describe('DTO Imports', () => {
                 systemLabel: 'DTO import label',
             },
             identifier: {},
-            info: {value},
+            // `info.mandatoryValue` is mapped with `valueRequired: true`: omitting it makes any CREATE
+            // rejected, so the nominal documents must always carry it.
+            info: {value, mandatoryValue: 'dto_mandatory_value', ...info},
         };
     };
 
@@ -93,11 +100,20 @@ describe('DTO Imports', () => {
             },
         });
 
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: DTO_TEST_MANDATORY_ATTRIBUTE_ID,
+                type: AttributeType.simple,
+                format: AttributeFormat.text,
+                label: {fr: 'DTO test mandatory value', en: 'DTO test mandatory value'},
+            },
+        });
+
         await adminUserSdk.SaveLibrary({
             library: {
                 id: DTO_IMPORTS_LIBRARY_ID,
                 label: {fr: 'Test DTO', en: 'Test DTO'},
-                attributes: ['label', DTO_TEST_ATTRIBUTE_ID],
+                attributes: ['label', DTO_TEST_ATTRIBUTE_ID, DTO_TEST_MANDATORY_ATTRIBUTE_ID],
                 recordIdentityConf: {label: 'label'},
             },
         });
@@ -194,6 +210,99 @@ describe('DTO Imports', () => {
             await _waitForProcessing();
 
             expect(await _findRecords(uuid)).toHaveLength(0);
+        }, 10000);
+    });
+
+    describe('mandatory fields', () => {
+        const _payloadDocumentWithoutMandatoryValue = (systemId: string, value: string): ISDO['content'] => {
+            const payloadDocument = _payloadDocument(systemId, value);
+            delete (payloadDocument.info as Record<string, unknown>).mandatoryValue;
+
+            return payloadDocument;
+        };
+
+        test('a CREATE operation missing a mandatory attribute should be rejected', async () => {
+            const uuid = crypto.randomUUID();
+
+            await _publish(
+                _dto({method: 'CREATE', payloadDocument: _payloadDocumentWithoutMandatoryValue(uuid, 'dto_value')}),
+            );
+
+            await _waitForProcessing();
+
+            expect(await _findRecords(uuid)).toHaveLength(0);
+        }, 10000);
+
+        test('a CREATE operation with an empty mandatory attribute should be rejected', async () => {
+            const uuid = crypto.randomUUID();
+
+            await _publish(
+                _dto({
+                    method: 'CREATE',
+                    payloadDocument: _payloadDocument(uuid, 'dto_value', {mandatoryValue: ''}),
+                }),
+            );
+
+            await _waitForProcessing();
+
+            expect(await _findRecords(uuid)).toHaveLength(0);
+        }, 10000);
+
+        test('an UPDATE operation not carrying the mandatory attribute should be applied', async () => {
+            const {createRecord} = await adminUserSdk.CreateRecord({
+                library: DTO_IMPORTS_LIBRARY_ID,
+                data: {
+                    values: [
+                        {attribute: DTO_TEST_ATTRIBUTE_ID, payload: 'value'},
+                        {attribute: DTO_TEST_MANDATORY_ATTRIBUTE_ID, payload: 'mandatory value'},
+                    ],
+                },
+            });
+
+            const recordUUID = createRecord.record!.uuid;
+            const recordId = createRecord.record!.id;
+
+            // An UPDATE is a patch: an absent attribute means "unchanged", not "emptied"
+            await _publish(
+                _dto({
+                    method: 'UPDATE',
+                    payloadDocument: _payloadDocumentWithoutMandatoryValue(recordUUID, 'dto_patched_value'),
+                }),
+            );
+
+            await vi.waitFor(
+                async () => {
+                    expect(await _getTestValue(recordId)).toBe('dto_patched_value');
+                },
+                {timeout: 5000, interval: 1000},
+            );
+        });
+
+        test('an UPDATE operation emptying the mandatory attribute should be rejected', async () => {
+            const {createRecord} = await adminUserSdk.CreateRecord({
+                library: DTO_IMPORTS_LIBRARY_ID,
+                data: {
+                    values: [
+                        {attribute: DTO_TEST_ATTRIBUTE_ID, payload: 'value'},
+                        {attribute: DTO_TEST_MANDATORY_ATTRIBUTE_ID, payload: 'mandatory value'},
+                    ],
+                },
+            });
+
+            const recordUUID = createRecord.record!.uuid;
+            const recordId = createRecord.record!.id;
+
+            await _publish(
+                _dto({
+                    method: 'UPDATE',
+                    payloadDocument: _payloadDocument(recordUUID, 'dto_rejected_value', {mandatoryValue: null}),
+                }),
+            );
+
+            await _waitForProcessing();
+
+            // Nothing of the operation is applied, not even the valid attributes
+            expect(await _getTestValue(recordId)).toBe('value');
         }, 10000);
     });
 
