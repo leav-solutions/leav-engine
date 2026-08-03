@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import {type ISDO, type ISDOMappingAttribute, type ISDOMappingLibrary} from '../../../_types/sdo';
+import {type ISDOImportPayload, type ISDOMappingAttribute, type ISDOMappingLibrary} from '../../../_types/sdo';
 import {type IRecordDomain} from '../../record/recordDomain';
 import {type ISDOUtils} from '../../../utils/sdo/sdo';
 import {type ISDODomain} from '../sdoDomain';
@@ -39,8 +39,8 @@ export interface ISDOImportDomainDeps {
 }
 
 export interface ISDOImportDomain {
-    create: (sdo: ISDO, ctx: IQueryInfos) => Promise<void>;
-    update: (sdo: ISDO, ctx: IQueryInfos) => Promise<void>;
+    create: (sdo: ISDOImportPayload, ctx: IQueryInfos) => Promise<void>;
+    update: (sdo: ISDOImportPayload, ctx: IQueryInfos) => Promise<void>;
 }
 
 export default function ({
@@ -54,7 +54,7 @@ export default function ({
 }: ISDOImportDomainDeps): ISDOImportDomain {
     const debug = config.sdo.debug ?? false;
 
-    const create = async (sdo: ISDO, ctx: IQueryInfos) => {
+    const create = async (sdo: ISDOImportPayload, ctx: IQueryInfos) => {
         const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(ctx);
         const leavLibraryId = sdoUtils.getLeavLibraryId(sdoGlobalSettings.mapping, sdo);
         const sdoLibrary = sdoUtils.getSDOLibrary(sdoGlobalSettings.mapping, leavLibraryId);
@@ -109,7 +109,7 @@ export default function ({
         }
     };
 
-    const update = async (sdo: ISDO, ctx: IQueryInfos) => {
+    const update = async (sdo: ISDOImportPayload, ctx: IQueryInfos) => {
         const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(ctx);
         const leavLibraryId = sdoUtils.getLeavLibraryId(sdoGlobalSettings.mapping, sdo);
         const sdoLibrary = sdoUtils.getSDOLibrary(sdoGlobalSettings.mapping, leavLibraryId);
@@ -214,7 +214,7 @@ export default function ({
     };
 
     const _mapRecordValuesFromSDO = async (
-        sdo: ISDO,
+        sdo: ISDOImportPayload,
         sdoMappingLibrary: ISDOMappingLibrary,
         ctx: IQueryInfos,
         record?: IRecord,

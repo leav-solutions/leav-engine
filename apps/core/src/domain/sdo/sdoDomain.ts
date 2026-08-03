@@ -17,6 +17,7 @@ import {
     type IExtendSDOFunction,
     type ISDOTriggerTarget,
 } from '../../_types/sdo';
+import {type IDTO} from '../../_types/dto';
 import {type IGlobalSettings} from '../../_types/globalSettings';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IValue, type ILinkValue, type IStandardValue, type ITreeValue} from '../../_types/value';
@@ -65,12 +66,14 @@ export interface ISDODomain {
         action,
         record,
         sdo,
+        dto,
         error,
         ctx,
     }: {
         action: EventAction;
         record?: IDbPayload['topic']['record'];
         sdo?: ISDO;
+        dto?: IDTO;
         error?: unknown;
         ctx: IQueryInfos;
     }): Promise<void>;
@@ -93,14 +96,14 @@ export default function ({
     const exportMappingFunctions: Map<string, ISDOMappingFunction> = new Map();
     const extendSDOFunctions: Map<string, IExtendSDOFunction> = new Map();
 
-    const sendLog = async ({action, record, sdo, error, ctx}): Promise<void> => {
+    const sendLog = async ({action, record, sdo, dto, error, ctx}): Promise<void> => {
         await eventsManager.sendDatabaseEvent(
             {
                 action,
                 topic: {
                     record,
                 },
-                ...((sdo || error) && {metadata: {sdo, error}}),
+                ...((sdo || dto || error) && {metadata: {sdo, dto, error}}),
             },
             ctx,
         );

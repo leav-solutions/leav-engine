@@ -6,7 +6,7 @@ export type SDOAction = 'CREATE' | 'UPDATE';
 
 export interface ISDO {
     dataModelRelease: string;
-    name: string; // library
+    name: string; // libraryId
     date: number;
     action: SDOAction;
     clientId?: string; // emitting application (AMP norm), from config.sdo.clientId
@@ -27,6 +27,12 @@ export interface ISDO {
         [attributePath: string]: unknown;
     };
 }
+
+/**
+ * Minimal shape needed to import an entity: the SDO type (i.e. the mapping key) and its content.
+ * Shared by the SDO import (a full ISDO) and the DTO import (`payloadType` + `payloadDocument`).
+ */
+export type ISDOImportPayload = Pick<ISDO, 'name' | 'content'>;
 
 export interface IBufferList {
     [libraryId: string]: Map<string, IBuffer>;

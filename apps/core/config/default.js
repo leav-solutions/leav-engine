@@ -317,7 +317,7 @@ module.exports = {
             import: {
                 enable: envToBool(process.env.DTO_IMPORT_ENABLE, false),
                 exchange: process.env.DTO_IMPORT_EXCHANGE || process.env.INSTANCE_ID + '_dto_import',
-                exchangeType: process.env.DTO_IMPORT_EXCHANGE_TYPE || 'fanout',
+                exchangeType: process.env.DTO_IMPORT_EXCHANGE_TYPE || 'direct',
                 queue: process.env.DTO_IMPORT_QUEUE || process.env.INSTANCE_ID + '_dto_import',
                 prefetch: envToNumber(process.env.DTO_IMPORT_PREFETCH, 1),
             },
