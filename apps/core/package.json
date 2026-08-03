@@ -48,7 +48,7 @@
         "@types/graphql-upload": "16.0.7",
         "@types/jexl": "2.3.4",
         "@types/jsonwebtoken": "9.0.10",
-        "@types/lodash": "4.17.24",
+        "@types/lodash": "4.17.25",
         "@types/ms": "2.1.0",
         "@types/node": "24.13.3",
         "@types/nodemailer": "8.0.1",
@@ -59,7 +59,7 @@
         "graphql-request": "7.4.0",
         "graphql-tag": "2.12.7",
         "prettier": "3.9.6",
-        "tsx": "4.23.1",
+        "tsx": "4.23.5",
         "typescript": "7.0.2",
         "vitest": "4.1.10"
     },
