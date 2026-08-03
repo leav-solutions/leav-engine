@@ -9,7 +9,15 @@
             "Bash(yarn vitest *)",
             "Bash(yarn graphql-generate)",
             "Bash(yarn build)",
-            "Bash(npm view *)"
+            "Bash(npm view *)",
+            "Bash(npx tsc *)",
+            "Bash(../../node_modules/.bin/vitest run *)",
+            "Bash(docker container ls*)",
+            "Bash(npx prettier --check *)",
+            "Bash(../../node_modules/.bin/tsc *)",
+            "mcp__claude_ai_Atlassian_Rovo__getJiraIssue",
+            "mcp__claude_ai_Atlassian_Rovo__searchJiraIssuesUsingJql",
+            "mcp__claude_ai_Atlassian__getJiraIssue"
         ]
     }
 }
