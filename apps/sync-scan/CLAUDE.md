@@ -38,6 +38,39 @@ src/
 └── _types/        # Types config, FS, DB, événements
 ```
 
+## Tests
+
+```bash
+# Unitaires (en local)
+yarn workspace sync-scan run test
+
+# E2E (nécessite un RabbitMQ joignable — depuis le container automate-scan, qui monte le workspace)
+docker exec -ti -w /app/apps/sync-scan docker-automate-scan-1 yarn run test:e2e
+```
+
+Les e2e ([`src/__tests__/e2e/`](src/__tests__/e2e/)) publient de vrais événements via `automate()` et
+les relisent sur une queue dédiée (`config/test.js` : exchange `leav_core_test_sync_scan`, queue
+`files_events_test_sync_scan` — utilisés **uniquement** par ces tests).
+
+Deux invariants à préserver en touchant à ce fichier de test :
+
+- **La topologie de test doit être en place avant la première publication.** Elle est déclarée dans le
+  `setup` du canal consommateur (exchange + queue + bind, l'exchange inclus pour ne pas dépendre du
+  canal producteur), et `purgeQueue()` en `beforeEach` sert de **barrière** (il attend le premier
+  connect du canal) autant que de nettoyage. Sans cette barrière, les événements partent sur un
+  exchange sans binding et sont jetés silencieusement → 20 s de timeout. Invisible en local (la queue
+  `durable` survit d'un run à l'autre), systématique en CI où le service RabbitMQ est neuf.
+- **Les assertions restent hors du handler `consume`** (`collectMessages(n)` collecte, le test
+  asserte) et chaque consumer est annulé en `finally` — sinon un test en échec laisse un consumer qui
+  vole les messages des suivants (round-robin RabbitMQ) et fait tomber toute la suite en cascade.
+
+Pour reproduire les conditions CI en local, supprimer la topologie de test avant le run :
+
+```bash
+curl -s -u guest:guest -X DELETE http://rabbitmq.leav.localhost/api/queues/%2F/files_events_test_sync_scan
+curl -s -u guest:guest -X DELETE http://rabbitmq.leav.localhost/api/exchanges/%2F/leav_core_test_sync_scan
+```
+
 ## Relation avec automate-scan
 
 - `sync-scan` — réconciliation **ponctuelle** (on-demand ou périodique)
