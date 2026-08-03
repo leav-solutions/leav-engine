@@ -190,5 +190,47 @@ Deux approches coexistent. **styled-components** reste majoritaire dans l'exista
   npm (AMP, xStream) les résolvent via leur bundler. En local, `app-studio` bundle directement
   `libs/ui/src` (alias `_ui`) et ne dépend pas de cette copie.
 - **Typage** : `*.module.css` est déclaré non typé (`src/typings/cssModules.d.ts`).
-  `vite/client` a été retiré des `tsconfig` (son `*.module.css` _default-export-only_ bloquait
-  les named imports) ; `import.meta.env` est typé par `src/typings/viteEnv.d.ts`.
+  `vite/client` a été retiré du **tsconfig de build** (son `*.module.css` _default-export-only_
+  bloquait les named imports) ; `import.meta.env` est typé par `src/typings/viteEnv.d.ts`.
+  ⚠️ Il est **toujours présent dans `tsconfig.spec.json`** (`types: [… "vite/client"]`), ce qui rend
+  la devDependency `vite` indispensable au `tscheck` bien qu'elle ne soit jamais importée.
+
+---
+
+## Dépendances — spécificités d'une lib publiée
+
+`@leav/ui` est publiée sur npm : un consommateur externe n'installe que ses `dependencies` et ses
+`peerDependencies`. La frontière entre code **publié** et code de **dev** est donnée par le `exclude`
+de [`tsconfig.build.json`](tsconfig.build.json) (`**/*.test.*` et `**/_tests`) — d'où le placement en
+`devDependencies` de `@testing-library/*` et `vitest`, importés uniquement depuis `src/_tests/`.
+
+Pour auditer, utiliser le skill [`audit-dependencies`](../../.claude/skills/audit-dependencies/).
+
+### Non déclarées à dessein
+
+`antd`, `@fortawesome/{react-fontawesome,free-solid-svg-icons,fontawesome-svg-core}`, `classnames`,
+`lodash` et `react-modal` sont **importés sans être déclarés**, y compris par du code publié (`antd` :
+202 fichiers du `dist`). Ce sont des dépendances directes d'`aristid-ds`, notre `peerDependency`
+hard-pinnée : les déclarer ici créerait un couplage de version avec le design system, et une seconde
+copie d'`antd` chez le consommateur casserait le theming (contexte React).
+
+> ⚠️ Conséquence assumée : un consommateur npm ne les obtient que par le hoisting d'`aristid-ds`.
+> Si ce compromis devient gênant, la bonne réponse est de les passer en `peerDependencies`
+> (le consommateur fournit l'instance unique), **pas** en `dependencies`.
+
+### Non importées mais indispensables
+
+| Package                      | Pourquoi                                                                                                                                                                                  |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vite`                       | `vite/client` dans les `types` de `tsconfig.spec.json` (cf. section Styling ci-dessus)                                                                                                    |
+| `happy-dom`                  | `environment: 'happy-dom'` dans `vitest.config.ts` (chaîne, pas import)                                                                                                                   |
+| `graphql`                    | Peer de `@apollo/client` et des plugins codegen                                                                                                                                           |
+| `@graphql-codegen/*`         | Noms de plugins en chaînes dans [`codegen.ts`](codegen.ts), dont la clé `add:`                                                                                                            |
+| `tsc-alias`, `typescript`    | Invoqués depuis les `scripts`                                                                                                                                                             |
+| `@total-typescript/ts-reset` | Importé par `src/typings/reset.d.ts`. `tsc` ne ré-émet pas les `.d.ts` d'entrée, donc il n'atteint jamais `dist/` : `devDependencies` est bien le bon bloc, malgré ce que suggère un scan |
+
+### Dette connue
+
+`@ant-design/icons` est pinné en `5.6.1` alors qu'`antd@6.4.5` exige `^6.2.5` : **deux copies
+coexistent** (5.6.1 à la racine, 6.3.2 sous `antd/node_modules`), d'où les warnings sourcemap au
+build d'`app-studio`. Préexistant, à traiter à part.

@@ -44,3 +44,15 @@ src/
 - `automate-scan` — surveillance **continue** (temps réel)
 
 Les deux publient sur la même queue RabbitMQ.
+
+---
+
+## Dépendances à usage non évident
+
+`graphql` n'est **jamais importé directement** mais doit rester déclaré : il satisfait la
+`peerDependency` des `apollo-client` / `apollo-cache-inmemory` / `apollo-link-http` et de
+`graphql-tag`, tous utilisés par [`src/scan.ts`](src/scan.ts). Yarn émet d'ailleurs un warning de
+peer (la version 16 dépasse le range `^14 || ^15` des `apollo-*`) : c'est préexistant et connu, le
+retirer laisserait ces packages sans aucun `graphql`.
+
+Auditer avec le skill [`audit-dependencies`](../../.claude/skills/audit-dependencies/).
