@@ -44,6 +44,8 @@ export const ApplicationSchema = z
             }),
         ),
         enableViewSettings: z.boolean().optional(),
+        // Only effective when `enableViewSettings` is also on: kanban is built on the V2 views system.
+        enableKanbanView: z.boolean().optional(),
         enableMatomoTracking: z.boolean().optional(),
     })
     .check(ctx => {

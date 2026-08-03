@@ -32,6 +32,9 @@ export const viewV2ToSerializedView = (view: GetViewV2Query['viewV2']): Serializ
     attributesIds: view.display.attributes
         .filter(({visible, attribute}) => visible && attribute.id !== IDENTITY_COLUMN_ID)
         .map(({attribute}) => attribute.id),
+    // The grouping axis (kanban columns): the id of the single display attribute flagged `isGroupBy`,
+    // or undefined when no axis is set. Generic — display-mode-agnostic (see SerializedView).
+    groupByAttributeId: view.display.attributes.find(({isGroupBy}) => isGroupBy)?.attribute.id,
     sort: view.sorts
         .filter(sort => sort.activated)
         .map(sort => ({field: sort.attributes.map(attribute => attribute.id).join('.'), order: sort.order}))

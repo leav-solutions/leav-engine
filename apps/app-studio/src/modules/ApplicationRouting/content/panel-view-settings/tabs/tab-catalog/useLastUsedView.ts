@@ -18,7 +18,7 @@ export const useLastUsedView = () => {
 
     const [saveUserDataMutation] = useSaveUserDataMutation();
 
-    const {data} = useGetUserDataQuery({
+    const {data, loading} = useGetUserDataQuery({
         variables: {keys: [userDataKey]},
     });
 
@@ -26,6 +26,9 @@ export const useLastUsedView = () => {
 
     return {
         lastUsedViewId,
+        // Exposed so the view store can tell "no last-used view yet" (query in flight) from "no
+        // last-used view at all" (settled) — the former must not fall back to the default view.
+        loading,
         saveLastUsedView: (viewId: string) =>
             saveUserDataMutation({
                 variables: {

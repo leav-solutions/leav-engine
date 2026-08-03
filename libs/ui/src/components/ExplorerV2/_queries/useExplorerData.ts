@@ -1,15 +1,8 @@
 import {localizedTranslation} from '@leav/utils';
 import {useEffect, useMemo} from 'react';
 import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
+import {type Entrypoint, type IEntrypointLink, type IExplorerData, type SerializedView} from '../_types';
 import {
-    type Entrypoint,
-    type IEntrypointLink,
-    type IExplorerData,
-    type SerializedView,
-    type IEntrypointLibrary,
-} from '../_types';
-import {
-    type ExplorerLibraryDataQuery,
     type ExplorerLinkDataQuery,
     type LinkPropertyLinkValueFragment,
     type SortOrder,
@@ -21,48 +14,10 @@ import {
 import {type UIFilter} from '_ui/components/Filters/_types';
 import {prepareFiltersForRequest} from '_ui/components/Filters';
 import {AttributeConditionFilter} from '_ui/types';
+import {mapLibraryDataToExplorerData} from './mapLibraryDataToExplorerData';
+import {getLibraryRequestValuesList} from './getLibraryRequestValuesList';
 
 export const dateValuesSeparator = '\n';
-
-const _mappingLibrary = (
-    data: ExplorerLibraryDataQuery,
-    libraryId: string,
-    availableLangs: string[],
-): IExplorerData => {
-    const attributes = data.records.list.length
-        ? data.records.list[0].properties.reduce((acc, property) => {
-              acc[property.attributeId] = {
-                  ...property.attributeProperties,
-                  label: localizedTranslation(property.attributeProperties.label, availableLangs),
-              };
-
-              return acc;
-          }, {})
-        : {};
-
-    const records = data.records.list.map(({whoAmI, active, permissions, properties}) => ({
-        libraryId,
-        key: whoAmI.id, // For <KitTable /> only
-        itemId: whoAmI.id, // For <KitTable /> only
-        active,
-        canActivate: permissions.create_record,
-        canDelete: permissions.delete_record,
-        whoAmI: {
-            label: null,
-            subLabel: null,
-            color: null,
-            preview: null,
-            ...whoAmI,
-        },
-        propertiesById: properties.reduce((acc, {attributeId, values}) => ({...acc, [attributeId]: values}), {}),
-    }));
-
-    return {
-        totalCount: data.records.totalCount ?? 0,
-        attributes,
-        records,
-    };
-};
 
 const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
     const attributes = data.records.list.length
@@ -171,9 +126,7 @@ export const useExplorerData = ({
         },
     });
 
-    const allowFreeEntry = isLibrary ? (entrypoint as IEntrypointLibrary).allowFreeEntry : undefined;
-    const valuesList =
-        !isLibrary || (fulltextSearch && allowFreeEntry) ? undefined : (entrypoint as IEntrypointLibrary).valuesList; // Remove values list for free entry values list on search
+    const valuesList = getLibraryRequestValuesList(entrypoint, fulltextSearch);
     const preparedFilters = prepareFiltersForRequest(filters, filtersOperator, valuesList);
 
     const {
@@ -200,7 +153,7 @@ export const useExplorerData = ({
 
     const memoizedData = useMemo(() => {
         if (isLibrary) {
-            return libraryData ? _mappingLibrary(libraryData, libraryId, availableLangs) : null;
+            return libraryData ? mapLibraryDataToExplorerData(libraryData, libraryId, availableLangs) : null;
         }
 
         if (isLink) {

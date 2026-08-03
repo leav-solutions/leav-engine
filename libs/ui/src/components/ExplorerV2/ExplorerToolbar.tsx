@@ -12,10 +12,12 @@ const ExplorerToolbarListStyled = styled.ul`
     border-radius: calc(var(--general-border-radius-s) * 1px);
     list-style: none;
     display: flex;
-    overflow: auto;
+    flex-wrap: wrap;
+    /* Without this, the flex column parent (height: 100%, overflow: hidden) can shrink this bar
+       below its wrapped content's natural height once the data area below claims space. */
+    flex-shrink: 0;
     align-items: center;
     gap: calc(var(--general-spacing-xxs) * 1px);
-    white-space: nowrap;
     min-height: 26px; // height of the filter chip
     justify-content: space-between;
 

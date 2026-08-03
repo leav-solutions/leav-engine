@@ -117,6 +117,12 @@ export type SerializedView = {
     viewLabels?: Record<string, string>;
     viewType?: ViewType;
     attributesIds?: string[];
+    /**
+     * Id of the attribute designated as the grouping axis (kanban columns, future table grouping…).
+     * Generic, display-mode-agnostic. It is always one of `attributesIds`. Derived host-side from the
+     * `display.attributes` entry flagged `isGroupBy` (see `viewV2ToSerializedView`).
+     */
+    groupByAttributeId?: string;
     sort?: Array<{field: string; order: SortOrder}>;
     filters?: Array<SerializedFilter | HiddenFullFilter>;
     filtersOperator?: 'AND' | 'OR';
@@ -165,3 +171,46 @@ export interface IDataViewOnAction {
 }
 
 export type SetNewPage = (newCurrentPage: number, ignoredPageSize: number) => void;
+
+/**
+ * Everything the kanban needs to load its columns itself (per-column pagination): the records request
+ * parameters of the current view, with filters already prepared for the request. Only library
+ * entrypoints provide one — without it the kanban falls back to grouping the globally-loaded set.
+ */
+export interface IKanbanDataSource {
+    libraryId: string;
+    attributeIds: string[];
+    filters: RecordFilterInput[];
+    searchQuery: string;
+    sorts: Array<{field: string; order: SortOrder}>;
+}
+
+/**
+ * Props shared by every display-mode renderer (TableView, KanbanView…). The `DataView` router owns the
+ * `viewType`/`groupByAttributeId` switch and forwards this same shape to whichever renderer it picks, so
+ * a mode can be added without touching the router's call site in `Explorer.tsx`.
+ */
+export interface IDataViewChildProps {
+    dataGroupedFilteredSorted: IItemData[];
+    itemActions: IItemAction[];
+    attributesProperties: IExplorerData['attributes'];
+    attributesToDisplay: string[];
+    paginationProps?: {
+        pageSizeOptions: number[];
+        totalCount: number;
+        currentPage: number;
+        pageSize: number;
+        setNewPage: (page: number, pageSize: number) => void;
+        setNewPageSize: (page: number, pageSize: number) => void;
+    };
+    selection: {
+        onSelectItem?: null | ((selectedItem: IItemData) => void);
+        onSelectionChange: null | ((keys: Key[]) => void);
+        isMassSelectionAll: boolean;
+        selectedKeys: Key[];
+        mode?: 'simple' | 'multiple';
+    };
+    hideTableHeader: boolean;
+    useSmallHeaderSize?: boolean;
+    tableBodyHeight?: string;
+}

@@ -18,6 +18,7 @@ import {SortableContext, sortableKeyboardCoordinates, verticalListSortingStrateg
 import {restrictToParentElement, restrictToVerticalAxis} from '@dnd-kit/modifiers';
 import {ColumnItem} from './ColumnItem';
 import {IDENTITY_COLUMN_ID} from './_constants';
+import {ViewV2Types} from '../../../../../../__generated__';
 import {useCurrentView} from '../../store-current-view/useCurrentView';
 import {AvailableAttributesDropdown} from '../../manage-available-attributes/AvailableAttributesDropdown';
 import {section, header, lists, list} from './columnsSettings.module.css';
@@ -41,7 +42,12 @@ export const ColumnsSettings = ({
     const {t} = useTranslation();
     const {lang} = useLang();
 
-    const {canManageViews} = useCurrentView();
+    const {view, canManageViews} = useCurrentView();
+
+    // In a table these are columns; in a kanban they are the attributes displayed on each card, not
+    // columns — so the section title follows the display mode.
+    const isKanban = view?.display.type === ViewV2Types.kanban;
+    const titleKey = isKanban ? 'view_settings.display.columns.title_kanban' : 'view_settings.display.columns.title';
 
     const getLabel = (attr: CurrentViewColumn) =>
         attr.attribute.label ? localizedTranslation(attr.attribute.label, lang) : attr.attribute.id;
@@ -67,7 +73,7 @@ export const ColumnsSettings = ({
         <div className={section}>
             <header className={header}>
                 <KitTypography.Text weight="bold" size="fontSize5">
-                    {t('view_settings.display.columns.title')}
+                    {t(titleKey)}
                 </KitTypography.Text>
                 {canManageViews && <AvailableAttributesDropdown facet="columns" />}
             </header>

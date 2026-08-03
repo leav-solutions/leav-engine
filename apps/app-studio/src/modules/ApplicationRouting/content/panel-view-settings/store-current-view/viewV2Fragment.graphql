@@ -19,6 +19,7 @@ fragment AppStudioViewSettingsView on ViewV2 {
         type
         attributes {
             visible
+            isGroupBy
             attribute {
                 id
                 label

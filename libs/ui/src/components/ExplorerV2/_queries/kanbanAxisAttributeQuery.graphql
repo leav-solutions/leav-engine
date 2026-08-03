@@ -1,0 +1,15 @@
+# Axis attribute metadata needed to render the kanban board (columns come from the linked tree),
+# fetched upfront so the board works even when no record is loaded yet.
+query KanbanAxisAttribute($attributeId: ID!) {
+    attributes(filters: {id: $attributeId}) {
+        list {
+            id
+            multiple_values
+            ... on TreeAttribute {
+                linked_tree {
+                    id
+                }
+            }
+        }
+    }
+}

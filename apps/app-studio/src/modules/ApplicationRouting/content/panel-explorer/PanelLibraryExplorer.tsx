@@ -43,6 +43,7 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
                     itemActions={itemActions}
                     hideFirstActionLabel
                     currentView={viewSettingsProps.currentView}
+                    isViewLoading={viewSettingsProps.isViewLoading}
                     defaultCallbacks={viewSettingsProps.defaultCallbacks}
                 />
             </div>

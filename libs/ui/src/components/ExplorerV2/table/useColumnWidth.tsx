@@ -1,5 +1,5 @@
 import {isTypeStandard} from '@leav/utils';
-import {type IExplorerData} from './_types';
+import {type IExplorerData} from '../_types';
 import {useEffect, useRef, useState} from 'react';
 import {AttributeFormat} from '_ui/_gqlTypes';
 

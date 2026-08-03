@@ -1,5 +1,5 @@
-import {IdCard} from './IdCard';
-import {type IItemAction, type IItemData} from './_types';
+import {IdCard} from '../cells/IdCard';
+import {type IItemAction, type IItemData} from '../_types';
 import {cloneElement, useRef} from 'react';
 import {KitButton, KitDropDown, KitTooltip} from 'aristid-ds';
 import styled from 'styled-components';

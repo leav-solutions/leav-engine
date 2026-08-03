@@ -7,6 +7,8 @@ import {currentViewReducer} from '../../../store-current-view/currentViewReducer
 import {type CurrentViewColumn} from '../../../store-current-view/_types';
 import {TabDisplay} from '../TabDisplay';
 import {ViewV2Types} from '../../../../../../../__generated__';
+import {ApplicationSettingsContext} from '../../../../../../../config/application-instance/application-settings/ApplicationSettingsContext';
+import {type Application} from '../../../../../types';
 
 // All seeded columns start hidden, mirroring the previous fake "Attribut 2..7" setup.
 const SEEDED_COLUMNS: CurrentViewColumn[] = [
@@ -31,13 +33,28 @@ const WithMessenger = ({children}: {children: ReactNode}) => (
     <PanelMessengerContext.Provider value={messengerStub}>{children}</PanelMessengerContext.Provider>
 );
 
+// Application settings with the kanban gate fully open (`enableViewSettings` AND `enableKanbanView`),
+// the default of these tests. Pass explicit flags to exercise the gated states.
+const applicationWithFlags = (
+    flags: Pick<Application, 'enableViewSettings' | 'enableKanbanView'> = {
+        enableViewSettings: true,
+        enableKanbanView: true,
+    },
+): Application => ({workspaces: [], libraries: {}, ...flags});
+
+const WithAppSettings = ({children, application}: {children: ReactNode; application: Application}) => (
+    <ApplicationSettingsContext.Provider value={[application, vi.fn()]}>{children}</ApplicationSettingsContext.Provider>
+);
+
 // Reducer-backed provider so toggling the eye dispatches real actions and re-renders.
 const TabDisplayWithState = ({
     columns = SEEDED_COLUMNS,
     canManageViews = false,
+    application = applicationWithFlags(),
 }: {
     columns?: CurrentViewColumn[];
     canManageViews?: boolean;
+    application?: Application;
 }) => {
     const seed = {
         id: 'view-1',
@@ -52,11 +69,13 @@ const TabDisplayWithState = ({
     };
     const [state, dispatch] = useReducer(currentViewReducer, {view: seed, savedView: seed});
     return (
-        <WithMessenger>
-            <CurrentViewContext.Provider value={{...state, isEmptyView: false, canManageViews, dispatch}}>
-                <TabDisplay />
-            </CurrentViewContext.Provider>
-        </WithMessenger>
+        <WithAppSettings application={application}>
+            <WithMessenger>
+                <CurrentViewContext.Provider value={{...state, isEmptyView: false, canManageViews, dispatch}}>
+                    <TabDisplay />
+                </CurrentViewContext.Provider>
+            </WithMessenger>
+        </WithAppSettings>
     );
 };
 
@@ -85,17 +104,25 @@ describe('TabDisplay', () => {
         // Empty state = no view in the store (null). The tab no longer shows a KitEmpty placeholder:
         // the (hardcoded) display modes and the locked identity column are always rendered.
         render(
-            <WithMessenger>
-                <CurrentViewContext.Provider
-                    value={{view: null, savedView: null, isEmptyView: true, canManageViews: false, dispatch: vi.fn()}}
-                >
-                    <TabDisplay />
-                </CurrentViewContext.Provider>
-            </WithMessenger>,
+            <WithAppSettings application={applicationWithFlags()}>
+                <WithMessenger>
+                    <CurrentViewContext.Provider
+                        value={{
+                            view: null,
+                            savedView: null,
+                            isEmptyView: true,
+                            canManageViews: false,
+                            dispatch: vi.fn(),
+                        }}
+                    >
+                        <TabDisplay />
+                    </CurrentViewContext.Provider>
+                </WithMessenger>
+            </WithAppSettings>,
         );
 
         expect(screen.queryByText('view_settings.empty_view')).not.toBeInTheDocument();
-        expect(screen.getAllByRole('checkbox')).toHaveLength(3);
+        expect(screen.getAllByRole('checkbox')).toHaveLength(2);
 
         const visibleItems = within(getVisibleList()).getAllByRole('listitem');
         expect(visibleItems).toHaveLength(1);
@@ -112,17 +139,29 @@ describe('TabDisplay', () => {
         expect(screen.getByLabelText(gearLabel)).toBeInTheDocument();
     });
 
-    it('renders three display modes: one selected, the two others disabled', () => {
+    it('renders two display modes (table + kanban) with the current type selected when the kanban gate is open', () => {
+        // The seeded view type is `list`, rendered by the table tile; the default test application
+        // has both `enableViewSettings` and `enableKanbanView` on.
         render(<TabDisplayWithState />);
 
         const tiles = screen.getAllByRole('checkbox');
-        expect(tiles).toHaveLength(3);
+        expect(tiles).toHaveLength(2);
 
         const checkedTiles = tiles.filter(tile => tile.getAttribute('aria-checked') === 'true');
-        const disabledTiles = tiles.filter(tile => (tile as HTMLButtonElement).disabled);
 
-        expect(checkedTiles).toHaveLength(1); // Table
-        expect(disabledTiles).toHaveLength(2); // List + Mosaic
+        expect(checkedTiles).toHaveLength(1); // Table (list)
+        expect(screen.getByText('view_settings.display.mode.table')).toBeInTheDocument();
+        expect(screen.getByText('view_settings.display.mode.kanban')).toBeInTheDocument();
+    });
+
+    it('does not offer the kanban mode tile when the enableKanbanView flag is off', () => {
+        // enableViewSettings on, but the kanban flag absent (its default) → gate closed.
+        render(<TabDisplayWithState application={applicationWithFlags({enableViewSettings: true})} />);
+
+        // Only the table tile remains selectable: kanban cannot be reached from the volet.
+        expect(screen.getAllByRole('checkbox')).toHaveLength(1);
+        expect(screen.getByText('view_settings.display.mode.table')).toBeInTheDocument();
+        expect(screen.queryByText('view_settings.display.mode.kanban')).not.toBeInTheDocument();
     });
 
     it('shows the locked identity column first, always visible and non-toggleable', () => {

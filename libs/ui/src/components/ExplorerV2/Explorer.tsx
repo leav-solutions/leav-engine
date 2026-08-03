@@ -2,16 +2,19 @@ import {forwardRef, type ReactNode, useId, useImperativeHandle, useMemo} from 'r
 import {KitEmpty, KitSnackBarProvider, KitTypography} from 'aristid-ds';
 import styled from 'styled-components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useDelayedLoading} from '_ui/hooks/useDelayedLoading';
 import {useStickyValue} from '_ui/hooks/useStickyValue';
 import {Loading} from '_ui/components/Loading';
 import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
 import {useControlledFilterStore} from '_ui/components/Filters/useControlledFilterStore';
 import {FiltersContext} from '_ui/components/Filters/context/filtersContext';
+import {prepareFiltersForRequest} from '_ui/components/Filters';
 import {type UIFilter} from '_ui/components/Filters/_types';
 import {type JoinLibraryContextFragment, ViewV2Types} from '_ui/_gqlTypes';
 import {
     type Entrypoint,
     type IItemAction,
+    type IKanbanDataSource,
     type IMassActions,
     type IPrimaryAction,
     isHiddenFullFilter,
@@ -46,6 +49,8 @@ import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {MASS_SELECTION_ALL, SNACKBAR_MASS_ID} from './_constants';
 import {useExplorerCountData} from './_queries/useExplorerCountData';
+import {getLibraryRequestValuesList} from './_queries/getLibraryRequestValuesList';
+import {useKanbanColumnsData} from './kanban/useKanbanColumnsData';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
@@ -152,6 +157,13 @@ export interface IExplorerProps {
      * back via `defaultCallbacks.viewSettings.onFiltersChange` (ADR-006 / LEAVC-810).
      */
     currentView?: SerializedView;
+    /**
+     * Host-controlled loading flag: the host is still resolving WHICH view to show (or its content) and
+     * hasn't sent the real `currentView` yet. Renders the loader instead of the default (list) view, so a
+     * kanban (or any non-list) view never flashes a table first. Purely additive — omitted (uncontrolled)
+     * consumers keep rendering their default view immediately.
+     */
+    isViewLoading?: boolean;
 }
 
 export interface IExplorerRef {
@@ -194,6 +206,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             defaultCallbacks,
             joinLibraryContext,
             currentView,
+            isViewLoading,
         },
         ref,
     ) => {
@@ -217,6 +230,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                 viewLabels: currentView?.viewLabels ?? {},
                 viewType: currentView?.viewType ?? ViewV2Types.list,
                 attributesIds: currentView?.attributesIds ?? [],
+                groupByAttributeId: currentView?.groupByAttributeId,
                 sort: currentView?.sort ?? [],
                 shortcuts: currentView?.shortcuts ?? DEFAULT_VIEW_SHORTCUTS,
             }),
@@ -286,6 +300,23 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {currentPage, setNewPageSize, setNewPage} = usePagination(viewSettingsDispatch);
 
+        const isKanban = view.viewType === ViewV2Types.kanban;
+        // On a library entrypoint the kanban loads its records itself, column by column (per-column
+        // pagination): the global data/count queries are skipped and it receives a data source instead.
+        // The link entrypoint keeps the global-set fallback (its query has no filters/pagination).
+        const isPerColumnKanban = isKanban && entrypoint.type === 'library';
+
+        // The grouping axis must be fetched even when it is a hidden column, otherwise cards could not be
+        // distributed into columns. It is appended to the queried attributes without becoming a displayed
+        // table column (attributesToDisplay stays view.attributesIds).
+        const queryAttributeIds = useMemo(
+            () =>
+                view.groupByAttributeId && !view.attributesIds.includes(view.groupByAttributeId)
+                    ? [...view.attributesIds, view.groupByAttributeId]
+                    : view.attributesIds,
+            [view.attributesIds, view.groupByAttributeId],
+        );
+
         const {
             data,
             isMultivalue,
@@ -295,14 +326,77 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         } = useExplorerData({
             entrypoint,
             libraryId: view.libraryId,
-            attributeIds: view.attributesIds,
+            attributeIds: queryAttributeIds,
             fulltextSearch: view.fulltextSearch,
             pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
             sorts: view.sort,
             filters: requestFilters,
             filtersOperator,
-            skip: !isViewReady,
+            skip: !isViewReady || isPerColumnKanban,
         }); // TODO: refresh when go back on page
+
+        const kanbanDataSource = useMemo<IKanbanDataSource | undefined>(
+            () =>
+                isPerColumnKanban && isViewReady
+                    ? {
+                          libraryId: view.libraryId,
+                          attributeIds: queryAttributeIds,
+                          filters: prepareFiltersForRequest(
+                              requestFilters,
+                              filtersOperator,
+                              getLibraryRequestValuesList(entrypoint, view.fulltextSearch),
+                          ),
+                          searchQuery: view.fulltextSearch,
+                          sorts: view.sort,
+                      }
+                    : undefined,
+            [
+                isPerColumnKanban,
+                isViewReady,
+                view.libraryId,
+                queryAttributeIds,
+                requestFilters,
+                filtersOperator,
+                entrypoint,
+                view.fulltextSearch,
+                view.sort,
+            ],
+        );
+        // The per-column kanban owns its data (listDistinctValues counts + one card page per column). It is
+        // loaded HERE, not inside KanbanView, so the aggregate count and the loaded card keys feed the
+        // same wiring as the list view — ref.totalCount, mass selection ("select all"), results count.
+        // KanbanView becomes a pure renderer of the columns it receives. Off the per-column path the hook
+        // is disabled (kanbanDataSource undefined → empty state) and the link fallback keeps its global set.
+        const kanbanColumnsData = useKanbanColumnsData({
+            dataSource: kanbanDataSource,
+            axisAttributeId: view.groupByAttributeId,
+        });
+
+        // V1 kanban trees are flat: every record lands in exactly one column (a node bucket or the
+        // no-value one), so the sum of the column counts is the filtered total, and the union of every
+        // column's loaded cards is the set of visible keys. Both are frozen while the board reloads
+        // (reset → fresh counts, or column pages in flight): a filter/search/sort change empties
+        // columnStatesById synchronously, and without the freeze the results count and the
+        // mass-selection checkbox would flicker to 0/disabled on every interaction (same LEAVC-587
+        // pattern as listTotalCountFiltered below).
+        const isKanbanBoardReloading =
+            kanbanColumnsData.isReloading ||
+            Object.values(kanbanColumnsData.columnStatesById).some(({isLoadingMore}) => isLoadingMore);
+        const kanbanTotalCount = useStickyValue(
+            useMemo(
+                () => Object.values(kanbanColumnsData.columnStatesById).reduce((total, {count}) => total + count, 0),
+                [kanbanColumnsData.columnStatesById],
+            ),
+            isKanbanBoardReloading,
+        );
+        const kanbanVisibleKeys = useStickyValue(
+            useMemo(
+                () => Object.values(kanbanColumnsData.columnStatesById).flatMap(({cards}) => cards.map(({key}) => key)),
+                [kanbanColumnsData.columnStatesById],
+            ),
+            isKanbanBoardReloading,
+        );
+
         const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
         const isLink = entrypoint.type === 'link';
 
@@ -324,7 +418,10 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             columnsToDisplay: !joinLibraryContext ? view.attributesIds : [],
         });
 
-        const totalCountFiltered = useStickyValue(data?.totalCount ?? 0, loadingData);
+        const listTotalCountFiltered = useStickyValue(data?.totalCount ?? 0, loadingData);
+        // On the per-column kanban the records query is skipped, so the filtered total comes from the
+        // summed column counts instead of `data.totalCount`.
+        const totalCountFiltered = isPerColumnKanban ? kanbanTotalCount : listTotalCountFiltered;
 
         const {
             countData: rawTotalCountLibrary,
@@ -335,11 +432,24 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             libraryId: view.libraryId,
             defaultFilters: hiddenFilters,
             filters: requestFilters,
+            // Kept alive on the per-column kanban path: the count is grouping-independent (library
+            // total) and feeds the "X / Y" results count next to the mass-selection checkbox.
             skip: !isViewReady,
         });
         const totalCountLibrary = useStickyValue(rawTotalCountLibrary, countLoading);
 
-        const hasNoResults = data === null || data.totalCount === 0;
+        // On the per-column kanban path the board owns its data: an empty board renders its empty
+        // columns, never the global "no data" placeholder.
+        const hasNoResults = !isPerColumnKanban && (data === null || data.totalCount === 0);
+
+        // Loader states, delayed so a fast request never flashes a spinner:
+        // - `viewSettingsLoading` / `loadingData`: the explorer's own bootstrap + records query;
+        // - `isViewLoading`: the host is still resolving WHICH view to show and hasn't sent the real
+        //   `currentView` yet — without this the explorer would paint its default (list) view and flash a
+        //   table before a kanban (or any non-list) view arrives. Omitted by uncontrolled consumers → they
+        //   keep rendering immediately (no behaviour change).
+        const isExplorerLoading = loadingData || viewSettingsLoading || Boolean(isViewLoading);
+        const isLoaderVisible = useDelayedLoading(isExplorerLoading);
 
         const isAllowedFreeEntry = !(entrypoint.type === 'library' && !entrypoint.allowFreeEntry);
 
@@ -373,7 +483,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             columnsToDisplay: !joinLibraryContext ? view.attributesIds : [],
         });
 
-        const allVisibleKeys = data?.records.map(({key}) => key) ?? [];
+        const allVisibleKeys = isPerColumnKanban ? kanbanVisibleKeys : (data?.records.map(({key}) => key) ?? []);
 
         const {generatePreviewsMassAction, GeneratePreviewsModal} = useGeneratePreviewsMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('generatePreviews'),
@@ -503,14 +613,17 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                         {viewSettingsShortcutsButtons}
                         {hidePrimaryActions ? null : primaryButton}
                     </ExplorerToolbar>
-                    {loadingData || viewSettingsLoading ? (
+                    {isLoaderVisible ? (
                         <Loading />
-                    ) : hasNoResults ? (
+                    ) : isExplorerLoading ? null : hasNoResults ? (
                         <ExplorerEmptyDataStyled>
                             {emptyPlaceholder || <KitEmpty title={t('explorer.empty-data')} />}
                         </ExplorerEmptyDataStyled>
                     ) : (
                         <DataView
+                            viewType={view.viewType}
+                            groupByAttributeId={view.groupByAttributeId}
+                            kanbanColumns={isPerColumnKanban ? kanbanColumnsData : undefined}
                             dataGroupedFilteredSorted={data?.records ?? emptyArray}
                             attributesProperties={data?.attributes ?? emptyObject}
                             attributesToDisplay={
@@ -519,7 +632,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                             hideTableHeader={hideTableHeader}
                             useSmallHeaderSize={useSmallHeaderSize}
                             paginationProps={
-                                entrypoint.type === 'library' && !noPagination
+                                entrypoint.type === 'library' && !noPagination && !isKanban
                                     ? {
                                           pageSizeOptions: defaultPageSizeOptions,
                                           currentPage,
@@ -541,7 +654,9 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                                 onSelectionChange: _isSelectionDisable ? null : setSelectedKeys,
                                 isMassSelectionAll,
                                 selectedKeys: isMassSelectionAll
-                                    ? data?.records.map(({whoAmI}) => whoAmI.id)
+                                    ? isPerColumnKanban
+                                        ? kanbanVisibleKeys
+                                        : data?.records.map(({whoAmI}) => whoAmI.id)
                                     : (view.massSelection as string[]),
                                 mode: selectionMode,
                             }}

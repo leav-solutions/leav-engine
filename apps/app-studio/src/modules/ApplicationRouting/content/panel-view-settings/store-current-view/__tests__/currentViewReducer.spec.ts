@@ -61,11 +61,79 @@ const attrVisible = (view: NonNullState, id: string) =>
 // The pure, single-view reducer powering the display-only actions shared across tabs.
 describe('viewReducer (display actions)', () => {
     describe('SET_VIEW_TYPE', () => {
-        it('updates only the view type and keeps the attributes reference', () => {
+        it('updates only the view type and keeps the attributes reference when there is no axis', () => {
             const view = makeView();
             const next = viewReducer(view, {type: 'SET_VIEW_TYPE', payload: {viewType: ViewV2Types.cards}});
             expect(next.display.type).toBe(ViewV2Types.cards);
             expect(next.display.attributes).toBe(view.display.attributes);
+        });
+
+        it('clears the grouping axis on a type switch (blank axis when re-entering kanban)', () => {
+            const kanban = makeView({display: {type: ViewV2Types.kanban, attributes: makeView().display.attributes}});
+            const withAxis = viewReducer(kanban, {
+                type: 'SET_GROUP_BY_ATTRIBUTE',
+                payload: {attribute: {id: 'b', label: {en: 'B'}}},
+            });
+            expect(withAxis.display.attributes.find(attr => attr.attribute.id === 'b')?.isGroupBy).toBe(true);
+
+            const next = viewReducer(withAxis, {type: 'SET_VIEW_TYPE', payload: {viewType: ViewV2Types.list}});
+            expect(next.display.type).toBe(ViewV2Types.list);
+            expect(next.display.attributes.some(attr => attr.isGroupBy)).toBe(false);
+        });
+
+        it('preserves the view reference on a full no-op (same type, no axis)', () => {
+            const view = makeView();
+            const next = viewReducer(view, {type: 'SET_VIEW_TYPE', payload: {viewType: view.display.type}});
+            expect(next).toBe(view);
+        });
+    });
+
+    describe('SET_GROUP_BY_ATTRIBUTE', () => {
+        const groupByOf = (view: NonNullState, id: string) =>
+            view.display.attributes.find(attr => attr.attribute.id === id)?.isGroupBy;
+        const columnOf = (view: NonNullState, id: string) =>
+            view.display.attributes.find(attr => attr.attribute.id === id);
+        const axis = (id: string) => ({id, label: {en: id.toUpperCase()}});
+
+        it('flags an existing display attribute as the axis and leaves the others unflagged', () => {
+            const view = makeView();
+            const next = viewReducer(view, {type: 'SET_GROUP_BY_ATTRIBUTE', payload: {attribute: axis('b')}});
+
+            expect(groupByOf(next, 'b')).toBe(true);
+            // Attributes that were never the axis stay unflagged (no explicit `false` written, to avoid churn).
+            expect(groupByOf(next, 'a')).toBeUndefined();
+            expect(groupByOf(next, 'c')).toBeUndefined();
+        });
+
+        it('appends a not-yet-displayed attribute as a hidden column and flags it as the axis', () => {
+            const view = makeView();
+            const next = viewReducer(view, {type: 'SET_GROUP_BY_ATTRIBUTE', payload: {attribute: axis('status')}});
+
+            const added = columnOf(next, 'status');
+            expect(added).toEqual({visible: false, isGroupBy: true, attribute: axis('status')});
+        });
+
+        it('moves the axis to another attribute (single axis at a time)', () => {
+            const withAxis = viewReducer(makeView(), {type: 'SET_GROUP_BY_ATTRIBUTE', payload: {attribute: axis('b')}});
+            const next = viewReducer(withAxis, {type: 'SET_GROUP_BY_ATTRIBUTE', payload: {attribute: axis('c')}});
+
+            expect(groupByOf(next, 'c')).toBe(true);
+            // The former axis is explicitly unset (it carried `true`, so it is flipped to `false`).
+            expect(groupByOf(next, 'b')).toBe(false);
+        });
+
+        it('clears the axis when attribute is null', () => {
+            const withAxis = viewReducer(makeView(), {type: 'SET_GROUP_BY_ATTRIBUTE', payload: {attribute: axis('b')}});
+            const next = viewReducer(withAxis, {type: 'SET_GROUP_BY_ATTRIBUTE', payload: {attribute: null}});
+
+            expect(groupByOf(next, 'b')).toBe(false);
+        });
+
+        it('preserves the view reference when the axis is unchanged', () => {
+            const withAxis = viewReducer(makeView(), {type: 'SET_GROUP_BY_ATTRIBUTE', payload: {attribute: axis('b')}});
+            const next = viewReducer(withAxis, {type: 'SET_GROUP_BY_ATTRIBUTE', payload: {attribute: axis('b')}});
+
+            expect(next).toBe(withAxis);
         });
     });
 
