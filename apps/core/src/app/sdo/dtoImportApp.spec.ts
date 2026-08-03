@@ -2,15 +2,20 @@ import {type IAmqpMessage} from '@leav/message-broker';
 import {EventAction} from '@leav/utils';
 import {type ToAny} from '../../utils/utils';
 import {default as dtoImportApp, type IDTOImportAppDeps} from './dtoImportApp';
-import {mockDTO, mockDTOImportMessage, sdoGlobalSettings} from '../../__tests__/mocks/sdo/data';
+import {mockDTO, mockDTOImportMessage, mockSDOMapping, sdoGlobalSettings} from '../../__tests__/mocks/sdo/data';
 import {mockImportDomain, mockSdoDomain} from '../../__tests__/mocks/sdo/domains';
 import {mockConfig} from '../../__tests__/mocks/sdo/config';
 import {mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
+import {DTOErrorCode} from '../../_types/dto';
+import {type ISDOMapping} from '../../_types/sdo';
+import sdoUtils from '../../utils/sdo/sdo';
 import ValidationError from '../../errors/ValidationError';
 
 const depsBase: ToAny<IDTOImportAppDeps> = {
     'core.domain.sdo': mockSdoDomain,
     'core.domain.sdo.import': mockImportDomain,
+    // Pure mapping helpers, no I/O: using the real implementation keeps the rejection assertions honest
+    'core.utils.sdo': sdoUtils(),
     'core.utils.getSystemQueryContext': () => mockSystemQueryContext,
     config: mockConfig,
 };
@@ -19,6 +24,19 @@ const _messageFor = (dto: unknown): IAmqpMessage =>
     ({
         content: Buffer.from(JSON.stringify(dto)),
     }) as IAmqpMessage;
+
+// `mockSDO.content.simple` holds the value of the "simple" mapped attribute; flagging it required lets
+// us build documents which are valid apart from that one attribute.
+const mappingWithRequiredSimple: ISDOMapping = {
+    ...mockSDOMapping,
+    test: {
+        ...mockSDOMapping.test,
+        sdoAttributes: {
+            ...mockSDOMapping.test.sdoAttributes,
+            simple: {...mockSDOMapping.test.sdoAttributes.simple, valueRequired: true},
+        },
+    },
+};
 
 describe('dtoImportApp', () => {
     beforeEach(() => {
@@ -80,28 +98,170 @@ describe('dtoImportApp', () => {
         it('[-] should reject an operation missing envelope fields', async () => {
             const {operationId: _operationId, payloadDocument: _payloadDocument, ...incompleteDTO} = mockDTO;
 
-            await expect(dtoImportApp(depsBase).onDTOEvent(_messageFor(incompleteDTO))).rejects.toThrow(
-                'missing operationId, payloadDocument',
-            );
+            // A functional rejection is acked: the handler resolves instead of throwing
+            await dtoImportApp(depsBase).onDTOEvent(_messageFor(incompleteDTO));
 
             expect(mockSdoDomain.schemaValidation).not.toHaveBeenCalled();
+            expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    action: EventAction.DTO_LOG_ERROR,
+                    error: expect.objectContaining({
+                        message: expect.stringContaining('missing operationId, payloadDocument'),
+                        details: [
+                            {
+                                code: DTOErrorCode.MANDATORY_FIELD_MISSING,
+                                attribute: 'operationId',
+                                message: 'A mandatory envelope field is missing',
+                            },
+                            {
+                                code: DTOErrorCode.MANDATORY_FIELD_MISSING,
+                                attribute: 'payloadDocument',
+                                message: 'A mandatory envelope field is missing',
+                            },
+                        ],
+                    }),
+                }),
+            );
         });
 
         it('[-] should reject an unsupported method', async () => {
-            await expect(
-                dtoImportApp(depsBase).onDTOEvent(_messageFor({...mockDTO, method: 'DELETE'})),
-            ).rejects.toThrow('unsupported method DELETE');
+            await dtoImportApp(depsBase).onDTOEvent(_messageFor({...mockDTO, method: 'DELETE'}));
 
             expect(mockSdoDomain.schemaValidation).not.toHaveBeenCalled();
+            expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    action: EventAction.DTO_LOG_ERROR,
+                    error: expect.objectContaining({
+                        details: [
+                            {
+                                code: DTOErrorCode.INVALID_METHOD,
+                                attribute: null,
+                                message: 'Unsupported method DELETE',
+                            },
+                        ],
+                    }),
+                }),
+            );
+        });
+
+        it('[-] should reject an operation targeting an unmapped payloadType', async () => {
+            await dtoImportApp(depsBase).onDTOEvent(_messageFor({...mockDTO, payloadType: 'unmapped'}));
+
+            expect(mockImportDomain.create).not.toHaveBeenCalled();
+            expect(mockImportDomain.update).not.toHaveBeenCalled();
+            expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    action: EventAction.DTO_LOG_ERROR,
+                    error: expect.objectContaining({
+                        details: [
+                            {
+                                code: DTOErrorCode.INVALID_TYPE,
+                                attribute: null,
+                                message: 'Unknown payload type unmapped',
+                            },
+                        ],
+                    }),
+                }),
+            );
+        });
+
+        it('[-] should reject a "CREATE" operation missing a required attribute', async () => {
+            mockSdoDomain.getSDOGlobalSettings.mockResolvedValue({
+                ...sdoGlobalSettings,
+                importEnable: true,
+                mapping: mappingWithRequiredSimple,
+            });
+            const {simple: _simple, ...payloadDocumentWithoutSimple} = mockDTO.payloadDocument;
+
+            await dtoImportApp(depsBase).onDTOEvent(
+                _messageFor({...mockDTO, method: 'CREATE', payloadDocument: payloadDocumentWithoutSimple}),
+            );
+
+            expect(mockImportDomain.create).not.toHaveBeenCalled();
+            expect(mockImportDomain.update).not.toHaveBeenCalled();
+            expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    action: EventAction.DTO_LOG_ERROR,
+                    error: expect.objectContaining({
+                        details: [
+                            {
+                                code: DTOErrorCode.MANDATORY_FIELD_MISSING,
+                                attribute: 'simple',
+                                message: 'A mandatory attribute is missing',
+                            },
+                        ],
+                    }),
+                }),
+            );
+        });
+
+        it('[-] should reject an "UPDATE" operation explicitly emptying a required attribute', async () => {
+            mockSdoDomain.getSDOGlobalSettings.mockResolvedValue({
+                ...sdoGlobalSettings,
+                importEnable: true,
+                mapping: mappingWithRequiredSimple,
+            });
+
+            await dtoImportApp(depsBase).onDTOEvent(
+                _messageFor({...mockDTO, payloadDocument: {...mockDTO.payloadDocument, simple: null}}),
+            );
+
+            expect(mockImportDomain.update).not.toHaveBeenCalled();
+            expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    action: EventAction.DTO_LOG_ERROR,
+                    error: expect.objectContaining({
+                        details: [
+                            {
+                                code: DTOErrorCode.MANDATORY_FIELD_MISSING,
+                                attribute: 'simple',
+                                message: 'A mandatory attribute is missing',
+                            },
+                        ],
+                    }),
+                }),
+            );
+        });
+
+        it('[+] should apply an "UPDATE" operation not carrying a required attribute, since it is a patch', async () => {
+            mockSdoDomain.getSDOGlobalSettings.mockResolvedValue({
+                ...sdoGlobalSettings,
+                importEnable: true,
+                mapping: mappingWithRequiredSimple,
+            });
+            const {simple: _simple, ...payloadDocumentWithoutSimple} = mockDTO.payloadDocument;
+
+            await dtoImportApp(depsBase).onDTOEvent(
+                _messageFor({...mockDTO, payloadDocument: payloadDocumentWithoutSimple}),
+            );
+
+            expect(mockImportDomain.update).toHaveBeenCalledTimes(1);
+            expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
+                expect.objectContaining({action: EventAction.DTO_LOG_IMPORT_RECORD}),
+            );
         });
 
         it('[-] should reject if payload document schema validation throws', async () => {
             const validationError = new ValidationError({dontcare: 'error-field'}, 'Schema validation error');
             mockSdoDomain.schemaValidation.mockRejectedValueOnce(validationError);
 
-            await expect(dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage)).rejects.toThrow(validationError);
+            await dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage);
 
             expect(mockImportDomain.update).not.toHaveBeenCalled();
+            expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    action: EventAction.DTO_LOG_ERROR,
+                    error: expect.objectContaining({
+                        details: [
+                            {
+                                code: DTOErrorCode.INVALID_FIELD_FORMAT,
+                                attribute: null,
+                                message: 'Schema validation error',
+                            },
+                        ],
+                    }),
+                }),
+            );
         });
 
         it('[-] should reject if message is not a valid JSON', async () => {

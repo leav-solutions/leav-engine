@@ -1,18 +1,20 @@
 import {type AmqpMessageHandler} from '@leav/message-broker';
 import {logger} from '@leav/logger';
 import {EventAction} from '@leav/utils';
-import {type IDTO} from '../../_types/dto';
-import {type ISDOImportPayload} from '../../_types/sdo';
+import {DTOErrorCode, type IDTO} from '../../_types/dto';
+import {type ISDOImportPayload, type ISDOMappingLibrary} from '../../_types/sdo';
 import {type IConfig} from '../../_types/config';
 import {type ISDODomain} from '../../domain/sdo/sdoDomain';
 import {type ISDOImportDomain} from '../../domain/sdo/import/sdoImportDomain';
+import {type ISDOUtils} from '../../utils/sdo/sdo';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 import LeavError from '../../errors/LeavError';
-import ValidationError from '../../errors/ValidationError';
+import DTORejectionError from '../../errors/DTORejectionError';
 
 export interface IDTOImportAppDeps {
     'core.domain.sdo': ISDODomain;
     'core.domain.sdo.import': ISDOImportDomain;
+    'core.utils.sdo': ISDOUtils;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
     config: IConfig;
 }
@@ -35,6 +37,7 @@ const SUPPORTED_METHODS: ReadonlyArray<IDTO['method']> = ['CREATE', 'UPDATE'];
 export default function ({
     'core.domain.sdo': sdoDomain,
     'core.domain.sdo.import': sdoImportDomain,
+    'core.utils.sdo': sdoUtils,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
     config,
 }: IDTOImportAppDeps): IDTOImportApp {
@@ -44,15 +47,65 @@ export default function ({
         const missingFields = REQUIRED_ENVELOPE_FIELDS.filter(field => dto[field] === undefined || dto[field] === null);
 
         if (missingFields.length) {
-            throw new ValidationError(
-                Object.fromEntries(missingFields.map(field => [field, 'Missing required field'])),
+            // An operation missing `operationId` / `correlationId` cannot be correlated by the emitter:
+            // its statement will be unusable as is. How to report it is up to the statement publication
+            // (LEAVC-983); here we only reject with a contractual code.
+            throw new DTORejectionError(
+                missingFields.map(field => ({
+                    code: DTOErrorCode.MANDATORY_FIELD_MISSING,
+                    attribute: field,
+                    message: 'A mandatory envelope field is missing',
+                })),
                 `[dtoImportApp]: invalid DTO envelope, missing ${missingFields.join(', ')}`,
-                true,
             );
         }
 
         if (!SUPPORTED_METHODS.includes(dto.method)) {
-            throw new ValidationError({method: dto.method}, `[dtoImportApp]: unsupported method ${dto.method}`, true);
+            throw new DTORejectionError(
+                [
+                    {
+                        code: DTOErrorCode.INVALID_METHOD,
+                        attribute: null,
+                        message: `Unsupported method ${dto.method}`,
+                    },
+                ],
+                `[dtoImportApp]: unsupported method ${dto.method}`,
+            );
+        }
+    };
+
+    const _validatePayloadDocument = async (dto: IDTO): Promise<void> => {
+        // `payloadDocument` has the same shape as an SDO `content`, so the generic SDO JSON
+        // schema applies to both flows.
+        try {
+            await sdoDomain.schemaValidation(dto.payloadDocument);
+        } catch (error) {
+            throw new DTORejectionError(
+                [{code: DTOErrorCode.INVALID_FIELD_FORMAT, attribute: null, message: error.message}],
+                `[dtoImportApp]: invalid payload document, ${error.message}`,
+            );
+        }
+    };
+
+    /**
+     * LEAVC-956: an attribute flagged `valueRequired` in the SDO mapping must carry a value, otherwise
+     * the whole operation is rejected — nothing is imported.
+     */
+    const _validateRequiredValues = (dto: IDTO, mappingLibrary: ISDOMappingLibrary): void => {
+        const missingAttributes = sdoUtils.getMissingRequiredSDOAttributes(
+            mappingLibrary,
+            dto.payloadDocument,
+            dto.method,
+        );
+
+        if (missingAttributes.length) {
+            throw new DTORejectionError(
+                missingAttributes.map(attribute => ({
+                    code: DTOErrorCode.MANDATORY_FIELD_MISSING,
+                    attribute,
+                    message: 'A mandatory attribute is missing',
+                })),
+            );
         }
     };
 
@@ -73,9 +126,24 @@ export default function ({
 
             debug && logger.debug('DTO import: operation received', {dto});
 
-            // `payloadDocument` has the same shape as an SDO `content`, so the generic SDO JSON
-            // schema applies to both flows.
-            await sdoDomain.schemaValidation(dto.payloadDocument);
+            await _validatePayloadDocument(dto);
+
+            // The mapping is keyed by SDO type: no entry means the payload type is unknown to this
+            // instance. Checked here to reject with a contractual code, before the import domain
+            // fails on a generic "Library not found".
+            const mappingLibrary = sdoGlobalSettings.mapping[dto.payloadType];
+
+            if (!mappingLibrary) {
+                throw new DTORejectionError([
+                    {
+                        code: DTOErrorCode.INVALID_TYPE,
+                        attribute: null,
+                        message: `Unknown payload type ${dto.payloadType}`,
+                    },
+                ]);
+            }
+
+            _validateRequiredValues(dto, mappingLibrary);
 
             // A DTO carries the same information the SDO import needs: the SDO type (mapping key)
             // and the entity content. The import domain is therefore reused as-is.
@@ -90,10 +158,15 @@ export default function ({
                     break;
                 default:
                     // Defensive: _validateEnvelope already rejected any other method.
-                    throw new ValidationError(
-                        {method: dto.method},
+                    throw new DTORejectionError(
+                        [
+                            {
+                                code: DTOErrorCode.INVALID_METHOD,
+                                attribute: null,
+                                message: `Unsupported method ${dto.method}`,
+                            },
+                        ],
                         `[dtoImportApp]: unsupported method ${dto.method}`,
-                        true,
                     );
             }
 
@@ -119,6 +192,7 @@ export default function ({
                               record: error.record,
                               errorIdInStdout: error.errorId,
                               stack: error.stack,
+                              ...(error instanceof DTORejectionError && {details: error.details}),
                           }
                         : {
                               message: error.message,
@@ -128,8 +202,14 @@ export default function ({
                 ctx: _systemQueryContext,
             });
 
-            // Rethrow: createAmqpConnection's default contract nacks the message (no requeue) on throw.
-            // Publishing the resulting statement is handled separately (LEAVC-983).
+            if (error instanceof DTORejectionError) {
+                // A functional rejection is a *processed* operation: the message is acked (returning
+                // resolves createAmqpConnection's default contract) and the answer to the emitter is an
+                // `ERROR` statement carrying `error.details` (published by LEAVC-983).
+                return;
+            }
+
+            // Technical failure: rethrow so createAmqpConnection nacks the message (no requeue).
             throw error;
         }
     };

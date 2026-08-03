@@ -39,6 +39,8 @@ export const SDO_EDITOR_EMAIL_LEAV_ATTRIBUTE_PATH = `${CommonAttributes.MODIFIED
 // library so it can't interfere with the SDO import tests running in parallel.
 export const DTO_IMPORTS_LIBRARY_ID = 'test_dto_imports';
 export const DTO_TEST_ATTRIBUTE_ID = 'dto_test_value';
+// Mapped with `valueRequired: true` to cover the mandatory field rejection (LEAVC-956)
+export const DTO_TEST_MANDATORY_ATTRIBUTE_ID = 'dto_test_mandatory_value';
 
 export const sdoGlobalSettings: ISDOSettings = {
     timer: SDO_EXPORT_TIMER,
@@ -141,6 +143,11 @@ export const sdoGlobalSettings: ISDOSettings = {
             leavLibraryId: DTO_IMPORTS_LIBRARY_ID,
             sdoAttributes: {
                 'info.value': {leavAttributeId: DTO_TEST_ATTRIBUTE_ID, valueRequired: false, format: 'string'},
+                'info.mandatoryValue': {
+                    leavAttributeId: DTO_TEST_MANDATORY_ATTRIBUTE_ID,
+                    valueRequired: true,
+                    format: 'string',
+                },
             },
         },
     },

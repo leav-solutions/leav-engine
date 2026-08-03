@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import {type ISDO, sdoPathIdentifierUuid, type ISDOMapping, type ISDOMappingLibrary} from '../../_types/sdo';
+import {type DTOMethod} from '../../_types/dto';
 
 export interface ISDOAdditionalLibraryTriggerMatch {
     targetLeavLibraryId: string;
@@ -14,6 +15,11 @@ export interface ISDOUtils {
     hasSDOAttribute: (sdoLibrary: ISDOMappingLibrary, attribute: string) => boolean;
     getSDOLibrary: (sdoLibrary: ISDOMapping, leavLibraryId: string) => ISDOMappingLibrary;
     getRecordUUIDFromSDO: (sdo: Pick<ISDO, 'content'>) => string;
+    getMissingRequiredSDOAttributes: (
+        sdoMappingLibrary: ISDOMappingLibrary,
+        content: ISDO['content'],
+        method: DTOMethod,
+    ) => string[];
     tmpRecordIdToUuid: (recordId: string) => string;
 }
 
@@ -75,6 +81,29 @@ export default function (): ISDOUtils {
         return recordUuid;
     };
 
+    const _isEmptyValue = (value: unknown): boolean =>
+        value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0);
+
+    /**
+     * SDO paths (mapping keys) of the attributes flagged `valueRequired` in the mapping and left
+     * without a value by the incoming document.
+     *
+     * A `CREATE` builds the whole entity: every required attribute must be there. An `UPDATE` is a
+     * patch, so an absent attribute simply means "unchanged" — only an attribute explicitly present
+     * but emptied is a rejection.
+     */
+    const getMissingRequiredSDOAttributes = (
+        sdoMappingLibrary: ISDOMappingLibrary,
+        content: ISDO['content'],
+        method: DTOMethod,
+    ): string[] =>
+        Object.entries(sdoMappingLibrary.sdoAttributes ?? {})
+            .filter(([, sdoAttr]) => sdoAttr.valueRequired)
+            .filter(
+                ([sdoKey]) => (method === 'CREATE' || _.has(content, sdoKey)) && _isEmptyValue(_.get(content, sdoKey)),
+            )
+            .map(([sdoKey]) => sdoKey);
+
     // TODO replace by a real uuid in record inside leav when ready
     const tmpRecordIdToUuid = (recordId: string): string => `${recordId}`;
 
@@ -86,6 +115,7 @@ export default function (): ISDOUtils {
         hasSDOAttribute,
         getSDOLibrary,
         getRecordUUIDFromSDO,
+        getMissingRequiredSDOAttributes,
         tmpRecordIdToUuid,
     };
 }
