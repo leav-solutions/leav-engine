@@ -223,7 +223,12 @@ docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e
 ```
 
 > ⚠️ Pas de `yarn build` global — chaque app/lib se build individuellement depuis son dossier.
-> Les libs doivent être buildées et leur dossier `dist/` commité pour être consommées par les autres apps.
+>
+> **Aucun `dist/` n'est commité** : `.gitignore` couvre `apps/*/dist` et `libs/*/dist`. En local, les
+> apps ne consomment pas le `dist` des libs mais leurs **sources**, via les alias de
+> [`vite-config-common.js`](vite-config-common.js) (`@leav/ui`, `_ui/*` → `libs/ui/src`) — donc
+> `tscheck` et les tests passent sans build préalable. En CI, ce sont les jobs `build-npm-leav-*` qui
+> buildent et publient les libs. Un `yarn build` local ne sert qu'à vérifier le bundle.
 
 > 🎭 **e2e front** : le job CI `e2e-playwright` est `manual` + `allow_failure` en MR (donc jamais
 > lancé automatiquement, et son échec n'apparaît pas dans le vert du pipeline). **Le déclencher
@@ -236,6 +241,60 @@ docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e
 > `build-docker-core [amd64]` : c'est l'image qu'il produit qui sert à exécuter les tests e2e. Un
 > job ne pouvant pas en déclencher un autre en CI, cet enchaînement est **manuel** : on lance
 > `build-docker-core [amd64]`, on attend sa fin, puis on lance `e2e-playwright`.
+
+---
+
+## Gestion des dépendances
+
+Yarn Workspaces **hoiste** tout à la racine, ce qui masque deux problèmes symétriques :
+
+- une dépendance **déclarée mais inutilisée** (poids mort, et pour les `@types/*` un risque de types
+  périmés qui entrent en conflit avec ceux que le package embarque désormais lui-même) ;
+- une dépendance **importée mais non déclarée** (_phantom dependency_) : ça marche en local parce
+  qu'un workspace voisin la hoiste, et ça casse dès que le package est installé seul — une lib
+  publiée sur npm, ou une app dont l'image Docker ne copie que son propre `package.json`.
+
+> 🔎 Pour auditer un workspace, utiliser le skill **`audit-dependencies`**
+> ([`.claude/skills/audit-dependencies/`](.claude/skills/audit-dependencies/)). Son `SKILL.md`
+> contient la checklist des **usages non visibles d'un scan d'imports** — c'est là que se joue
+> l'essentiel du tri, et c'est ce qui évite de supprimer une dépendance load-bearing.
+
+### Pourquoi une phantom dependency casse en prod mais pas en local
+
+En local, tout est hoisté à la racine : un package importé sans être déclaré se résout quand même,
+parce qu'un workspace voisin l'a tiré. Les images Docker, elles, ne fonctionnent pas comme ça.
+[`docker/DOCKERFILES/build/generic.Dockerfile`](docker/DOCKERFILES/build/generic.Dockerfile) — qui
+build **tous les services sauf le core** (`automate-scan`, `sync-scan`, `mcp-runtime`,
+`preview-generator`) — installe les dépendances avec :
+
+```dockerfile
+RUN yarn workspaces focus $APP               # build : deps de CE workspace uniquement
+RUN yarn workspaces focus $APP --production  # runtime : idem, sans les devDependencies
+```
+
+`yarn workspaces focus` n'installe que ce que **le workspace ciblé déclare** (plus ses libs
+`workspace:` liées), pas l'arbre hoisté du monorepo. D'où deux conséquences :
+
+- une **phantom dependency** est purement absente de l'image → `MODULE_NOT_FOUND` au démarrage, alors
+  que tout passait en local ;
+- `--production` retire les `devDependencies` → tout ce qui est nécessaire **au runtime** doit être en
+  `dependencies`, jamais en `devDependencies`.
+
+Corollaire pour tester : `docker compose up` ne prouve rien sur ce point, puisque le compose monte le
+monorepo entier. Il faut soit builder l'image, soit forcer un `yarn install` dans le conteneur pour
+que son arbre reflète les `package.json` modifiés.
+
+### Deux règles à connaître avant de toucher un `package.json`
+
+- **« Déclaré » ≠ « utilisé », et « importé » ≠ « déclaré ».** Un package peut être indispensable
+  sans apparaître dans un seul `import` : nom de plugin passé en chaîne (`codegen.ts`), valeur de
+  config (`environment: 'happy-dom'`), `types` d'un tsconfig, binaire appelé depuis `scripts`,
+  préchargement par `NODE_OPTIONS`, ou simple satisfaction de la `peerDependency` d'un autre package.
+- **Les packages appartenant à `aristid-ds`** (`antd`, `@fortawesome/*`, `classnames`, `lodash`,
+  `react-modal`) sont **volontairement non déclarés** dans `libs/ui` et `apps/admin`. Le design system
+  est distribué en **commit-pin** : les pinner créerait un couplage de version avec lui, et une
+  seconde copie d'`antd` dans un bundle consommateur casse le theming (contexte React). C'est une
+  décision assumée, pas un oubli — cf. [`libs/ui/CLAUDE.md`](libs/ui/CLAUDE.md).
 
 ---
 

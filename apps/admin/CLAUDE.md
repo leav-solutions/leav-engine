@@ -47,3 +47,40 @@ src/
 ```bash
 yarn build:install  # Build vers apps/core/applications/admin/
 ```
+
+---
+
+## Dépendances à usage non évident
+
+Pour auditer, utiliser le skill [`audit-dependencies`](../../.claude/skills/audit-dependencies/).
+
+### Non importées par leur nom, mais indispensables
+
+| Package                    | Pourquoi                                                                                                                                                                                                                                                                          |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@leav/ui`                 | **Jamais importé sous ce nom** : le code passe par l'alias `_ui/*` (défini dans [`vite-config-common.js`](../../vite-config-common.js) et `vitest.config.ts`), qui pointe vers `libs/ui/src`. La dépendance workspace reste ce qui garantit l'installation des deps de `libs/ui`. |
+| `fomantic-ui-less`         | Import **nu** (`import 'fomantic-ui-less/semantic.less'` dans `src/index.tsx`, sans `from`) + `@import` dans `src/semantic-ui/theme.config` + `scripts/fixSemanticUiCss.js` (postinstall).                                                                                        |
+| `less`                     | Vite compile les `.less`, le package n'est jamais importé.                                                                                                                                                                                                                        |
+| `@graphql-codegen/add`     | Le plugin `add:` est une **clé de config** dans [`codegen.ts`](codegen.ts), invisible à un scan d'imports.                                                                                                                                                                        |
+| `vite-plugin-dynamic-base` | Importé par [`vite.config.js`](vite.config.js) uniquement.                                                                                                                                                                                                                        |
+| `graphql`, `jsoneditor`    | Satisfont les `peerDependencies` de `@apollo/client`/`graphql-ws` et de `jsoneditor-react`.                                                                                                                                                                                       |
+| `happy-dom`                | `environment: 'happy-dom'` dans `vitest.config.ts` (chaîne).                                                                                                                                                                                                                      |
+
+### Non déclarées à dessein
+
+`antd` (imports de type uniquement) et `@fortawesome/*` sont importés sans être déclarés : ce sont des
+dépendances d'`aristid-ds`, distribué en commit-pin. Les pinner ici créerait un couplage de version
+avec le design system — cf. [`libs/ui/CLAUDE.md`](../../libs/ui/CLAUDE.md).
+
+### ⚠️ ~109 fichiers de test entièrement commentés
+
+Une grande partie des `*.test.tsx` de `components/` est **intégralement en commentaires** (héritage
+`enzyme` + `react-test-renderer`, incompatibles React 18). Deux conséquences :
+
+- un scan d'imports naïf les lit et réclame `enzyme`, `react-router-dom-v5`, `react-sortable-tree`
+  ou `react-test-renderer` comme dépendances manquantes — **ne pas les déclarer** ;
+- inversement, `react-test-renderer` et `@types/react-test-renderer` sont encore déclarés alors
+  qu'ils ne servent plus qu'à ce code mort : candidats au retrait.
+
+La suppression de ces fichiers est un chantier à part (rien ne les exécute : `vitest` les compte
+comme « skipped »).
