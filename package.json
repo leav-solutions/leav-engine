@@ -44,7 +44,6 @@
         "typescript": "npm:@typescript/typescript6@^6.0.2"
     },
     "resolutions": {
-        "nwsapi": "2.2.7",
         "@types/react": "18.3.31",
         "@types/react-dom": "18.3.7",
         "semver": ">=7.8.0",
