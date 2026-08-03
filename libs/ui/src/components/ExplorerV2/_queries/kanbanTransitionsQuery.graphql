@@ -1,0 +1,20 @@
+query KanbanTransitions($attributeId: ID!) {
+    attributes(filters: {id: $attributeId}) {
+        list {
+            id
+            permissions {
+                edit_value
+            }
+            ... on TreeAttribute {
+                tree_values {
+                    node {
+                        id
+                    }
+                    allowedDependentValues {
+                        nodeId
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,129 @@
+.board {
+    flex: 1 1 min-content;
+    display: flex;
+    gap: calc(var(--general-spacing-s) * 1px);
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: calc(var(--general-spacing-xs) * 1px);
+    align-items: flex-start;
+}
+
+.column {
+    flex: 0 0 auto;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    background: var(--general-utilities-neutral-light);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+    overflow: hidden;
+}
+
+.columnHeader {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+    padding: calc(var(--general-spacing-s) * 1px);
+    font-weight: 600;
+}
+
+.colorDot {
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--dot-color, var(--general-utilities-neutral-dark));
+}
+
+.columnLabel {
+    flex: 1 1 auto;
+    /* Flex items default to min-width: auto, which lets the label's intrinsic width win over
+       overflow: hidden and push into the count/dot instead of truncating. */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.columnCount {
+    flex: 0 0 auto;
+    color: var(--general-utilities-neutral-dark);
+}
+
+.columnBody {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xs) * 1px);
+    /* Top padding leaves room for the card's hover/selected outline (DS ItemCard), otherwise
+       clipped by .column's overflow: hidden on the first card of the column. */
+    padding: calc(var(--general-spacing-xs) * 1px) calc(var(--general-spacing-s) * 1px)
+        calc(var(--general-spacing-s) * 1px);
+    overflow-y: auto;
+}
+
+.emptyColumn {
+    padding: calc(var(--general-spacing-s) * 1px);
+    color: var(--general-utilities-neutral-dark);
+    text-align: center;
+}
+
+.loadMoreButton {
+    flex: 0 0 auto;
+    align-self: center;
+    margin-top: calc(var(--general-spacing-xs) * 1px);
+}
+
+.clickableCard {
+    cursor: pointer;
+}
+
+/* The dragged source card stays in place, dimmed; the DragOverlay clone follows the pointer. */
+.cardDragging {
+    opacity: 0.4;
+}
+
+/* Column that is not an allowed workflow target while a drag is active. */
+.columnDropDisabled {
+    opacity: 0.4;
+}
+
+/* Allowed column currently hovered by the dragged card. */
+.columnDropTarget {
+    outline: 2px solid var(--general-colors-primary-400);
+    outline-offset: -2px;
+}
+
+.dragOverlayCard {
+    width: 280px;
+    cursor: grabbing;
+}
+
+.dragOverlayCard :global(.kit-item-card-image) {
+    display: none;
+}
+
+/* Records without a preview would otherwise show KitItemCard's grey image placeholder (the image area
+   is always rendered by the DS). Collapse it so the card is text-only, closer to the target design. */
+.cardNoImage :global(.kit-item-card-image) {
+    display: none;
+}
+
+.cardAttributes {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xs) * 1px);
+}
+
+/* One attribute per block: the label on its own line, its value underneath. */
+.cardAttributeRow {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--general-spacing-xxs) * 1px);
+    font-size: 0.85em;
+}
+
+.cardAttributeLabel {
+    color: var(--general-utilities-neutral-dark);
+}

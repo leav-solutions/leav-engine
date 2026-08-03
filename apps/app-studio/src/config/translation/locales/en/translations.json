@@ -161,10 +161,17 @@
                 "title": "Display mode",
                 "table": "Table",
                 "list": "List",
-                "mosaic": "Mosaic"
+                "mosaic": "Mosaic",
+                "kanban": "Kanban"
+            },
+            "axis": {
+                "title": "Axis",
+                "placeholder": "Choose the axis attribute",
+                "no_eligible": "No attribute usable as an axis in this library."
             },
             "columns": {
                 "title": "Columns",
+                "title_kanban": "Displayed attributes",
                 "search_placeholder": "Search...",
                 "manage_available": "Manage available attributes",
                 "identity": "Information (displayed by default)",

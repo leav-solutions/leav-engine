@@ -7,6 +7,10 @@ export const CurrentViewContext = createContext<{
     savedView: CurrentView;
     // No view is targeted (default state)
     isEmptyView: boolean;
+    // The view to display is not known yet (last-used-view lookup or view-content query in flight).
+    // Distinct from `isEmptyView`: the explorer must wait rather than fall back to its default view.
+    // Optional (like `serializedView`/`origin`): consumers read it falsy-safe, volet-only test harnesses omit it.
+    isViewResolving?: boolean;
     // Whether the current user holds the `manage_views` permission on the displayed library — drives
     // every admin affordance of the volet (rename/save/delete/share others' views, reference view,
     // available-attributes wheel). Resolved once by the provider, `false` while loading.
@@ -22,6 +26,7 @@ export const CurrentViewContext = createContext<{
     view: null,
     savedView: null,
     isEmptyView: false,
+    isViewResolving: false,
     canManageViews: false,
     serializedView: undefined,
     origin: undefined,

@@ -4,6 +4,7 @@
 // In this case, the spyOn is too complex to implement, prefer using the mocks parameter of render method.
 //
 import {createRef} from 'react';
+import {type MockedResponse} from '@apollo/client/testing';
 import {waitFor, render, screen, within, getRecordRows} from '_ui/_tests/testUtils';
 import userEvent from '@testing-library/user-event';
 import {type Mockify} from '_ui/__mocks__/utils';
@@ -16,7 +17,7 @@ import * as useGetRecordUpdatesSubscription from '_ui/hooks/useGetRecordUpdatesS
 import {type IEntrypointLibrary, type IEntrypointLink, type IItemAction, type IPrimaryAction} from './_types';
 import {ThroughConditionFilter} from '_ui/types';
 import * as useExecuteSaveValueBatchMutation from '../RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
-import * as useColumnWidth from './useColumnWidth';
+import * as useColumnWidth from './table/useColumnWidth';
 import {ExplorerV2, type IExplorerRef} from './Explorer';
 import * as attributeDetailsModule from '_ui/components/ExplorerV2/manage-view-settings-v2/_shared/useAttributeDetailsData';
 import {KitAlert} from 'aristid-ds';
@@ -3565,6 +3566,306 @@ describe('Explorer', () => {
                 expect(screen.getByRole('columnheader', {name: simpleMockAttribute.label.fr})).toBeInTheDocument();
             });
             expect(screen.queryByRole('columnheader', {name: linkMockAttribute.label.fr})).not.toBeInTheDocument();
+        });
+    });
+
+    // ************* NOTE ******************
+    //
+    // Integration coverage of the library kanban per-column wiring introduced with the board's own
+    // data loading. The reactive kanban queries (axis attribute, tree nodes, listDistinctValues counts) are
+    // spied like the rest of this file; the per-column card pages go through apolloClient.query, so they
+    // are fed via MockedProvider `mocks` and routed to their column with a `variableMatcher` on the
+    // group filter (robust against the exact prepared-filters/attributeIds shape).
+    //
+    describe('Kanban (library, per-column pagination)', () => {
+        const KANBAN_TREE = 'tree_status';
+        const NO_VALUE_COLUMN_ID = '__no_axis_value__';
+
+        const kanbanView = (overrides: Record<string, unknown> = {}) => ({
+            viewType: gqlTypes.ViewV2Types.kanban,
+            groupByAttributeId: 'status',
+            attributesIds: ['status'],
+            sort: [],
+            filters: [],
+            ...overrides,
+        });
+
+        const mockKanbanAxis = (treeId: string | null = KANBAN_TREE) =>
+            vi.spyOn(gqlTypes, 'useKanbanAxisAttributeQuery').mockReturnValue({
+                data: {
+                    attributes: {
+                        list: [{id: 'status', multiple_values: false, ...(treeId ? {linked_tree: {id: treeId}} : {})}],
+                    },
+                },
+                loading: false,
+            } as unknown as ReturnType<typeof gqlTypes.useKanbanAxisAttributeQuery>);
+
+        const axisNode = (id: string, label: string, color: string | null = null, library = 'statuses') => ({
+            id: `node-${id}`,
+            record: {id, whoAmI: {id, label, color, library: {id: library}}},
+        });
+
+        const mockTreeNodes = (nodes: Array<ReturnType<typeof axisNode>>) =>
+            vi.spyOn(gqlTypes, 'useTreeNodeChildrenQuery').mockReturnValue({
+                data: {treeNodeChildren: {list: nodes}},
+                loading: false,
+            } as unknown as ReturnType<typeof gqlTypes.useTreeNodeChildrenQuery>);
+
+        const treeGroup = (nodeRecordId: string, count: number, library = 'statuses') => ({
+            count,
+            value: {
+                id: `node-${nodeRecordId}`,
+                record: {
+                    id: nodeRecordId,
+                    whoAmI: {id: nodeRecordId, label: nodeRecordId, color: null, library: {id: library}},
+                },
+            },
+        });
+        const noValueGroup = (count: number) => ({count, value: null});
+
+        const mockDistinctValues = (groups: Array<ReturnType<typeof treeGroup> | ReturnType<typeof noValueGroup>>) =>
+            vi.spyOn(gqlTypes, 'useListDistinctValuesQuery').mockReturnValue({
+                data: {listDistinctValues: groups},
+                loading: false,
+            } as unknown as ReturnType<typeof gqlTypes.useListDistinctValuesQuery>);
+
+        // __typename is required throughout: MockedProvider adds __typename to the query, so the
+        // network-only result must carry it or Apollo cannot normalize the records and drops them.
+        const kanbanRecord = (id: string) => ({
+            __typename: 'Record',
+            id,
+            whoAmI: {
+                __typename: 'RecordIdentity',
+                id,
+                label: id,
+                subLabel: null,
+                color: null,
+                preview: null,
+                library: {__typename: 'Library', id: 'campaigns'},
+            },
+            active: true,
+            permissions: {__typename: 'RecordPermissions', create_record: true, delete_record: true},
+            properties: [],
+        });
+
+        const pageMock = ({
+            column,
+            offset = 0,
+            records,
+        }: {
+            column: string;
+            offset?: number;
+            records: Array<ReturnType<typeof kanbanRecord>>;
+        }): MockedResponse => ({
+            request: {query: gqlTypes.ExplorerLibraryDataDocument},
+            variableMatcher: (variables: gqlTypes.ExplorerLibraryDataQueryVariables) =>
+                (variables.pagination?.offset ?? 0) === offset &&
+                [variables.filters ?? []]
+                    .flat()
+                    .some(filter =>
+                        column === NO_VALUE_COLUMN_ID
+                            ? filter?.condition === gqlTypes.RecordFilterCondition.IS_EMPTY
+                            : filter?.value === column,
+                    ),
+            result: {data: {records: {totalCount: records.length, list: records}}},
+        });
+
+        const loadMoreName = 'explorer.kanban.load-more';
+
+        test('skips the global records query, keeps the count query, and loads its cards per column', async () => {
+            mockKanbanAxis();
+            mockTreeNodes([axisNode('draft', 'Draft'), axisNode('validated', 'Validated')]);
+            mockDistinctValues([treeGroup('draft', 2), treeGroup('validated', 12), noValueGroup(3)]);
+
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} ignoreViewByDefault currentView={kanbanView()} />, {
+                mocks: [
+                    pageMock({column: 'draft', records: [kanbanRecord('d1'), kanbanRecord('d2')]}),
+                    pageMock({
+                        column: 'validated',
+                        records: Array.from({length: 10}, (_, i) => kanbanRecord(`v${i}`)),
+                    }),
+                    pageMock({
+                        column: NO_VALUE_COLUMN_ID,
+                        records: [kanbanRecord('n1'), kanbanRecord('n2'), kanbanRecord('n3')],
+                    }),
+                ],
+            });
+
+            await screen.findByText('Draft');
+            // Records are loaded per column, so the global records query stays skipped…
+            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(expect.objectContaining({skip: true}));
+            // …but the count query runs (library total for the results count / mass selection).
+            expect(gqlTypes.useExplorerLibraryCountDataQuery).toHaveBeenLastCalledWith(
+                expect.objectContaining({skip: false}),
+            );
+            // The board rendered its own cards (loaded per column), never the skipped global set.
+            await screen.findByText('d1');
+        });
+
+        test('I1b — the filtered total sums the column counts and enables mass selection', async () => {
+            mockKanbanAxis();
+            mockTreeNodes([axisNode('draft', 'Draft'), axisNode('validated', 'Validated')]);
+            // 2 + 12 + 3 = 17 records across the columns.
+            mockDistinctValues([treeGroup('draft', 2), treeGroup('validated', 12), noValueGroup(3)]);
+
+            render(
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    ignoreViewByDefault
+                    currentView={kanbanView()}
+                    defaultMassActions={['deactivate']}
+                />,
+                {
+                    mocks: [
+                        pageMock({column: 'draft', records: [kanbanRecord('d1'), kanbanRecord('d2')]}),
+                        pageMock({
+                            column: 'validated',
+                            records: Array.from({length: 10}, (_, i) => kanbanRecord(`v${i}`)),
+                        }),
+                        pageMock({
+                            column: NO_VALUE_COLUMN_ID,
+                            records: [kanbanRecord('n1'), kanbanRecord('n2'), kanbanRecord('n3')],
+                        }),
+                    ],
+                },
+            );
+
+            await screen.findByText('Draft');
+            // The summed filtered total (17) reaches the results count next to the selection checkbox…
+            await screen.findByText('17', {exact: false});
+            // …and that select-all checkbox is no longer disabled (was stuck disabled on totalCount === 0).
+            const selectAllCheckbox = screen.getByRole('checkbox', {name: /17/});
+            expect(selectAllCheckbox).not.toBeDisabled();
+        });
+
+        test('an empty board renders empty columns, not the global no-data placeholder', async () => {
+            mockKanbanAxis();
+            mockTreeNodes([axisNode('draft', 'Draft'), axisNode('validated', 'Validated')]);
+            mockDistinctValues([]); // no record anywhere
+
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} ignoreViewByDefault currentView={kanbanView()} />);
+
+            await screen.findByText('Draft');
+            expect(screen.getByText('Validated')).toBeInTheDocument();
+            expect(screen.getAllByText('explorer.kanban.empty-column').length).toBeGreaterThan(0);
+            expect(screen.queryByText('explorer.empty-data')).not.toBeInTheDocument();
+        });
+
+        test('header count comes from listDistinctValues; "Voir plus" shows while cards < count and loads the next page', async () => {
+            mockKanbanAxis();
+            mockTreeNodes([axisNode('draft', 'Draft'), axisNode('validated', 'Validated')]);
+            mockDistinctValues([treeGroup('draft', 2), treeGroup('validated', 12)]);
+
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} ignoreViewByDefault currentView={kanbanView()} />, {
+                mocks: [
+                    pageMock({column: 'draft', records: [kanbanRecord('d1'), kanbanRecord('d2')]}),
+                    pageMock({
+                        column: 'validated',
+                        offset: 0,
+                        records: Array.from({length: 10}, (_, i) => kanbanRecord(`v${i}`)),
+                    }),
+                    pageMock({
+                        column: 'validated',
+                        offset: 10,
+                        records: [kanbanRecord('v10'), kanbanRecord('v11')],
+                    }),
+                ],
+            });
+
+            // Header shows the listDistinctValues count (12), even though only 10 cards are loaded.
+            expect(await screen.findByText('12')).toBeInTheDocument();
+
+            // Only "validated" (12 > 10 loaded) keeps a "Voir plus"; "draft" (2/2) has none.
+            await waitFor(() => expect(screen.getAllByRole('button', {name: loadMoreName})).toHaveLength(1));
+
+            await user.click(screen.getByRole('button', {name: loadMoreName}));
+
+            // The next page fills the column (12/12): the button is gone.
+            await waitFor(() => expect(screen.queryByRole('button', {name: loadMoreName})).not.toBeInTheDocument());
+        });
+
+        describe('"no value" column', () => {
+            test('leads the board when its count is positive', async () => {
+                mockKanbanAxis();
+                mockTreeNodes([axisNode('draft', 'Draft')]);
+                mockDistinctValues([treeGroup('draft', 1), noValueGroup(3)]);
+
+                render(<ExplorerV2 entrypoint={libraryEntrypoint} ignoreViewByDefault currentView={kanbanView()} />, {
+                    mocks: [
+                        pageMock({column: 'draft', records: [kanbanRecord('d1')]}),
+                        pageMock({
+                            column: NO_VALUE_COLUMN_ID,
+                            records: [kanbanRecord('n1'), kanbanRecord('n2'), kanbanRecord('n3')],
+                        }),
+                    ],
+                });
+
+                expect(await screen.findByText('explorer.kanban.no-axis-value')).toBeInTheDocument();
+            });
+
+            test('is absent when its count is zero', async () => {
+                mockKanbanAxis();
+                mockTreeNodes([axisNode('draft', 'Draft')]);
+                mockDistinctValues([treeGroup('draft', 1)]);
+
+                render(<ExplorerV2 entrypoint={libraryEntrypoint} ignoreViewByDefault currentView={kanbanView()} />, {
+                    mocks: [pageMock({column: 'draft', records: [kanbanRecord('d1')]})],
+                });
+
+                await screen.findByText('Draft');
+                expect(screen.queryByText('explorer.kanban.no-axis-value')).not.toBeInTheDocument();
+            });
+        });
+
+        test('a link entrypoint keeps the client-side fallback: no per-column loader, no "Voir plus"', async () => {
+            mockKanbanAxis();
+            mockTreeNodes([axisNode('draft', 'Draft'), axisNode('validated', 'Validated')]);
+            const distinctValuesSpy = mockDistinctValues([]); // per-column counts must stay skipped on the link path
+
+            render(<ExplorerV2 entrypoint={linkEntrypoint} ignoreViewByDefault currentView={kanbanView()} />, {
+                mocks: [ExplorerLinkAttributeQueryMock],
+            });
+
+            await screen.findByText('Draft');
+            // The per-column loader is disabled (kanbanDataSource is undefined on a link entrypoint).
+            expect(distinctValuesSpy).toHaveBeenCalledWith(expect.objectContaining({skip: true}));
+            // The fallback derives counts from the loaded cards, so it never shows a "Voir plus".
+            expect(screen.queryByRole('button', {name: loadMoreName})).not.toBeInTheDocument();
+        });
+
+        test('a card carries its own selection checkbox that selects the record individually', async () => {
+            // état initial : un board avec une seule carte (d1), sélection de masse activée
+            mockKanbanAxis();
+            mockTreeNodes([axisNode('draft', 'Draft')]);
+            mockDistinctValues([treeGroup('draft', 1)]);
+
+            render(
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    ignoreViewByDefault
+                    currentView={kanbanView()}
+                    defaultMassActions={['deactivate']}
+                />,
+                {mocks: [pageMock({column: 'draft', records: [kanbanRecord('d1')]})]},
+            );
+
+            await screen.findByText('d1');
+            // la carte expose bien une case à cocher (distincte du "tout sélectionner" de la toolbar)
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            const toolbarSelectAll = within(toolbar).getByRole('checkbox');
+            const cardCheckboxes = screen.getAllByRole('checkbox').filter(checkbox => checkbox !== toolbarSelectAll);
+            expect(cardCheckboxes).toHaveLength(1);
+            // et aucune sélection au départ (le snackbar de sélection est absent)
+            expect(screen.queryByText(/massAction\.selectedItems/)).not.toBeInTheDocument();
+
+            // coche la carte
+            await user.click(cardCheckboxes[0]);
+
+            // le record est sélectionné individuellement : le snackbar remonte 1 élément
+            await waitFor(() => {
+                expect(cardCheckboxes[0]).toBeChecked();
+                expect(screen.getByText(/massAction\.selectedItems\|1/)).toBeInTheDocument();
+            });
         });
     });
 });

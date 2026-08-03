@@ -40,7 +40,7 @@ export const CurrentViewStoreProvider = ({
         'view-settings-select-view': data => setSelectedViewId(data.viewId),
     });
 
-    const {lastUsedViewId} = useLastUsedView();
+    const {lastUsedViewId, loading: lastUsedLoading} = useLastUsedView();
 
     // A memorized id can go stale between visits (view deleted, unshared, moved to another library).
     // Rather than dropping to the empty state, forget it once and fall back to the configured view
@@ -88,6 +88,15 @@ export const CurrentViewStoreProvider = ({
         }
     }, [lastUsedFallbackPending, currentViewId]);
 
+    // Distinct from `isEmptyView` (settled "no view"): here the panel simply doesn't KNOW yet which view
+    // to show, so the explorer must wait (show a loader) rather than fall back to its default (list) view.
+    // Two windows: (1) the last-used-view lookup is in flight and nothing else pins a view id — until it
+    // settles `currentViewId` is undefined and `isEmptyView` would wrongly read `true`; (2) a view id is
+    // targeted and its content query is still loading. Bounded by both queries → never an infinite wait.
+    const isViewResolving = Boolean(
+        (lastUsedLoading && selectedViewId === undefined && viewId === undefined) || (currentViewId && loading),
+    );
+
     // Load the freshly-fetched view whenever a DIFFERENT view arrives. Guarding on the last loaded
     // id (rather than a one-shot flag) lets the catalog switch views while still ignoring background
     // refetches of the same id, which must not clobber unsaved in-memory edits (R4). A foreign-library
@@ -125,8 +134,8 @@ export const CurrentViewStoreProvider = ({
     );
 
     const value = useMemo(
-        () => ({view, savedView, isEmptyView, canManageViews, dispatch, serializedView, origin}),
-        [view, savedView, isEmptyView, canManageViews, serializedView, origin],
+        () => ({view, savedView, isEmptyView, isViewResolving, canManageViews, dispatch, serializedView, origin}),
+        [view, savedView, isEmptyView, isViewResolving, canManageViews, serializedView, origin],
     );
 
     return <CurrentViewContext.Provider value={value}>{children}</CurrentViewContext.Provider>;

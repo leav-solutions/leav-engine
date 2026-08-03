@@ -19,6 +19,7 @@ import {reconcileToolbarFilters} from './reconcileToolbarFilters';
 export const useViewSettingsProps = (): {
     currentView?: SerializedViewV2;
     defaultCallbacks?: ComponentProps<typeof ExplorerV2>['defaultCallbacks'];
+    isViewLoading?: boolean;
 } => {
     const [application] = useApplicationSettingsContext();
     const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
@@ -30,7 +31,7 @@ export const useViewSettingsProps = (): {
         panelId,
     });
 
-    const {serializedView} = useContext(CurrentViewContext);
+    const {serializedView, isEmptyView, isViewResolving} = useContext(CurrentViewContext);
     const {dispatch} = usePanelEventHandlers<AppStudioInternalEvent>();
     const {setFilterConfig, rePathFilter, toggleFilterPinned, filters: hubFilters} = useCurrentView();
 
@@ -76,12 +77,26 @@ export const useViewSettingsProps = (): {
     // Fallback for a library with no resolvable view, so the Explorer can still render.
     const defaultView: SerializedViewV2 = {viewType: undefined, attributesIds: [], filters: []};
 
+    // Leave `currentView` undefined while the view isn't known yet, so ExplorerV2 shows its loader
+    // instead of flashing the default (list) view before the real view — e.g. a kanban — arrives.
+    // - `isViewResolving`: last-used-view lookup OR view-content query still in flight (the store's
+    //   authoritative signal — covers the window where no id is pinned yet, i.e. `isEmptyView` is `true`).
+    // - `serializedView === undefined && !isEmptyView`: the one render between the content query settling
+    //   and the reducer's LOAD_VIEW effect committing the view.
+    // Both are bounded by their queries/effect → once settled we return the serialized view or
+    // `defaultView` (both defined), so this is never an infinite loader.
+    const isViewLoading = isViewResolving || (serializedView === undefined && !isEmptyView);
+
     // The live (unsaved) view from the store overrides nothing else: it already reflects the loaded
     // view once fetched, and the user's in-progress edits while the volet is open.
-    const currentView = serializedView ?? defaultView;
+    const currentView = isViewLoading ? undefined : (serializedView ?? defaultView);
 
     return {
         currentView,
+        // Tells ExplorerV2 to show its loader while the view is still being resolved, instead of the
+        // default (list) view — paired with the undefined `currentView` above (which also skips the
+        // records query on this path).
+        isViewLoading,
         defaultCallbacks: {
             viewSettings: {
                 onFiltersChange,

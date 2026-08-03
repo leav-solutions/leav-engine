@@ -1236,6 +1236,7 @@ export type ViewV2SortInput = {
 
 export enum ViewV2Types {
   cards = 'cards',
+  kanban = 'kanban',
   list = 'list',
   timeline = 'timeline'
 }
@@ -7007,3 +7008,213 @@ export type GlobalSettingsFlagsQueryHookResult = ReturnType<typeof useGlobalSett
 export type GlobalSettingsFlagsLazyQueryHookResult = ReturnType<typeof useGlobalSettingsFlagsLazyQuery>;
 export type GlobalSettingsFlagsSuspenseQueryHookResult = ReturnType<typeof useGlobalSettingsFlagsSuspenseQuery>;
 export type GlobalSettingsFlagsQueryResult = Apollo.QueryResult<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>;
+// --- Kanban operations (ExplorerV2) ---
+
+export type KanbanAxisAttributeQueryVariables = Exact<{
+  attributeId: Scalars['ID']['input'];
+}>;
+
+
+export type KanbanAxisAttributeQuery = { attributes?: { list: Array<
+      | { id: string, multiple_values: boolean }
+      | { id: string, multiple_values: boolean, linked_tree?: { id: string } | null }
+    > } | null };
+
+export type KanbanTransitionsQueryVariables = Exact<{
+  attributeId: Scalars['ID']['input'];
+}>;
+
+
+export type KanbanTransitionsQuery = { attributes?: { list: Array<
+      | { id: string, permissions: { edit_value: boolean } }
+      | { id: string, tree_values?: Array<{ node?: { id: string } | null, allowedDependentValues?: Array<{ nodeId?: string | null }> | null }> | null, permissions: { edit_value: boolean } }
+    > } | null };
+
+export type ListDistinctValuesQueryVariables = Exact<{
+  library: Scalars['ID']['input'];
+  attribute: Scalars['ID']['input'];
+  recordFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+}>;
+
+
+export type ListDistinctValuesQuery = { listDistinctValues?: Array<
+    | { count: number }
+    | { count: number, value?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string } } } } | null }
+  > | null };
+
+export const KanbanAxisAttributeDocument = gql`
+    query KanbanAxisAttribute($attributeId: ID!) {
+  attributes(filters: {ids: [$attributeId]}) {
+    list {
+      id
+      multiple_values
+      ... on TreeAttribute {
+        linked_tree {
+          id
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useKanbanAxisAttributeQuery__
+ *
+ * To run a query within a React component, call `useKanbanAxisAttributeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useKanbanAxisAttributeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useKanbanAxisAttributeQuery({
+ *   variables: {
+ *      attributeId: // value for 'attributeId'
+ *   },
+ * });
+ */
+export function useKanbanAxisAttributeQuery(baseOptions: Apollo.QueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables> & ({ variables: KanbanAxisAttributeQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
+      }
+export function useKanbanAxisAttributeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
+        }
+// @ts-ignore
+export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>;
+export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanAxisAttributeQuery | undefined, KanbanAxisAttributeQueryVariables>;
+export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
+        }
+export type KanbanAxisAttributeQueryHookResult = ReturnType<typeof useKanbanAxisAttributeQuery>;
+export type KanbanAxisAttributeLazyQueryHookResult = ReturnType<typeof useKanbanAxisAttributeLazyQuery>;
+export type KanbanAxisAttributeSuspenseQueryHookResult = ReturnType<typeof useKanbanAxisAttributeSuspenseQuery>;
+export type KanbanAxisAttributeQueryResult = Apollo.QueryResult<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>;
+
+export const KanbanTransitionsDocument = gql`
+    query KanbanTransitions($attributeId: ID!) {
+  attributes(filters: {id: $attributeId}) {
+    list {
+      id
+      permissions {
+        edit_value
+      }
+      ... on TreeAttribute {
+        tree_values {
+          node {
+            id
+          }
+          allowedDependentValues {
+            nodeId
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useKanbanTransitionsQuery__
+ *
+ * To run a query within a React component, call `useKanbanTransitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useKanbanTransitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useKanbanTransitionsQuery({
+ *   variables: {
+ *      attributeId: // value for 'attributeId'
+ *   },
+ * });
+ */
+export function useKanbanTransitionsQuery(baseOptions: Apollo.QueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables> & ({ variables: KanbanTransitionsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>(KanbanTransitionsDocument, options);
+      }
+export function useKanbanTransitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>(KanbanTransitionsDocument, options);
+        }
+// @ts-ignore
+export function useKanbanTransitionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>;
+export function useKanbanTransitionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanTransitionsQuery | undefined, KanbanTransitionsQueryVariables>;
+export function useKanbanTransitionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>(KanbanTransitionsDocument, options);
+        }
+export type KanbanTransitionsQueryHookResult = ReturnType<typeof useKanbanTransitionsQuery>;
+export type KanbanTransitionsLazyQueryHookResult = ReturnType<typeof useKanbanTransitionsLazyQuery>;
+export type KanbanTransitionsSuspenseQueryHookResult = ReturnType<typeof useKanbanTransitionsSuspenseQuery>;
+export type KanbanTransitionsQueryResult = Apollo.QueryResult<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>;
+
+export const ListDistinctValuesDocument = gql`
+    query ListDistinctValues($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput]) {
+  listDistinctValues(
+    library: $library
+    attribute: $attribute
+    recordFilters: $recordFilters
+  ) {
+    count
+    ... on TreeDistinctValues {
+      value {
+        id
+        record {
+          id
+          whoAmI {
+            id
+            label
+            color
+            library {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useListDistinctValuesQuery__
+ *
+ * To run a query within a React component, call `useListDistinctValuesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListDistinctValuesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListDistinctValuesQuery({
+ *   variables: {
+ *      library: // value for 'library'
+ *      attribute: // value for 'attribute'
+ *      recordFilters: // value for 'recordFilters'
+ *   },
+ * });
+ */
+export function useListDistinctValuesQuery(baseOptions: Apollo.QueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables> & ({ variables: ListDistinctValuesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>(ListDistinctValuesDocument, options);
+      }
+export function useListDistinctValuesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>(ListDistinctValuesDocument, options);
+        }
+// @ts-ignore
+export function useListDistinctValuesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>): Apollo.UseSuspenseQueryResult<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>;
+export function useListDistinctValuesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>): Apollo.UseSuspenseQueryResult<ListDistinctValuesQuery | undefined, ListDistinctValuesQueryVariables>;
+export function useListDistinctValuesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>(ListDistinctValuesDocument, options);
+        }
+export type ListDistinctValuesQueryHookResult = ReturnType<typeof useListDistinctValuesQuery>;
+export type ListDistinctValuesLazyQueryHookResult = ReturnType<typeof useListDistinctValuesLazyQuery>;
+export type ListDistinctValuesSuspenseQueryHookResult = ReturnType<typeof useListDistinctValuesSuspenseQuery>;
+export type ListDistinctValuesQueryResult = Apollo.QueryResult<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>;

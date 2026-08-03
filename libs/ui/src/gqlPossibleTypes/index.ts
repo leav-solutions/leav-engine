@@ -22,4 +22,5 @@ export const gqlPossibleTypes: PossibleTypesMap = {
     Attribute: ['StandardAttribute', 'LinkAttribute', 'TreeAttribute'],
     StandardValuesListConf: ['StandardStringValuesListConf', 'StandardDateRangeValuesListConf'],
     GenericValue: ['Value', 'LinkValue', 'TreeValue'],
+    GenericDistinctValues: ['TreeDistinctValues', 'LinkDistinctValues', 'StandardDistinctValues'],
 };

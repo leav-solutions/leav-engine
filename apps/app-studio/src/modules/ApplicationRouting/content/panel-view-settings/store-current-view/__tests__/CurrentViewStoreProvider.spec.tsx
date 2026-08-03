@@ -1,8 +1,10 @@
+import {useContext} from 'react';
 import userEvent from '@testing-library/user-event';
 import {act, render, screen} from '_ui/_tests/testUtils';
 import {ViewV2Shortcut, ViewV2Types} from '../../../../../../__generated__';
 import {type CurrentView} from '../_types';
 import {useCurrentView} from '../useCurrentView';
+import {CurrentViewContext} from '../CurrentViewContext';
 import {CurrentViewStoreProvider} from '../CurrentViewStoreProvider';
 
 // usePanelEventHandlers comes from @leav/ui; keep useLang/useUser real (provided by the test render).
@@ -11,8 +13,9 @@ vi.mock('@leav/ui', async () => ({
     usePanelEventHandlers: () => ({dispatch: vi.fn()}),
 }));
 
-// The store resolves its current view id from `selectedViewId ?? lastUsedViewId ?? viewId`.
-// Pilotable per test (default: off, so most tests fall back to the configured `viewId`).
+// The store resolves its current view id from `selectedViewId ?? lastUsedViewId ?? viewId`. The mocks
+// are controllable so a test can drive both the resolution order and the async last-used-view lookup
+// still being in flight (feeds `isViewResolving`).
 const mockUseLastUsedView = vi.fn();
 vi.mock('../../tabs/tab-catalog/useLastUsedView', () => ({
     useLastUsedView: (...args: unknown[]) => mockUseLastUsedView(...args),
@@ -87,9 +90,16 @@ const mockViewV2ById = (byId: Record<string, NonNullView | null>) => {
     }));
 };
 
+// Reads the store's authoritative "view not known yet" flag straight from the context.
+const ResolvingProbe = () => {
+    const {isViewResolving} = useContext(CurrentViewContext);
+
+    return <div>resolving:{String(isViewResolving)}</div>;
+};
+
 beforeEach(() => {
     vi.clearAllMocks();
-    mockUseLastUsedView.mockReturnValue({lastUsedViewId: undefined, saveLastUsedView: vi.fn()});
+    mockUseLastUsedView.mockReturnValue({lastUsedViewId: undefined, loading: false, saveLastUsedView: vi.fn()});
     mockViewV2ById({'view-1': makeView()});
 });
 
@@ -265,6 +275,59 @@ describe('CurrentViewStoreProvider', () => {
             );
 
             expect(screen.getByText('empty-view')).toBeInTheDocument();
+        });
+    });
+
+    // `isViewResolving` is what stops the explorer from flashing its default (list) view before the real
+    // view — e.g. a kanban — is known. It must cover BOTH async windows and clear once settled.
+    describe('isViewResolving', () => {
+        it('flags resolving while the targeted view content is loading', () => {
+            mockUseGetViewV2Query.mockReturnValue({data: undefined, loading: true});
+
+            render(
+                <CurrentViewStoreProvider viewId="view-1">
+                    <ResolvingProbe />
+                </CurrentViewStoreProvider>,
+            );
+
+            expect(screen.getByText('resolving:true')).toBeInTheDocument();
+        });
+
+        it('flags resolving while the last-used-view lookup is in flight and no id is pinned (the regression)', () => {
+            // No configured viewId, last-used-view query still loading: currentViewId is undefined so
+            // isEmptyView reads true, but the view is NOT known yet — the explorer must wait, not fall back.
+            mockUseLastUsedView.mockReturnValue({lastUsedViewId: undefined, loading: true, saveLastUsedView: vi.fn()});
+            mockUseGetViewV2Query.mockReturnValue({data: undefined});
+
+            render(
+                <CurrentViewStoreProvider viewId={undefined}>
+                    <ResolvingProbe />
+                </CurrentViewStoreProvider>,
+            );
+
+            expect(screen.getByText('resolving:true')).toBeInTheDocument();
+        });
+
+        it('clears resolving once the view is fetched', () => {
+            render(
+                <CurrentViewStoreProvider viewId="view-1">
+                    <ResolvingProbe />
+                </CurrentViewStoreProvider>,
+            );
+
+            expect(screen.getByText('resolving:false')).toBeInTheDocument();
+        });
+
+        it('does not flag resolving in the settled empty state (no id, lookup done)', () => {
+            mockUseGetViewV2Query.mockReturnValue({data: undefined});
+
+            render(
+                <CurrentViewStoreProvider viewId={undefined}>
+                    <ResolvingProbe />
+                </CurrentViewStoreProvider>,
+            );
+
+            expect(screen.getByText('resolving:false')).toBeInTheDocument();
         });
     });
 });

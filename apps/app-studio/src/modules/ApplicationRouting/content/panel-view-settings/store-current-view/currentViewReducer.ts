@@ -43,8 +43,58 @@ export const createDefaultView = (
  */
 const viewReducer = (view: NonNullable<CurrentView>, action: CurrentViewAction): NonNullable<CurrentView> => {
     switch (action.type) {
-        case 'SET_VIEW_TYPE':
-            return {...view, display: {...view.display, type: action.payload.viewType}};
+        case 'SET_VIEW_TYPE': {
+            const {viewType} = action.payload;
+
+            // The grouping axis (`isGroupBy`) is a kanban-only marker, meaningless for the other
+            // display types. Clear it on every type switch so that leaving kanban and coming back
+            // starts from a blank axis (LEAVC/AMONT-1124). Only the marker is flipped off — like
+            // SET_GROUP_BY_ATTRIBUTE with a null attribute — any column that was appended solely to
+            // carry it stays as a regular hidden available column.
+            const hasAxis = view.display.attributes.some(column => column.isGroupBy);
+            const attributes = hasAxis
+                ? view.display.attributes.map(column => (column.isGroupBy ? {...column, isGroupBy: false} : column))
+                : view.display.attributes;
+
+            // Preserve the ref on a full no-op (same type, no axis to clear) so the wrapper's
+            // useReducer bail-out holds.
+            if (view.display.type === viewType && !hasAxis) {
+                return view;
+            }
+
+            return {...view, display: {...view.display, type: viewType, attributes}};
+        }
+        // Single grouping axis (kanban columns): exactly one display attribute carries `isGroupBy`.
+        // The axis can be any library tree attribute — if it is not yet a display column, append it as a
+        // hidden one (visible:false) so it can hold the marker. Flip `isGroupBy` on the target, off the
+        // others. `attribute: null` clears the axis entirely.
+        case 'SET_GROUP_BY_ATTRIBUTE': {
+            const {attribute} = action.payload;
+            const targetId = attribute?.id ?? null;
+
+            const isAlreadyColumn =
+                targetId !== null && view.display.attributes.some(column => column.attribute.id === targetId);
+
+            // `attribute` is non-null whenever targetId is (they come from the same payload object).
+            const withTarget =
+                targetId !== null && !isAlreadyColumn && attribute
+                    ? [...view.display.attributes, {visible: false, attribute}]
+                    : view.display.attributes;
+
+            let changed = withTarget !== view.display.attributes;
+            const attributes = withTarget.map(column => {
+                const shouldBeAxis = column.attribute.id === targetId;
+                if (!!column.isGroupBy === shouldBeAxis) {
+                    return column;
+                }
+                changed = true;
+                return {...column, isGroupBy: shouldBeAxis};
+            });
+
+            // Preserve the ref on a no-op so the wrapper's useReducer bail-out holds (mirror of
+            // SET_FILTER_CONFIG's G1 guard).
+            return changed ? {...view, display: {...view.display, attributes}} : view;
+        }
         // Opaque display config from a custom panel iframe. G1-style idempotency guard (mirror of
         // SET_FILTER_CONFIG): an identical write returns the SAME view ref so the useReducer bail-out
         // holds and the host↔iframe round-trip cannot loop.

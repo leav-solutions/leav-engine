@@ -1,0 +1,34 @@
+import {AttributeType} from '_ui/_gqlTypes';
+
+/**
+ * Minimal attribute shape needed to decide grouping-axis eligibility. Kept structural (not a generated
+ * type) so both consumers — the app-studio kanban axis picker and the ExplorerV2 table grouping — can
+ * feed their own fetched attribute without coupling to a specific query's generated type. `type` is a
+ * plain string to avoid nominal-enum friction across the two apps' generated `AttributeType`s.
+ */
+export interface IGroupingAxisCandidate {
+    type: string;
+    values_list?: {enable?: boolean | null; allowFreeEntry?: boolean | null} | null;
+}
+
+/**
+ * General grouping-axis eligibility (ADR-011). An attribute can drive a grouping axis (kanban columns,
+ * table grouping) iff it has a FINITE value set:
+ * - a `tree` attribute (columns = tree nodes), or
+ * - any attribute whose values list is enabled AND closed (`!allowFreeEntry`) — columns = those values.
+ *
+ * ⚠️ Not consumed by the kanban axis picker yet: the kanban board only implements tree axes, so the
+ * picker uses the narrower {@link isValidKanbanAxis} until closed-values-list axes are built
+ * (kanban lot 2, LEAVC-1076). The upcoming table grouping is the other intended consumer.
+ */
+export const isValidGroupingAxis = (attribute: IGroupingAxisCandidate): boolean =>
+    attribute.type === AttributeType.tree ||
+    Boolean(attribute.values_list?.enable && !attribute.values_list.allowFreeEntry);
+
+/**
+ * Kanban axis eligibility, phase 1: `tree` attributes only. The whole kanban data path is tree-only
+ * (`listDistinctValues` read through `TreeDistinctValues`, columns from the linked tree's root nodes,
+ * 3-segment tree group filters) — offering a closed values list here would dead-end on an empty board.
+ * Superseded by {@link isValidGroupingAxis} once LEAVC-1076 (kanban lot 2) implements the other axes.
+ */
+export const isValidKanbanAxis = (attribute: IGroupingAxisCandidate): boolean => attribute.type === AttributeType.tree;

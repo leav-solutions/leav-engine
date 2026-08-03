@@ -156,7 +156,9 @@ export const useMassActions = ({
                         : hasSelectedAllVisibleItems
                           ? {
                                 key: 'toggle_page_selection',
-                                label: t('explorer.massAction.toggle_selection.deselect_page', {count: view.pageSize}),
+                                label: t('explorer.massAction.toggle_selection.deselect_page', {
+                                    count: allVisibleKeys.length,
+                                }),
                                 disabled: isSelectionInteractionDisabled,
                                 onClick: () =>
                                     _setSelectedKeys(
@@ -165,7 +167,9 @@ export const useMassActions = ({
                             }
                           : {
                                 key: 'toggle_page_selection',
-                                label: t('explorer.massAction.toggle_selection.select_page', {count: view.pageSize}),
+                                label: t('explorer.massAction.toggle_selection.select_page', {
+                                    count: allVisibleKeys.length,
+                                }),
                                 disabled: isSelectionInteractionDisabled,
                                 onClick: () =>
                                     _setSelectedKeys([...new Set([...view.massSelection, ...allVisibleKeys])]),

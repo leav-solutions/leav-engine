@@ -815,6 +815,13 @@
             "some_day": "Some day",
             "undefined": "Undefined",
             "between_dates": "Between dates"
+        },
+        "kanban": {
+            "transition-error": "The card could not be moved. Your change was cancelled.",
+            "no-axis-value": "No value",
+            "no-axis-selected": "Select an axis attribute to display the kanban.",
+            "empty-column": "No item",
+            "load-more": "See more"
         }
     }
 }

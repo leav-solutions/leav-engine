@@ -43,6 +43,35 @@ describe('viewV2ToSerializedView', () => {
         expect(result.attributesIds).toEqual(['attribute_2']);
     });
 
+    it('derives groupByAttributeId from the display attribute flagged isGroupBy (axis may be hidden)', () => {
+        const result = viewV2ToSerializedView(
+            makeView({
+                display: {
+                    type: ViewV2Types.kanban,
+                    attributes: [
+                        {visible: true, attribute: {id: 'label', label: {fr: 'Libellé'}}},
+                        {visible: false, isGroupBy: true, attribute: {id: 'status', label: {fr: 'Statut'}}},
+                    ],
+                },
+            }),
+        );
+
+        expect(result.groupByAttributeId).toBe('status');
+    });
+
+    it('leaves groupByAttributeId undefined when no display attribute is flagged as axis', () => {
+        const result = viewV2ToSerializedView(
+            makeView({
+                display: {
+                    type: ViewV2Types.list,
+                    attributes: [{visible: true, attribute: {id: 'label', label: {fr: 'Libellé'}}}],
+                },
+            }),
+        );
+
+        expect(result.groupByAttributeId).toBeUndefined();
+    });
+
     it('serializes each activated sort in order, joining the descent path into a dotted field', () => {
         const result = viewV2ToSerializedView(
             makeView({

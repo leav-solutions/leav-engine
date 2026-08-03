@@ -815,6 +815,13 @@
             "some_day": "Un jour",
             "undefined": "Non définie",
             "between_dates": "Entre les dates"
+        },
+        "kanban": {
+            "transition-error": "La carte n’a pas pu être déplacée. Votre modification a été annulée.",
+            "no-axis-value": "Sans valeur",
+            "no-axis-selected": "Sélectionnez un attribut d’axe pour afficher le Kanban.",
+            "empty-column": "Aucun élément",
+            "load-more": "Voir plus"
         }
     }
 }

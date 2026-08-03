@@ -1,0 +1,35 @@
+# Fetches the kanban board's grouping level: the distinct values of the axis attribute and the record
+# count per group (= per column). Backs the column headers (label/color/count) and the "Voir plus"
+# visibility (`cards.length < count`); the cards themselves come from a separate per-column records
+# query (see useKanbanColumnsData).
+#
+# `listDistinctValues` returns a GenericDistinctValues list directly (no pagination/sort envelope). For
+# tree attributes every item is a TreeDistinctValues; the inline fragment is required — without it
+# `value` is absent from the response type. Items where `value` is null form the "Sans valeur" bucket.
+#
+# `value.record` is the tree-node record used as the kanban column key (id) and rendered in the column
+# header (whoAmI.label / whoAmI.color).
+#
+# NB: unlike the records query, listDistinctValues takes no searchQuery — the per-column counts are not
+# narrowed by the search box (kanban V1 limitation).
+query ListDistinctValues($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput]) {
+    listDistinctValues(library: $library, attribute: $attribute, recordFilters: $recordFilters) {
+        count
+        ... on TreeDistinctValues {
+            value {
+                id
+                record {
+                    id
+                    whoAmI {
+                        id
+                        label
+                        color
+                        library {
+                            id
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
