@@ -78,11 +78,12 @@ const toPackageName = specifier => {
 const isRelative = s => s.startsWith('.') || s.startsWith('/') || s.startsWith('data:') || s.startsWith('http');
 
 /**
- * Build the "is this file part of the published output?" predicate.
+ * Build the "is this file dev-only?" predicate, splitting runtime code from test/tooling code.
  *
  * For a published lib the distinction is what makes findings actionable: something imported by
- * published code but declared only in devDependencies is missing for npm consumers. We derive the
- * boundary from tsconfig.build.json `exclude` when present (libs/ui excludes `**\/*.test.*` and
+ * runtime code but declared only in devDependencies is missing for npm consumers. Note the label
+ * describes the *file*, not the package — a private app has runtime files too, nothing "published".
+ * We derive the boundary from tsconfig.build.json `exclude` when present (libs/ui excludes `**\/*.test.*` and
  * `**\/_tests`), and fall back to the usual test/dev conventions otherwise.
  */
 const makeIsDevFile = pkgDir => {
@@ -107,7 +108,8 @@ const makeIsDevFile = pkgDir => {
             ),
     );
     const CONVENTIONAL_DEV = [
-        /(^|\/)(__tests__|__mocks__|_tests|benchmarks)(\/|$)/,
+        // `tests` covers apps/app-studio, whose vitest setupFiles lives in tests/setupTests.ts.
+        /(^|\/)(__tests__|__mocks__|_tests|tests|benchmarks)(\/|$)/,
         /\.(test|spec|stories)\.[tj]sx?$/,
         /^scripts\//,
         // Root-level tooling config: vite.config.js, vitest.unit.config.ts, codegen.ts, tsconfig…
@@ -122,14 +124,14 @@ const makeIsDevFile = pkgDir => {
 
 const collectReferences = pkgDir => {
     const isDevFile = makeIsDevFile(pkgDir);
-    /** @type {Map<string, {published: Set<string>, dev: Set<string>}>} */
+    /** @type {Map<string, {runtime: Set<string>, dev: Set<string>}>} */
     const refs = new Map();
 
     const record = (name, relPath) => {
         if (!refs.has(name)) {
-            refs.set(name, {published: new Set(), dev: new Set()});
+            refs.set(name, {runtime: new Set(), dev: new Set()});
         }
-        const bucket = refs.get(name)[isDevFile(relPath) ? 'dev' : 'published'];
+        const bucket = refs.get(name)[isDevFile(relPath) ? 'dev' : 'runtime'];
         if (bucket.size < 3) {
             bucket.add(relPath);
         }
@@ -219,16 +221,16 @@ const auditPackage = pkgDir => {
             .filter(([name]) => !declared.has(name))
             .map(([name, hits]) => ({
                 name,
-                scope: hits.published.size ? 'published' : 'dev-only',
-                files: [...hits.published, ...hits.dev].slice(0, 3),
+                scope: hits.runtime.size ? 'runtime' : 'dev',
+                files: [...hits.runtime, ...hits.dev].slice(0, 3),
             }))
             .sort((a, b) => a.name.localeCompare(b.name)),
         devOnlyButPublished: [...refs.entries()]
             .filter(
                 ([name, hits]) =>
-                    hits.published.size && devs.includes(name) && !deps.includes(name) && !peers.includes(name),
+                    hits.runtime.size && devs.includes(name) && !deps.includes(name) && !peers.includes(name),
             )
-            .map(([name, hits]) => ({name, files: [...hits.published]}))
+            .map(([name, hits]) => ({name, files: [...hits.runtime]}))
             .sort((a, b) => a.name.localeCompare(b.name)),
         blockOf,
     };
@@ -259,7 +261,7 @@ const printReport = (pkgDir, report) => {
     }
 
     if (report.isPublished) {
-        console.log('\nC. Imported by published code but declared only in devDependencies');
+        console.log('\nC. Imported by runtime code but declared only in devDependencies');
         console.log('   (this package is published: such a dependency is missing for npm consumers)');
         if (!report.devOnlyButPublished.length) {
             console.log('   (none)');

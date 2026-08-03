@@ -34,30 +34,35 @@ Zero-dependency Node script, reports only, exits 0, writes nothing. Three sectio
 
 - **A.** declared and never referenced → removal candidates
 - **B.** referenced and declared nowhere → phantom dependencies
-- **C.** (published packages only) imported by **published** code but declared only in
+- **C.** (published packages only) imported by **runtime** code but declared only in
   `devDependencies` → missing for npm consumers
+
+In section B each finding is tagged `[runtime]` or `[dev]`. That tag describes the **file** that
+imports it, not the package: a phantom dep reached only from tests is far less urgent than one in
+runtime code.
 
 It already handles what a naive `grep "from 'x'"` gets wrong: comments are stripped, bare
 side-effect imports (`import 'pkg/style.css'`) are caught, and so are CSS/LESS `@import` (with `~`),
-`require()`, dynamic `import()` and `vi.mock`/`jest.mock`. For published packages the published/dev
-boundary comes from the `exclude` of `tsconfig.build.json`.
+`require()`, dynamic `import()` and `vi.mock`/`jest.mock`. The runtime/dev boundary comes from the
+`exclude` of `tsconfig.build.json` when present, and from the usual conventions otherwise
+(`__tests__`, `tests`, `*.test.*`, `scripts/`, root-level `*.config.*`).
 
 ## 2. Triage section A — usages invisible to an import scan
 
 A package can be load-bearing without ever appearing in an `import`. Check each of these before
 concluding it is dead:
 
-| Invisible usage                                    | Real examples in this repo                                                                                                                         |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Plugin referenced **by name, as a string**         | `@graphql-codegen/{typescript,typescript-operations,typescript-react-apollo,typescript-graphql-request}` and the `add:` key, in every `codegen.ts` |
-| Config **value** as a string                       | `happy-dom` via `environment: 'happy-dom'` in the vitest config                                                                                    |
-| A tsconfig's `types` array                         | `@types/node` via `types: ["node"]`; **`vite` in `libs/ui`** via `vite/client` in `tsconfig.spec.json`                                             |
-| Binary invoked from `scripts`                      | `tsx`, `prettier`, `typescript`, `tsc-alias`                                                                                                       |
-| Compiled implicitly by the bundler                 | `less` — Vite compiles `.less`, the package itself is never imported                                                                               |
-| `NODE_OPTIONS` / preload                           | `@opentelemetry/auto-instrumentations-node`, loaded by `docker/scripts/start-core.sh` when `OTEL_AUTO_INSTRUMENT=1`                                |
-| Satisfying someone else's **peerDependency**       | `graphql` (peer of `graphql-request`, `graphql-tag`, `apollo-*`); `jsoneditor` (peer of `jsoneditor-react`)                                        |
-| Types required by **another package's** `.d.ts`    | `@types/jexl`, because `jexl-extended/dist/index.d.ts` does `import {Jexl} from 'jexl'` and `jexl` ships none                                      |
-| Workspace dependency consumed through an **alias** | `@leav/ui` in `apps/admin`: never imported by name, but the `_ui/*` alias compiles `libs/ui/src`, so the workspace dep is what installs its deps   |
+| Invisible usage                                    | Real examples in this repo                                                                                                                                                                                                                    |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Plugin referenced **by name, as a string**         | `@graphql-codegen/{typescript,typescript-operations,typescript-react-apollo,typescript-graphql-request}` and the `add:` key, in every `codegen.ts`                                                                                            |
+| Config **value** as a string                       | `happy-dom` via `environment: 'happy-dom'` in the vitest config                                                                                                                                                                               |
+| A tsconfig's `types` array                         | `@types/node` via `types: ["node"]`; **`vite` in `libs/ui`** via `vite/client` in `tsconfig.spec.json`                                                                                                                                        |
+| Binary invoked from `scripts`                      | `tsx`, `prettier`, `typescript`, `tsc-alias`                                                                                                                                                                                                  |
+| Compiled implicitly by the bundler                 | `less` — Vite compiles `.less`, the package itself is never imported                                                                                                                                                                          |
+| `NODE_OPTIONS` / preload                           | `@opentelemetry/auto-instrumentations-node`, loaded by `docker/scripts/start-core.sh` when `OTEL_AUTO_INSTRUMENT=1`                                                                                                                           |
+| Satisfying someone else's **peerDependency**       | `graphql` (peer of `graphql-request`, `graphql-tag`, `apollo-*`); `jsoneditor` (peer of `jsoneditor-react`)                                                                                                                                   |
+| Types required by **another package's** `.d.ts`    | `apps/core` needed `@types/jexl` while on `jexl-extended@1`, whose `.d.ts` did `import {Jexl} from 'jexl'` and `jexl` shipped none. Fixed by `jexl-extended@2`, which bundles its own types — so this one is history, but the pattern recurs. |
+| Workspace dependency consumed through an **alias** | `@leav/ui` in `apps/admin`: never imported by name, but the `_ui/*` alias compiles `libs/ui/src`, so the workspace dep is what installs its deps                                                                                              |
 
 Quick way to settle a peer question:
 
@@ -94,7 +99,7 @@ node -e "console.log(JSON.stringify(require('./node_modules/<pkg>/package.json')
   phantom dependency is simply absent from the image (`MODULE_NOT_FOUND` at boot) even though local
   dev was fine, and anything needed at runtime must sit in `dependencies`, not `devDependencies`.
   `docker compose up` does not exercise this, since it mounts the whole monorepo.
-- **Section C caveat**: a `.d.ts` under `src/` counts as published code for the scanner, but `tsc`
+- **Section C caveat**: a `.d.ts` under `src/` counts as runtime code for the scanner, but `tsc`
   does not re-emit declaration inputs, so it never reaches `dist/`. That is why
   `@total-typescript/ts-reset` shows up in section C for `libs/ui` while `devDependencies` is the
   correct placement. Check whether the file actually lands in `dist/`.
