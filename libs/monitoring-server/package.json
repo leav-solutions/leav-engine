@@ -30,7 +30,7 @@
     "dependencies": {
         "@hono/node-server": "2.0.12",
         "@leav/logger": "workspace:libs/logger",
-        "hono": "4.12.33",
+        "hono": "4.12.34",
         "prom-client": "15.1.3"
     },
     "devDependencies": {

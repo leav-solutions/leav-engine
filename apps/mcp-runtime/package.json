@@ -24,7 +24,7 @@
         "@types/express": "5.0.6",
         "@types/node": "24.13.3",
         "prettier": "3.9.6",
-        "tsx": "4.23.1",
+        "tsx": "4.23.5",
         "typescript": "7.0.2",
         "vitest": "4.1.10"
     },
