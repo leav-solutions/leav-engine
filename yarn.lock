@@ -13608,10 +13608,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-capacitor@npm:6.2.0":
-  version: 6.2.0
-  resolution: "fs-capacitor@npm:6.2.0"
-  checksum: 10/a567b27ea93052cd926b7e218e644da7426bd245c43c1b61e3dcf382242be68d28cd193a859170ad5f87599aa037c7f5cca3e70587af9b2689ebd8afb06e4303
+"fs-capacitor@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "fs-capacitor@npm:8.0.0"
+  checksum: 10/836d3d662f2d057ce3697bb99feb0fa2eefbf953fef0a57977e609cc9b605b65f03bf7066ec943790a3dccf046c3b6a7630e41a4b7d60859ec618bbc20063597
   languageName: node
   linkType: hard
 
