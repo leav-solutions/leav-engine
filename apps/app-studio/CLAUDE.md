@@ -320,3 +320,30 @@ In Comparaison Mode (4, `'false'` pour les panels génériques).
 - Setup (`tests/setupTests.ts`) : `expect.extend` de jest-dom + mocks i18n (`useSharedTranslation` renvoie les clés ; `react-i18next` renvoie `clé|valeur`) → les tests assertent sur des clés stables
 - `tsconfig` en solution config (`tsconfig.build.json` + `tsconfig.spec.json`) ; `tscheck` = `tsc -b tsconfig.json`
 - Génération des types GraphQL : `graphql-codegen` (même pattern que `libs/ui`)
+
+---
+
+## Dépendances à usage non évident
+
+Pour auditer, utiliser le skill [`audit-dependencies`](../../.claude/skills/audit-dependencies/).
+
+### Non importées par leur nom, mais indispensables
+
+| Package                                                                       | Pourquoi                                                                                                         |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `@graphql-codegen/{typescript,typescript-operations,typescript-react-apollo}` | Référencés par **nom de plugin** (chaînes) dans [`src/config/graphQL/codegen.ts`](src/config/graphQL/codegen.ts) |
+| `graphql`                                                                     | Satisfait les `peerDependencies` de `@apollo/client`, `graphql-ws` et des plugins codegen                        |
+| `happy-dom`                                                                   | `environment: 'happy-dom'` dans `vitest.config.ts` (chaîne, pas import)                                          |
+| `@types/node`                                                                 | Présent dans les `types` de `tsconfig.spec.json`                                                                 |
+| `vite`, `lightningcss`, `browserslist`                                        | Réellement importés par [`vite.config.js`](vite.config.js) (`browserslistToTargets`, `browserslist`)             |
+
+### Non déclarées à dessein
+
+`antd`, `@ant-design/icons` et les `@fortawesome/*` sont importés sans être déclarés, ainsi que
+`react-modal` (dans `tests/setupTests.ts`). Ce sont des dépendances d'`aristid-ds`, distribué en
+commit-pin : les pinner ici créerait un couplage de version avec le design system — cf.
+[`libs/ui/CLAUDE.md`](../../libs/ui/CLAUDE.md).
+
+> ℹ️ `styled-components` n'est **pas** déclaré ici alors que le bundle en contient : il n'est importé
+> que par les sources de `libs/ui`, qui le déclare en `dependencies`. App-studio, lui, est passé aux
+> CSS Modules.
