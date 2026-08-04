@@ -1,7 +1,7 @@
 {
     "name": "app-studio",
     "description": "Generic application to create a workflow from a configuration",
-    "version": "1.0.0-beta18",
+    "version": "1.19.0",
     "icons": [
         {
             "src": "favicon-leav.svg",
