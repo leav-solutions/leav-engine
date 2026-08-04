@@ -315,21 +315,25 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
         // different rendering.
         if (isTreeValue(value, attributeProperties)) {
             const whoAmI = value.treePayload?.record.whoAmI;
-            content = !whoAmI?.label ? null : attributeProperties.multi_tree_display_option ===
-              MultiDisplayOption.tag ? (
-                <TableTagGroup tags={[_buildLinkTreeTag(whoAmI.label, whoAmI.color)]} />
-            ) : (
-                <IdCard key={attributeProperties.id} item={whoAmI} />
-            );
+
+            // Returned bare, outside of `StyledCenteringWrapper`: as a flex item the tag group would
+            // only ever see its own content width — see the comment in `TableTagGroup`. The
+            // multivalued branches above return it directly for the same reason.
+            if (whoAmI?.label && attributeProperties.multi_tree_display_option === MultiDisplayOption.tag) {
+                return <TableTagGroup tags={[_buildLinkTreeTag(whoAmI.label, whoAmI.color)]} />;
+            }
+
+            content = !whoAmI?.label ? null : <IdCard key={attributeProperties.id} item={whoAmI} />;
         }
 
         if (isLinkValue(value, attributeProperties)) {
             const whoAmI = value.linkPayload?.whoAmI;
-            content = !whoAmI ? null : attributeProperties.multi_link_display_option === MultiDisplayOption.tag ? (
-                <TableTagGroup tags={[_buildLinkTreeTag(whoAmI.label, whoAmI.color)]} />
-            ) : (
-                <IdCard key={attributeProperties.id} item={whoAmI} />
-            );
+
+            if (whoAmI && attributeProperties.multi_link_display_option === MultiDisplayOption.tag) {
+                return <TableTagGroup tags={[_buildLinkTreeTag(whoAmI.label, whoAmI.color)]} />;
+            }
+
+            content = !whoAmI ? null : <IdCard key={attributeProperties.id} item={whoAmI} />;
         }
 
         return <StyledCenteringWrapper>{content}</StyledCenteringWrapper>;
