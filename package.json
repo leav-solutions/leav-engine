@@ -44,9 +44,6 @@
         "typescript": "npm:@typescript/typescript6@^6.0.2"
     },
     "resolutions": {
-        "nwsapi": "2.2.7",
-        "fs-capacitor": "6.2.0",
-        "react-error-overlay": "6.1.0",
         "@types/react": "18.3.31",
         "@types/react-dom": "18.3.7",
         "semver": ">=7.8.0",
@@ -55,8 +52,6 @@
         "lodash": ">=4.18.1",
         "uuid": "^14",
         "sha.js": ">=2.4.12",
-        "git-url-parse": "13",
-        "glob-parent": ">=5.1.2",
         "@types/express": ">=4.17.21",
         "@elastic/transport:undici": "^6.25.0",
         "minimatch@^3.0.4": "^3.1.5",
