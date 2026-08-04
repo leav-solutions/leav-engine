@@ -42,8 +42,10 @@ Conséquences à connaître :
   la réponse à l'émetteur *est* le statement `ERROR` ;
 - le nack étant sans requeue (contrat `consume()` de `@leav/message-broker`), un message en erreur
   technique est **perdu** — d'où le statement `INTERNAL_ERROR` publié malgré tout avant le rethrow ;
-- une opération **sans `operationId`** ne peut être corrélée par l'émetteur : elle est rejetée, mais
-  **aucun statement n'est publié** (il serait inexploitable). Limite assumée.
+- une opération à laquelle manque **l'un** de ses trois ids de traçabilité (`requestId`,
+  `operationId`, `correlationId` — ce dernier étant la clé de corrélation *de l'émetteur*) est
+  rejetée, mais **aucun statement n'est publié** : il ne pourrait pas être rattaché à l'opération. Le
+  contrat ne traitant pas ce cas, c'est une décision leav.
 
 Statuts émis : `SUCCESS`, `NO_CHANGE` (un `CREATE` sur un `systemId` déjà existant est *skippé* par
 l'import — rien n'est écrit), `ERROR`. **Il n'y a pas de détection fine du non-changement** : un
