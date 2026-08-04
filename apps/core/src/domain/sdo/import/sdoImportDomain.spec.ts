@@ -78,7 +78,11 @@ describe('importDomain', () => {
         it('[-] should return if record already exists', async () => {
             mockRecordDomain.find.mockResolvedValue({list: [{id: 'existing record'}]} as IListWithCursor<IRecord>);
 
-            await _importDomain.create(mockSDO, mockSystemQueryContext);
+            // Nothing written: the caller reports it as NO_CHANGE, on the record already in place
+            await expect(_importDomain.create(mockSDO, mockSystemQueryContext)).resolves.toEqual({
+                record: {id: 'existing record'},
+                changed: false,
+            });
             expect(mockRecordDomain.find).toHaveBeenCalledTimes(1);
             expect(mockRecordDomain.find).toHaveBeenNthCalledWith(1, {
                 params: {
@@ -97,8 +101,9 @@ describe('importDomain', () => {
         });
 
         it('[+] should create record', async () => {
+            const createdRecord = {id: 'created record', uuid: mockSDO.content.system.systemId};
             mockRecordDomain.find.mockResolvedValue({list: []} as IListWithCursor<IRecord>);
-            mockRecordDomain.createRecord.mockResolvedValue({});
+            mockRecordDomain.createRecord.mockResolvedValue({record: createdRecord} as ICreateRecordResult);
             mockAttributeDomain.getAttributeProperties.mockResolvedValue({type: AttributeTypes.SIMPLE});
 
             await expect(
@@ -107,7 +112,7 @@ describe('importDomain', () => {
                     simplifiedMockSdo({[mockSDOMapping.test.sdoAttributes.simple.leavAttributeId]: '12'}),
                     mockSystemQueryContext,
                 ),
-            ).resolves.not.toThrow();
+            ).resolves.toEqual({record: createdRecord, changed: true});
             expect(mockRecordDomain.find).toHaveBeenCalledTimes(1);
             expect(mockRecordDomain.createRecord).toHaveBeenCalledTimes(1);
         });
@@ -188,6 +193,19 @@ describe('importDomain', () => {
                 },
                 ctx: mockSystemQueryContext,
             });
+        });
+
+        it('[+] should return the updated record as changed', async () => {
+            const existingRecord = {id: 'existing record', uuid: mockSDO.content.system.systemId};
+            mockRecordDomain.find.mockResolvedValue({list: [existingRecord]} as IListWithCursor<IRecord>);
+            mockAttributeDomain.getAttributeProperties.mockResolvedValue({type: AttributeTypes.SIMPLE});
+
+            await expect(
+                _importDomain.update(
+                    simplifiedMockSdo({[mockSDOMapping.test.sdoAttributes.simple.leavAttributeId]: '12'}),
+                    mockSystemQueryContext,
+                ),
+            ).resolves.toEqual({record: existingRecord, changed: true});
         });
 
         it('[+] should save SDO system.applicationIds into the sdo_application_ids attribute', async () => {

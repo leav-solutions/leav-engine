@@ -12,6 +12,7 @@ export interface IRabbitMQ {
     getSDOExportChannel: () => Promise<IAmqpChannel>;
     getSDOImportChannel: () => Promise<IAmqpChannel>;
     getDTOImportChannel: () => Promise<IAmqpChannel>;
+    getDTOStatementChannel: () => Promise<IAmqpChannel>;
     getLeavDataEventChannel: () => Promise<IAmqpChannel>;
     close(): Promise<void>;
 }
@@ -109,14 +110,31 @@ export default function rabbitMQ({
     };
     const getDTOImportChannel = async (): Promise<IAmqpChannel> => getDtoImportChannel();
 
+    let dtoStatementChannel: IAmqpChannel | undefined;
+    const getDtoStatementChannel = (): IAmqpChannel => {
+        if (!dtoStatementChannel) {
+            const {exchange, exchangeType} = config.sdo.dto.statement;
+
+            dtoStatementChannel = getSdoConnection().createChannel({
+                name: 'dto:statement',
+                setup: async t => {
+                    await t.assertExchange(exchange, exchangeType);
+                },
+            });
+        }
+        return dtoStatementChannel;
+    };
+    const getDTOStatementChannel = async (): Promise<IAmqpChannel> => getDtoStatementChannel();
+
     return {
         getLeavDataEventChannel,
         getSDOExportChannel,
         getSDOImportChannel,
         getDTOImportChannel,
+        getDTOStatementChannel,
         close: async () => {
             await Promise.allSettled(
-                [sdoExportChannel, sdoImportChannel, dtoImportChannel]
+                [sdoExportChannel, sdoImportChannel, dtoImportChannel, dtoStatementChannel]
                     .filter((c): c is IAmqpChannel => !!c)
                     .map(c => c.close()),
             );

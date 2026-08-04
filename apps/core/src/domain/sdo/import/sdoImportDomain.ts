@@ -38,9 +38,23 @@ export interface ISDOImportDomainDeps {
     config: IConfig;
 }
 
+/**
+ * Outcome of an import operation, so the caller can report it back to the emitter (DTO statement,
+ * LEAVC-983).
+ */
+export interface ISDOImportResult {
+    /** The leav record the operation landed on, source of the statement's `sdo_identifier` */
+    record: IRecord | null;
+    /**
+     * `false` when nothing was written (a `CREATE` on an already existing record is skipped). Note
+     * that an applied `UPDATE` is always `true`, even if no value actually differs.
+     */
+    changed: boolean;
+}
+
 export interface ISDOImportDomain {
-    create: (sdo: ISDOImportPayload, ctx: IQueryInfos) => Promise<void>;
-    update: (sdo: ISDOImportPayload, ctx: IQueryInfos) => Promise<void>;
+    create: (sdo: ISDOImportPayload, ctx: IQueryInfos) => Promise<ISDOImportResult>;
+    update: (sdo: ISDOImportPayload, ctx: IQueryInfos) => Promise<ISDOImportResult>;
 }
 
 export default function ({
@@ -54,7 +68,7 @@ export default function ({
 }: ISDOImportDomainDeps): ISDOImportDomain {
     const debug = config.sdo.debug ?? false;
 
-    const create = async (sdo: ISDOImportPayload, ctx: IQueryInfos) => {
+    const create = async (sdo: ISDOImportPayload, ctx: IQueryInfos): Promise<ISDOImportResult> => {
         const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(ctx);
         const leavLibraryId = sdoUtils.getLeavLibraryId(sdoGlobalSettings.mapping, sdo);
         const sdoLibrary = sdoUtils.getSDOLibrary(sdoGlobalSettings.mapping, leavLibraryId);
@@ -69,7 +83,7 @@ export default function ({
                     `Record with uuid "${recordUuid}" on library "${leavLibraryId}" already exists, import create skipped`,
                 );
 
-            return;
+            return {record: records[0], changed: false};
         }
 
         let valuesToSave = await _mapRecordValuesFromSDO(sdo, sdoLibrary, ctx);
@@ -107,9 +121,14 @@ export default function ({
                 ),
             });
         }
+
+        // `res.record` is the record as created, before the values were saved: its `modified_at` can
+        // lag the last value write by a few milliseconds. Good enough for the statement's identity
+        // block, which is about the object's identifiers, not about auditing.
+        return {record: res.record ?? null, changed: true};
     };
 
-    const update = async (sdo: ISDOImportPayload, ctx: IQueryInfos) => {
+    const update = async (sdo: ISDOImportPayload, ctx: IQueryInfos): Promise<ISDOImportResult> => {
         const sdoGlobalSettings = await sdoDomain.getSDOGlobalSettings(ctx);
         const leavLibraryId = sdoUtils.getLeavLibraryId(sdoGlobalSettings.mapping, sdo);
         const sdoLibrary = sdoUtils.getSDOLibrary(sdoGlobalSettings.mapping, leavLibraryId);
@@ -151,6 +170,8 @@ export default function ({
                 }, {} as ErrorFieldDetail<unknown>),
             });
         }
+
+        return {record: records[0], changed: true};
     };
 
     const _findRecords = async (leavLibraryId: string, recordUuid: string, ctx: IQueryInfos) => {

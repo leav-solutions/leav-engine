@@ -3,10 +3,10 @@ import {EventAction} from '@leav/utils';
 import {type ToAny} from '../../utils/utils';
 import {default as dtoImportApp, type IDTOImportAppDeps} from './dtoImportApp';
 import {mockDTO, mockDTOImportMessage, mockSDOMapping, sdoGlobalSettings} from '../../__tests__/mocks/sdo/data';
-import {mockImportDomain, mockSdoDomain} from '../../__tests__/mocks/sdo/domains';
+import {mockDTOStatementDomain, mockImportDomain, mockSdoDomain} from '../../__tests__/mocks/sdo/domains';
 import {mockConfig} from '../../__tests__/mocks/sdo/config';
 import {mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
-import {DTOErrorCode} from '../../_types/dto';
+import {DTOErrorCode, DTOStatementStatus} from '../../_types/dto';
 import {type ISDOMapping} from '../../_types/sdo';
 import sdoUtils from '../../utils/sdo/sdo';
 import ValidationError from '../../errors/ValidationError';
@@ -14,6 +14,7 @@ import ValidationError from '../../errors/ValidationError';
 const depsBase: ToAny<IDTOImportAppDeps> = {
     'core.domain.sdo': mockSdoDomain,
     'core.domain.sdo.import': mockImportDomain,
+    'core.domain.sdo.dtoStatement': mockDTOStatementDomain,
     // Pure mapping helpers, no I/O: using the real implementation keeps the rejection assertions honest
     'core.utils.sdo': sdoUtils(),
     'core.utils.getSystemQueryContext': () => mockSystemQueryContext,
@@ -38,10 +39,20 @@ const mappingWithRequiredSimple: ISDOMapping = {
     },
 };
 
+const mockImportedRecord = {
+    id: '1337',
+    library: 'leavLibraryId',
+    uuid: mockDTO.payloadDocument.system.systemId,
+    created_at: 1728294761,
+    modified_at: 1728456120,
+};
+
 describe('dtoImportApp', () => {
     beforeEach(() => {
         vi.resetAllMocks();
         mockSdoDomain.getSDOGlobalSettings.mockResolvedValue({...sdoGlobalSettings, importEnable: true});
+        mockImportDomain.create.mockResolvedValue({record: mockImportedRecord, changed: true});
+        mockImportDomain.update.mockResolvedValue({record: mockImportedRecord, changed: true});
     });
 
     describe('onDTOEvent()', () => {
@@ -284,6 +295,85 @@ describe('dtoImportApp', () => {
                 dto: mockDTO,
                 ctx: mockSystemQueryContext,
             });
+        });
+    });
+
+    describe('statement', () => {
+        it('[+] should answer a SUCCESS statement carrying the imported record', async () => {
+            await dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage);
+
+            expect(mockDTOStatementDomain.sendStatement).toHaveBeenCalledTimes(1);
+            expect(mockDTOStatementDomain.sendStatement).toHaveBeenCalledWith({
+                dto: mockDTO,
+                status: DTOStatementStatus.SUCCESS,
+                record: mockImportedRecord,
+            });
+        });
+
+        it('[+] should answer a SUCCESS statement on a "CREATE" operation', async () => {
+            await dtoImportApp(depsBase).onDTOEvent(_messageFor({...mockDTO, method: 'CREATE'}));
+
+            expect(mockDTOStatementDomain.sendStatement).toHaveBeenCalledWith(
+                expect.objectContaining({status: DTOStatementStatus.SUCCESS}),
+            );
+        });
+
+        it('[+] should answer a NO_CHANGE statement when the import wrote nothing', async () => {
+            // A "CREATE" on an already existing record is skipped by the import domain
+            mockImportDomain.create.mockResolvedValue({record: mockImportedRecord, changed: false});
+
+            await dtoImportApp(depsBase).onDTOEvent(_messageFor({...mockDTO, method: 'CREATE'}));
+
+            expect(mockDTOStatementDomain.sendStatement).toHaveBeenCalledWith({
+                dto: {...mockDTO, method: 'CREATE'},
+                status: DTOStatementStatus.NO_CHANGE,
+                record: mockImportedRecord,
+            });
+        });
+
+        it('[-] should answer an ERROR statement carrying the rejection details', async () => {
+            await dtoImportApp(depsBase).onDTOEvent(_messageFor({...mockDTO, payloadType: 'unmapped'}));
+
+            expect(mockDTOStatementDomain.sendStatement).toHaveBeenCalledWith({
+                dto: {...mockDTO, payloadType: 'unmapped'},
+                status: DTOStatementStatus.ERROR,
+                details: [{code: DTOErrorCode.INVALID_TYPE, attribute: null, message: 'Unknown payload type unmapped'}],
+            });
+        });
+
+        it('[-] should answer an INTERNAL_ERROR statement then rethrow when the import fails technically', async () => {
+            mockImportDomain.update.mockRejectedValueOnce(new Error('Record not found'));
+
+            await expect(dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage)).rejects.toThrow('Record not found');
+
+            expect(mockDTOStatementDomain.sendStatement).toHaveBeenCalledWith({
+                dto: mockDTO,
+                status: DTOStatementStatus.ERROR,
+                details: [{code: DTOErrorCode.INTERNAL_ERROR, attribute: null, message: 'Record not found'}],
+            });
+        });
+
+        it('[-] should answer no statement when imports are globally disabled', async () => {
+            mockSdoDomain.getSDOGlobalSettings.mockResolvedValue({...sdoGlobalSettings, importEnable: false});
+
+            await dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage);
+
+            expect(mockDTOStatementDomain.sendStatement).not.toHaveBeenCalled();
+        });
+
+        it('[-] should not fail a successful import when the statement cannot be published', async () => {
+            mockDTOStatementDomain.sendStatement.mockRejectedValue(new Error('Broker unreachable'));
+
+            await expect(dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage)).resolves.toBeUndefined();
+
+            expect(mockImportDomain.update).toHaveBeenCalledTimes(1);
+        });
+
+        it('[-] should keep rethrowing the original error when the statement cannot be published', async () => {
+            mockImportDomain.update.mockRejectedValueOnce(new Error('Record not found'));
+            mockDTOStatementDomain.sendStatement.mockRejectedValue(new Error('Broker unreachable'));
+
+            await expect(dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage)).rejects.toThrow('Record not found');
         });
     });
 });

@@ -1,9 +1,16 @@
-import {createAmqpConnection, type IAmqpConnection, type IAmqpChannel} from '@leav/message-broker';
+import {createAmqpConnection, type IAmqpConnection, type IAmqpChannel, type IAmqpTopology} from '@leav/message-broker';
 import {getConfig} from '../../../../config';
 
 export class RabbitMqClient {
     private connection?: IAmqpConnection;
-    private channel?: IAmqpChannel;
+    /**
+     * One channel per purpose (an exchange to publish on, a queue to listen to): a channel's `setup`
+     * only runs when it is created, so sharing a single channel would silently skip the assertions of
+     * every exchange/queue but the first.
+     */
+    private channels = new Map<string, IAmqpChannel>();
+    /** Channel to use to consume/purge a given queue, i.e. the one that asserted and bound it */
+    private queueChannels = new Map<string, IAmqpChannel>();
 
     public async connect(): Promise<void> {
         const conf = await getConfig();
@@ -17,7 +24,8 @@ export class RabbitMqClient {
     public async close(): Promise<void> {
         await this.connection?.close();
         this.connection = undefined;
-        this.channel = undefined;
+        this.channels.clear();
+        this.queueChannels.clear();
     }
 
     private getConnection(): IAmqpConnection {
@@ -27,45 +35,53 @@ export class RabbitMqClient {
         return this.connection;
     }
 
-    private getChannel(): IAmqpChannel {
-        if (!this.channel) {
-            throw new Error('RabbitMqClient: call assertExchangeAndBindQueue() or publishToExchange() first.');
+    private getOrCreateChannel(key: string, setup: (t: IAmqpTopology) => Promise<void>): IAmqpChannel {
+        if (!this.channels.has(key)) {
+            this.channels.set(
+                key,
+                this.getConnection().createChannel({
+                    name: `e2e:rabbitMqUtils:${key}`,
+                    setup,
+                }),
+            );
         }
-        return this.channel;
+        return this.channels.get(key);
+    }
+
+    private getQueueChannel(queue: string): IAmqpChannel {
+        const channel = this.queueChannels.get(queue);
+
+        if (!channel) {
+            throw new Error(`RabbitMqClient: call assertExchangeAndBindQueue() for queue "${queue}" first.`);
+        }
+        return channel;
     }
 
     /**
      * `type` must match the type the core asserts for that exchange, otherwise the broker answers
-     * PRECONDITION_FAILED and closes the channel (SDO import/export is `fanout`, DTO import is
-     * `direct`).
+     * PRECONDITION_FAILED and closes the channel (SDO import/export is `fanout`, DTO import and DTO
+     * statement are `direct`).
      */
     public async publishToExchange<T = unknown>(exchange: string, payload: T, type = 'fanout'): Promise<void> {
-        if (!this.channel) {
-            this.channel = this.getConnection().createChannel({
-                name: 'e2e:rabbitMqUtils',
-                setup: async t => {
-                    await t.assertExchange(exchange, type, {durable: true});
-                },
-            });
-        }
-        await this.channel.publish(exchange, '', Buffer.from(JSON.stringify(payload)));
+        const channel = this.getOrCreateChannel(`publish:${exchange}`, async t => {
+            await t.assertExchange(exchange, type, {durable: true});
+        });
+
+        await channel.publish(exchange, '', Buffer.from(JSON.stringify(payload)));
     }
 
     public async assertExchangeAndBindQueue(queue: string, exchange: string, type = 'fanout'): Promise<void> {
-        if (!this.channel) {
-            this.channel = this.getConnection().createChannel({
-                name: 'e2e:rabbitMqUtils',
-                setup: async t => {
-                    await t.assertExchange(exchange, type, {durable: true});
-                    await t.assertQueue(queue, {durable: true});
-                    await t.bindQueue(queue, exchange, '');
-                },
-            });
-        }
+        const channel = this.getOrCreateChannel(`queue:${queue}`, async t => {
+            await t.assertExchange(exchange, type, {durable: true});
+            await t.assertQueue(queue, {durable: true});
+            await t.bindQueue(queue, exchange, '');
+        });
+
+        this.queueChannels.set(queue, channel);
     }
 
     public async purgeQueue(queue: string): Promise<void> {
-        await this.getChannel().purgeQueue(queue);
+        await this.getQueueChannel(queue).purgeQueue(queue);
     }
 
     public async waitForMessage<T = unknown>(
@@ -73,7 +89,7 @@ export class RabbitMqClient {
         predicate: (message: T) => boolean = () => true,
         timeoutMs = 30_000,
     ): Promise<T> {
-        const channel = this.getChannel();
+        const channel = this.getQueueChannel(queue);
 
         return new Promise<T>((resolve, reject) => {
             let consumerTag: string | undefined;

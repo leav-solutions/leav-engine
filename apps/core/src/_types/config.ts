@@ -104,6 +104,15 @@ export interface IDto {
         queue: string;
         prefetch?: number;
     };
+    /**
+     * Statement (acknowledgement) published back to the Data Platform once an operation has been
+     * processed, on its own exchange (`<client>_dto_operation_statement`)
+     */
+    statement: {
+        enable: boolean;
+        exchange: string;
+        exchangeType: string;
+    };
 }
 
 export interface IAutomation {

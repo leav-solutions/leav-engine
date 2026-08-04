@@ -1,4 +1,4 @@
-import {type IDTO} from '../../../../_types/dto';
+import {DTOErrorCode, DTOStatementStatus, type IDTO, type IDTOStatement} from '../../../../_types/dto';
 import {type ISDO} from '../../../../_types/sdo';
 import {getConfig} from '../../../../config';
 import {RabbitMqClient} from './rabbitMQUtils';
@@ -18,6 +18,10 @@ import {AttributeFormat, AttributeType} from '../../_gqlTypes';
  * (`payloadType` / `method` / `payloadDocument`) and the method dispatch. The value mapping itself is
  * covered by `sdoImports.test.ts`.
  */
+// Own queue on the statement exchange, prefixed like every other fixture of this file so a suite
+// running in parallel can't consume our statements.
+const DTO_STATEMENT_TEST_QUEUE = 'test_dto_imports_statement_queue';
+
 describe('DTO Imports', () => {
     let conf: IConfig;
     let rabbitmqClient: RabbitMqClient;
@@ -83,6 +87,13 @@ describe('DTO Imports', () => {
             })
         ).records.list[0].property[0].payload;
 
+    const _waitForStatementOf = (operationId: string) =>
+        rabbitmqClient.waitForMessage<IDTOStatement>(
+            DTO_STATEMENT_TEST_QUEUE,
+            statement => statement.operationId === operationId,
+            10000,
+        );
+
     // No positive event to wait for when an operation must be rejected/ignored -> wait a fixed delay,
     // longer than the processing time observed on the nominal cases.
     const _waitForProcessing = () => new Promise(resolve => setTimeout(resolve, 5000));
@@ -129,6 +140,11 @@ describe('DTO Imports', () => {
         });
 
         await rabbitmqClient.connect();
+        await rabbitmqClient.assertExchangeAndBindQueue(
+            DTO_STATEMENT_TEST_QUEUE,
+            conf.sdo.dto.statement.exchange,
+            conf.sdo.dto.statement.exchangeType,
+        );
     });
 
     afterAll(async () => {
@@ -304,6 +320,78 @@ describe('DTO Imports', () => {
             // Nothing of the operation is applied, not even the valid attributes
             expect(await _getTestValue(recordId)).toBe('value');
         }, 10000);
+    });
+
+    describe('statement', () => {
+        test('an applied CREATE should be answered with a SUCCESS statement', async () => {
+            const uuid = crypto.randomUUID();
+            const dto = _dto({method: 'CREATE', payloadDocument: _payloadDocument(uuid, 'dto_statement_value')});
+
+            await _publish(dto);
+
+            const statement = await _waitForStatementOf(dto.operationId);
+
+            expect(statement).toMatchObject({
+                operationId: dto.operationId,
+                requestId: dto.requestId,
+                correlationId: dto.correlationId,
+                dataModelRelease: dto.dataModelRelease,
+                payloadType: DTO_IMPORTS_LIBRARY_ID,
+                method: 'CREATE',
+                status: DTOStatementStatus.SUCCESS,
+                details: null,
+                sdo_identifier: {
+                    system: {
+                        systemId: uuid,
+                        systemCreationDate: expect.any(Number),
+                        systemLastModifiedDate: expect.any(Number),
+                    },
+                    identifier: {},
+                },
+                date: expect.any(Number),
+            });
+        }, 15000);
+
+        test('a CREATE on an existing systemId should be answered with a NO_CHANGE statement', async () => {
+            const uuid = crypto.randomUUID();
+
+            const firstDto = _dto({method: 'CREATE', payloadDocument: _payloadDocument(uuid, 'first_value')});
+            await _publish(firstDto);
+            await _waitForStatementOf(firstDto.operationId);
+
+            // Same systemId: the import skips it, so nothing was written
+            const secondDto = _dto({method: 'CREATE', payloadDocument: _payloadDocument(uuid, 'second_value')});
+            await _publish(secondDto);
+
+            expect(await _waitForStatementOf(secondDto.operationId)).toMatchObject({
+                status: DTOStatementStatus.NO_CHANGE,
+                details: null,
+                sdo_identifier: {system: {systemId: uuid}},
+            });
+        }, 25000);
+
+        test('a rejected operation should be answered with an ERROR statement carrying the details', async () => {
+            const uuid = crypto.randomUUID();
+            const dto = _dto({
+                method: 'CREATE',
+                payloadDocument: _payloadDocument(uuid, 'dto_value', {mandatoryValue: ''}),
+            });
+
+            await _publish(dto);
+
+            expect(await _waitForStatementOf(dto.operationId)).toMatchObject({
+                status: DTOStatementStatus.ERROR,
+                sdo_identifier: null,
+                details: [
+                    {
+                        code: DTOErrorCode.MANDATORY_FIELD_MISSING,
+                        attribute: 'info.mandatoryValue',
+                        message: 'A mandatory attribute is missing',
+                    },
+                ],
+            });
+            expect(await _findRecords(uuid)).toHaveLength(0);
+        }, 15000);
     });
 
     describe('envelope validation', () => {

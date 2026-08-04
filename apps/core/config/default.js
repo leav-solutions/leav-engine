@@ -321,6 +321,13 @@ module.exports = {
                 queue: process.env.DTO_IMPORT_QUEUE || process.env.INSTANCE_ID + '_dto_import',
                 prefetch: envToNumber(process.env.DTO_IMPORT_PREFETCH, 1),
             },
+            statement: {
+                enable: envToBool(process.env.DTO_STATEMENT_ENABLE, true),
+                exchange: process.env.DTO_STATEMENT_EXCHANGE || process.env.INSTANCE_ID + '_dto_operation_statement',
+                // `direct` like the DTO import exchange: same flow, same emitter. A mismatch with the
+                // real bus makes the broker answer PRECONDITION_FAILED, hence the override.
+                exchangeType: process.env.DTO_STATEMENT_EXCHANGE_TYPE || 'direct',
+            },
         },
     },
 };
