@@ -50,9 +50,9 @@ export default function ({
         const missingFields = REQUIRED_ENVELOPE_FIELDS.filter(field => dto[field] === undefined || dto[field] === null);
 
         if (missingFields.length) {
-            // An operation missing `operationId` cannot be correlated by the emitter: it is rejected
-            // with a contractual code all the same, but no statement can be published for it (see
-            // dtoStatementDomain).
+            // An operation missing one of its traceability ids cannot be correlated by the emitter: it
+            // is rejected with a contractual code all the same, but no statement can be published for
+            // it (see dtoStatementDomain).
             throw new DTORejectionError(
                 missingFields.map(field => ({
                     code: DTOErrorCode.MANDATORY_FIELD_MISSING,

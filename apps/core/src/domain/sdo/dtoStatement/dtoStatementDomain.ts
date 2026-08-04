@@ -10,6 +10,11 @@ import {type IConfig} from '../../../_types/config';
 import {type IRecord} from '../../../_types/record';
 import {type IRabbitMQ} from '../../../infra/sdo/sdoRabbitMQ';
 
+/** Traceability ids the emitter matches the statement on, echoed as-is from the DTO */
+const CORRELATION_ID_FIELDS = ['requestId', 'operationId', 'correlationId'] as const satisfies ReadonlyArray<
+    keyof IDTO
+>;
+
 export interface IDTOStatementDomainDeps {
     'core.infra.sdo.rabbitMQ': IRabbitMQ;
     config: IConfig;
@@ -57,10 +62,16 @@ export default function ({
             return;
         }
 
-        if (!dto?.operationId) {
-            // Without the traceability ids the emitter cannot match the statement to its operation, so
-            // publishing it would only add noise on the bus.
-            logger.warn('[DTO] Statement skipped: the operation carries no operationId to correlate it with');
+        // The contract states the statement is correlated by `requestId` / `operationId` /
+        // `correlationId` echoed from the DTO (`correlationId` being the emitter's own key), but says
+        // nothing about an operation missing one of them. leav's decision: all three are required to
+        // publish, otherwise the statement could not be matched back to the operation.
+        const missingCorrelationIds = CORRELATION_ID_FIELDS.filter(field => !dto?.[field]);
+
+        if (missingCorrelationIds.length) {
+            logger.warn(
+                `[DTO] Statement skipped: the operation carries no ${missingCorrelationIds.join(' / ')} to correlate it with`,
+            );
             return;
         }
 

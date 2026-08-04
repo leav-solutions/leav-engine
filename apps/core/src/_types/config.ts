@@ -105,7 +105,7 @@ export interface IDto {
         prefetch?: number;
     };
     /**
-     * Statement (acknowledgement) published back to the Data Platform once an operation has been
+     * Statement (acknowledgement) published back once an operation has been
      * processed, on its own exchange (`<client>_dto_operation_statement`)
      */
     statement: {

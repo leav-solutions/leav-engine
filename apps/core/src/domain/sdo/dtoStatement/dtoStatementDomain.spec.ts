@@ -146,16 +146,22 @@ describe('dtoStatementDomain', () => {
             expect(dtoStatementChannel.publish).not.toHaveBeenCalled();
         });
 
-        it('[-] should publish nothing for an operation without operationId, which cannot be correlated', async () => {
-            const {operationId: _operationId, ...dtoWithoutOperationId} = mockDTO;
+        // Any of the three is enough to make the statement unmatchable by the emitter
+        it.each(['requestId', 'operationId', 'correlationId'] as const)(
+            '[-] should publish nothing for an operation without %s, which cannot be correlated',
+            async missingField => {
+                const {[missingField]: _missing, ...dtoWithoutCorrelationId} = mockDTO;
 
-            await dtoStatementDomain(depsBase).sendStatement({
-                dto: dtoWithoutOperationId as IDTO,
-                status: DTOStatementStatus.ERROR,
-                details: [{code: DTOErrorCode.MANDATORY_FIELD_MISSING, attribute: 'operationId', message: 'missing'}],
-            });
+                await dtoStatementDomain(depsBase).sendStatement({
+                    dto: dtoWithoutCorrelationId as IDTO,
+                    status: DTOStatementStatus.ERROR,
+                    details: [
+                        {code: DTOErrorCode.MANDATORY_FIELD_MISSING, attribute: missingField, message: 'missing'},
+                    ],
+                });
 
-            expect(dtoStatementChannel.publish).not.toHaveBeenCalled();
-        });
+                expect(dtoStatementChannel.publish).not.toHaveBeenCalled();
+            },
+        );
     });
 });

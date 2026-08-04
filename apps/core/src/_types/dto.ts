@@ -54,7 +54,7 @@ export interface IDTOErrorDetail {
 }
 
 /**
- * Outcome of an import operation, reported back to the emitter (`message-formats.md` §3).
+ * Outcome of an import operation, reported back to the emitter.
  */
 export enum DTOStatementStatus {
     SUCCESS = 'SUCCESS',
