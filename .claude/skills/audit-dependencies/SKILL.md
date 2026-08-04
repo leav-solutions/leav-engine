@@ -52,17 +52,19 @@ side-effect imports (`import 'pkg/style.css'`) are caught, and so are CSS/LESS `
 A package can be load-bearing without ever appearing in an `import`. Check each of these before
 concluding it is dead:
 
-| Invisible usage                                    | Real examples in this repo                                                                                                                                                                                                                    |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Plugin referenced **by name, as a string**         | `@graphql-codegen/{typescript,typescript-operations,typescript-react-apollo,typescript-graphql-request}` and the `add:` key, in every `codegen.ts`                                                                                            |
-| Config **value** as a string                       | `happy-dom` via `environment: 'happy-dom'` in the vitest config                                                                                                                                                                               |
-| A tsconfig's `types` array                         | `@types/node` via `types: ["node"]`; **`vite` in `libs/ui`** via `vite/client` in `tsconfig.spec.json`                                                                                                                                        |
-| Binary invoked from `scripts`                      | `tsx`, `prettier`, `typescript`, `tsc-alias`                                                                                                                                                                                                  |
-| Compiled implicitly by the bundler                 | `less` — Vite compiles `.less`, the package itself is never imported                                                                                                                                                                          |
-| `NODE_OPTIONS` / preload                           | `@opentelemetry/auto-instrumentations-node`, loaded by `docker/scripts/start-core.sh` when `OTEL_AUTO_INSTRUMENT=1`                                                                                                                           |
-| Satisfying someone else's **peerDependency**       | `graphql` (peer of `graphql-request`, `graphql-tag`, `apollo-*`); `jsoneditor` (peer of `jsoneditor-react`)                                                                                                                                   |
-| Types required by **another package's** `.d.ts`    | `apps/core` needed `@types/jexl` while on `jexl-extended@1`, whose `.d.ts` did `import {Jexl} from 'jexl'` and `jexl` shipped none. Fixed by `jexl-extended@2`, which bundles its own types — so this one is history, but the pattern recurs. |
-| Workspace dependency consumed through an **alias** | `@leav/ui` in `apps/admin`: never imported by name, but the `_ui/*` alias compiles `libs/ui/src`, so the workspace dep is what installs its deps                                                                                              |
+| Invisible usage                                    | Real examples in this repo                                                                                                                                                                                                                                                                                |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Plugin referenced **by name, as a string**         | `@graphql-codegen/{typescript,typescript-operations,typescript-react-apollo,typescript-graphql-request}` in every `codegen.ts`                                                                                                                                                                            |
+| Plugin referenced as a **config key**              | `@graphql-codegen/add` — written `{add: {content: …}}` inside `plugins`, and the cli resolves the bare name to a separate package. `apps/portal` used it for years without declaring it. Check this one per workspace, not globally.                                                                      |
+| Config **value** as a string                       | `happy-dom` via `environment: 'happy-dom'` in the vitest config                                                                                                                                                                                                                                           |
+| A tsconfig's `types` array                         | `@types/node` via `types: ["node"]`; **`vite` in `libs/ui`** via `vite/client` in `tsconfig.spec.json`                                                                                                                                                                                                    |
+| Binary invoked from `scripts`                      | `tsx`, `prettier`, `typescript`, `tsc-alias`                                                                                                                                                                                                                                                              |
+| Compiled implicitly by the bundler                 | `less` — Vite compiles `.less`, the package itself is never imported                                                                                                                                                                                                                                      |
+| `NODE_OPTIONS` / preload                           | `@opentelemetry/auto-instrumentations-node`, loaded by `docker/scripts/start-core.sh` when `OTEL_AUTO_INSTRUMENT=1`                                                                                                                                                                                       |
+| Satisfying someone else's **peerDependency**       | `graphql` (peer of `graphql-request`, `graphql-tag`, `apollo-*`); `jsoneditor` (peer of `jsoneditor-react`)                                                                                                                                                                                               |
+| Satisfying a peer of a **`workspace:` lib**        | `@leav/ui` declares `@apollo/client`, `react-router-dom`, `i18next`, `react-i18next`, `aristid-ds`, `react`, `react-dom` as peers — so every consuming app must provide them. Hence `@apollo/client` in `apps/login` and `react-router-dom` in `apps/portal`, both with zero imports in their own `src/`. |
+| Types required by **another package's** `.d.ts`    | `apps/core` needed `@types/jexl` while on `jexl-extended@1`, whose `.d.ts` did `import {Jexl} from 'jexl'` and `jexl` shipped none. Fixed by `jexl-extended@2`, which bundles its own types — so this one is history, but the pattern recurs.                                                             |
+| Workspace dependency consumed through an **alias** | `@leav/ui` in `apps/admin`: never imported by name, but the `_ui/*` alias compiles `libs/ui/src`, so the workspace dep is what installs its deps                                                                                                                                                          |
 
 Quick way to settle a peer question:
 
@@ -76,12 +78,32 @@ node -e "console.log(JSON.stringify(require('./node_modules/<pkg>/package.json')
   files; the scanner strips comments, but always eyeball the reported line before adding a package.
   `enzyme` in particular must never be reinstated — it does not support React 18.
 - **Packages owned by `aristid-ds`** — `antd`, `@fortawesome/*`, `classnames`, `lodash`,
-  `react-modal`. Deliberately left undeclared in `libs/ui` and `apps/admin`: the design system is
-  distributed as a **commit pin**, so pinning its packages here would couple us to its version, and
-  a second copy of `antd` in a consumer bundle breaks theming (it carries React context).
-  This is a documented decision, not an oversight — see `libs/ui/CLAUDE.md`.
+  `react-modal`. Deliberately left undeclared in `libs/ui`, `apps/admin`, `apps/app-studio`,
+  `apps/login` and `apps/portal`: the design system is distributed as a **commit pin**, so pinning its
+  packages here would couple us to its version, and a second copy of `antd` in a consumer bundle
+  breaks theming (it carries React context). This is a documented decision, not an oversight — see
+  `libs/ui/CLAUDE.md`.
+
+    These are not even a latent risk: `aristid-ds` lists them in its own **`dependencies`** (not as
+    peers), so they resolve from its subtree even under `yarn workspaces focus`. Confirm with:
+
+    ```bash
+    node -e "console.log(Object.keys(require('./node_modules/aristid-ds/package.json').dependencies))"
+    ```
 
 ## 4. Traps to hunt actively (the scanner cannot see them)
+
+- **Shared config at the repo root is outside the scanned folder.** The scanner only walks the
+  workspace directory, so imports made on its behalf from a root-level file are invisible **both
+  ways**. Every front consumes `commonConfig()` from `vite-config-common.js`, which imports
+  `@vitejs/plugin-react` and `vite-plugin-svgr` — neither declared at the root, so each app must
+  declare them itself. `apps/login` and `apps/portal` were missing `vite-plugin-svgr`. Expect the
+  inverse too: once declared, the package resurfaces in **section A** as apparently unused. Grep the
+  root configs an app pulls in before trusting either section:
+
+    ```bash
+    grep -hn "^import\|require(" vite-config-common.js
+    ```
 
 - **Stale `@types/X`** when `X` now ships its own typings. Compare:
     ```bash

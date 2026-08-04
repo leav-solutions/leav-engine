@@ -21,7 +21,6 @@
     "dependencies": {
         "@ant-design/icons": "5.6.1",
         "@apollo/client": "3.14.1",
-        "@apollo/link-error": "2.0.0-beta.3",
         "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
         "aristid-ds": "17.1.0-63930cf",
@@ -38,6 +37,7 @@
         "styled-components": "6.0.8"
     },
     "devDependencies": {
+        "@graphql-codegen/add": "5.0.3",
         "@graphql-codegen/cli": "6.3.1",
         "@graphql-codegen/typescript": "5.0.10",
         "@graphql-codegen/typescript-operations": "5.1.0",
@@ -55,6 +55,7 @@
         "typescript": "7.0.2",
         "vite": "7.3.6",
         "vite-plugin-dynamic-base": "1.4.1",
+        "vite-plugin-svgr": "4.5.0",
         "vitest": "4.1.10"
     },
     "browserslist": {
