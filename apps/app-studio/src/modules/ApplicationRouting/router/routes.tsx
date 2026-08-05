@@ -8,7 +8,7 @@ import {Panel} from '../Panel';
 import {PanelContainer} from '../PanelContainer';
 import {AbsolutePaths, UnreachablePaths} from './paths';
 import {RedirectToFirstRecordPanelAllowedInCompactMode} from '../guards/RedirectToFirstRecordPanelAllowedInCompactMode';
-import {RedirectCreationFormPanelToPopup} from '../guards/RedirectCreationFormPanelToPopup';
+import {RedirectCreationPanelToPopup} from '../guards/RedirectCreationPanelToPopup';
 import {WorkspacePanelContainer} from '../WorkspacePanelContainer';
 import {NotFound} from '../NotFound';
 
@@ -77,9 +77,9 @@ export const getNextLevelRoutes = (): RouteObject[] => {
             element: (
                 <RedirectToPreviousPanel>
                     <RedirectToFirstRecordPanelAllowedInCompactMode>
-                        <RedirectCreationFormPanelToPopup>
+                        <RedirectCreationPanelToPopup>
                             <PanelContainer>{children => <Panel sliderVoletHostElement={children} />}</PanelContainer>
-                        </RedirectCreationFormPanelToPopup>
+                        </RedirectCreationPanelToPopup>
                     </RedirectToFirstRecordPanelAllowedInCompactMode>
                 </RedirectToPreviousPanel>
             ),

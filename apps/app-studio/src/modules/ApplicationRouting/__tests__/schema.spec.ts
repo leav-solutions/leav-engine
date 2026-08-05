@@ -90,6 +90,67 @@ describe('ApplicationSchema — creationPanels group', () => {
         expect(result.success).toBe(false);
     });
 
+    it('parses a customCreation entry and applies the shared defaults (icon, isStandalone)', () => {
+        const result = ApplicationSchema.safeParse(
+            makeApplication([
+                {
+                    id: 'create-custom',
+                    type: 'customCreation',
+                    iframeSource: 'https://host/creation-flow',
+                    name: {fr: 'Créer via l’appli métier'},
+                },
+            ]),
+        );
+
+        expect(result.success).toBe(true);
+        expect(result.data?.libraries.home.creationPanels).toEqual([
+            {
+                id: 'create-custom',
+                type: 'customCreation',
+                iframeSource: 'https://host/creation-flow',
+                name: {fr: 'Créer via l’appli métier'},
+                icon: 'fa-plus',
+                isStandalone: true,
+            },
+        ]);
+    });
+
+    it('accepts mixed creationForm and customCreation entries in the same list', () => {
+        const result = ApplicationSchema.safeParse(
+            makeApplication([
+                {id: 'create-simple', formId: 'creation', name: {fr: 'Créer une UB simple'}},
+                {
+                    id: 'create-custom',
+                    type: 'customCreation',
+                    iframeSource: 'https://host/creation-flow',
+                    name: {fr: 'Créer via l’appli métier'},
+                },
+            ]),
+        );
+
+        expect(result.success).toBe(true);
+        expect(result.data?.libraries.home.creationPanels?.map(panel => panel.type)).toEqual([
+            'creationForm',
+            'customCreation',
+        ]);
+    });
+
+    it('rejects a customCreation entry without an iframeSource', () => {
+        const result = ApplicationSchema.safeParse(
+            makeApplication([{id: 'create-custom', type: 'customCreation', name: {fr: 'Créer'}}]),
+        );
+
+        expect(result.success).toBe(false);
+    });
+
+    it('rejects an iframeSource entry without an explicit customCreation type (no implicit flavour)', () => {
+        const result = ApplicationSchema.safeParse(
+            makeApplication([{id: 'create-custom', iframeSource: 'https://host/creation-flow', name: {fr: 'Créer'}}]),
+        );
+
+        expect(result.success).toBe(false);
+    });
+
     it('reports a duplicate id between a creationPanel and a recordPanel', () => {
         const result = ApplicationSchema.safeParse(
             makeApplication([{id: 'clashing-id', formId: 'creation', name: {fr: 'Créer'}}], {

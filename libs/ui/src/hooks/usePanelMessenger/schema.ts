@@ -100,6 +100,16 @@ export const creationPanelSchema = z.object({
     isStandalone: z.literal(true),
 });
 
+/**
+ * Creation panel delegated to an iframe: the embedded app owns the whole creation flow and
+ * notifies the host with a `record-created` message (see `RecordCreatedMessage`) when done.
+ */
+export const customCreationPanelSchema = z.object({
+    type: z.literal('customCreation'),
+    iframeSource: z.string(),
+    isStandalone: z.literal(true),
+});
+
 export const baseExplorerPanelSchema = z.object({
     type: z.literal('explorer'),
     viewId: z.string().optional(),
@@ -128,7 +138,14 @@ export const treeExplorerPanelSchema = z.object({
 });
 
 export const PanelSchema = basePanelSchema.and(
-    z.union([explorerPanelSchema, iframePanelSchema, editionPanelSchema, creationPanelSchema, treeExplorerPanelSchema]),
+    z.union([
+        explorerPanelSchema,
+        iframePanelSchema,
+        editionPanelSchema,
+        creationPanelSchema,
+        customCreationPanelSchema,
+        treeExplorerPanelSchema,
+    ]),
 );
 
 export const PanelIFrameSchema = basePanelSchema.and(iframePanelSchema);

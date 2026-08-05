@@ -1,6 +1,6 @@
 import {type FunctionComponent, useContext, useEffect, useRef} from 'react';
 import {useParams} from 'react-router-dom';
-import {LangContext, usePanelIFrameHandlers, type ViewSettingsUpdateMessage} from '@leav/ui';
+import {LangContext, usePanelIFrameHandlers, type RecordCreatedMessage, type ViewSettingsUpdateMessage} from '@leav/ui';
 import {CurrentViewContext} from '../panel-view-settings/store-current-view/CurrentViewContext';
 import {useOpenNotification} from './message-handlers/useOpenNotification';
 import {useOpenAlert} from './message-handlers/useOpenAlert';
@@ -23,9 +23,12 @@ interface IPanelCustomProps {
     source: string;
     title: string;
     recordId: string | null;
+    // Only wired by `customCreation` panels (PanelCustomCreation): reaction to the iframe's
+    // `record-created` message. Regular custom panels leave it undefined (message ignored).
+    onRecordCreated?: (data: RecordCreatedMessage['data']) => void;
 }
 
-export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title, recordId}) => {
+export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title, recordId, onRecordCreated}) => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     const {navigateToPanel} = useNavigateToPanel();
@@ -60,6 +63,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
         onOpenFlapPanel: openFlapPanel,
         onCloseFlapPanel: closeFlapPanel,
         onClosePanel: closePanel,
+        onRecordCreated,
         onGetPanelConfig: getPanelConfig,
         onGetUrl: getURL,
         onMessage: trackMatomoEvent,

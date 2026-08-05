@@ -17,6 +17,7 @@ export type {
     IsRegisteredMessage,
     NavigateToPanelMessage,
     ClosePanelMessage,
+    RecordCreatedMessage,
     NavigateToIframeMessage,
     MessageToPanelMessage,
     OpenFlapPanelMessage,

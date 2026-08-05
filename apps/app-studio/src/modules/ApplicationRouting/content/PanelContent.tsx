@@ -2,6 +2,7 @@ import {type FunctionComponent} from 'react';
 import {EditRecordPage} from '@leav/ui';
 import {type Panel} from '_ui/hooks/usePanelMessenger/types';
 import {PanelCustom} from './panel-custom/PanelCustom';
+import {PanelCustomCreation} from './panel-custom/PanelCustomCreation';
 import {PanelLibraryExplorer} from './panel-explorer/PanelLibraryExplorer';
 import {PanelAttributeExplorer} from './panel-explorer/PanelAttributeExplorer';
 import {PanelCreationForm} from './panel-creation-form/PanelCreationForm';
@@ -16,6 +17,9 @@ interface IPanelContentProps {
 export const PanelContent: FunctionComponent<IPanelContentProps> = ({panel, recordId, libraryId}) => {
     if (panel.type === 'creationForm') {
         return <PanelCreationForm libraryId={libraryId} formId={panel.formId} />;
+    }
+    if (panel.type === 'customCreation') {
+        return <PanelCustomCreation source={panel.iframeSource} title={panel.id} />;
     }
     if (panel.type === 'editionForm') {
         return (
