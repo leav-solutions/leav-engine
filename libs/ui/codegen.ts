@@ -9,7 +9,12 @@ const config: CodegenConfig = {
             [`${apiUrl}/graphql?key=${apiKey}`]: {},
         },
     ],
-    documents: ['src/(_queries|gqlFragments)/**/*.ts', 'src/components/**/_queries/**/*.ts', 'src/**/*.graphql'],
+    documents: [
+        'src/(_queries|gqlFragments)/**/*.ts',
+        'src/components/**/_queries/**/*.ts',
+        'src/modules/**/_queries/**/*.ts',
+        'src/**/*.graphql',
+    ],
     generates: {
         'src/_gqlTypes/index.ts': {
             plugins: [

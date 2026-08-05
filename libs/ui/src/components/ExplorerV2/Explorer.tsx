@@ -318,6 +318,21 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         );
 
         const {
+            countData: rawTotalCountLibrary,
+            loading: countLoading,
+            refetchCount,
+        } = useExplorerCountData({
+            entrypoint,
+            libraryId: view.libraryId,
+            defaultFilters: hiddenFilters,
+            filters: requestFilters,
+            // Kept alive on the per-column kanban path: the count is grouping-independent (library
+            // total) and feeds the "X / Y" results count next to the mass-selection checkbox.
+            skip: !isViewReady,
+        });
+        const totalCountLibrary = useStickyValue(rawTotalCountLibrary, countLoading);
+
+        const {
             data,
             isMultivalue,
             canEditLinkAttributeValues,
@@ -333,6 +348,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             filters: requestFilters,
             filtersOperator,
             skip: !isViewReady || isPerColumnKanban,
+            refetchCount,
         }); // TODO: refresh when go back on page
 
         const kanbanDataSource = useMemo<IKanbanDataSource | undefined>(
@@ -422,21 +438,6 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         // On the per-column kanban the records query is skipped, so the filtered total comes from the
         // summed column counts instead of `data.totalCount`.
         const totalCountFiltered = isPerColumnKanban ? kanbanTotalCount : listTotalCountFiltered;
-
-        const {
-            countData: rawTotalCountLibrary,
-            loading: countLoading,
-            refetchCount,
-        } = useExplorerCountData({
-            entrypoint,
-            libraryId: view.libraryId,
-            defaultFilters: hiddenFilters,
-            filters: requestFilters,
-            // Kept alive on the per-column kanban path: the count is grouping-independent (library
-            // total) and feeds the "X / Y" results count next to the mass-selection checkbox.
-            skip: !isViewReady,
-        });
-        const totalCountLibrary = useStickyValue(rawTotalCountLibrary, countLoading);
 
         // On the per-column kanban path the board owns its data: an empty board renders its empty
         // columns, never the global "no data" placeholder.

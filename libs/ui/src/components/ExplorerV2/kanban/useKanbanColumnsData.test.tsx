@@ -4,7 +4,7 @@ import {
     ExplorerLibraryDataDocument,
     ListDistinctValuesDocument,
     RecordFilterCondition,
-    RecordUpdateDocument,
+    RecordUpdateLightDocument,
     SortOrder,
     type RecordFilterInput,
 } from '_ui/_gqlTypes';
@@ -123,29 +123,17 @@ const pageMock = ({
 
 const cardIds = (cards?: Array<{itemId: string}>) => (cards ?? []).map(card => card.itemId);
 
-const recordUpdateMock = (recordId: string, delay = 50): MockedResponse => ({
+const recordUpdateMock = (recordId: string, delay = 50, updatedAttributes: string[] = []): MockedResponse => ({
     request: {
-        query: RecordUpdateDocument,
+        query: RecordUpdateLightDocument,
         variables: {filters: {libraries: [LIBRARY]}},
     },
     delay,
     result: {
         data: {
             recordUpdate: {
-                record: {
-                    id: recordId,
-                    whoAmI: {
-                        __typename: 'RecordIdentity',
-                        id: recordId,
-                        label: recordId,
-                        subLabel: null,
-                        color: null,
-                        preview: null,
-                        library: {__typename: 'Library', id: LIBRARY, label: null},
-                    },
-                    modified_by: [],
-                },
-                updatedValues: [],
+                record: {id: recordId},
+                updatedValues: updatedAttributes.map(attribute => ({attribute})),
             },
         },
     },
@@ -499,9 +487,11 @@ describe('useKanbanColumnsData', () => {
                 }),
             ];
 
-            // WHEN a recordUpdate event fires while nothing in "draft" actually changed
+            // WHEN an unlisted record switches active (e.g. gets created), while nothing in "draft"
+            // actually changed — a plain value edit on an unlisted record would be ignored (see the
+            // creation-form test below), so the reload trigger here must be an active switch
             const recordUpdateMocks = [
-                recordUpdateMock('untouched-record', 300),
+                recordUpdateMock('untouched-record', 300, ['active']),
                 distinctValuesMock({groups: [treeGroup('draft', KANBAN_COLUMN_PAGE_SIZE + 2)]}),
                 pageMock({groupFilter: eqFilter('draft'), offset: 0, records: firstPage}),
                 pageMock({
@@ -531,6 +521,40 @@ describe('useKanbanColumnsData', () => {
                 expect(result.current.columnStatesById.draft?.cards).toHaveLength(KANBAN_COLUMN_PAGE_SIZE + 2),
             );
             expect(cardIds(result.current.columnStatesById.draft?.cards).slice(-2)).toEqual(['c10', 'c11']);
+        });
+    });
+
+    describe('a value save on an unlisted record that does not switch active', () => {
+        it('is ignored, so a creation form drafting an inactive record above the board does not reset it on every field', async () => {
+            // GIVEN a loaded board
+            const initialMocks = [
+                distinctValuesMock({groups: [treeGroup('draft', 2)]}),
+                pageMock({groupFilter: eqFilter('draft'), records: [record('d1'), record('d2')]}),
+            ];
+
+            // WHEN a recordUpdate fires for a record no column has loaded, saving a plain value —
+            // the typical echo of a creation form field blur (the draft record is inactive)
+            // Trap: the post-reload truth, consumed only if the event wrongly triggers a full reload.
+            const trapMocks = [
+                recordUpdateMock('drafted-record-in-creation', 300, ['title']),
+                distinctValuesMock({groups: [treeGroup('draft', 1)]}),
+                pageMock({groupFilter: eqFilter('draft'), records: [record('d1')]}),
+            ];
+
+            const {result} = renderHook(props => useKanbanColumnsData(props), {
+                mocks: [...initialMocks, ...trapMocks],
+                initialProps: {dataSource: baseDataSource, axisAttributeId: AXIS},
+            });
+            await waitFor(() => expect(cardIds(result.current.columnStatesById.draft?.cards)).toEqual(['d1', 'd2']));
+
+            // ...the event fires at 300ms
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            // THEN the board is left exactly as it was: no reset, no reload
+            await waitFor(() => {
+                expect(cardIds(result.current.columnStatesById.draft?.cards)).toEqual(['d1', 'd2']);
+                expect(result.current.columnStatesById.draft.count).toBe(2);
+            });
         });
     });
 

@@ -32,4 +32,20 @@ describe('useGetPreviousPanelParams', () => {
         expect(previousWhere).toBe('fullpage');
         expect(previousRecordId).toBe(undefined);
     });
+
+    it('should provide no previous record for a top-level creation opened with the newRecord sentinel', async () => {
+        // top-level creation panel opened from a library panel: /:workspaceId/:panelId/newRecord/popup/:panelId
+        window.history.pushState({}, '', '/42/libraryPanelId/newRecord/popup/creationPanelId');
+
+        const {previousRecordPanelId, previousWhere, previousRecordId} = useGetPreviousPanelParams({
+            currentRecordId: 'newRecord',
+            currentWhere: 'popup',
+            currentRecordPanelId: 'creationPanelId',
+        });
+
+        // no parent record: PanelCreationForm must not try to link the created record
+        expect(previousRecordId).toBe(undefined);
+        expect(previousWhere).toBe('fullpage');
+        expect(previousRecordPanelId).toBe('libraryPanelId');
+    });
 });

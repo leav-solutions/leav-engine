@@ -15,6 +15,8 @@ export type ViewSettingsTab = z.infer<typeof ViewSettingsTabSchema>;
 
 export type Application = z.infer<typeof ApplicationSchema>;
 
+export type CreationPanels = NonNullable<Application['libraries'][string]['creationPanels']>;
+
 export type AppStudioInternalEvent =
     | {type: 'view-settings-select-view'; data: {viewId: string}}
     | {
@@ -28,7 +30,7 @@ export type AppStudioInternalEvent =
               hiddenFilters?: HiddenFullFilter[];
               explorerPanelDetails: {
                   libraryId: string;
-                  panelType: 'libraryPanels' | 'recordPanels';
+                  panelType: keyof Application['libraries'][string];
                   panelId: string;
               };
           };

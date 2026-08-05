@@ -413,10 +413,11 @@ describe('Explorer', () => {
         },
     };
 
+    const refetchLibraryData = vi.fn();
     const mockExplorerLibraryDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
         loading: false,
         called: true,
-        refetch: vi.fn(),
+        refetch: refetchLibraryData,
         data: {
             records: {
                 totalCount: mockRecords.length,
@@ -425,10 +426,11 @@ describe('Explorer', () => {
         },
     };
 
+    const refetchLibraryCountData = vi.fn();
     const mockExplorerLibraryCountDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryCountDataQuery> = {
         loading: false,
         called: true,
-        refetch: vi.fn(),
+        refetch: refetchLibraryCountData,
         data: {
             records: {
                 totalCount: mockRecords.length,
@@ -849,6 +851,29 @@ describe('Explorer', () => {
         'useGetRecordUpdatesSubscription',
     );
 
+    const useRecordUpdateLightSubscriptionMock = vi.spyOn(gqlTypes, 'useRecordUpdateLightSubscription');
+
+    // Simulates the server pushing one light recordUpdate event: fires the subscription's onData
+    // (only when it is actually open, i.e. not skipped) on every render — the debounced flush
+    // dedupes the repeats into a single reaction.
+    const fireRecordUpdateLightEvent = (recordId: string, updatedAttributes: string[]) => {
+        useRecordUpdateLightSubscriptionMock.mockImplementation(options => {
+            if (!options?.skip) {
+                options?.onData?.({
+                    data: {
+                        data: {
+                            recordUpdate: {
+                                record: {id: recordId},
+                                updatedValues: updatedAttributes.map(attribute => ({attribute})),
+                            },
+                        },
+                    },
+                } as any);
+            }
+            return {loading: false, restart: vi.fn()} as any;
+        });
+    };
+
     let user: ReturnType<typeof userEvent.setup>;
     let useColumnWidthSpy: ReturnType<typeof vi.spyOn> | undefined;
 
@@ -905,6 +930,8 @@ describe('Explorer', () => {
             loading: false,
             restart: vi.fn(),
         });
+
+        useRecordUpdateLightSubscriptionMock.mockReturnValue({loading: false, restart: vi.fn()} as any);
 
         vi.clearAllMocks();
         user = userEvent.setup();
@@ -1547,27 +1574,42 @@ describe('Explorer', () => {
         );
     });
 
-    test('Should call the useGetRecordUpdatesSubscription', async () => {
+    test('watches the whole library through the light subscription and keeps the value-carrying one for links only', async () => {
         render(
             <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
                 <Explorer entrypoint={libraryEntrypoint} />
             </Explorer.EditSettingsContextProvider>,
         );
-        expect(useGetRecordUpdatesSubscriptionMock).toHaveBeenCalledTimes(6);
-        expect(useGetRecordUpdatesSubscriptionMock.mock.calls[0]).toEqual([
-            {
-                libraries: [''],
-                records: expect.any(Array),
-            },
-            true,
-        ]);
-        expect(useGetRecordUpdatesSubscriptionMock.mock.calls[3]).toEqual([
-            {
-                libraries: [libraryEntrypoint.libraryId],
-                records: [recordId1, recordId2],
-            },
-            false,
-        ]);
+
+        // Library entrypoint: the value-carrying subscription (link path) never opens...
+        expect(useGetRecordUpdatesSubscriptionMock).toHaveBeenCalled();
+        useGetRecordUpdatesSubscriptionMock.mock.calls.forEach(([, skipped]) => expect(skipped).toBe(true));
+
+        // ...and the light one watches the whole library. Several instances of the data hook
+        // render (mass actions notably), so assert on any call, not the last one.
+        expect(useRecordUpdateLightSubscriptionMock).toHaveBeenCalledWith(
+            expect.objectContaining({
+                skip: false,
+                variables: {filters: {libraries: [libraryEntrypoint.libraryId]}},
+            }),
+        );
+    });
+
+    test('reloads the list and its count when an unlisted record of the library switches active', async () => {
+        // a record unknown to the list (typically just created above the explorer) gets activated
+        fireRecordUpdateLightEvent('freshly-created-record', ['active']);
+
+        render(
+            <Explorer.EditSettingsContextProvider panelElement={() => document.body}>
+                <Explorer entrypoint={libraryEntrypoint} />
+            </Explorer.EditSettingsContextProvider>,
+        );
+
+        // the explorer reloads by itself: full list + count refetch
+        await waitFor(() => {
+            expect(refetchLibraryData).toHaveBeenCalled();
+            expect(refetchLibraryCountData).toHaveBeenCalled();
+        });
     });
 
     describe('Item actions', () => {

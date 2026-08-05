@@ -4,11 +4,11 @@ import {useLang} from '_ui/hooks';
 import {
     ExplorerLibraryDataDocument,
     useListDistinctValuesQuery,
-    useRecordUpdateSubscription,
     type ExplorerLibraryDataQuery,
     type ExplorerLibraryDataQueryVariables,
     type RecordFilterInput,
 } from '_ui/_gqlTypes';
+import {useWatchLibraryRecordUpdates} from '_ui/modules/watch-record-updates';
 import {KANBAN_COLUMN_PAGE_SIZE, KANBAN_SELF_WRITE_ECHO_WINDOW_MS} from '../_constants';
 import {type IExplorerData, type IItemData} from '../_types';
 import {NO_AXIS_VALUE_COLUMN_ID} from '../grouping/buildKanbanColumns';
@@ -199,39 +199,41 @@ export const useKanbanColumnsData = ({
     // record update in the library can move a card across columns (its axis value changed) or alter a
     // displayed attribute, so a fresh update is not patched onto individual cards: the whole board is
     // re-derived from scratch, the same way a filter/search/sort change already resets and reloads it.
-    // Variables are memoized on the library id: a fresh object literal each render makes
-    // useRecordUpdateSubscription tear down and re-open the subscription on every re-render.
-    const recordUpdateVariables = useMemo(
-        () => ({filters: {libraries: dataSource ? [dataSource.libraryId] : []}}),
-        [dataSource?.libraryId],
-    );
-    useRecordUpdateSubscription({
-        skip: !isEnabled,
-        variables: recordUpdateVariables,
-        onData: ({data: subscriptionResult}) => {
-            // Our own drag & drop write comes back through this subscription: it is already reconciled
-            // optimistically (cardMoved), so swallow its echo instead of resetting and reloading the
-            // whole board — that reset is what made a self-move flash. Every echo of the id is swallowed
-            // while the suppression window is open (the flag is NOT consumed on the first one, since a
-            // single write may echo several times); the window auto-expires so later genuine updates pass.
-            const updatedRecordId = subscriptionResult.data?.recordUpdate.record.id;
-            if (updatedRecordId !== undefined && selfWriteEchoTimersRef.current.has(updatedRecordId)) {
-                return;
-            }
+    // Both flush channels therefore converge on the same full reload. The classification is the
+    // module's: an event on a record no column has loaded only matters when it switches `active`
+    // (creation, [de]activation) — the critical case is a creation form open above the kanban, whose
+    // draft record saves a value on every field blur. Tradeoff (same as the table's): an edit moving
+    // an unlisted-but-active record between columns beyond their loaded pages leaves the counts stale
+    // until the next reload.
+    const _reloadWholeBoard = () => {
+        loadedCountByColumnIdRef.current = Object.fromEntries(
+            Object.entries(columnStatesById).map(([columnId, columnState]) => [columnId, columnState.cards.length]),
+        );
+        manualReloadCounterRef.current += 1;
+        // Set synchronously (not through the requestSignature-keyed effect, which runs later as a
+        // passive effect): a page already in flight must be discarded by loadPage's stale-response
+        // guard as soon as it resolves, even if that happens before React re-renders.
+        requestSignatureRef.current = `${requestSignature}#reload-${manualReloadCounterRef.current}`;
+        setIsReloading(true);
+        dispatch({type: 'reset'});
+        setAttributesProperties({});
+        return refetchCounts();
+    };
 
-            loadedCountByColumnIdRef.current = Object.fromEntries(
-                Object.entries(columnStatesById).map(([columnId, columnState]) => [columnId, columnState.cards.length]),
-            );
-            manualReloadCounterRef.current += 1;
-            // Set synchronously (not through the requestSignature-keyed effect, which runs later as a
-            // passive effect): a page already in flight must be discarded by loadPage's stale-response
-            // guard as soon as it resolves, even if that happens before React re-renders.
-            requestSignatureRef.current = `${requestSignature}#reload-${manualReloadCounterRef.current}`;
-            setIsReloading(true);
-            dispatch({type: 'reset'});
-            setAttributesProperties({});
-            refetchCounts();
-        },
+    useWatchLibraryRecordUpdates({
+        libraryId: dataSource?.libraryId ?? '',
+        skip: !isEnabled,
+        visibleRecordIds: Object.values(columnStatesById).flatMap(columnState =>
+            columnState.cards.map(card => card.itemId),
+        ),
+        // Our own drag & drop write comes back through the subscription: it is already reconciled
+        // optimistically (cardMoved), so swallow its echo instead of resetting and reloading the
+        // whole board — that reset is what made a self-move flash. Every echo of the id is swallowed
+        // while the suppression window is open (the flag is NOT consumed on the first one, since a
+        // single write may echo several times); the window auto-expires so later genuine updates pass.
+        shouldIgnoreEvent: recordId => selfWriteEchoTimersRef.current.has(recordId),
+        onVisibleRecordsTouched: _reloadWholeBoard,
+        onListContentMaybeChanged: _reloadWholeBoard,
     });
 
     // Loads (or reloads) every column's cards, up to however many it had before the reset. Triggered

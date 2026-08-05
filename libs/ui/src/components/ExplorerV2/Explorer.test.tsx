@@ -415,10 +415,11 @@ describe('Explorer', () => {
         },
     };
 
+    const refetchLibraryData = vi.fn();
     const mockExplorerLibraryDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
         loading: false,
         called: true,
-        refetch: vi.fn(),
+        refetch: refetchLibraryData,
         data: {
             records: {
                 totalCount: mockRecords.length,
@@ -427,10 +428,11 @@ describe('Explorer', () => {
         },
     };
 
+    const refetchLibraryCountData = vi.fn();
     const mockExplorerLibraryCountDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryCountDataQuery> = {
         loading: false,
         called: true,
-        refetch: vi.fn(),
+        refetch: refetchLibraryCountData,
         data: {
             records: {
                 totalCount: mockRecords.length,
@@ -851,6 +853,29 @@ describe('Explorer', () => {
         'useGetRecordUpdatesSubscription',
     );
 
+    const useRecordUpdateLightSubscriptionMock = vi.spyOn(gqlTypes, 'useRecordUpdateLightSubscription');
+
+    // Simulates the server pushing one light recordUpdate event: fires the subscription's onData
+    // (only when it is actually open, i.e. not skipped) on every render — the debounced flush
+    // dedupes the repeats into a single reaction.
+    const fireRecordUpdateLightEvent = (recordId: string, updatedAttributes: string[]) => {
+        useRecordUpdateLightSubscriptionMock.mockImplementation(options => {
+            if (!options?.skip) {
+                options?.onData?.({
+                    data: {
+                        data: {
+                            recordUpdate: {
+                                record: {id: recordId},
+                                updatedValues: updatedAttributes.map(attribute => ({attribute})),
+                            },
+                        },
+                    },
+                } as any);
+            }
+            return {loading: false, restart: vi.fn()} as any;
+        });
+    };
+
     let user: ReturnType<typeof userEvent.setup>;
     let useColumnWidthSpy: ReturnType<typeof vi.spyOn> | undefined;
 
@@ -907,6 +932,8 @@ describe('Explorer', () => {
             loading: false,
             restart: vi.fn(),
         });
+
+        useRecordUpdateLightSubscriptionMock.mockReturnValue({loading: false, restart: vi.fn()} as any);
 
         vi.clearAllMocks();
         user = userEvent.setup();
@@ -1430,23 +1457,77 @@ describe('Explorer', () => {
         );
     });
 
-    test('Should call the useGetRecordUpdatesSubscription', async () => {
-        render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
-        expect(useGetRecordUpdatesSubscriptionMock).toHaveBeenCalledTimes(6);
-        expect(useGetRecordUpdatesSubscriptionMock.mock.calls[0]).toEqual([
-            {
-                libraries: [''],
-                records: expect.any(Array),
-            },
-            true,
-        ]);
-        expect(useGetRecordUpdatesSubscriptionMock.mock.calls[3]).toEqual([
-            {
-                libraries: [libraryEntrypoint.libraryId],
-                records: [recordId1, recordId2],
-            },
-            false,
-        ]);
+    test('watches the whole library through the light subscription and keeps the value-carrying one for links only', async () => {
+        // currentView makes the view ready: the table's data hook (and its subscription) un-skips
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} currentView={{}} />);
+
+        await waitFor(() => {
+            expect(getRecordRows().length).toBeGreaterThan(0);
+        });
+
+        // Library entrypoint: the value-carrying subscription (link path) never opens...
+        expect(useGetRecordUpdatesSubscriptionMock).toHaveBeenCalled();
+        useGetRecordUpdatesSubscriptionMock.mock.calls.forEach(([, skipped]) => expect(skipped).toBe(true));
+
+        // ...and the light one watches the whole library once the view is ready. Several instances
+        // of the data hook render (mass actions notably), so assert on any call, not the last one.
+        expect(useRecordUpdateLightSubscriptionMock).toHaveBeenCalledWith(
+            expect.objectContaining({
+                skip: false,
+                variables: {filters: {libraries: [libraryEntrypoint.libraryId]}},
+            }),
+        );
+    });
+
+    test('reloads the list and its count when an unlisted record of the library switches active', async () => {
+        // a record unknown to the list (typically just created above the explorer) gets activated
+        fireRecordUpdateLightEvent('freshly-created-record', ['active']);
+
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} currentView={{}} />);
+
+        // the explorer reloads by itself: full list + count refetch
+        await waitFor(() => {
+            expect(refetchLibraryData).toHaveBeenCalled();
+            expect(refetchLibraryCountData).toHaveBeenCalled();
+        });
+    });
+
+    test('ignores an event on an unlisted record that does not touch active', async () => {
+        // an unlisted record (e.g. on another page) gets one of its values edited
+        fireRecordUpdateLightEvent('some-record-on-another-page', ['title']);
+
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} currentView={{}} />);
+
+        // the list is unaffected: no full reload, even once the debounce window has elapsed
+        await waitFor(() => {
+            expect(getRecordRows().length).toBeGreaterThan(0);
+        });
+        await new Promise(resolve => setTimeout(resolve, 400));
+        expect(refetchLibraryData).not.toHaveBeenCalled();
+        expect(refetchLibraryCountData).not.toHaveBeenCalled();
+    });
+
+    test('refreshes a listed record in place when it changes', async () => {
+        const fetchRecord = vi.fn();
+        vi.spyOn(gqlTypes, 'useExplorerLibraryDataLazyQuery').mockImplementation(
+            () => [fetchRecord] as unknown as gqlTypes.ExplorerLibraryDataLazyQueryHookResult,
+        );
+        // a record already displayed in the list gets updated
+        fireRecordUpdateLightEvent(recordId1, ['title']);
+
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} currentView={{}} />);
+
+        // only that record is re-fetched — no full list reload
+        await waitFor(() => {
+            expect(fetchRecord).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    variables: expect.objectContaining({
+                        filters: [expect.objectContaining({field: 'id', value: recordId1})],
+                    }),
+                }),
+            );
+        });
+        expect(refetchLibraryData).not.toHaveBeenCalled();
     });
 
     describe('Item actions', () => {

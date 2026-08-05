@@ -142,6 +142,40 @@ describe('retrievePanelDetails', () => {
         });
     });
 
+    it('should locate the panel by its id (creationPanels)', () => {
+        const creationPanelId = 'create-simple';
+        const baseApplication: Application = {
+            ...emptyApplication,
+            libraries: {
+                ...emptyApplication.libraries,
+                home: {
+                    ...emptyApplication.libraries.home,
+                    creationPanels: [
+                        {
+                            id: creationPanelId,
+                            type: 'creationForm',
+                            formId: 'creation',
+                            name: {fr: 'Créer'},
+                            icon: 'fa-plus',
+                            isStandalone: true,
+                        },
+                    ],
+                },
+            },
+        };
+
+        const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({
+            application: baseApplication,
+            recordPanelId: creationPanelId,
+        });
+
+        expect(panelType).toBe('creationPanels');
+        // A creation panel belongs to (and creates into) its owner library.
+        expect(libraryId).toBe('home');
+        expect(displayedLibraryId).toBe('home');
+        expect(currentPanel?.id).toBe(creationPanelId);
+    });
+
     const makeCustomRecordPanelApp = (panel: Record<string, unknown>): Application => ({
         ...emptyApplication,
         libraries: {

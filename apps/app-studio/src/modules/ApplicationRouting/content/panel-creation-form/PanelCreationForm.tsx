@@ -61,6 +61,8 @@ export const PanelCreationForm: FunctionComponent<IPanelCreationFormProps> = ({f
                         ],
                     );
                 }
+                // No manual refresh needed: the explorer under the popup detects the created
+                // record by itself, through its library-wide record-updates subscription.
                 navigate(RelativePaths.closeCurrentPanel, {relative: 'path'});
             }}
             removePadding

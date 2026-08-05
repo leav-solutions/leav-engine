@@ -1,5 +1,5 @@
 import {localizedTranslation} from '@leav/utils';
-import {useEffect, useMemo} from 'react';
+import {useMemo} from 'react';
 import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
 import {
     type Entrypoint,
@@ -21,6 +21,7 @@ import {
 import {type UIFilter} from '_ui/components/Filters/_types';
 import {prepareFiltersForRequest} from '_ui/components/Filters';
 import {AttributeConditionFilter} from '_ui/types';
+import {useWatchLibraryRecordUpdates} from '_ui/modules/watch-record-updates';
 
 export const dateValuesSeparator = '\n';
 
@@ -129,6 +130,7 @@ export const useExplorerData = ({
     filters,
     filtersOperator,
     skip,
+    refetchCount,
 }: {
     entrypoint: Entrypoint;
     libraryId: string;
@@ -142,6 +144,9 @@ export const useExplorerData = ({
     filters: UIFilter[];
     filtersOperator: DefaultViewSettings['filtersOperator'];
     skip: boolean;
+    // Called alongside the list reload when an unlisted record of the library switches `active`.
+    // A returned promise has its rejection swallowed with the reload's one.
+    refetchCount?: () => void | Promise<unknown>;
 }) => {
     const {lang: availableLangs} = useLang();
 
@@ -211,30 +216,45 @@ export const useExplorerData = ({
     }, [libraryData, linkData]);
 
     const ids = memoizedData?.records.map(record => record.itemId);
-    const {data: updatedData} = useGetRecordUpdatesSubscription(
+
+    // A link entrypoint keeps the value-carrying subscription, scoped to its linked records
+    // only (permission-safe: they are displayed, hence readable): each event patches the
+    // linked records' values straight into the Apollo cache (see the hook's onData).
+    useGetRecordUpdatesSubscription(
         {libraries: [libraryId], records: ids},
-        !libraryId || !ids || ids.length === 0,
+        skip || !isLink || !libraryId || !ids || ids.length === 0,
     );
 
-    // TODO: change to useMemo, and use updatedData to update memoizedData with new Data. Good luck !
-    useEffect(() => {
-        if (updatedData && memoizedData && isLibrary) {
-            fetchLibraryRecord({
-                variables: {
-                    libraryId,
-                    attributeIds,
-                    filters: [
-                        {
-                            field: 'id',
-                            condition: AttributeConditionFilter.EQUAL,
-                            value: updatedData.recordUpdate.record.id,
-                        },
-                    ],
-                },
-                fetchPolicy: 'network-only',
-            });
-        }
-    }, [updatedData]);
+    // A library entrypoint watches the WHOLE library, not just the listed records: a record
+    // created outside the explorer (e.g. from a creation form in a popup above it) is unknown
+    // to the list, but its activation — the last step of a creation — flags the list content
+    // as dirty. The subscription is the light one (no business data) and the flushes are
+    // debounced: see the module for the classification and storm-collapsing rules.
+    useWatchLibraryRecordUpdates({
+        libraryId,
+        skip: skip || !isLibrary,
+        visibleRecordIds: ids,
+        onVisibleRecordsTouched: recordIds =>
+            recordIds.length === 1
+                ? // A single listed record changed: refresh it in place.
+                  fetchLibraryRecord({
+                      variables: {
+                          libraryId,
+                          attributeIds,
+                          filters: [
+                              {
+                                  field: 'id',
+                                  condition: AttributeConditionFilter.EQUAL,
+                                  value: recordIds[0],
+                              },
+                          ],
+                      },
+                      fetchPolicy: 'network-only',
+                  })
+                : // Several listed records changed at once: one list reload beats N unit fetches.
+                  libraryRefetch(),
+        onListContentMaybeChanged: () => Promise.all([libraryRefetch(), refetchCount?.()]),
+    });
 
     return {
         data: memoizedData,
