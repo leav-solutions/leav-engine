@@ -10,8 +10,8 @@ import {RelativePaths} from '../../router/paths';
 /**
  * Maps the library's ordered `creationPanels` config entries to the explorer's `primaryActions`:
  * each action navigates to its creation panel as a top-level creation (the `NEW_RECORD_ID`
- * sentinel fills the `:recordId` route slot), always in a popup (creation forms are forced to
- * popup by the `RedirectCreationFormPanelToPopup` guard anyway).
+ * sentinel fills the `:recordId` route slot), always in a popup (creation panels are forced to
+ * popup by the `RedirectCreationPanelToPopup` guard anyway).
  */
 export const mapperToCreationActions = ({
     creationPanels,

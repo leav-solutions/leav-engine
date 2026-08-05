@@ -24,6 +24,7 @@ describe('MessageHandlers', () => {
                 navigateToPanel: expect.any(Function),
                 navigateToIframe: expect.any(Function),
                 closePanel: expect.any(Function),
+                notifyRecordCreated: expect.any(Function),
                 openFlapPanel: expect.any(Function),
                 closeFlapPanel: expect.any(Function),
                 getPanelConfig: expect.any(Function),
@@ -158,6 +159,15 @@ describe('MessageHandlers', () => {
             closePanel(data);
 
             expect(dispatchMock).toHaveBeenCalledWith({type: 'close-panel', data});
+        });
+
+        it('Should expose method notifyRecordCreated which tells the host a record was created in the iframe', async () => {
+            const data = {recordId: '42'};
+
+            const {notifyRecordCreated} = getExposedMethods({current: null}, dispatchMock);
+            notifyRecordCreated(data);
+
+            expect(dispatchMock).toHaveBeenCalledWith({type: 'record-created', data});
         });
 
         it('Should expose method explorerViewChanged which notifies parent of a view change', async () => {
@@ -304,6 +314,15 @@ describe('MessageHandlers', () => {
             handlers({type: 'request-current-view'} as any, dispatchMock);
 
             expect(onRequestCurrentView).toHaveBeenCalledTimes(1);
+        });
+
+        it('should call onRecordCreated when receiving record-created', () => {
+            const onRecordCreated = vi.fn();
+            const handlers = initClientHandlers(callCbMock, {handlers: {onRecordCreated}}, callbacksStore);
+
+            handlers({type: 'record-created', data: {recordId: '42'}}, dispatchMock);
+
+            expect(onRecordCreated).toHaveBeenCalledWith({recordId: '42'});
         });
 
         it('should call onEscape when receiving panel-escape', () => {

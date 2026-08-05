@@ -4,6 +4,7 @@ import {localizedTranslation} from '@leav/utils';
 import {useParams} from 'react-router-dom';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
+import {isCreationPanel} from '../utils/isCreationPanel';
 import {LibraryIdCard} from './id-card/LibraryIdCard';
 import {RecordIdCard} from './id-card/RecordIdCard';
 import {KitSpace} from 'aristid-ds';
@@ -59,7 +60,7 @@ export const PanelHeader: FunctionComponent<{
                 ) : (
                     <RecordIdCard libraryId={computedLibraryId} currentRecordId={computedRecordId} avatarSize="l" />
                 )}
-                {!isLibraryPanel && currentPanel.type !== 'creationForm' && (
+                {!isLibraryPanel && !isCreationPanel(currentPanel) && (
                     <KitSpace direction="horizontal" size="xxs">
                         <ToggleFlapButton
                             targetFlapPanelId={FLAP_INFO_AND_HISTORY_PANEL_ID}

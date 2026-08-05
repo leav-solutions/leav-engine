@@ -3,7 +3,7 @@ import * as ReactRouter from 'react-router-dom';
 import * as ApplicationSettingsContext from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {type Application} from '../../types';
 import * as RetrievePanelDetails from '../../utils/retrievePanelDetails';
-import {RedirectCreationFormPanelToPopup} from '../RedirectCreationFormPanelToPopup';
+import {RedirectCreationPanelToPopup} from '../RedirectCreationPanelToPopup';
 
 vi.mock('../../../../config/application-instance/application-settings/useApplicationSettingsContext', () => ({
     useApplicationSettingsContext: vi.fn(),
@@ -20,7 +20,7 @@ vi.mock('../../utils/retrievePanelDetails', () => ({
     retrievePanelDetails: vi.fn(),
 }));
 
-describe('RedirectCreationFormPanelToPopup component guard', () => {
+describe('RedirectCreationPanelToPopup component guard', () => {
     const spyUseParams = vi.spyOn(ReactRouter, 'useParams');
     const spyNavigate = vi.spyOn(ReactRouter, 'Navigate');
     const spyGeneratePath = vi.spyOn(ReactRouter, 'generatePath');
@@ -107,9 +107,9 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
         });
 
         const {getByText} = render(
-            <RedirectCreationFormPanelToPopup>
+            <RedirectCreationPanelToPopup>
                 <div>Test children</div>
-            </RedirectCreationFormPanelToPopup>,
+            </RedirectCreationPanelToPopup>,
         );
 
         expect(getByText('Test children')).toBeInTheDocument();
@@ -144,9 +144,9 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
         });
 
         const {getByText} = render(
-            <RedirectCreationFormPanelToPopup>
+            <RedirectCreationPanelToPopup>
                 <div>Test children</div>
-            </RedirectCreationFormPanelToPopup>,
+            </RedirectCreationPanelToPopup>,
         );
 
         expect(getByText('Test children')).toBeInTheDocument();
@@ -170,9 +170,9 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
         } as any);
 
         render(
-            <RedirectCreationFormPanelToPopup>
+            <RedirectCreationPanelToPopup>
                 <div>Test children</div>
-            </RedirectCreationFormPanelToPopup>,
+            </RedirectCreationPanelToPopup>,
         );
 
         expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -211,7 +211,45 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
             panelType: 'recordPanels',
         });
 
-        render(<RedirectCreationFormPanelToPopup />);
+        render(<RedirectCreationPanelToPopup />);
+
+        expect(spyGeneratePath).toHaveBeenCalledTimes(1);
+        expect(spyGeneratePath).toHaveBeenCalledWith(expect.any(String), {
+            recordId: currentRecordId,
+            recordPanelId: currentRecordPanelId,
+        });
+
+        expect(spyNavigate).toHaveBeenCalledTimes(1);
+        expect(spyNavigate).toHaveBeenCalledWith({replace: true, to: '/completePath', relative: 'path'}, {});
+    });
+
+    it('should redirect to popup when panel is a customCreation iframe and where is slider', async () => {
+        spyUseParams.mockReturnValue({
+            workspaceId,
+            panelId: currentPanelId,
+            recordId: currentRecordId,
+            where: 'slider',
+            recordPanelId: currentRecordPanelId,
+        });
+        spyGeneratePath.mockReturnValueOnce('/completePath');
+        spyUseApplicationSettingsContext.mockReturnValue([application] as any);
+        spyRetrievePanelDetails.mockReturnValue({
+            currentPanel: {
+                id: currentRecordPanelId,
+                name: {
+                    en: 'Create',
+                    fr: 'Créer une campagne',
+                },
+                isStandalone: true,
+                type: 'customCreation',
+                iframeSource: 'https://host/creation-flow',
+            },
+            libraryId: 'campaigns',
+            displayedLibraryId: 'campaigns',
+            panelType: 'creationPanels',
+        });
+
+        render(<RedirectCreationPanelToPopup />);
 
         expect(spyGeneratePath).toHaveBeenCalledTimes(1);
         expect(spyGeneratePath).toHaveBeenCalledWith(expect.any(String), {
@@ -250,7 +288,7 @@ describe('RedirectCreationFormPanelToPopup component guard', () => {
             panelType: 'recordPanels',
         });
 
-        render(<RedirectCreationFormPanelToPopup />);
+        render(<RedirectCreationPanelToPopup />);
 
         expect(spyGeneratePath).toHaveBeenCalledTimes(1);
         expect(spyGeneratePath).toHaveBeenCalledWith(expect.any(String), {

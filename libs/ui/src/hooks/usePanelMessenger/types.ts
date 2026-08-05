@@ -133,6 +133,20 @@ export type ClosePanelMessage = IMessageBase & {
     };
 };
 
+/**
+ * Sent by a `customCreation` panel iframe once it has successfully created its record.
+ * The host closes the creation panel and triggers no refresh itself: reflecting the new record
+ * is up to whatever sits underneath. An explorer detects it through its library-wide
+ * record-updates subscription, but the underlying panel may be something else (e.g. a custom
+ * iframe — notifying it is the `onCreated` contract planned with `openCreationPanel`, LEAVC-1102).
+ */
+export type RecordCreatedMessage = IMessageBase & {
+    type: 'record-created';
+    data: {
+        recordId: string;
+    };
+};
+
 export type NavigateToIframeMessage = IMessageBase & {
     type: 'navigate-to-iframe';
     data: {
@@ -270,6 +284,7 @@ export type MessageToParent =
     | UnregisterMessage
     | NavigateToPanelMessage
     | ClosePanelMessage
+    | RecordCreatedMessage
     | NavigateToIframeMessage
     | MessageToPanelMessage
     | OpenFlapPanelMessage
@@ -357,6 +372,7 @@ export interface IUsePanelMessengerOptions {
         onMessage?: (data: unknown, id: string, dispatch: MessageDispatcher, callCb: CallCbFunction) => void;
         onNavigateToPanel?: (data: NavigateToPanelMessage['data']) => void;
         onClosePanel?: (data: ClosePanelMessage['data']) => void;
+        onRecordCreated?: (data: RecordCreatedMessage['data']) => void;
         onNavigateToIframe?: (data: NavigateToIframeMessage['data']) => void;
         onOpenFlapPanel?: (data: OpenFlapPanelMessage['data']) => void;
         onGetUrl?: (data: GetUrlMessage['data']) => void;

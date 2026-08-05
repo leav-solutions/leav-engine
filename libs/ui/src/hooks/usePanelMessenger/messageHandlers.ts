@@ -17,6 +17,7 @@ import {
     type NavigateToIframeMessage,
     type NavigateToPanelMessage,
     type NotificationMessage,
+    type RecordCreatedMessage,
     packetId,
     type SimpleMessage,
     type OpenFlapPanelMessage,
@@ -143,6 +144,9 @@ export const initClientHandlers: (
         case 'close-panel':
             options?.handlers?.onClosePanel?.(message.data);
             break;
+        case 'record-created':
+            options?.handlers?.onRecordCreated?.(message.data);
+            break;
         case 'navigate-to-iframe':
             options?.handlers?.onNavigateToIframe?.(message.data);
             break;
@@ -246,6 +250,9 @@ export const getExposedMethods = (callbacksStore: MutableRefObject<Callbacks>, d
     },
     closePanel: (data: ClosePanelMessage['data']) => {
         dispatch?.({type: 'close-panel', data});
+    },
+    notifyRecordCreated: (data: RecordCreatedMessage['data']) => {
+        dispatch?.({type: 'record-created', data});
     },
     navigateToIframe: (data: NavigateToIframeMessage['data']) => {
         dispatch?.({type: 'navigate-to-iframe', data});

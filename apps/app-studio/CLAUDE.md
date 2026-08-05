@@ -101,18 +101,34 @@ Point d'entrée affiché dans le menu latéral gauche. Deux types :
 
 Liste **ordonnée** des moyens de création d'une bibliothèque, exposée sur le bouton `+` de
 l'explorateur : 1 entrée → bouton simple, N entrées → menu déroulant dans l'ordre du tableau.
-Chaque entrée ouvre son formulaire LEAV en **popup**, en création _top-level_ (navigation avec le
-sentinel `newRecord` dans le slot `:recordId`). Aucun refresh à la charge d'app-studio : à la
-validation, l'explorateur sous la popup détecte lui-même le record créé, via sa souscription
-`recordUpdate` sur toute la bibliothèque (l'activation d'un record hors liste déclenche le
-rechargement de la liste et du compteur — cf. `useExplorerData` dans `@leav/ui`).
+Chaque entrée s'ouvre en **popup**, en création _top-level_ (navigation avec le sentinel
+`newRecord` dans le slot `:recordId`). Aucun refresh à la charge d'app-studio : refléter le
+record créé revient au panel sous la popup. Quand c'est un explorateur (seul déclencheur
+aujourd'hui : son bouton `+`), il le détecte lui-même via sa souscription `recordUpdate` sur
+toute la bibliothèque (l'activation d'un record hors liste déclenche le rechargement de la
+liste et du compteur — cf. `useExplorerData` dans `@leav/ui`). Mais le panel sous-jacent peut
+ne pas être un explorateur : quand une iframe custom déclenchera elle-même la création
+(`openCreationPanel`, LEAVC-1102), c'est le callback `onCreated(recordId)` de cette story qui
+la notifiera.
 
-| Paramètre | Type      | Description                                                   |
-| --------- | --------- | ------------------------------------------------------------- |
-| `id`      | string    | Identifiant unique (partage l'espace d'ids des autres panels) |
-| `formId`  | string    | Formulaire LEAV de création à ouvrir                          |
-| `name`    | `{fr,en}` | **Requis** — libellé du bouton / de l'entrée du menu          |
-| `icon`    | string    | Icône FontAwesome, défaut `fa-plus`                           |
+Deux saveurs d'entrée, discriminées par `type` :
+
+- **`creationForm`** (défaut quand `type` est omis) : ouvre le formulaire LEAV `formId`.
+- **`customCreation`** (`type` explicite obligatoire) : ouvre l'iframe `iframeSource`, qui porte
+  tout le flux de création. Quand elle a terminé, l'iframe notifie l'hôte avec le message
+  `record-created` (méthode `notifyRecordCreated({recordId})` du messenger) — app-studio referme
+  alors la popup, le refresh de la liste restant assuré par la souscription ci-dessus. Le query
+  param optionnel `formInitialValues` (posé par un `navigate-to-panel` ciblant ce panel) est
+  transmis tel quel à l'URL de l'iframe — passe-plat, à interpréter côté app embarquée.
+
+| Paramètre      | Type      | Description                                                       |
+| -------------- | --------- | ----------------------------------------------------------------- |
+| `id`           | string    | Identifiant unique (partage l'espace d'ids des autres panels)     |
+| `type`         | string    | `creationForm` (défaut) ou `customCreation`                       |
+| `formId`       | string    | `creationForm` uniquement — formulaire LEAV de création à ouvrir  |
+| `iframeSource` | string    | `customCreation` uniquement — URL de l'iframe du flux de création |
+| `name`         | `{fr,en}` | **Requis** — libellé du bouton / de l'entrée du menu              |
+| `icon`         | string    | Icône FontAwesome, défaut `fa-plus`                               |
 
 Contraintes :
 
