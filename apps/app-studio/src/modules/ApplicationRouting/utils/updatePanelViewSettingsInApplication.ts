@@ -35,7 +35,8 @@ export const updatePanelViewSettingsInApplication = (
     viewSettings: PanelViewSettings,
 ): Application => {
     const library = prevApplication.libraries[location.libraryId];
-    if (!library) {
+    // `creationPanels` is optional in the config: no panels under this type, nothing to update.
+    if (!library || !library[location.panelType]) {
         return prevApplication;
     }
 

@@ -30,6 +30,7 @@ export const checkPanelIdsUniqueness = (ctx: ICheckContext): void => {
     const allPanelIds = Object.values(ctx.value.libraries).flatMap(library => [
         ...library.libraryPanels.map(panel => panel.id),
         ...library.recordPanels.map(panel => panel.id),
+        ...(library.creationPanels ?? []).map(panel => panel.id),
     ]);
 
     const panelDuplicates = _findDuplicates(allPanelIds);

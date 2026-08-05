@@ -42,7 +42,13 @@ if (!targetUrl) {
     process.exit(1);
 }
 
-const browser = await chromium.launch({args: ['--no-sandbox'], channel: 'chrome'});
+// System Google Chrome when present, otherwise the Playwright-managed Chromium build.
+// `channel: 'chrome'` lets Playwright locate the system Chrome on any OS; it throws when
+// Chrome is not installed, in which case we fall back to the bundled Chromium.
+const launchOptions = {args: ['--no-sandbox']};
+const browser = await chromium
+    .launch({...launchOptions, channel: 'chrome'})
+    .catch(() => chromium.launch(launchOptions));
 try {
     const context = await browser.newContext({
         viewport: {width: 1_600, height: 1_000},

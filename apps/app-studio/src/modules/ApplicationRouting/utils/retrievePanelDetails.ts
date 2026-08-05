@@ -2,7 +2,7 @@ import {type Application} from '../types';
 import {buildTreeWorkspacePanel, isTreeWorkspace} from './treeWorkspacePanel';
 
 type Panel = Application['libraries'][string]['libraryPanels'][number];
-type PanelType = 'libraryPanels' | 'recordPanels';
+type PanelType = 'libraryPanels' | 'recordPanels' | 'creationPanels';
 type PanelLocation = {currentPanel: Panel; libraryId: string | null; panelType: PanelType | null};
 type PanelIndex = Map<string, PanelLocation>;
 
@@ -20,12 +20,15 @@ const panelIndexCache = new WeakMap<Application, PanelIndex>();
 const buildPanelIndex = (application: Application): PanelIndex => {
     const index: PanelIndex = new Map();
 
-    for (const [libraryId, {libraryPanels, recordPanels}] of Object.entries(application.libraries)) {
+    for (const [libraryId, {libraryPanels, recordPanels, creationPanels}] of Object.entries(application.libraries)) {
         for (const currentPanel of libraryPanels) {
             index.set(currentPanel.id, {currentPanel, libraryId, panelType: 'libraryPanels'});
         }
         for (const currentPanel of recordPanels) {
             index.set(currentPanel.id, {currentPanel, libraryId, panelType: 'recordPanels'});
+        }
+        for (const currentPanel of creationPanels ?? []) {
+            index.set(currentPanel.id, {currentPanel, libraryId, panelType: 'creationPanels'});
         }
     }
 

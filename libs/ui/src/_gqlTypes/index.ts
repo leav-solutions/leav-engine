@@ -1868,6 +1868,13 @@ export type RecordUpdateSubscription = { recordUpdate: { record: { id: string, w
         | { payload?: any | null, raw_payload?: any | null, value?: any | null, raw_value?: any | null, id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null }
        }> } };
 
+export type RecordUpdateLightSubscriptionVariables = Exact<{
+  filters?: InputMaybe<RecordUpdateFilterInput>;
+}>;
+
+
+export type RecordUpdateLightSubscription = { recordUpdate: { record: { id: string }, updatedValues: Array<{ attribute: string }> } };
+
 export type GetRecordsFromLibraryQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   pagination?: InputMaybe<RecordsPagination>;
@@ -4826,6 +4833,41 @@ export function useRecordUpdateSubscription(baseOptions?: Apollo.SubscriptionHoo
       }
 export type RecordUpdateSubscriptionHookResult = ReturnType<typeof useRecordUpdateSubscription>;
 export type RecordUpdateSubscriptionResult = Apollo.SubscriptionResult<RecordUpdateSubscription>;
+export const RecordUpdateLightDocument = gql`
+    subscription RECORD_UPDATE_LIGHT($filters: RecordUpdateFilterInput) {
+  recordUpdate(filters: $filters) {
+    record {
+      id
+    }
+    updatedValues {
+      attribute
+    }
+  }
+}
+    `;
+
+/**
+ * __useRecordUpdateLightSubscription__
+ *
+ * To run a query within a React component, call `useRecordUpdateLightSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useRecordUpdateLightSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRecordUpdateLightSubscription({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useRecordUpdateLightSubscription(baseOptions?: Apollo.SubscriptionHookOptions<RecordUpdateLightSubscription, RecordUpdateLightSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<RecordUpdateLightSubscription, RecordUpdateLightSubscriptionVariables>(RecordUpdateLightDocument, options);
+      }
+export type RecordUpdateLightSubscriptionHookResult = ReturnType<typeof useRecordUpdateLightSubscription>;
+export type RecordUpdateLightSubscriptionResult = Apollo.SubscriptionResult<RecordUpdateLightSubscription>;
 export const GetRecordsFromLibraryDocument = gql`
     query getRecordsFromLibrary($libraryId: ID!, $pagination: RecordsPagination, $filters: [RecordFilterInput]) {
   records(library: $libraryId, filters: $filters, pagination: $pagination) {

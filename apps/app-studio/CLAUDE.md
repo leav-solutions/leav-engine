@@ -69,8 +69,9 @@ src/
   ],
   libraries: {
     [libraryId]: {
-      libraryPanels: Panel[],  // panneaux au niveau bibliothèque
-      recordPanels: Panel[]    // panneaux au niveau record
+      libraryPanels: Panel[],           // panneaux au niveau bibliothèque
+      recordPanels: Panel[],            // panneaux au niveau record
+      creationPanels?: CreationPanel[]  // moyens de création exposés sur le « + » (ExplorerV2)
     }
   }
 }
@@ -94,7 +95,38 @@ Point d'entrée affiché dans le menu latéral gauche. Deux types :
 
 - En **libraryPanel** : un seul panel `explorer` supporté pour le moment ; il liste toutes les entités de la bibliothèque.
 - En **recordPanel** : un `explorer` liste les entités liées via `attributeSource` (attribut de liaison). Plusieurs recordPanels coexistent — l'ordre dans le tableau = l'ordre des onglets.
-- `creationForm` est toujours `isStandalone` (hors onglets) et n'est invoqué que si l'explorateur associé a `"create"` dans ses `defaultPrimaryActions`.
+- `creationForm` est toujours `isStandalone` (hors onglets). En recordPanel, il n'est invoqué que si l'explorateur associé a `"create"` dans ses `defaultPrimaryActions`. Au niveau bibliothèque, des `creationPanels` déclarés (cf. ci-dessous) **remplacent** le `create` built-in de l'explorateur.
+
+### Panels de création (`creationPanels`)
+
+Liste **ordonnée** des moyens de création d'une bibliothèque, exposée sur le bouton `+` de
+l'explorateur : 1 entrée → bouton simple, N entrées → menu déroulant dans l'ordre du tableau.
+Chaque entrée ouvre son formulaire LEAV en **popup**, en création _top-level_ (navigation avec le
+sentinel `newRecord` dans le slot `:recordId`). Aucun refresh à la charge d'app-studio : à la
+validation, l'explorateur sous la popup détecte lui-même le record créé, via sa souscription
+`recordUpdate` sur toute la bibliothèque (l'activation d'un record hors liste déclenche le
+rechargement de la liste et du compteur — cf. `useExplorerData` dans `@leav/ui`).
+
+| Paramètre | Type      | Description                                                   |
+| --------- | --------- | ------------------------------------------------------------- |
+| `id`      | string    | Identifiant unique (partage l'espace d'ids des autres panels) |
+| `formId`  | string    | Formulaire LEAV de création à ouvrir                          |
+| `name`    | `{fr,en}` | **Requis** — libellé du bouton / de l'entrée du menu          |
+| `icon`    | string    | Icône FontAwesome, défaut `fa-plus`                           |
+
+Contraintes :
+
+- Visibilité croisée `name`/`icon` : avec **1 entrée**, le `+` est un bouton icône-seul
+  (`hideFirstActionLabel`) — l'`icon` est visible mais pas le `name` ; avec **N entrées**, le menu
+  n'affiche que les `name` — les `icon` des entrées ne sont pas rendues. `name` reste requis :
+  il devient le libellé visible dès qu'une deuxième entrée est ajoutée.
+- Sans `creationPanels`, le `create` built-in de l'explorateur est inchangé.
+- Câblé sur l'explorateur de **bibliothèque** uniquement (le cas lié — explorateur d'attribut avec
+  liaison au parent — reste sur le built-in ; généralisation prévue au Lot 2 du chantier
+  `creationPanels`).
+- La config **explorer-studio générée par le core** ne déclare pas encore de `creationPanels` (ses
+  explorateurs restent sur le `create` built-in) ; adapter cette génération est une tâche à part,
+  à intégrer au plan du chantier `creationPanels`.
 
 ### Paramètres communs à tous les panels
 

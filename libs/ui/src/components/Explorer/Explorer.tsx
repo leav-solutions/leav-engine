@@ -200,6 +200,19 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         const {currentPage, setNewPageSize, setNewPage} = usePagination(viewSettingsDispatch);
 
         const {
+            countData: rawTotalCountLibrary,
+            loading: countLoading,
+            refetchCount,
+        } = useExplorerCountData({
+            entrypoint,
+            libraryId: view.libraryId,
+            defaultFilters: defaultViewSettings?.filters ?? [],
+            filters: filtersData.filters,
+            skip: viewSettingsLoading,
+        });
+        const totalCountLibrary = useStickyValue(rawTotalCountLibrary, countLoading);
+
+        const {
             data,
             isMultivalue,
             canEditLinkAttributeValues,
@@ -215,6 +228,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
             filters: filtersData.filters,
             filtersOperator: filtersData.filtersOperator,
             skip: viewSettingsLoading,
+            refetchCount,
         }); // TODO: refresh when go back on page
         const isMassSelectionAll = view.massSelection === MASS_SELECTION_ALL;
         const isLink = entrypoint.type === 'link';
@@ -238,19 +252,6 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
         });
 
         const totalCountFiltered = useStickyValue(data?.totalCount ?? 0, loadingData);
-
-        const {
-            countData: rawTotalCountLibrary,
-            loading: countLoading,
-            refetchCount,
-        } = useExplorerCountData({
-            entrypoint,
-            libraryId: view.libraryId,
-            defaultFilters: defaultViewSettings?.filters ?? [],
-            filters: filtersData.filters,
-            skip: viewSettingsLoading,
-        });
-        const totalCountLibrary = useStickyValue(rawTotalCountLibrary, countLoading);
 
         const hasNoResults = data === null || data.totalCount === 0;
 
