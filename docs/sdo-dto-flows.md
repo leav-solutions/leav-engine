@@ -11,11 +11,11 @@ des consumers au boot).
 
 ## Les trois exchanges — et leur type réel
 
-| Config                        | Exchange                        | Sens             | Type déclaré |
-| ----------------------------- | ------------------------------- | ---------------- | ------------ |
-| `sdo.exchange`                | `<c>_sdo`                       | export + import  | `fanout`     |
-| `sdo.dto.import.exchange`     | `<c>_dto_import`                | Data Platform →  | `direct`     |
-| `sdo.dto.statement.exchange`  | `<c>_dto_operation_statement`   | → Data Platform  | `direct`     |
+| Config                       | Exchange                      | Sens            | Type déclaré |
+| ---------------------------- | ----------------------------- | --------------- | ------------ |
+| `sdo.exchange`               | `<c>_sdo`                     | export + import | `fanout`     |
+| `sdo.dto.import.exchange`    | `<c>_dto_import`              | Data Platform → | `direct`     |
+| `sdo.dto.statement.exchange` | `<c>_dto_operation_statement` | → Data Platform | `direct`     |
 
 ⚠️ **Le contrat affirme que tous ses exchanges sont en `fanout` ; c'est faux sur le bus réel** pour le
 flux DTO — d'où le passage de `dto_import` en `direct` (commit `b36fb1b32`), et le même défaut pour le
@@ -31,29 +31,35 @@ core (`config.amqp`) : seul le canal des data events de l'export est sur celle d
 
 Deux natures d'échec, deux comportements (`app/sdo/dtoImportApp.ts`) :
 
-| Nature                                                    | Message AMQP                    | Statement                    |
-| --------------------------------------------------------- | ------------------------------- | ---------------------------- |
-| **Rejet fonctionnel** (`DTORejectionError`)               | **acké** — opération traitée    | `ERROR` + `details` du rejet |
-| **Erreur technique** (toute autre erreur)                 | rethrow → **nack sans requeue** | `ERROR` / `INTERNAL_ERROR`   |
+| Nature                                      | Message AMQP                    | Statement                    |
+| ------------------------------------------- | ------------------------------- | ---------------------------- |
+| **Rejet fonctionnel** (`DTORejectionError`) | **acké** — opération traitée    | `ERROR` + `details` du rejet |
+| **Erreur technique** (toute autre erreur)   | rethrow → **nack sans requeue** | `ERROR` / `INTERNAL_ERROR`   |
 
 Conséquences à connaître :
 
 - un rejet fonctionnel n'est **pas** une panne du consumer : le requeue-er en boucle serait inutile,
-  la réponse à l'émetteur *est* le statement `ERROR` ;
+  la réponse à l'émetteur _est_ le statement `ERROR` ;
 - le nack étant sans requeue (contrat `consume()` de `@leav/message-broker`), un message en erreur
   technique est **perdu** — d'où le statement `INTERNAL_ERROR` publié malgré tout avant le rethrow ;
 - une opération à laquelle manque **l'un** de ses trois ids de traçabilité (`requestId`,
-  `operationId`, `correlationId` — ce dernier étant la clé de corrélation *de l'émetteur*) est
+  `operationId`, `correlationId` — ce dernier étant la clé de corrélation _de l'émetteur_) est
   rejetée, mais **aucun statement n'est publié** : il ne pourrait pas être rattaché à l'opération. Le
   contrat ne traitant pas ce cas, c'est une décision leav.
 
-Statuts émis : `SUCCESS`, `NO_CHANGE` (un `CREATE` sur un `systemId` déjà existant est *skippé* par
+Statuts émis : `SUCCESS`, `NO_CHANGE` (un `CREATE` sur un `systemId` déjà existant est _skippé_ par
 l'import — rien n'est écrit), `ERROR`. **Il n'y a pas de détection fine du non-changement** : un
 `UPDATE` appliqué vaut toujours `SUCCESS`, même si aucune valeur ne diffère réellement.
 
 `sdo_identifier` est construit depuis le **record leav** (uuid + dates), pas depuis le document reçu —
 c'est la raison pour laquelle `ISDOImportDomain.create/update` retournent `{record, changed}` au lieu
-de `void`.
+de `void`. Son bloc `identifier` (identifiants métier) suit la même règle **dès que le record
+préexistait** (`UPDATE`, ou `CREATE` skippé) : il est relu depuis le record via les entrées de mapping
+`identifier.*` (`sdoDomain.getRecordSDOIdentifier`), et non réécho du document — un patch peut ne pas
+porter ce bloc, et un `CREATE` skippé n'a rien appliqué. Sur une **création réelle**, c'est le document
+reçu qui fait foi. Cas particuliers : `{}` si le mapping ne déclare aucune clé `identifier.*` (leav ne
+stocke alors aucun identifiant métier pour ce type, et aucune lecture n'est faite), et repli sur le
+réécho si la relecture échoue — le bloc `identifier` ne doit jamais coûter le statement entier.
 
 ⚠️ La `date` d'un statement est en **secondes** (contrat), alors que celle de l'enveloppe d'export SDO
 est en **millisecondes** (`Date.now()`). Ne pas s'inspirer de l'une pour l'autre.
