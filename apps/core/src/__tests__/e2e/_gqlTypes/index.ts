@@ -172,6 +172,8 @@ export type AttributeInput = {
   settings?: InputMaybe<Scalars['JSONObject']['input']>;
   /**  only for link or standard attribute  */
   smart_filter?: InputMaybe<SmartFilterConfInput>;
+  /**  only for tree attribute  */
+  tree_selection_conf?: InputMaybe<TreeSelectionConfInput>;
   type?: InputMaybe<AttributeType>;
   unique?: InputMaybe<Scalars['Boolean']['input']>;
   values_list?: InputMaybe<ValuesListConfInput>;
@@ -353,6 +355,8 @@ export enum EventAction {
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
   DATA_IMPORT_START = 'DATA_IMPORT_START',
+  DTO_LOG_ERROR = 'DTO_LOG_ERROR',
+  DTO_LOG_IMPORT_RECORD = 'DTO_LOG_IMPORT_RECORD',
   EXPORT_END = 'EXPORT_END',
   EXPORT_START = 'EXPORT_START',
   GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
@@ -568,6 +572,8 @@ export enum LogAction {
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
   DATA_IMPORT_START = 'DATA_IMPORT_START',
+  DTO_LOG_ERROR = 'DTO_LOG_ERROR',
+  DTO_LOG_IMPORT_RECORD = 'DTO_LOG_IMPORT_RECORD',
   EXPORT_END = 'EXPORT_END',
   EXPORT_START = 'EXPORT_START',
   GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
@@ -961,7 +967,6 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
@@ -1026,6 +1031,20 @@ export type TreeNodePermissionsConfInput = {
 export type TreePermissionsDependentValuesConfInput = {
   allowByDefault: Scalars['Boolean']['input'];
   dependenciesTreeAttributes: Array<Scalars['ID']['input']>;
+};
+
+export enum TreeSelectableNodes {
+  all_nodes = 'all_nodes',
+  leaves_only = 'leaves_only'
+}
+
+export type TreeSelectionConfInput = {
+  defaultExpanded?: InputMaybe<Scalars['Boolean']['input']>;
+  displayRootNode?: InputMaybe<Scalars['ID']['input']>;
+  maxDepth?: InputMaybe<Scalars['Int']['input']>;
+  selectableNodes?: InputMaybe<TreeSelectableNodes>;
+  showSelectChildrenButton?: InputMaybe<Scalars['Boolean']['input']>;
+  showSelectDescendantsButton?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type TreepermissionsConfInput = {
@@ -1282,6 +1301,13 @@ export type SaveAttributeMutationVariables = Exact<{
 
 export type SaveAttributeMutation = { saveAttribute: { id: string } };
 
+export type DeleteAttributeMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteAttributeMutation = { deleteAttribute: { id: string } };
+
 export type GetLinkAttributeSmartFilterQueryVariables = Exact<{
   filters?: InputMaybe<AttributesFiltersInput>;
 }>;
@@ -1385,6 +1411,13 @@ export type NotificationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type NotificationsQuery = { notifications: { totalCount: number, list: Array<{ id: string, date: number, level: NotificationLevel, title: string, message: string, taskId?: string | null, relatedEntities?: Array<{ url: string, label: string }> | null, attachments?: Array<{ url: string, label: string }> | null }> } };
 
+export type SavePermissionMutationVariables = Exact<{
+  permission: PermissionInput;
+}>;
+
+
+export type SavePermissionMutation = { savePermission: { type: PermissionTypes } };
+
 export type GetRecordQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['String']['input'];
@@ -1408,7 +1441,7 @@ export type CreateRecordMutationVariables = Exact<{
 }>;
 
 
-export type CreateRecordMutation = { createRecord: { valuesErrors?: Array<{ attribute: string, input?: string | null, message: string, type: string }> | null, record?: { id: string, uuid: string } | null } };
+export type CreateRecordMutation = { createRecord: { valuesErrors?: Array<{ attribute?: string | null, input?: string | null, message: string, type: string }> | null, record?: { id: string, uuid: string } | null } };
 
 export type DeleteRecordMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']['input']>;
@@ -1479,6 +1512,13 @@ export type TreeAddElementMutationVariables = Exact<{
 
 export type TreeAddElementMutation = { treeAddElement: { id: string } };
 
+export type DeleteTreeMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type DeleteTreeMutation = { deleteTree: { id: string } };
+
 export type SaveValueBatchMutationVariables = Exact<{
   library?: InputMaybe<Scalars['ID']['input']>;
   recordId?: InputMaybe<Scalars['ID']['input']>;
@@ -1487,7 +1527,7 @@ export type SaveValueBatchMutationVariables = Exact<{
 }>;
 
 
-export type SaveValueBatchMutation = { saveValueBatch: { errors?: Array<{ attribute: string, input?: string | null, message: string, type: string }> | null, values?: Array<
+export type SaveValueBatchMutation = { saveValueBatch: { errors?: Array<{ attribute?: string | null, input?: string | null, message: string, type: string }> | null, values?: Array<
       | { id_value?: string | null, linkPayload?: { id: string } | null }
       | { id_value?: string | null, treePayload?: { id: string } | null }
       | { payload?: any | null, id_value?: string | null }
@@ -1650,6 +1690,13 @@ export const DeleteApiKeyDocument = gql`
 export const SaveAttributeDocument = gql`
     mutation SaveAttribute($attribute: AttributeInput) {
   saveAttribute(attribute: $attribute) {
+    id
+  }
+}
+    `;
+export const DeleteAttributeDocument = gql`
+    mutation DeleteAttribute($id: ID!) {
+  deleteAttribute(id: $id) {
     id
   }
 }
@@ -1859,6 +1906,13 @@ export const NotificationsDocument = gql`
   }
 }
     `;
+export const SavePermissionDocument = gql`
+    mutation SavePermission($permission: PermissionInput!) {
+  savePermission(permission: $permission) {
+    type
+  }
+}
+    `;
 export const GetRecordDocument = gql`
     query GetRecord($libraryId: ID!, $recordId: String!) {
   records(
@@ -2010,6 +2064,13 @@ export const TreeAddElementDocument = gql`
     parent: $parent
     order: $order
   ) {
+    id
+  }
+}
+    `;
+export const DeleteTreeDocument = gql`
+    mutation DeleteTree($id: ID!) {
+  deleteTree(id: $id) {
     id
   }
 }
@@ -2267,6 +2328,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     SaveAttribute(variables?: SaveAttributeMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveAttributeMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<SaveAttributeMutation>({ document: SaveAttributeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveAttribute', 'mutation', variables);
     },
+    DeleteAttribute(variables: DeleteAttributeMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteAttributeMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteAttributeMutation>({ document: DeleteAttributeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteAttribute', 'mutation', variables);
+    },
     getLinkAttributeSmartFilter(variables?: GetLinkAttributeSmartFilterQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetLinkAttributeSmartFilterQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetLinkAttributeSmartFilterQuery>({ document: GetLinkAttributeSmartFilterDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'getLinkAttributeSmartFilter', 'query', variables);
     },
@@ -2309,6 +2373,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     Notifications(variables?: NotificationsQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<NotificationsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<NotificationsQuery>({ document: NotificationsDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'Notifications', 'query', variables);
     },
+    SavePermission(variables: SavePermissionMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SavePermissionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SavePermissionMutation>({ document: SavePermissionDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SavePermission', 'mutation', variables);
+    },
     GetRecord(variables: GetRecordQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecordQuery>({ document: GetRecordDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecord', 'query', variables);
     },
@@ -2341,6 +2408,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     TreeAddElement(variables: TreeAddElementMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<TreeAddElementMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<TreeAddElementMutation>({ document: TreeAddElementDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'TreeAddElement', 'mutation', variables);
+    },
+    DeleteTree(variables: DeleteTreeMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteTreeMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteTreeMutation>({ document: DeleteTreeDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteTree', 'mutation', variables);
     },
     SaveValueBatch(variables?: SaveValueBatchMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveValueBatchMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<SaveValueBatchMutation>({ document: SaveValueBatchDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveValueBatch', 'mutation', variables);

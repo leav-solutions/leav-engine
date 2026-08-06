@@ -1,0 +1,5 @@
+mutation SavePermission($permission: PermissionInput!) {
+    savePermission(permission: $permission) {
+        type
+    }
+}
