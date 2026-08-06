@@ -26,7 +26,7 @@ export interface ICreateRecordParams {
 
 export interface ICreateRecordValueError {
     // Should correspond to GraphQL ValueBatchError
-    attribute: string;
+    attribute: string | null;
     library?: string;
     type: ErrorTypes | Errors;
     message: string;

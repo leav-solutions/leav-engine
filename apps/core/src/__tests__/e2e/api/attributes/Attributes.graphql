@@ -4,6 +4,12 @@ mutation SaveAttribute($attribute: AttributeInput) {
     }
 }
 
+mutation DeleteAttribute($id: ID!) {
+    deleteAttribute(id: $id) {
+        id
+    }
+}
+
 query getLinkAttributeSmartFilter($filters: AttributesFiltersInput) {
     attributes(filters: $filters) {
         list {

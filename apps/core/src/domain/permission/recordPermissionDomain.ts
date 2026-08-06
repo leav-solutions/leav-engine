@@ -170,8 +170,9 @@ export default function (deps: IRecordPermissionDomainDeps): IRecordPermissionDo
                 ctx,
             );
 
-            // If record is in creation and user is the creator, we allow all actions
-            if (treeBasedPermission === false) {
+            // Record-in-creation bypass doesn't apply to CREATE_RECORD itself, so the extension can
+            // still deny creation based on the record's own classification.
+            if (treeBasedPermission === false && action !== RecordPermissionsActions.CREATE_RECORD) {
                 const record = await recordRepo.getRecord({libraryId: library, recordId, ctx});
                 return recordInCreationBypassHelper.recordInCreationBypass(record, ctx);
             }

@@ -170,7 +170,7 @@ export default function ({
 
                     type ValueBatchError {
                         type: String!,
-                        attribute: String!,
+                        attribute: String,
                         library: String,
                         input: String,
                         message: String!

@@ -9,3 +9,9 @@ mutation TreeAddElement($treeId: ID!, $element: TreeElementInput!, $parent: ID, 
         id
     }
 }
+
+mutation DeleteTree($id: ID!) {
+    deleteTree(id: $id) {
+        id
+    }
+}

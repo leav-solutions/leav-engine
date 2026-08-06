@@ -8,6 +8,7 @@ import {type IListWithCursor} from '../../_types/list';
 import {type ISaveValue, type IValue, type IValuesOptions} from '../../_types/value';
 import {ECacheType, type ICachesService} from '../../infra/cache/cacheService';
 import {Errors} from '../../_types/errors';
+import PermissionError from '../../errors/PermissionError';
 import {LibraryPermissionsActions, RecordPermissionsActions} from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {
@@ -167,6 +168,17 @@ export default function ({
     const ret: IRecordDomain = {
         find: findRecordsHelper,
         async activateNewRecord({library, recordId, formId, skipVerifyRequiredAttributes, ctx}) {
+            const hasCreatePermission = await recordPermissionDomain.getRecordPermission({
+                action: RecordPermissionsActions.CREATE_RECORD,
+                library,
+                recordId,
+                ctx,
+            });
+
+            if (!hasCreatePermission) {
+                throw new PermissionError(RecordPermissionsActions.CREATE_RECORD);
+            }
+
             const libraryAttributes = await attributeDomain.getLibraryAttributes(library, ctx);
 
             if (!skipVerifyRequiredAttributes) {
