@@ -20,6 +20,7 @@ import {type ItemActions, type ExplorerProps} from '../../types';
 import {AttributeType, RecordFilterCondition} from '../../../../__generated__';
 import {mapToCommonExplorerProps} from './mapperToCommonExplorerProps';
 import {mapperToItemActions} from './mapperToItemActions';
+import {mapperToCreationProps} from './mapperToCreationProps';
 import {useViewSettingsProps} from './useViewSettingsProps';
 import {explorerContainer} from './panelExplorer.module.css';
 
@@ -86,6 +87,12 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
 
     const commonExplorerProps = explorerProps ? mapToCommonExplorerProps({explorerProps}) : {};
     const itemActions = mapperToItemActions({actions, application, lang, navigate, libraryId: libraryIdSource});
+    const creationProps = mapperToCreationProps({
+        creationPanels: application.libraries[libraryIdSource]?.creationPanels ?? [],
+        lang,
+        navigate,
+        initialValues: recordId ? {[attributeSource]: [recordId]} : undefined,
+    });
 
     // TODO: Should be deleted when we will use link explorer
     itemActions.push({
@@ -172,6 +179,12 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
             <div className={explorerContainer}>
                 <ExplorerV2
                     {...commonExplorerPropsV2}
+                    // Declared creationPanels replace the built-in `create`, like on PanelLibraryExplorer. The
+                    // attribute explorer adds its link context: the created record must end up attached to the
+                    // parent record through `attributeSource`, so the value is forwarded as `formInitialValues`
+                    // and the record is created already linked — the linked-records pre-filter below would
+                    // otherwise hide it from the list.
+                    {...creationProps}
                     entrypoint={entrypoint}
                     hideFirstActionLabel
                     defaultActionsForItem={[]}
@@ -195,6 +208,12 @@ export const PanelAttributeExplorer: FunctionComponent<IPanelExplorerProps> = ({
         <div className={explorerContainer}>
             <Explorer
                 {...commonExplorerProps}
+                // Declared creationPanels replace the built-in `create`, like on PanelLibraryExplorer. The
+                // attribute explorer adds its link context: the created record must end up attached to the
+                // parent record through `attributeSource`, so the value is forwarded as `formInitialValues`
+                // and the record is created already linked — the linked-records pre-filter below would
+                // otherwise hide it from the list.
+                {...creationProps}
                 defaultViewSettings={{
                     filters: [linkPreFilter],
                     ...commonExplorerProps.defaultViewSettings,

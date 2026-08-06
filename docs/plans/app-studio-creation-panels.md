@@ -116,9 +116,10 @@ suggérée par Philippe) :
 - **Schéma** (`usePanelMessenger/schema.ts`) : groupe `creationPanels` par bibliothèque ; entrée =
   panel de création avec `formId` (label, icône, `where`).
 - **Validateur** (`schemaValidators.ts`) : cohérence des entrées.
-- **Mapper** (`panel-explorer/mapperToCreationActions.tsx`, calqué sur `mapperToItemActions.tsx`) :
-  `creationPanels` → `IPrimaryAction[]` dont le `callback` **navigue** vers le panel de création
-  (top-level via `NEW_RECORD_ID`, cf. Lot 0).
+- **Mapper** (`panel-explorer/mapperToCreationProps.tsx`, calqué sur `mapperToItemActions.tsx`) :
+  `creationPanels` → props de création de l'explorateur (`primaryActions` dont le `callback`
+  **navigue** vers le panel de création — top-level via `NEW_RECORD_ID`, cf. Lot 0 — et
+  `defaultPrimaryActions: []`).
 - **Câblage** `PanelLibraryExplorer` / `PanelAttributeExplorer` : passer `primaryActions`,
   **désactiver le built-in `create`** quand des `creationPanels` existent.
 - Tests (schéma, mapper, rendu `+` simple vs déroulant).
