@@ -15,14 +15,14 @@ des consumers au boot).
 | ---------------------------- | ----------------------------- | --------------- | ------------ |
 | `sdo.exchange`               | `<c>_sdo`                     | export + import | `fanout`     |
 | `sdo.dto.import.exchange`    | `<c>_dto_import`              | Data Platform → | `direct`     |
-| `sdo.dto.statement.exchange` | `<c>_dto_operation_statement` | → Data Platform | `direct`     |
+| `sdo.dto.statement.exchange` | `<c>_dto_operation_statement` | → Data Platform | `fanout`     |
 
-⚠️ **Le contrat affirme que tous ses exchanges sont en `fanout` ; c'est faux sur le bus réel** pour le
-flux DTO — d'où le passage de `dto_import` en `direct` (commit `b36fb1b32`), et le même défaut pour le
-statement. Un type qui ne correspond pas à celui déjà déclaré sur le broker fait répondre
-`PRECONDITION_FAILED` et fermer le canal : **le type est donc surchargeable par env**
-(`DTO_IMPORT_EXCHANGE_TYPE`, `DTO_STATEMENT_EXCHANGE_TYPE`) pour ne pas exiger une livraison de code
-si un environnement diverge.
+⚠️ **Le type n'est pas uniforme sur le flux DTO** : `dto_import` a dû passer en `direct` (commit
+`b36fb1b32`) pour correspondre au bus réel, alors que le statement est bien en `fanout` comme l'annonce
+le contrat. Ne pas déduire le type d'un exchange de celui de son voisin. Un type qui ne correspond pas
+à celui déjà déclaré sur le broker fait répondre `PRECONDITION_FAILED` et fermer le canal : **le type
+est donc surchargeable par env** (`DTO_IMPORT_EXCHANGE_TYPE`, `DTO_STATEMENT_EXCHANGE_TYPE`) pour ne
+pas exiger une livraison de code si un environnement diverge.
 
 Les trois canaux vivent sur une **connexion AMQP dédiée** (`config.sdo.amqp`), distincte de celle du
 core (`config.amqp`) : seul le canal des data events de l'export est sur celle du core.

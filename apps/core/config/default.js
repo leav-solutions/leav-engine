@@ -324,7 +324,7 @@ module.exports = {
             statement: {
                 enable: envToBool(process.env.DTO_STATEMENT_ENABLE, true),
                 exchange: process.env.DTO_STATEMENT_EXCHANGE || process.env.INSTANCE_ID + '_dto_operation_statement',
-                exchangeType: process.env.DTO_STATEMENT_EXCHANGE_TYPE || 'direct',
+                exchangeType: process.env.DTO_STATEMENT_EXCHANGE_TYPE || 'fanout',
             },
         },
     },

@@ -33,7 +33,7 @@ export const mockConfig = {
             statement: {
                 enable: true,
                 exchange: 'testDtoStatementExchange',
-                exchangeType: 'direct',
+                exchangeType: 'fanout',
             },
         },
     },

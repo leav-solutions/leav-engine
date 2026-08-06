@@ -109,7 +109,7 @@ module.exports = {
             statement: {
                 enable: true,
                 exchange: 'test_dto_statement_exchange',
-                exchangeType: 'direct',
+                exchangeType: 'fanout',
             },
         },
     },
