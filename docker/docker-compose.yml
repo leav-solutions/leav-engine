@@ -487,7 +487,9 @@ services:
     ports:
       - "80:80"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      # Allow to override path in .env for rootless docker install https://docs.docker.com/engine/security/rootless/
+      # For instance /run/user/1000/docker.sock
+      - ${DOCKER_HOST_SOCKET_PATH:-/var/run/docker.sock}:/var/run/docker.sock
     labels:
       # Enable self‑routing for Traefik dashboard
       - "traefik.enable=true"
