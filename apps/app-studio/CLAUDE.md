@@ -137,9 +137,12 @@ Contraintes :
   n'affiche que les `name` — les `icon` des entrées ne sont pas rendues. `name` reste requis :
   il devient le libellé visible dès qu'une deuxième entrée est ajoutée.
 - Sans `creationPanels`, le `create` built-in de l'explorateur est inchangé.
-- Câblé sur l'explorateur de **bibliothèque** uniquement (le cas lié — explorateur d'attribut avec
-  liaison au parent — reste sur le built-in ; généralisation prévue au Lot 2 du chantier
-  `creationPanels`).
+- Câblé sur l'explorateur de **bibliothèque** et sur l'explorateur **d'attribut** (liaison au
+  parent). Ce dernier transmet en plus son contexte de liaison : le `+` ouvre le panel avec
+  `formInitialValues = {[attributeSource]: [recordId du parent]}`, si bien que le record est créé
+  **déjà rattaché** au parent — sinon le pré-filtre « records liés » de la liste le masquerait.
+  Les deux saveurs le consomment sans config supplémentaire : le formulaire LEAV à la création du
+  record (`EditRecordPage`), l'iframe `customCreation` via le passe-plat.
 - La config **explorer-studio générée par le core** ne déclare pas encore de `creationPanels` (ses
   explorateurs restent sur le `create` built-in) ; adapter cette génération est une tâche à part,
   à intégrer au plan du chantier `creationPanels`.

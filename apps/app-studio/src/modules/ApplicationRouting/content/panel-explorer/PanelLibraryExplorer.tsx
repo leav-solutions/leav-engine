@@ -4,13 +4,10 @@ import {useNavigate} from 'react-router-dom';
 import {type ItemActions, type ExplorerProps} from '../../types';
 import {mapToCommonExplorerProps} from './mapperToCommonExplorerProps';
 import {mapperToItemActions} from './mapperToItemActions';
-import {mapperToCreationActions} from './mapperToCreationActions';
+import {mapperToCreationProps} from './mapperToCreationProps';
 import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {useViewSettingsProps} from './useViewSettingsProps';
 import {explorerContainer} from './panelExplorer.module.css';
-
-// Stable reference: disables the explorer built-in `create` when `creationPanels` are declared.
-const NO_DEFAULT_PRIMARY_ACTIONS: Array<'create'> = [];
 
 interface IPanelLibraryExplorerProps {
     libraryId: string;
@@ -29,21 +26,15 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
 
     const commonExplorerProps = mapToCommonExplorerProps({explorerProps});
     const itemActions = mapperToItemActions({actions, application, lang, navigate, libraryId});
+    const creationProps = mapperToCreationProps({
+        creationPanels: application.libraries[libraryId]?.creationPanels ?? [],
+        lang,
+        navigate,
+    });
 
     const viewSettingsProps = useViewSettingsProps();
 
     const entrypoint = {type: 'library', libraryId} as const;
-
-    const creationPanels = application.libraries[libraryId]?.creationPanels ?? [];
-    // Declared creationPanels replace the built-in `create` (spread after the common props to
-    // override any `defaultPrimaryActions` coming from the explorerProps config).
-    const creationProps =
-        creationPanels.length > 0
-            ? {
-                  primaryActions: mapperToCreationActions({creationPanels, lang, navigate}),
-                  defaultPrimaryActions: NO_DEFAULT_PRIMARY_ACTIONS,
-              }
-            : {};
 
     // TODO: Should be deleted when ViewV2 will be fully integrated and ExplorerV2 will be renamed to Explorer.
     if (application.enableViewSettings) {
@@ -54,6 +45,8 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
             <div className={explorerContainer}>
                 <ExplorerV2
                     {...commonExplorerPropsV2}
+                    // Declared creationPanels replace the built-in `create` (spread after the common props to
+                    // override any `defaultPrimaryActions` coming from the explorerProps config).
                     {...creationProps}
                     entrypoint={entrypoint}
                     itemActions={itemActions}
@@ -70,6 +63,8 @@ export const PanelLibraryExplorer: FunctionComponent<IPanelLibraryExplorerProps>
         <div className={explorerContainer}>
             <Explorer
                 {...commonExplorerProps}
+                // Declared creationPanels replace the built-in `create` (spread after the common props to
+                // override any `defaultPrimaryActions` coming from the explorerProps config).
                 {...creationProps}
                 defaultViewSettings={commonExplorerProps.defaultViewSettings}
                 entrypoint={entrypoint}
