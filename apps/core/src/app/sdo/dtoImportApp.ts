@@ -199,6 +199,11 @@ export default function ({
                 dto,
                 status: importResult.changed ? DTOStatementStatus.SUCCESS : DTOStatementStatus.NO_CHANGE,
                 record: importResult.record,
+                mappingLibrary,
+                // An UPDATE patches an existing record; a CREATE that changed nothing was skipped
+                // because the record was already there.
+                recordPreexisted: dto.method === 'UPDATE' || !importResult.changed,
+                ctx: _systemQueryContext,
             });
         } catch (error) {
             logger.error(`Error in dtoImportApp::onDTOEvent(): ${error.message}`, {
@@ -230,6 +235,7 @@ export default function ({
             await _publishStatement({
                 dto,
                 status: DTOStatementStatus.ERROR,
+                ctx: _systemQueryContext,
                 details:
                     error instanceof DTORejectionError
                         ? error.details

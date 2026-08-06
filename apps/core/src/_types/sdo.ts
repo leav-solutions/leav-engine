@@ -52,6 +52,9 @@ export type SDOMappingAttributeFormat = 'number' | 'integer' | 'boolean' | 'stri
 
 export const sdoPathIdentifierUuid = 'system.systemId' as const;
 
+/** Content block holding the business identifiers of an object */
+export const sdoIdentifierBlock = 'identifier' as const;
+
 export interface ISDOMappingAttribute {
     /**
      * LEAV attribute id, or a dotted path traversing links/trees for export (e.g. "category.color").

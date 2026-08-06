@@ -9,6 +9,7 @@ export const mockSdoDomain: Mockify<ISDODomain> = {
     schemaValidation: vi.fn(),
     getSDOGlobalSettings: vi.fn(),
     getRecordSDO: vi.fn(),
+    getRecordSDOIdentifier: vi.fn(),
     resolveAdditionalLibraryTriggerTargets: vi.fn(),
     sendLog: vi.fn(),
     registerSDOExportMappingFunctions: vi.fn(),

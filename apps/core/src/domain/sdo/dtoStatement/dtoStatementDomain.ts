@@ -8,7 +8,10 @@ import {
 } from '../../../_types/dto';
 import {type IConfig} from '../../../_types/config';
 import {type IRecord} from '../../../_types/record';
+import {type IQueryInfos} from '../../../_types/queryInfos';
+import {type ISDOMappingLibrary} from '../../../_types/sdo';
 import {type IRabbitMQ} from '../../../infra/sdo/sdoRabbitMQ';
+import {type ISDODomain} from '../sdoDomain';
 
 /** Traceability ids the emitter matches the statement on, echoed as-is from the DTO */
 const CORRELATION_ID_FIELDS = ['requestId', 'operationId', 'correlationId'] as const satisfies ReadonlyArray<
@@ -16,6 +19,7 @@ const CORRELATION_ID_FIELDS = ['requestId', 'operationId', 'correlationId'] as c
 >;
 
 export interface IDTOStatementDomainDeps {
+    'core.domain.sdo': ISDODomain;
     'core.infra.sdo.rabbitMQ': IRabbitMQ;
     config: IConfig;
 }
@@ -23,10 +27,19 @@ export interface IDTOStatementDomainDeps {
 export interface ISendStatementParams {
     dto: IDTO;
     status: DTOStatementStatus;
+    ctx: IQueryInfos;
     /** Contractual error details, only on an `ERROR` statement */
     details?: IDTOErrorDetail[];
     /** The leav record the operation landed on, source of `sdo_identifier` */
     record?: IRecord | null;
+    /** Mapping of the targeted SDO type, needed to read the stored `identifier` block back */
+    mappingLibrary?: ISDOMappingLibrary;
+    /**
+     * `true` when the record already existed before the operation (an `UPDATE`, or a `CREATE` skipped
+     * because the record was there). The incoming document is then not the source of truth for the
+     * business identifiers: they are read back from leav.
+     */
+    recordPreexisted?: boolean;
 }
 
 export interface IDTOStatementDomain {
@@ -34,12 +47,45 @@ export interface IDTOStatementDomain {
 }
 
 export default function ({
+    'core.domain.sdo': sdoDomain,
     'core.infra.sdo.rabbitMQ': rabbitMQService,
     config,
 }: IDTOStatementDomainDeps): IDTOStatementDomain {
     const debug = config.sdo.debug ?? false;
 
-    const _buildSDOIdentifier = (dto: IDTO, record?: IRecord | null): IDTOStatementIdentifier | null => {
+    const _receivedIdentifier = (dto: IDTO): Record<string, unknown> =>
+        (dto.payloadDocument?.identifier as Record<string, unknown>) ?? {};
+
+    /**
+     * On a pre-existing record the incoming document is not the source of truth for the business
+     * identifiers: an `UPDATE` patch may not carry the block at all, and a skipped `CREATE` was never
+     * applied. They are therefore read back from leav — falling back to what was received rather than
+     * losing the whole statement should that read fail.
+     */
+    const _getIdentifier = async ({
+        dto,
+        record,
+        mappingLibrary,
+        recordPreexisted,
+        ctx,
+    }: ISendStatementParams): Promise<Record<string, unknown>> => {
+        if (!recordPreexisted || !mappingLibrary) {
+            return _receivedIdentifier(dto);
+        }
+
+        try {
+            return await sdoDomain.getRecordSDOIdentifier(mappingLibrary, record, ctx);
+        } catch (error) {
+            logger.warn(
+                `[DTO] Could not read the stored identifier block of ${record?.id}, falling back to the received one: ${error.message}`,
+            );
+            return _receivedIdentifier(dto);
+        }
+    };
+
+    const _buildSDOIdentifier = async (params: ISendStatementParams): Promise<IDTOStatementIdentifier | null> => {
+        const {record} = params;
+
         if (!record) {
             return null;
         }
@@ -52,12 +98,13 @@ export default function ({
                 systemCreationDate: record.created_at,
                 systemLastModifiedDate: record.modified_at,
             },
-            // The `identifier` block holds business identifiers leav doesn't own, echoed as received.
-            identifier: (dto.payloadDocument?.identifier as Record<string, unknown>) ?? {},
+            identifier: await _getIdentifier(params),
         };
     };
 
-    const sendStatement = async ({dto, status, details, record}: ISendStatementParams): Promise<void> => {
+    const sendStatement = async (params: ISendStatementParams): Promise<void> => {
+        const {dto, status, details} = params;
+
         if (!config.sdo.dto.statement.enable) {
             return;
         }
@@ -86,7 +133,7 @@ export default function ({
             method: dto.method,
             status,
             details: isError ? (details ?? []) : null,
-            sdo_identifier: isError ? null : _buildSDOIdentifier(dto, record),
+            sdo_identifier: isError ? null : await _buildSDOIdentifier(params),
             date: Math.round(Date.now() / 1000), // epoch in seconds, per the contract
         };
 

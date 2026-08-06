@@ -16,6 +16,7 @@ import {
     type IExtendSDOFunctions,
     type IExtendSDOFunction,
     type ISDOTriggerTarget,
+    sdoIdentifierBlock,
 } from '../../_types/sdo';
 import {type IDTO} from '../../_types/dto';
 import {type IGlobalSettings} from '../../_types/globalSettings';
@@ -52,10 +53,15 @@ export interface ISDODomain {
     getRecordSDO(
         leavLibraryId: string,
         recordId: string,
-        sdoGlobalSettingsMapping: ISDOMapping,
+        sdoMapping: ISDOMapping,
         sdoAction: SDOAction,
         ctx: IQueryInfos,
     ): Promise<ISDO | null>;
+    getRecordSDOIdentifier(
+        sdoMappingLibrary: ISDOMappingLibrary,
+        record: IRecord,
+        ctx: IQueryInfos,
+    ): Promise<Record<string, unknown>>;
     resolveAdditionalLibraryTriggerTargets(
         sdoMapping: ISDOMapping,
         eventLibraryId: string,
@@ -191,51 +197,96 @@ export default function ({
             }
         }
 
-        const mapRecordAttributeValue = async (values: IValue[], attributeProperty: IAttribute): Promise<unknown> => {
-            switch (attributeProperty.type) {
-                case AttributeTypes.SIMPLE:
-                    return (values?.[0] as IStandardValue)?.raw_payload ?? null;
-                case AttributeTypes.ADVANCED:
-                    if (attributeProperty.multiple_values) {
-                        return (values as IStandardValue[]).map(value => value.raw_payload) ?? [];
-                    }
-                    return (values as IStandardValue[])[0]?.raw_payload ?? null;
-                case AttributeTypes.SIMPLE_LINK: {
-                    const simpleLinkedRecord = (values?.[0] as ILinkValue)?.payload;
-                    return simpleLinkedRecord
-                        ? _getUUIDValue(simpleLinkedRecord.library, simpleLinkedRecord.id, ctx)
-                        : null;
-                }
-                case AttributeTypes.ADVANCED_LINK: {
-                    const advLinksUuids = await Promise.all(
-                        (values as ILinkValue[]).map(async link =>
-                            link.payload ? _getUUIDValue(link.payload?.library, link.payload?.id, ctx) : null,
-                        ),
-                    );
-                    return attributeProperty.multiple_values ? advLinksUuids : (advLinksUuids[0] ?? null);
-                }
-                case AttributeTypes.TREE: {
-                    const treeLinkUuids = await Promise.all(
-                        (values as ITreeValue[]).map(async treeValue =>
-                            treeValue.payload?.record
-                                ? _getUUIDValue(treeValue.payload.record.library, treeValue.payload.record.id, ctx)
-                                : null,
-                        ),
-                    );
-                    return attributeProperty.multiple_values ? treeLinkUuids : (treeLinkUuids[0] ?? null);
-                }
-                default:
-                    throw new LeavError(
-                        ErrorTypes.INTERNAL_ERROR,
-                        `getRecordSDO(): unknown type ${attributeProperty.type} for attribute ${attributeProperty.id}`,
-                    );
-            }
-        };
+        const attributesByLeavAttributeId = await _resolveMappedRecordValues(
+            leavLibraryId,
+            record,
+            sdoMappingLibrary.sdoAttributes,
+            ctx,
+        );
 
+        // Create sdo object
+        const sdo = await _createSDO(
+            record,
+            sdoAction,
+            sdoMappingLibrary,
+            sdoLibraryId,
+            attributesByLeavAttributeId,
+            ctx,
+        );
+
+        // validate SDO (json schema)
+        try {
+            await schemaValidation(sdo.content);
+        } catch (error) {
+            logger.error(`getRecordSDO JSON Schema validation error for ${leavLibraryId}/${recordId}: ${error.stack}`);
+            throw error;
+        }
+
+        return sdo;
+    };
+
+    const _mapRecordAttributeValue = async (
+        values: IValue[],
+        attributeProperty: IAttribute,
+        ctx: IQueryInfos,
+    ): Promise<unknown> => {
+        switch (attributeProperty.type) {
+            case AttributeTypes.SIMPLE:
+                return (values?.[0] as IStandardValue)?.raw_payload ?? null;
+            case AttributeTypes.ADVANCED:
+                if (attributeProperty.multiple_values) {
+                    return (values as IStandardValue[]).map(value => value.raw_payload) ?? [];
+                }
+                return (values as IStandardValue[])[0]?.raw_payload ?? null;
+            case AttributeTypes.SIMPLE_LINK: {
+                const simpleLinkedRecord = (values?.[0] as ILinkValue)?.payload;
+                return simpleLinkedRecord
+                    ? _getUUIDValue(simpleLinkedRecord.library, simpleLinkedRecord.id, ctx)
+                    : null;
+            }
+            case AttributeTypes.ADVANCED_LINK: {
+                const advLinksUuids = await Promise.all(
+                    (values as ILinkValue[]).map(async link =>
+                        link.payload ? _getUUIDValue(link.payload?.library, link.payload?.id, ctx) : null,
+                    ),
+                );
+                return attributeProperty.multiple_values ? advLinksUuids : (advLinksUuids[0] ?? null);
+            }
+            case AttributeTypes.TREE: {
+                const treeLinkUuids = await Promise.all(
+                    (values as ITreeValue[]).map(async treeValue =>
+                        treeValue.payload?.record
+                            ? _getUUIDValue(treeValue.payload.record.library, treeValue.payload.record.id, ctx)
+                            : null,
+                    ),
+                );
+                return attributeProperty.multiple_values ? treeLinkUuids : (treeLinkUuids[0] ?? null);
+            }
+            default:
+                throw new LeavError(
+                    ErrorTypes.INTERNAL_ERROR,
+                    `getRecordSDO(): unknown type ${attributeProperty.type} for attribute ${attributeProperty.id}`,
+                );
+        }
+    };
+
+    /**
+     * Resolves the leav value of every mapped attribute and stores it on the record, keyed by its
+     * `leavAttributeId`. Returns the attribute properties, which the export mapping functions need.
+     *
+     * The record is mutated on purpose (it acts as the value bag for the content build below); pass a
+     * copy when the caller's record must stay untouched.
+     */
+    const _resolveMappedRecordValues = async (
+        leavLibraryId: string,
+        record: IRecord,
+        sdoAttributes: ISDOMappingLibrary['sdoAttributes'],
+        ctx: IQueryInfos,
+    ): Promise<Map<string, IAttribute>> => {
         const attributesByLeavAttributeId = new Map<string, IAttribute>();
 
         await Promise.all(
-            Object.values(sdoMappingLibrary.sdoAttributes)
+            Object.values(sdoAttributes)
                 .filter(attr => attr.leavAttributeId !== '')
                 .map(async attr => {
                     const attributePath = attr.leavAttributeId;
@@ -267,29 +318,88 @@ export default function ({
                         ctx,
                     });
 
-                    record[attributePath] = await mapRecordAttributeValue(fieldValues, attributeProperty);
+                    record[attributePath] = await _mapRecordAttributeValue(fieldValues, attributeProperty, ctx);
                 }),
         );
 
-        // Create sdo object
-        const sdo = await _createSDO(
-            record,
-            sdoAction,
-            sdoMappingLibrary,
-            sdoLibraryId,
-            attributesByLeavAttributeId,
+        return attributesByLeavAttributeId;
+    };
+
+    /**
+     * Writes the mapped values onto an SDO content, at the SDO path each mapping entry declares,
+     * applying the entry's export function and format.
+     */
+    const _setMappedValuesOnContent = async (
+        content: ISDO['content'] | Record<string, unknown>,
+        record: IRecord,
+        sdoAttributes: ISDOMappingLibrary['sdoAttributes'],
+        attributesByLeavAttributeId: Map<string, IAttribute>,
+        ctx: IQueryInfos,
+    ): Promise<void> => {
+        await Promise.all(
+            Object.entries(sdoAttributes).map(async ([attributeKey, mappingAttribute]) => {
+                const mappingFunction = exportMappingFunctions.get(
+                    mappingAttribute.exportFunction,
+                ) as ISDOMappingFunction;
+
+                if (mappingAttribute.leavAttributeId && !mappingFunction && mappingAttribute.exportFunction) {
+                    throw new LeavError(
+                        ErrorTypes.INTERNAL_ERROR,
+                        `Unknown mapping function ${mappingAttribute.exportFunction} for attribute ${attributeKey}`,
+                    );
+                }
+
+                if (mappingAttribute.leavAttributeId && mappingFunction) {
+                    const attr = attributesByLeavAttributeId.get(mappingAttribute.leavAttributeId);
+                    const mappedValue = await mappingFunction(record[mappingAttribute.leavAttributeId], attr, ctx);
+
+                    _.set(content, attributeKey, _cleanValue(mappedValue, mappingAttribute.format));
+                } else {
+                    _.set(
+                        content,
+                        attributeKey,
+                        _cleanValue(record[mappingAttribute.leavAttributeId], mappingAttribute.format),
+                    );
+                }
+            }),
+        );
+    };
+
+    /**
+     * The `identifier` block (business identifiers of the object) as currently stored in leav, built
+     * from the mapping entries targeting that block. `{}` when the mapping declares none — leav then
+     * holds no business identifier for this SDO type.
+     */
+    const getRecordSDOIdentifier = async (
+        sdoMappingLibrary: ISDOMappingLibrary,
+        record: IRecord,
+        ctx: IQueryInfos,
+    ): Promise<Record<string, unknown>> => {
+        const identifierAttributes = Object.fromEntries(
+            Object.entries(sdoMappingLibrary.sdoAttributes ?? {}).filter(([sdoKey]) =>
+                sdoKey.startsWith(`${sdoIdentifierBlock}.`),
+            ),
+        );
+
+        if (!Object.keys(identifierAttributes).length) {
+            return {};
+        }
+
+        // The resolution stores its values on the record it is given: work on a copy, the caller's
+        // record (e.g. the one an import just returned) must stay untouched.
+        const recordValues = {...record};
+
+        const attributesByLeavAttributeId = await _resolveMappedRecordValues(
+            sdoMappingLibrary.leavLibraryId,
+            recordValues,
+            identifierAttributes,
             ctx,
         );
 
-        // validate SDO (json schema)
-        try {
-            await schemaValidation(sdo.content);
-        } catch (error) {
-            logger.error(`getRecordSDO JSON Schema validation error for ${leavLibraryId}/${recordId}: ${error.stack}`);
-            throw error;
-        }
+        const content: Record<string, unknown> = {};
+        await _setMappedValuesOnContent(content, recordValues, identifierAttributes, attributesByLeavAttributeId, ctx);
 
-        return sdo;
+        return (content[sdoIdentifierBlock] as Record<string, unknown>) ?? {};
     };
 
     const _extractLinkedRecordId = (value: IValue): string | null => {
@@ -395,32 +505,12 @@ export default function ({
             },
         };
 
-        await Promise.all(
-            Object.entries(sdoMappingLibrary.sdoAttributes).map(async ([attributeKey, mappingAttribute]) => {
-                const mappingFunction = exportMappingFunctions.get(
-                    mappingAttribute.exportFunction,
-                ) as ISDOMappingFunction;
-
-                if (mappingAttribute.leavAttributeId && !mappingFunction && mappingAttribute.exportFunction) {
-                    throw new LeavError(
-                        ErrorTypes.INTERNAL_ERROR,
-                        `Unknown mapping function ${mappingAttribute.exportFunction} for attribute ${attributeKey}`,
-                    );
-                }
-
-                if (mappingAttribute.leavAttributeId && mappingFunction) {
-                    const attr = attributesByLeavAttributeId.get(mappingAttribute.leavAttributeId);
-                    const mappedValue = await mappingFunction(record[mappingAttribute.leavAttributeId], attr, ctx);
-
-                    _.set(sdo.content, attributeKey, _cleanValue(mappedValue, mappingAttribute.format));
-                } else {
-                    _.set(
-                        sdo.content,
-                        attributeKey,
-                        _cleanValue(record[mappingAttribute.leavAttributeId], mappingAttribute.format),
-                    );
-                }
-            }),
+        await _setMappedValuesOnContent(
+            sdo.content,
+            record,
+            sdoMappingLibrary.sdoAttributes,
+            attributesByLeavAttributeId,
+            ctx,
         );
 
         // Extend SDO function: extend the whole SDO with plugin logic that the
@@ -465,6 +555,7 @@ export default function ({
     return {
         getSDOGlobalSettings,
         getRecordSDO,
+        getRecordSDOIdentifier,
         resolveAdditionalLibraryTriggerTargets,
         schemaValidation,
         sendLog,

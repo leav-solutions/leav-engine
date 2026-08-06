@@ -18,6 +18,7 @@ import {
     type SDOMappingAttributeFormat,
     type ISDOMapping,
     type ISDOMappingAttribute,
+    type ISDOMappingLibrary,
     sdoPathIdentifierUuid,
     type ISDO,
 } from '../../_types/sdo';
@@ -838,6 +839,106 @@ describe('sdoDomain', () => {
             ).rejects.toThrow(
                 `attribute ${sdoUnknownSchemaMapping[mockSDO.name].sdoAttributes.treeMapping.leavAttributeId} not found in LEAV`,
             );
+        });
+    });
+
+    describe('getRecordSDOIdentifier', () => {
+        const libId = 'campaigns';
+        const record: IRecord = {id: 'campaign1', library: libId, ...mockRecordSystemData};
+
+        const _mappingLibrary = (sdoAttributes: Record<string, ISDOMappingAttribute>): ISDOMappingLibrary => ({
+            leavLibraryId: libId,
+            sdoAttributes,
+        });
+
+        beforeEach(() => {
+            mockGetAttributeByPath.mockImplementation(async ({attributePath}) => ({
+                id: attributePath,
+                type: AttributeTypes.SIMPLE,
+            }));
+        });
+
+        it('[+] should build the identifier block from the mapping entries targeting it', async () => {
+            mockRecordDomain.getRecordFieldValue.mockImplementation(async ({attributePath}) =>
+                attributePath === 'campaigns_id_pac'
+                    ? ([{raw_payload: 'pac-42'}] as IStandardValue[])
+                    : ([{raw_payload: 'internal-code'}] as IStandardValue[]),
+            );
+
+            const identifier = await _sdoDomain.getRecordSDOIdentifier(
+                _mappingLibrary({
+                    'identifier.pacId': {leavAttributeId: 'campaigns_id_pac', valueRequired: false, format: 'string'},
+                    'identifier.customerInternalCode': {
+                        leavAttributeId: 'campaigns_customer_internal_code',
+                        valueRequired: false,
+                        format: 'string',
+                    },
+                    'info.label': {leavAttributeId: 'campaigns_label', valueRequired: false, format: 'string'},
+                }),
+                record,
+                mockSystemQueryContext,
+            );
+
+            // `info.*` entries are left out: only the identifier block is read
+            expect(identifier).toEqual({pacId: 'pac-42', customerInternalCode: 'internal-code'});
+            expect(mockRecordDomain.getRecordFieldValue).toHaveBeenCalledTimes(2);
+        });
+
+        it('[+] should apply the format declared by the mapping entry', async () => {
+            mockRecordDomain.getRecordFieldValue.mockResolvedValue([{raw_payload: '2026'}] as IStandardValue[]);
+
+            const identifier = await _sdoDomain.getRecordSDOIdentifier(
+                _mappingLibrary({
+                    'identifier.year': {leavAttributeId: 'campaigns_year', valueRequired: false, format: 'integer'},
+                }),
+                record,
+                mockSystemQueryContext,
+            );
+
+            expect(identifier).toEqual({year: 2026});
+        });
+
+        it('[+] should return an empty object without any read when the mapping targets no identifier', async () => {
+            const identifier = await _sdoDomain.getRecordSDOIdentifier(
+                _mappingLibrary({
+                    'info.label': {leavAttributeId: 'campaigns_label', valueRequired: false, format: 'string'},
+                }),
+                record,
+                mockSystemQueryContext,
+            );
+
+            expect(identifier).toEqual({});
+            expect(mockRecordDomain.getRecordFieldValue).not.toHaveBeenCalled();
+            expect(mockGetAttributeByPath).not.toHaveBeenCalled();
+        });
+
+        it('[+] should not mutate the record it is given', async () => {
+            mockRecordDomain.getRecordFieldValue.mockResolvedValue([{raw_payload: 'pac-42'}] as IStandardValue[]);
+            const recordSnapshot = {...record};
+
+            await _sdoDomain.getRecordSDOIdentifier(
+                _mappingLibrary({
+                    'identifier.pacId': {leavAttributeId: 'campaigns_id_pac', valueRequired: false, format: 'string'},
+                }),
+                record,
+                mockSystemQueryContext,
+            );
+
+            expect(record).toEqual(recordSnapshot);
+        });
+
+        it('[-] should throw when a mapped attribute does not exist in LEAV', async () => {
+            mockGetAttributeByPath.mockRejectedValue(new Error('not found'));
+
+            await expect(
+                _sdoDomain.getRecordSDOIdentifier(
+                    _mappingLibrary({
+                        'identifier.pacId': {leavAttributeId: 'unknown_attr', valueRequired: false, format: 'string'},
+                    }),
+                    record,
+                    mockSystemQueryContext,
+                ),
+            ).rejects.toThrow('attribute unknown_attr not found in LEAV');
         });
     });
 

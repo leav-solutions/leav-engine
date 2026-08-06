@@ -307,6 +307,10 @@ describe('dtoImportApp', () => {
                 dto: mockDTO,
                 status: DTOStatementStatus.SUCCESS,
                 record: mockImportedRecord,
+                mappingLibrary: mockSDOMapping[mockDTO.payloadType],
+                // An UPDATE patches an existing record: its stored identifiers win over the received ones
+                recordPreexisted: true,
+                ctx: mockSystemQueryContext,
             });
         });
 
@@ -314,7 +318,11 @@ describe('dtoImportApp', () => {
             await dtoImportApp(depsBase).onDTOEvent(_messageFor({...mockDTO, method: 'CREATE'}));
 
             expect(mockDTOStatementDomain.sendStatement).toHaveBeenCalledWith(
-                expect.objectContaining({status: DTOStatementStatus.SUCCESS}),
+                expect.objectContaining({
+                    status: DTOStatementStatus.SUCCESS,
+                    // A real creation: the received document is the source of truth
+                    recordPreexisted: false,
+                }),
             );
         });
 
@@ -328,6 +336,10 @@ describe('dtoImportApp', () => {
                 dto: {...mockDTO, method: 'CREATE'},
                 status: DTOStatementStatus.NO_CHANGE,
                 record: mockImportedRecord,
+                mappingLibrary: mockSDOMapping[mockDTO.payloadType],
+                // Skipped because the record was already there: nothing of the document was applied
+                recordPreexisted: true,
+                ctx: mockSystemQueryContext,
             });
         });
 
@@ -338,6 +350,7 @@ describe('dtoImportApp', () => {
                 dto: {...mockDTO, payloadType: 'unmapped'},
                 status: DTOStatementStatus.ERROR,
                 details: [{code: DTOErrorCode.INVALID_TYPE, attribute: null, message: 'Unknown payload type unmapped'}],
+                ctx: mockSystemQueryContext,
             });
         });
 
@@ -350,6 +363,7 @@ describe('dtoImportApp', () => {
                 dto: mockDTO,
                 status: DTOStatementStatus.ERROR,
                 details: [{code: DTOErrorCode.INTERNAL_ERROR, attribute: null, message: 'Record not found'}],
+                ctx: mockSystemQueryContext,
             });
         });
 
