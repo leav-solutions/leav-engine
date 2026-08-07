@@ -149,9 +149,12 @@ x-env-preview-generator: &env-preview-generator
   OUTPUT_ROOT_PATH: /results
   ICC_PATH: /app/apps/preview-generator/profile/
 
+# The Dockerfile's own directory is the build context on purpose: this image carries no
+# application code (the monorepo is bind-mounted on /app at runtime), so nothing needs to be sent
+# to the daemon. See docs/troubleshooting/tls-interception.md for why pointing it at apps/core
+# instead would upload ~138 MB with no .dockerignore applying.
 x-env-build-core: &env-build-core
-  context: ../apps/core
-  dockerfile: ../../docker/DOCKERFILES/CORE/Dockerfile
+  context: ./DOCKERFILES/CORE/
 
 # Healthcheck with libs/monitoring-server module
 x-healthcheck-localhost-44444: &healthcheck-localhost-44444
@@ -424,8 +427,8 @@ services:
   preview-generator:
     profiles: ["automate"]
     build:
-      context: ../apps/preview-generator
-      dockerfile: ../../docker/DOCKERFILES/PREVIEW_GENERATOR/Dockerfile
+      # Minimal build context, same rationale as x-env-build-core above.
+      context: ./DOCKERFILES/PREVIEW_GENERATOR
     restart: always
     environment:
       <<: [*env-logger, *env-amqp, *env-preview-generator]
