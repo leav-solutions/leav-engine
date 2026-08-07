@@ -237,6 +237,39 @@ Voir [`CODING_GUIDELINES.md`](CODING_GUIDELINES.md) — source de vérité pour 
 
 ---
 
+## ⚠️ Documentation — à faire systématiquement
+
+**Avant de conclure toute tâche ayant modifié du code, de la config ou des tests, tu DOIS vérifier
+l'impact documentaire et le traiter dans la même tâche.** Ce n'est pas optionnel et ça ne se
+délègue pas à une MR ultérieure (cf. [ADR-003](docs/adr/ADR-003-documentation.md)).
+
+Deux questions à se poser, dans cet ordre :
+
+1. **Documentation impactée** — une doc existante devient-elle fausse, incomplète ou trompeuse ?
+   Passer en revue : `docs/` (y compris les ADR et les checklists de `docs/cleanup/`), le
+   `CLAUDE.md` racine, le `CLAUDE.md` du ou des workspaces touchés, les `CLAUDE.md` locaux d'un
+   dossier modifié, les `README.md`, et `CODING_GUIDELINES.md` si une convention change.
+   → Corriger immédiatement.
+2. **Information à ajouter** — la tâche a-t-elle produit un savoir qui n'est déductible ni du code
+   ni de l'historique git ? Typiquement : un piège non évident, une raison derrière un choix
+   surprenant, une contrainte d'infra ou de build, une décision d'archi structurante (→ nouvel ADR
+   selon le template de [`docs/adr/ADR.md`](docs/adr/ADR.md)), une commande ou un enchaînement CI
+   non documenté.
+   → L'écrire au bon endroit : le plus proche possible du code concerné.
+
+Règles d'application :
+
+- **Le doute se lève, il ne se garde pas** : si l'impact documentaire est incertain, aller vérifier
+  le fichier candidat plutôt que de supposer qu'il est à jour.
+- **Pas de doc creuse** : ne rien ajouter qui paraphrase le code, redise un diff ou raconte
+  l'historique de la tâche. Si rien n'est impacté et qu'il n'y a rien de non-évident à consigner,
+  ne rien écrire.
+- **Commit séparé** avec le type conventionnel `docs`, dans la même MR que le code.
+- **Le dire explicitement** en fin de tâche : soit ce qui a été mis à jour ou ajouté, soit qu'il
+  n'y avait rien à documenter. Ne jamais laisser cette vérification silencieuse.
+
+---
+
 ## Chantiers en cours et à venir
 
 ### Planifiés
