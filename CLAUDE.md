@@ -155,6 +155,13 @@ yarn test
 docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e
 ```
 
+> 🔐 **`TLS: server certificate not trusted` au build ou `SELF_SIGNED_CERT_IN_CHAIN` côté Node** :
+> proxy d'inspection HTTPS d'entreprise. Diagnostic, correctifs et pièges (secret de build inerte
+> en CI, `NODE_EXTRA_CA_CERTS`) dans
+> [`docs/troubleshooting/tls-interception.md`](docs/troubleshooting/tls-interception.md).
+> Cette page explique aussi pourquoi les contextes de build de la stack locale pointent sur
+> `docker/DOCKERFILES/<APP>/` — à ne pas « corriger ».
+
 > ⚠️ Pas de `yarn build` global — chaque app/lib se build individuellement depuis son dossier.
 >
 > **Aucun `dist/` n'est commité** : `.gitignore` couvre `apps/*/dist` et `libs/*/dist`. En local, les
