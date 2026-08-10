@@ -1,5 +1,6 @@
 import {act, renderHook} from '_ui/_tests/testUtils';
 import {useEditionMappingState} from './useEditionMappingState';
+import {DO_NOT_CHANGE} from './_types';
 
 const dependencyFilterA = {field: 'status', value: 'active'};
 const dependencyFilterB = {field: 'status', value: 'inactive'};
@@ -28,6 +29,18 @@ describe('useEditionMappingState', () => {
             });
         });
 
+        test('should remove the mapping and decrement count when going back to "do not change"', () => {
+            const {result} = renderHook(() => useEditionMappingState());
+
+            act(() => result.current.applyMappingChange({before: 'node_1', after: 'node_2', occurrenceCount: 3}));
+            act(() => result.current.applyMappingChange({before: 'node_1', after: DO_NOT_CHANGE, occurrenceCount: 3}));
+
+            expect(result.current.editionMapping).toEqual({
+                count: 0,
+                mapping: [{values: []}],
+            });
+        });
+
         test('should remove the mapping and decrement count when before equals after', () => {
             const {result} = renderHook(() => useEditionMappingState());
 
@@ -38,6 +51,39 @@ describe('useEditionMappingState', () => {
                 count: 0,
                 mapping: [{values: []}],
             });
+        });
+
+        test('should leave the state untouched when "do not change" is selected without a prior remapping', () => {
+            const {result} = renderHook(() => useEditionMappingState());
+
+            act(() => result.current.applyMappingChange({before: 'node_1', after: DO_NOT_CHANGE, occurrenceCount: 3}));
+
+            expect(result.current.editionMapping).toEqual({count: 0, mapping: []});
+        });
+
+        test('should count a group only once when its target changes several times', () => {
+            const {result} = renderHook(() => useEditionMappingState());
+
+            act(() => result.current.applyMappingChange({before: 'node_1', after: 'node_2', occurrenceCount: 3}));
+            act(() => result.current.applyMappingChange({before: 'node_1', after: 'node_3', occurrenceCount: 3}));
+
+            expect(result.current.editionMapping).toEqual({
+                count: 3,
+                mapping: [{values: [{before: 'node_1', after: 'node_3'}]}],
+            });
+        });
+
+        test('should never map a group to an empty value, which would clear it instead of keeping it', () => {
+            const {result} = renderHook(() => useEditionMappingState());
+
+            act(() => result.current.applyMappingChange({before: 'node_1', after: 'node_2', occurrenceCount: 3}));
+            act(() => result.current.applyMappingChange({before: 'node_1', after: 'node_3', occurrenceCount: 3}));
+            act(() => result.current.applyMappingChange({before: 'node_1', after: DO_NOT_CHANGE, occurrenceCount: 3}));
+
+            const mappedValues = result.current.editionMapping.mapping.flatMap(bucket => bucket.values);
+
+            expect(mappedValues).toEqual([]);
+            expect(result.current.editionMapping.count).toBe(0);
         });
     });
 
@@ -123,6 +169,32 @@ describe('useEditionMappingState', () => {
             });
         });
 
+        test('should remove the value from its bucket and decrement count when going back to "do not change"', () => {
+            const {result} = renderHook(() => useEditionMappingState());
+
+            act(() =>
+                result.current.applyMonoDependencyWorkflowChange({
+                    before: 'node_1',
+                    after: 'node_2',
+                    occurrenceCount: 5,
+                    dependencyFilter: dependencyFilterA,
+                }),
+            );
+            act(() =>
+                result.current.applyMonoDependencyWorkflowChange({
+                    before: 'node_1',
+                    after: DO_NOT_CHANGE,
+                    occurrenceCount: 5,
+                    dependencyFilter: dependencyFilterA,
+                }),
+            );
+
+            expect(result.current.editionMapping).toEqual({
+                count: 0,
+                mapping: [{dependenciesFilters: [dependencyFilterA], values: []}],
+            });
+        });
+
         test('should remove the value from its bucket and decrement count when before equals after', () => {
             const {result} = renderHook(() => useEditionMappingState());
 
@@ -146,6 +218,47 @@ describe('useEditionMappingState', () => {
             expect(result.current.editionMapping).toEqual({
                 count: 0,
                 mapping: [{dependenciesFilters: [dependencyFilterA], values: []}],
+            });
+        });
+
+        test('should leave the state untouched when "do not change" is selected without a prior remapping', () => {
+            const {result} = renderHook(() => useEditionMappingState());
+
+            act(() =>
+                result.current.applyMonoDependencyWorkflowChange({
+                    before: 'node_1',
+                    after: DO_NOT_CHANGE,
+                    occurrenceCount: 5,
+                    dependencyFilter: dependencyFilterA,
+                }),
+            );
+
+            expect(result.current.editionMapping).toEqual({count: 0, mapping: []});
+        });
+
+        test('should count a group only once when its target changes several times', () => {
+            const {result} = renderHook(() => useEditionMappingState());
+
+            act(() =>
+                result.current.applyMonoDependencyWorkflowChange({
+                    before: 'node_1',
+                    after: 'node_2',
+                    occurrenceCount: 5,
+                    dependencyFilter: dependencyFilterA,
+                }),
+            );
+            act(() =>
+                result.current.applyMonoDependencyWorkflowChange({
+                    before: 'node_1',
+                    after: 'node_3',
+                    occurrenceCount: 5,
+                    dependencyFilter: dependencyFilterA,
+                }),
+            );
+
+            expect(result.current.editionMapping).toEqual({
+                count: 5,
+                mapping: [{dependenciesFilters: [dependencyFilterA], values: [{before: 'node_1', after: 'node_3'}]}],
             });
         });
     });

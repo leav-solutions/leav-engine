@@ -62,8 +62,10 @@ export const useEditAttributeMassAction = ({
 
     const bulkCount = view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
 
+    const canEdit = selectedAttribute !== null && editionMapping.count > 0;
+
     const _saveEditionMapping = () => {
-        if (!selectedAttribute || editionMapping.count === 0) {
+        if (!canEdit) {
             return;
         }
 
@@ -121,6 +123,7 @@ export const useEditAttributeMassAction = ({
             <EditAttributeMassActionModal
                 isOpen={openModal}
                 bulkCount={bulkCount}
+                canEdit={canEdit}
                 onOkButtonClick={_saveEditionMapping}
                 onCancelButtonClick={_closeModal}
             >
