@@ -185,6 +185,22 @@ Modèle à trois niveaux : Admin → Library → Record.
 
 ---
 
+## Export SDO — surface d'API pour les plugins
+
+`src/domain/sdo/` exporte une bibliothèque en SDO à partir d'une config déclarative
+(`globalSettings.settings.sdo.mapping`). Quand cette config ne suffit pas, un plugin prend le relais
+via `registerSDOExportMappingFunctions` (par attribut) ou `registerExtendSDOFunctions` (tout le SDO),
+avec `extendSDOFunctionConfig` pour sa config d'instance et `additionalAttributeTriggers` /
+`additionalLibraryTriggers` pour le déclenchement.
+
+> ⚠️ Le piège : un attribut lu par une extend function n'est mappé à **aucun** chemin SDO, donc
+> `hasSDOAttribute` filtre son événement et **aucun export n'est émis**. C'est ce que débloque
+> `additionalAttributeTriggers`.
+
+→ Contrat complet, pièges et exemples : [`docs/sdo-export-plugins.md`](../../docs/sdo-export-plugins.md).
+
+---
+
 ## Migrations DB
 
 Fichiers `NNN-*.ts` dans [`src/infra/db/migrations/`](src/infra/db/migrations/), joués une fois via le
