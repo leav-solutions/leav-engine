@@ -1,4 +1,4 @@
-import {type IDTO} from '../../../../_types/dto';
+import {DTOErrorCode, DTOStatementStatus, type IDTO, type IDTOStatement} from '../../../../_types/dto';
 import {type ISDO} from '../../../../_types/sdo';
 import {getConfig} from '../../../../config';
 import {RabbitMqClient} from './rabbitMQUtils';
@@ -7,6 +7,7 @@ import {adminUserSdk} from '../e2eUtils';
 import {
     DTO_IMPORTS_LIBRARY_ID,
     DTO_TEST_ATTRIBUTE_ID,
+    DTO_TEST_IDENTIFIER_ATTRIBUTE_ID,
     DTO_TEST_MANDATORY_ATTRIBUTE_ID,
     sdoGlobalSettings,
 } from './sdoConfig';
@@ -18,6 +19,13 @@ import {AttributeFormat, AttributeType} from '../../_gqlTypes';
  * (`payloadType` / `method` / `payloadDocument`) and the method dispatch. The value mapping itself is
  * covered by `sdoImports.test.ts`.
  */
+// Own queue on the statement exchange, prefixed like every other fixture of this file so a suite
+// running in parallel can't consume our statements.
+const DTO_STATEMENT_TEST_QUEUE = 'test_dto_imports_statement_queue';
+
+// Value of the `identifier.testCode` mapped attribute carried by the nominal documents
+const DTO_IDENTIFIER_CODE = 'dto_identifier_code';
+
 describe('DTO Imports', () => {
     let conf: IConfig;
     let rabbitmqClient: RabbitMqClient;
@@ -26,7 +34,12 @@ describe('DTO Imports', () => {
      * `payloadDocument` has the same shape as an SDO `content` and is validated against the generic
      * SDO JSON schema, which still requires the whole `system` bookkeeping block.
      */
-    const _payloadDocument = (systemId: string, value: string, info: Record<string, unknown> = {}): ISDO['content'] => {
+    const _payloadDocument = (
+        systemId: string,
+        value: string,
+        info: Record<string, unknown> = {},
+        identifier: Record<string, unknown> = {testCode: DTO_IDENTIFIER_CODE},
+    ): ISDO['content'] => {
         const nowSec = Math.round(Date.now() / 1000); // in seconds
         const editorUUID = crypto.randomUUID();
 
@@ -40,7 +53,9 @@ describe('DTO Imports', () => {
                 systemLastModificator: editorUUID,
                 systemLabel: 'DTO import label',
             },
-            identifier: {},
+            // `identifier.testCode` is mapped to a leav attribute: on a pre-existing record, what the
+            // statement reports back is read from the record, not from this block.
+            identifier,
             // `info.mandatoryValue` is mapped with `valueRequired: true`: omitting it makes any CREATE
             // rejected, so the nominal documents must always carry it.
             info: {value, mandatoryValue: 'dto_mandatory_value', ...info},
@@ -83,6 +98,13 @@ describe('DTO Imports', () => {
             })
         ).records.list[0].property[0].payload;
 
+    const _waitForStatementOf = (operationId: string) =>
+        rabbitmqClient.waitForMessage<IDTOStatement>(
+            DTO_STATEMENT_TEST_QUEUE,
+            statement => statement.operationId === operationId,
+            10000,
+        );
+
     // No positive event to wait for when an operation must be rejected/ignored -> wait a fixed delay,
     // longer than the processing time observed on the nominal cases.
     const _waitForProcessing = () => new Promise(resolve => setTimeout(resolve, 5000));
@@ -109,11 +131,25 @@ describe('DTO Imports', () => {
             },
         });
 
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: DTO_TEST_IDENTIFIER_ATTRIBUTE_ID,
+                type: AttributeType.simple,
+                format: AttributeFormat.text,
+                label: {fr: 'DTO test identifier code', en: 'DTO test identifier code'},
+            },
+        });
+
         await adminUserSdk.SaveLibrary({
             library: {
                 id: DTO_IMPORTS_LIBRARY_ID,
                 label: {fr: 'Test DTO', en: 'Test DTO'},
-                attributes: ['label', DTO_TEST_ATTRIBUTE_ID, DTO_TEST_MANDATORY_ATTRIBUTE_ID],
+                attributes: [
+                    'label',
+                    DTO_TEST_ATTRIBUTE_ID,
+                    DTO_TEST_MANDATORY_ATTRIBUTE_ID,
+                    DTO_TEST_IDENTIFIER_ATTRIBUTE_ID,
+                ],
                 recordIdentityConf: {label: 'label'},
             },
         });
@@ -129,6 +165,11 @@ describe('DTO Imports', () => {
         });
 
         await rabbitmqClient.connect();
+        await rabbitmqClient.assertExchangeAndBindQueue(
+            DTO_STATEMENT_TEST_QUEUE,
+            conf.sdo.dto.statement.exchange,
+            conf.sdo.dto.statement.exchangeType,
+        );
     });
 
     afterAll(async () => {
@@ -304,6 +345,103 @@ describe('DTO Imports', () => {
             // Nothing of the operation is applied, not even the valid attributes
             expect(await _getTestValue(recordId)).toBe('value');
         }, 10000);
+    });
+
+    describe('statement', () => {
+        test('an applied CREATE should be answered with a SUCCESS statement', async () => {
+            const uuid = crypto.randomUUID();
+            const dto = _dto({method: 'CREATE', payloadDocument: _payloadDocument(uuid, 'dto_statement_value')});
+
+            await _publish(dto);
+
+            const statement = await _waitForStatementOf(dto.operationId);
+
+            expect(statement).toMatchObject({
+                operationId: dto.operationId,
+                requestId: dto.requestId,
+                correlationId: dto.correlationId,
+                dataModelRelease: dto.dataModelRelease,
+                payloadType: DTO_IMPORTS_LIBRARY_ID,
+                method: 'CREATE',
+                status: DTOStatementStatus.SUCCESS,
+                details: null,
+                sdo_identifier: {
+                    system: {
+                        systemId: uuid,
+                        systemCreationDate: expect.any(Number),
+                        systemLastModifiedDate: expect.any(Number),
+                    },
+                    // A real creation echoes the received block
+                    identifier: {testCode: DTO_IDENTIFIER_CODE},
+                },
+                date: expect.any(Number),
+            });
+        }, 15000);
+
+        test('an UPDATE not carrying the identifier block should report the one stored in leav', async () => {
+            const uuid = crypto.randomUUID();
+
+            // Create the record first, so it carries the mapped identifier value
+            const createDto = _dto({method: 'CREATE', payloadDocument: _payloadDocument(uuid, 'dto_value')});
+            await _publish(createDto);
+            await _waitForStatementOf(createDto.operationId);
+
+            // The patch says nothing about `identifier`: the statement must still report the stored code
+            const updateDto = _dto({
+                method: 'UPDATE',
+                payloadDocument: _payloadDocument(uuid, 'dto_patched_value', {}, {}),
+            });
+            await _publish(updateDto);
+
+            expect(await _waitForStatementOf(updateDto.operationId)).toMatchObject({
+                status: DTOStatementStatus.SUCCESS,
+                sdo_identifier: {
+                    system: {systemId: uuid},
+                    identifier: {testCode: DTO_IDENTIFIER_CODE},
+                },
+            });
+        }, 25000);
+
+        test('a CREATE on an existing systemId should be answered with a NO_CHANGE statement', async () => {
+            const uuid = crypto.randomUUID();
+
+            const firstDto = _dto({method: 'CREATE', payloadDocument: _payloadDocument(uuid, 'first_value')});
+            await _publish(firstDto);
+            await _waitForStatementOf(firstDto.operationId);
+
+            // Same systemId: the import skips it, so nothing was written
+            const secondDto = _dto({method: 'CREATE', payloadDocument: _payloadDocument(uuid, 'second_value')});
+            await _publish(secondDto);
+
+            expect(await _waitForStatementOf(secondDto.operationId)).toMatchObject({
+                status: DTOStatementStatus.NO_CHANGE,
+                details: null,
+                sdo_identifier: {system: {systemId: uuid}},
+            });
+        }, 25000);
+
+        test('a rejected operation should be answered with an ERROR statement carrying the details', async () => {
+            const uuid = crypto.randomUUID();
+            const dto = _dto({
+                method: 'CREATE',
+                payloadDocument: _payloadDocument(uuid, 'dto_value', {mandatoryValue: ''}),
+            });
+
+            await _publish(dto);
+
+            expect(await _waitForStatementOf(dto.operationId)).toMatchObject({
+                status: DTOStatementStatus.ERROR,
+                sdo_identifier: null,
+                details: [
+                    {
+                        code: DTOErrorCode.MANDATORY_FIELD_MISSING,
+                        attribute: 'info.mandatoryValue',
+                        message: 'A mandatory attribute is missing',
+                    },
+                ],
+            });
+            expect(await _findRecords(uuid)).toHaveLength(0);
+        }, 15000);
     });
 
     describe('envelope validation', () => {

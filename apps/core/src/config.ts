@@ -365,6 +365,11 @@ export const validateConfig = (conf: IConfig) => {
                     queue: Joi.string().required(),
                     prefetch: Joi.number().required(),
                 }),
+                statement: Joi.object().keys({
+                    enable: Joi.boolean().required(),
+                    exchange: Joi.string().required(),
+                    exchangeType: Joi.string().required(),
+                }),
             }),
             debug: Joi.boolean().required(),
         }),

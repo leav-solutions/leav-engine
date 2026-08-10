@@ -41,6 +41,8 @@ export const DTO_IMPORTS_LIBRARY_ID = 'test_dto_imports';
 export const DTO_TEST_ATTRIBUTE_ID = 'dto_test_value';
 // Mapped with `valueRequired: true` to cover the mandatory field rejection (LEAVC-956)
 export const DTO_TEST_MANDATORY_ATTRIBUTE_ID = 'dto_test_mandatory_value';
+// Mapped under the `identifier` block, which the statement reports back from what leav stores
+export const DTO_TEST_IDENTIFIER_ATTRIBUTE_ID = 'dto_test_identifier_code';
 
 export const sdoGlobalSettings: ISDOSettings = {
     timer: SDO_EXPORT_TIMER,
@@ -146,6 +148,11 @@ export const sdoGlobalSettings: ISDOSettings = {
                 'info.mandatoryValue': {
                     leavAttributeId: DTO_TEST_MANDATORY_ATTRIBUTE_ID,
                     valueRequired: true,
+                    format: 'string',
+                },
+                'identifier.testCode': {
+                    leavAttributeId: DTO_TEST_IDENTIFIER_ATTRIBUTE_ID,
+                    valueRequired: false,
                     format: 'string',
                 },
             },

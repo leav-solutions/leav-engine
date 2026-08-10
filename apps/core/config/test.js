@@ -106,6 +106,11 @@ module.exports = {
                 exchangeType: 'direct',
                 queue: 'test_dto_import_queue',
             },
+            statement: {
+                enable: true,
+                exchange: 'test_dto_statement_exchange',
+                exchangeType: 'fanout',
+            },
         },
     },
 };

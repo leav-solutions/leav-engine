@@ -1,5 +1,6 @@
 import {type ISDOExportDomain} from '../../../domain/sdo/export/sdoExportDomain';
 import {type ISDOImportDomain} from '../../../domain/sdo/import/sdoImportDomain';
+import {type IDTOStatementDomain} from '../../../domain/sdo/dtoStatement/dtoStatementDomain';
 import {type ISDODomain} from '../../../domain/sdo/sdoDomain';
 import {type ISDOUtils} from '../../../utils/sdo/sdo';
 import {type IRecordSDORepo} from '../../../infra/sdo/recordsSDORepo/recordSDORepo';
@@ -8,6 +9,7 @@ export const mockSdoDomain: Mockify<ISDODomain> = {
     schemaValidation: vi.fn(),
     getSDOGlobalSettings: vi.fn(),
     getRecordSDO: vi.fn(),
+    getRecordSDOIdentifier: vi.fn(),
     resolveAdditionalLibraryTriggerTargets: vi.fn(),
     sendLog: vi.fn(),
     registerSDOExportMappingFunctions: vi.fn(),
@@ -17,6 +19,10 @@ export const mockSdoDomain: Mockify<ISDODomain> = {
 export const mockImportDomain: Mockify<ISDOImportDomain> = {
     create: vi.fn(),
     update: vi.fn(),
+};
+
+export const mockDTOStatementDomain: Mockify<IDTOStatementDomain> = {
+    sendStatement: vi.fn(),
 };
 
 export const mockExportDomain: Mockify<ISDOExportDomain> = {
@@ -39,5 +45,6 @@ export const mockSDOUtils: Mockify<ISDOUtils> = {
     hasSDOAttribute: vi.fn(),
     getSDOLibrary: vi.fn(),
     getRecordUUIDFromSDO: vi.fn(),
+    getMissingRequiredSDOAttributes: vi.fn(),
     tmpRecordIdToUuid: vi.fn(),
 };

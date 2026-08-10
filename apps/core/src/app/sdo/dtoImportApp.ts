@@ -1,11 +1,12 @@
 import {type AmqpMessageHandler} from '@leav/message-broker';
 import {logger} from '@leav/logger';
 import {EventAction} from '@leav/utils';
-import {DTOErrorCode, type IDTO} from '../../_types/dto';
+import {DTOErrorCode, DTOStatementStatus, type IDTO} from '../../_types/dto';
 import {type ISDOImportPayload, type ISDOMappingLibrary} from '../../_types/sdo';
 import {type IConfig} from '../../_types/config';
 import {type ISDODomain} from '../../domain/sdo/sdoDomain';
-import {type ISDOImportDomain} from '../../domain/sdo/import/sdoImportDomain';
+import {type ISDOImportDomain, type ISDOImportResult} from '../../domain/sdo/import/sdoImportDomain';
+import {type IDTOStatementDomain, type ISendStatementParams} from '../../domain/sdo/dtoStatement/dtoStatementDomain';
 import {type ISDOUtils} from '../../utils/sdo/sdo';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 import LeavError from '../../errors/LeavError';
@@ -14,6 +15,7 @@ import DTORejectionError from '../../errors/DTORejectionError';
 export interface IDTOImportAppDeps {
     'core.domain.sdo': ISDODomain;
     'core.domain.sdo.import': ISDOImportDomain;
+    'core.domain.sdo.dtoStatement': IDTOStatementDomain;
     'core.utils.sdo': ISDOUtils;
     'core.utils.getSystemQueryContext': GetSystemQueryContext;
     config: IConfig;
@@ -37,6 +39,7 @@ const SUPPORTED_METHODS: ReadonlyArray<IDTO['method']> = ['CREATE', 'UPDATE'];
 export default function ({
     'core.domain.sdo': sdoDomain,
     'core.domain.sdo.import': sdoImportDomain,
+    'core.domain.sdo.dtoStatement': dtoStatementDomain,
     'core.utils.sdo': sdoUtils,
     'core.utils.getSystemQueryContext': getSystemQueryContext,
     config,
@@ -47,9 +50,9 @@ export default function ({
         const missingFields = REQUIRED_ENVELOPE_FIELDS.filter(field => dto[field] === undefined || dto[field] === null);
 
         if (missingFields.length) {
-            // An operation missing `operationId` / `correlationId` cannot be correlated by the emitter:
-            // its statement will be unusable as is. How to report it is up to the statement publication
-            // (LEAVC-983); here we only reject with a contractual code.
+            // An operation missing one of its traceability ids cannot be correlated by the emitter: it
+            // is rejected with a contractual code all the same, but no statement can be published for
+            // it (see dtoStatementDomain).
             throw new DTORejectionError(
                 missingFields.map(field => ({
                     code: DTOErrorCode.MANDATORY_FIELD_MISSING,
@@ -109,6 +112,19 @@ export default function ({
         }
     };
 
+    /**
+     * A statement is the answer to the emitter, not part of the import itself: a broker issue here
+     * must neither turn a successful import into a nack (the message wouldn't be replayed anyway) nor
+     * mask the error being reported.
+     */
+    const _publishStatement = async (params: ISendStatementParams): Promise<void> => {
+        try {
+            await dtoStatementDomain.sendStatement(params);
+        } catch (error) {
+            logger.error(`Failed to publish the DTO statement: ${error.message}`, {stack: error.stack});
+        }
+    };
+
     const onDTOEvent: AmqpMessageHandler = async msg => {
         const _systemQueryContext = getSystemQueryContext('sdo::dtoImportApp:onDTOEvent');
         let dto: IDTO;
@@ -148,13 +164,14 @@ export default function ({
             // A DTO carries the same information the SDO import needs: the SDO type (mapping key)
             // and the entity content. The import domain is therefore reused as-is.
             const importPayload: ISDOImportPayload = {name: dto.payloadType, content: dto.payloadDocument};
+            let importResult: ISDOImportResult;
 
             switch (dto.method) {
                 case 'CREATE':
-                    await sdoImportDomain.create(importPayload, _systemQueryContext);
+                    importResult = await sdoImportDomain.create(importPayload, _systemQueryContext);
                     break;
                 case 'UPDATE':
-                    await sdoImportDomain.update(importPayload, _systemQueryContext);
+                    importResult = await sdoImportDomain.update(importPayload, _systemQueryContext);
                     break;
                 default:
                     // Defensive: _validateEnvelope already rejected any other method.
@@ -173,6 +190,19 @@ export default function ({
             await sdoDomain.sendLog({
                 action: EventAction.DTO_LOG_IMPORT_RECORD,
                 dto,
+                ctx: _systemQueryContext,
+            });
+
+            // A `CREATE` on an already existing record is skipped by the import domain: nothing was
+            // written, which the contract reports as `NO_CHANGE` rather than `SUCCESS`.
+            await _publishStatement({
+                dto,
+                status: importResult.changed ? DTOStatementStatus.SUCCESS : DTOStatementStatus.NO_CHANGE,
+                record: importResult.record,
+                mappingLibrary,
+                // An UPDATE patches an existing record; a CREATE that changed nothing was skipped
+                // because the record was already there.
+                recordPreexisted: dto.method === 'UPDATE' || !importResult.changed,
                 ctx: _systemQueryContext,
             });
         } catch (error) {
@@ -202,10 +232,22 @@ export default function ({
                 ctx: _systemQueryContext,
             });
 
+            await _publishStatement({
+                dto,
+                status: DTOStatementStatus.ERROR,
+                ctx: _systemQueryContext,
+                details:
+                    error instanceof DTORejectionError
+                        ? error.details
+                        : // A technical failure has no contractual code of its own: the emitter is told
+                          // the operation failed on our side, and the details stay in our logs.
+                          [{code: DTOErrorCode.INTERNAL_ERROR, attribute: null, message: error.message}],
+            });
+
             if (error instanceof DTORejectionError) {
                 // A functional rejection is a *processed* operation: the message is acked (returning
-                // resolves createAmqpConnection's default contract) and the answer to the emitter is an
-                // `ERROR` statement carrying `error.details` (published by LEAVC-983).
+                // resolves createAmqpConnection's default contract) and the answer to the emitter is
+                // the `ERROR` statement published above.
                 return;
             }
 

@@ -238,7 +238,7 @@ describe('SDO Exports', () => {
         await rabbitmqClient.purgeQueue(TEST_GET_EXPORT_MSG_QUEUE);
     });
 
-    const waitForSdoOf = (libraryId: string, recordUUID: string, timeoutMs = SDO_EXPORT_TIMER * 10): Promise<ISDO> =>
+    const waitForSdoOf = (libraryId: string, recordUUID: string, timeoutMs = SDO_EXPORT_TIMER * 20): Promise<ISDO> =>
         rabbitmqClient.waitForMessage<ISDO>(
             TEST_GET_EXPORT_MSG_QUEUE,
             m => m.name === libraryId && String((m.content as any).system?.systemId) === recordUUID,

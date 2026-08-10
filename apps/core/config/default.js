@@ -321,6 +321,11 @@ module.exports = {
                 queue: process.env.DTO_IMPORT_QUEUE || process.env.INSTANCE_ID + '_dto_import',
                 prefetch: envToNumber(process.env.DTO_IMPORT_PREFETCH, 1),
             },
+            statement: {
+                enable: envToBool(process.env.DTO_STATEMENT_ENABLE, true),
+                exchange: process.env.DTO_STATEMENT_EXCHANGE || process.env.INSTANCE_ID + '_dto_operation_statement',
+                exchangeType: process.env.DTO_STATEMENT_EXCHANGE_TYPE || 'fanout',
+            },
         },
     },
 };

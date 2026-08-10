@@ -30,6 +30,11 @@ export const mockConfig = {
                 queue: 'testDtoImportQueue',
                 prefetch: 1,
             },
+            statement: {
+                enable: true,
+                exchange: 'testDtoStatementExchange',
+                exchangeType: 'fanout',
+            },
         },
     },
 } as unknown as IConfig;

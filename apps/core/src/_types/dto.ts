@@ -53,6 +53,47 @@ export interface IDTOErrorDetail {
     message: string;
 }
 
+/**
+ * Outcome of an import operation, reported back to the emitter.
+ */
+export enum DTOStatementStatus {
+    SUCCESS = 'SUCCESS',
+    NO_CHANGE = 'NO_CHANGE',
+    ERROR = 'ERROR',
+}
+
+/**
+ * Identity of the imported object, echoed to the emitter on a non-error statement.
+ */
+export interface IDTOStatementIdentifier {
+    system: {
+        systemId: string;
+        systemCreationDate: number;
+        systemLastModifiedDate: number;
+    };
+    identifier: Record<string, unknown>;
+}
+
+/**
+ * Acknowledgement of one import operation, published on the `<c>_dto_operation_statement` exchange.
+ * The traceability ids are echoed as-is from the DTO so the emitter can correlate it.
+ */
+export interface IDTOStatement {
+    operationId: string;
+    requestId: string;
+    dataModelRelease: string;
+    correlationId: string;
+    payloadType: string;
+    method: DTOMethod;
+    status: DTOStatementStatus;
+    /** `null` unless the status is `ERROR` */
+    details: IDTOErrorDetail[] | null;
+    /** `null` on `ERROR` (the object was not touched) — snake_case comes from the contract */
+    sdo_identifier: IDTOStatementIdentifier | null;
+    /** epoch in SECONDS, per the contract (the SDO export envelope uses milliseconds) */
+    date: number;
+}
+
 export interface IDTO {
     dataModelRelease: string;
     /**

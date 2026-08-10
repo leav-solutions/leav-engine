@@ -13,6 +13,7 @@ const makeMockChannel = (): Mockify<IAmqpChannel> => ({
 const sdoExportChannel = makeMockChannel();
 const sdoImportChannel = makeMockChannel();
 const dtoImportChannel = makeMockChannel();
+export const dtoStatementChannel = makeMockChannel();
 const leavDataEventChannel = makeMockChannel();
 
 const mockRabbitMQService: Mockify<IRabbitMQ> = {
@@ -20,6 +21,7 @@ const mockRabbitMQService: Mockify<IRabbitMQ> = {
     getLeavDataEventChannel: vi.fn(),
     getSDOImportChannel: vi.fn(),
     getDTOImportChannel: vi.fn(),
+    getDTOStatementChannel: vi.fn(),
     close: vi.fn(),
 };
 
@@ -28,6 +30,7 @@ export function setupMockRabbitMQService() {
     mockRabbitMQService.getLeavDataEventChannel.mockResolvedValue(leavDataEventChannel as IAmqpChannel);
     mockRabbitMQService.getSDOImportChannel.mockResolvedValue(sdoImportChannel as IAmqpChannel);
     mockRabbitMQService.getDTOImportChannel.mockResolvedValue(dtoImportChannel as IAmqpChannel);
+    mockRabbitMQService.getDTOStatementChannel.mockResolvedValue(dtoStatementChannel as IAmqpChannel);
 }
 
 export default mockRabbitMQService;
