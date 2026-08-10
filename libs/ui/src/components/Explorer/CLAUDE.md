@@ -8,6 +8,12 @@ vues sauvegardées, actions primaires / par ligne / en masse, sélection, pagina
 > ViewV2 terminée). **Pour tout nouveau développement de vues,
 > cibler ExplorerV2.** Ce dossier n'est documenté que pour les modifications de maintenance.
 
+> 📄 **Sens des références entre les deux docs : v1 → v2, jamais l'inverse.** Ce fichier
+> disparaîtra avec le dossier ; un lien qui partirait de `ExplorerV2/CLAUDE.md` vers ici casserait
+> à ce moment-là, et alourdirait le diff du cleanup. Tout savoir **commun aux deux copies**
+> s'écrit donc dans [`ExplorerV2/CLAUDE.md`](../ExplorerV2/CLAUDE.md), et c'est ce fichier-ci qui
+> s'y réfère.
+
 ---
 
 ## Explorer v1 vs ExplorerV2 — le point à comprendre en premier
@@ -110,22 +116,9 @@ vue dans la toolbar (filtres, raccourcis `useOpenViewSettingsV2`, bouton volet `
 
 > ⚠️ `actions-mass/edit-attribute/` est une **copie intégrale** de son homologue `ExplorerV2/` :
 > toute correction est à porter dans les deux (vérifier avec `diff -rq` entre les deux dossiers).
-
-### Édition en masse — la sémantique de `after` dans `saveValueBulk`
-
-Le mapping envoyé au serveur ne connaît que deux gestes, et l'un des deux **ne s'exprime pas** :
-
-- `after: <nodeId>` remplace la valeur, `after: null` **vide** la valeur (→ `valueDomain.deleteValue`) ;
-- « ne pas changer » se dit en **omettant l'entrée du mapping**, jamais par une valeur d'`after`.
-
-D'où la sentinelle front `DO_NOT_CHANGE` (`edit-attribute/_types.ts`), volontairement distincte de
-`null` : c'est leur confusion qui avait rendu l'option « Ne pas changer » destructrice (LEAVC-1105).
-
-Le **vidage en masse n'est volontairement pas offert** par l'UI depuis ce correctif : aucune option
-du sélecteur ne produit `after: null`. Ce n'est pas une régression à « restaurer » — il faudra une
-option explicitement nommée, et de préférence conditionnée à l'autorisation de transition vers
-`null` du workflow (`allowedDependentValues` accepte un `nodeId` nul, mais
-`useTreeNodesCandidates.tsx` l'écarte aujourd'hui).
+> La sémantique du mapping `saveValueBulk` est documentée côté v2 —
+> [`ExplorerV2/CLAUDE.md`](../ExplorerV2/CLAUDE.md), section
+> `## Édition en masse d'attribut (actions-mass/edit-attribute/)`.
 
 ---
 

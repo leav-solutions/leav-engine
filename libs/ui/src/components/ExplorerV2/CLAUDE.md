@@ -111,6 +111,29 @@ app-studio importe). Construit par `panel-view-settings/store-current-view/viewV
 
 ---
 
+## Édition en masse d'attribut (`actions-mass/edit-attribute/`)
+
+> ⚠️ **Copie intégrale** de son homologue v1 : toute correction est à porter dans les deux
+> (vérifier avec `diff -rq` entre les deux dossiers).
+
+### La sémantique de `after` dans `saveValueBulk`
+
+Le mapping envoyé au serveur ne connaît que deux gestes, et l'un des deux **ne s'exprime pas** :
+
+- `after: <nodeId>` remplace la valeur, `after: null` **vide** la valeur (→ `valueDomain.deleteValue`) ;
+- « ne pas changer » se dit en **omettant l'entrée du mapping**, jamais par une valeur d'`after`.
+
+D'où la sentinelle front `DO_NOT_CHANGE` (`edit-attribute/_types.ts`), volontairement distincte de
+`null` : c'est leur confusion qui avait rendu l'option « Ne pas changer » destructrice (LEAVC-1105).
+
+Le **vidage en masse n'est volontairement pas offert** par l'UI depuis ce correctif : aucune option
+du sélecteur ne produit `after: null`. Ce n'est pas une régression à « restaurer » — il faudra une
+option explicitement nommée, et de préférence conditionnée à l'autorisation de transition vers
+`null` du workflow (`allowedDependentValues` accepte un `nodeId` nul, mais
+`useTreeNodesCandidates.tsx` l'écarte aujourd'hui).
+
+---
+
 ## Mode Kanban (`kanban/`)
 
 Plan et décisions : [`docs/explorer-kanban-plan.md`](../../../../../docs/explorer-kanban-plan.md).

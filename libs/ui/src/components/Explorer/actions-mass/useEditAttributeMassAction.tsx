@@ -62,8 +62,7 @@ export const useEditAttributeMassAction = ({
 
     const bulkCount = view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
 
-    // Prédicat partagé par le bouton « Modifier » et la garde de soumission, pour qu'ils ne
-    // puissent pas diverger : rien à faire tant qu'aucun groupe n'entre dans le mapping.
+    // Shared by the "edit" button and the submit guard, so the two cannot diverge.
     const canEdit = selectedAttribute !== null && editionMapping.count > 0;
 
     const _saveEditionMapping = () => {

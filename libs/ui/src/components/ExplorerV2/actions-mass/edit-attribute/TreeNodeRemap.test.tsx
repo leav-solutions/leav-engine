@@ -68,7 +68,7 @@ describe('TreeNodeRemap', () => {
         await _selectOption('Node two');
         await _selectOption(doNotChangeLabel);
 
-        // `after: null` would mean « clear the value » for saveValueBulk — never send it here (LEAVC-1105).
+        // `after: null` would mean "clear the value" for saveValueBulk — never send it here (LEAVC-1105).
         expect(setAttributeMapping).toHaveBeenLastCalledWith({
             before: 'node_1',
             after: DO_NOT_CHANGE,
