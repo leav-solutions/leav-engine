@@ -3924,7 +3924,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hono/node-server@npm:2.0.12, @hono/node-server@npm:^1.19.9 || ^2.0.5":
+"@hono/node-server@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@hono/node-server@npm:2.1.0"
+  peerDependencies:
+    hono: ^4
+  checksum: 10/a8fbbfe017c60cc625e13cf37da5604340968037e748dab6dbe0c225880a56eac6eefd02089e3fcebe11a9ecbdc7c50bac7827ef99a654148b7f64b1c66b3ecb
+  languageName: node
+  linkType: hard
+
+"@hono/node-server@npm:^1.19.9 || ^2.0.5":
   version: 2.0.12
   resolution: "@hono/node-server@npm:2.0.12"
   peerDependencies:
@@ -4357,7 +4366,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@leav/monitoring-server@workspace:libs/monitoring-server"
   dependencies:
-    "@hono/node-server": "npm:2.0.12"
+    "@hono/node-server": "npm:2.1.0"
     "@leav/logger": "workspace:libs/logger"
     "@types/node": "npm:24.13.3"
     hono: "npm:4.12.34"
