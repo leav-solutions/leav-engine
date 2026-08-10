@@ -88,7 +88,7 @@
         "dataloader": "2.2.3",
         "dayjs": "1.11.21",
         "exceljs": "4.4.0",
-        "exiftool-vendored": "37.1.0",
+        "exiftool-vendored": "37.2.0",
         "express": "4.22.2",
         "express-useragent": "1.0.15",
         "graphql": "16.14.2",
