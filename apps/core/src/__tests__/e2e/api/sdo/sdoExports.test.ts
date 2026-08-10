@@ -22,7 +22,7 @@ import {
     SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
     SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID,
     SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID,
-    SDO_EXPORTS_EXTEND_FUNCTION_CONFIG,
+    SDO_EXPORTS_COMPUTED_FUNCTION_CONFIG,
 } from './sdoConfig';
 import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
@@ -676,14 +676,10 @@ describe('SDO Exports', () => {
         const {uuid: targetUUID} = target.record;
 
         const createMsg = await waitForSdoOf(SDO_EXPORTS_EXTENDED_LIBRARY_ID, targetUUID);
-        // No trigger yet: the plugin function aggregates an empty list. It also echoes the mapping's
-        // extendSDOFunctionConfig, which the core hands over untouched.
+        // No trigger yet: the plugin function aggregates an empty list.
         expect(createMsg).toMatchObject({
             action: 'CREATE',
-            content: {
-                system: {systemId: targetUUID},
-                info: {triggeredBy: [], extendConfig: SDO_EXPORTS_EXTEND_FUNCTION_CONFIG},
-            },
+            content: {system: {systemId: targetUUID}, info: {triggeredBy: []}},
         });
 
         const {createRecord: trigger} = await adminUserSdk.CreateRecord({
@@ -728,6 +724,29 @@ describe('SDO Exports', () => {
             content: {
                 system: {systemId: targetUUID},
                 info: {unmappedValue: 'triggered by an unmapped attribute'},
+            },
+        });
+    });
+
+    test('an export mapping function builds a computed SDO path from its own config', async () => {
+        // The `info.computed` mapping entry declares no leavAttributeId: the plugin function is still
+        // called, receives the entry's exportFunctionConfig, and gets neither value nor attributeProps.
+        const {createRecord: target} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_EXTENDED_LIBRARY_ID});
+        const {uuid: targetUUID} = target.record;
+
+        const msg = await waitForSdoOf(SDO_EXPORTS_EXTENDED_LIBRARY_ID, targetUUID);
+
+        expect(msg).toMatchObject({
+            content: {
+                system: {systemId: targetUUID},
+                info: {
+                    computed: {
+                        computedFrom: target.record.id,
+                        config: SDO_EXPORTS_COMPUTED_FUNCTION_CONFIG,
+                        hasValue: false,
+                        hasAttributeProps: false,
+                    },
+                },
             },
         });
     });

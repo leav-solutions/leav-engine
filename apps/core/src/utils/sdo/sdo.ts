@@ -70,7 +70,7 @@ export default function (): ISDOUtils {
     // SDO path, so nothing else would ever make them trigger an export.
     const hasSDOAttribute = (sdoLibrary: ISDOMappingLibrary, attribute: string): boolean =>
         Object.values(sdoLibrary.sdoAttributes ?? {}).some(
-            ({leavAttributeId}) => leavAttributeId.split('.')[0] === attribute,
+            ({leavAttributeId}) => leavAttributeId?.split('.')[0] === attribute,
         ) || (sdoLibrary.additionalAttributeTriggers ?? []).includes(attribute);
 
     const getRecordUUIDFromSDO = (sdo: Pick<ISDO, 'content'>): string => {

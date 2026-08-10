@@ -58,13 +58,28 @@ export const sdoIdentifierBlock = 'identifier' as const;
 export interface ISDOMappingAttribute {
     /**
      * LEAV attribute id, or a dotted path traversing links/trees for export (e.g. "category.color").
-     * Import ignores mapping entries whose leavAttributeId is a path, since a path can't be resolved
-     * to a single writable attribute.
+     *
+     * Optional: an SDO path computed by an `exportFunction` from several sources has no single source
+     * attribute. Import ignores entries without one, as it does for dotted paths — neither resolves to
+     * a single writable attribute. An empty string means the same thing (an SDO path declared in the
+     * config but not mapped yet) and behaves identically.
      */
-    leavAttributeId: string;
+    leavAttributeId?: string;
     valueRequired: boolean;
     format: SDOMappingAttributeFormat;
-    exportFunction?: string; // name of the function to use for export
+    /**
+     * Name of a plugin-registered function (see registerSDOExportMappingFunctions) producing the value
+     * of this SDO path. It may ignore `leavAttributeId` entirely and aggregate whatever it needs off the
+     * record — which is how a whole computed block gets exported while staying declared in the mapping.
+     */
+    exportFunction?: string;
+    /**
+     * Opaque configuration handed to `exportFunction`. The core never interprets it: the plugin owning
+     * the function defines and validates its shape. It lives on the mapping entry so an
+     * instance-specific table (ids, behaviours…) stays editable in the admin custom config, with no
+     * redeployment.
+     */
+    exportFunctionConfig?: Record<string, unknown>;
 }
 
 export interface ISDOAdditionalLibraryTrigger {
@@ -86,9 +101,9 @@ export interface ISDOMappingLibrary {
      */
     additionalLibraryTriggers?: ISDOAdditionalLibraryTrigger[];
     /**
-     * Export triggers sourced from an attribute OF `leavLibraryId` that is mapped to no SDO path —
-     * the case of a block built entirely by `extendSDOFunction`. Without this, saving such an
-     * attribute is skipped by `hasSDOAttribute` and no SDO is ever emitted.
+     * Export triggers sourced from an attribute OF `leavLibraryId` that is mapped to no SDO path — an
+     * attribute read by an `exportFunction` to build a computed block, for instance. Without this,
+     * saving such an attribute is skipped by `hasSDOAttribute` and no SDO is ever emitted.
      */
     additionalAttributeTriggers?: string[];
     /**
@@ -97,13 +112,6 @@ export interface ISDOMappingLibrary {
      * can't express. Called with the full record and the built SDO.
      */
     extendSDOFunction?: string;
-    /**
-     * Opaque configuration handed to `extendSDOFunction`. The core never interprets it: the plugin
-     * owning the function defines and validates its shape. It lives alongside the rest of the SDO
-     * mapping so an instance-specific table (ids, behaviours…) stays editable in the admin custom
-     * config, with no redeployment.
-     */
-    extendSDOFunctionConfig?: Record<string, unknown>;
 }
 
 export interface ISDOMapping {
@@ -126,23 +134,32 @@ export interface ISDOSettings {
     mapping: ISDOMapping;
 }
 
-export type ISDOMappingFunction = (value: unknown, attributeProps: IAttribute, ctx: IQueryInfos) => Promise<unknown>;
-
-export type ISDOMappingFunctions<Keys extends string = string> = Record<Keys, ISDOMappingFunction>;
-
 /**
- * Plugin function extending a whole SDO export. Receives the full LEAV record, the SDO built from the
- * generic attribute mapping and the mapping's `extendSDOFunctionConfig`, and returns the (possibly
- * extended) SDO.
+ * Plugin function producing the value of one SDO path on export, named by the mapping entry's
+ * `exportFunction`. Its result goes through the entry's `format` before being set at its SDO path.
  *
- * The returned content is still validated against the generic JSON schema, which requires `system`
- * and `info`: spread `sdo.content` rather than replacing it.
+ * It is free to ignore `value` and build the whole thing off `record` — that is how a computed block
+ * (aggregating linked records, reading a different attribute per hierarchy level…) gets exported while
+ * remaining declared in the mapping. Such an entry needs no `leavAttributeId`, in which case `value`
+ * and `attributeProps` are absent.
  */
-export type IExtendSDOFunction = (params: {
+export type ISDOExportMappingFunction = (params: {
     record: IRecord;
-    sdo: ISDO;
+    /** Value of the entry's `leavAttributeId`, already resolved and mapped (uuids for links/trees). */
+    value?: unknown;
+    /** Properties of the entry's carrier attribute — e.g. `linked_tree` for a tree attribute. */
+    attributeProps?: IAttribute;
+    /** The entry's `exportFunctionConfig`, opaque to the core. */
     config?: Record<string, unknown>;
     ctx: IQueryInfos;
-}) => Promise<ISDO>;
+}) => Promise<unknown>;
+
+export type ISDOExportMappingFunctions<Keys extends string = string> = Record<Keys, ISDOExportMappingFunction>;
+
+/**
+ * Plugin function extending a whole SDO export. Receives the full LEAV record and the
+ * SDO built from the generic attribute mapping, returns the (possibly extended) SDO.
+ */
+export type IExtendSDOFunction = (record: IRecord, sdo: ISDO, ctx: IQueryInfos) => Promise<ISDO>;
 
 export type IExtendSDOFunctions<Keys extends string = string> = Record<Keys, IExtendSDOFunction>;

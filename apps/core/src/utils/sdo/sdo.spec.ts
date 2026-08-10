@@ -37,6 +37,18 @@ describe('sdoUtils', () => {
             expect(hasSDOAttribute({leavLibraryId: 'campaigns'} as ISDOMappingLibrary, 'campaigns_label')).toBe(false);
         });
 
+        test('does not crash on an entry with no leavAttributeId', () => {
+            // A computed SDO path built by an exportFunction designates no attribute
+            const withComputedEntry: ISDOMappingLibrary = {
+                leavLibraryId: 'campaigns',
+                sdoAttributes: {
+                    framing: {valueRequired: false, format: 'object', exportFunction: 'campaignFraming'},
+                },
+            };
+
+            expect(hasSDOAttribute(withComputedEntry, 'campaigns_objectives')).toBe(false);
+        });
+
         test('matches an attribute declared in additionalAttributeTriggers', () => {
             // Read by an extendSDOFunction, so mapped to no SDO path: nothing else would trigger it
             const withTriggerAttributes: ISDOMappingLibrary = {
