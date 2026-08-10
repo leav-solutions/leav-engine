@@ -104,6 +104,11 @@ app-studio importe). Construit par `panel-view-settings/store-current-view/viewV
 | `cells/`                    | Rendu de cellule **partagé** entre les modes (`TableCell`, `IdCard`, `TableTagGroup`) — utilisé par `table/` **et** `kanban/` (cartes)                 |
 | `grouping/`                 | Regroupement partagé (`buildKanbanColumns`, `isValidGroupingAxis`, `groupFilters`, types `_types.ts`)                                                  |
 
+> ⚠️ `actions-mass/edit-attribute/` est une **copie intégrale** de son homologue v1 : toute
+> correction est à porter dans les deux. La sémantique du mapping `saveValueBulk` (`after: null`
+> **vide** la valeur, « ne pas changer » = entrée omise, d'où la sentinelle `DO_NOT_CHANGE`) est
+> documentée dans [`Explorer/CLAUDE.md`](../Explorer/CLAUDE.md#édition-en-masse--la-sémantique-de-after-dans-savevaluebulk).
+
 ---
 
 ## Mode Kanban (`kanban/`)

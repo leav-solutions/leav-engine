@@ -108,6 +108,25 @@ vue dans la toolbar (filtres, raccourcis `useOpenViewSettingsV2`, bouton volet `
 | `DataView.tsx`                                                              | Rendu du tableau (wrapper `KitTable`)                                                                                  |
 | `ExplorerToolbar.tsx` / `ExplorerTitle.tsx` / `ExplorerFiltersAndSorts.tsx` | Header, titre, barre filtres+tris                                                                                      |
 
+> ⚠️ `actions-mass/edit-attribute/` est une **copie intégrale** de son homologue `ExplorerV2/` :
+> toute correction est à porter dans les deux (vérifier avec `diff -rq` entre les deux dossiers).
+
+### Édition en masse — la sémantique de `after` dans `saveValueBulk`
+
+Le mapping envoyé au serveur ne connaît que deux gestes, et l'un des deux **ne s'exprime pas** :
+
+- `after: <nodeId>` remplace la valeur, `after: null` **vide** la valeur (→ `valueDomain.deleteValue`) ;
+- « ne pas changer » se dit en **omettant l'entrée du mapping**, jamais par une valeur d'`after`.
+
+D'où la sentinelle front `DO_NOT_CHANGE` (`edit-attribute/_types.ts`), volontairement distincte de
+`null` : c'est leur confusion qui avait rendu l'option « Ne pas changer » destructrice (LEAVC-1105).
+
+Le **vidage en masse n'est volontairement pas offert** par l'UI depuis ce correctif : aucune option
+du sélecteur ne produit `after: null`. Ce n'est pas une régression à « restaurer » — il faudra une
+option explicitement nommée, et de préférence conditionnée à l'autorisation de transition vers
+`null` du workflow (`allowedDependentValues` accepte un `nodeId` nul, mais
+`useTreeNodesCandidates.tsx` l'écarte aujourd'hui).
+
 ---
 
 ## GraphQL (`_queries/`)
