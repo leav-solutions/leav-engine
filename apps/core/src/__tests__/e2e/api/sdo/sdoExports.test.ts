@@ -21,6 +21,8 @@ import {
     SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID,
     SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
     SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID,
+    SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID,
+    SDO_EXPORTS_EXTEND_FUNCTION_CONFIG,
 } from './sdoConfig';
 import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
@@ -189,11 +191,19 @@ describe('SDO Exports', () => {
                 label: {fr: 'SDO export extended value', en: 'SDO export extended value'},
             },
         });
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID,
+                type: AttributeType.simple,
+                format: AttributeFormat.text,
+                label: {fr: 'SDO export extend unmapped', en: 'SDO export extend unmapped'},
+            },
+        });
         await adminUserSdk.SaveLibrary({
             library: {
                 id: SDO_EXPORTS_EXTENDED_LIBRARY_ID,
                 label: {fr: 'Test SDO étendu', en: 'Test SDO extended'},
-                attributes: [SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID],
+                attributes: [SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID, SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID],
                 recordIdentityConf: {label: 'id'},
             },
         });
@@ -666,10 +676,14 @@ describe('SDO Exports', () => {
         const {uuid: targetUUID} = target.record;
 
         const createMsg = await waitForSdoOf(SDO_EXPORTS_EXTENDED_LIBRARY_ID, targetUUID);
-        // No trigger yet: the plugin function aggregates an empty list.
+        // No trigger yet: the plugin function aggregates an empty list. It also echoes the mapping's
+        // extendSDOFunctionConfig, which the core hands over untouched.
         expect(createMsg).toMatchObject({
             action: 'CREATE',
-            content: {system: {systemId: targetUUID}, info: {triggeredBy: []}},
+            content: {
+                system: {systemId: targetUUID},
+                info: {triggeredBy: [], extendConfig: SDO_EXPORTS_EXTEND_FUNCTION_CONFIG},
+            },
         });
 
         const {createRecord: trigger} = await adminUserSdk.CreateRecord({
@@ -688,6 +702,33 @@ describe('SDO Exports', () => {
         expect(updateMsg).toMatchObject({
             action: 'UPDATE',
             content: {system: {systemId: targetUUID}, info: {triggeredBy: [trigger.record.uuid]}},
+        });
+    });
+
+    test('additionalAttributeTriggers makes an unmapped attribute trigger an export', async () => {
+        // SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID is in no sdoAttributes path: without
+        // additionalAttributeTriggers, hasSDOAttribute would skip the event and nothing would be
+        // emitted. The fakeplugin extend function reads it off the record into info.unmappedValue.
+        const {createRecord: target} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_EXTENDED_LIBRARY_ID});
+        const {uuid: targetUUID} = target.record;
+
+        const createMsg = await waitForSdoOf(SDO_EXPORTS_EXTENDED_LIBRARY_ID, targetUUID);
+        expect(createMsg).toMatchObject({action: 'CREATE', content: {info: {unmappedValue: null}}});
+
+        await adminUserSdk.SaveValue({
+            libraryId: SDO_EXPORTS_EXTENDED_LIBRARY_ID,
+            recordId: target.record.id,
+            attributeId: SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID,
+            value: {payload: 'triggered by an unmapped attribute'},
+        });
+
+        const updateMsg = await waitForSdoOf(SDO_EXPORTS_EXTENDED_LIBRARY_ID, targetUUID);
+        expect(updateMsg).toMatchObject({
+            action: 'UPDATE',
+            content: {
+                system: {systemId: targetUUID},
+                info: {unmappedValue: 'triggered by an unmapped attribute'},
+            },
         });
     });
 

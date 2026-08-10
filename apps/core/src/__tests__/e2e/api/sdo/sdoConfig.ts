@@ -25,6 +25,10 @@ export const SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID = 'sdo_export_extended_valu
 export const SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID = 'test_sdo_exports_extend_trigger';
 export const SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID = 'sdo_export_extend_trigger_link';
 export const SDO_EXPORTS_EXTEND_FUNCTION_NAME = 'fakeplugin_extendWithTriggers';
+// Mapped to no SDO path on purpose: only `additionalAttributeTriggers` makes saving it emit an export
+export const SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID = 'sdo_export_extend_unmapped';
+// Echoed by the extend function into `info.extendConfig`, to cover `extendSDOFunctionConfig` transmission
+export const SDO_EXPORTS_EXTEND_FUNCTION_CONFIG = {label: 'fakeplugin extend config'};
 
 // IMPORT
 export const SDO_IMPORTS_LIBRARY_ID = 'test_sdo_imports';
@@ -116,6 +120,8 @@ export const sdoGlobalSettings: ISDOSettings = {
         [SDO_EXPORTS_EXTENDED_LIBRARY_ID]: {
             leavLibraryId: SDO_EXPORTS_EXTENDED_LIBRARY_ID,
             extendSDOFunction: SDO_EXPORTS_EXTEND_FUNCTION_NAME,
+            extendSDOFunctionConfig: SDO_EXPORTS_EXTEND_FUNCTION_CONFIG,
+            additionalAttributeTriggers: [SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID],
             additionalLibraryTriggers: [
                 {
                     leavLibraryId: SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,

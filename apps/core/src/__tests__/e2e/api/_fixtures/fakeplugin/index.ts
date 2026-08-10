@@ -14,14 +14,14 @@ import {TaskPriority} from '../../../../../_types/tasksManager';
 import {type TTrpc} from '../../../../../app/trpc/trpcApp';
 import {type IEventsManagerDomain} from '../../../../../domain/eventsManager/eventsManagerDomain';
 import {type IRecordDomain} from '../../../../../domain/record/recordDomain';
-import {type ISDO} from '../../../../../_types/sdo';
-import {type IRecord, AttributeCondition} from '../../../../../_types/record';
-import {type IQueryInfos} from '../../../../../_types/queryInfos';
+import {type IExtendSDOFunction} from '../../../../../_types/sdo';
+import {AttributeCondition} from '../../../../../_types/record';
 import {fakePluginAutomationAction} from './domain/fakeAutomationAction';
 import {
     SDO_EXPORTS_EXTEND_FUNCTION_NAME,
     SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
     SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID,
+    SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID,
 } from '../../sdo/sdoConfig';
 
 interface IDeps {
@@ -85,7 +85,7 @@ export default function ({
     'core.domain.record': recordDomain,
     'fakeplugin.domain': fakeDomain,
 }: IDeps): IPluginInitModule {
-    const _extendSdoWithTriggers = async (record: IRecord, sdo: ISDO, ctx: IQueryInfos): Promise<ISDO> => {
+    const _extendSdoWithTriggers: IExtendSDOFunction = async ({record, sdo, config, ctx}) => {
         const {list} = await recordDomain.find({
             params: {
                 library: SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
@@ -107,6 +107,10 @@ export default function ({
                 info: {
                     ...((sdo.content.info as Record<string, unknown>) ?? {}),
                     triggeredBy: list.map(triggerRecord => triggerRecord.uuid),
+                    // Read straight off the record: this attribute is in no SDO path, it only reaches
+                    // the export through `additionalAttributeTriggers`.
+                    unmappedValue: record[SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID] ?? null,
+                    extendConfig: config ?? null,
                 },
             },
         };

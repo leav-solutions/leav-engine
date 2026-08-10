@@ -36,6 +36,18 @@ describe('sdoUtils', () => {
         test('does not crash when sdoAttributes is undefined', () => {
             expect(hasSDOAttribute({leavLibraryId: 'campaigns'} as ISDOMappingLibrary, 'campaigns_label')).toBe(false);
         });
+
+        test('matches an attribute declared in additionalAttributeTriggers', () => {
+            // Read by an extendSDOFunction, so mapped to no SDO path: nothing else would trigger it
+            const withTriggerAttributes: ISDOMappingLibrary = {
+                ...mappingLibrary,
+                additionalAttributeTriggers: ['campaigns_objectives'],
+            };
+
+            expect(hasSDOAttribute(withTriggerAttributes, 'campaigns_objectives')).toBe(true);
+            expect(hasSDOAttribute(withTriggerAttributes, 'campaigns_comment')).toBe(false);
+            expect(hasSDOAttribute(mappingLibrary, 'campaigns_objectives')).toBe(false);
+        });
     });
 
     describe('getAdditionalLibraryTriggers', () => {

@@ -77,13 +77,33 @@ export interface ISDOMappingLibrary {
     sdoAttributes: {
         [sdoAttributePath: string]: ISDOMappingAttribute;
     };
+    /**
+     * Export triggers sourced from ANOTHER library: when one of its records changes, follow
+     * `leavAttributePath` from it to reach the record of `leavLibraryId` to re-export.
+     *
+     * Sibling of `additionalAttributeTriggers` — both declare additional reasons to export, named
+     * after the source of the trigger.
+     */
     additionalLibraryTriggers?: ISDOAdditionalLibraryTrigger[];
+    /**
+     * Export triggers sourced from an attribute OF `leavLibraryId` that is mapped to no SDO path —
+     * the case of a block built entirely by `extendSDOFunction`. Without this, saving such an
+     * attribute is skipped by `hasSDOAttribute` and no SDO is ever emitted.
+     */
+    additionalAttributeTriggers?: string[];
     /**
      * Name of a plugin-registered function (see registerExtendSDOFunctions) invoked at the end of the
      * SDO build to extend the whole SDO — e.g. inject aggregated data the generic attribute mapping
      * can't express. Called with the full record and the built SDO.
      */
     extendSDOFunction?: string;
+    /**
+     * Opaque configuration handed to `extendSDOFunction`. The core never interprets it: the plugin
+     * owning the function defines and validates its shape. It lives alongside the rest of the SDO
+     * mapping so an instance-specific table (ids, behaviours…) stays editable in the admin custom
+     * config, with no redeployment.
+     */
+    extendSDOFunctionConfig?: Record<string, unknown>;
 }
 
 export interface ISDOMapping {
@@ -111,9 +131,18 @@ export type ISDOMappingFunction = (value: unknown, attributeProps: IAttribute, c
 export type ISDOMappingFunctions<Keys extends string = string> = Record<Keys, ISDOMappingFunction>;
 
 /**
- * Plugin function extending a whole SDO export. Receives the full LEAV record and the
- * SDO built from the generic attribute mapping, returns the (possibly extended) SDO.
+ * Plugin function extending a whole SDO export. Receives the full LEAV record, the SDO built from the
+ * generic attribute mapping and the mapping's `extendSDOFunctionConfig`, and returns the (possibly
+ * extended) SDO.
+ *
+ * The returned content is still validated against the generic JSON schema, which requires `system`
+ * and `info`: spread `sdo.content` rather than replacing it.
  */
-export type IExtendSDOFunction = (record: IRecord, sdo: ISDO, ctx: IQueryInfos) => Promise<ISDO>;
+export type IExtendSDOFunction = (params: {
+    record: IRecord;
+    sdo: ISDO;
+    config?: Record<string, unknown>;
+    ctx: IQueryInfos;
+}) => Promise<ISDO>;
 
 export type IExtendSDOFunctions<Keys extends string = string> = Record<Keys, IExtendSDOFunction>;

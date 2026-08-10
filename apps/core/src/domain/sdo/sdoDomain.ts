@@ -529,7 +529,7 @@ export default function ({
             );
         }
 
-        return extendSDOFn ? extendSDOFn(record, sdo, ctx) : sdo;
+        return extendSDOFn ? extendSDOFn({record, sdo, config: sdoMappingLibrary.extendSDOFunctionConfig, ctx}) : sdo;
     };
 
     const _cleanValue = (val, type) => {

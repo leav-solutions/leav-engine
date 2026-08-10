@@ -21,6 +21,7 @@ import {
     type ISDOMappingLibrary,
     sdoPathIdentifierUuid,
     type ISDO,
+    type IExtendSDOFunction,
 } from '../../_types/sdo';
 import {EventAction} from '@leav/utils';
 import {mockSDOUtils} from '../../__tests__/mocks/sdo/domains';
@@ -744,16 +745,18 @@ describe('sdoDomain', () => {
                 [uuidAttribute, {id: 'simpleAttribute', type: AttributeTypes.SIMPLE}].find(a => a.id === attributePath),
             );
 
-            const extendFunction = vi.fn(async (record: IRecord, sdo: ISDO) => ({
+            const extendFunction = vi.fn<IExtendSDOFunction>(async ({record, sdo}) => ({
                 ...sdo,
                 content: {...sdo.content, extendedFrom: record.id},
             }));
             _sdoDomain.registerExtendSDOFunctions({extendSdo: extendFunction});
 
+            const extendConfig = {someInstanceTable: ['a', 'b']};
             const mappingWithExtendFunction: ISDOMapping = {
                 [mockSDO.name]: {
                     ...mockSDOMapping[mockSDO.name],
                     extendSDOFunction: 'extendSdo',
+                    extendSDOFunctionConfig: extendConfig,
                     sdoAttributes: {
                         simpleMapping: {leavAttributeId: 'simpleAttribute', valueRequired: false, format: 'string'},
                     },
@@ -768,12 +771,14 @@ describe('sdoDomain', () => {
                 mockSystemQueryContext,
             );
 
-            // The function receives the full record and the SDO built from the generic mapping.
-            expect(extendFunction).toHaveBeenCalledWith(
-                expect.objectContaining({id: 'entity'}),
-                expect.objectContaining({name: mockSDO.name, action: 'CREATE'}),
-                mockSystemQueryContext,
-            );
+            // The function receives the full record, the SDO built from the generic mapping, and the
+            // mapping's extendSDOFunctionConfig handed over untouched.
+            expect(extendFunction).toHaveBeenCalledWith({
+                record: expect.objectContaining({id: 'entity'}),
+                sdo: expect.objectContaining({name: mockSDO.name, action: 'CREATE'}),
+                config: extendConfig,
+                ctx: mockSystemQueryContext,
+            });
             expect((sdo as ISDO).content).toMatchObject({extendedFrom: 'entity'});
         });
 
