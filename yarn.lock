@@ -4369,7 +4369,7 @@ __metadata:
     "@hono/node-server": "npm:2.1.0"
     "@leav/logger": "workspace:libs/logger"
     "@types/node": "npm:24.13.3"
-    hono: "npm:4.12.34"
+    hono: "npm:4.13.1"
     prom-client: "npm:15.1.3"
     typescript: "npm:7.0.2"
     vitest: "npm:4.1.10"
@@ -14310,10 +14310,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hono@npm:4.12.34":
-  version: 4.12.34
-  resolution: "hono@npm:4.12.34"
-  checksum: 10/c33104233b751c50e1821382eefad5584823ff2b635af261eb1e85c17bab706f73f3c1e5ace4d2f4c23a7fdced24e4e4de9cc5a32404b134ac93b66ff0e81a0a
+"hono@npm:4.13.1":
+  version: 4.13.1
+  resolution: "hono@npm:4.13.1"
+  checksum: 10/0d4e3a293473a07b04eb685bf64d52bcd911b396bc0a8f580a25f0f9f92ef963c4a42607b9af597344889a193ec1724f7d0259660ad6f748bc421002dec790e3
   languageName: node
   linkType: hard
 
