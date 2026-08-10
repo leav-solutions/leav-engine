@@ -37,5 +37,3 @@ RUN apk --no-cache add \
 
 # set working dir
 WORKDIR /app/apps/preview-generator
-
-COPY ./package.json .

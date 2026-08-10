@@ -8,3 +8,5 @@ yarn.lock
 *.sh
 .gitignore
 .dockerignore
+Dockerfile
+*.Dockerfile

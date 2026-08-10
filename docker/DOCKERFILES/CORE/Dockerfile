@@ -4,5 +4,3 @@ FROM node:24.19.0-alpine3.24
 RUN apk --update add perl pkgconfig
 
 WORKDIR /app/apps/core
-
-COPY ./package.json .
