@@ -3,7 +3,7 @@ import {SystemTrees} from '../../../_constants/systemTrees';
 import {createAmqpConnection, type IAmqpConnection} from '@leav/message-broker';
 import {logger} from '@leav/logger';
 import {appRootPath} from '../../../rootPath';
-import fsremaned from 'fs';
+import fs from 'fs';
 import path from 'path';
 import {type AwilixContainer} from 'awilix';
 import {getConfig} from '../../../config';
@@ -44,7 +44,7 @@ const _setupFakePlugin = async () => {
     const relativePath = path.relative(pluginsFolder, fakePluginSrc);
 
     try {
-        await fsremaned.promises.symlink(relativePath, fakePluginDest);
+        await fs.promises.symlink(relativePath, fakePluginDest);
     } catch (e) {
         // It's ok, already exists
         if (e.code === 'EEXIST') {
@@ -98,21 +98,12 @@ export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContain
 };
 
 const _createRequiredDirectories = async conf => {
-    if (!fsremaned.existsSync(conf.import.directory)) {
-        await fsremaned.promises.mkdir(conf.import.directory);
-    }
-    if (!fsremaned.existsSync(conf.export.directory)) {
-        await fsremaned.promises.mkdir(conf.export.directory);
-    }
-    if (!fsremaned.existsSync(conf.diskCache.directory)) {
-        await fsremaned.promises.mkdir(conf.diskCache.directory);
+    for (const dir of [conf.import.directory, conf.export.directory, conf.diskCache.directory]) {
+        await fs.promises.mkdir(dir, {recursive: true});
     }
 
     const filesDir = conf.files.rootPaths.trim().split(':')[1];
-
-    if (!fsremaned.existsSync(filesDir)) {
-        await fsremaned.promises.mkdir(filesDir);
-    }
+    await fs.promises.mkdir(filesDir, {recursive: true});
 };
 
 const _createUsersAndGroups = async (coreContainer: AwilixContainer, project: TestProject) => {
@@ -224,5 +215,5 @@ export async function teardown() {
     const pluginsFolder = path.join(appRootPath, 'plugins');
     const fakePluginDest = `${pluginsFolder}/fakeplugin`;
 
-    fsremaned.unlinkSync(fakePluginDest);
+    fs.unlinkSync(fakePluginDest);
 }

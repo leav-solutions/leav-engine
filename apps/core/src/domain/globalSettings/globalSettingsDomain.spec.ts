@@ -66,7 +66,7 @@ describe('getSettingsRepo', () => {
                 'core.infra.globalSettings': mockGlobalSettingsRepo as IGlobalSettingsRepo,
             });
 
-            expect(() => domain.saveSettings({settings: mockGlobalSettings, ctx: mockCtx})).rejects.toThrow(
+            await expect(domain.saveSettings({settings: mockGlobalSettings, ctx: mockCtx})).rejects.toThrow(
                 PermissionError,
             );
         });

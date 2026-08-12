@@ -2,6 +2,7 @@ module.exports = {
     server: {
         host: '0.0.0.0',
         port: 7357,
+        publicUrl: 'http://localhost:7357',
         admin: {
             login: 'admin',
             password: 'admin',

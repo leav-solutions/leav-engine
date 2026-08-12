@@ -1,5 +1,5 @@
 import {createAmqpConnection} from '@leav/message-broker';
-import fsremaned from 'fs';
+import fs from 'fs';
 import {getConfig} from '../../../config';
 import {initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
@@ -17,9 +17,7 @@ import {type TestProject} from 'vitest/node';
 
 const _createRequiredDirectories = async (conf: Awaited<ReturnType<typeof getConfig>>): Promise<void> => {
     for (const dir of [conf.import.directory, conf.export.directory, conf.diskCache.directory]) {
-        if (!fsremaned.existsSync(dir)) {
-            await fsremaned.promises.mkdir(dir, {recursive: true});
-        }
+        await fs.promises.mkdir(dir, {recursive: true});
     }
 };
 
