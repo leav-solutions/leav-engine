@@ -1,12 +1,12 @@
 import {
     adminUserSdk,
+    downloadFileBuffer,
     e2eGuestUser,
     e2eNonAdminUser,
     gqlSaveAttribute,
     gqlSaveValue,
     makeGraphQlCall,
 } from '../e2eUtils';
-import getFileDataBuffer from '../../../../utils/helpers/getFileDataBuffer';
 import getExcelData from '../../../../utils/helpers/getExcelData';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import {waitForTaskCompletedWithStatus} from '../taskUtils';
@@ -128,8 +128,7 @@ describe('Export Nested Attributes', () => {
 
         const task = await waitForTaskCompletedWithStatus(exportTaskId, TaskStatus.DONE);
 
-        const filepath = task.link.url;
-        const buffer = await getFileDataBuffer(filepath);
+        const buffer = await downloadFileBuffer(task.link.url);
         return getExcelData(buffer);
     }
 

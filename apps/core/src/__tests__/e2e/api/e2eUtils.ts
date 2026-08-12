@@ -136,6 +136,23 @@ export async function makeGraphQlCall(query: string | FormData, options?: IMakeG
         throw e;
     }
 }
+export async function downloadFileBuffer(url: string, user: IE2EUser = e2eAdminUser()): Promise<Buffer> {
+    const config = await getConfig();
+    const token = await user.getAuthToken();
+
+    const response = await fetch(`${config.server.publicUrl}${url}`, {
+        headers: {
+            Cookie: `${ACCESS_TOKEN_COOKIE_NAME}=${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to download file at ${url}: HTTP ${response.status}`);
+    }
+
+    return Buffer.from(await response.arrayBuffer());
+}
+
 export async function importFileGraphQlCall(query: string, filePath: string, sheets = undefined) {
     try {
         const url = getGraphQLUrl();

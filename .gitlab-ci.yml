@@ -583,6 +583,7 @@ e2e-api:
     - *e2e_service_mailpit
     # Dont need elasticsearch for api tests, but could be added if needed (see file history)
   variables:
+    SERVER_PUBLIC_URL: "http://localhost:7357"
     ARANGO_URL: "http://root:@arangodb:8529"
     AUTH_KEY: "123456789"
     AMQP_HOST: "rabbitmq"

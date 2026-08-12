@@ -4,6 +4,7 @@ import {getConfig} from '../../../../config';
 import {MASKED_VALUE} from '../../../../_constants/values';
 import {
     adminUserSdk,
+    downloadFileBuffer,
     gqlAddElemToTree,
     gqlCreateRecord,
     gqlSaveAttribute,
@@ -13,7 +14,6 @@ import {
     makeWebSocketGraphQlCall,
     toCleanJSON,
 } from '../e2eUtils';
-import getFileDataBuffer from '../../../../utils/helpers/getFileDataBuffer';
 import getExcelData from '../../../../utils/helpers/getExcelData';
 import {AttributeFormats, AttributeTypes} from '../../../../_types/attribute';
 import dayjs from 'dayjs';
@@ -389,8 +389,7 @@ describe('Export', () => {
 
             const task = await waitForTaskCompletion(exportTaskId);
 
-            const filepath = task.link.url;
-            const buffer = await getFileDataBuffer(filepath);
+            const buffer = await downloadFileBuffer(task.link.url);
             const excelData = await getExcelData(buffer);
 
             expect(excelData).toEqual([
@@ -409,8 +408,7 @@ describe('Export', () => {
 
             const task = await waitForTaskCompletion(exportTaskId);
 
-            const filepath = task.link.url;
-            const buffer = await getFileDataBuffer(filepath);
+            const buffer = await downloadFileBuffer(task.link.url);
             const excelData = await getExcelData(buffer);
 
             expect(excelData).toEqual([
@@ -434,8 +432,7 @@ describe('Export', () => {
 
             const task = await waitForTaskCompletion(exportTaskId);
 
-            const filepath = task.link.url;
-            const buffer = await getFileDataBuffer(filepath);
+            const buffer = await downloadFileBuffer(task.link.url);
             const excelData = await getExcelData(buffer);
 
             expect(excelData).toEqual([
@@ -469,8 +466,7 @@ describe('Export', () => {
 
             const task = await waitForTaskCompletion(exportTaskId);
 
-            const filepath = task.link.url;
-            const buffer = await getFileDataBuffer(filepath);
+            const buffer = await downloadFileBuffer(task.link.url);
             const excelData = await getExcelData(buffer);
 
             expect(excelData).toEqual([
