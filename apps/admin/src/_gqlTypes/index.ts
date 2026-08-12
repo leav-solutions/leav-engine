@@ -355,6 +355,8 @@ export enum EventAction {
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
   DATA_IMPORT_START = 'DATA_IMPORT_START',
+  DTO_LOG_ERROR = 'DTO_LOG_ERROR',
+  DTO_LOG_IMPORT_RECORD = 'DTO_LOG_IMPORT_RECORD',
   EXPORT_END = 'EXPORT_END',
   EXPORT_START = 'EXPORT_START',
   GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
@@ -570,6 +572,8 @@ export enum LogAction {
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
   DATA_IMPORT_START = 'DATA_IMPORT_START',
+  DTO_LOG_ERROR = 'DTO_LOG_ERROR',
+  DTO_LOG_IMPORT_RECORD = 'DTO_LOG_IMPORT_RECORD',
   EXPORT_END = 'EXPORT_END',
   EXPORT_START = 'EXPORT_START',
   GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
@@ -1203,6 +1207,7 @@ export type ViewV2CreateInput = {
 
 export type ViewV2DisplayAttributeInput = {
   attributeId: Scalars['ID']['input'];
+  isGroupBy?: InputMaybe<Scalars['Boolean']['input']>;
   visible: Scalars['Boolean']['input'];
 };
 
@@ -1236,6 +1241,7 @@ export type ViewV2SortInput = {
 
 export enum ViewV2Types {
   cards = 'cards',
+  kanban = 'kanban',
   list = 'list',
   timeline = 'timeline'
 }
@@ -1414,14 +1420,14 @@ export type GetApiKeysQueryVariables = Exact<{
 }>;
 
 
-export type GetApiKeysQuery = { apiKeys: { list: Array<{ id: string, label?: string | null, key?: string | null, expiresAt?: number | null, createdAt: number, modifiedAt: number, createdBy: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, modifiedBy: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, user: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> } };
+export type GetApiKeysQuery = { apiKeys: { list: Array<{ id: string, label?: string | null, key?: string | null, expiresAt?: number | null, createdAt: number, modifiedAt: number, createdBy?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, modifiedBy?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, user?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }> } };
 
 export type SaveApiKeyMutationVariables = Exact<{
   apiKey: ApiKeyInput;
 }>;
 
 
-export type SaveApiKeyMutation = { saveApiKey: { id: string, label?: string | null, key?: string | null, expiresAt?: number | null, createdAt: number, modifiedAt: number, createdBy: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, modifiedBy: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, user: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } };
+export type SaveApiKeyMutation = { saveApiKey: { id: string, label?: string | null, key?: string | null, expiresAt?: number | null, createdAt: number, modifiedAt: number, createdBy?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, modifiedBy?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, user?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } };
 
 export type DeleteApplicationMutationVariables = Exact<{
   appId: Scalars['ID']['input'];
@@ -1846,14 +1852,14 @@ export type GetTasksQueryVariables = Exact<{
 }>;
 
 
-export type GetTasksQuery = { tasks: { totalCount: number, list: Array<{ id: string, label: any, modified_at: number, created_at: number, startAt: number, status: TaskStatus, priority: any, startedAt?: number | null, completedAt?: number | null, archive: boolean, created_by: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, progress?: { percent?: number | null, description?: any | null } | null, link?: { name: string, url: string } | null, canceledBy?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }> } };
+export type GetTasksQuery = { tasks: { totalCount: number, list: Array<{ id: string, label: any, modified_at: number, created_at: number, startAt: number, status: TaskStatus, priority: any, startedAt?: number | null, completedAt?: number | null, archive: boolean, created_by?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, progress?: { percent?: number | null, description?: any | null } | null, link?: { name: string, url: string } | null, canceledBy?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }> } };
 
 export type SubTasksUpdateSubscriptionVariables = Exact<{
   filters?: InputMaybe<TaskFiltersInput>;
 }>;
 
 
-export type SubTasksUpdateSubscription = { task: { id: string, label: any, modified_at: number, created_at: number, startAt: number, status: TaskStatus, priority: any, startedAt?: number | null, completedAt?: number | null, archive: boolean, created_by: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, progress?: { percent?: number | null, description?: any | null } | null, link?: { name: string, url: string } | null, canceledBy?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } };
+export type SubTasksUpdateSubscription = { task: { id: string, label: any, modified_at: number, created_at: number, startAt: number, status: TaskStatus, priority: any, startedAt?: number | null, completedAt?: number | null, archive: boolean, created_by?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, progress?: { percent?: number | null, description?: any | null } | null, link?: { name: string, url: string } | null, canceledBy?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null } };
 
 export type DeleteTreeMutationVariables = Exact<{
   treeId: Scalars['ID']['input'];
@@ -1960,7 +1966,7 @@ export type SaveValueBatchMutation = { saveValueBatch: { values?: Array<
       | { id_value?: string | null, modified_at?: number | null, created_at?: number | null, linkValue?: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string } }
       | { id_value?: string | null, modified_at?: number | null, created_at?: number | null, treeValue?: { record: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { whoAmI: { id: string, label?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string } }
       | { value?: any | null, raw_value?: any | null, id_value?: string | null, modified_at?: number | null, created_at?: number | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string } }
-    > | null, errors?: Array<{ type: string, attribute: string, input?: string | null, message: string }> | null } };
+    > | null, errors?: Array<{ type: string, attribute?: string | null, input?: string | null, message: string }> | null } };
 
 export type SaveValueMutationVariables = Exact<{
   library: Scalars['ID']['input'];

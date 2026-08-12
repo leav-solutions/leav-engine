@@ -8,6 +8,10 @@ export interface IEvent {
 
 /*** Database events ***/
 
+/**
+ * When adding an event in this list, ensure to run `yarn graphql-generate` in apps/admin to
+ * allow filter on it in admin history page
+ */
 export enum EventAction {
     API_KEY_DELETE = 'API_KEY_DELETE',
     API_KEY_SAVE = 'API_KEY_SAVE',
