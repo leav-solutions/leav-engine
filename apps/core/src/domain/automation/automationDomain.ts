@@ -149,25 +149,6 @@ export default function ({
             const chainDepth = ctx.automationDepth ?? 0;
 
             try {
-                if (chainDepth >= config.automation.maxChainDepth) {
-                    outcome = 'depth_exceeded';
-                    logger.error(
-                        `Automation chain cut: depth ${chainDepth} reached maxChainDepth (${config.automation.maxChainDepth}) for event action ${event.action} with topic ${JSON.stringify(event.topic)}. Check active rules for a circular composition.`,
-                    );
-                    await eventsManagerDomain.sendDatabaseEvent(
-                        {
-                            action: EventAction.AUTOMATION_CHAIN_DEPTH_EXCEEDED,
-                            topic: event.topic ?? {},
-                            metadata: {
-                                automationDepth: chainDepth,
-                                maxAutomationChainDepth: config.automation.maxChainDepth,
-                            },
-                        },
-                        ctx,
-                    );
-                    return;
-                }
-
                 const rules = await _getRulesToTrigger(event, synchronous, ctx);
                 triggerRulesMatched.record(rules.length, baseAttrs);
                 outcome = rules.length > 0 ? 'matched' : 'no_match';
@@ -179,6 +160,31 @@ export default function ({
                 };
 
                 if (!rules.length) {
+                    return;
+                }
+
+                // Cut only when a rule would actually run: an event reaching the max depth with no
+                // matching rule is a chain ending by itself, and the same save is evaluated by both
+                // the synchronous path and the async consumer - cutting before matching would emit
+                // one AUTOMATION_CHAIN_DEPTH_EXCEEDED per path for a single logical cut.
+                if (chainDepth >= config.automation.maxChainDepth) {
+                    outcome = 'depth_exceeded';
+                    const blockedRules = rules.map(rule => rule.id);
+                    logger.error(
+                        `Automation chain cut: depth ${chainDepth} reached maxChainDepth (${config.automation.maxChainDepth}) for event action ${event.action} with topic ${JSON.stringify(event.topic)}, blocking rules ${blockedRules.join(', ')}. Check active rules for a circular composition.`,
+                    );
+                    await eventsManagerDomain.sendDatabaseEvent(
+                        {
+                            action: EventAction.AUTOMATION_CHAIN_DEPTH_EXCEEDED,
+                            topic: event.topic ?? {},
+                            metadata: {
+                                automationDepth: chainDepth,
+                                maxAutomationChainDepth: config.automation.maxChainDepth,
+                                blockedRules,
+                            },
+                        },
+                        ctx,
+                    );
                     return;
                 }
 

@@ -114,8 +114,8 @@ describe('automationDomain', () => {
             expect(eventsManagerDomain.sendDatabaseEvent).not.toHaveBeenCalled();
         });
 
-        it('cuts the chain when the incoming depth reaches maxChainDepth: no rule is fetched nor executed', async () => {
-            const {domain, pipelineDomain, rulesCache, eventsManagerDomain} = buildDomain({maxChainDepth: 5});
+        it('cuts the chain when the incoming depth reaches maxChainDepth: no rule is executed', async () => {
+            const {domain, pipelineDomain, eventsManagerDomain} = buildDomain({maxChainDepth: 5});
 
             await domain.triggerRules({
                 event: valueSaveEvent,
@@ -123,17 +123,29 @@ describe('automationDomain', () => {
                 ctx: {...mockCtx, automationDepth: 5},
             });
 
-            expect(rulesCache.getRulesToTrigger).not.toHaveBeenCalled();
             expect(pipelineDomain.executePipeline).not.toHaveBeenCalled();
             expect(eventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledTimes(1);
             expect(eventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledWith(
                 {
                     action: EventAction.AUTOMATION_CHAIN_DEPTH_EXCEEDED,
                     topic: valueSaveEvent.topic,
-                    metadata: {automationDepth: 5, maxAutomationChainDepth: 5},
+                    metadata: {automationDepth: 5, maxAutomationChainDepth: 5, blockedRules: ['rule-id']},
                 },
                 expect.objectContaining({automationDepth: 5}),
             );
+        });
+
+        it('stays silent when the depth is reached but no rule matches: the chain ends by itself', async () => {
+            const {domain, pipelineDomain, eventsManagerDomain} = buildDomain({rules: [], maxChainDepth: 5});
+
+            await domain.triggerRules({
+                event: valueSaveEvent,
+                synchronous: true,
+                ctx: {...mockCtx, automationDepth: 5},
+            });
+
+            expect(pipelineDomain.executePipeline).not.toHaveBeenCalled();
+            expect(eventsManagerDomain.sendDatabaseEvent).not.toHaveBeenCalled();
         });
 
         it('cuts the chain on the async path too', async () => {
