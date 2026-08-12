@@ -1,7 +1,7 @@
 import {type AmqpMessageHandler} from '@leav/message-broker';
 import {logger} from '@leav/logger';
 import {EventAction} from '@leav/utils';
-import {DTOErrorCode, DTOStatementStatus, type IDTO} from '../../_types/dto';
+import {DTOErrorCode, DTOStatementStatus, type IDTOStatement, type IDTO} from '../../_types/dto';
 import {type ISDOImportPayload, type ISDOMappingLibrary} from '../../_types/sdo';
 import {type IConfig} from '../../_types/config';
 import {type ISDODomain} from '../../domain/sdo/sdoDomain';
@@ -117,9 +117,9 @@ export default function ({
      * must neither turn a successful import into a nack (the message wouldn't be replayed anyway) nor
      * mask the error being reported.
      */
-    const _publishStatement = async (params: ISendStatementParams): Promise<void> => {
+    const _publishStatement = async (params: ISendStatementParams): Promise<IDTOStatement | void> => {
         try {
-            await dtoStatementDomain.sendStatement(params);
+            return await dtoStatementDomain.sendStatement(params);
         } catch (error) {
             logger.error(`Failed to publish the DTO statement: ${error.message}`, {stack: error.stack});
         }
@@ -187,15 +187,9 @@ export default function ({
                     );
             }
 
-            await sdoDomain.sendLog({
-                action: EventAction.DTO_IMPORT_SUCCESS,
-                dto,
-                ctx: _systemQueryContext,
-            });
-
             // A `CREATE` on an already existing record is skipped by the import domain: nothing was
             // written, which the contract reports as `NO_CHANGE` rather than `SUCCESS`.
-            await _publishStatement({
+            const statement = await _publishStatement({
                 dto,
                 status: importResult.changed ? DTOStatementStatus.SUCCESS : DTOStatementStatus.NO_CHANGE,
                 record: importResult.record,
@@ -205,10 +199,29 @@ export default function ({
                 recordPreexisted: dto.method === 'UPDATE' || !importResult.changed,
                 ctx: _systemQueryContext,
             });
+
+            await sdoDomain.sendLog({
+                action: EventAction.DTO_IMPORT_SUCCESS,
+                dto,
+                statement,
+                ctx: _systemQueryContext,
+            });
         } catch (error) {
             logger.error(`Error in dtoImportApp::onDTOEvent(): ${error.message}`, {
                 errorId: error.errorId,
                 stack: error.stack,
+            });
+
+            const statement = await _publishStatement({
+                dto,
+                status: DTOStatementStatus.ERROR,
+                ctx: _systemQueryContext,
+                details:
+                    error instanceof DTORejectionError
+                        ? error.details
+                        : // A technical failure has no contractual code of its own: the emitter is told
+                          // the operation failed on our side, and the details stay in our logs.
+                          [{code: DTOErrorCode.INTERNAL_ERROR, attribute: null, message: error.message}],
             });
 
             await sdoDomain.sendLog({
@@ -229,19 +242,8 @@ export default function ({
                               stack: error.stack,
                           },
                 dto,
+                statement,
                 ctx: _systemQueryContext,
-            });
-
-            await _publishStatement({
-                dto,
-                status: DTOStatementStatus.ERROR,
-                ctx: _systemQueryContext,
-                details:
-                    error instanceof DTORejectionError
-                        ? error.details
-                        : // A technical failure has no contractual code of its own: the emitter is told
-                          // the operation failed on our side, and the details stay in our logs.
-                          [{code: DTOErrorCode.INTERNAL_ERROR, attribute: null, message: error.message}],
             });
 
             if (error instanceof DTORejectionError) {

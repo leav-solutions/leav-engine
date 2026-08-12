@@ -43,7 +43,7 @@ export interface ISendStatementParams {
 }
 
 export interface IDTOStatementDomain {
-    sendStatement: (params: ISendStatementParams) => Promise<void>;
+    sendStatement: (params: ISendStatementParams) => Promise<IDTOStatement | void>;
 }
 
 export default function ({
@@ -102,7 +102,7 @@ export default function ({
         };
     };
 
-    const sendStatement = async (params: ISendStatementParams): Promise<void> => {
+    const sendStatement = async (params: ISendStatementParams): Promise<IDTOStatement | void> => {
         const {dto, status, details} = params;
 
         if (!config.sdo.dto.statement.enable) {
@@ -143,6 +143,8 @@ export default function ({
         await statementChannel.publish(exchange, '', Buffer.from(JSON.stringify(statement)));
 
         logger.verbose(`DTO statement ${status} sent for operation ${dto.operationId}`, (debug && {statement}) || {});
+
+        return statement;
     };
 
     return {

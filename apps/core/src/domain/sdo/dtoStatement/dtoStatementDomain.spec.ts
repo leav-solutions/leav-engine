@@ -37,7 +37,7 @@ const mockMappingLibrary: ISDOMappingLibrary = {
 const _sendStatement = (
     params: Omit<ISendStatementParams, 'ctx'>,
     deps: ToAny<IDTOStatementDomainDeps> = depsBase,
-): Promise<void> => dtoStatementDomain(deps).sendStatement({...params, ctx: mockSystemQueryContext});
+): Promise<IDTOStatement | void> => dtoStatementDomain(deps).sendStatement({...params, ctx: mockSystemQueryContext});
 
 const _publishedStatement = (): IDTOStatement => JSON.parse(dtoStatementChannel.publish.mock.calls[0][2].toString());
 
@@ -49,7 +49,11 @@ describe('dtoStatementDomain', () => {
 
     describe('sendStatement()', () => {
         it('[+] should publish a SUCCESS statement echoing the DTO traceability ids', async () => {
-            await _sendStatement({dto: mockDTO, status: DTOStatementStatus.SUCCESS, record: mockRecord});
+            const statement = await _sendStatement({
+                dto: mockDTO,
+                status: DTOStatementStatus.SUCCESS,
+                record: mockRecord,
+            });
 
             expect(dtoStatementChannel.publish).toHaveBeenCalledTimes(1);
             expect(dtoStatementChannel.publish.mock.calls[0][0]).toBe(mockConfig.sdo.dto.statement.exchange);
@@ -75,6 +79,9 @@ describe('dtoStatementDomain', () => {
                 },
                 date: expect.any(Number),
             });
+
+            // The caller (dtoImportApp) relies on this to thread the statement into the DTO_IMPORT_* events
+            expect(statement).toEqual(_publishedStatement());
         });
 
         it('[+] should date the statement in seconds, not milliseconds', async () => {
@@ -86,13 +93,18 @@ describe('dtoStatementDomain', () => {
         });
 
         it('[+] should publish a NO_CHANGE statement carrying the identity of the untouched record', async () => {
-            await _sendStatement({dto: mockDTO, status: DTOStatementStatus.NO_CHANGE, record: mockRecord});
+            const statement = await _sendStatement({
+                dto: mockDTO,
+                status: DTOStatementStatus.NO_CHANGE,
+                record: mockRecord,
+            });
 
             expect(_publishedStatement()).toMatchObject({
                 status: DTOStatementStatus.NO_CHANGE,
                 details: null,
                 sdo_identifier: {system: {systemId: mockRecord.uuid}},
             });
+            expect(statement).toMatchObject({status: DTOStatementStatus.NO_CHANGE});
         });
 
         it('[+] should publish an ERROR statement carrying the details and no identifier', async () => {
@@ -104,13 +116,14 @@ describe('dtoStatementDomain', () => {
                 },
             ];
 
-            await _sendStatement({dto: mockDTO, status: DTOStatementStatus.ERROR, details});
+            const statement = await _sendStatement({dto: mockDTO, status: DTOStatementStatus.ERROR, details});
 
             expect(_publishedStatement()).toMatchObject({
                 status: DTOStatementStatus.ERROR,
                 details,
                 sdo_identifier: null,
             });
+            expect(statement).toMatchObject({status: DTOStatementStatus.ERROR, details});
         });
 
         it('[+] should not carry an identifier when no record is known', async () => {
@@ -194,12 +207,16 @@ describe('dtoStatementDomain', () => {
                 sdo: {...mockConfig.sdo, dto: {...mockConfig.sdo.dto, statement: {enable: false}}},
             } as unknown as IConfig;
 
-            await _sendStatement({dto: mockDTO, status: DTOStatementStatus.SUCCESS, record: mockRecord}, {
-                ...depsBase,
-                config,
-            } as ToAny<IDTOStatementDomainDeps>);
+            const statement = await _sendStatement(
+                {dto: mockDTO, status: DTOStatementStatus.SUCCESS, record: mockRecord},
+                {
+                    ...depsBase,
+                    config,
+                } as ToAny<IDTOStatementDomainDeps>,
+            );
 
             expect(dtoStatementChannel.publish).not.toHaveBeenCalled();
+            expect(statement).toBeUndefined();
         });
 
         // Any of the three is enough to make the statement unmatchable by the emitter
@@ -208,7 +225,7 @@ describe('dtoStatementDomain', () => {
             async missingField => {
                 const {[missingField]: _missing, ...dtoWithoutCorrelationId} = mockDTO;
 
-                await _sendStatement({
+                const statement = await _sendStatement({
                     dto: dtoWithoutCorrelationId as IDTO,
                     status: DTOStatementStatus.ERROR,
                     details: [
@@ -217,6 +234,7 @@ describe('dtoStatementDomain', () => {
                 });
 
                 expect(dtoStatementChannel.publish).not.toHaveBeenCalled();
+                expect(statement).toBeUndefined();
             },
         );
     });
