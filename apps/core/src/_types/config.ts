@@ -121,6 +121,7 @@ export interface IAutomation {
         events: string;
     };
     prefetch?: number;
+    maxChainDepth: number;
 }
 
 export interface IAutomationCache {

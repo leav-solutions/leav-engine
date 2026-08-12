@@ -93,6 +93,7 @@ export default function ({config}: IElasticsearchServiceDeps): IElasticsearchSer
                             instanceId: {type: 'constant_keyword'},
                             action: {type: 'keyword'},
                             trigger: {type: 'keyword'},
+                            automationDepth: {type: 'integer'},
                             topic: {type: 'object'},
                             before: {type: 'flattened'},
                             after: {type: 'flattened'},

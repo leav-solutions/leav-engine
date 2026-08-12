@@ -340,6 +340,7 @@ export const validateConfig = (conf: IConfig) => {
                 events: Joi.string().required(),
             }),
             prefetch: Joi.number().required(),
+            maxChainDepth: Joi.number().integer().min(1).required(),
         }),
         sdo: Joi.object().keys({
             amqp: amqpConnOptSchema,
