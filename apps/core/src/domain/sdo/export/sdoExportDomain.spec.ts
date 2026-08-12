@@ -150,7 +150,7 @@ describe('sdoExportDomain', () => {
             });
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.SDO_LOG_EXPORT_RECORD,
+                action: EventAction.SDO_EXPORT_SUCCESS,
                 record: {id: 'recordId', libraryId: 'libraryId'},
                 sdo: mockSDO,
                 ctx: mockSystemQueryContext,

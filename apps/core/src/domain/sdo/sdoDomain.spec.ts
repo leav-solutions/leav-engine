@@ -1077,7 +1077,7 @@ describe('sdoDomain', () => {
     describe('sendLog', () => {
         it('[+] should send sdo log', async () => {
             await sdoDomain(deps).sendLog({
-                action: EventAction.SDO_LOG_IMPORT_RECORD,
+                action: EventAction.SDO_IMPORT_SUCCESS,
                 record: {
                     id: 'recordId',
                     libraryId: 'libraryId',
@@ -1088,7 +1088,7 @@ describe('sdoDomain', () => {
 
             expect(mockEventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledWith(
                 {
-                    action: EventAction.SDO_LOG_IMPORT_RECORD,
+                    action: EventAction.SDO_IMPORT_SUCCESS,
                     topic: {
                         record: {
                             id: 'recordId',
@@ -1103,14 +1103,14 @@ describe('sdoDomain', () => {
 
         it('[+] should send error log', async () => {
             await sdoDomain(deps).sendLog({
-                action: EventAction.SDO_LOG_ERROR,
+                action: EventAction.SDO_EXPORT_ERROR,
                 error: 'Error message',
                 ctx: mockSystemQueryContext,
             });
 
             expect(mockEventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledWith(
                 {
-                    action: EventAction.SDO_LOG_ERROR,
+                    action: EventAction.SDO_EXPORT_ERROR,
                     topic: {},
                     metadata: {error: 'Error message'},
                 },

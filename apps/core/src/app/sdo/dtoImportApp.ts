@@ -188,7 +188,7 @@ export default function ({
             }
 
             await sdoDomain.sendLog({
-                action: EventAction.DTO_LOG_IMPORT_RECORD,
+                action: EventAction.DTO_IMPORT_SUCCESS,
                 dto,
                 ctx: _systemQueryContext,
             });
@@ -212,7 +212,7 @@ export default function ({
             });
 
             await sdoDomain.sendLog({
-                action: EventAction.DTO_LOG_ERROR,
+                action: EventAction.DTO_IMPORT_ERROR,
                 error:
                     error instanceof LeavError
                         ? {

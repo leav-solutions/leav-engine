@@ -206,7 +206,7 @@ describe('exportApp', () => {
             await expect(exportApp(depsBase).onDataEvent(mockDataEventMessage)).rejects.toThrow(error);
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.SDO_LOG_ERROR,
+                action: EventAction.SDO_EXPORT_ERROR,
                 error: {
                     message: error.message,
                     stack: error.stack,
@@ -232,7 +232,7 @@ describe('exportApp', () => {
             await expect(exportApp(depsBase).onDataEvent(mockDataEventMessage)).rejects.toThrow(error);
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.SDO_LOG_ERROR,
+                action: EventAction.SDO_EXPORT_ERROR,
                 error: {
                     message: error.message,
                     stack: error.stack,

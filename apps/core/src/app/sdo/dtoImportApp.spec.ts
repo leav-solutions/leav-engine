@@ -89,7 +89,7 @@ describe('dtoImportApp', () => {
             await dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage);
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.DTO_LOG_IMPORT_RECORD,
+                action: EventAction.DTO_IMPORT_SUCCESS,
                 dto: mockDTO,
                 ctx: mockSystemQueryContext,
             });
@@ -115,7 +115,7 @@ describe('dtoImportApp', () => {
             expect(mockSdoDomain.schemaValidation).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         message: expect.stringContaining('missing operationId, payloadDocument'),
                         details: [
@@ -141,7 +141,7 @@ describe('dtoImportApp', () => {
             expect(mockSdoDomain.schemaValidation).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         details: [
                             {
@@ -162,7 +162,7 @@ describe('dtoImportApp', () => {
             expect(mockImportDomain.update).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         details: [
                             {
@@ -192,7 +192,7 @@ describe('dtoImportApp', () => {
             expect(mockImportDomain.update).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         details: [
                             {
@@ -220,7 +220,7 @@ describe('dtoImportApp', () => {
             expect(mockImportDomain.update).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         details: [
                             {
@@ -248,7 +248,7 @@ describe('dtoImportApp', () => {
 
             expect(mockImportDomain.update).toHaveBeenCalledTimes(1);
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
-                expect.objectContaining({action: EventAction.DTO_LOG_IMPORT_RECORD}),
+                expect.objectContaining({action: EventAction.DTO_IMPORT_SUCCESS}),
             );
         });
 
@@ -261,7 +261,7 @@ describe('dtoImportApp', () => {
             expect(mockImportDomain.update).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         details: [
                             {
@@ -290,7 +290,7 @@ describe('dtoImportApp', () => {
             await expect(dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage)).rejects.toThrow(importError);
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.DTO_LOG_ERROR,
+                action: EventAction.DTO_IMPORT_ERROR,
                 error: {message: 'Record not found', stack: expect.any(String)},
                 dto: mockDTO,
                 ctx: mockSystemQueryContext,
