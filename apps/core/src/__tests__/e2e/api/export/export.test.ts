@@ -477,7 +477,7 @@ describe('Export', () => {
                         'text',
                         '123',
                         '1761837010063',
-                        '{"to":550238400,"from":550065600}',
+                        `{"to":${dayjs('1987-06-09 12:00:00').unix()},"from":${dayjs('1987-06-07 12:00:00').unix()}}`,
                         MASKED_VALUE,
                         'false',
                         '#FF5733',
@@ -487,7 +487,7 @@ describe('Export', () => {
                         'text',
                         '123',
                         '1761837010063',
-                        '{"to":550238400,"from":550065600}',
+                        `{"to":${dayjs('1987-06-09 12:00:00').unix()},"from":${dayjs('1987-06-07 12:00:00').unix()}}`,
                         MASKED_VALUE,
                         'true', // if a boolean is undefined it should be exported as false
                         '#FF5733',
