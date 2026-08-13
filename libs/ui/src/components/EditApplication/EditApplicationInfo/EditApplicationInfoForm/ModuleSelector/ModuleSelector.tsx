@@ -1,17 +1,7 @@
 import {Form, type FormItemProps} from 'antd';
 import {KitSelect} from 'aristid-ds';
-import styled from 'styled-components';
-import {themeVars} from '../../../../../antdTheme';
 import {useSharedTranslation} from '../../../../../hooks/useSharedTranslation';
 import {useGetApplicationModulesQuery} from '../../../../../_gqlTypes';
-
-const OptionLabel = styled.div`
-    font-weight: bold;
-`;
-
-const OptionDescription = styled.div`
-    color: ${themeVars.secondaryTextColor};
-`;
 
 interface IModuleSelectorProps extends FormItemProps {
     disabled: boolean;

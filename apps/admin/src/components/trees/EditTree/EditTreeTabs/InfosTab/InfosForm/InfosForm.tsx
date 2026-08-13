@@ -63,7 +63,7 @@ const TreeInfosForm = ({tree, onSubmit, readonly, errors, onCheckIdExists}: ITre
 
     const existingTree = tree !== null;
 
-    const {lang: userLang, defaultLang, availableLangs} = useLang();
+    const {defaultLang, availableLangs} = useLang();
 
     const _handleSubmit = values => {
         onSubmit(values);

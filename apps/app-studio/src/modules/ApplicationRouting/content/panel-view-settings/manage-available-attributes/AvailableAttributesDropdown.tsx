@@ -4,15 +4,11 @@ import {KitBadge, KitButton, KitDropDown, KitInput, KitLoader, KitTooltip, KitTr
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faGear, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons';
 import {useLang} from '@leav/ui';
-import {
-    useGetViewSettingsLibraryAttributesLazyQuery,
-    useGetViewSettingsLibraryAttributesQuery,
-} from '../../../../../__generated__';
+import {useGetViewSettingsLibraryAttributesQuery} from '../../../../../__generated__';
 import {type AvailableAttribute} from '../store-current-view/_types';
 import {useCurrentView} from '../store-current-view/useCurrentView';
 import {sanitize} from '../tabs/tab-display/_constants';
 import {
-    attachChildren,
     type AvailableAttributesMode,
     buildAttributeNodes,
     collectBranchKeys,
@@ -91,7 +87,7 @@ export const AvailableAttributesDropdown = ({facet}: {facet: AvailableAttributes
         skip: !open || !libraryId,
     });
 
-    const [fetchAttributes] = useGetViewSettingsLibraryAttributesLazyQuery({fetchPolicy: 'cache-first'});
+    /* const [fetchAttributes] = useGetViewSettingsLibraryAttributesLazyQuery({fetchPolicy: 'cache-first'}); */
 
     // Seed the lookup from the current selection (labels come from the view itself).
     useEffect(() => {
@@ -131,7 +127,8 @@ export const AvailableAttributesDropdown = ({facet}: {facet: AvailableAttributes
         setTreeData(nodes);
     }, [data, libraryId, mode, lang]);
 
-    const onLoadData = async (node: IAttributeTreeNode) => {
+    // Kept for the commented-out `loadData` below (TODO: re-enable with nested mode).
+    /* const onLoadData = async (node: IAttributeTreeNode) => {
         if (node.children || !node.linkedLibraryId) {
             return;
         }
@@ -140,7 +137,7 @@ export const AvailableAttributesDropdown = ({facet}: {facet: AvailableAttributes
         const children = buildAttributeNodes(attributes, node.attributePath, mode, lang);
         children.forEach(child => pathIndex.current.set(child.key, child.attributePath));
         setTreeData(previous => attachChildren(previous, node.key, children));
-    };
+    }; */
 
     const availablePaths = facet === 'filters' ? availableFilterPaths : availableSortPaths;
     const checkedKeys = facet === 'columns' ? availableColumnIds : availablePaths.map(path => path.join('/'));

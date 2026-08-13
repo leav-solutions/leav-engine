@@ -64,7 +64,7 @@ function AttributesList({library, readOnly, onDeleteAttribute, onAddAttributes}:
     const [filters, setFilters] = useState<GetAttributesQueryVariables['filters']>({});
     const [tableData, setTableData] = useState<AttributeListType[]>([]);
 
-    const {loading, error, data, refetch} = useGetAttributesQuery({
+    const {loading, data, refetch} = useGetAttributesQuery({
         variables: {
             pagination: {
                 limit: pageSize,

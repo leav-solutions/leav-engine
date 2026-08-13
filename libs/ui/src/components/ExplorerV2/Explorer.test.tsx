@@ -1214,7 +1214,7 @@ describe('Explorer', () => {
         const [firstRecordRow, secondRecordRow] = tableRows;
         const [record1] = mockRecords;
         const [
-            selectRowCell,
+            _selectRowCell,
             whoAmICell,
             simpleAttributeCell,
             linkCell,

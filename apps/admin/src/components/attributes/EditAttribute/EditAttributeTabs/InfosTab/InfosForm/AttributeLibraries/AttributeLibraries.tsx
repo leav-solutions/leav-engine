@@ -17,10 +17,10 @@ interface IAttributeLibrariesProps extends Omit<FormDropdownProps, 'onChange' | 
     attribute: GET_ATTRIBUTE_BY_ID_attributes_list;
 }
 
-function AttributeLibraries({attribute, onChange, ...fieldProps}: IAttributeLibrariesProps): JSX.Element {
+function AttributeLibraries({attribute, ...fieldProps}: IAttributeLibrariesProps): JSX.Element {
     const {loading, error, data} = useGetLibrariesWithAttributesQuery();
     const [saveLibrary, {loading: loadingSave, error: saveError}] = useSaveLibraryAttributesMutation({
-        onError: e => undefined, // To prevent unhandled rejection, error is managed with error variable
+        onError: () => undefined, // To prevent unhandled rejection, error is managed with error variable
     });
 
     const libraries = data?.libraries?.list ?? [];

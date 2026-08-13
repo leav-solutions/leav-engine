@@ -9,10 +9,9 @@ import DeleteButton from '../../shared/DeleteButton';
 
 interface IDeleteLibraryProps {
     library: GET_LIBRARIES_libraries_list;
-    filters?: any;
 }
 
-const DeleteLibrary = ({library, filters}: IDeleteLibraryProps): JSX.Element | null => {
+const DeleteLibrary = ({library}: IDeleteLibraryProps): JSX.Element | null => {
     const {t} = useTranslation();
     const userData = useUserData();
 

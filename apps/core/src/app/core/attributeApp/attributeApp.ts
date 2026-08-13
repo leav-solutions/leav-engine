@@ -8,7 +8,6 @@ import {type IRecordDomain} from '../../../domain/record/recordDomain';
 import {type ITreeDomain} from '../../../domain/tree/treeDomain';
 import {type IVersionProfileDomain} from '../../../domain/versionProfile/versionProfileDomain';
 import {type GraphQLResolveInfo} from 'graphql';
-import {type IUtils} from '../../../utils/utils';
 import {type IAppGraphQLSchema} from '../../../_types/graphql';
 import {type IList} from '../../../_types/list';
 import {type IQueryInfos} from '../../../_types/queryInfos';
@@ -50,7 +49,6 @@ interface IDeps {
     'core.domain.versionProfile': IVersionProfileDomain;
     'core.app.graphql': IGraphqlApp;
     'core.app.core': ICoreApp;
-    'core.utils': IUtils;
 }
 
 export default function (deps: IDeps): ICoreAttributeApp {
@@ -65,7 +63,6 @@ export default function (deps: IDeps): ICoreAttributeApp {
         'core.domain.versionProfile': versionProfileDomain,
         'core.app.graphql': graphqlApp,
         'core.app.core': coreApp,
-        'core.utils': utils,
     } = deps;
     const commonResolvers = {
         /**
@@ -76,7 +73,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
             coreApp.filterSysTranslationField(attributeData.description, args.lang || []),
         input_types: (attributeData, _, ctx) => attributeDomain.getInputTypes({attrData: attributeData, ctx}),
         output_types: (attributeData, _, ctx) => attributeDomain.getOutputTypes({attrData: attributeData, ctx}),
-        compute: (attributeData, _, ctx) => attributeDomain.doesCompute(attributeData),
+        compute: attributeData => attributeDomain.doesCompute(attributeData),
         metadata_fields: async (attributeData: IAttribute, _, ctx) =>
             attributeData.metadata_fields
                 ? Promise.all(

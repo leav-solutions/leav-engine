@@ -150,8 +150,12 @@ export default function ({
                     _checkAuth,
                     express.static(config.preview.directory, {fallthrough: false}),
                     async (err, req, res, next) => {
-                        const htmlContent = await fs.promises.readFile(__dirname + '/preview404.html', 'utf8');
-                        res.status(404).type('html').send(htmlContent);
+                        try {
+                            const htmlContent = await fs.promises.readFile(__dirname + '/preview404.html', 'utf8');
+                            res.status(404).type('html').send(htmlContent);
+                        } catch (readErr) {
+                            next(readErr);
+                        }
                     },
                 ]);
                 baseRouter.use(`/${config.export.endpoint}`, [_checkAuth, express.static(config.export.directory)]);

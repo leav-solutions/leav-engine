@@ -50,14 +50,10 @@ const Wrapper = styled.div`
 `;
 
 function GeneralCustomConfigTab(): JSX.Element {
-    const {
-        data,
-        loading: getLoading,
-        error: getError,
-    } = useGetGlobalSettingsQuery({
+    const {data, loading: getLoading} = useGetGlobalSettingsQuery({
         fetchPolicy: 'no-cache',
     });
-    const [saveGlobalSettings, {loading: saveLoading, error: saveError}] = useSaveGlobalSettingsMutation();
+    const [saveGlobalSettings] = useSaveGlobalSettingsMutation();
 
     const _onChange = (value: Record<string, any>) => {
         const dataToSave = {

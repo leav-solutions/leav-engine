@@ -158,7 +158,7 @@ describe('LibraryDomain', () => {
                 'core.domain.attribute': mockAttrDomain as IAttributeDomain,
             });
 
-            const lib = await libDomain.getLibraries({params: {withCount: true}, ctx});
+            await libDomain.getLibraries({params: {withCount: true}, ctx});
             expect(mockLibRepo.getLibraries.mock.calls[0][0].params.sort).toMatchObject({field: 'id', order: 'asc'});
         });
     });

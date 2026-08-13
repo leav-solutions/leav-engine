@@ -226,7 +226,6 @@ describe('attributeTreeRepo', () => {
                 let recordForDelete: IRecord;
                 let remoteRecordForDelete: IRecord;
                 let remoteNodeForDelete: ITreeNodeLight;
-                let recordForDeleteValue: ILinkValue;
 
                 beforeEach(async () => {
                     recordForDelete = await createRecord({});
@@ -244,11 +243,7 @@ describe('attributeTreeRepo', () => {
                         ctx,
                     });
 
-                    recordForDeleteValue = await createValue(
-                        treeMonoAttribute,
-                        recordForDelete.id,
-                        remoteNodeForDelete.id,
-                    );
+                    await createValue(treeMonoAttribute, recordForDelete.id, remoteNodeForDelete.id);
 
                     await treeRepo.deleteElement({
                         treeId,
@@ -710,7 +705,6 @@ describe('attributeTreeRepo', () => {
                 let recordForDelete: IRecord;
                 let remoteRecordForDelete: IRecord;
                 let remoteNodeForDelete: ITreeNodeLight;
-                let recordForDeleteValue1: ILinkValue;
                 let recordForDeleteValue2: ILinkValue;
 
                 beforeEach(async () => {
@@ -729,11 +723,7 @@ describe('attributeTreeRepo', () => {
                         ctx,
                     });
 
-                    recordForDeleteValue1 = await createValue(
-                        treeMultiAttribute,
-                        recordForDelete.id,
-                        remoteNodeForDelete.id,
-                    );
+                    await createValue(treeMultiAttribute, recordForDelete.id, remoteNodeForDelete.id);
                     recordForDeleteValue2 = await createValue(treeMultiAttribute, recordForDelete.id, remoteNode3.id);
 
                     await treeRepo.deleteElement({

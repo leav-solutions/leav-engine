@@ -280,9 +280,7 @@ describe('useExplorerLinkRecords', () => {
             );
 
             act(() => {
-                result.current.handleExplorerCreateValue({
-                    recordIdCreated: '123456',
-                });
+                result.current.handleExplorerCreateValue({});
             });
 
             expect(mockSetBackendValues).not.toHaveBeenCalled();
@@ -299,7 +297,6 @@ describe('useExplorerLinkRecords', () => {
 
             act(() => {
                 result.current.handleExplorerCreateValue({
-                    recordIdCreated: '123456',
                     saveValuesResultOnLink: mockSubmitRes,
                 });
             });

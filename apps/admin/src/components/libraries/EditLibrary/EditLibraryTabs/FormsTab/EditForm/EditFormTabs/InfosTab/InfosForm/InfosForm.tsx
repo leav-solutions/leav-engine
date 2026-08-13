@@ -20,9 +20,6 @@ type FormValues = Pick<GET_FORM_forms_list, 'id' | 'system' | 'label' | 'sidePan
     dependencyAttributes: string[];
 };
 
-const FormGroupWithMargin = styled(Form.Group)`
-    margin-top: 10px;
-`;
 const Legend = styled.legend`
     font-weight: bold;
 `;

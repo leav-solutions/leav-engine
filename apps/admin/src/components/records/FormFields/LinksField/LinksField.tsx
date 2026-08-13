@@ -107,7 +107,7 @@ function LinksField({values, attribute, onChange, readonly}: IEditRecordFormLink
         setIsOpenAddRecordModal(false);
     };
 
-    const _handleAddValue = e => {
+    const _handleAddValue = () => {
         if (attribute.type !== AttributeType.tree) {
             return;
         }

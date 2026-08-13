@@ -17,7 +17,7 @@ import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
 
 export const AutomationList = () => {
     const navigate = useNavigate();
-    const {currentPage, pageSize, resetPage, handlePageChange, handlePageSizeChange} = usePagination();
+    const {currentPage, pageSize, handlePageChange, handlePageSizeChange} = usePagination();
     // const {gqlFilters, filtersValues, onFilterChange} = useHistoryFilters({onFilterChange: resetPage}); //TODO: Use similar hook as for history
     const {data, total, loading, error} = useGetAutomationRulesData({currentPage, pageSize, filters: undefined}); //TODO: Add filters from above hook
     // const {isOpen, selectedRecord, openDetails, closeDetails} = useAutomationDetails();  //TODO: Use similar hook as for history, but for automation

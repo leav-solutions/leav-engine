@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-interface IKeyValue<T> {
+interface IKeyValue {
     [key: string]: any;
 }
 
@@ -35,7 +35,7 @@ const _isObject = (item: any): item is object => item && typeof item === 'object
  * @param target
  * @param ...sources
  */
-const _mergeDeep = function (target: IKeyValue<any>, ...sources: Array<IKeyValue<any>>): IKeyValue<any> {
+const _mergeDeep = function (target: IKeyValue, ...sources: IKeyValue[]): IKeyValue {
     if (!sources.length) {
         return target;
     }
@@ -45,11 +45,11 @@ const _mergeDeep = function (target: IKeyValue<any>, ...sources: Array<IKeyValue
     if (_isObject(target) && _isObject(source)) {
         for (const key in source) {
             if (_isObject(source[key])) {
-                if (!(target as IKeyValue<any>)[key]) {
+                if (!(target as IKeyValue)[key]) {
                     Object.assign(target, {[key]: {}});
                 }
 
-                _mergeDeep((target as IKeyValue<any>)[key], source[key]);
+                _mergeDeep((target as IKeyValue)[key], source[key]);
             } else {
                 Object.assign(target, {[key]: source[key]});
             }

@@ -55,7 +55,7 @@ function EditTabLabelModal({open, tabsElement, tab, onClose}: IEditTabLabelModal
         <Modal open={open} onClose={onClose} closeOnEscape closeOnDimmerClick closeIcon size="small" centered basic>
             <Modal.Header />
             <Modal.Content>
-                {availableLangs.map((l, i) => (
+                {availableLangs.map(l => (
                     <Input
                         fluid
                         key={l}

@@ -3,7 +3,6 @@ import {type GetCoreEntityByIdFunc} from '../helpers/getCoreEntityById';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 import {type ITreeNodePermissionDomain} from '../permission/treeNodePermissionDomain';
 import {type ITreePermissionDomain} from '../permission/treePermissionDomain';
-import {type IValueDomain} from '../value/valueDomain';
 import {type ILibraryRepo} from '../../infra/library/libraryRepo';
 import {type ITreeRepo} from '../../infra/tree/treeRepo';
 import {type IVersionProfileRepo} from '../../infra/versionProfile/versionProfileRepo';
@@ -785,10 +784,6 @@ describe('treeDomain', () => {
                 }),
             };
 
-            const mockValueDomain: Mockify<IValueDomain> = {
-                getValues: global.__mockPromise([{value: false}]),
-            };
-
             const domain = treeDomain({
                 ...depsBase,
                 'core.domain.tree.helpers.treeDataValidation': treeDataValidationHelper as ITreeDataValidationHelper,
@@ -1079,7 +1074,7 @@ describe('treeDomain', () => {
                 'core.domain.helpers.getCoreEntityById': mockGetEntityByIdHelperNoResult as GetCoreEntityByIdFunc,
             });
 
-            const rej = await expect(
+            await expect(
                 domain.deleteElement({
                     treeId: 'test_tree',
                     nodeId: '1345',

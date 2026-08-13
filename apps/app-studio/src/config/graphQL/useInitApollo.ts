@@ -15,7 +15,7 @@ export const useInitApollo = (
     unauthorizedHandler: (forward: NextLink, operation: Operation) => Observable<unknown>,
 ) => {
     const {checkAuthOrRedirectToLogin} = useRedirectToLogin();
-    const errorLink = onError(({graphQLErrors, networkError, operation, forward, response}) => {
+    const errorLink = onError(({graphQLErrors, networkError, operation, forward}) => {
         if (
             (networkError as ServerError)?.statusCode === 401 ||
             (graphQLErrors ?? [])?.some(err => err?.extensions?.code === 'UNAUTHENTICATED')

@@ -47,7 +47,7 @@ export default function ({
     const systemUserId = String(config.defaultUserId);
     const now = dayjs().unix();
 
-    const _createCollections = async (collections: IMigrationCoreCollection[], ctx: IQueryInfos) => {
+    const _createCollections = async (collections: IMigrationCoreCollection[]) => {
         for (const collection of collections) {
             if (!(await dbService.collectionExists(collection.name))) {
                 await dbService.createCollection(collection.name, collection.type);
@@ -270,7 +270,7 @@ export default function ({
 
     return {
         async run(ctx) {
-            await _createCollections(coreCollections, ctx);
+            await _createCollections(coreCollections);
             await createAttributes(systemAttributes, attributeRepo, ctx);
             await createLibraries(systemLibraries, dbService, libraryRepo, ctx);
             await createTrees(systemTrees, dbService, ctx);

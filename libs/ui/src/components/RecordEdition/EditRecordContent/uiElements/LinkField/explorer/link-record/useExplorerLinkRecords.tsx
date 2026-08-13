@@ -104,13 +104,7 @@ export const useExplorerLinkRecords = ({attribute, backendValues, setBackendValu
         }
     };
 
-    const handleExplorerCreateValue = ({
-        recordIdCreated,
-        saveValuesResultOnLink,
-    }: {
-        recordIdCreated: string;
-        saveValuesResultOnLink?: ISubmitMultipleResult;
-    }) => {
+    const handleExplorerCreateValue = ({saveValuesResultOnLink}: {saveValuesResultOnLink?: ISubmitMultipleResult}) => {
         if (saveValuesResultOnLink) {
             handleExplorerLinkValue(saveValuesResultOnLink);
         }

@@ -1,12 +1,9 @@
-import {systemUserId} from '../../../../_constants/users';
-import {type IQueryInfos} from '../../../../_types/queryInfos';
 import {getCoreDep} from '../../integrationTestUtils';
 import {type IAutomationActionsRegistry} from '../../../../domain/automation/automationActionsRegistry';
 import {AutomationRuleActions} from '../../../../domain/automation/actions/_types';
 
 describe('pipelineExecutor', () => {
     let actionsRegistry: IAutomationActionsRegistry;
-    const ctx: IQueryInfos = {userId: systemUserId};
 
     beforeAll(async () => {
         actionsRegistry = getCoreDep<IAutomationActionsRegistry>('core.domain.automation.actionsRegistry');

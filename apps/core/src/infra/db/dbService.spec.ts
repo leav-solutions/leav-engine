@@ -54,7 +54,7 @@ describe('dbService', () => {
                 config: mockConfig as IConfig,
             });
 
-            const res = await dbServ.execute({
+            await dbServ.execute({
                 query: 'FOR e in elems RETURN e',
                 ctx,
             });
@@ -74,13 +74,13 @@ describe('dbService', () => {
             /* eslint-disable no-throw-literal */
             mockDb.query = vi
                 .fn()
-                .mockImplementationOnce(q => {
+                .mockImplementationOnce(() => {
                     throw {isArangoError: true, errorNum: 1200};
                 })
-                .mockImplementationOnce(q => {
+                .mockImplementationOnce(() => {
                     throw {isArangoError: true, errorNum: 1200};
                 })
-                .mockImplementationOnce(q => mockDbCursor);
+                .mockImplementationOnce(() => mockDbCursor);
 
             const dbServ = dbService({
                 'core.infra.db': mockDb,
@@ -88,7 +88,7 @@ describe('dbService', () => {
                 config: mockConfig as IConfig,
             });
 
-            const res = await dbServ.execute({
+            await dbServ.execute({
                 query: 'FOR e in elems RETURN e',
                 ctx,
             });
@@ -100,12 +100,12 @@ describe('dbService', () => {
             const mockDb = new Database();
 
             const mockUtils: Mockify<IUtils> = {
-                rethrow: vi.fn().mockImplementation(e => {
+                rethrow: vi.fn().mockImplementation(() => {
                     throw new Error();
                 }) as never,
             };
 
-            mockDb.query = vi.fn().mockImplementation(q => {
+            mockDb.query = vi.fn().mockImplementation(() => {
                 throw {isArangoError: true, errorNum: 1200};
             });
 

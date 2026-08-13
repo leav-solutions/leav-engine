@@ -11,7 +11,7 @@ function InfosTab(): JSX.Element {
     const {pathname} = useLocation();
     const [saveForm] = useSaveFormMutation({
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
-        onError: e => undefined,
+        onError: () => undefined,
         onCompleted: res => {
             navigate(`${pathname}#forms?fid=${res.saveForm.id}`, {replace: true});
         },

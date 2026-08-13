@@ -2,7 +2,6 @@ import {type SyntheticEvent} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Button, Checkbox, Grid, Icon, Input, Table} from 'semantic-ui-react';
 import useLang from '../../../../../../hooks/useLang';
-import useUserData from '../../../../../../hooks/useUserData';
 import {localizedLabel} from '../../../../../../utils';
 import {type GET_FORMS_LIST_forms_list} from '../../../../../../_gqlTypes/GET_FORMS_LIST';
 import {type IFormFilterOptions} from '../../../../../../_types/forms';
@@ -32,7 +31,6 @@ function FormsList({
 }: IFormsListProps): JSX.Element {
     const {lang: availableLanguages} = useLang();
     const {t} = useTranslation();
-    const {permissions} = useUserData();
 
     const _handleFilterChange = (e: SyntheticEvent, d: any) => {
         // If a checkbox was not checked and is clicked, go back to indeterminate state

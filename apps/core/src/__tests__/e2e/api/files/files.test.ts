@@ -6,7 +6,7 @@ import {PermissionTypes, RecordPermissionsActions} from '../../../../_types/perm
 import axios from 'axios';
 import {ACCESS_TOKEN_COOKIE_NAME} from '../../../../_types/auth';
 
-const fileExists = async (path: string) => !!(await fs.promises.stat(path).catch(e => false));
+const fileExists = async (path: string) => !!(await fs.promises.stat(path).catch(() => false));
 
 const filesLibrary = 'files';
 const directoriesLibrary = 'files_directories';

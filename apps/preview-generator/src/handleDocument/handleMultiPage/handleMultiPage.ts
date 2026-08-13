@@ -56,7 +56,7 @@ const _createFolderRec = async (folderDestinationPath: string) => {
     if (!pathExist) {
         const pathList = folderDestinationPath.split('/');
         pathList.shift();
-        const errorCreateDir = await createDirectoryRecursively(pathList, folderDestinationPath, 0);
+        const errorCreateDir = await createDirectoryRecursively(pathList);
 
         if (errorCreateDir) {
             const errorId = handleError(errorCreateDir);

@@ -67,7 +67,6 @@ export default function ({
     'core.domain.application.appStudio': appStudioDomain,
     'core.utils': utils,
     config,
-    translator,
 }: IApplicationDomainDeps): IApplicationDomain {
     const _getApplicationProperties = async ({id, ctx}) => {
         const apps = await applicationRepo.getApplications({

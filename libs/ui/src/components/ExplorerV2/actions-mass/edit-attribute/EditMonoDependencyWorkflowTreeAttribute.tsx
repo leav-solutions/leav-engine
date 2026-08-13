@@ -19,7 +19,7 @@ export const EditMonoDependencyWorkflowTreeAttribute = ({
 }) => {
     const {t} = useSharedTranslation();
 
-    const [monoDependencyAttribute, _ignoredCurrentAttribute] = attribute.dependencies.toSorted((a, _b) =>
+    const [monoDependencyAttribute, _ignoredCurrentAttribute] = attribute.dependencies.toSorted(a =>
         a.id === attribute.id ? 1 : -1,
     );
 

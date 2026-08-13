@@ -171,7 +171,7 @@ describe('inheritanceCalculationAction', () => {
     describe('Empty inheritance cases', () => {
         beforeEach(() => {
             mockCalculationsVariable.processVariableString.mockImplementation(
-                async (ctx: IActionsListContext, variable: string): Promise<IVariableValue[]> => [],
+                async (): Promise<IVariableValue[]> => [],
             );
         });
 

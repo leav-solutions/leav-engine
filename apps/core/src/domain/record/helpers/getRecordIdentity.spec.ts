@@ -736,12 +736,10 @@ describe('getRecordIdentity', () => {
                 },
             };
 
-            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi
-                .fn()
-                .mockImplementation(({attributePath: attributeId}) =>
-                    // Simulates ACCESS_ATTRIBUTE denied — returns empty array silently
-                    Promise.resolve([]),
-                );
+            const mockGetRecordFieldValueHelper: GetRecordFieldValueHelper = vi.fn().mockImplementation(() =>
+                // Simulates ACCESS_ATTRIBUTE denied — returns empty array silently
+                Promise.resolve([]),
+            );
 
             const mockValidateHelperLocal: Mockify<IValidateHelper> = {
                 validateLibrary: vi.fn().mockReturnValue(libData),

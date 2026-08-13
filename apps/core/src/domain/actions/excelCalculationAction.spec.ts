@@ -1,5 +1,5 @@
 import {type ILogger} from '@leav/logger';
-import {ActionsListEvents, type ActionsListValueType, type IActionsListContext} from '../../_types/actionsList';
+import {ActionsListEvents, type IActionsListContext} from '../../_types/actionsList';
 import {type ICalculationVariable, type IVariableValue} from '../helpers/calculations/calculationVariable';
 import excelCalculationAction from './excelCalculationAction';
 import {type IValue} from '../../_types/value';
@@ -28,11 +28,7 @@ describe('excelCalculationAction', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         mockCalculationsVariable.processVariableString.mockImplementation(
-            async (
-                context: IActionsListContext,
-                variable: string,
-                initialValue: ActionsListValueType,
-            ): Promise<IVariableValue[]> => [
+            async (context: IActionsListContext, variable: string): Promise<IVariableValue[]> => [
                 {
                     payload: `${variable}Value`,
                     raw_payload: `${variable}RawValue`,

@@ -7,7 +7,6 @@ import {type ILinkBaseValue, type ILinkValue, type IDistinctValue} from '../../_
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
-import {type GetConditionPart} from './helpers/getConditionPart';
 import {type IAttributeSimpleRepo} from './attributeSimpleRepo';
 import _ from 'lodash';
 import {type IQueryInfos} from '../../_types/queryInfos';
@@ -16,7 +15,6 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attributeTypes.attributeSimple'?: IAttributeSimpleRepo;
-    'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
@@ -33,7 +31,6 @@ export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.attributeSimple': attributeSimpleRepo = null,
-    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
 }: IDeps = {}): IAttributeSimpleLinkRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], linkedValue: GeneratedAqlQuery): GeneratedAqlQuery {
@@ -312,7 +309,7 @@ export default function ({
                 ? linkedValue
                 : _getExtendedFilterPart(attributes, linkedValue);
         },
-        async clearAllValues(args): Promise<boolean> {
+        async clearAllValues(): Promise<boolean> {
             return true;
         },
     };

@@ -1,10 +1,9 @@
 import {access, mkdir} from 'fs';
 import {dirname, extname, join} from 'path';
 import {ErrorPreview} from '../../errors/ErrorPreview';
-import {type IConfig} from '../../types/types';
 import {handleError} from '../../utils/log';
 
-export const checkOutput = async (output: string, size: number, name: string, config: IConfig) => {
+export const checkOutput = async (output: string, size: number, name: string) => {
     // check if folder exist and create it if not
     const dirOutput = dirname(output);
 
@@ -16,7 +15,7 @@ export const checkOutput = async (output: string, size: number, name: string, co
     if (!pathExist) {
         const pathList = dirOutput.split('/');
         pathList.shift();
-        const errorCreateDir = await createDirectoryRecursively(pathList, output, size);
+        const errorCreateDir = await createDirectoryRecursively(pathList);
 
         if (errorCreateDir) {
             const errorId = handleError(errorCreateDir);
@@ -48,7 +47,7 @@ export const checkOutput = async (output: string, size: number, name: string, co
     }
 };
 
-export const createDirectoryRecursively = async (pathList: string[], output: string, size: number) => {
+export const createDirectoryRecursively = async (pathList: string[]) => {
     let allPath = '/';
 
     for (const path of pathList) {

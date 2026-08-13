@@ -27,7 +27,6 @@ export interface ICardProps {
     colorTypeDictionnary: IColorDic;
     changeParam?: (input: IParamInput) => void;
     onChangeCustomMessage?: (actionId: number, value: string, lang: string) => void;
-    index?: number;
     dragging?: boolean;
 }
 
@@ -44,7 +43,6 @@ function ALCCard({
     setCurrentIndex,
     colorTypeDictionnary,
     changeParam,
-    index,
     dragging,
     onChangeCustomMessage,
 }: ICardProps) {
@@ -83,7 +81,7 @@ function ALCCard({
         collect: monitor => ({
             isDragging: !!monitor.isDragging(),
         }),
-        canDrag: monitor => !blockedCard,
+        canDrag: () => !blockedCard,
     });
 
     const [{isOver}, drop] = useDrop({
@@ -208,7 +206,6 @@ function ALCCard({
                                 listAction.params.length &&
                                 listAction.params.map((param, i) => (
                                     <Param
-                                        index={index}
                                         key={i}
                                         actionId={listAction.list_id !== undefined ? listAction.list_id : -1}
                                         param={param}
@@ -233,7 +230,6 @@ function ALCCard({
                         {paramMessageOpen &&
                             availableLangs.map(lang => (
                                 <CustomMessage
-                                    index={index}
                                     customMessage={listAction.error_message?.[lang] ?? ''}
                                     lang={lang}
                                     key={lang}

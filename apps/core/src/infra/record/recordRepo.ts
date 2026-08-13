@@ -37,15 +37,7 @@ export interface IFindRequestResult {
 }
 
 export interface IRecordRepo {
-    createRecord({
-        libraryId,
-        recordData,
-        ctx,
-    }: {
-        libraryId: string;
-        recordData: IRecord;
-        ctx: IQueryInfos;
-    }): Promise<IRecord>;
+    createRecord({libraryId, recordData}: {libraryId: string; recordData: IRecord; ctx: IQueryInfos}): Promise<IRecord>;
     updateRecord({
         libraryId,
         recordData,
@@ -55,7 +47,7 @@ export interface IRecordRepo {
         recordData: IRecord;
         ctx: IQueryInfos;
     }): Promise<{old: IRecord; new: IRecord}>;
-    deleteRecord({libraryId, recordId, ctx}: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<IRecord>;
+    deleteRecord({libraryId, recordId}: {libraryId: string; recordId: string; ctx: IQueryInfos}): Promise<IRecord>;
     find(params: {
         libraryId: string;
         filters?: IRecordFilterOption[];
@@ -407,7 +399,7 @@ export default function ({
                 cursor,
             };
         },
-        async createRecord({libraryId, recordData, ctx}): Promise<IRecord> {
+        async createRecord({libraryId, recordData}): Promise<IRecord> {
             const collection = dbService.db.collection(libraryId);
             const {new: newRecord} = await collection.save(recordData, {returnNew: true});
 
@@ -415,7 +407,7 @@ export default function ({
 
             return dbUtils.cleanup(newRecord);
         },
-        async deleteRecord({libraryId, recordId, ctx}): Promise<IRecord> {
+        async deleteRecord({libraryId, recordId}): Promise<IRecord> {
             const collection = dbService.db.collection(libraryId);
 
             // Delete record

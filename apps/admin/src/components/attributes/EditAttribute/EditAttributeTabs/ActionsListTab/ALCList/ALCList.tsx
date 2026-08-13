@@ -105,7 +105,7 @@ function ALCList({
         canDrop() {
             return false;
         },
-        hover(item, monitor) {
+        hover() {
             setCurrentIndex(-1);
             return;
         },
@@ -171,7 +171,6 @@ function ALCList({
             return (
                 <ALCCard
                     key={actionId}
-                    index={i}
                     id={`${action.list_id}`}
                     action={action}
                     moveCard={moveCard}

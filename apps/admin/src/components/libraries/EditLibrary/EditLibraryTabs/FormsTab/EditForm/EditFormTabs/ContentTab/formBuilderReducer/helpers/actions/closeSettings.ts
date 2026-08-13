@@ -1,6 +1,6 @@
-import {type IFormBuilderActionCloseSettings, type IFormBuilderState} from '../../formBuilderReducer';
+import {type IFormBuilderState} from '../../formBuilderReducer';
 
-export default function closeSettings(state: IFormBuilderState, action: IFormBuilderActionCloseSettings) {
+export default function closeSettings(state: IFormBuilderState) {
     return {
         ...state,
         openSettings: false,

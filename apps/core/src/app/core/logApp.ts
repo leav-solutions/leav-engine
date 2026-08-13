@@ -394,7 +394,7 @@ export default function ({
                                 };
                             }
                         },
-                        permission: async (topic: Log['topic'], _, ctx: IQueryInfos) =>
+                        permission: async (topic: Log['topic']) =>
                             topic.permission
                                 ? {
                                       type: topic.permission.type,

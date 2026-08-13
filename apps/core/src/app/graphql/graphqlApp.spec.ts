@@ -4,7 +4,6 @@ import {
     type FragmentDefinitionNode,
     type FragmentSpreadNode,
     type GraphQLResolveInfo,
-    type InlineFragmentNode,
     Kind,
     type NameNode,
     type SelectionSetNode,
@@ -38,11 +37,6 @@ describe('GraphqlApp', () => {
         const mockNameNode: NameNode = {
             kind: Kind.NAME,
             value: null,
-        };
-
-        const mockInlineFragment: InlineFragmentNode = {
-            kind: Kind.INLINE_FRAGMENT,
-            selectionSet: null,
         };
 
         const mockFragmentSpread: FragmentSpreadNode = {

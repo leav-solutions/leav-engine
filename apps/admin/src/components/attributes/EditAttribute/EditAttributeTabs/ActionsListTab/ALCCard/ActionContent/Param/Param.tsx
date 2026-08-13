@@ -6,7 +6,6 @@ import {type IParam, type IParamInput} from '../../../interfaces/interfaces';
 //////////////////// INTERFACES
 
 interface IParamProps {
-    index: number | undefined;
     param: IParam | null;
     actionId: number;
     changeParam?: (param: IParamInput) => void;
@@ -19,7 +18,7 @@ interface ICorrespondences {
 
 //////////////////// COMPONENT
 
-function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps): JSX.Element {
+function Param({param, actionId, changeParam, setBlockCard}: IParamProps): JSX.Element {
     const {t} = useTranslation();
     const [currentValue, setCurrentValue] = useState(param ? param.value : null);
 
@@ -47,7 +46,7 @@ function Param({param, actionId, changeParam, setBlockCard, index}: IParamProps)
         event.stopPropagation();
     };
 
-    const _onFocus = e => {
+    const _onFocus = () => {
         setBlockCard(true);
     };
 

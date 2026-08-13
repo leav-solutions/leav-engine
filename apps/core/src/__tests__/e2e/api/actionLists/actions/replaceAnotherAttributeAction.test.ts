@@ -496,7 +496,6 @@ describe('replaceAnotherAttributeAction', () => {
 
                 describe('when multiple values are set', () => {
                     let savedIdValue1: string;
-                    let savedIdValue2: string;
                     beforeEach(async () => {
                         savedIdValue1 = await gqlSaveValueBis(
                             attrAdvancedStandardTriggerId,
@@ -506,14 +505,9 @@ describe('replaceAnotherAttributeAction', () => {
                                 payload: 'Test string value',
                             },
                         );
-                        savedIdValue2 = await gqlSaveValueBis(
-                            attrAdvancedStandardTriggerId,
-                            libraryId,
-                            parentRecordId,
-                            {
-                                payload: 'Another test string value',
-                            },
-                        );
+                        await gqlSaveValueBis(attrAdvancedStandardTriggerId, libraryId, parentRecordId, {
+                            payload: 'Another test string value',
+                        });
                     });
 
                     it('set trigger two values should update children records value', async () => {
@@ -639,12 +633,11 @@ describe('replaceAnotherAttributeAction', () => {
 
                 describe('when multiple values are set', () => {
                     let savedIdValue1: string;
-                    let savedIdValue2: string;
                     beforeEach(async () => {
                         savedIdValue1 = await gqlSaveValueBis(attrAdvancedLinkTriggerId, libraryId, parentRecordId, {
                             payload: treeNodeRecord1Id,
                         });
-                        savedIdValue2 = await gqlSaveValueBis(attrAdvancedLinkTriggerId, libraryId, parentRecordId, {
+                        await gqlSaveValueBis(attrAdvancedLinkTriggerId, libraryId, parentRecordId, {
                             payload: treeNodeRecord2Id,
                         });
                     });

@@ -41,9 +41,6 @@ export default function ({
     'core.utils': utils,
     translator,
 }: IDeps): IViewV2App {
-    const _resolveAttribute = (parent: {attributeId: string}, _: unknown, ctx: IQueryInfos) =>
-        attributeDomain.getAttributeProperties({id: parent.attributeId, ctx});
-
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
             return {

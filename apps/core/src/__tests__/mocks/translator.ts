@@ -5,5 +5,5 @@ export const mockTranslator: Mockify<i18n> = {
 };
 
 export const mockTranslatorWithOptions: Mockify<i18n> = {
-    t: vi.fn((key, options) => 'not implemented!'),
+    t: vi.fn(() => 'not implemented!'),
 };

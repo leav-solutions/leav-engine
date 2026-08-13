@@ -232,7 +232,7 @@ export default function ({
                     },
                     ctx,
                 ),
-                await validatePreviewsSettings(dataToSave, ctx),
+                await validatePreviewsSettings(dataToSave),
             );
 
             // remove full text attributes if attribute is delete

@@ -53,8 +53,6 @@ describe('EditAttribute', () => {
             },
         ];
 
-        let comp;
-
         render(<EditAttribute attributeId="test_attr" />, {apolloMocks: mocks});
 
         expect(screen.getByText(/loading/)).toBeInTheDocument();

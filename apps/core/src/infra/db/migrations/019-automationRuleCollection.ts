@@ -9,7 +9,7 @@ interface IDeps {
 
 export default function ({'core.infra.db.dbService': dbService = null}: IDeps = {}): IMigration {
     return {
-        async run(ctx) {
+        async run() {
             if (!(await dbService.collectionExists(AUTOMATION_RULES_COLLECTION_NAME))) {
                 await dbService.createCollection(AUTOMATION_RULES_COLLECTION_NAME, CollectionType.DOCUMENT_COLLECTION);
             }

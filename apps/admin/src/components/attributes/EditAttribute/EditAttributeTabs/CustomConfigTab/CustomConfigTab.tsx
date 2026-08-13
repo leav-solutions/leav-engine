@@ -54,7 +54,7 @@ interface ICustomConfigTabProps {
 }
 
 function CustomConfigTab({attribute}: ICustomConfigTabProps): JSX.Element {
-    const [saveAttribute, {error, loading}] = useSaveAttributeMutation();
+    const [saveAttribute] = useSaveAttributeMutation();
 
     const _onChange = (value: Record<string, any>) => {
         const dataToSave = {

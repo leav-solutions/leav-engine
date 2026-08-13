@@ -1,5 +1,5 @@
 import {type IConfig} from '../../../_types/config';
-import {type INotification, NotificationChannels} from '../../../_types/notification';
+import {type INotification} from '../../../_types/notification';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IGlobalSettingsDomain} from '../../globalSettings/globalSettingsDomain';
 import {type IMailerService} from '../../../infra/mailer/mailerService';

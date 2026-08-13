@@ -1,7 +1,6 @@
 import {systemUserId} from '../../../../_constants/users';
 import {type ILibraryDomain} from '../../../../domain/library/libraryDomain';
 import {type IRecordDomain} from '../../../../domain/record/recordDomain';
-import {type IValueDomain} from '../../../../domain/value/valueDomain';
 import {ErrorTypes} from '../../../../_types/errors';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
 import {getCoreDep} from '../../integrationTestUtils';
@@ -14,14 +13,12 @@ const libraryId = 'create_record_uuid_test_lib';
 describe('create record (uuid system attribute)', () => {
     let recordDomain: IRecordDomain;
     let libraryDomain: ILibraryDomain;
-    let valueDomain: IValueDomain;
     const ctx: IQueryInfos = {userId: systemUserId};
 
     describe('UUID system attribute', () => {
         beforeAll(async () => {
             recordDomain = getCoreDep<IRecordDomain>('core.domain.record');
             libraryDomain = getCoreDep<ILibraryDomain>('core.domain.library');
-            valueDomain = getCoreDep<IValueDomain>('core.domain.value');
 
             await libraryDomain.saveLibrary({id: libraryId}, ctx);
         });

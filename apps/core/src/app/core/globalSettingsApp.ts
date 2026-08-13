@@ -140,17 +140,17 @@ export default function ({
                 return next();
             };
 
-            const _handleError = async (err, req, res, next) => {
+            const _handleError = async (err, req, res) => {
                 logger.error(`[${req.ctx.queryId}] Global setting error ${err.stack}`);
                 res.status(err.statusCode ?? 500).send(err.type ?? 'Internal server error');
             };
 
-            const _serveDefaultIcon = async (req: IRequestWithContext, res: Response, next: NextFunction) => {
+            const _serveDefaultIcon = async (req: IRequestWithContext, res: Response) => {
                 const defaultIconPath = path.resolve(appRootPath, '../../assets/logo-leavengine.svg');
                 res.sendFile(defaultIconPath);
             };
 
-            const _serveDefaultFavicon = async (req: IRequestWithContext, res: Response, next: NextFunction) => {
+            const _serveDefaultFavicon = async (req: IRequestWithContext, res: Response) => {
                 const defaultFaviconPath = path.resolve(appRootPath, '../../assets/favicon-leav.svg');
                 res.sendFile(defaultFaviconPath);
             };
@@ -191,7 +191,7 @@ export default function ({
                         const settings = await globalSettingsDomain.getSettings(req.ctx);
 
                         if (!settings.icon) {
-                            _serveDefaultIcon(req, res, next);
+                            _serveDefaultIcon(req, res);
                             return;
                         }
 
@@ -212,14 +212,14 @@ export default function ({
                         ).list[0];
 
                         if (!fileRecord) {
-                            _serveDefaultIcon(req, res, next);
+                            _serveDefaultIcon(req, res);
                             return;
                         }
 
                         const previewsAttribute = utils.getPreviewsAttributeName(settings.icon.library);
                         let previewPath = fileRecord[previewsAttribute]?.[req.params.size];
                         if (!previewPath) {
-                            _serveDefaultFavicon(req, res, next);
+                            _serveDefaultFavicon(req, res);
                             return;
                         }
 
@@ -248,7 +248,7 @@ export default function ({
                         const settings = await globalSettingsDomain.getSettings(req.ctx);
 
                         if (!settings.favicon) {
-                            _serveDefaultFavicon(req, res, next);
+                            _serveDefaultFavicon(req, res);
                             return;
                         }
 
@@ -269,14 +269,14 @@ export default function ({
                         ).list[0];
 
                         if (!fileRecord) {
-                            _serveDefaultFavicon(req, res, next);
+                            _serveDefaultFavicon(req, res);
                             return;
                         }
 
                         const previewsAttribute = utils.getPreviewsAttributeName(settings.favicon.library);
                         let previewPath = fileRecord[previewsAttribute]?.tiny;
                         if (!previewPath) {
-                            _serveDefaultFavicon(req, res, next);
+                            _serveDefaultFavicon(req, res);
                             return;
                         }
 

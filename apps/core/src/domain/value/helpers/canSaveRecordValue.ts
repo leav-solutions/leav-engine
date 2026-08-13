@@ -98,7 +98,7 @@ export const IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS = [
 ];
 
 export default async (params: ICanSaveRecordValueParams): Promise<ICanSaveRecordValueRes> => {
-    const {attributeProps, value, library, recordId, ctx, deps, keepEmpty = false} = params;
+    const {attributeProps, value, library, recordId, ctx, deps} = params;
 
     if (IMMUTABLE_CORE_SYSTEM_ATTRIBUTE_IDS.includes(attributeProps.id)) {
         return {canSave: false, reason: Errors.IMMUTABLE_CORE_SYSTEM_ATTRIBUTE};

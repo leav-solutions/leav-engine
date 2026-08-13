@@ -202,7 +202,7 @@ describe('PermissionRepo', () => {
             };
             const permRepo = permissionRepo({'core.infra.db.dbService': mockDbServ});
 
-            const perm = await permRepo.getPermissions({
+            await permRepo.getPermissions({
                 type: PermissionTypes.RECORD,
                 applyTo: 'test_lib',
                 usersGroupNodeId: '12345',

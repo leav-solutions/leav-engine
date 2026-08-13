@@ -20,7 +20,7 @@ type SearchQueryType = Parameters<IElasticsearchService['search']>[0]['query'];
 
 export default function ({'core.infra.elasticsearch.service': esService, config}: IDeps): ILogRepo {
     return {
-        async getLogs({filters, sort, pagination}, ctx) {
+        async getLogs({filters, sort, pagination}) {
             /**
              * Topic filters received are a nested object, we need to flatten it to be able to use them in ES.
              * eg. {topic: {library: 'my_lib', attribute: 'my_attribute', record: {library: 'my_lib', id: '123456'}}}

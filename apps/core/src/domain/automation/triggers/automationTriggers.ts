@@ -43,7 +43,7 @@ export default function ({
             cache.set(eventAction, result);
             return result;
         },
-        validateAutomationRuleTrigger: async ({eventAction, eventTopic, synchronous}, ctx) => {
+        validateAutomationRuleTrigger: async ({eventAction, eventTopic, synchronous}) => {
             const triggerDef = triggersRegistry.getTrigger(eventAction);
 
             if (triggerDef.synchronicity === AutomationTriggerDefSynchronicity.SYNC && !synchronous) {

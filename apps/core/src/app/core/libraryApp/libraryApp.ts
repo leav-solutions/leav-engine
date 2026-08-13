@@ -214,13 +214,13 @@ export default function ({
                         },
                     },
                     Library: {
-                        attributes: async (parent, args, ctx, info): Promise<ILibrary[]> =>
+                        attributes: async (parent, args, ctx): Promise<ILibrary[]> =>
                             attributeDomain.getLibraryAttributes(parent.id, ctx),
-                        mandatoryAttribute: async (library, _, ctx, info) =>
+                        mandatoryAttribute: async (library, _, ctx) =>
                             library.mandatoryAttribute
                                 ? attributeDomain.getAttributeProperties({id: library.mandatoryAttribute, ctx})
                                 : null,
-                        fullTextAttributes: async (parent, args, ctx, info) =>
+                        fullTextAttributes: async (parent, args, ctx) =>
                             attributeDomain.getLibraryFullTextAttributes(parent.id, ctx),
                         /**
                          * Return library label, potentially filtered by requested language

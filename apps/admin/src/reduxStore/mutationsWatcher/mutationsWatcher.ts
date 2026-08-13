@@ -1,4 +1,4 @@
-import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 
 export interface IMutationsWatcherReducerState {
     mutationsCount: number;
@@ -14,11 +14,11 @@ export const mutationsWatcherSlice = createSlice({
     name: 'mutationsWatcher',
     initialState,
     reducers: {
-        startMutation: (state, action: PayloadAction) => {
+        startMutation: state => {
             state.mutationsCount++;
             state.hasPendingMutations = true;
         },
-        endMutation: (state, action: PayloadAction) => {
+        endMutation: state => {
             state.mutationsCount--;
             state.hasPendingMutations = state.mutationsCount > 0;
         },

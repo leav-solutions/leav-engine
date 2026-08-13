@@ -9,7 +9,6 @@ import {getVersionProfilesQuery} from '../../../queries/versionProfiles/getVersi
 import {useTranslation} from 'react-i18next';
 import {useNavigate, useParams} from 'react-router-dom';
 import {Divider, Header} from 'semantic-ui-react';
-import styled from 'styled-components';
 import {type GET_VERSION_PROFILES, type GET_VERSION_PROFILESVariables} from '../../../_gqlTypes/GET_VERSION_PROFILES';
 import {
     PermissionsActions,
@@ -20,11 +19,6 @@ import {
 import {type IFormError} from '../../../_types/errors';
 import InfoForm from './InfoForm';
 import {type GET_VERSION_PROFILE_BY_ID_versionProfiles_list} from '../../../_gqlTypes/GET_VERSION_PROFILE_BY_ID';
-
-const Wrapper = styled.div`
-    display: grid;
-    grid-template-rows: auto 1fr;
-`;
 
 function EditVersionProfile(): JSX.Element {
     const apolloClient = useApolloClient();
@@ -41,7 +35,7 @@ function EditVersionProfile(): JSX.Element {
         skip: isNewProfile,
     });
 
-    const [saveVersionProfile, {loading: saveLoading, error: saveError}] = useSaveVersionProfileMutation({
+    const [saveVersionProfile, {loading: saveLoading}] = useSaveVersionProfileMutation({
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onCompleted: res => {
             if (isNewProfile) {
