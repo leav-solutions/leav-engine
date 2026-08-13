@@ -64,6 +64,46 @@ réécho si la relecture échoue — le bloc `identifier` ne doit jamais coûter
 ⚠️ La `date` d'un statement est en **secondes** (contrat), alors que celle de l'enveloppe d'export SDO
 est en **millisecondes** (`Date.now()`). Ne pas s'inspirer de l'une pour l'autre.
 
+## Activation de l'import par entité (`importEnable`) et exclusion d'attributs (`skipImport`)
+
+Le mapping étant **partagé entre l'export et l'import**, une entité doit déclarer explicitement
+qu'elle est importable (LEAVC-1091) — sans quoi la seule façon d'empêcher son import serait de la
+retirer du mapping, ce qui casserait son export.
+
+⚠️ **Les deux niveaux de `importEnable` n'ont pas le même défaut**, et c'est volontaire :
+
+| Niveau                                          | Test effectué                   | Absent signifie |
+| ----------------------------------------------- | ------------------------------- | --------------- |
+| Racine — `settings.sdo.importEnable`            | `=== false` ⇒ coupé (permissif) | **actif**       |
+| Entité — `settings.sdo.mapping[x].importEnable` | `!== true` ⇒ coupé (restrictif) | **inactif**     |
+
+La racine reste le commutateur global : imports coupés à la racine ⇒ aucune entité n'est importée,
+quelle que soit sa configuration.
+
+Ce que fait chaque consumer d'une entité **non importable** :
+
+| Flux    | Comportement                                                                                                  |
+| ------- | ------------------------------------------------------------------------------------------------------------- |
+| **SDO** | message **acké**, rien d'importé, aucun log d'import ; trace via `debug && logger.debug` (`config.sdo.debug`) |
+| **DTO** | rejet fonctionnel `NOT_AUTHORIZED` ⇒ message acké + statement `ERROR` + `DTO_IMPORT_ERROR`                    |
+
+L'asymétrie tient au contrat : l'émetteur d'un DTO attend une réponse, celui d'un SDO non.
+
+> Un type **absent** du mapping n'est pas concerné : ça reste une anomalie de configuration, donc une
+> erreur (`SDO_IMPORT_ERROR` + nack côté SDO, `INVALID_TYPE` côté DTO). Le contrôle `importEnable` ne
+> s'applique qu'à une entité effectivement mappée.
+
+Au niveau de l'attribut, `skipImport: true` l'exclut de l'import sans toucher à son export. Il n'a de
+sens que sur une entité `importEnable: true`, et **neutralise `valueRequired`** pour cet attribut (cf.
+section suivante) : exiger un attribut qu'on a décidé de ne pas importer rejetterait l'opération pour
+rien.
+
+**Déploiement** : le défaut restrictif couperait les imports des instances déjà configurées. La
+migration `028-enableSdoImportOnMappedLibraries` pose donc `importEnable: true` sur chaque entité du
+mapping existant qui ne se prononce pas — sauf si les imports sont déjà coupés à la racine. Elle ne
+remplit que les clés **absentes**, donc un `false` posé ensuite par les ops survit à un rejeu. Les
+entités **ajoutées après** au mapping devront porter `importEnable: true` explicitement.
+
 ## `valueRequired` : uniquement sur l'import DTO
 
 Le flag `valueRequired` du mapping (`globalSettings.settings.sdo.mapping`) n'est lu **que** par le
@@ -72,6 +112,7 @@ consumer DTO (LEAVC-956) — ni à l'export, ni à l'import SDO, où il reste un
 - `CREATE` : tout attribut requis doit être présent **et** non vide ;
 - `UPDATE` : c'est un patch, donc un attribut absent = « inchangé » (accepté) ; seul un attribut
   **présent mais vidé** (`null` / `''` / `[]`) est rejeté.
+- un attribut `skipImport: true` n'est jamais requis, quel que soit son `valueRequired`.
 
 ## Tests
 
@@ -79,3 +120,12 @@ Les e2e du flux publient et consomment de vrais messages : `src/__tests__/e2e/ap
 tient **un canal par usage** (un exchange sur lequel publier, une queue à écouter). C'est structurel :
 le `setup` d'un canal ne s'exécute qu'à sa création, donc un canal partagé n'asserterait
 silencieusement que le premier exchange/queue et rendrait la suite dépendante de l'ordre des appels.
+
+⚠️ **`waitForMessage` doit impérativement annuler son consumer**, y compris quand le message arrive
+avant que `consume()` ait résolu son tag — d'où le `await` sur la promesse de `consume()` dans
+`stop()`. Un consumer resté attaché continue de concurrencer la queue et **jette** (`nack` sans
+requeue) les messages qu'attend l'appel suivant : symptôme, un `No matching message on "…"` qui ne
+tombe que par intermittence, typiquement sous la charge des suites tournant en parallèle.
+
+Les queues e2e sont **durables et jamais reset entre deux runs** : purger celles qu'on consomme
+(`purgeQueue`) évite d'avoir à drainer tout l'historique avant le message attendu.
