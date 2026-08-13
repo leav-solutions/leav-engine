@@ -159,6 +159,28 @@ export default function ({
                 ]);
             }
 
+            // An entity has to opt in to be importable (LEAVC-1091). Unlike the SDO flow, which just
+            // ignores the message, the emitter of a DTO is owed an answer: contractual rejection.
+            //
+            // The error catalog is closed (it is shared with the Data Platform, see the contract §4):
+            // it has no code for "type known but not importable". `NOT_AUTHORIZED` ("action non
+            // autorisée") is the closest, and is listed among the CREATE/UPDATE checks. `INVALID_TYPE`
+            // is deliberately left to the unmapped case above, so the two configurations stay
+            // distinguishable. Which flag is missing is our business, not the emitter's: it goes to
+            // the internal message, not to the contractual detail.
+            if (mappingLibrary.importEnable !== true) {
+                throw new DTORejectionError(
+                    [
+                        {
+                            code: DTOErrorCode.NOT_AUTHORIZED,
+                            attribute: null,
+                            message: 'This instance does not accept imports for this payload type',
+                        },
+                    ],
+                    `[dtoImportApp]: payload type ${dto.payloadType} is mapped but not flagged "importEnable"`,
+                );
+            }
+
             _validateRequiredValues(dto, mappingLibrary);
 
             // A DTO carries the same information the SDO import needs: the SDO type (mapping key)

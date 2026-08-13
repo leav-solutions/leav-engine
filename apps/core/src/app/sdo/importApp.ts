@@ -46,6 +46,22 @@ export default function ({
                 return;
             }
 
+            // An entity has to opt in to be importable (LEAVC-1091). A type *absent* from the mapping
+            // is a different matter — it stays an error, raised further down by the import domain.
+            const mappingLibrary = sdoGlobalSettings.mapping?.[sdo.name];
+
+            if (mappingLibrary && mappingLibrary.importEnable !== true) {
+                debug &&
+                    logger.debug(
+                        `Import: SDO ignored, the mapping entry "${sdo.name}" (library "${mappingLibrary.leavLibraryId}") is not flagged "importEnable"`,
+                        {sdo},
+                    );
+                // Returning acks the message (createAmqpConnection's default contract): the SDO is
+                // processed as far as this instance is concerned, nothing is imported and nothing is
+                // logged as an imported record.
+                return;
+            }
+
             debug && logger.debug('Import: sdo event selected', {sdo});
             await sdoDomain.schemaValidation(sdo.content);
 

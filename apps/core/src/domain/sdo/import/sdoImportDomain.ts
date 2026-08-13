@@ -247,6 +247,8 @@ export default function ({
             .filter(([, sdoAttr]) => Boolean(sdoAttr.leavAttributeId))
             // A path (e.g. "category.color") can't be resolved to a single writable attribute — skip it.
             .filter(([, sdoAttr]) => !sdoAttr.leavAttributeId.includes('.'))
+            // Explicitly excluded from the import by the mapping (LEAVC-1091) — the export still uses it.
+            .filter(([, sdoAttr]) => !sdoAttr.skipImport)
             .filter(([sdoKey]) => {
                 const value = _.get(sdo.content, sdoKey);
                 return value !== undefined && value !== '';
