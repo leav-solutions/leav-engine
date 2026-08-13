@@ -37,38 +37,43 @@ export default async (params: IPrepareValueParams): Promise<ISaveValue[]> => {
         : [value];
 
     // Execute actions list on metadata
-    preparedValues.map(async preparedValue => {
-        if (preparedValue.metadata) {
-            try {
-                for (const metaFieldName of Object.keys(preparedValue.metadata)) {
-                    const metaFieldProps = await deps.attributeDomain.getAttributeProperties({id: metaFieldName, ctx});
+    await Promise.all(
+        preparedValues.map(async preparedValue => {
+            if (preparedValue.metadata) {
+                try {
+                    for (const metaFieldName of Object.keys(preparedValue.metadata)) {
+                        const metaFieldProps = await deps.attributeDomain.getAttributeProperties({
+                            id: metaFieldName,
+                            ctx,
+                        });
 
-                    if (metaFieldProps?.actions_list?.[ActionsListEvents.SAVE_VALUE]) {
-                        const processedMetaValue = await deps.actionsListDomain.runActionsList(
-                            metaFieldProps.actions_list[ActionsListEvents.SAVE_VALUE],
-                            [{payload: preparedValue.metadata[metaFieldName]}],
-                            {
-                                ...ctx,
-                                attribute: metaFieldProps,
-                                recordId,
-                                library,
-                                actionEvent: ActionsListEvents.SAVE_VALUE,
-                            },
-                        );
-                        preparedValue.metadata[metaFieldName] = processedMetaValue[0].payload;
+                        if (metaFieldProps?.actions_list?.[ActionsListEvents.SAVE_VALUE]) {
+                            const processedMetaValue = await deps.actionsListDomain.runActionsList(
+                                metaFieldProps.actions_list[ActionsListEvents.SAVE_VALUE],
+                                [{payload: preparedValue.metadata[metaFieldName]}],
+                                {
+                                    ...ctx,
+                                    attribute: metaFieldProps,
+                                    recordId,
+                                    library,
+                                    actionEvent: ActionsListEvents.SAVE_VALUE,
+                                },
+                            );
+                            preparedValue.metadata[metaFieldName] = processedMetaValue[0].payload;
+                        }
                     }
-                }
-            } catch (e) {
-                if (!(e instanceof ValidationError)) {
+                } catch (e) {
+                    if (!(e instanceof ValidationError)) {
+                        deps.utils.rethrow(e);
+                    }
+
+                    e.fields = {metadata: {...e.fields}};
+
                     deps.utils.rethrow(e);
                 }
-
-                e.fields = {metadata: {...e.fields}};
-
-                deps.utils.rethrow(e);
             }
-        }
-    });
+        }),
+    );
 
     return preparedValues;
 };

@@ -68,11 +68,11 @@ describe('importDomain', () => {
     };
 
     beforeAll(async () => {
-        await fs.promises.mkdir(importMockConfig.directory);
+        await fs.promises.mkdir(importMockConfig.directory, {recursive: true});
     });
 
     afterAll(async () => {
-        await fs.promises.rmdir(importMockConfig.directory, {recursive: true});
+        await fs.promises.rm(importMockConfig.directory, {recursive: true});
     });
 
     beforeEach(() => {
@@ -279,7 +279,7 @@ describe('importDomain', () => {
                 translator: mockTranslator as i18n,
             });
 
-            expect(imprtDomain.importData({filename: 'kzdidnzj', ctx}, {id: 'fakeTaskId'})).rejects.toThrow();
+            await expect(imprtDomain.importData({filename: 'kzdidnzj', ctx}, {id: 'fakeTaskId'})).rejects.toThrow();
         });
 
         test('test import elements - simple and advanced links', async () => {

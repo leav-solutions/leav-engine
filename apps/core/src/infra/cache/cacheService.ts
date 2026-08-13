@@ -90,13 +90,17 @@ export default function ({
             // Start the computation and store the promise immediately to avoid race conditions
             savePromise = saveFunc();
             memoizePromiseMap.set(key, savePromise);
-            savePromise.finally(() => {
-                // Cleanup the promise from the map after it resolves
-                // Use nextTick to ensure this runs after the current event loop tick
-                nextTick(() => {
-                    memoizePromiseMap.delete(key);
-                });
-            });
+            savePromise
+                .finally(() => {
+                    // Cleanup the promise from the map after it resolves
+                    // Use nextTick to ensure this runs after the current event loop tick
+                    nextTick(() => {
+                        memoizePromiseMap.delete(key);
+                    });
+                })
+                // .finally() returns a new promise that rejects if savePromise does; the actual
+                // error is already handled by whoever awaits the returned savePromise below.
+                .catch(() => undefined);
         }
         return savePromise as Promise<T>;
     }
