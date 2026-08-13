@@ -8,7 +8,6 @@ import {type IRecord} from '../../_types/record';
 import {type IDbService} from '../db/dbService';
 import {type IDbUtils} from '../db/dbUtils';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
-import {type GetConditionPart} from './helpers/getConditionPart';
 import {type IAttributeSimpleLinkRepo} from './attributeSimpleLinkRepo';
 import {type IDbDocument, type IDbEdge} from '../db/_types';
 import {type EdgeCollection} from 'arangojs/collection';
@@ -24,7 +23,6 @@ interface IDeps {
     'core.infra.db.dbService'?: IDbService;
     'core.infra.db.dbUtils'?: IDbUtils;
     'core.infra.attributeTypes.attributeSimpleLink'?: IAttributeSimpleLinkRepo;
-    'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
     'core.utils'?: IUtils;
 }
@@ -33,7 +31,6 @@ export default function ({
     'core.infra.db.dbService': dbService = null,
     'core.infra.db.dbUtils': dbUtils = null,
     'core.infra.attributeTypes.attributeSimpleLink': attributeSimpleLinkRepo = null,
-    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.filterTypes': filterTypes = null,
     'core.utils': utils = null,
 }: IDeps = {}): IAttributeAdvancedLinkRepo {
@@ -545,7 +542,7 @@ export default function ({
                 ? linkedValue
                 : _getExtendedFilterPart(attributes, linkedValue);
         },
-        async clearAllValues({attribute, ctx}): Promise<boolean> {
+        async clearAllValues(): Promise<boolean> {
             return true;
         },
         async clearMultipleValues({libraryId, attribute, ctx}): Promise<void> {

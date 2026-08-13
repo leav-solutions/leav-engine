@@ -3,22 +3,12 @@ import {SystemTrees} from '../../../_constants/systemTrees';
 import {type IAttributeDomain} from '../../attribute/attributeDomain';
 import {type IElementAncestorsHelper} from '../../tree/helpers/elementAncestors';
 import {type IQueryInfos} from '../../../_types/queryInfos';
-import {type ICacheService, type ICachesService} from '../../../infra/cache/cacheService';
 import {PermissionsRelations, PermissionTypes, RecordPermissionsActions} from '../../../_types/permissions';
 import {type IGetTreeBasedPermissionParams} from '../_types';
 import {type IPermissionByUserGroupsHelper} from './permissionByUserGroups';
 import {type IReducePermissionsArrayHelper} from './reducePermissionsArray';
 import treeBasedPermissions, {type ITreeBasedPermissionsDeps} from './treeBasedPermissions';
 import {type ToAny} from '../../../utils/utils';
-
-const mockCacheService: Mockify<ICacheService> = {
-    getData: global.__mockPromise([null]),
-    storeData: global.__mockPromise(),
-};
-
-const mockCachesService: Mockify<ICachesService> = {
-    getCache: vi.fn().mockReturnValue(mockCacheService),
-};
 
 const depsBase: ToAny<ITreeBasedPermissionsDeps> = {
     'core.domain.attribute': vi.fn(),
@@ -130,57 +120,6 @@ describe('TreeBasedPermissionDomain', () => {
             clearElementAncestorsCache: vi.fn(),
         } satisfies Mockify<IElementAncestorsHelper>;
 
-        const attributesProps = {
-            category: {
-                id: 'category',
-                type: 'tree',
-                linked_tree: 'categories',
-            },
-            status: {
-                id: 'status',
-                type: 'tree',
-                linked_tree: 'statuses',
-            },
-            user_groups: {
-                id: 'user_groups',
-                type: 'tree',
-                linked_tree: SystemTrees.USERS_GROUPS,
-            },
-        };
-        const mockAttrMultipleDomain: Mockify<IAttributeDomain> = {
-            getAttributeProperties: vi.fn().mockImplementation(({id}) => Promise.resolve(attributesProps[id])),
-        };
-
-        const values = {
-            category: {
-                id_value: 12345,
-                value: {
-                    record: {
-                        id: 'A',
-                        library: 'category',
-                    },
-                },
-            },
-            status: {
-                id_value: 98765,
-                value: {
-                    record: {
-                        id: 'AA',
-                        library: 'statuses',
-                    },
-                },
-            },
-            user_groups: {
-                id_value: 54321,
-                value: {
-                    record: {
-                        id: 1,
-                        library: SystemLibraries.USERS_GROUPS,
-                    },
-                },
-            },
-        };
-
         const mockPermConf = {
             relation: PermissionsRelations.AND,
             permissionTreeAttributes: ['category'],
@@ -188,14 +127,6 @@ describe('TreeBasedPermissionDomain', () => {
 
         const mockReducePermissionsArrayHelper: IReducePermissionsArrayHelper = {
             reducePermissionsArray: vi.fn().mockReturnValue(true),
-        };
-
-        const mockReducePermissionsArrayHelperFalse: IReducePermissionsArrayHelper = {
-            reducePermissionsArray: vi.fn().mockReturnValue(false),
-        };
-
-        const mockReducePermissionsArrayHelperNull: IReducePermissionsArrayHelper = {
-            reducePermissionsArray: vi.fn().mockReturnValue(null),
         };
 
         const params: IGetTreeBasedPermissionParams = {

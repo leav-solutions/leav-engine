@@ -65,7 +65,7 @@ describe('Utils', () => {
             const utilsModule = utils();
 
             const multiply = factor => async n =>
-                new Promise((resolve, reject) => {
+                new Promise(resolve => {
                     resolve(n * factor);
                 });
 

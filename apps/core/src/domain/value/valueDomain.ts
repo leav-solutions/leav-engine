@@ -3,7 +3,6 @@ import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type UpdateRecordLastModifFunc} from '../helpers/updateRecordLastModif';
 import {type SendRecordUpdateEventHelper} from '../record/helpers/sendRecordUpdateEvent';
 import {type IAutomationDomain} from '../automation/automationDomain';
-import {type IElementAncestorsHelper} from '../tree/helpers/elementAncestors';
 import {type IGetDefaultElementHelper} from '../tree/helpers/getDefaultElement';
 import {type ITreeDomain} from '../tree/treeDomain';
 import {type IVersionProfileDomain} from '../versionProfile/versionProfileDomain';
@@ -186,7 +185,6 @@ export interface IValueDomainDeps {
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.helpers.validate': IValidateHelper;
     'core.domain.helpers.updateRecordLastModif': UpdateRecordLastModifFunc;
-    'core.domain.tree.helpers.elementAncestors': IElementAncestorsHelper;
     'core.domain.tree.helpers.getDefaultElement': IGetDefaultElementHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.domain.record.helpers.createRecord': CreateRecordHelper;
@@ -218,7 +216,6 @@ const valueDomain = function ({
     'core.domain.eventsManager': eventsManager,
     'core.domain.helpers.validate': validate,
     'core.domain.helpers.updateRecordLastModif': updateRecordLastModif,
-    'core.domain.tree.helpers.elementAncestors': elementAncestors,
     'core.domain.tree.helpers.getDefaultElement': getDefaultElementHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
     'core.domain.record.helpers.createRecord': createRecordHelper,

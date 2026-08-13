@@ -131,7 +131,7 @@ export const useMassActions = ({
             indeterminate={hasSelectedSomeItems}
             checked={hasSelectedAllAvailableItems}
             disabled={isSelectionInteractionDisabled}
-            onChange={_ => {
+            onChange={() => {
                 if (hasSelectedAllAvailableItems) {
                     _setSelectedKeys([]);
                 } else {

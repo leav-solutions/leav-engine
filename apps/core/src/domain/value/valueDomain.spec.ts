@@ -44,7 +44,6 @@ const depsBase: ToAny<IValueDomainDeps> = {
     'core.domain.eventsManager': vi.fn(),
     'core.domain.helpers.validate': vi.fn(),
     'core.domain.helpers.updateRecordLastModif': vi.fn(),
-    'core.domain.tree.helpers.elementAncestors': vi.fn(),
     'core.domain.tree.helpers.getDefaultElement': vi.fn(),
     'core.domain.record.helpers.sendRecordUpdateEvent': vi.fn(),
     'core.domain.record.helpers.getRecordIdentity': vi.fn(),

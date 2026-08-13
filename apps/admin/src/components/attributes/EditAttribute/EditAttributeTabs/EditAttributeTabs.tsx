@@ -23,7 +23,6 @@ import PermissionsTab from './PermissionsTab';
 import ValuesListTab from './ValuesListTab';
 import CustomConfigTab from './CustomConfigTab';
 import DependenciesTab from './DependenciesTab';
-import {useCurrentApplicationContext} from '../../../../context/CurrentApplicationContext';
 import {AttributeDisplayTab} from '../../../../modules/attribute-display';
 
 interface IEditAttributeTabsProps {
@@ -49,7 +48,6 @@ function EditAttributeTabs({
     const availableLanguages = useLang().lang;
     const navigate = useNavigate();
     const location = useLocation();
-    const applicationData = useCurrentApplicationContext();
     const headerLabel =
         !!attribute && attribute.label ? localizedLabel(attribute.label, availableLanguages) : t('attributes.new');
 

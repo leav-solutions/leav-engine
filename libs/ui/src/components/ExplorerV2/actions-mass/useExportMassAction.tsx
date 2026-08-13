@@ -21,7 +21,7 @@ interface IUseExportMassActionReturn {
  */
 export const useExportMassAction = ({
     isEnabled,
-    store: {view, dispatch},
+    store: {view},
     totalCount,
     onExport,
 }: FeatureHook<{

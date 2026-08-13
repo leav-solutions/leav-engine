@@ -7,7 +7,7 @@ import {useGetTreeByIdQuery} from '../../../../../../../../../_gqlTypes';
 import {type GET_TREE_BY_ID_trees_list} from '../../../../../../../../../_gqlTypes/GET_TREE_BY_ID';
 
 function BreadcrumbNavigator(): JSX.Element {
-    const {state, dispatch} = useFormBuilderReducer();
+    const {state} = useFormBuilderReducer();
 
     // Retrieve tree ID from form config and selected attribute
     const selectedDepAttribute = state.form.dependencyAttributes?.find(

@@ -1,4 +1,3 @@
-import {type IField} from '_ui/types/search';
 import {
     type IGetRecordsFromLibraryQuery,
     type IGetRecordsFromLibraryQueryElement,
@@ -20,7 +19,7 @@ export const mockGetRecordsFromLibraryQueryElement: IGetRecordsFromLibraryQueryE
     },
 };
 
-export const mockGetRecordsFromLibraryQuery = (libraryName: string, fields: IField[]): IGetRecordsFromLibraryQuery => ({
+export const mockGetRecordsFromLibraryQuery = (): IGetRecordsFromLibraryQuery => ({
     records: {
         totalCount: 1,
         list: [mockGetRecordsFromLibraryQueryElement],

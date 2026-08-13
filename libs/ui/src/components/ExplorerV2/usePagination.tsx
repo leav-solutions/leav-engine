@@ -5,7 +5,7 @@ import {type SetNewPage} from './_types';
 export const usePagination = (dispatch: Dispatch<IViewSettingsAction>) => {
     const [currentPage, setCurrentPage] = useState(1);
 
-    const setNewPage: SetNewPage = (newCurrentPage: number, ignoredPageSize: number) => {
+    const setNewPage: SetNewPage = (newCurrentPage: number) => {
         setCurrentPage(newCurrentPage);
     };
 

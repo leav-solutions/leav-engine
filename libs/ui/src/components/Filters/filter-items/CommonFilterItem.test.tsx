@@ -77,7 +77,7 @@ describe('CommonFilterItem', () => {
                 condition: AttributeConditionFilter.EQUAL,
             };
 
-            const {baseElement} = render(
+            render(
                 <MockFiltersContextProvider viewMock={{...filtersInitialState, filters: [filter]}}>
                     <CommonFilterItemContainer />
                 </MockFiltersContextProvider>,

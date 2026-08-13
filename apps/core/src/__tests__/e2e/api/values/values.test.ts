@@ -55,7 +55,6 @@ describe('Values', () => {
     let recordIdLinked2: string;
     let recordUniqueId: string;
     let recordIdPostSaveActions: string;
-    let recordIdPostDeleteActions: string;
     let advValueId: string;
     let treeElemId: string;
     let treeElemId2: string;
@@ -301,7 +300,6 @@ describe('Values', () => {
         treeElemId = resRecord.data.data.c4.record.id;
         recordUniqueId = resRecord.data.data.c5.record.id;
         recordIdPostSaveActions = resRecord.data.data.c6.record.id;
-        recordIdPostDeleteActions = resRecord.data.data.c7.record.id;
         recordIdLinked2 = resRecord.data.data.c8.record.id;
         treeElemId2 = resRecord.data.data.c9.record.id;
 

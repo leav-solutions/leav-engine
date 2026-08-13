@@ -1,4 +1,4 @@
-import {aql, Database} from 'arangojs';
+import {Database} from 'arangojs';
 import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {AttributeTypes} from '../../_types/attribute';
@@ -9,8 +9,6 @@ import {type IAttributeWithRevLink} from './attributeTypesRepo';
 
 const depsBase: ToAny<IAttributeAdvancedRepoDeps> = {
     'core.infra.db.dbService': vi.fn(),
-    'core.infra.db.dbUtils': vi.fn(),
-    'core.infra.attributeTypes.helpers.getConditionPart': vi.fn(),
     'core.infra.record.helpers.filterTypes': vi.fn(),
 };
 
@@ -490,7 +488,6 @@ describe('AttributeStandardRepo', () => {
             const attrRepo = attributeAdvancedRepo({
                 ...depsBase,
                 'core.infra.db.dbService': mockDbServ,
-                'core.infra.attributeTypes.helpers.getConditionPart': () => aql`rVal == ${'MyLabel'}`,
                 'core.infra.record.helpers.filterTypes': mockFilterTypesHelper as IFilterTypesHelper,
             });
             const filter = attrRepo.filterValueQueryPart(

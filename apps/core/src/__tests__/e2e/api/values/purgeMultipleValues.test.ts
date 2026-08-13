@@ -27,11 +27,8 @@ describe('Purge multiple values', () => {
     let recordTarget1: string;
     let recordTarget2: string;
 
-    let idValue1: string;
     let idValue2: string;
-    let idRecordValue1: string;
     let idRecordValue2: string;
-    let idNodeValue1: string;
     let idNodeValue2: string;
 
     let treeNodeId1: string;
@@ -95,17 +92,17 @@ describe('Purge multiple values', () => {
         recordTarget2 = await gqlCreateRecord(testLibId);
         testRecordId = await gqlCreateRecord(testLibId);
 
-        idValue1 = await gqlSaveValueBis(attrAdvancedId, testLibId, testRecordId, {payload: 'value1'});
+        await gqlSaveValueBis(attrAdvancedId, testLibId, testRecordId, {payload: 'value1'});
         idValue2 = await gqlSaveValueBis(attrAdvancedId, testLibId, testRecordId, {payload: 'value2'});
 
-        idRecordValue1 = await gqlSaveValueBis(attrAdvancedLinkId, testLibId, testRecordId, {
+        await gqlSaveValueBis(attrAdvancedLinkId, testLibId, testRecordId, {
             payload: recordTarget1,
         });
         idRecordValue2 = await gqlSaveValueBis(attrAdvancedLinkId, testLibId, testRecordId, {
             payload: recordTarget2,
         });
 
-        idNodeValue1 = await gqlSaveValueBis(attrTreeId, testLibId, testRecordId, {payload: treeNodeId1});
+        await gqlSaveValueBis(attrTreeId, testLibId, testRecordId, {payload: treeNodeId1});
         idNodeValue2 = await gqlSaveValueBis(attrTreeId, testLibId, testRecordId, {payload: treeNodeId2});
 
         // Set multiple values property as false for all attributes

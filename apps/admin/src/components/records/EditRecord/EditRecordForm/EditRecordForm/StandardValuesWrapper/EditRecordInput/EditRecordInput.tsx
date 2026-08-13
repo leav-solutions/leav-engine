@@ -92,7 +92,7 @@ function EditRecordInput({
         setEditing(false);
     };
 
-    const _handleBlur = e => {
+    const _handleBlur = () => {
         // This is a ugly hack to make sure we hide buttons when user clicks on another field.
         // The best behavior would be to save value on blur, but it's really hard to implement because
         // the blur event messes around with the buttons and it's hard to know if we clicked on a button.

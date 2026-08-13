@@ -1,8 +1,10 @@
-declare namespace NodeJS {
+declare global {
     /* eslint-disable @typescript-eslint/naming-convention */
-    interface Global {
-        __mockPromise(promRes?: any): any;
-        __mockPromiseMultiple(promRes?: any[]): any;
+    namespace NodeJS {
+        interface Global {
+            __mockPromise(promRes?: any): any;
+            __mockPromiseMultiple(promRes?: any[]): any;
+        }
     }
 }
 
@@ -15,7 +17,3 @@ global.__mockPromiseMultiple = promResults => {
 
     return jestFn;
 };
-
-// Used to mock any interface, turning all function properties to an optionnal mock
-// Mockified object must be then passed to a function with a type assertion
-type Mockify<T> = {[P in keyof T]?: T[P] extends (...args: any) => any ? ReturnType<typeof vi.fn> : T[P]};

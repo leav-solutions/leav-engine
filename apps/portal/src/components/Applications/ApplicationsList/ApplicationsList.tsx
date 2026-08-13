@@ -35,7 +35,7 @@ const ListWrapper = styled.div`
 const dividerIconStyle = {marginRight: '0.5em'};
 
 function ApplicationsList({applications}: IApplicationsListProps): JSX.Element {
-    const {t, i18n} = useTranslation();
+    const {t} = useTranslation();
     const [favorites, setFavorites] = useState<string[]>([]);
     const [consulted, setConsulted] = useState<string[]>([]);
 

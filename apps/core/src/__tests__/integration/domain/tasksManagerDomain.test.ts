@@ -29,7 +29,7 @@ describe('tasksManagerDomain', {retry: 2}, () => {
     });
 
     it('should correctly execute simple task', async () => {
-        const createdTask = await createAndGetTask('Simple Task', {hello: 'world'});
+        const createdTask = await createAndGetTask('Simple Task');
 
         expect(createdTask.id).toBeDefined();
         expect(createdTask.label.en).toBe('Simple Task');
@@ -47,7 +47,7 @@ describe('tasksManagerDomain', {retry: 2}, () => {
 
     it('should failed when simple task throw', async () => {
         fakeWorkerFn.mockRejectedValue(new Error('Fake worker error'));
-        const createdTask = await createAndGetTask('Failed Task', {hello: 'world'});
+        const createdTask = await createAndGetTask('Failed Task');
 
         expect(createdTask.id).toBeDefined();
         expect(createdTask.label.en).toBe('Failed Task');
@@ -72,7 +72,7 @@ describe('tasksManagerDomain', {retry: 2}, () => {
                     setTimeout(resolve, 60_000);
                 }),
         );
-        const taskToCancel = await createAndGetTask('Long task cancel', {});
+        const taskToCancel = await createAndGetTask('Long task cancel');
 
         expect(taskToCancel.id).toBeDefined();
         expect(taskToCancel.label.en).toBe('Long task cancel');
@@ -88,7 +88,7 @@ describe('tasksManagerDomain', {retry: 2}, () => {
         expect(taskToCancelCanceling.status).toBe(TaskStatus.PENDING_CANCEL);
 
         // create new task to ensure worker is reconnected
-        const newTask = await createAndGetTask('Task after cancel', {});
+        const newTask = await createAndGetTask('Task after cancel');
         const newTaskCompleted = await waitForTaskCompletion(newTask.id);
         expect(newTaskCompleted.status).toBe(TaskStatus.DONE);
 
@@ -98,7 +98,7 @@ describe('tasksManagerDomain', {retry: 2}, () => {
         // expect(canceledTask.status).toBe(TaskStatus.CANCELED);
     });
 
-    async function createAndGetTask(taskName: string, args: any): Promise<ITask> {
+    async function createAndGetTask(taskName: string): Promise<ITask> {
         const taskId = await taskManagerDomain.createTask(
             {
                 label: {

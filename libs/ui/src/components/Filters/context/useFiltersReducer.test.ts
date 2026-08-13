@@ -273,7 +273,7 @@ describe('useFiltersReducer', () => {
                 loading: false,
             } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
-            const {result} = renderHook(() =>
+            renderHook(() =>
                 useFiltersReducer({
                     libraryId: mockLibraryId,
                     viewId: mockViewId,
@@ -338,7 +338,7 @@ describe('useFiltersReducer', () => {
                 loading: false,
             } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
 
-            const {result} = renderHook(() =>
+            renderHook(() =>
                 useFiltersReducer({
                     libraryId: mockLibraryId,
                     skip: false,

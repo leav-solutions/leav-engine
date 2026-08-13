@@ -84,7 +84,6 @@ export default function (deps: IFormDomainDeps): IFormDomain {
         'core.domain.permission.attribute': attributePermissionDomain,
         'core.domain.helpers.validate': validateHelper,
         'core.domain.permission.admin': adminPermissionDomain,
-        'core.domain.tree': treeDomain,
         'core.infra.form': formRepo,
         'core.utils': utils,
         'core.utils.logger': logger,

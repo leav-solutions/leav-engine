@@ -44,7 +44,7 @@ function List({state, dispatch}: IListProps) {
 
     const onEdit = useMemo(() => {
         const callback = state.onEditRecordClick ? state.onEditRecordClick : () => undefined;
-        return entity => (event, data) => {
+        return entity => () => {
             callback(entity.whoAmI);
         };
     }, [state.onEditRecordClick]);

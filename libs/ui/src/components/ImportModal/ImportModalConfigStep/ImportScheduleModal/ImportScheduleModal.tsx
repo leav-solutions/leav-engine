@@ -19,7 +19,7 @@ function ImportScheduleModal({
 }: IImportScheduleModalProps): JSX.Element {
     const {t} = useSharedTranslation();
 
-    const _onChange = (d, dateString) => {
+    const _onChange = d => {
         onChangeScheduleDate(d);
     };
 

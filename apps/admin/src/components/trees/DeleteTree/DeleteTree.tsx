@@ -11,10 +11,9 @@ import DeleteButton from '../../shared/DeleteButton';
 
 interface IDeleteTreeProps {
     tree?: GET_TREES_trees_list;
-    filters?: any;
 }
 
-const DeleteTree = ({tree, filters}: IDeleteTreeProps): JSX.Element | null => {
+const DeleteTree = ({tree}: IDeleteTreeProps): JSX.Element | null => {
     const {t} = useTranslation();
     const availableLanguages = useLang().lang;
     const userData = useUserData();

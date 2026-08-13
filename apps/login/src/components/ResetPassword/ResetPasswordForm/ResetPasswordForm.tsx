@@ -1,26 +1,11 @@
-import {Card, Form} from 'antd';
+import {Form} from 'antd';
 import {KitAlert, KitButton, KitInput, KitTypography} from 'aristid-ds';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import styled from 'styled-components';
 
 const extractValueFromEventAndThen = (next: any) => (event: any) => {
     next(event.target.value);
 };
-
-const Wrapper = styled.div`
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 10%;
-`;
-
-const ResetPasswordBlock = styled(Card)`
-    width: 30rem;
-    max-width: 450px;
-    box-sizing: border-box;
-`;
 
 interface IResetPasswordFormProps {
     onSubmit: (newPassword: string) => void;

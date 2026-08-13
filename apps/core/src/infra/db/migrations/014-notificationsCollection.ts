@@ -10,7 +10,7 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
     const NOTIFICATIONS_COLLECTION_NAME = 'core_notifications';
 
     return {
-        async run(ctx) {
+        async run() {
             if (!(await dbService.collectionExists(NOTIFICATIONS_COLLECTION_NAME))) {
                 await dbService.createCollection(NOTIFICATIONS_COLLECTION_NAME, CollectionType.DOCUMENT_COLLECTION);
             }

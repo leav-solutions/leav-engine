@@ -1,3 +1,3 @@
-export default (_deps: any) => ({
-    init: async (_extensionPoints: any) => undefined,
+export default () => ({
+    init: async () => undefined,
 });

@@ -14,7 +14,6 @@ describe('Custom Message', () => {
                 customMessage={customMessage}
                 lang={lang}
                 onChangeCustomMessage={placeholder}
-                index={0}
                 key={lang}
                 actionId={0}
                 setBlockCard={vi.fn()}

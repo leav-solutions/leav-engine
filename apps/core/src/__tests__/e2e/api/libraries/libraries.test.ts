@@ -115,7 +115,6 @@ describe('Libraries', () => {
 
         expect(res.status).toBe(200);
         expect(res.data.data.__type).toBeDefined();
-        const isPresent = res.data.data.__type.fields.filter(field => field.name === 'libraries_test').length > 0;
     });
 
     test('Get library by ID', async () => {

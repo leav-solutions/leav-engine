@@ -2,13 +2,12 @@ import {type ISystemTranslationGenerator} from '../graphql/customScalars/systemT
 import {type ICoreDomain} from '../../domain/core/coreDomain';
 import {type IEventsManagerDomain} from '../../domain/eventsManager/eventsManagerDomain';
 import * as fs from 'fs';
-import {type GraphQLScalarType, Kind} from 'graphql';
+import {type GraphQLScalarType} from 'graphql';
 import GraphQLJSON, {GraphQLJSONObject} from 'graphql-type-json';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import {type i18n} from 'i18next';
 import {type IAppGraphQLSchema} from '../../_types/graphql';
-import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IAppModule} from '../../_types/shared';
 import {type ISystemTranslation} from '../../_types/systemTranslation';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
@@ -27,28 +26,6 @@ export interface ICoreAppDeps {
     config: any;
     translator: i18n;
 }
-
-const _parseLiteralAny = ast => {
-    switch (ast.kind) {
-        case Kind.BOOLEAN:
-        case Kind.STRING:
-            return ast.value;
-        case Kind.INT:
-        case Kind.FLOAT:
-            return Number(ast.value);
-        case Kind.LIST:
-            return ast.values.map(_parseLiteralAny);
-        case Kind.OBJECT:
-            return ast.fields.reduce((accumulator, field) => {
-                accumulator[field.name.value] = _parseLiteralAny(field.value);
-                return accumulator;
-            }, {});
-        case Kind.NULL:
-            return null;
-        default:
-            return ast.value;
-    }
-};
 
 export default function ({
     'core.domain.core': coreDomain,
@@ -93,8 +70,8 @@ export default function ({
                 `,
                 resolvers: {
                     Query: {
-                        version: (parent, args, ctx: IQueryInfos) => coreDomain.getVersion(),
-                        langs: (parent, args, ctx: IQueryInfos) => config.lang.available,
+                        version: () => coreDomain.getVersion(),
+                        langs: () => config.lang.available,
                     } as any,
                     Mutation: {} as any,
                     Upload: GraphQLUpload,

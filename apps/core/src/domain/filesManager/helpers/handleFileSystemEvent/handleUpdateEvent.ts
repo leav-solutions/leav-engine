@@ -52,7 +52,7 @@ export const handleUpdateEvent = async (
     recordData = {...recordData, ...fileMetadata};
 
     // Update datas
-    await updateRecordFile(recordData, record.id!, library, deps, ctx).catch(function (e) {
+    await updateRecordFile(recordData, record.id!, library, deps, ctx).catch(function () {
         deps.logger.warn(`[FilesManager] error during updateRecordFile recordId ${record.id}`);
     });
 

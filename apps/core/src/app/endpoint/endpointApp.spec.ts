@@ -67,7 +67,7 @@ describe('endpointApp', () => {
             endpointApp.extensionPoints.registerRoutes([[mockRoute.path, mockRoute.method, mockRoute.handlers]]);
 
             endpointApp.registerRoute(expressApp as unknown as Express);
-            const [_initCtxHandler, ..._ignoredHandlers] = expressApp.get.mock.calls[0][1];
+            const [_initCtxHandler] = expressApp.get.mock.calls[0][1];
             const request = {query: {lang: 'fr'}, body: {requestId: 'requestId'}};
             const nextMock = vi.fn();
             validateRequestTokenHelper.mockResolvedValue({groupsId: 'groupsId', userId: 'userId'});
@@ -101,7 +101,7 @@ describe('endpointApp', () => {
             endpointApp.extensionPoints.registerRoutes([[mockRoute.path, mockRoute.method, mockRoute.handlers]]);
 
             endpointApp.registerRoute(expressApp as unknown as Express);
-            const [_initCtxHandler, ..._ignoredHandlers] = expressApp.get.mock.calls[0][1];
+            const [_initCtxHandler] = expressApp.get.mock.calls[0][1];
             const request = {query: {lang: 'fr'}, body: {requestId: 'requestId'}};
             const nextMock = vi.fn();
             validateRequestTokenHelper.mockRejectedValue('error');
@@ -153,7 +153,7 @@ describe('endpointApp', () => {
             endpointApp.extensionPoints.registerRoutes([[mockRoute.path, mockRoute.method, mockRoute.handlers, false]]);
 
             endpointApp.registerRoute(expressApp as unknown as Express);
-            const [_initCtxHandler, ..._ignoredHandlers] = expressApp.get.mock.calls[0][1];
+            const [_initCtxHandler] = expressApp.get.mock.calls[0][1];
             const request = {query: {lang: 'fr'}, body: {requestId: 'requestId'}};
             const nextMock = vi.fn();
 

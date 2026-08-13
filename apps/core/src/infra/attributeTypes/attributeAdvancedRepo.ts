@@ -1,6 +1,5 @@
-import {aql, type GeneratedAqlQuery, join, literal} from 'arangojs/aql';
+import {aql, type GeneratedAqlQuery, literal} from 'arangojs/aql';
 import {type DocumentCollection, type EdgeCollection} from 'arangojs/collection';
-import {type IDbUtils} from '../db/dbUtils';
 import {type IDbDocument, type IDbEdge} from '../db/_types';
 import {type IFilterTypesHelper} from '../record/helpers/filterTypes';
 import {VALUES_COLLECTION, VALUES_LINKS_COLLECTION} from '../value/valueRepo';
@@ -9,12 +8,9 @@ import {type IRecord} from '../../_types/record';
 import {type IDistinctValue, type IStandardBaseValue, type IStandardValue, type IValueEdge} from '../../_types/value';
 import {type IDbService} from '../db/dbService';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
-import {type GetConditionPart} from './helpers/getConditionPart';
 
 export interface IAttributeAdvancedRepoDeps {
     'core.infra.db.dbService': IDbService;
-    'core.infra.db.dbUtils': IDbUtils;
-    'core.infra.attributeTypes.helpers.getConditionPart': GetConditionPart;
     'core.infra.record.helpers.filterTypes': IFilterTypesHelper;
 }
 
@@ -22,8 +18,6 @@ export type IAttributeAdvancedRepo = IAttributeTypeRepo<AttributeTypes.ADVANCED>
 
 export default function ({
     'core.infra.db.dbService': dbService,
-    'core.infra.db.dbUtils': dbUtils,
-    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart,
     'core.infra.record.helpers.filterTypes': filterTypesHelper,
 }: IAttributeAdvancedRepoDeps): IAttributeAdvancedRepo {
     function _getExtendedFilterPart(attributes: IAttribute[], advancedValue: GeneratedAqlQuery): GeneratedAqlQuery {
@@ -162,7 +156,7 @@ export default function ({
                 version: savedEdge.version ?? null,
             };
         },
-        async deleteValue({library, recordId, attribute, value, ctx}): Promise<IStandardValue | null> {
+        async deleteValue({library, recordId, value}): Promise<IStandardValue | null> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION) as EdgeCollection<IDbEdge>;
 
@@ -248,7 +242,7 @@ export default function ({
 
             return recordIds.map(recordId => valuesByRecordId.get(recordId) || []);
         },
-        async getValueById({library, recordId, attribute, valueId, ctx}): Promise<IStandardValue> {
+        async getValueById({valueId, ctx}): Promise<IStandardValue> {
             const valCollec = dbService.db.collection(VALUES_COLLECTION) as DocumentCollection;
             const edgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION) as EdgeCollection<IDbEdge>;
 
@@ -279,13 +273,7 @@ export default function ({
             };
         },
 
-        async listDistinctValues({
-            library,
-            attribute,
-            recordIds,
-            options,
-            ctx,
-        }): Promise<IDistinctValue<IStandardBaseValue>> {
+        async listDistinctValues({attribute, recordIds, options, ctx}): Promise<IDistinctValue<IStandardBaseValue>> {
             const valuesEdgeCollec = dbService.db.collection(VALUES_LINKS_COLLECTION);
 
             // For all recordIds,
@@ -363,7 +351,7 @@ export default function ({
 
             return filterTypesHelper.isCountFilter(filter) ? aql`COUNT(${advancedValue})` : advancedValue;
         },
-        async clearAllValues({attribute, ctx}): Promise<boolean> {
+        async clearAllValues(): Promise<boolean> {
             return true;
         },
         async clearMultipleValues({libraryId, attribute, ctx}): Promise<void> {

@@ -91,11 +91,7 @@ const PresetItem: FunctionComponent<{
     </li>
 );
 
-export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({
-    filter,
-    onFilterChange,
-    selectDropDownRef,
-}) => {
+export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({filter, onFilterChange}) => {
     const datePickerRef = useRef<HTMLDivElement>(null);
     const {t} = useSharedTranslation();
 

@@ -110,7 +110,7 @@ const LibrariesList = ({
                                         <Checkbox readOnly checked={!!l.system} />
                                     </Table.Cell>
                                     <Table.Cell>
-                                        <DeleteLibrary library={l} filters={filters} />
+                                        <DeleteLibrary library={l} />
                                     </Table.Cell>
                                 </Table.Row>
                             );

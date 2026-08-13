@@ -13,7 +13,7 @@ export const handleCheck = async (msgContent: IMessageConsume, config: IConfig) 
     for (const version of versions) {
         for (const size of version.sizes) {
             const output = join(config.outputRootPath, size.output);
-            await checkOutput(output, size.size, size.name, config);
+            await checkOutput(output, size.size, size.name);
         }
     }
 };

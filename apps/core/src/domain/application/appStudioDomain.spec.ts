@@ -1,6 +1,5 @@
 import {type IPermissionDomain} from '../permission/permissionDomain';
 import {type ILibraryDomain} from '../library/libraryDomain';
-import {type IRecordDomain} from '../record/recordDomain';
 import {type ITreeDomain} from '../tree/treeDomain';
 import {type IGetLibrarySystemPanelsHelper} from './helpers/getLibrarySystemPanels';
 import {type IApplication} from '../../_types/application';
@@ -132,7 +131,6 @@ describe('appStudioDomain', () => {
             });
 
             test('gives a distinct id to a tree workspace whose tree shares a library id', async () => {
-                const {domain} = buildDomain();
                 const mockTreeDomain: Mockify<ITreeDomain> = {
                     getTrees: global.__mockPromise({list: [makeTree('lib_banane', 'Banane')], totalCount: 1}),
                     getTreeProperties: global.__mockPromise(makeTree('lib_banane', 'Banane')),

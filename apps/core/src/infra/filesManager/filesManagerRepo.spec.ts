@@ -24,7 +24,7 @@ describe('FilesManagerRepo', () => {
             'core.infra.db.dbService': mockDbServ,
         });
 
-        const res = await repo.getRecord(
+        await repo.getRecord(
             {
                 fileName: 'fileNameTest',
                 filePath: 'filePathTest',
@@ -61,7 +61,7 @@ describe('FilesManagerRepo', () => {
             'core.infra.db.dbService': mockDbServ,
         });
 
-        const res = await repo.getParentRecord('fullParentPath', 'libraryTest', ctx);
+        await repo.getParentRecord('fullParentPath', 'libraryTest', ctx);
         expect(mockDbServ.execute.mock.calls[0][0].query.query).toMatchSnapshot();
         expect(mockDbServ.execute.mock.calls[0][0].query.bindVars).toMatchSnapshot();
     });

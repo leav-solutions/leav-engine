@@ -39,7 +39,6 @@ describe('searchFilters', () => {
 
     let deepLinkedRecordId1;
     let deepLinkedRecordId2;
-    let deepLinkedRecordId3;
 
     let treeRecordId1;
     let treeRecordId2;
@@ -252,7 +251,7 @@ describe('searchFilters', () => {
 
         deepLinkedRecordId1 = await gqlCreateRecord(deepLinkedLibraryId);
         deepLinkedRecordId2 = await gqlCreateRecord(deepLinkedLibraryId);
-        deepLinkedRecordId3 = await gqlCreateRecord(deepLinkedLibraryId);
+        await gqlCreateRecord(deepLinkedLibraryId);
 
         linkedRecordId1 = await gqlCreateRecord(linkedLibraryId);
         linkedRecordId2 = await gqlCreateRecord(linkedLibraryId);

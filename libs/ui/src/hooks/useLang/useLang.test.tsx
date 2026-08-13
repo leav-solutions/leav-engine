@@ -3,12 +3,6 @@ import useLang from './useLang';
 import {MockedLangContextProvider} from '../../testing';
 
 describe('useLang', () => {
-    const CompWithLang = () => {
-        const lang = useLang();
-
-        return <div className="lang">{lang.lang[0]}</div>;
-    };
-
     test('Return user data from context', async () => {
         const hook = renderHook(() => useLang(), {
             wrapper: ({children}) => <MockedLangContextProvider>{children as JSX.Element}</MockedLangContextProvider>,

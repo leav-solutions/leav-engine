@@ -1,8 +1,7 @@
-import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type ErrorFieldDetail, Errors} from '../../../_types/errors';
 import {type ILibrary, LibraryBehavior} from '../../../_types/library';
 
-export default async (libData: ILibrary, ctx: IQueryInfos): Promise<ErrorFieldDetail<ILibrary>> => {
+export default async (libData: ILibrary): Promise<ErrorFieldDetail<ILibrary>> => {
     const errors: ErrorFieldDetail<ILibrary> = {};
 
     if (!libData.previewsSettings) {
@@ -16,7 +15,7 @@ export default async (libData: ILibrary, ctx: IQueryInfos): Promise<ErrorFieldDe
 
     // Sort settings to have system settings first
     const settingsToCheck = [...libData.previewsSettings];
-    settingsToCheck.sort((a, b) => (a.system ? -1 : 1));
+    settingsToCheck.sort(a => (a.system ? -1 : 1));
 
     // Check for duplicates in sizes names.
     // If a duplicate is found, we must be able to tell where the name was previously used

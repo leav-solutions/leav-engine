@@ -114,7 +114,7 @@ const formBuilderReducer = (state: IFormBuilderState, action: FormBuilderAction)
             return openSettings(state, action);
         }
         case FormBuilderActionTypes.CLOSE_SETTINGS: {
-            return closeSettings(state, action);
+            return closeSettings(state);
         }
         case FormBuilderActionTypes.SAVE_SETTINGS: {
             return saveSettings(state, action);

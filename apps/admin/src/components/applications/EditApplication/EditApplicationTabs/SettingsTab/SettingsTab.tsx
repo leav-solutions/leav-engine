@@ -52,7 +52,7 @@ const Wrapper = styled.div`
 function SettingsTab(): JSX.Element {
     const {application, readonly} = useEditApplicationContext();
 
-    const [saveApplication, {error, loading}] = useSaveApplicationMutation({
+    const [saveApplication] = useSaveApplicationMutation({
         // Prevents Apollo from throwing an exception on error state. Errors are managed with the error variable
         onError: () => undefined,
     });

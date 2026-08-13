@@ -2,7 +2,6 @@ import {FormUIElementTypes, FORM_ROOT_CONTAINER_ID} from '@leav/utils';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IValidateHelper} from '../helpers/validate';
 import {type ILibraryDomain} from '../library/libraryDomain';
-import {type ILibraryPermissionDomain} from '../permission/libraryPermissionDomain';
 import {type IRecordAttributePermissionDomain} from '../permission/recordAttributePermissionDomain';
 import {type IRecordDomain} from '../record/recordDomain';
 import {type ITreeDomain} from '../tree/treeDomain';
@@ -313,10 +312,6 @@ describe('formDomain', () => {
         });
 
         test('If creation not allowed, throw permission error', async () => {
-            const mockLibraryPermForbiddenDomain: Mockify<ILibraryPermissionDomain> = {
-                getLibraryPermission: global.__mockPromise(false),
-            };
-
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: []}),
                 updateForm: vi.fn(),
@@ -340,10 +335,6 @@ describe('formDomain', () => {
         });
 
         test('If edition not allowed, throw permission error', async () => {
-            const mockLibraryPermForbiddenDomain: Mockify<ILibraryPermissionDomain> = {
-                getLibraryPermission: global.__mockPromise(false),
-            };
-
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: [mockForm]}),
                 updateForm: global.__mockPromise(mockForm),
@@ -405,10 +396,6 @@ describe('formDomain', () => {
         });
 
         test('If not allowed, throw permission error', async () => {
-            const mockLibraryPermForbiddenDomain: Mockify<ILibraryPermissionDomain> = {
-                getLibraryPermission: global.__mockPromise(false),
-            };
-
             const mockFormRepo: Mockify<IFormRepo> = {
                 getForms: global.__mockPromise({list: [mockForm]}),
                 deleteForm: global.__mockPromise(mockForm),

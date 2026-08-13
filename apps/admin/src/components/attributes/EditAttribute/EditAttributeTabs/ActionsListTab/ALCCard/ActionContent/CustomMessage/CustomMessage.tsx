@@ -4,7 +4,6 @@ import {Input, Label} from 'semantic-ui-react';
 //////////////////// INTERFACES
 
 interface ICustomMessageProps {
-    index: number | undefined;
     customMessage: string;
     lang: string;
     actionId: number;
@@ -15,7 +14,6 @@ interface ICustomMessageProps {
 //////////////////// COMPONENT
 
 function CustomMessage({
-    index,
     customMessage,
     lang,
     actionId,
@@ -31,7 +29,7 @@ function CustomMessage({
         onChangeCustomMessage(actionId, value, lang);
     };
 
-    const _onFocus = e => {
+    const _onFocus = () => {
         setBlockCard(true);
     };
 

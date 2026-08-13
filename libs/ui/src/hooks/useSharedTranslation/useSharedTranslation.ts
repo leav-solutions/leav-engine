@@ -24,7 +24,7 @@ const useSharedTranslation = () => {
                         useSuspense: true,
                     },
                 },
-                (err, t) => {
+                err => {
                     if (err) {
                         return console.error('Something went wrong loading', err);
                     }

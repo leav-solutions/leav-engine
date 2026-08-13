@@ -2,7 +2,6 @@ import {handleBackground} from './handleBackground';
 
 describe('handleBackground', () => {
     const output = './test.png';
-    const args = [output, '-alpha', output];
     test('background color', () => {
         const background = '#FF0000';
 

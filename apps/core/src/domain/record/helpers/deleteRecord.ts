@@ -15,7 +15,6 @@ import {type IAttributeSimpleLinkRepo} from '../../../infra/attributeTypes/attri
 import {type IValueDomain} from '../../value/valueDomain';
 import {type IfLibraryJoinLinkAttribute} from '../../attribute/helpers/ifLibraryJoinLinkAttribute';
 import {type IRecordSDORepo} from '../../../infra/sdo/recordsSDORepo/recordSDORepo';
-import {CommonAttributes} from '../../../_constants/systemAttributes';
 
 export type DeleteRecordHelper = (library: string, id: string, ctx: IQueryInfos) => Promise<IRecord>;
 

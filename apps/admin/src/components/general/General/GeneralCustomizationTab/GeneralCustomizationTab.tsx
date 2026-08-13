@@ -12,7 +12,7 @@ import {type SAVE_GLOBAL_SETTINGS_saveGlobalSettings} from '../../../../_gqlType
 
 function GeneralCustomizationTab(): JSX.Element {
     const {loading, error, data} = useGetGlobalSettingsQuery();
-    const [saveGlobalSettings, {loading: saveLoading, error: saveError}] = useSaveGlobalSettingsMutation({
+    const [saveGlobalSettings, {error: saveError}] = useSaveGlobalSettingsMutation({
         update: (cache, {data: {saveGlobalSettings: savedSettings}}) => {
             cache.writeQuery({
                 query: getGlobalSettingsQuery,

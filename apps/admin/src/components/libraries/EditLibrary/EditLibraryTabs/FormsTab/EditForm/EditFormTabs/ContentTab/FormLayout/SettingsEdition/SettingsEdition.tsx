@@ -15,7 +15,7 @@ const SettingsWrapper = styled.div`
 
 function SettingsEdition(): JSX.Element {
     const {
-        state: {elementInSettings, openSettings, library},
+        state: {elementInSettings, openSettings},
         dispatch,
     } = useFormBuilderReducer();
 

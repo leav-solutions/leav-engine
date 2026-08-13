@@ -8,7 +8,7 @@ const library = 'files';
 
 const rand = Math.random().toString().substring(2);
 
-const fileExists = async (path: string) => !!(await fs.promises.stat(path).catch(e => false));
+const fileExists = async (path: string) => !!(await fs.promises.stat(path).catch(() => false));
 
 describe('Files manager', () => {
     const rootPath = '/files';

@@ -1,1 +1,1 @@
-import {type InportMeta} from 'vite/types/importMeta';
+/// <reference types="vite/client" />

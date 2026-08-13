@@ -1,4 +1,3 @@
-import {useTranslation} from 'react-i18next';
 import {Modal} from 'semantic-ui-react';
 import styled from 'styled-components';
 import EditAttribute from '../EditAttribute';
@@ -25,8 +24,6 @@ function EditAttributeModal({
     onPostSave,
     redirectAfterCreate,
 }: IEditAttributeModalProps): JSX.Element {
-    const {t} = useTranslation();
-
     return (
         <Modal
             open={open}

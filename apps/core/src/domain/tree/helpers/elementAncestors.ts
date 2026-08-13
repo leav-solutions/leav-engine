@@ -25,7 +25,7 @@ export default function ({
             const cacheKey = _getCacheKey(treeId, nodeId);
             return cacheService.memoize({key: cacheKey, func: _execute, ctx});
         },
-        clearElementAncestorsCache: async ({treeId, ctx}) => {
+        clearElementAncestorsCache: async ({treeId}) => {
             const cacheKey = _getCacheKey(treeId);
             const cache = cacheService.getCache(ECacheType.RAM);
             cache.deleteData([cacheKey]);

@@ -1,4 +1,3 @@
-import userEvent, {type UserEvent} from '@testing-library/user-event';
 import {useRef} from 'react';
 import {getRecordColumnsValues} from '_ui/_queries/records/getRecordColumnsValues';
 import {mockRecord} from '_ui/__mocks__/common/record';
@@ -74,11 +73,6 @@ describe('EditRecord', () => {
             },
         },
     ];
-
-    let user: UserEvent;
-    beforeEach(() => {
-        user = userEvent.setup();
-    });
 
     test('Display form', async () => {
         const CompWithButtons = () => {

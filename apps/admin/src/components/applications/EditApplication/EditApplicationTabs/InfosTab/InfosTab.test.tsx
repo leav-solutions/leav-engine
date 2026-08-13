@@ -1,11 +1,6 @@
 import userEvent from '@testing-library/user-event';
 import EditApplicationContext from '../../../../../context/EditApplicationContext';
-import {
-    ApplicationType,
-    GetApplicationByIdDocument,
-    GetApplicationModulesDocument,
-    SaveApplicationDocument,
-} from '../../../../../_gqlTypes';
+import {ApplicationType, GetApplicationModulesDocument, SaveApplicationDocument} from '../../../../../_gqlTypes';
 import {getApplicationByIdQuery} from '../../../../../queries/applications/getApplicationByIdQuery';
 import {act, fireEvent, render, screen, waitFor, within} from '../../../../../_tests/testUtils';
 import {mockApplicationDetails, mockApplicationsModules} from '../../../../../__mocks__/common/applications';

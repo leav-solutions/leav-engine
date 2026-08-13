@@ -73,7 +73,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
 
             setStatus('finish');
         },
-        onError: err => {
+        onError: () => {
             setStatus('error');
         },
     });

@@ -20,7 +20,6 @@ const _validateSettings = (
         attributeRepo: IAttributeRepo;
         actionsListDomain: IActionsListDomain;
     },
-    ctx: IQueryInfos,
 ): ErrorFieldDetail<IAttribute> => {
     const errors: ErrorFieldDetail<IAttribute> = {};
 
@@ -276,7 +275,7 @@ const _validateTreeSelectionConf = async (
  * @param attrData
  * @param deps
  */
-const _validateId = (attrData: IAttribute, deps: {config: any}): ErrorFieldDetail<IAttribute> => {
+const _validateId = (attrData: IAttribute): ErrorFieldDetail<IAttribute> => {
     // Check required fields
 
     const idFieldErrors: ErrorFieldDetail<IAttribute> = {};
@@ -372,9 +371,9 @@ export const validateAttributeData = async (
     ctx: IQueryInfos,
 ): Promise<ErrorFieldDetail<IAttribute>> => {
     const validationFuncs = [
-        _validateSettings(attrData, deps, ctx),
+        _validateSettings(attrData, deps),
         _validateRequiredFields(attrData, deps),
-        _validateId(attrData, deps),
+        _validateId(attrData),
         _validateMetadataFields(attrData, deps, ctx),
         _validateInputType(attrData, deps),
         _validateRequiredActions(attrData, deps),

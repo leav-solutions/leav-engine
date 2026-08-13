@@ -40,7 +40,7 @@ const processLogin = (
                     throw new Error('no_server_response');
                 }
             },
-            error => {
+            () => {
                 throw new Error('no_server_response');
             },
         )

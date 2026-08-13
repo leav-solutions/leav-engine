@@ -197,7 +197,7 @@ function ImportModalConfigStep({libraries, onGetAttributes}: IImportModalConfigS
             });
         }
 
-        const sheetColumns: ColumnsType<object> = Object.keys(sheet.data[0]).map((col, index) => ({
+        const sheetColumns: ColumnsType<object> = Object.keys(sheet.data[0]).map(col => ({
             title: col,
             dataIndex: col,
             onCell: _setStyleOnMappingRow,

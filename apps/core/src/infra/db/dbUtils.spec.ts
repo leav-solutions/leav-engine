@@ -136,7 +136,7 @@ describe('dbUtils', () => {
         });
 
         test('Filter with a LIKE on ID', async function () {
-            const res = await testDbUtils.findCoreEntity({
+            await testDbUtils.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 filters: {id: 'test'},
                 ctx,
@@ -148,7 +148,7 @@ describe('dbUtils', () => {
         });
 
         test('Should filter label on any language', async function () {
-            const res = await testDbUtils.findCoreEntity({
+            await testDbUtils.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 filters: {label: 'test'},
                 ctx,
@@ -179,7 +179,7 @@ describe('dbUtils', () => {
                 'core.infra.db.dbService': mockDbServLimit,
                 config: mockConf as IConfig,
             });
-            const res = await testDbUtilsLimit.findCoreEntity({
+            await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 withCount: true,
                 pagination: {limit: 5, offset: 0},
@@ -211,7 +211,7 @@ describe('dbUtils', () => {
                 'core.infra.db.dbService': mockDbServLimit,
                 config: mockConf as IConfig,
             });
-            const res = await testDbUtilsLimit.findCoreEntity({
+            await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 withCount: true,
                 sort: {
@@ -246,7 +246,7 @@ describe('dbUtils', () => {
                 'core.infra.db.dbService': mockDbServLimit,
                 config: mockConf as IConfig,
             });
-            const res = await testDbUtilsLimit.findCoreEntity({
+            await testDbUtilsLimit.findCoreEntity({
                 collectionName: TREES_COLLECTION_NAME,
                 withCount: true,
                 sort: {

@@ -205,7 +205,6 @@ describe('EditLibraryModal', () => {
         });
 
         test('Submit select field on change', async () => {
-            const user = userEvent.setup();
             vi.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockImplementation(() => mockResultGetLibById as QueryResult);
             const mockSaveLibraryMutation = vi.fn().mockReturnValue({
                 data: {

@@ -29,12 +29,6 @@ const SwitchFormItem = styled(Form.Item)`
     }
 `;
 
-const SwitchWrapper = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-`;
-
 const DescriptionFormItem = styled(Form.Item)`
     position: relative;
     .ant-form-item-extra {
@@ -92,10 +86,6 @@ function EditAttributeInfoForm({
         if (!isEditing && labelLang === defaultLang && !hasIdBeenEdited) {
             form.setFieldsValue({id: slugifyString(e.target.value)});
         }
-    };
-
-    const _handleNumberChange = (field: string) => (value: number) => {
-        form.setFieldsValue({[field]: value});
     };
 
     const _handleIdChange = () => {

@@ -4,7 +4,6 @@ import {type ISDOImportApp} from '../app/sdo/importApp';
 import {type IExportApp} from '../app/sdo/exportApp';
 import {type IDTOImportApp} from '../app/sdo/dtoImportApp';
 import {type IRabbitMQ} from '../infra/sdo/sdoRabbitMQ';
-import {type GetSystemQueryContext} from '../utils/helpers/getSystemQueryContext';
 
 export interface ISDOInterface {
     init(): Promise<void>;
@@ -15,7 +14,6 @@ interface IDeps {
     'core.app.sdo.export': IExportApp;
     'core.app.sdo.dtoImport': IDTOImportApp;
     'core.infra.sdo.rabbitMQ': IRabbitMQ;
-    'core.utils.getSystemQueryContext': GetSystemQueryContext;
     config: IConfig;
 }
 
@@ -24,7 +22,6 @@ export default function ({
     'core.app.sdo.export': exportApp,
     'core.app.sdo.dtoImport': dtoImportApp,
     'core.infra.sdo.rabbitMQ': rabbitMQService,
-    'core.utils.getSystemQueryContext': getSystemQueryContext,
     config,
 }: IDeps): ISDOInterface {
     return {

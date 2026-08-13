@@ -20,11 +20,7 @@ function ValuesVersionsForm({isReadOnly, onChange, extra}: IValuesVersionsFormPr
     const {lang} = useLang();
     const isVersionable = Form.useWatch(['versions_conf', 'versionable'], form);
 
-    const {
-        loading: profilesLoading,
-        error: profilesError,
-        data: profilesData,
-    } = useGetVersionProfilesQuery({
+    const {loading: profilesLoading, data: profilesData} = useGetVersionProfilesQuery({
         skip: !isVersionable,
     });
 

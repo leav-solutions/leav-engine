@@ -234,7 +234,7 @@ export default function ({
                 `,
             resolvers: {
                 Query: {
-                    async me(parent, args, ctx: IQueryInfos, info): Promise<IRecord> {
+                    async me(parent, args, ctx: IQueryInfos): Promise<IRecord> {
                         return recordRepo.getRecord({
                             libraryId: SystemLibraries.USERS,
                             recordId: ctx.userId,

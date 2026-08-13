@@ -509,7 +509,6 @@ export default function ({
         filename: string,
         callbackElement: (element: IElement, index: number) => Promise<void>,
         callbackTree: (element: ITree, index: number) => Promise<void>,
-        ctx: IQueryInfos,
     ): Promise<boolean> =>
         new Promise((resolve, reject) => {
             const parser = new JsonParser();
@@ -583,7 +582,7 @@ export default function ({
             });
         });
 
-    const _jsonSchemaValidation = async (schemaPath: string, filepath: string, ctx: IQueryInfos): Promise<void> => {
+    const _jsonSchemaValidation = async (schemaPath: string, filepath: string): Promise<void> => {
         const {size} = await fs.promises.stat(filepath);
         const megaBytesSize = size / (1024 * 1024);
 
@@ -771,7 +770,7 @@ export default function ({
             const lang = ctx.lang || config.lang.default;
 
             try {
-                await _jsonSchemaValidation(IMPORT_CONFIG_SCHEMA_PATH, filepath, ctx);
+                await _jsonSchemaValidation(IMPORT_CONFIG_SCHEMA_PATH, filepath);
             } catch (err) {
                 if (!(err instanceof ValidatorResultError)) {
                     logger.error(`Error validating JSON schema during import config task ${task.id}: ${err.stack}`);
@@ -906,7 +905,7 @@ export default function ({
             };
 
             try {
-                await _jsonSchemaValidation(IMPORT_DATA_SCHEMA_PATH, `${config.import.directory}/${filename}`, ctx);
+                await _jsonSchemaValidation(IMPORT_DATA_SCHEMA_PATH, `${config.import.directory}/${filename}`);
             } catch (err) {
                 if (!(err instanceof ValidatorResultError)) {
                     logger.error(`Error validating JSON schema during import data task ${task.id}: ${err.stack}`);
@@ -935,13 +934,12 @@ export default function ({
             // We call iterate on file a first time to estimate time of import
             await _getStoredFileData(
                 filename,
-                async (element: IElement, index: number): Promise<void> => {
+                async (): Promise<void> => {
                     progress.elements += 1;
                 },
-                async (tree: ITree, index: number) => {
+                async () => {
                     progress.treesNb += 1;
                 },
-                params.ctx,
             );
 
             const cacheDataPath = `${filename}-data`;
@@ -1095,7 +1093,6 @@ export default function ({
                         await _writeReport(reportFilePath, pos, e, lang);
                     }
                 },
-                ctx,
             );
 
             // Treat cache (links and versionable values)

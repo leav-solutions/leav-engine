@@ -12,12 +12,10 @@ import {ATTRIB_COLLECTION_NAME} from '../attribute/attributeRepo';
 import {type IDbService} from '../db/dbService';
 import {LIB_ATTRIB_COLLECTION_NAME} from '../library/libraryRepo';
 import {BASE_QUERY_IDENTIFIER, type IAttributeTypeRepo} from './attributeTypesRepo';
-import {type GetConditionPart} from './helpers/getConditionPart';
 import _ from 'lodash';
 
 interface IDeps {
     'core.infra.db.dbService'?: IDbService;
-    'core.infra.attributeTypes.helpers.getConditionPart'?: GetConditionPart;
     'core.infra.record.helpers.filterTypes'?: IFilterTypesHelper;
 }
 
@@ -25,7 +23,6 @@ export type IAttributeSimpleRepo = IAttributeTypeRepo<AttributeTypes.SIMPLE>;
 
 export default function ({
     'core.infra.db.dbService': dbService = null,
-    'core.infra.attributeTypes.helpers.getConditionPart': getConditionPart = null,
     'core.infra.record.helpers.filterTypes': filterTypesHelper = null,
 }: IDeps = {}): IAttributeSimpleRepo {
     async function _saveValue(
@@ -162,8 +159,6 @@ export default function ({
             return filterTypesHelper.isCountFilter(filter) ? aql`COUNT(${recordValue}) ? 1 : 0` : recordValue;
         },
         async clearAllValues({attribute, ctx}): Promise<boolean> {
-            const libAttribCollec = dbService.db.collection(LIB_ATTRIB_COLLECTION_NAME);
-
             // TODO: use aql template tag, and find out why it doesn't work :)
             const query = `
                 FOR v

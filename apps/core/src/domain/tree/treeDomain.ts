@@ -848,7 +848,7 @@ export default function ({
         async isRecordPresent({treeId, record, ctx}): Promise<boolean> {
             return treeRepo.isRecordPresent({treeId, record, ctx});
         },
-        getLibraryTreeId(library, ctx) {
+        getLibraryTreeId(library) {
             return utils.getLibraryTreeId(library);
         },
         async getRecordByNodeId({treeId, nodeId, ctx}): Promise<IRecord> {

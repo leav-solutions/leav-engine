@@ -54,7 +54,7 @@ interface ICustomConfigTabProps {
 }
 
 function CustomConfigTab({library}: ICustomConfigTabProps): JSX.Element {
-    const [saveLibrary, {error, loading}] = useSaveLibraryMutation();
+    const [saveLibrary] = useSaveLibraryMutation();
 
     const _onChangeConfig = (value: Record<string, any>) => {
         const dataToSave = {

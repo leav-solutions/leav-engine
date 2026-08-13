@@ -2,18 +2,14 @@ import {CommonAttributes} from '../../_constants/systemAttributes';
 import {Errors, ErrorTypes} from '../../_types/errors';
 import {type IAttributeDomain} from '../attribute/attributeDomain';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
-import {type IValidateHelper} from '../helpers/validate';
 import {type ILibraryPermissionDomain} from '../permission/libraryPermissionDomain';
 import {type IValueDomain} from '../value/valueDomain';
 import {type ICachesService} from '../../infra/cache/cacheService';
 import {type IRecordRepo} from '../../infra/record/recordRepo';
 import {type IUtils, type ToAny} from '../../utils/utils';
-import type * as Config from '../../_types/config';
 import {type IQueryInfos} from '../../_types/queryInfos';
-import {LibraryBehavior} from '../../_types/library';
 import {AttributeCondition, Operator} from '../../_types/record';
 import {mockAttrSimple, mockUniqueAttrSimple} from '../../__tests__/mocks/attribute';
-import {mockLibrary} from '../../__tests__/mocks/library';
 import {mockRecord} from '../../__tests__/mocks/record';
 import {mockCtx} from '../../__tests__/mocks/shared';
 import {type IRecordPermissionDomain} from '../permission/recordPermissionDomain';
@@ -23,18 +19,6 @@ import {createRecord as createRecordHelper} from './helpers';
 import {type IFormRepo} from '../../infra/form/formRepo';
 import mockLogger from '../../__tests__/mockers/logger';
 import {type ICreateRecordValueError} from './_types';
-
-const eventsManagerMockConfig: Mockify<Config.IEventsManager> = {
-    routingKeys: {data_events: 'test.data.events', pubsub_events: 'test.pubsub.events'},
-};
-
-const mockConfig: Mockify<Config.IConfig> = {
-    eventsManager: eventsManagerMockConfig as Config.IEventsManager,
-    files: {
-        rootPaths: 'files1:/files',
-        originalsPathPrefix: 'originals',
-    },
-};
 
 const depsBase: ToAny<IRecordDomainDeps> = {
     'core.infra.record': vi.fn(),
@@ -70,19 +54,6 @@ describe('RecordDomain', () => {
 
     const mockAutomationDomain: Mockify<IAutomationDomain> = {
         triggerRules: global.__mockPromise(),
-    };
-
-    const mockValidateHelper: Mockify<IValidateHelper> = {
-        validateLibrary: vi.fn().mockImplementation(libraryId => ({
-            ...mockLibrary,
-            behavior: libraryId === 'files' ? LibraryBehavior.FILES : LibraryBehavior.STANDARD,
-            recordIdentityConf: {
-                label: 'library_label',
-                color: 'library_color',
-                preview: 'library_preview',
-                subLabel: 'library_subLabel',
-            },
-        })),
     };
 
     const mockSendRecordUpdateEventHelper = vi.fn();

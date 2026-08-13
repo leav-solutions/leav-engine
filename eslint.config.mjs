@@ -10,6 +10,7 @@ export default defineConfig([
             '**/_gqlTypes/**',
             '**/dist/**',
             '**/dist-spec/**',
+            '**/dist-publish/**',
             '**/dist-types/**',
             '**/plugins/**',
             '**/__generated__/**',
@@ -32,7 +33,6 @@ export default defineConfig([
     {
         rules: {
             // eslint / typescript-eslint recommended
-            '@typescript-eslint/no-unused-vars': 'off',
             'no-case-declarations': 'off',
             'no-async-promise-executor': 'off',
             // react recommended
@@ -139,6 +139,16 @@ export default defineConfig([
             'no-throw-literal': 'error',
             'no-undef-init': 'error',
             '@typescript-eslint/no-unused-expressions': ['error', {allowShortCircuit: true}],
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    ignoreRestSiblings: true,
+                    argsIgnorePattern: '^_',
+                    caughtErrorsIgnorePattern: '^_',
+                    destructuredArrayIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                },
+            ],
             'object-shorthand': 'error',
             'one-var': ['error', 'never'],
             'prefer-object-spread': 'error',
@@ -157,6 +167,12 @@ export default defineConfig([
         files: ['libs/ui/**', 'apps/admin/**', 'apps/app-studio/**', 'apps/login/**', 'apps/portal/**', 'test-apps/**'],
         rules: {
             'no-console': ['error', {allow: ['warn', 'error', 'info']}],
+        },
+    },
+    {
+        files: ['apps/app-studio/**'],
+        rules: {
+            '@typescript-eslint/no-unused-vars': 'off',
         },
     },
     {

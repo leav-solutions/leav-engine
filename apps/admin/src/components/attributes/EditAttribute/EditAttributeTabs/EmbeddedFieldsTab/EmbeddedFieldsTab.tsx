@@ -51,7 +51,6 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
     const [treeItems, setTreeItems] = useState<ITreeItem[]>([]);
     const [flatItems, setFlatItems] = useState<IFlatItem[]>([]);
     const [formValues, setFormValues] = useState<IFormValue[]>([]);
-    const [isVirtualized, setIsVirtualized] = useState<boolean>(true);
 
     // Manually set the depth of embedded_fields to max
     const [level] = useState<number>(100);
@@ -174,7 +173,7 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
         );
     };
 
-    const _manageRowHeight = (_treeIndex: number, node: TreeItem, _path: unknown[]): number => {
+    const _manageRowHeight = (_treeIndex: number, node: TreeItem): number => {
         const item = flatItems.find(e => e.id === node.id);
         const displayForm = item ? item.displayForm : false;
 
@@ -191,9 +190,6 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
             setFlatItems(items =>
                 items.map(item => {
                     if (item.id === info.node.id) {
-                        // trigger rowHeight
-                        setIsVirtualized(false);
-
                         return {...item, displayForm: !item.displayForm};
                     }
                     return item;
@@ -295,9 +291,6 @@ function EmbeddedFieldsTab({attribute}: IEmbeddedFieldsTabProps): JSX.Element {
 
     const _handleSubmit = async () => {
         save(formValues, treeItems);
-
-        // trigger rowHeight
-        setIsVirtualized(false);
     };
 
     const _handleDrop = async ({isDragging}: {isDragging: boolean}) => {

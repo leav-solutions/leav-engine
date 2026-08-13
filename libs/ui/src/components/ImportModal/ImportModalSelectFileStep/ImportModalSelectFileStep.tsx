@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import {message, Space, Spin} from 'antd';
 import {KitAlert, KitUpload, KitNotification} from 'aristid-ds';
 import {type IKitDragger} from 'aristid-ds/dist/Kit/DataEntry/Upload/types';
@@ -200,7 +202,7 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
             const reader = new FileReader();
             reader.readAsBinaryString(fileToImport);
 
-            reader.onload = async e => {
+            reader.onload = async () => {
                 try {
                     const res = await _setFileData(reader.result);
 
@@ -219,15 +221,15 @@ function ImportModalSelectFileStep({onGetAttributes}: IImportModalSelectFileStep
                 }
             };
 
-            reader.onloadstart = e => {
+            reader.onloadstart = () => {
                 setLoading(true);
             };
 
-            reader.onloadend = e => {
+            reader.onloadend = () => {
                 setLoading(false);
             };
 
-            reader.onerror = e => {
+            reader.onerror = () => {
                 KitNotification.error({
                     message: t('error.error_occurred'),
                     description: reader.error?.message ?? '',

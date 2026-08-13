@@ -41,6 +41,6 @@ describe('handleCheck', () => {
     test('should call checkOutput with output', async () => {
         await handleCheck(msgContent as IMessageConsume, config as IConfig);
 
-        expect(checkOutput).toBeCalledWith(inputRootPath + output, size, name, expect.anything());
+        expect(checkOutput).toBeCalledWith(inputRootPath + output, size, name);
     });
 });

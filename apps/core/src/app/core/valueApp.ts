@@ -76,9 +76,9 @@ export default function ({
             userDomain.getUserRecord(value.created_by, ctx),
         modified_by: async (value: IValue, _, ctx: IQueryInfos): Promise<IRecord | null> =>
             userDomain.getUserRecord(value.modified_by, ctx),
-        metadata: (value: IValue, _, ctx: IQueryInfos): Array<{name: string; value: IStandardValue}> =>
+        metadata: (value: IValue): Array<{name: string; value: IStandardValue}> =>
             value.metadata ? objectToNameValueArray(value.metadata as IKeyValue<IStandardValue>) : [],
-        version: (value: IValue, _, ctx: IQueryInfos): Array<{treeId: string; treeNode: {id: string}}> =>
+        version: (value: IValue): Array<{treeId: string; treeNode: {id: string}}> =>
             value?.version
                 ? objectToNameValueArray(value.version).map(v => ({
                       treeId: v.name,
@@ -368,11 +368,7 @@ export default function ({
                                 ctx,
                             });
                         },
-                        async saveValueBatch(
-                            _: never,
-                            {library, recordId, version, values, deleteEmpty},
-                            ctx: IQueryInfos,
-                        ) {
+                        async saveValueBatch(_: never, {library, recordId, values, deleteEmpty}, ctx: IQueryInfos) {
                             const savedValues = await valueDomain.saveValueBatch({
                                 library,
                                 recordId,

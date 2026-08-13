@@ -1,8 +1,10 @@
-declare namespace NodeJS {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    interface Global {
-        __mockPromise(promRes?: any): any;
-        __mockPromiseMultiple(promRes?: any[]): any;
+declare global {
+    namespace NodeJS {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        interface Global {
+            __mockPromise(promRes?: any): any;
+            __mockPromiseMultiple(promRes?: any[]): any;
+        }
     }
 }
 

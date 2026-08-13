@@ -56,7 +56,6 @@ describe('listDistinctValues', () => {
     let remoteRecordId3: string;
     let remoteRecordId4: string;
     let remoteRecordId5: string;
-    let remoteRecordId6: string;
     let recordId1: string;
     let recordId2: string;
     let recordId3: string;
@@ -194,7 +193,6 @@ describe('listDistinctValues', () => {
         remoteRecordId3 = resRemoteRecord.data.data.c3.record.id;
         remoteRecordId4 = resRemoteRecord.data.data.c4.record.id;
         remoteRecordId5 = resRemoteRecord.data.data.c5.record.id;
-        remoteRecordId6 = resRemoteRecord.data.data.c6.record.id;
 
         treeNodeId1 = await gqlAddElemToTree(treeName, {
             id: remoteRecordId1,
