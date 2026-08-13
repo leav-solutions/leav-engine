@@ -145,7 +145,7 @@ describe('Indexation', () => {
         const fuzzyAttrId = 'indexation_fuzzy_attribute_test';
         let avocadoRecord: string;
         let bananaRecord: string;
-        let strawberryRecord: string;
+        let pineappleRecord: string;
 
         beforeAll(async () => {
             await makeGraphQlCall(`mutation {
@@ -189,12 +189,12 @@ describe('Indexation', () => {
 
             avocadoRecord = await createAndSetValue('avocado');
             bananaRecord = await createAndSetValue('banana');
-            strawberryRecord = await createAndSetValue('strawberry');
+            pineappleRecord = await createAndSetValue('pineapple');
 
             await makeGraphQlCall(`mutation {
                 activateRecords(
                     libraryId: "${fuzzyLibName}",
-                    recordsIds: ["${avocadoRecord}", "${bananaRecord}", "${strawberryRecord}"],
+                    recordsIds: ["${avocadoRecord}", "${bananaRecord}", "${pineappleRecord}"],
                 ) { id }
             }`);
 
@@ -203,7 +203,7 @@ describe('Indexation', () => {
             // for some queries, masking incomplete state).
             await searchUntil(`library: "${fuzzyLibName}", searchQuery: "avocado"`, r => r.list.length === 1);
             await searchUntil(`library: "${fuzzyLibName}", searchQuery: "banana"`, r => r.list.length === 1);
-            await searchUntil(`library: "${fuzzyLibName}", searchQuery: "strawberry"`, r => r.list.length === 1);
+            await searchUntil(`library: "${fuzzyLibName}", searchQuery: "pineapple"`, r => r.list.length === 1);
         });
 
         const search = async (query: string) => {
@@ -216,14 +216,14 @@ describe('Indexation', () => {
             expect(ids).toContain(avocadoRecord);
         });
 
-        test('Missing-char typo on long word: "strawbery" finds "strawberry"', async () => {
-            const ids = await search('strawbery');
-            expect(ids).toContain(strawberryRecord);
+        test('Missing-char typo on long word: "pineaple" finds "pineapple"', async () => {
+            const ids = await search('pineaple');
+            expect(ids).toContain(pineappleRecord);
         });
 
-        test('Extra-char typo on long word: "strawberryy" finds "strawberry"', async () => {
-            const ids = await search('strawberryy');
-            expect(ids).toContain(strawberryRecord);
+        test('Extra-char typo on long word: "pineappple" finds "pineappple"', async () => {
+            const ids = await search('pineappple');
+            expect(ids).toContain(pineappleRecord);
         });
 
         test('Single-char typo on short word stays below threshold: "banaan" does not find "banana"', async () => {

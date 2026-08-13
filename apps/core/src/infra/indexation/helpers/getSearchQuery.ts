@@ -48,12 +48,33 @@ export default function ({config = null}: IDeps = {}): GetSearchQuery {
             }
         }
 
-        // If no specific sort is provided, we sort by relevance and then by _key
+        // Recomputed outside BM25: when matched words are common library-wide, their IDF collapses to
+        // ~0, so BM25 can't rank an exact match above a fuzzy one. "_"-prefixed so dbUtils.cleanup
+        // strips it, but callers with their own outer SORT (recordRepo.find()) can still read it.
+        const exactMatchChecks = fields.map(
+            field =>
+                aql`(TOKENS(${search}, ${CORE_INDEX_INPUT_ANALYZER}) ALL IN TOKENS(doc.${CORE_INDEX_FIELD}.${field}, ${CORE_INDEX_ANALYZER}))`,
+        );
+        const isExactMatch = join(
+            exactMatchChecks.flatMap((check, i) => (i > 0 ? [aql`OR`, check] : [check])),
+            ' ',
+        );
+
+        queryParts.push(aql`LET _relevanceExactMatch = (${isExactMatch})`);
+        queryParts.push(aql`LET _relevanceScore = BM25(doc)`);
+        // Rounded variant for callers with their own explicit sort (recordRepo.find()): a raw BM25
+        // float almost never ties between two documents, which would leave their sort no room to
+        // apply. Not used in our own SORT below, which needs BM25's fine-grained fuzzy-match ordering.
+        queryParts.push(aql`LET _relevanceScoreGroup = ROUND(_relevanceScore)`);
+
+        // If no specific sort is provided, rank exact matches first, then by relevance, then by _key.
         if (!sort) {
-            queryParts.push(aql`SORT BM25(doc) DESC, TO_NUMBER(doc._key) DESC`);
+            queryParts.push(aql`SORT _relevanceExactMatch DESC, _relevanceScore DESC, TO_NUMBER(doc._key) DESC`);
         }
 
-        queryParts.push(aql`RETURN MERGE(doc, {${CORE_INDEX_FIELD}: doc.${CORE_INDEX_FIELD}})`);
+        queryParts.push(
+            aql`RETURN MERGE(doc, {${CORE_INDEX_FIELD}: doc.${CORE_INDEX_FIELD}, _relevanceExactMatch, _relevanceScore, _relevanceScoreGroup})`,
+        );
 
         return join(queryParts, '\n');
     };

@@ -12,7 +12,10 @@ describe('getSearchQuery', () => {
         expect(query).toMatch('SEARCH');
         expect(query).toMatch('ANALYZER');
         expect(query).toMatch('NGRAM_MATCH');
-        expect(query).toMatch('SORT BM25');
+        expect(query).toMatch('ALL IN TOKENS');
+        expect(query).toMatch('_relevanceExactMatch');
+        expect(query).toMatch('_relevanceScore');
+        expect(query).toMatch('SORT _relevanceExactMatch DESC');
     });
 
     test('Omit NGRAM_MATCH when fuzzy search is disabled', async () => {
