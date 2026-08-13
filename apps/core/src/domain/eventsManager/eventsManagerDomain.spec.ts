@@ -8,9 +8,10 @@ import eventsManager, {type IEventsManagerDomainDeps} from './eventsManagerDomai
 import {type IEventsManagerRabbitMQ} from '../../infra/eventsManager/eventsManagerRabbitMQ';
 import {type ILogger} from '@leav/logger';
 
+const debugLog = false;
 const logger: Mockify<ILogger> = {
-    error: vi.fn((...args) => console.log(args)),
-    warn: vi.fn((...args) => console.log(args)),
+    error: vi.fn((...args) => debugLog && console.log(args)),
+    warn: vi.fn((...args) => debugLog && console.log(args)),
 };
 
 const ctx: IQueryInfos = {

@@ -1,4 +1,5 @@
 import {ActionsListEvents, type IActionsListContext} from '../../../_types/actionsList';
+import ValidationError from '../../../errors/ValidationError';
 import calculationVariable, {type IVariableValue} from './calculationVariable';
 
 const mockCalculationsVariableFunctions = {
@@ -52,9 +53,6 @@ describe('calculationVariable', () => {
     });
 
     test('run unknown function', async () => {
-        const res = calculation.processVariableString(ctx, 'meh()', ['toto']);
-        res.catch(e => {
-            expect(e).toEqual(Error('Invalid request'));
-        });
+        await expect(calculation.processVariableString(ctx, 'meh()', ['toto'])).rejects.throw(ValidationError);
     });
 });

@@ -53,10 +53,11 @@ const mockConfig: Mockify<Config.IConfig> = {
     },
 };
 
+const debugLog = false;
 const logger: Mockify<ILogger> = {
-    info: vi.fn((...args) => console.log(args)),
-    error: vi.fn((...args) => console.log(args)),
-    warn: vi.fn((...args) => console.log(args)),
+    info: vi.fn((...args) => debugLog && console.log(args)),
+    error: vi.fn((...args) => debugLog && console.log(args)),
+    warn: vi.fn((...args) => debugLog && console.log(args)),
 };
 
 vi.mock('./helpers/handlePreview', () => ({
@@ -803,7 +804,9 @@ describe('FilesManager', () => {
                 'core.utils': mockUtils as IUtils,
             });
 
-            expect(async () => filesManagerDomain.storeFiles(filesToUpload, ctx)).rejects.toThrow(ValidationError);
+            await expect(async () => filesManagerDomain.storeFiles(filesToUpload, ctx)).rejects.toThrow(
+                ValidationError,
+            );
         });
 
         test('Throw if duplicate names in files to store', async () => {
@@ -818,7 +821,7 @@ describe('FilesManager', () => {
                 'core.utils': mockUtils as IUtils,
             });
 
-            expect(async () =>
+            await expect(async () =>
                 filesManagerDomain.storeFiles(
                     {...filesToUpload, files: [filesToUpload.files[0], filesToUpload.files[0]]},
                     ctx,
@@ -847,7 +850,9 @@ describe('FilesManager', () => {
                 'core.utils': mockUtils as IUtils,
             });
 
-            expect(async () => filesManagerDomain.storeFiles(filesToUpload, ctx)).rejects.toThrow(ValidationError);
+            await expect(async () => filesManagerDomain.storeFiles(filesToUpload, ctx)).rejects.toThrow(
+                ValidationError,
+            );
         });
     });
 });

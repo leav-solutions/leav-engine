@@ -21,8 +21,9 @@ const ctx: IQueryInfos = {
     queryId: 'indexManagerDomainTest',
 };
 
+const debugLog = false;
 const mockLogger: Mockify<ILogger> = {
-    info: vi.fn((...args) => console.log(args)),
+    info: vi.fn((...args) => debugLog && console.log(args)),
 };
 
 const depsBase: ToAny<IIndexationManagerDomainDeps> = {
