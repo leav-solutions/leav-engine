@@ -771,6 +771,7 @@ e2e-playwright:
   tags:
     - ${RUNNER}
   stage: build
+  needs: []
   rules:
     - if: $DISABLE_BUILD_DOCKER_JOBS == "true"
       when: never
@@ -963,6 +964,7 @@ build-docker-mcp-runtime:
 
 .build_npm: &build_npm
   stage: build
+  needs: []
   before_script:
     - *leav_npm_auth
   script:
