@@ -164,7 +164,7 @@ export default function ({
         });
 
         await sdoDomain.sendLog({
-            action: EventAction.SDO_LOG_EXPORT_RECORD,
+            action: EventAction.SDO_EXPORT_SUCCESS,
             record: {id: recordId, libraryId},
             sdo,
             ctx: _systemQueryContext,

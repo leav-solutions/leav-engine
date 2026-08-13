@@ -18,7 +18,7 @@ import {
     type ISDOTriggerTarget,
     sdoIdentifierBlock,
 } from '../../_types/sdo';
-import {type IDTO} from '../../_types/dto';
+import {type IDTOStatement, type IDTO} from '../../_types/dto';
 import {type IGlobalSettings} from '../../_types/globalSettings';
 import {AttributeTypes, type IAttribute} from '../../_types/attribute';
 import {type IValue, type ILinkValue, type IStandardValue, type ITreeValue} from '../../_types/value';
@@ -74,6 +74,7 @@ export interface ISDODomain {
         sdo,
         dto,
         error,
+        statement,
         ctx,
     }: {
         action: EventAction;
@@ -81,6 +82,7 @@ export interface ISDODomain {
         sdo?: ISDO;
         dto?: IDTO;
         error?: unknown;
+        statement?: IDTOStatement | void;
         ctx: IQueryInfos;
     }): Promise<void>;
     registerSDOExportMappingFunctions: (mappingFunctions: ISDOMappingFunctions) => void;
@@ -102,14 +104,14 @@ export default function ({
     const exportMappingFunctions: Map<string, ISDOMappingFunction> = new Map();
     const extendSDOFunctions: Map<string, IExtendSDOFunction> = new Map();
 
-    const sendLog = async ({action, record, sdo, dto, error, ctx}): Promise<void> => {
+    const sendLog = async ({action, record, sdo, dto, error, statement, ctx}): Promise<void> => {
         await eventsManager.sendDatabaseEvent(
             {
                 action,
                 topic: {
                     record,
                 },
-                ...((sdo || dto || error) && {metadata: {sdo, dto, error}}),
+                ...((sdo || dto || error || statement) && {metadata: {sdo, dto, error, statement}}),
             },
             ctx,
         );

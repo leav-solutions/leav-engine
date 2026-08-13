@@ -100,7 +100,7 @@ export default function ({
             });
 
             await sdoDomain.sendLog({
-                action: EventAction.SDO_LOG_ERROR,
+                action: EventAction.SDO_EXPORT_ERROR,
                 error:
                     error instanceof LeavError
                         ? {

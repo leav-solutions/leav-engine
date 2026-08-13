@@ -6,7 +6,7 @@ import {mockDTO, mockDTOImportMessage, mockSDOMapping, sdoGlobalSettings} from '
 import {mockDTOStatementDomain, mockImportDomain, mockSdoDomain} from '../../__tests__/mocks/sdo/domains';
 import {mockConfig} from '../../__tests__/mocks/sdo/config';
 import {mockSystemQueryContext} from '../../__tests__/mocks/sdo/core';
-import {DTOErrorCode, DTOStatementStatus} from '../../_types/dto';
+import {DTOErrorCode, DTOStatementStatus, type IDTOStatement} from '../../_types/dto';
 import {type ISDOMapping} from '../../_types/sdo';
 import sdoUtils from '../../utils/sdo/sdo';
 import ValidationError from '../../errors/ValidationError';
@@ -45,6 +45,21 @@ const mockImportedRecord = {
     uuid: mockDTO.payloadDocument.system.systemId,
     created_at: 1728294761,
     modified_at: 1728456120,
+};
+
+// Stands in for whatever dtoStatementDomain.sendStatement() resolves with, to check it is threaded
+// through into the DTO_IMPORT_* event as-is
+const mockStatement: IDTOStatement = {
+    operationId: mockDTO.operationId,
+    requestId: mockDTO.requestId,
+    dataModelRelease: mockDTO.dataModelRelease,
+    correlationId: mockDTO.correlationId,
+    payloadType: mockDTO.payloadType,
+    method: mockDTO.method,
+    status: DTOStatementStatus.SUCCESS,
+    details: null,
+    sdo_identifier: null,
+    date: 1728294761,
 };
 
 describe('dtoImportApp', () => {
@@ -86,11 +101,14 @@ describe('dtoImportApp', () => {
         });
 
         it('[+] should send an import log on success', async () => {
+            mockDTOStatementDomain.sendStatement.mockResolvedValue(mockStatement);
+
             await dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage);
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.DTO_LOG_IMPORT_RECORD,
+                action: EventAction.DTO_IMPORT_SUCCESS,
                 dto: mockDTO,
+                statement: mockStatement,
                 ctx: mockSystemQueryContext,
             });
         });
@@ -115,7 +133,7 @@ describe('dtoImportApp', () => {
             expect(mockSdoDomain.schemaValidation).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         message: expect.stringContaining('missing operationId, payloadDocument'),
                         details: [
@@ -141,7 +159,7 @@ describe('dtoImportApp', () => {
             expect(mockSdoDomain.schemaValidation).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         details: [
                             {
@@ -162,7 +180,7 @@ describe('dtoImportApp', () => {
             expect(mockImportDomain.update).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         details: [
                             {
@@ -192,7 +210,7 @@ describe('dtoImportApp', () => {
             expect(mockImportDomain.update).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         details: [
                             {
@@ -220,7 +238,7 @@ describe('dtoImportApp', () => {
             expect(mockImportDomain.update).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         details: [
                             {
@@ -248,7 +266,7 @@ describe('dtoImportApp', () => {
 
             expect(mockImportDomain.update).toHaveBeenCalledTimes(1);
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
-                expect.objectContaining({action: EventAction.DTO_LOG_IMPORT_RECORD}),
+                expect.objectContaining({action: EventAction.DTO_IMPORT_SUCCESS}),
             );
         });
 
@@ -261,7 +279,7 @@ describe('dtoImportApp', () => {
             expect(mockImportDomain.update).not.toHaveBeenCalled();
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
                 expect.objectContaining({
-                    action: EventAction.DTO_LOG_ERROR,
+                    action: EventAction.DTO_IMPORT_ERROR,
                     error: expect.objectContaining({
                         details: [
                             {
@@ -286,13 +304,16 @@ describe('dtoImportApp', () => {
         it('[-] should send an error log then rethrow when the import domain fails', async () => {
             const importError = new Error('Record not found');
             mockImportDomain.update.mockRejectedValueOnce(importError);
+            const errorStatement = {...mockStatement, status: DTOStatementStatus.ERROR};
+            mockDTOStatementDomain.sendStatement.mockResolvedValue(errorStatement);
 
             await expect(dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage)).rejects.toThrow(importError);
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.DTO_LOG_ERROR,
+                action: EventAction.DTO_IMPORT_ERROR,
                 error: {message: 'Record not found', stack: expect.any(String)},
                 dto: mockDTO,
+                statement: errorStatement,
                 ctx: mockSystemQueryContext,
             });
         });
@@ -381,6 +402,10 @@ describe('dtoImportApp', () => {
             await expect(dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage)).resolves.toBeUndefined();
 
             expect(mockImportDomain.update).toHaveBeenCalledTimes(1);
+            // The failed publication must not surface a stale/wrong statement in the event
+            expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
+                expect.objectContaining({action: EventAction.DTO_IMPORT_SUCCESS, statement: undefined}),
+            );
         });
 
         it('[-] should keep rethrowing the original error when the statement cannot be published', async () => {
@@ -388,6 +413,10 @@ describe('dtoImportApp', () => {
             mockDTOStatementDomain.sendStatement.mockRejectedValue(new Error('Broker unreachable'));
 
             await expect(dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage)).rejects.toThrow('Record not found');
+
+            expect(mockSdoDomain.sendLog).toHaveBeenCalledWith(
+                expect.objectContaining({action: EventAction.DTO_IMPORT_ERROR, statement: undefined}),
+            );
         });
     });
 });

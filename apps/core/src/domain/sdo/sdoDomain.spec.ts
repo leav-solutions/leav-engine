@@ -2,7 +2,7 @@ import {type ToAny} from '../../utils/utils';
 import {AttributeCondition, CORE_IN_CREATION_BY, type IRecord, type IRecordIdentity} from '../../_types/record';
 import jsonschema, {type ValidatorResult} from 'jsonschema';
 import sdoDomain, {type ISDODomain, type ISDODomainDeps} from './sdoDomain';
-import {mockSDO, mockSDOMapping, sdoGlobalSettings} from '../../__tests__/mocks/sdo/data';
+import {mockDTO, mockSDO, mockSDOMapping, sdoGlobalSettings} from '../../__tests__/mocks/sdo/data';
 import {
     mockEventsManagerDomain,
     mockGlobalSettingsDomain,
@@ -25,6 +25,7 @@ import {
 import {EventAction} from '@leav/utils';
 import {mockSDOUtils} from '../../__tests__/mocks/sdo/domains';
 import {type IGlobalSettings} from '../../_types/globalSettings';
+import {DTOStatementStatus, type IDTOStatement} from '../../_types/dto';
 
 const mockStandardAttributeRecordFieldValues = [
     {
@@ -1075,9 +1076,22 @@ describe('sdoDomain', () => {
     });
 
     describe('sendLog', () => {
+        const mockStatement: IDTOStatement = {
+            operationId: 'a1559880-b232-449d-8027-b7e02faac354',
+            requestId: '0f8c1aa3-6351-4578-ace6-1fd6b55e4944',
+            dataModelRelease: 'dataModelRelease',
+            correlationId: 'b3ae252d-7a24-4109-a75d-28dc1007032d',
+            payloadType: 'test',
+            method: 'UPDATE',
+            status: DTOStatementStatus.SUCCESS,
+            details: null,
+            sdo_identifier: null,
+            date: 1728294761,
+        };
+
         it('[+] should send sdo log', async () => {
             await sdoDomain(deps).sendLog({
-                action: EventAction.SDO_LOG_IMPORT_RECORD,
+                action: EventAction.SDO_IMPORT_SUCCESS,
                 record: {
                     id: 'recordId',
                     libraryId: 'libraryId',
@@ -1088,7 +1102,7 @@ describe('sdoDomain', () => {
 
             expect(mockEventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledWith(
                 {
-                    action: EventAction.SDO_LOG_IMPORT_RECORD,
+                    action: EventAction.SDO_IMPORT_SUCCESS,
                     topic: {
                         record: {
                             id: 'recordId',
@@ -1103,16 +1117,51 @@ describe('sdoDomain', () => {
 
         it('[+] should send error log', async () => {
             await sdoDomain(deps).sendLog({
-                action: EventAction.SDO_LOG_ERROR,
+                action: EventAction.SDO_EXPORT_ERROR,
                 error: 'Error message',
                 ctx: mockSystemQueryContext,
             });
 
             expect(mockEventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledWith(
                 {
-                    action: EventAction.SDO_LOG_ERROR,
+                    action: EventAction.SDO_EXPORT_ERROR,
                     topic: {},
                     metadata: {error: 'Error message'},
+                },
+                mockSystemQueryContext,
+            );
+        });
+
+        it('[+] should include the DTO statement in the event metadata', async () => {
+            await sdoDomain(deps).sendLog({
+                action: EventAction.DTO_IMPORT_SUCCESS,
+                dto: mockDTO,
+                statement: mockStatement,
+                ctx: mockSystemQueryContext,
+            });
+
+            expect(mockEventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledWith(
+                {
+                    action: EventAction.DTO_IMPORT_SUCCESS,
+                    topic: {},
+                    metadata: {dto: mockDTO, statement: mockStatement},
+                },
+                mockSystemQueryContext,
+            );
+        });
+
+        it('[+] should build the metadata block when only the statement is truthy', async () => {
+            await sdoDomain(deps).sendLog({
+                action: EventAction.DTO_IMPORT_SUCCESS,
+                statement: mockStatement,
+                ctx: mockSystemQueryContext,
+            });
+
+            expect(mockEventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledWith(
+                {
+                    action: EventAction.DTO_IMPORT_SUCCESS,
+                    topic: {},
+                    metadata: {statement: mockStatement},
                 },
                 mockSystemQueryContext,
             );

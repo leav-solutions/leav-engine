@@ -39,7 +39,7 @@ describe('importApp', () => {
             expect(mockImportDomain.create).toHaveBeenCalledWith(sdo, mockSystemQueryContext);
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.SDO_LOG_IMPORT_RECORD,
+                action: EventAction.SDO_IMPORT_SUCCESS,
                 sdo,
                 ctx: mockSystemQueryContext,
             });
@@ -84,7 +84,7 @@ describe('importApp', () => {
             expect(mockImportDomain.update).toHaveBeenCalledWith(sdo, mockSystemQueryContext);
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.SDO_LOG_IMPORT_RECORD,
+                action: EventAction.SDO_IMPORT_SUCCESS,
                 sdo,
                 ctx: mockSystemQueryContext,
             });
@@ -101,7 +101,7 @@ describe('importApp', () => {
             await expect(importApp(depsBase).onSDOEvent(importMessage)).rejects.toThrow('Unexpected action');
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.SDO_LOG_ERROR,
+                action: EventAction.SDO_IMPORT_ERROR,
                 error: {
                     message: 'Unexpected action',
                     stack: expect.any(String),
@@ -128,7 +128,7 @@ describe('importApp', () => {
             await expect(importApp(depsBase).onSDOEvent(mockMsg)).rejects.toThrow(validationError);
 
             expect(mockSdoDomain.sendLog).toHaveBeenCalledWith({
-                action: EventAction.SDO_LOG_ERROR,
+                action: EventAction.SDO_IMPORT_ERROR,
                 error: {
                     message: 'Schema validation error',
                     stack: validationError.stack,

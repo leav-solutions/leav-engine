@@ -40,6 +40,16 @@ interface IDeps {
     config: IConfig;
 }
 
+// Keep to logs history consultation in admin to avoid error
+// `GraphQLError: Enum "LogAction" cannot represent value: "SDO_LOG_EXPORT_RECORD"`
+enum DeprecatedEventAction {
+    SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
+    SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
+    SDO_LOG_ERROR = 'SDO_LOG_ERROR',
+    DTO_LOG_IMPORT_RECORD = 'DTO_LOG_IMPORT_RECORD',
+    DTO_LOG_ERROR = 'DTO_LOG_ERROR',
+}
+
 export default function ({
     'core.domain.log': logDomain,
     'core.domain.eventsManager': eventsManagerDomain,
@@ -70,6 +80,7 @@ export default function ({
                 typeDefs: `
                     enum LogAction {
                         ${eventsManagerDomain.getActions().join('\n')}
+                        ${Object.values(DeprecatedEventAction).join('\n')}
                     }
 
                     type PermissionTopic {
