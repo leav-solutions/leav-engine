@@ -8,6 +8,12 @@ vues sauvegardées, actions primaires / par ligne / en masse, sélection, pagina
 > ViewV2 terminée). **Pour tout nouveau développement de vues,
 > cibler ExplorerV2.** Ce dossier n'est documenté que pour les modifications de maintenance.
 
+> 📄 **Sens des références entre les deux docs : v1 → v2, jamais l'inverse.** Ce fichier
+> disparaîtra avec le dossier ; un lien qui partirait de `ExplorerV2/CLAUDE.md` vers ici casserait
+> à ce moment-là, et alourdirait le diff du cleanup. Tout savoir **commun aux deux copies**
+> s'écrit donc dans [`ExplorerV2/CLAUDE.md`](../ExplorerV2/CLAUDE.md), et c'est ce fichier-ci qui
+> s'y réfère.
+
 ---
 
 ## Explorer v1 vs ExplorerV2 — le point à comprendre en premier
@@ -107,6 +113,12 @@ vue dans la toolbar (filtres, raccourcis `useOpenViewSettingsV2`, bouton volet `
 | `link-item/`                                                                | Ajout/remplacement de liens en masse                                                                                   |
 | `DataView.tsx`                                                              | Rendu du tableau (wrapper `KitTable`)                                                                                  |
 | `ExplorerToolbar.tsx` / `ExplorerTitle.tsx` / `ExplorerFiltersAndSorts.tsx` | Header, titre, barre filtres+tris                                                                                      |
+
+> ⚠️ `actions-mass/edit-attribute/` est une **copie intégrale** de son homologue `ExplorerV2/` :
+> toute correction est à porter dans les deux (vérifier avec `diff -rq` entre les deux dossiers).
+> La sémantique du mapping `saveValueBulk` est documentée côté v2 —
+> [`ExplorerV2/CLAUDE.md`](../ExplorerV2/CLAUDE.md), section
+> `## Édition en masse d'attribut (actions-mass/edit-attribute/)`.
 
 ---
 

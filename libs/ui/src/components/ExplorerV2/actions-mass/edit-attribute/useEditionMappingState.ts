@@ -1,6 +1,15 @@
 import {useState} from 'react';
-import {type RecordFilterInput, type SaveValueBulkMappingInput} from '_ui/_gqlTypes';
-import {type SetAttributeMapping, type SetAttributeMappingWithDependency} from './_types';
+import {
+    type RecordFilterInput,
+    type SaveValueBulkMappingInput,
+    type SaveValueBulkMappingValueInput,
+} from '_ui/_gqlTypes';
+import {
+    DO_NOT_CHANGE,
+    type MassEditMappingChange,
+    type SetAttributeMapping,
+    type SetAttributeMappingWithDependency,
+} from './_types';
 
 type EditionMapping = {count: number; mapping: SaveValueBulkMappingInput[]};
 
@@ -11,75 +20,68 @@ const _isBucketMatchingFilter = (bucket: SaveValueBulkMappingInput, dependencyFi
         filter => filter?.field === dependencyFilter.field && filter?.value === dependencyFilter.value,
     ) ?? false;
 
+const _isNeutralChange = ({before, after}: MassEditMappingChange) => after === DO_NOT_CHANGE || after === before;
+
+const _isMapped = (values: SaveValueBulkMappingValueInput[], before: MassEditMappingChange['before']) =>
+    values.some(value => value.before === before);
+
+const _countDelta = (values: SaveValueBulkMappingValueInput[], change: MassEditMappingChange) => {
+    if (_isMapped(values, change.before)) {
+        return _isNeutralChange(change) ? -change.occurrenceCount : 0;
+    }
+    return _isNeutralChange(change) ? 0 : change.occurrenceCount;
+};
+
+const _applyChangeToValues = (
+    values: SaveValueBulkMappingValueInput[],
+    change: MassEditMappingChange,
+): SaveValueBulkMappingValueInput[] => {
+    const otherValues = values.filter(value => value.before !== change.before);
+
+    return _isNeutralChange(change) ? otherValues : otherValues.concat([{before: change.before, after: change.after}]);
+};
+
 export const useEditionMappingState = () => {
     const [editionMapping, setEditionMapping] = useState<EditionMapping>(EDITION_MAPPING_INITIAL_STATE);
 
     const resetEditionMapping = () => setEditionMapping(EDITION_MAPPING_INITIAL_STATE);
 
-    const applyMappingChange: SetAttributeMapping = ({before, after, occurrenceCount}) => {
-        setEditionMapping(current =>
-            before === after
-                ? {
-                      count: current.count - occurrenceCount,
-                      mapping: [{values: (current.mapping[0]?.values ?? []).filter(value => value.before !== before)}],
-                  }
-                : {
-                      count: current.count + occurrenceCount,
-                      mapping: [
-                          {
-                              values: (current.mapping[0]?.values ?? [])
-                                  .filter(value => value.before !== before)
-                                  .concat([{before, after}]),
-                          },
-                      ],
-                  },
-        );
-    };
-
-    const applyMonoDependencyWorkflowChange: SetAttributeMappingWithDependency = ({
-        before,
-        after,
-        occurrenceCount,
-        dependencyFilter,
-    }) => {
+    const applyMappingChange: SetAttributeMapping = change => {
         setEditionMapping(current => {
-            if (before === after) {
-                return {
-                    count: current.count - occurrenceCount,
-                    mapping: current.mapping.map(bucket => {
-                        if (!_isBucketMatchingFilter(bucket, dependencyFilter)) {
-                            return bucket;
-                        }
-                        return {
-                            dependenciesFilters: [dependencyFilter],
-                            values: (bucket.values ?? []).filter(value => value.before !== before),
-                        };
-                    }),
-                };
-            }
+            const values = current.mapping[0]?.values ?? [];
 
-            const hasExistingBucket = current.mapping.some(bucket => _isBucketMatchingFilter(bucket, dependencyFilter));
-
-            if (!hasExistingBucket) {
-                return {
-                    count: current.count + occurrenceCount,
-                    mapping: [...current.mapping, {dependenciesFilters: [dependencyFilter], values: [{before, after}]}],
-                };
+            if (_isNeutralChange(change) && !_isMapped(values, change.before)) {
+                return current;
             }
 
             return {
-                count: current.count + occurrenceCount,
-                mapping: current.mapping.map(bucket => {
-                    if (!_isBucketMatchingFilter(bucket, dependencyFilter)) {
-                        return bucket;
-                    }
-                    return {
-                        dependenciesFilters: [dependencyFilter],
-                        values: (bucket.values ?? [])
-                            .filter(value => value.before !== before)
-                            .concat([{before, after}]),
-                    };
-                }),
+                count: current.count + _countDelta(values, change),
+                mapping: [{values: _applyChangeToValues(values, change)}],
+            };
+        });
+    };
+
+    const applyMonoDependencyWorkflowChange: SetAttributeMappingWithDependency = ({dependencyFilter, ...change}) => {
+        setEditionMapping(current => {
+            const matchingBucket = current.mapping.find(bucket => _isBucketMatchingFilter(bucket, dependencyFilter));
+            const values = matchingBucket?.values ?? [];
+
+            if (_isNeutralChange(change) && !_isMapped(values, change.before)) {
+                return current;
+            }
+
+            const updatedBucket = {
+                dependenciesFilters: [dependencyFilter],
+                values: _applyChangeToValues(values, change),
+            };
+
+            return {
+                count: current.count + _countDelta(values, change),
+                mapping: matchingBucket
+                    ? current.mapping.map(bucket =>
+                          _isBucketMatchingFilter(bucket, dependencyFilter) ? updatedBucket : bucket,
+                      )
+                    : current.mapping.concat([updatedBucket]),
             };
         });
     };

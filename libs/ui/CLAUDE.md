@@ -49,6 +49,10 @@ actions primaires, actions par ligne, actions en masse.
 
 > ⚠️ Pour le **développement de vues**, cibler **ExplorerV2** (ci-dessous), pas ce composant.
 > Explorer (v1) est **legacy** et sera remplacé.
+>
+> 📄 Corollaire documentaire : un savoir **commun aux deux copies** s'écrit dans
+> `ExplorerV2/CLAUDE.md`, et `Explorer/CLAUDE.md` y renvoie — **jamais l'inverse**, puisque la doc
+> v1 disparaîtra avec son dossier.
 
 ### ExplorerV2 (`src/components/ExplorerV2/`) — voir [`ExplorerV2/CLAUDE.md`](src/components/ExplorerV2/CLAUDE.md)
 

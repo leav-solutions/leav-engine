@@ -11,12 +11,14 @@ export const EditAttributeMassActionModal = ({
     isOpen,
     children,
     bulkCount,
+    canEdit,
     onOkButtonClick,
     onCancelButtonClick,
 }: {
     isOpen: boolean;
     children: ReactNode;
     bulkCount: number;
+    canEdit: boolean;
     onOkButtonClick: () => void;
     onCancelButtonClick: () => void;
 }) => {
@@ -47,6 +49,7 @@ export const EditAttributeMassActionModal = ({
                         type="primary"
                         onClick={onOkButtonClick}
                         size="m"
+                        disabled={!canEdit}
                         icon={<FontAwesomeIcon icon={faCheck} />}
                     >
                         {t('global.edit')}

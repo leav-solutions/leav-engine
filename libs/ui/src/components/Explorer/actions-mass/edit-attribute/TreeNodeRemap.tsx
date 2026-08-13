@@ -2,7 +2,7 @@ import {type ComponentProps} from 'react';
 import styled from 'styled-components';
 import {KitIdCard, KitSelect, KitTypography} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {type MassEditTreeNode, type SetAttributeMapping} from './_types';
+import {DO_NOT_CHANGE, type MassEditTargetNode, type MassEditTreeNode, type SetAttributeMapping} from './_types';
 
 const DivContainer = styled.div`
     display: grid;
@@ -11,7 +11,6 @@ const DivContainer = styled.div`
     grid-column-gap: calc(var(--general-spacing-l) * 1px);
 `;
 
-const UNDEFINED_VALUE = '__null__';
 const DEFAULT_ID_CARD_COLOR = 'rgba(200, 200, 200, 1)';
 
 export const TreeNodeRemap = ({
@@ -22,17 +21,18 @@ export const TreeNodeRemap = ({
 }: {
     currentNode: MassEditTreeNode;
     occurrenceCount: number;
-    candidateNodes: MassEditTreeNode[];
+    candidateNodes: MassEditTargetNode[];
     setAttributeMapping: SetAttributeMapping;
 }) => {
     const {t} = useSharedTranslation();
 
-    const selectOptions: ComponentProps<typeof KitSelect>['options'] = candidateNodes.map(node => ({
-        label: node.label,
-        value: node.id ?? UNDEFINED_VALUE,
-    }));
-
-    const doNotChangeOption = selectOptions[0];
+    const selectOptions: ComponentProps<typeof KitSelect>['options'] = [
+        {label: t('explorer.massAction.editAttribute_value_do_not_change'), value: DO_NOT_CHANGE},
+        ...candidateNodes.map(node => ({
+            label: node.label,
+            value: node.id,
+        })),
+    ];
 
     return (
         <DivContainer>
@@ -43,14 +43,14 @@ export const TreeNodeRemap = ({
                 })}
             </KitTypography.Text>
             <KitSelect
-                defaultValue={doNotChangeOption.value}
+                defaultValue={DO_NOT_CHANGE}
                 options={selectOptions}
                 size="middle"
                 allowClear={false}
                 onChange={value => {
                     setAttributeMapping({
                         before: currentNode.id,
-                        after: value === UNDEFINED_VALUE ? null : value,
+                        after: value,
                         occurrenceCount,
                     });
                 }}
