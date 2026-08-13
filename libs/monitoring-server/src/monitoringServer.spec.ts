@@ -48,11 +48,4 @@ describe('monitoringServer', () => {
         const text = await res.text();
         expect(text).toBe('NOT OK');
     });
-
-    it('should respond with Prometheus metrics on /metrics', async () => {
-        const res = await fetch(`http://localhost:${port}/metrics`);
-        expect(res.status).toBe(200);
-        const text = await res.text();
-        expect(text).toContain('process_cpu_user_seconds_total'); // standard nodejs metric
-    });
 });

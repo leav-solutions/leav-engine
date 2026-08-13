@@ -1,6 +1,5 @@
 import {Hono} from 'hono';
 import {serve} from '@hono/node-server';
-import * as Prometheus from 'prom-client';
 import {logger} from '@leav/logger';
 
 export interface IMonitoringServer {
@@ -20,8 +19,6 @@ export interface IMonitoringServerParams {
 const DEFAULT_MONITORING_SERVER_PORT = 44444;
 
 export function monitoringServer({healthCheckFunction}: IMonitoringServerParams = {}): IMonitoringServer {
-    Prometheus.collectDefaultMetrics({register: Prometheus.register});
-
     const serverPort =
         Number.parseInt(process.env.MONITORING_SERVER_PORT || `${DEFAULT_MONITORING_SERVER_PORT}`, 10) ||
         DEFAULT_MONITORING_SERVER_PORT;
@@ -46,10 +43,6 @@ export function monitoringServer({healthCheckFunction}: IMonitoringServerParams 
                 }
             }
             return c.text('OK');
-        });
-        app.get('/metrics', async c => {
-            const metrics = await Prometheus.register.metrics();
-            return c.text(metrics);
         });
 
         app.onError((err, c) => {

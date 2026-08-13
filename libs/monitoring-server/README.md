@@ -6,4 +6,3 @@ Create an independent monitoring http server for any long running nodejs service
 - Routes:
     - / always return 200
     - /health execute healthCheckFunction if any and return status code 500 if false
-    - /metrics return [prom-client](https://github.com/siimon/prom-client) default registry
