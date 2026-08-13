@@ -112,7 +112,7 @@
         "nodemailer": "9.0.5",
         "openid-client": "5.7.1",
         "progress-stream": "2.0.0",
-        "redis": "5.12.1",
+        "redis": "6.2.1",
         "ws": "8.21.3",
         "zod": "4.3.6"
     },

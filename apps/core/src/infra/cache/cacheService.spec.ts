@@ -1,7 +1,8 @@
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IConfig} from '../../_types/config';
 import cacheServiceFactory, {type ICacheService, type ICachesService} from './cacheService';
-import {type IRedis, type RedisClientType} from './redis';
+import {type IRedis} from './redis';
+import {type RedisClientType} from 'redis';
 import {memoizeCounter, memoizeComputeDuration} from './_metrics';
 
 vi.mock('./_metrics', () => ({

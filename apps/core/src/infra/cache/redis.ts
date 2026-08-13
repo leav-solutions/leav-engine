@@ -1,12 +1,11 @@
 import * as redis from 'redis';
 import {type IConfig} from '../../_types/config';
 import {logger} from '@leav/logger';
+import {type RedisClientType} from 'redis';
 
 interface IDeps {
     config?: IConfig;
 }
-
-export type RedisClientType = ReturnType<typeof redis.createClient>;
 
 export interface IRedis {
     cache: RedisClientType;
