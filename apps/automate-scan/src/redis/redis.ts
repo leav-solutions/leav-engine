@@ -26,11 +26,12 @@ export const createClient = async (host: string, port: number) => {
         },
     });
 
-    client.on('connect', () => undefined);
-
     client.on('error', err => {
-        logger.error(`201 - Error with redis because ${err.stack}`);
-        process.exit(201);
+        logger.warn(`Redis connection to ${host}:${port} error: ${err.message}`);
+    });
+
+    client.on('ready', () => {
+        logger.silly(`Redis connection to ${host}:${port} ready`);
     });
 
     await client.connect();

@@ -1,11 +1,11 @@
 import * as redis from 'redis';
 import {type IConfig} from '../../_types/config';
+import {logger} from '@leav/logger';
+import {type RedisClientType} from 'redis';
 
 interface IDeps {
     config?: IConfig;
 }
-
-export type RedisClientType = ReturnType<typeof redis.createClient>;
 
 export interface IRedis {
     cache: RedisClientType;
@@ -23,7 +23,13 @@ export async function initRedis({config}: IDeps): Promise<IRedis> {
         });
 
         client.on('error', err => {
-            throw new Error(`Redis Client Error ${err}`);
+            logger.warn(
+                `Redis connection to ${config.redis.host}:${config.redis.port}/${database} error: ${err.message}`,
+            );
+        });
+
+        client.on('ready', () => {
+            logger.silly(`Redis connection to ${config.redis.host}:${config.redis.port}/${database} ready`);
         });
 
         await client.connect();

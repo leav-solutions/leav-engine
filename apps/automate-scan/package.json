@@ -37,7 +37,7 @@
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
         "chokidar": "4.0.3",
-        "redis": "5.12.1"
+        "redis": "6.2.1"
     },
     "stableVersion": "1.0.0"
 }

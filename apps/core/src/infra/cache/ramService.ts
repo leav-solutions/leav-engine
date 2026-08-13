@@ -1,7 +1,6 @@
 import {type ICacheService, type IStoreDataParams} from './cacheService';
 import {chunk} from 'lodash';
-import {type RedisClientType} from './redis';
-import {type RedisArgument} from 'redis';
+import {type RedisClientType} from 'redis';
 import {cacheKeysCountGauge, redisErrorsCounter, redisOperationDuration} from './_metrics';
 
 type RedisOperation = 'get' | 'set' | 'del' | 'flush' | 'dbsize';
@@ -74,7 +73,7 @@ export default function (redisClient: RedisClientType, db: CacheDb): ICacheServi
                                 if (delKeys.length === 0) {
                                     continue;
                                 }
-                                await redisClient.DEL(delKeys as RedisArgument[]);
+                                await redisClient.DEL(delKeys);
                             }
                         }),
                     );
