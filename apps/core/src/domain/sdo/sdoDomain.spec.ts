@@ -21,6 +21,8 @@ import {
     type ISDOMappingLibrary,
     sdoPathIdentifierUuid,
     type ISDO,
+    type IExtendSDOFunction,
+    type ISDOExportMappingFunction,
 } from '../../_types/sdo';
 import {EventAction} from '@leav/utils';
 import {mockSDOUtils} from '../../__tests__/mocks/sdo/domains';
@@ -681,7 +683,10 @@ describe('sdoDomain', () => {
             });
         });
 
-        it('[+] Should not throw error when attribute undefined and function defined', async () => {
+        it('[+] Should export null for a declared but unmapped SDO path, without an export function', async () => {
+            // A mapping entry with neither leavAttributeId nor exportFunction is a placeholder: an SDO
+            // path listed in the config whose leav attribute has not been chosen yet. It must not break
+            // the whole library's export.
             jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
             mockRecordDomain.find.mockResolvedValueOnce({
                 list: [{id: 'entity', attribute: 'attribute value', ...mockRecordSystemData}],
@@ -696,7 +701,7 @@ describe('sdoDomain', () => {
                 mockSDORecordAttributes.list.find(a => a.id === attributePath),
             );
 
-            const sdoUnknownSchemaMapping: ISDOMapping = {
+            const sdoUnmappedPathMapping: ISDOMapping = {
                 [mockSDO.name]: {
                     ...mockSDOMapping[mockSDO.name],
                     sdoAttributes: {
@@ -705,7 +710,6 @@ describe('sdoDomain', () => {
                             leavAttributeId: '',
                             valueRequired: true,
                             format: 'number' as SDOMappingAttributeFormat,
-                            exportFunction: 'statusTree',
                         },
                     },
                 },
@@ -713,7 +717,7 @@ describe('sdoDomain', () => {
             const sdo = await _sdoDomain.getRecordSDO(
                 mockSDOMapping[mockSDO.name].leavLibraryId,
                 'entity',
-                sdoUnknownSchemaMapping,
+                sdoUnmappedPathMapping,
                 'CREATE',
                 mockSystemQueryContext,
             );
@@ -734,6 +738,83 @@ describe('sdoDomain', () => {
             });
         });
 
+        it('[+] Should run an export function on an entry with no leavAttributeId, and hand it its config', async () => {
+            // A computed SDO path: the function builds the value off the record alone, so the entry
+            // designates no source attribute — hence no `value` and no `attributeProps`.
+            jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
+            mockRecordDomain.find.mockResolvedValueOnce({
+                list: [{id: 'entity', ...mockRecordSystemData}],
+            } as unknown as IListWithCursor<IRecord>);
+            mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                [uuidAttribute].find(a => a.id === attributePath),
+            );
+
+            const computedFunction = vi.fn<ISDOExportMappingFunction>(async ({record}) => ({
+                computedFrom: record.id,
+            }));
+            _sdoDomain.registerSDOExportMappingFunctions({computed: computedFunction});
+
+            const exportFunctionConfig = {someInstanceTable: ['a', 'b']};
+            const computedMapping: ISDOMapping = {
+                [mockSDO.name]: {
+                    ...mockSDOMapping[mockSDO.name],
+                    sdoAttributes: {
+                        computedBlock: {
+                            valueRequired: false,
+                            format: 'object',
+                            exportFunction: 'computed',
+                            exportFunctionConfig,
+                        },
+                    },
+                },
+            };
+
+            const sdo = await _sdoDomain.getRecordSDO(
+                mockSDOMapping[mockSDO.name].leavLibraryId,
+                'entity',
+                computedMapping,
+                'CREATE',
+                mockSystemQueryContext,
+            );
+
+            expect(computedFunction).toHaveBeenCalledWith({
+                record: expect.objectContaining({id: 'entity'}),
+                config: exportFunctionConfig,
+                ctx: mockSystemQueryContext,
+            });
+            expect((sdo as ISDO).content).toMatchObject({computedBlock: {computedFrom: 'entity'}});
+        });
+
+        it('[-] Should throw when an export function is referenced but not registered, even with no leavAttributeId', async () => {
+            // Exporting null on a typo would hide the misconfiguration.
+            jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
+            mockRecordDomain.find.mockResolvedValueOnce({
+                list: [{id: 'entity', ...mockRecordSystemData}],
+            } as unknown as IListWithCursor<IRecord>);
+            mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                [uuidAttribute].find(a => a.id === attributePath),
+            );
+
+            const unknownFunctionMapping: ISDOMapping = {
+                [mockSDO.name]: {
+                    ...mockSDOMapping[mockSDO.name],
+                    sdoAttributes: {
+                        computedBlock: {valueRequired: false, format: 'object', exportFunction: 'notRegistered'},
+                    },
+                },
+            };
+
+            await expect(
+                _sdoDomain.getRecordSDO(
+                    mockSDOMapping[mockSDO.name].leavLibraryId,
+                    'entity',
+                    unknownFunctionMapping,
+                    'CREATE',
+                    mockSystemQueryContext,
+                ),
+            ).rejects.toThrow('Unknown mapping function notRegistered');
+        });
+
         it('[+] Should extend the whole SDO with a registered extend SDO function', async () => {
             jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
             mockRecordDomain.find.mockResolvedValueOnce({
@@ -744,7 +825,7 @@ describe('sdoDomain', () => {
                 [uuidAttribute, {id: 'simpleAttribute', type: AttributeTypes.SIMPLE}].find(a => a.id === attributePath),
             );
 
-            const extendFunction = vi.fn(async (record: IRecord, sdo: ISDO) => ({
+            const extendFunction = vi.fn<IExtendSDOFunction>(async (record, sdo) => ({
                 ...sdo,
                 content: {...sdo.content, extendedFrom: record.id},
             }));

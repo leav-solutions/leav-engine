@@ -7,7 +7,7 @@ import LeavError from '../../errors/LeavError';
 import {type GetSystemQueryContext} from '../../utils/helpers/getSystemQueryContext';
 import {logger} from '@leav/logger';
 import {type IExtensionPoints} from '../../_types/extensionPoints';
-import {type ISDOMappingFunctions, type IExtendSDOFunctions} from '../../_types/sdo';
+import {type ISDOExportMappingFunctions, type IExtendSDOFunctions} from '../../_types/sdo';
 import {type IConfig} from '../../_types/config';
 
 export interface IExportAppDeps {
@@ -127,7 +127,7 @@ export default function ({
     return {
         onDataEvent,
         extensionPoints: {
-            registerSDOExportMappingFunctions: (mappingFunctions: ISDOMappingFunctions) => {
+            registerSDOExportMappingFunctions: (mappingFunctions: ISDOExportMappingFunctions) => {
                 sdoDomain.registerSDOExportMappingFunctions(mappingFunctions);
             },
             registerExtendSDOFunctions: (extendSDOFunctions: IExtendSDOFunctions) => {

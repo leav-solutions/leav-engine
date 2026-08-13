@@ -241,7 +241,10 @@ export default function ({
         record?: IRecord,
     ): Promise<ISaveValue[]> => {
         const valuesToSave: Array<Promise<ISaveValue[]>> = Object.entries(sdoMappingLibrary.sdoAttributes)
-            .filter(([, sdoAttr]) => sdoAttr.leavAttributeId !== '')
+            // No leavAttributeId at all: either an SDO path not mapped yet, or one computed by an
+            // exportFunction. Neither designates an attribute to write to — importing such an entry
+            // would write the computed value into whatever attribute happened to be named.
+            .filter(([, sdoAttr]) => Boolean(sdoAttr.leavAttributeId))
             // A path (e.g. "category.color") can't be resolved to a single writable attribute — skip it.
             .filter(([, sdoAttr]) => !sdoAttr.leavAttributeId.includes('.'))
             .filter(([sdoKey]) => {

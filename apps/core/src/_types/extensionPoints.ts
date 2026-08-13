@@ -6,7 +6,7 @@ import {type AuthPostOidcLoginCallback} from './auth';
 import {type RegisterCronTask} from './cronTask';
 import {type ITRPCRouterFactory} from '../app/trpc/trpcApp';
 import {type IAutomationAction} from '../domain/automation/actions/_types';
-import {type ISDOMappingFunctions, type IExtendSDOFunctions} from './sdo';
+import {type ISDOExportMappingFunctions, type IExtendSDOFunctions} from './sdo';
 
 export interface IExtensionPoints {
     [name: string]: (...args: any[]) => void;
@@ -53,9 +53,9 @@ export interface IExtensionPointsFunctions extends IExtensionPoints {
     /**
      * Register SDO export mapping functions.
      *
-     * @param {ISDOMappingFunctions} mappingFunctions - mapping functions to register
+     * @param {ISDOExportMappingFunctions} mappingFunctions - mapping functions to register
      */
-    registerSDOExportMappingFunctions: (mappingFunctions: ISDOMappingFunctions) => void;
+    registerSDOExportMappingFunctions: (mappingFunctions: ISDOExportMappingFunctions) => void;
 
     /**
      * Register extend SDO functions.

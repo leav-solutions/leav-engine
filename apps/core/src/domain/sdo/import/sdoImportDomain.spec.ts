@@ -55,6 +55,12 @@ const _mockSDOMapping: ISDOMapping = {
                 valueRequired: false,
                 format: 'string',
             },
+            // A computed SDO path: built on export by a plugin function, so it designates no attribute
+            computedMapping: {
+                valueRequired: false,
+                format: 'object',
+                exportFunction: 'computeSomething',
+            },
         },
     },
     [libIdForLink]: {
@@ -135,6 +141,29 @@ describe('importDomain', () => {
             expect(mockRecordDomain.createRecord).toHaveBeenCalledTimes(1);
             const savedValues = mockRecordDomain.createRecord.mock.calls[0][0].values;
             expect(savedValues.some(v => v.attribute === 'simple_link.something')).toBe(false);
+        });
+
+        it('[+] should ignore a mapping entry with no leavAttributeId', async () => {
+            // A computed SDO path designates no writable attribute. Importing it would write the
+            // computed value into whatever attribute happened to be named — the guard against that.
+            mockRecordDomain.find.mockResolvedValue({list: []} as IListWithCursor<IRecord>);
+            mockRecordDomain.createRecord.mockResolvedValue({});
+            mockAttributeDomain.getAttributeProperties.mockResolvedValue({type: AttributeTypes.SIMPLE});
+
+            await expect(
+                _importDomain.create(
+                    simplifiedMockSdo({
+                        [mockSDOMapping.test.sdoAttributes.simple.leavAttributeId]: '12',
+                        computedMapping: {computed: 'should be ignored'},
+                    }),
+                    mockSystemQueryContext,
+                ),
+            ).resolves.not.toThrow();
+
+            expect(mockRecordDomain.createRecord).toHaveBeenCalledTimes(1);
+            const savedValues = mockRecordDomain.createRecord.mock.calls[0][0].values;
+            expect(savedValues).toHaveLength(1);
+            expect(savedValues[0].attribute).toBe(mockSDOMapping.test.sdoAttributes.simple.leavAttributeId);
         });
 
         it('[-] should throw if createRecord returns error', async () => {

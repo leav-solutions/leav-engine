@@ -25,6 +25,13 @@ export const SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID = 'sdo_export_extended_valu
 export const SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID = 'test_sdo_exports_extend_trigger';
 export const SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID = 'sdo_export_extend_trigger_link';
 export const SDO_EXPORTS_EXTEND_FUNCTION_NAME = 'fakeplugin_extendWithTriggers';
+// Mapped to no SDO path on purpose: only `additionalAttributeTriggers` makes saving it emit an export
+export const SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID = 'sdo_export_extend_unmapped';
+
+// To test an export mapping function on a COMPUTED SDO path — an entry with no leavAttributeId, whose
+// value is built by the plugin from the record and the entry's own config.
+export const SDO_EXPORTS_COMPUTED_FUNCTION_NAME = 'fakeplugin_computedBlock';
+export const SDO_EXPORTS_COMPUTED_FUNCTION_CONFIG = {label: 'fakeplugin export function config'};
 
 // IMPORT
 export const SDO_IMPORTS_LIBRARY_ID = 'test_sdo_imports';
@@ -116,6 +123,7 @@ export const sdoGlobalSettings: ISDOSettings = {
         [SDO_EXPORTS_EXTENDED_LIBRARY_ID]: {
             leavLibraryId: SDO_EXPORTS_EXTENDED_LIBRARY_ID,
             extendSDOFunction: SDO_EXPORTS_EXTEND_FUNCTION_NAME,
+            additionalAttributeTriggers: [SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID],
             additionalLibraryTriggers: [
                 {
                     leavLibraryId: SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
@@ -127,6 +135,14 @@ export const sdoGlobalSettings: ISDOSettings = {
                     leavAttributeId: SDO_EXPORTS_EXTENDED_VALUE_ATTRIBUTE_ID,
                     valueRequired: false,
                     format: 'string',
+                },
+                // A computed SDO path: no leavAttributeId, so the import must skip it and the export
+                // mapping function must still run and receive its config.
+                'info.computed': {
+                    valueRequired: false,
+                    format: 'object',
+                    exportFunction: SDO_EXPORTS_COMPUTED_FUNCTION_NAME,
+                    exportFunctionConfig: SDO_EXPORTS_COMPUTED_FUNCTION_CONFIG,
                 },
             },
         },

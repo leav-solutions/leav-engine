@@ -14,14 +14,15 @@ import {TaskPriority} from '../../../../../_types/tasksManager';
 import {type TTrpc} from '../../../../../app/trpc/trpcApp';
 import {type IEventsManagerDomain} from '../../../../../domain/eventsManager/eventsManagerDomain';
 import {type IRecordDomain} from '../../../../../domain/record/recordDomain';
-import {type ISDO} from '../../../../../_types/sdo';
-import {type IRecord, AttributeCondition} from '../../../../../_types/record';
-import {type IQueryInfos} from '../../../../../_types/queryInfos';
+import {type IExtendSDOFunction, type ISDOExportMappingFunction} from '../../../../../_types/sdo';
+import {AttributeCondition} from '../../../../../_types/record';
 import {fakePluginAutomationAction} from './domain/fakeAutomationAction';
 import {
     SDO_EXPORTS_EXTEND_FUNCTION_NAME,
+    SDO_EXPORTS_COMPUTED_FUNCTION_NAME,
     SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
     SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID,
+    SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID,
 } from '../../sdo/sdoConfig';
 
 interface IDeps {
@@ -85,7 +86,7 @@ export default function ({
     'core.domain.record': recordDomain,
     'fakeplugin.domain': fakeDomain,
 }: IDeps): IPluginInitModule {
-    const _extendSdoWithTriggers = async (record: IRecord, sdo: ISDO, ctx: IQueryInfos): Promise<ISDO> => {
+    const _extendSdoWithTriggers: IExtendSDOFunction = async (record, sdo, ctx) => {
         const {list} = await recordDomain.find({
             params: {
                 library: SDO_EXPORTS_EXTEND_TRIGGER_LIBRARY_ID,
@@ -107,10 +108,25 @@ export default function ({
                 info: {
                     ...((sdo.content.info as Record<string, unknown>) ?? {}),
                     triggeredBy: list.map(triggerRecord => triggerRecord.uuid),
+                    // Read straight off the record: this attribute is in no SDO path, it only reaches
+                    // the export through `additionalAttributeTriggers`.
+                    unmappedValue: record[SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID] ?? null,
                 },
             },
         };
     };
+
+    /**
+     * Export mapping function on a COMPUTED SDO path: its entry declares no `leavAttributeId`, so it
+     * gets neither `value` nor `attributeProps` and builds everything off the record and its own config.
+     */
+    const _computeSdoBlock: ISDOExportMappingFunction = async ({record, value, attributeProps, config}) => ({
+        computedFrom: record.id,
+        config: config ?? null,
+        // Proves the core hands over nothing when the entry designates no source attribute
+        hasValue: value !== undefined,
+        hasAttributeProps: attributeProps !== undefined,
+    });
 
     const _fakeReplaceValueAction = {
         id: 'fakeReplaceValue',
@@ -265,6 +281,10 @@ export default function ({
             extensionPoints.registerStart(async () => fakeDomain.startPlugin());
 
             extensionPoints.registerAutomationAction(fakePluginAutomationAction);
+
+            extensionPoints.registerSDOExportMappingFunctions({
+                [SDO_EXPORTS_COMPUTED_FUNCTION_NAME]: _computeSdoBlock,
+            });
 
             extensionPoints.registerExtendSDOFunctions({
                 [SDO_EXPORTS_EXTEND_FUNCTION_NAME]: _extendSdoWithTriggers,

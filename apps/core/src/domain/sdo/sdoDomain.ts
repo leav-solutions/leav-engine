@@ -11,8 +11,8 @@ import {
     type ISDOMappingLibrary,
     type ISDOMapping,
     type ISDOSettings,
-    type ISDOMappingFunctions,
-    type ISDOMappingFunction,
+    type ISDOExportMappingFunctions,
+    type ISDOExportMappingFunction,
     type IExtendSDOFunctions,
     type IExtendSDOFunction,
     type ISDOTriggerTarget,
@@ -85,7 +85,7 @@ export interface ISDODomain {
         statement?: IDTOStatement | void;
         ctx: IQueryInfos;
     }): Promise<void>;
-    registerSDOExportMappingFunctions: (mappingFunctions: ISDOMappingFunctions) => void;
+    registerSDOExportMappingFunctions: (mappingFunctions: ISDOExportMappingFunctions) => void;
     registerExtendSDOFunctions: (extendSDOFunctions: IExtendSDOFunctions) => void;
 }
 
@@ -101,7 +101,7 @@ export default function ({
 }: ISDODomainDeps): ISDODomain {
     const debug = config.sdo.debug ?? false;
 
-    const exportMappingFunctions: Map<string, ISDOMappingFunction> = new Map();
+    const exportMappingFunctions: Map<string, ISDOExportMappingFunction> = new Map();
     const extendSDOFunctions: Map<string, IExtendSDOFunction> = new Map();
 
     const sendLog = async ({action, record, sdo, dto, error, statement, ctx}): Promise<void> => {
@@ -289,7 +289,7 @@ export default function ({
 
         await Promise.all(
             Object.values(sdoAttributes)
-                .filter(attr => attr.leavAttributeId !== '')
+                .filter(attr => Boolean(attr.leavAttributeId))
                 .map(async attr => {
                     const attributePath = attr.leavAttributeId;
 
@@ -340,20 +340,29 @@ export default function ({
     ): Promise<void> => {
         await Promise.all(
             Object.entries(sdoAttributes).map(async ([attributeKey, mappingAttribute]) => {
-                const mappingFunction = exportMappingFunctions.get(
-                    mappingAttribute.exportFunction,
-                ) as ISDOMappingFunction;
+                const exportMappingFunction = exportMappingFunctions.get(mappingAttribute.exportFunction);
 
-                if (mappingAttribute.leavAttributeId && !mappingFunction && mappingAttribute.exportFunction) {
+                // A named function that isn't registered is a configuration error, whether or not the
+                // entry carries a leavAttributeId — silently exporting null would hide the typo.
+                if (mappingAttribute.exportFunction && !exportMappingFunction) {
                     throw new LeavError(
                         ErrorTypes.INTERNAL_ERROR,
                         `Unknown mapping function ${mappingAttribute.exportFunction} for attribute ${attributeKey}`,
                     );
                 }
 
-                if (mappingAttribute.leavAttributeId && mappingFunction) {
-                    const attr = attributesByLeavAttributeId.get(mappingAttribute.leavAttributeId);
-                    const mappedValue = await mappingFunction(record[mappingAttribute.leavAttributeId], attr, ctx);
+                if (exportMappingFunction) {
+                    // No leavAttributeId means a computed SDO path: the function builds the value off
+                    // the record alone, so there is no source value nor carrier attribute to hand over.
+                    const mappedValue = await exportMappingFunction({
+                        record,
+                        ...(mappingAttribute.leavAttributeId && {
+                            value: record[mappingAttribute.leavAttributeId],
+                            attributeProps: attributesByLeavAttributeId.get(mappingAttribute.leavAttributeId),
+                        }),
+                        config: mappingAttribute.exportFunctionConfig,
+                        ctx,
+                    });
 
                     _.set(content, attributeKey, _cleanValue(mappedValue, mappingAttribute.format));
                 } else {
@@ -563,7 +572,7 @@ export default function ({
         sendLog,
 
         // TODO maybe create a registerSDOImportMappingFunctions to register mapping functions for import, but we could use the same mapping functions for import and export
-        registerSDOExportMappingFunctions: (mappingFunctions: ISDOMappingFunctions) => {
+        registerSDOExportMappingFunctions: (mappingFunctions: ISDOExportMappingFunctions) => {
             for (const [functionName, mappingFunction] of Object.entries(mappingFunctions)) {
                 exportMappingFunctions.set(functionName, mappingFunction);
             }

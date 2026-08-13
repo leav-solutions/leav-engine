@@ -58,13 +58,28 @@ export const sdoIdentifierBlock = 'identifier' as const;
 export interface ISDOMappingAttribute {
     /**
      * LEAV attribute id, or a dotted path traversing links/trees for export (e.g. "category.color").
-     * Import ignores mapping entries whose leavAttributeId is a path, since a path can't be resolved
-     * to a single writable attribute.
+     *
+     * Optional: an SDO path computed by an `exportFunction` from several sources has no single source
+     * attribute. Import ignores entries without one, as it does for dotted paths — neither resolves to
+     * a single writable attribute. An empty string means the same thing (an SDO path declared in the
+     * config but not mapped yet) and behaves identically.
      */
-    leavAttributeId: string;
+    leavAttributeId?: string;
     valueRequired: boolean;
     format: SDOMappingAttributeFormat;
-    exportFunction?: string; // name of the function to use for export
+    /**
+     * Name of a plugin-registered function (see registerSDOExportMappingFunctions) producing the value
+     * of this SDO path. It may ignore `leavAttributeId` entirely and aggregate whatever it needs off the
+     * record — which is how a whole computed block gets exported while staying declared in the mapping.
+     */
+    exportFunction?: string;
+    /**
+     * Opaque configuration handed to `exportFunction`. The core never interprets it: the plugin owning
+     * the function defines and validates its shape. It lives on the mapping entry so an
+     * instance-specific table (ids, behaviours…) stays editable in the admin custom config, with no
+     * redeployment.
+     */
+    exportFunctionConfig?: Record<string, unknown>;
 }
 
 export interface ISDOAdditionalLibraryTrigger {
@@ -77,7 +92,20 @@ export interface ISDOMappingLibrary {
     sdoAttributes: {
         [sdoAttributePath: string]: ISDOMappingAttribute;
     };
+    /**
+     * Export triggers sourced from ANOTHER library: when one of its records changes, follow
+     * `leavAttributePath` from it to reach the record of `leavLibraryId` to re-export.
+     *
+     * Sibling of `additionalAttributeTriggers` — both declare additional reasons to export, named
+     * after the source of the trigger.
+     */
     additionalLibraryTriggers?: ISDOAdditionalLibraryTrigger[];
+    /**
+     * Export triggers sourced from an attribute OF `leavLibraryId` that is mapped to no SDO path — an
+     * attribute read by an `exportFunction` to build a computed block, for instance. Without this,
+     * saving such an attribute is skipped by `hasSDOAttribute` and no SDO is ever emitted.
+     */
+    additionalAttributeTriggers?: string[];
     /**
      * Name of a plugin-registered function (see registerExtendSDOFunctions) invoked at the end of the
      * SDO build to extend the whole SDO — e.g. inject aggregated data the generic attribute mapping
@@ -106,9 +134,27 @@ export interface ISDOSettings {
     mapping: ISDOMapping;
 }
 
-export type ISDOMappingFunction = (value: unknown, attributeProps: IAttribute, ctx: IQueryInfos) => Promise<unknown>;
+/**
+ * Plugin function producing the value of one SDO path on export, named by the mapping entry's
+ * `exportFunction`. Its result goes through the entry's `format` before being set at its SDO path.
+ *
+ * It is free to ignore `value` and build the whole thing off `record` — that is how a computed block
+ * (aggregating linked records, reading a different attribute per hierarchy level…) gets exported while
+ * remaining declared in the mapping. Such an entry needs no `leavAttributeId`, in which case `value`
+ * and `attributeProps` are absent.
+ */
+export type ISDOExportMappingFunction = (params: {
+    record: IRecord;
+    /** Value of the entry's `leavAttributeId`, already resolved and mapped (uuids for links/trees). */
+    value?: unknown;
+    /** Properties of the entry's carrier attribute — e.g. `linked_tree` for a tree attribute. */
+    attributeProps?: IAttribute;
+    /** The entry's `exportFunctionConfig`, opaque to the core. */
+    config?: Record<string, unknown>;
+    ctx: IQueryInfos;
+}) => Promise<unknown>;
 
-export type ISDOMappingFunctions<Keys extends string = string> = Record<Keys, ISDOMappingFunction>;
+export type ISDOExportMappingFunctions<Keys extends string = string> = Record<Keys, ISDOExportMappingFunction>;
 
 /**
  * Plugin function extending a whole SDO export. Receives the full LEAV record and the
