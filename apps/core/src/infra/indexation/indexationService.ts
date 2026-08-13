@@ -26,7 +26,7 @@ export const CORE_INDEX_ANALYZER = 'core_index';
 export const CORE_INDEX_NGRAM_ANALYZER = 'core_index_ngram';
 export const CORE_INDEX_VIEW = 'core_index';
 export const CORE_INDEX_FIELD = 'core_index';
-export const CORE_INDEX_NGRAM_THRESHOLD = 0.7;
+export const CORE_INDEX_NGRAM_THRESHOLD = 0.8;
 
 const _getCoreIndexView = libraryId => `${CORE_INDEX_VIEW}_${libraryId}`;
 

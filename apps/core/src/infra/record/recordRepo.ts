@@ -344,7 +344,18 @@ export default function ({
             } else if (sort?.length) {
                 const sortParts = sort.map(s => attributeTypesRepo.getTypeRepo(s.attributes[0]).sortQueryPart(s));
 
-                queryParts.push(aql`SORT `, join(sortParts, ', '));
+                if (fulltextSearchQuery) {
+                    // Relevance (getSearchQuery.ts) is the primary sort key; the requested sort only
+                    // breaks ties within a relevance group. TO_NUMBER(r._key) DESC is the last-resort
+                    // tie-break, for records still tied after that (e.g. same group, null sort value).
+                    queryParts.push(
+                        aql`SORT r._relevanceExactMatch DESC, r._relevanceScoreGroup DESC, `,
+                        join(sortParts, ', '),
+                        aql`, TO_NUMBER(r._key) DESC`,
+                    );
+                } else {
+                    queryParts.push(aql`SORT `, join(sortParts, ', '));
+                }
             }
 
             if (!retrieveInactive && !isFilteringOnActive) {
