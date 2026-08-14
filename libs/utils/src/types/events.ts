@@ -22,6 +22,7 @@ export enum EventAction {
     AUTOMATION_RULE_DELETE = 'AUTOMATION_RULE_DELETE',
     AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
     AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
+    AUTOMATION_CHAIN_DEPTH_EXCEEDED = 'AUTOMATION_CHAIN_DEPTH_EXCEEDED',
     ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
     ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
     EXPORT_START = 'EXPORT_START',
@@ -84,6 +85,8 @@ export interface IDbPayload {
 }
 
 export interface IDbEvent extends IEvent {
+    /** Number of chained automation executions that led to this event (see IQueryInfos.automationDepth) */
+    automationDepth?: number;
     payload: IDbPayload;
 }
 

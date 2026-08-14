@@ -16,6 +16,12 @@ export interface IQueryInfos {
     applicationId?: string;
     dbProfiler?: IDbProfiler;
     trigger?: string;
+    /**
+     * Number of chained automation executions ("rebounds") that led to the current operation.
+     * Undefined or 0 on user-initiated operations; incremented (by copy, never in place) each time
+     * an automation pipeline runs. Used by triggerRules to cut infinite rule chains.
+     */
+    automationDepth?: number;
     errors?: Array<LeavError<unknown>>;
 
     /**

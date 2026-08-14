@@ -12,6 +12,7 @@ import {
 import {SortOrder, type IList} from '../../_types/list';
 import {AdminPermissionsActions} from '../../_types/permissions';
 import {type IQueryInfos} from '../../_types/queryInfos';
+import {type IConfig} from '../../_types/config';
 import {type IGetCoreEntitiesParams} from '../../_types/shared';
 import PermissionError from '../../errors/PermissionError';
 import {type IAutomationRuleRepo} from '../../infra/automation/automationRuleRepo';
@@ -74,6 +75,7 @@ export interface IAutomationDomain {
 }
 
 export interface IAutomationDomainDeps {
+    config: IConfig;
     'core.domain.automation.triggers': IAutomationTriggers;
     'core.domain.automation.form': IAutomationJsonSchemaFormDomain;
     'core.domain.automation.form.uiJsonSchemaForm': IAutomationUiJsonSchemaFormDomain;
@@ -85,6 +87,7 @@ export interface IAutomationDomainDeps {
 }
 
 export default function ({
+    config,
     'core.domain.automation.triggers': automationTriggers,
     'core.domain.automation.form': automationJsonSchemaFormDomain,
     'core.domain.automation.form.uiJsonSchemaForm': automationUiJsonSchemaFormDomain,
@@ -137,11 +140,13 @@ export default function ({
             const {event, synchronous, ctx} = params;
             const start = Date.now();
             const baseAttrs = {event_action: event.action, synchronous};
-            let outcome: 'matched' | 'no_match' | 'error' = 'no_match';
+            let outcome: 'matched' | 'no_match' | 'error' | 'depth_exceeded' = 'no_match';
 
             if (!automationTriggers.isEventActionInTriggers(event.action, synchronous)) {
                 return;
             }
+
+            const chainDepth = ctx.automationDepth ?? 0;
 
             try {
                 const rules = await _getRulesToTrigger(event, synchronous, ctx);
@@ -158,6 +163,31 @@ export default function ({
                     return;
                 }
 
+                // Cut only when a rule would actually run: an event reaching the max depth with no
+                // matching rule is a chain ending by itself, and the same save is evaluated by both
+                // the synchronous path and the async consumer - cutting before matching would emit
+                // one AUTOMATION_CHAIN_DEPTH_EXCEEDED per path for a single logical cut.
+                if (chainDepth >= config.automation.maxChainDepth) {
+                    outcome = 'depth_exceeded';
+                    const blockedRules = rules.map(rule => rule.id);
+                    logger.error(
+                        `Automation chain cut: depth ${chainDepth} reached maxChainDepth (${config.automation.maxChainDepth}) for event action ${event.action} with topic ${JSON.stringify(event.topic)}, blocking rules ${blockedRules.join(', ')}. Check active rules for a circular composition.`,
+                    );
+                    await eventsManagerDomain.sendDatabaseEvent(
+                        {
+                            action: EventAction.AUTOMATION_CHAIN_DEPTH_EXCEEDED,
+                            topic: event.topic ?? {},
+                            metadata: {
+                                automationDepth: chainDepth,
+                                maxAutomationChainDepth: config.automation.maxChainDepth,
+                                blockedRules,
+                            },
+                        },
+                        ctx,
+                    );
+                    return;
+                }
+
                 logger.verbose(
                     `Triggering ${rules.length} automation rules for event action ${event.action} (${synchronous ? 'synchronous' : 'asynchronous'}) and topic ${JSON.stringify(event.topic)}`,
                 );
@@ -171,7 +201,9 @@ export default function ({
                                     pipeline: rule.pipeline,
                                     trigger,
                                 }),
-                                ctx,
+                                // Copy, never mutate: ctx is shared by sibling rules of this Promise.all
+                                // (and by the caller). Everything a pipeline writes carries depth + 1.
+                                {...ctx, automationDepth: chainDepth + 1},
                             );
                         } catch (error) {
                             logger.error(

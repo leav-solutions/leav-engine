@@ -85,16 +85,15 @@ export default function ({
         await pubsub.publish(pubSubEvent.payload.triggerName, publishedPayload);
     };
 
-    const _buildEventEnvelope = (payload: any, ctx: IQueryInfos): string =>
-        JSON.stringify({
-            time: Date.now(),
-            instanceId: config.instanceId,
-            userId: ctx.userId,
-            queryId: ctx.queryId,
-            emitter: utils.getProcessIdentifier(),
-            trigger: ctx.trigger,
-            payload,
-        });
+    const _buildEventEnvelope = (payload: any, ctx: IQueryInfos): object => ({
+        time: Date.now(),
+        instanceId: config.instanceId,
+        userId: ctx.userId,
+        queryId: ctx.queryId,
+        emitter: utils.getProcessIdentifier(),
+        trigger: ctx.trigger,
+        payload,
+    });
 
     return {
         async initPubSubEventsConsumer() {
@@ -104,13 +103,19 @@ export default function ({
             payload: IDbPayloadInternal<DBPayloadAction>,
             ctx: IQueryInfos,
         ) {
+            // trigger and automationDepth are database-events only (see IDbEvent): the pubsub
+            // consumers have no use for them.
+            const envelope = JSON.stringify({
+                ..._buildEventEnvelope(payload, ctx),
+                automationDepth: ctx.automationDepth,
+            });
             return eventsManagerRabbitMQ
-                .publishDatabaseEvent(_buildEventEnvelope(payload, ctx))
+                .publishDatabaseEvent(envelope)
                 .catch(e => logger.error(`Error while sending event to rabbitMQ: ${e.stack}`));
         },
         sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos) {
             return eventsManagerRabbitMQ
-                .publishPubSubEvent(_buildEventEnvelope(payload, ctx))
+                .publishPubSubEvent(JSON.stringify(_buildEventEnvelope(payload, ctx)))
                 .catch(e => logger.error(`Error while sending event to rabbitMQ: ${e.stack}`));
         },
         subscribe(triggersName: string[]): AsyncIterator<any> {

@@ -286,6 +286,10 @@ module.exports = {
         },
         // Dedicated prefetch - defaults to 1, sequential automation processing.
         prefetch: envToNumber(process.env.AUTOMATION_PREFETCH, 1),
+        // Max number of chained automation executions ("rebounds") in a single chain. Cuts infinite
+        // loops caused by circular rule compositions (A→B, B→C, C→A). Legitimate cascades are 1-3
+        // deep. Minimum is 1: automation writes never re-trigger rules.
+        maxChainDepth: envToNumber(process.env.AUTOMATION_MAX_CHAIN_DEPTH, 5),
     },
     sdo: {
         amqp: {

@@ -25,6 +25,10 @@ export default function ({
             await automationRabbitMQ.consumeEvents(async msg => {
                 const event: IDbEvent = JSON.parse(msg.content.toString());
                 const ctx = getSystemQueryContext('automation:onMessage');
+                // The chain depth is the only piece of the incoming envelope carried over to the
+                // fresh system context: it lets triggerRules cut infinite rule chains across the
+                // async boundary.
+                ctx.automationDepth = event.automationDepth ?? 0;
 
                 await automationDomain.triggerRules({
                     event: {

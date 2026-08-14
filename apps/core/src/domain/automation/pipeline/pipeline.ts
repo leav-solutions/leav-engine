@@ -106,7 +106,11 @@ export default function ({
                 action: EventAction.AUTOMATION_PIPELINE_SUCCESS,
                 topic: {automationRule: pipelineExec.ruleId},
                 after: {results: state.results},
-                metadata: {durationMs: Date.now() - state.startDateMs, trigger: pipelineExec.trigger},
+                metadata: {
+                    durationMs: Date.now() - state.startDateMs,
+                    automationDepth: ctx.automationDepth,
+                    trigger: pipelineExec.trigger,
+                },
             },
             ctx,
         );
@@ -121,7 +125,11 @@ export default function ({
                 action: EventAction.AUTOMATION_PIPELINE_FAILURE,
                 topic: {automationRule: pipelineExec.ruleId},
                 after: {results: state.results},
-                metadata: {durationMs: Date.now() - state.startDateMs, trigger: pipelineExec.trigger},
+                metadata: {
+                    durationMs: Date.now() - state.startDateMs,
+                    automationDepth: ctx.automationDepth,
+                    trigger: pipelineExec.trigger,
+                },
             },
             ctx,
         );
