@@ -61,6 +61,12 @@ const _mockSDOMapping: ISDOMapping = {
                 format: 'object',
                 exportFunction: 'computeSomething',
             },
+            skipped: {
+                leavAttributeId: 'skipped',
+                valueRequired: false,
+                format: 'string',
+                skipImport: true,
+            },
         },
     },
     [libIdForLink]: {
@@ -141,6 +147,26 @@ describe('importDomain', () => {
             expect(mockRecordDomain.createRecord).toHaveBeenCalledTimes(1);
             const savedValues = mockRecordDomain.createRecord.mock.calls[0][0].values;
             expect(savedValues.some(v => v.attribute === 'simple_link.something')).toBe(false);
+        });
+
+        it('[+] should ignore a mapping entry flagged skipImport', async () => {
+            mockRecordDomain.find.mockResolvedValue({list: []} as IListWithCursor<IRecord>);
+            mockRecordDomain.createRecord.mockResolvedValue({});
+            mockAttributeDomain.getAttributeProperties.mockResolvedValue({type: AttributeTypes.SIMPLE});
+
+            await expect(
+                _importDomain.create(
+                    simplifiedMockSdo({
+                        [mockSDOMapping.test.sdoAttributes.simple.leavAttributeId]: '12',
+                        skipped: 'should not be imported',
+                    }),
+                    mockSystemQueryContext,
+                ),
+            ).resolves.not.toThrow();
+
+            expect(mockRecordDomain.createRecord).toHaveBeenCalledTimes(1);
+            const savedValues = mockRecordDomain.createRecord.mock.calls[0][0].values;
+            expect(savedValues.some(v => v.attribute === 'skipped')).toBe(false);
         });
 
         it('[+] should ignore a mapping entry with no leavAttributeId', async () => {

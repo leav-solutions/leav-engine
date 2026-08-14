@@ -87,41 +87,44 @@ export class RabbitMqClient {
         const channel = this.getQueueChannel(queue);
 
         return new Promise<T>((resolve, reject) => {
-            let consumerTag: string | undefined;
-
             const timer = setTimeout(() => {
                 void stop();
                 reject(new Error(`No matching message on "${queue}" after ${timeoutMs}ms.`));
             }, timeoutMs);
 
+            /**
+             * The consumer tag is only known once `consume()` resolves, which can happen *after* a
+             * message has already been handled. Awaiting the promise here is what guarantees the
+             * consumer is really cancelled: a lingering one keeps competing for the queue and
+             * discards (nack without requeue) the messages awaited by the next call.
+             */
             const stop = async () => {
                 clearTimeout(timer);
+
+                const consumerTag = await consumePromise.catch(() => undefined);
 
                 if (consumerTag) {
                     await channel.cancel(consumerTag).catch(() => undefined);
                 }
             };
 
-            channel
-                .consume(
-                    queue,
-                    async msg => {
-                        const content = JSON.parse(msg.content.toString()) as T;
+            const consumePromise = channel.consume(
+                queue,
+                async msg => {
+                    const content = JSON.parse(msg.content.toString()) as T;
 
-                        if (predicate(content)) {
-                            channel.ack(msg);
-                            void stop();
-                            resolve(content);
-                        } else {
-                            channel.nack(msg);
-                        }
-                    },
-                    {manualAck: true},
-                )
-                .then(tag => {
-                    consumerTag = tag;
-                })
-                .catch(reject);
+                    if (predicate(content)) {
+                        channel.ack(msg);
+                        void stop();
+                        resolve(content);
+                    } else {
+                        channel.nack(msg);
+                    }
+                },
+                {manualAck: true},
+            );
+
+            consumePromise.catch(reject);
         });
     }
 }

@@ -194,6 +194,34 @@ describe('dtoImportApp', () => {
             );
         });
 
+        it('[-] should reject an operation whose entity is not importable', async () => {
+            const {importEnable: _importEnable, ...notImportableLibrary} = mockSDOMapping.test;
+
+            mockSdoDomain.getSDOGlobalSettings.mockResolvedValue({
+                ...sdoGlobalSettings,
+                importEnable: true,
+                mapping: {test: notImportableLibrary},
+            });
+
+            // A functional rejection is acked: the handler resolves instead of throwing
+            await dtoImportApp(depsBase).onDTOEvent(mockDTOImportMessage);
+
+            expect(mockImportDomain.create).not.toHaveBeenCalled();
+            expect(mockImportDomain.update).not.toHaveBeenCalled();
+            expect(mockDTOStatementDomain.sendStatement).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    status: DTOStatementStatus.ERROR,
+                    details: [
+                        {
+                            code: DTOErrorCode.NOT_AUTHORIZED,
+                            attribute: null,
+                            message: 'This instance does not accept imports for this payload type',
+                        },
+                    ],
+                }),
+            );
+        });
+
         it('[-] should reject a "CREATE" operation missing a required attribute', async () => {
             mockSdoDomain.getSDOGlobalSettings.mockResolvedValue({
                 ...sdoGlobalSettings,

@@ -69,6 +69,54 @@ describe('importApp', () => {
             expect(mockImportDomain.create).not.toHaveBeenCalled();
         });
 
+        it('[+] should dispatch a message whose entity is flagged importable', async () => {
+            const sdo = {...mockSDO, name: 'campaign'};
+            const importMessage = {...mockImportMessage, content: Buffer.from(JSON.stringify(sdo))};
+
+            mockSdoDomain.getSDOGlobalSettings.mockResolvedValueOnce({
+                ...sdoGlobalSettings,
+                mapping: {campaign: {leavLibraryId: 'campaigns', importEnable: true, sdoAttributes: {}}},
+            });
+
+            await importApp(depsBase).onSDOEvent(importMessage);
+
+            expect(mockImportDomain.create).toHaveBeenCalledTimes(1);
+        });
+
+        it('[-] should ignore and ack a message whose entity is not importable', async () => {
+            const sdo = {...mockSDO, name: 'campaign'};
+            const importMessage = {...mockImportMessage, content: Buffer.from(JSON.stringify(sdo))};
+
+            mockSdoDomain.getSDOGlobalSettings.mockResolvedValueOnce({
+                ...sdoGlobalSettings,
+                // No `importEnable` on the entity: not importable (LEAVC-1091)
+                mapping: {campaign: {leavLibraryId: 'campaigns', sdoAttributes: {}}},
+            });
+
+            await expect(importApp(depsBase).onSDOEvent(importMessage)).resolves.not.toThrow();
+
+            expect(mockImportDomain.create).not.toHaveBeenCalled();
+            expect(mockImportDomain.update).not.toHaveBeenCalled();
+            // Nothing was imported: no import log either
+            expect(mockSdoDomain.sendLog).not.toHaveBeenCalled();
+        });
+
+        it('[-] should let a message whose type is absent from the mapping go through', async () => {
+            // An unmapped type is a configuration matter, not an opt-out: it keeps failing in the
+            // import domain, it is not silently ignored.
+            const sdo = {...mockSDO, name: 'unmapped'};
+            const importMessage = {...mockImportMessage, content: Buffer.from(JSON.stringify(sdo))};
+
+            mockSdoDomain.getSDOGlobalSettings.mockResolvedValueOnce({
+                ...sdoGlobalSettings,
+                mapping: {campaign: {leavLibraryId: 'campaigns', importEnable: true, sdoAttributes: {}}},
+            });
+
+            await importApp(depsBase).onSDOEvent(importMessage);
+
+            expect(mockImportDomain.create).toHaveBeenCalledTimes(1);
+        });
+
         it('[+] should dispatch properly "update" message', async () => {
             // A specific importMessage and mockSDO are used here due to temporary explicit references
             // to the campaign and map libraries in the onSDOEvent function.

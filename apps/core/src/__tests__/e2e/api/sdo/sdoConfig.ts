@@ -36,6 +36,12 @@ export const SDO_EXPORTS_COMPUTED_FUNCTION_CONFIG = {label: 'fakeplugin export f
 // IMPORT
 export const SDO_IMPORTS_LIBRARY_ID = 'test_sdo_imports';
 export const SDO_TEST_ATTRIBUTE_ID = 'sdo_test_value';
+// Mapped with `skipImport: true` to cover the attribute exclusion (LEAVC-1091)
+export const SDO_TEST_SKIPPED_ATTRIBUTE_ID = 'sdo_test_skipped_value';
+
+// An entity mapped without `importEnable`, hence not importable (LEAVC-1091). Its own library so
+// the ignored-import assertions can't interfere with the nominal import tests.
+export const SDO_IMPORTS_DISABLED_LIBRARY_ID = 'test_sdo_imports_disabled';
 
 // A dotted path leavAttributeId, traversing the system link `modified_by` to the `users` library's
 // `email` attribute — used to cover export/import of path-based mappings end-to-end.
@@ -50,6 +56,9 @@ export const DTO_TEST_ATTRIBUTE_ID = 'dto_test_value';
 export const DTO_TEST_MANDATORY_ATTRIBUTE_ID = 'dto_test_mandatory_value';
 // Mapped under the `identifier` block, which the statement reports back from what leav stores
 export const DTO_TEST_IDENTIFIER_ATTRIBUTE_ID = 'dto_test_identifier_code';
+
+// A payload type mapped without `importEnable`: known to the instance, but not importable
+export const DTO_IMPORTS_DISABLED_LIBRARY_ID = 'test_dto_imports_disabled';
 
 export const sdoGlobalSettings: ISDOSettings = {
     timer: SDO_EXPORT_TIMER,
@@ -148,6 +157,7 @@ export const sdoGlobalSettings: ISDOSettings = {
         },
         [SDO_IMPORTS_LIBRARY_ID]: {
             leavLibraryId: SDO_IMPORTS_LIBRARY_ID,
+            importEnable: true,
             sdoAttributes: {
                 'info.value': {leavAttributeId: SDO_TEST_ATTRIBUTE_ID, valueRequired: false, format: 'string'},
                 'info.editorEmail': {
@@ -155,10 +165,32 @@ export const sdoGlobalSettings: ISDOSettings = {
                     valueRequired: false,
                     format: 'string',
                 },
+                // Exported like any other attribute, never written by an import
+                'info.skippedValue': {
+                    leavAttributeId: SDO_TEST_SKIPPED_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'string',
+                    skipImport: true,
+                },
+            },
+        },
+        // Mapped without `importEnable`: an SDO received for this entity is acked and ignored
+        [SDO_IMPORTS_DISABLED_LIBRARY_ID]: {
+            leavLibraryId: SDO_IMPORTS_DISABLED_LIBRARY_ID,
+            sdoAttributes: {
+                'info.value': {leavAttributeId: SDO_TEST_ATTRIBUTE_ID, valueRequired: false, format: 'string'},
+            },
+        },
+        // Mapped without `importEnable`: a DTO operation on this type is rejected with NOT_AUTHORIZED
+        [DTO_IMPORTS_DISABLED_LIBRARY_ID]: {
+            leavLibraryId: DTO_IMPORTS_DISABLED_LIBRARY_ID,
+            sdoAttributes: {
+                'info.value': {leavAttributeId: DTO_TEST_ATTRIBUTE_ID, valueRequired: false, format: 'string'},
             },
         },
         [DTO_IMPORTS_LIBRARY_ID]: {
             leavLibraryId: DTO_IMPORTS_LIBRARY_ID,
+            importEnable: true,
             sdoAttributes: {
                 'info.value': {leavAttributeId: DTO_TEST_ATTRIBUTE_ID, valueRequired: false, format: 'string'},
                 'info.mandatoryValue': {

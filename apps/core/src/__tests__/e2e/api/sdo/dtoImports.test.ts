@@ -5,6 +5,7 @@ import {RabbitMqClient} from './rabbitMQUtils';
 import {type IConfig} from '../../../../_types/config';
 import {adminUserSdk} from '../e2eUtils';
 import {
+    DTO_IMPORTS_DISABLED_LIBRARY_ID,
     DTO_IMPORTS_LIBRARY_ID,
     DTO_TEST_ATTRIBUTE_ID,
     DTO_TEST_IDENTIFIER_ATTRIBUTE_ID,
@@ -170,6 +171,9 @@ describe('DTO Imports', () => {
             conf.sdo.dto.statement.exchange,
             conf.sdo.dto.statement.exchangeType,
         );
+        // The queue is durable and never reset between runs: without this, every statement published
+        // by the previous runs has to be drained before the one a test is actually waiting for.
+        await rabbitmqClient.purgeQueue(DTO_STATEMENT_TEST_QUEUE);
     });
 
     afterAll(async () => {
@@ -483,5 +487,30 @@ describe('DTO Imports', () => {
 
             expect(await _findRecords(uuid)).toHaveLength(0);
         }, 10000);
+
+        test('an operation targeting a payloadType which is not importable should be rejected', async () => {
+            const uuid = crypto.randomUUID();
+            const dto = _dto({
+                method: 'CREATE',
+                payloadType: DTO_IMPORTS_DISABLED_LIBRARY_ID,
+                payloadDocument: _payloadDocument(uuid, 'dto_value'),
+            });
+
+            await _publish(dto);
+
+            // The type is known to the instance, it is just not importable: the emitter is answered
+            // a contractual rejection rather than the message being ignored (LEAVC-1091).
+            expect(await _waitForStatementOf(dto.operationId)).toMatchObject({
+                status: DTOStatementStatus.ERROR,
+                sdo_identifier: null,
+                details: [
+                    {
+                        code: DTOErrorCode.NOT_AUTHORIZED,
+                        attribute: null,
+                        message: 'This instance does not accept imports for this payload type',
+                    },
+                ],
+            });
+        }, 15000);
     });
 });

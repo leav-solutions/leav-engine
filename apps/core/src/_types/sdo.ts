@@ -80,6 +80,13 @@ export interface ISDOMappingAttribute {
      * redeployment.
      */
     exportFunctionConfig?: Record<string, unknown>;
+    /**
+     * Exclude this attribute from the import (default `false`). The export is not affected: this is
+     * the way to keep an attribute exported while never letting an incoming document write it.
+     * Only meaningful on a library flagged `importEnable: true`, and it also neutralizes
+     * `valueRequired` for this attribute — an attribute we chose not to import cannot be mandatory.
+     */
+    skipImport?: boolean;
 }
 
 export interface ISDOAdditionalLibraryTrigger {
@@ -89,6 +96,16 @@ export interface ISDOAdditionalLibraryTrigger {
 
 export interface ISDOMappingLibrary {
     leavLibraryId: string;
+    /**
+     * Import this entity when an SDO/DTO is received (default `false`). The mapping being shared with
+     * the export, an entity has to opt in explicitly to become importable.
+     *
+     * Nested under the instance-wide `ISDOSettings.importEnable`, which stays the global switch: no
+     * entity is imported when imports are off at the root. Beware the defaults are asymmetric — the
+     * root flag is permissive (only an explicit `false` turns imports off), this one is restrictive
+     * (only an explicit `true` turns them on).
+     */
+    importEnable?: boolean;
     sdoAttributes: {
         [sdoAttributePath: string]: ISDOMappingAttribute;
     };

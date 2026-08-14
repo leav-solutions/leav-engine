@@ -93,6 +93,9 @@ export default function (): ISDOUtils {
      * A `CREATE` builds the whole entity: every required attribute must be there. An `UPDATE` is a
      * patch, so an absent attribute simply means "unchanged" — only an attribute explicitly present
      * but emptied is a rejection.
+     *
+     * An attribute excluded from the import (`skipImport`) is never mandatory: it would be dropped by
+     * the import domain anyway, so requiring it would reject the whole operation for nothing.
      */
     const getMissingRequiredSDOAttributes = (
         sdoMappingLibrary: ISDOMappingLibrary,
@@ -100,7 +103,7 @@ export default function (): ISDOUtils {
         method: DTOMethod,
     ): string[] =>
         Object.entries(sdoMappingLibrary.sdoAttributes ?? {})
-            .filter(([, sdoAttr]) => sdoAttr.valueRequired)
+            .filter(([, sdoAttr]) => sdoAttr.valueRequired && !sdoAttr.skipImport)
             .filter(
                 ([sdoKey]) => (method === 'CREATE' || _.has(content, sdoKey)) && _isEmptyValue(_.get(content, sdoKey)),
             )

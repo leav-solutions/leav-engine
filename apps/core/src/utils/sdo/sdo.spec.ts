@@ -195,6 +195,24 @@ describe('sdoUtils', () => {
             expect(getMissingRequiredSDOAttributes(mappingLibrary, content, 'CREATE')).toEqual([]);
         });
 
+        test('ignores a required attribute excluded from the import by skipImport', () => {
+            const mappingLibraryWithSkippedRequired: ISDOMappingLibrary = {
+                ...mappingLibrary,
+                sdoAttributes: {
+                    ...mappingLibrary.sdoAttributes,
+                    'info.year': {...mappingLibrary.sdoAttributes['info.year'], skipImport: true},
+                },
+            };
+
+            expect(
+                getMissingRequiredSDOAttributes(
+                    mappingLibraryWithSkippedRequired,
+                    _content({label: 'campaign', stores: ['1']}),
+                    'CREATE',
+                ),
+            ).toEqual([]);
+        });
+
         test('does not crash when sdoAttributes is undefined', () => {
             expect(
                 getMissingRequiredSDOAttributes(

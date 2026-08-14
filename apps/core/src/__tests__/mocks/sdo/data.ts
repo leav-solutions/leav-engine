@@ -54,6 +54,7 @@ export const mockImportMessage = {
 export const mockSDOMapping: ISDOMapping = {
     ['test']: {
         leavLibraryId: 'leavLibraryId',
+        importEnable: true,
         sdoAttributes: {
             simple: {
                 leavAttributeId: 'simple',

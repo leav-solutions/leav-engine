@@ -3,7 +3,13 @@ import {getConfig} from '../../../../config';
 import {RabbitMqClient} from './rabbitMQUtils';
 import {type IConfig} from '../../../../_types/config';
 import {adminUserSdk} from '../e2eUtils';
-import {SDO_IMPORTS_LIBRARY_ID, SDO_TEST_ATTRIBUTE_ID, sdoGlobalSettings} from './sdoConfig';
+import {
+    SDO_IMPORTS_DISABLED_LIBRARY_ID,
+    SDO_IMPORTS_LIBRARY_ID,
+    SDO_TEST_ATTRIBUTE_ID,
+    SDO_TEST_SKIPPED_ATTRIBUTE_ID,
+    sdoGlobalSettings,
+} from './sdoConfig';
 import {AttributeFormat, AttributeType} from '../../_gqlTypes';
 import {SdoAttributes} from '../../../../_constants/systemAttributes';
 
@@ -26,10 +32,29 @@ describe('SDO Imports', () => {
             },
         });
 
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_TEST_SKIPPED_ATTRIBUTE_ID,
+                type: AttributeType.simple,
+                format: AttributeFormat.text,
+                label: {fr: 'SDO test skipped value', en: 'SDO test skipped value'},
+            },
+        });
+
         await adminUserSdk.SaveLibrary({
             library: {
                 id: SDO_IMPORTS_LIBRARY_ID,
                 label: {fr: 'Test SDO', en: 'Test SDO'},
+                attributes: ['label', SDO_TEST_ATTRIBUTE_ID, SDO_TEST_SKIPPED_ATTRIBUTE_ID],
+                recordIdentityConf: {label: 'label'},
+            },
+        });
+
+        // Mapped without `importEnable`: nothing must ever land in it
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: SDO_IMPORTS_DISABLED_LIBRARY_ID,
+                label: {fr: 'Test SDO import disabled', en: 'Test SDO import disabled'},
                 attributes: ['label', SDO_TEST_ATTRIBUTE_ID],
                 recordIdentityConf: {label: 'label'},
             },
@@ -188,6 +213,115 @@ describe('SDO Imports', () => {
                 {timeout: 5000, interval: 1000},
             );
         });
+
+        test('ignores a mapping entry flagged skipImport', async () => {
+            const creationDateSec = Math.round(Date.now() / 1000); // in seconds
+
+            const uuid = crypto.randomUUID();
+            const editorUUID = crypto.randomUUID();
+
+            const sdoToEmit: ISDO = {
+                name: SDO_IMPORTS_LIBRARY_ID,
+                dataModelRelease: 'dataModelRelease',
+                date: creationDateSec,
+                action: 'CREATE',
+                content: {
+                    system: {
+                        systemId: uuid,
+                        systemActive: true,
+                        systemCreationDate: creationDateSec,
+                        systemLastModifiedDate: creationDateSec,
+                        systemCreator: editorUUID,
+                        systemLastModificator: editorUUID,
+                        systemLabel: 'PAC 2027 Import V1',
+                        systemSdoHash: 'hashSkipImport',
+                    },
+                    identifier: {},
+                    info: {value: 'mock_value', skippedValue: 'should not be imported'},
+                },
+            };
+
+            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.exchange, sdoToEmit);
+
+            await vi.waitFor(
+                async () => {
+                    const record = (
+                        await adminUserSdk.GetRecordByUUID({
+                            libraryId: SDO_IMPORTS_LIBRARY_ID,
+                            recordUUID: uuid,
+                            retrieveInactive: false,
+                        })
+                    ).records.list[0];
+
+                    // The record is created normally, the excluded attribute is simply not written
+                    expect(record.uuid).toBe(uuid);
+
+                    const infoValuePayload = (
+                        await adminUserSdk.GetRecordByIdStandardValuesProperty({
+                            libraryId: SDO_IMPORTS_LIBRARY_ID,
+                            recordId: record.id,
+                            attributeId: SDO_TEST_ATTRIBUTE_ID,
+                        })
+                    ).records.list[0].property[0].payload;
+                    expect(infoValuePayload).toBe('mock_value');
+
+                    // A simple attribute with no stored value answers a single value with a null
+                    // payload, hence the optional chaining rather than a plain index access.
+                    const skippedValueProperty = (
+                        await adminUserSdk.GetRecordByIdStandardValuesProperty({
+                            libraryId: SDO_IMPORTS_LIBRARY_ID,
+                            recordId: record.id,
+                            attributeId: SDO_TEST_SKIPPED_ATTRIBUTE_ID,
+                        })
+                    ).records.list[0].property;
+                    expect(skippedValueProperty[0]?.payload ?? null).toBe(null);
+                },
+                {timeout: 5000, interval: 1000},
+            );
+        });
+
+        test('receive a message for an entity which is not importable should be ignored', async () => {
+            const creationDateSec = Math.round(Date.now() / 1000); // in seconds
+            const uuid = crypto.randomUUID();
+            const editorUUID = crypto.randomUUID();
+
+            const sdoToEmit: ISDO = {
+                name: SDO_IMPORTS_DISABLED_LIBRARY_ID,
+                dataModelRelease: 'dataModelRelease',
+                date: creationDateSec,
+                action: 'CREATE',
+                content: {
+                    system: {
+                        systemId: uuid,
+                        systemActive: true,
+                        systemCreationDate: creationDateSec,
+                        systemLastModifiedDate: creationDateSec,
+                        systemCreator: editorUUID,
+                        systemLastModificator: editorUUID,
+                        systemLabel: 'Should not be imported',
+                        systemSdoHash: 'hashImportDisabled',
+                    },
+                    identifier: {},
+                    info: {value: 'mock_value'},
+                },
+            };
+
+            await rabbitmqClient.publishToExchange<ISDO>(conf.sdo.exchange, sdoToEmit);
+
+            // Nothing positive to wait for (the message is acked and ignored) -> fixed delay, longer
+            // than the processing time observed on the nominal import tests.
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            const records = (
+                await adminUserSdk.GetRecordByUUID({
+                    libraryId: SDO_IMPORTS_DISABLED_LIBRARY_ID,
+                    recordUUID: uuid,
+                    retrieveInactive: true,
+                })
+            ).records.list;
+
+            expect(records).toHaveLength(0);
+        }, 10000);
 
         test('receive an create message should create an inactive record', async () => {
             const creationDateSec = Math.round(Date.now() / 1000); // in seconds
