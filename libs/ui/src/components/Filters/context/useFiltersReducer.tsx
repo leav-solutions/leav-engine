@@ -82,7 +82,7 @@ export const useFiltersReducer = ({
     );
 
     useEffect(() => {
-        if (!viewsLoading && !treeFiltersLoading) {
+        if (!viewsLoading && !treeFiltersLoading && !attributesLoading) {
             setRefetchViews(false);
             const uiFilters = toUIFilters({filters: allFilters ?? [], treeFilters, attributesDataById, t});
             dispatch({
@@ -94,11 +94,11 @@ export const useFiltersReducer = ({
                     filters: uiFilters,
                     initialFilters: uiFilters,
                     attributesDataById,
-                    loading: viewsLoading || attributesLoading,
+                    loading: false,
                 },
             });
         }
-    }, [attributesDataById, viewsLoading, treeFiltersLoading]);
+    }, [attributesDataById, viewsLoading, treeFiltersLoading, attributesLoading]);
 
     return {filtersData, dispatch};
 };

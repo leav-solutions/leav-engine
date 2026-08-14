@@ -114,6 +114,10 @@ export const useViewFiltersConverter = (viewFilters: IViewFilterToConvert[]) => 
 
     const toUIFilter = useCallback(
         (filter: IViewFilterToConvert): UIFilter | null => {
+            if (loading) {
+                return null;
+            }
+
             const [valid] = toValidFilters([
                 {
                     field: filter.attributes.map(attribute => attribute.id).join('.'),
@@ -186,7 +190,7 @@ export const useViewFiltersConverter = (viewFilters: IViewFilterToConvert[]) => 
         // view derived from it — a new object every render, looping ExplorerV2's controlled-view sync
         // (Maximum update depth). They are behaviorally stable, so we key only on the data inputs.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [attributesDataById],
+        [attributesDataById, loading],
     );
 
     const uiFilters = useMemo(
