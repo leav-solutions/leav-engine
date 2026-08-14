@@ -128,7 +128,9 @@ export const useTransformFilters = () => {
     }): UIFilter[] =>
         (filters ?? []).reduce<UIFilter[]>((acc, filter) => {
             if (!attributesDataById[filter.field]) {
-                console.warn(`Attribute ${filter.field} from user view not found in database.`);
+                console.warn(
+                    `Attribute ${filter.field} from user view is unavailable (unknown or not accessible), filter ignored.`,
+                );
                 return acc;
             }
 
