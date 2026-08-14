@@ -333,7 +333,9 @@
                 "label": "Nom de l’automatisation",
                 "label_placeholder": "Ajoutez le nom de l’automatisation",
                 "description": "Description",
-                "description_placeholder": "Décrivez l’objectif de cette automatisation"
+                "description_placeholder": "Décrivez l’objectif de cette automatisation",
+                "version": "Version",
+                "version_placeholder": "Ex. v1.2"
             },
             "trigger": {
                 "event_action": "Type de déclencheur",

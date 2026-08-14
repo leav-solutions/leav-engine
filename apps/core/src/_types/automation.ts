@@ -11,6 +11,7 @@ export type IAutomationRule = ICoreEntity & {
     id: string;
     label: string;
     description?: string;
+    version?: string;
     active: boolean;
     trigger: AutomationRuleTrigger;
     pipeline: AutomationRulePipeline;
@@ -19,6 +20,7 @@ export type IAutomationRule = ICoreEntity & {
 export type ICreateAutomationRule = {
     label: string;
     description?: string;
+    version?: string;
     trigger: AutomationRuleTrigger;
     pipeline: AutomationRulePipeline;
     active: boolean;
@@ -28,6 +30,7 @@ export type IUpdateAutomationRule = {
     id: string;
     label?: string;
     description?: string;
+    version?: string;
     active?: boolean;
     trigger?: AutomationRuleTrigger;
     pipeline?: AutomationRulePipeline;

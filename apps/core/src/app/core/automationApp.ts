@@ -71,10 +71,11 @@ export default function ({
                         createdBy: String!,
                         modifiedAt: Int!,
                         modifiedBy: String!
-                        
+
                         id: ID!,
                         label: String!,
                         description: String,
+                        version: String,
                         active: Boolean!,
                         trigger: AutomationRuleTrigger!,
                         pipeline: AutomationRulePipeline!
@@ -139,15 +140,17 @@ export default function ({
                     input CreateAutomationRuleInput {
                         label: String!,
                         description: String,
+                        version: String,
                         trigger: AutomationRuleTriggerInput!
                         pipeline: AutomationRulePipelineInput!
                         active: Boolean!
                     }
-                    
+
                     input UpdateAutomationRuleInput {
                         id: ID!,
                         label: String,
                         description: String,
+                        version: String,
                         active: Boolean,
                         trigger: AutomationRuleTriggerInput
                         pipeline: AutomationRulePipelineInput

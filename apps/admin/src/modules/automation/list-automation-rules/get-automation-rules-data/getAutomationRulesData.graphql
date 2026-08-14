@@ -8,6 +8,7 @@ query getAutomationRulesData(
         list {
             id
             label
+            version
             active
             trigger {
                 eventAction

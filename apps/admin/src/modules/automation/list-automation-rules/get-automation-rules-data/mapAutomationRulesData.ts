@@ -15,6 +15,7 @@ export const mapAutomationRulesData = (data: GetAutomationRulesDataQuery['automa
     data?.list?.map(automation => ({
         id: automation.id,
         name: automation.label,
+        version: automation.version ?? '',
         trigger: automation.trigger.eventAction,
         target: _getTarget(automation.trigger.eventTopic),
         nb_actions: automation.pipeline?.steps.length ?? 0,

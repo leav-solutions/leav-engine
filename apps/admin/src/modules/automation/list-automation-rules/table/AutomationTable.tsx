@@ -49,6 +49,13 @@ export const AutomationTable = ({
             ),
         },
         {
+            title: t('automation.table.column.version'),
+            dataIndex: 'version',
+            key: 'version',
+            width: ColumnWidth.XS,
+            render: (version: string) => <AutomationCell>{version}</AutomationCell>,
+        },
+        {
             title: t('automation.table.column.trigger'),
             dataIndex: 'trigger',
             key: 'trigger',
@@ -65,7 +72,7 @@ export const AutomationTable = ({
             title: t('automation.table.column.nb_actions'),
             dataIndex: 'nb_actions',
             key: 'nb_actions',
-            width: ColumnWidth.S,
+            width: ColumnWidth.XS,
             render: (nbActions: number) => <KitTag style={{width: 'fit-content'}}>{String(nbActions)}</KitTag>,
         },
         {

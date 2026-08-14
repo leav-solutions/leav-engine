@@ -4,6 +4,7 @@ query GetAutomationRules($filters: AutomationRulesFiltersInput) {
             id
             label
             description
+            version
             active
             createdAt
             createdBy

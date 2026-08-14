@@ -581,6 +581,7 @@
         "table": {
             "column": {
                 "name": "Nom",
+                "version": "Version",
                 "trigger": "Déclencheur",
                 "target": "Cible",
                 "nb_actions": "NB. Actions",

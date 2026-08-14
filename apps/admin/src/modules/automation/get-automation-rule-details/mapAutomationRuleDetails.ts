@@ -20,6 +20,7 @@ export const mapAutomationRuleDetails = (
     return {
         label: rule.label,
         description: rule.description ?? '',
+        version: rule.version ?? '',
         active: rule.active,
         trigger: {...triggerRest, ...(cleanedEventTopic !== undefined ? {eventTopic: cleanedEventTopic} : {})},
         pipeline: rule.pipeline

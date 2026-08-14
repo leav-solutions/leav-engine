@@ -165,6 +165,9 @@ export default function ({
                     description: {
                         type: 'string',
                     },
+                    version: {
+                        type: 'string',
+                    },
                     trigger: triggerSchema,
                     pipeline: pipelineSchema,
                 },

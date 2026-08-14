@@ -581,6 +581,7 @@
         "table": {
             "column": {
                 "name": "Name",
+                "version": "Version",
                 "trigger": "Trigger",
                 "target": "Target",
                 "nb_actions": "Number of actions",
