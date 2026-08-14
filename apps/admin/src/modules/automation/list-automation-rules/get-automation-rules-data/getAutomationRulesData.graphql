@@ -10,6 +10,12 @@ query getAutomationRulesData(
             label
             version
             active
+            modifiedAt
+            modifiedBy {
+                whoAmI {
+                    label
+                }
+            }
             trigger {
                 eventAction
                 eventTopic {

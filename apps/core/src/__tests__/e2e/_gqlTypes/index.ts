@@ -271,18 +271,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -295,6 +283,7 @@ export type CreateAutomationRuleInput = {
   label: Scalars['String']['input'];
   pipeline: AutomationRulePipelineInput;
   trigger: AutomationRuleTriggerInput;
+  version?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CreateRecordDataInput = {
@@ -364,8 +353,6 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -584,8 +571,6 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -974,19 +959,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
-};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1081,6 +1059,7 @@ export type UpdateAutomationRuleInput = {
   label?: InputMaybe<Scalars['String']['input']>;
   pipeline?: InputMaybe<AutomationRulePipelineInput>;
   trigger?: InputMaybe<AutomationRuleTriggerInput>;
+  version?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UploadFiltersInput = {
@@ -1333,7 +1312,7 @@ export type GetAutomationRulesQueryVariables = Exact<{
 }>;
 
 
-export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: string, description?: string | null, active: boolean, createdAt: number, createdBy: string, modifiedAt: number, modifiedBy: string, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null }, pipeline: { steps: Array<{ type: AutomationRuleActions, name?: string | null, params: any }> } }> } };
+export type GetAutomationRulesQuery = { automationRules: { list: Array<{ id: string, label: string, description?: string | null, version?: string | null, active: boolean, createdAt: number, createdBy: string, modifiedAt: number, modifiedBy?: { id: string } | null, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null }, pipeline: { steps: Array<{ type: AutomationRuleActions, name?: string | null, params: any }> } }> } };
 
 export type CreateAutomationRuleMutationVariables = Exact<{
   rule: CreateAutomationRuleInput;
@@ -1739,11 +1718,14 @@ export const GetAutomationRulesDocument = gql`
       id
       label
       description
+      version
       active
       createdAt
       createdBy
       modifiedAt
-      modifiedBy
+      modifiedBy {
+        id
+      }
       trigger {
         synchronous
         eventAction

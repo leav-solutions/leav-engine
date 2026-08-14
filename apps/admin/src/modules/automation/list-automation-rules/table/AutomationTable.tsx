@@ -86,6 +86,20 @@ export const AutomationTable = ({
                 </KitTag>
             ),
         },
+        {
+            title: t('automation.table.column.modified_at'),
+            dataIndex: 'modifiedAt',
+            key: 'modifiedAt',
+            width: ColumnWidth.M,
+            render: (modifiedAt: string) => <AutomationCell>{modifiedAt}</AutomationCell>,
+        },
+        {
+            title: t('automation.table.column.modified_by'),
+            dataIndex: 'modifiedBy',
+            key: 'modifiedBy',
+            width: ColumnWidth.M,
+            render: (modifiedBy: string) => <AutomationCell>{modifiedBy}</AutomationCell>,
+        },
     ];
 
     return (

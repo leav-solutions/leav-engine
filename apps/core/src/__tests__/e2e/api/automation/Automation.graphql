@@ -9,7 +9,9 @@ query GetAutomationRules($filters: AutomationRulesFiltersInput) {
             createdAt
             createdBy
             modifiedAt
-            modifiedBy
+            modifiedBy {
+                id
+            }
             trigger {
                 synchronous
                 eventAction

@@ -585,7 +585,9 @@
                 "trigger": "Trigger",
                 "target": "Target",
                 "nb_actions": "Number of actions",
-                "status": "Status"
+                "status": "Status",
+                "modified_at": "Modified on",
+                "modified_by": "Modified by"
             },
             "action": {
                 "delete": {

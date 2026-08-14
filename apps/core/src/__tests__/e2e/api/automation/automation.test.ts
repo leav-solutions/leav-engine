@@ -62,7 +62,7 @@ describe('Automation', () => {
                     createdAt: expect.any(Number),
                     createdBy: adminUserId,
                     modifiedAt: expect.any(Number),
-                    modifiedBy: adminUserId,
+                    modifiedBy: {id: adminUserId},
                     trigger: {
                         synchronous: expect.any(Boolean),
                         eventAction: expect.any(String),

@@ -14,6 +14,8 @@ export type AutomationRulesData = {
     target: string;
     nb_actions: number;
     active: boolean;
+    modifiedAt: string;
+    modifiedBy: string;
 };
 
 export type UseGetAutomationRulesParams = {
