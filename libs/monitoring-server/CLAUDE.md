@@ -4,7 +4,7 @@
 
 ## Ce que c'est
 
-Factory function qui démarre un petit serveur HTTP (Hono + prom-client) exposant
+Factory function qui démarre un petit serveur HTTP (Hono) exposant
 des endpoints standards pour l'observabilité. Utilisé par les apps backend.
 
 ## Exports clés
@@ -18,11 +18,10 @@ des endpoints standards pour l'observabilité. Utilisé par les apps backend.
 
 ## Endpoints exposés
 
-| Route          | Description                                                       |
-| -------------- | ----------------------------------------------------------------- |
-| `GET /`        | Message de bienvenue                                              |
-| `GET /health`  | Health check (callback custom optionnel, OK par défaut)           |
-| `GET /metrics` | Métriques Prometheus (default metrics collectées automatiquement) |
+| Route         | Description                                             |
+| ------------- | ------------------------------------------------------- |
+| `GET /`       | Message de bienvenue                                    |
+| `GET /health` | Health check (callback custom optionnel, OK par défaut) |
 
 ## Usage
 
