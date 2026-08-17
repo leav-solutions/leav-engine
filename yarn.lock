@@ -10597,6 +10597,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"codeclimate-types@npm:^0.3.0":
+  version: 0.3.1
+  resolution: "codeclimate-types@npm:0.3.1"
+  checksum: 10/abadc51fffc21c50546eafbe81eb046dd805138ff0c108fc6025e2980fdd15ab57ef2628cbf3cc39e011bd36c7c969d0b419e5ed95d8988c587896327ccfcce4
+  languageName: node
+  linkType: hard
+
 "color-convert@npm:^1.9.0":
   version: 1.9.3
   resolution: "color-convert@npm:1.9.3"
@@ -12186,15 +12193,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-formatter-gitlab@npm:5.1.0":
-  version: 5.1.0
-  resolution: "eslint-formatter-gitlab@npm:5.1.0"
+"eslint-formatter-codeclimate@npm:^2.0.0":
+  version: 2.0.1
+  resolution: "eslint-formatter-codeclimate@npm:2.0.1"
   dependencies:
-    chalk: "npm:^4.0.0"
+    codeclimate-types: "npm:^0.3.0"
+  peerDependencies:
+    eslint: ">=9"
+  checksum: 10/8965f14c2fd8a99d825ebfd64b74c9a6fd40b2e5a1d0eb688159d2dcdc9d5ff01419557a3352b59364391fb63780c04dbd945238f1f24552738e0b9cf30680f1
+  languageName: node
+  linkType: hard
+
+"eslint-formatter-gitlab@npm:7.2.0":
+  version: 7.2.0
+  resolution: "eslint-formatter-gitlab@npm:7.2.0"
+  dependencies:
+    eslint-formatter-codeclimate: "npm:^2.0.0"
     yaml: "npm:^2.0.0"
   peerDependencies:
-    eslint: ">=5"
-  checksum: 10/cf5f7bcb884addd263be2126c21484e2eb9139ea5d89d484d65d4f332d35937d8dce5fb3b263037dad0088dfa1c16de82b18ba9eb79891f71897f34b807d1817
+    eslint: ">=9"
+  checksum: 10/8345d6327175e18dacec2d69fe96cacb73aa1862ee6fe7ae75e9e685932505aedaa9edb3fb66486b24e7208f45421a5cdf3a27f5eaa946b6ef9d3306aedc255c
   languageName: node
   linkType: hard
 
@@ -15275,7 +15293,7 @@ __metadata:
     commitizen: "npm:4.3.2"
     cz-conventional-changelog: "npm:3.3.0"
     eslint: "npm:9.39.5"
-    eslint-formatter-gitlab: "npm:5.1.0"
+    eslint-formatter-gitlab: "npm:7.2.0"
     eslint-plugin-no-only-tests: "npm:3.4.0"
     husky: "npm:6.0.0"
     lint-staged: "npm:16.4.0"
