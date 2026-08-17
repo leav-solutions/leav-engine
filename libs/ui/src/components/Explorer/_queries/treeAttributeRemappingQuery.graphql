@@ -2,9 +2,15 @@ query TreeAttributeRemapping(
     $libraryId: ID!
     $attributeId: ID!
     $recordFilters: [RecordFilterInput]!
+    $searchQuery: String
     $attributeDependentValue: AttributeDependentValueInput
 ) {
-    listDistinctValues(library: $libraryId, attribute: $attributeId, recordFilters: $recordFilters) {
+    listDistinctValues(
+        library: $libraryId
+        attribute: $attributeId
+        recordFilters: $recordFilters
+        searchQuery: $searchQuery
+    ) {
         count
         ... on TreeDistinctValues {
             treeNode: value {

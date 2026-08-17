@@ -1566,6 +1566,30 @@ export type GetRecordByIdLinkValuesPropertyQueryVariables = Exact<{
 
 export type GetRecordByIdLinkValuesPropertyQuery = { records: { list: Array<{ id: string, active: boolean, whoAmI: { library: { id: string } }, property: Array<{ id_value?: string | null, payload?: { id: string, library: { id: string } } | null }> }> } };
 
+export type ListDistinctValuesQueryVariables = Exact<{
+  library: Scalars['ID']['input'];
+  attribute: Scalars['ID']['input'];
+  recordFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type ListDistinctValuesQuery = { listDistinctValues?: Array<
+    | { count: number }
+    | { count: number, treeNode?: { id: string } | null }
+  > | null };
+
+export type SaveValueBulkMutationVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  attributeId: Scalars['ID']['input'];
+  recordsFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
+  mapping: Array<SaveValueBulkMappingInput> | SaveValueBulkMappingInput;
+}>;
+
+
+export type SaveValueBulkMutation = { saveValueBulk: string };
+
 export type GetRecordByIdTreeValuesPropertyQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   recordId: Scalars['String']['input'];
@@ -2177,6 +2201,34 @@ export const GetRecordByIdLinkValuesPropertyDocument = gql`
   }
 }
     `;
+export const ListDistinctValuesDocument = gql`
+    query ListDistinctValues($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput], $searchQuery: String) {
+  listDistinctValues(
+    library: $library
+    attribute: $attribute
+    recordFilters: $recordFilters
+    searchQuery: $searchQuery
+  ) {
+    count
+    ... on TreeDistinctValues {
+      treeNode: value {
+        id
+      }
+    }
+  }
+}
+    `;
+export const SaveValueBulkDocument = gql`
+    mutation SaveValueBulk($libraryId: ID!, $attributeId: ID!, $recordsFilters: [RecordFilterInput], $searchQuery: String, $mapping: [SaveValueBulkMappingInput!]!) {
+  saveValueBulk(
+    libraryId: $libraryId
+    attributeId: $attributeId
+    recordsFilters: $recordsFilters
+    searchQuery: $searchQuery
+    mapping: $mapping
+  )
+}
+    `;
 export const GetRecordByIdTreeValuesPropertyDocument = gql`
     query GetRecordByIdTreeValuesProperty($libraryId: ID!, $recordId: String!, $attributeId: ID!) {
   records(
@@ -2416,6 +2468,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     GetRecordByIdLinkValuesProperty(variables: GetRecordByIdLinkValuesPropertyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordByIdLinkValuesPropertyQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecordByIdLinkValuesPropertyQuery>({ document: GetRecordByIdLinkValuesPropertyDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordByIdLinkValuesProperty', 'query', variables);
+    },
+    ListDistinctValues(variables: ListDistinctValuesQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<ListDistinctValuesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<ListDistinctValuesQuery>({ document: ListDistinctValuesDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'ListDistinctValues', 'query', variables);
+    },
+    SaveValueBulk(variables: SaveValueBulkMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SaveValueBulkMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SaveValueBulkMutation>({ document: SaveValueBulkDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SaveValueBulk', 'mutation', variables);
     },
     GetRecordByIdTreeValuesProperty(variables: GetRecordByIdTreeValuesPropertyQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetRecordByIdTreeValuesPropertyQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetRecordByIdTreeValuesPropertyQuery>({ document: GetRecordByIdTreeValuesPropertyDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetRecordByIdTreeValuesProperty', 'query', variables);

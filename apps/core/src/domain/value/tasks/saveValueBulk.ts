@@ -22,6 +22,7 @@ import {logger} from '@leav/logger';
 export interface ISaveValueBulkParams {
     libraryId: string;
     recordsFilters?: IRecordFilterLight[];
+    fulltextSearch?: string;
     attributeId: string;
     mapping: Array<{
         dependenciesFilters?: IRecordFilterLight[];
@@ -59,7 +60,7 @@ export default function ({
     translator,
 }: ISaveValueBulkTaskDeps): ISaveValueBulkTask {
     const saveValueBulk = async (params: ISaveValueBulkParams, task?: ITaskFuncParams): Promise<string> => {
-        const {libraryId, recordsFilters = [], attributeId, mapping, ctx} = params;
+        const {libraryId, recordsFilters = [], fulltextSearch, attributeId, mapping, ctx} = params;
 
         await validate.validateLibrary(libraryId, ctx);
         await validate.validateLibraryAttribute(libraryId, attributeId, ctx);
@@ -123,6 +124,7 @@ export default function ({
                     const records = await findRecordsHelper({
                         params: {
                             library: libraryId,
+                            fulltextSearch,
                             filters: [
                                 ...(recordsFilters.length > 0
                                     ? [
