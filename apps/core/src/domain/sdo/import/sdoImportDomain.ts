@@ -249,6 +249,11 @@ export default function ({
             .filter(([, sdoAttr]) => !sdoAttr.leavAttributeId.includes('.'))
             // Explicitly excluded from the import by the mapping (LEAVC-1091) — the export still uses it.
             .filter(([, sdoAttr]) => !sdoAttr.skipImport)
+            // The exported value is produced by an export function, so it does not have the shape the
+            // attribute stores: `toIDLabel` on a link attribute exports `{id, label}` objects, which
+            // written back would destroy the link. Consuming these forms is a ticket of its own
+            // (LEAVC-1106), and until then such an entry is export-only.
+            .filter(([, sdoAttr]) => !sdoAttr.exportFunction)
             .filter(([sdoKey]) => {
                 const value = _.get(sdo.content, sdoKey);
                 return value !== undefined && value !== '';
