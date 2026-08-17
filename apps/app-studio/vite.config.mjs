@@ -1,13 +1,13 @@
 /** @type {import('vite').UserConfig} */
 
 import {defineConfig} from 'vite';
-import {commonConfig, devIndexHtmlReplaceVarsPlugin} from '../../vite-config-common';
+import {commonConfig, devIndexHtmlReplaceVarsPlugin} from '../../vite-config-common.mjs';
 import {dynamicBase} from 'vite-plugin-dynamic-base';
 import {browserslistToTargets} from 'lightningcss';
 import browserslist from 'browserslist';
-import packageJson from './package.json';
+import packageJson from './package.json' with {type: 'json'};
 
-export const devIndexApplyApplicationBaseUrl = () => ({
+const devIndexApplyApplicationBaseUrl = () => ({
     name: 'dev-index-apply-application-base-url',
     enforce: 'pre',
     apply: 'serve', // uniquement en dev
@@ -20,7 +20,7 @@ export const devIndexApplyApplicationBaseUrl = () => ({
     },
 });
 
-const _commonConfig = commonConfig(__dirname);
+const _commonConfig = commonConfig(import.meta.dirname);
 
 export default () =>
     defineConfig({

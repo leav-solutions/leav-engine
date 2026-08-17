@@ -1,12 +1,12 @@
 /** @type {import('vite').UserConfig} */
 
 import {defineConfig} from 'vite';
-import {commonConfig, devIndexHtmlReplaceVarsPlugin} from '../../vite-config-common';
+import {commonConfig, devIndexHtmlReplaceVarsPlugin} from '../../vite-config-common.mjs';
 import {dynamicBase} from 'vite-plugin-dynamic-base';
 
 export default () =>
     defineConfig({
-        ...commonConfig(__dirname),
+        ...commonConfig(import.meta.dirname),
         plugins: [
             dynamicBase({
                 transformIndexHtml: true,
