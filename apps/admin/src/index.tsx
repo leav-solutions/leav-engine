@@ -7,7 +7,6 @@ import ReactDOM from 'react-dom/client';
 import {Provider as ReduxProvider} from 'react-redux';
 import {store} from './reduxStore/store';
 import {Loader} from 'semantic-ui-react';
-import {APP_BASE_URL} from './constants';
 import useAppLang from './hooks/useAppLang';
 import i18n from './i18n';
 import './index.css';
@@ -20,7 +19,7 @@ export function Index() {
 
     useEffect(() => {
         if (!i18nIsInitialized && lang) {
-            i18n.init(APP_BASE_URL, lang);
+            i18n.init(lang);
             seti18nIsInitialized(true);
         }
     }, [lang]);
