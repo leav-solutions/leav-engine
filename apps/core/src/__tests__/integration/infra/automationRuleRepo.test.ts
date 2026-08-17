@@ -342,5 +342,106 @@ describe('automationRuleRepo', () => {
 
             expect(rules.totalCount).toBe(6);
         });
+
+        it('returns rules matching a library filter regardless of whether they also have an attribute', async () => {
+            const rules = await automationRuleRepo.getAutomationRules(
+                {
+                    filters: {
+                        trigger: {
+                            eventTopic: {library: libraryId},
+                        },
+                    },
+                    withCount: true,
+                },
+                ctx,
+            );
+
+            // Without partialMatchOnEventTopic, there is no "subset" constraint: any rule whose
+            // eventTopic.library matches is returned, whatever its other eventTopic keys.
+            expect(rules.list.map(r => r.label)).toEqual(
+                expect.arrayContaining([
+                    'Rule with library topic',
+                    'Rule with library and attribute topic',
+                    'Rule with extra tree key',
+                ]),
+            );
+            expect(rules.totalCount).toBe(3);
+        });
+
+        it('does not restrict on attribute when eventTopic.attribute is explicitly null', async () => {
+            const rules = await automationRuleRepo.getAutomationRules(
+                {
+                    filters: {
+                        trigger: {
+                            eventTopic: {library: libraryId, attribute: null},
+                        },
+                    },
+                    withCount: true,
+                },
+                ctx,
+            );
+
+            // Same result as filtering on library alone: a null attribute must not turn into
+            // `eventTopic.attribute == null`, which would silently drop rules that do have one.
+            expect(rules.list.map(r => r.label)).toEqual(
+                expect.arrayContaining([
+                    'Rule with library topic',
+                    'Rule with library and attribute topic',
+                    'Rule with extra tree key',
+                ]),
+            );
+            expect(rules.totalCount).toBe(3);
+        });
+    });
+
+    describe('getAutomationRules with version filter', () => {
+        beforeEach(async () => {
+            await automationRuleRepo.createAutomationRule(
+                {
+                    label: 'Rule v1.2.3',
+                    version: 'v1.2.3',
+                    active: false,
+                    trigger: {synchronous: false, eventAction: EventAction.RECORD_INIT},
+                    pipeline: {steps: []},
+                },
+                ctx,
+            );
+            await automationRuleRepo.createAutomationRule(
+                {
+                    label: 'Rule v2.0.0',
+                    version: 'v2.0.0',
+                    active: false,
+                    trigger: {synchronous: false, eventAction: EventAction.RECORD_INIT},
+                    pipeline: {steps: []},
+                },
+                ctx,
+            );
+        });
+
+        it('matches on a partial, case-insensitive version', async () => {
+            const rules = await automationRuleRepo.getAutomationRules(
+                {
+                    filters: {version: '1.2'},
+                    withCount: true,
+                },
+                ctx,
+            );
+
+            expect(rules.list).toHaveLength(1);
+            expect(rules.list[0].label).toBe('Rule v1.2.3');
+        });
+
+        it('matches regardless of case', async () => {
+            const rules = await automationRuleRepo.getAutomationRules(
+                {
+                    filters: {version: 'V1.2'},
+                    withCount: true,
+                },
+                ctx,
+            );
+
+            expect(rules.list).toHaveLength(1);
+            expect(rules.list[0].label).toBe('Rule v1.2.3');
+        });
     });
 });

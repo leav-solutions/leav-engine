@@ -115,6 +115,7 @@ export default function ({
                         id: ID,
                         label: String,
                         active: Boolean,
+                        version: String,
                         trigger: PartialAutomationRuleTriggerInput
                     }
 

@@ -259,6 +259,7 @@ export type AutomationRulesFiltersInput = {
   id?: InputMaybe<Scalars['ID']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
+  version?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AutomationRulesSortInput = {

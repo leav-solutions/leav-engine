@@ -40,6 +40,7 @@ type IAutomationRuleDbDocument = IAutomationRuleBaseDocument & IDbDocument;
 
 export type IAutomationRuleFilterOptionsInRepo = ICoreEntityFilterOptions & {
     active?: boolean;
+    version?: string;
     trigger?: {
         synchronous?: boolean;
         eventAction?: EventAction | SyncAutomationRuleEventAction;
@@ -161,7 +162,12 @@ export default function (
             const {partialMatchOnEventTopic, ...findCoreEntityParams} = {...defaultParams, ...params};
 
             const buildEventTopicFilter = (eventTopic: Record<string, unknown>): GeneratedAqlQuery => {
-                const eventTopicEntries = Object.entries(eventTopic);
+                // A null/undefined value means "not filtered on this key". Without this, `{library: 'x',
+                // attribute: null}` would generate `eventTopic.attribute == null` and silently restrict the
+                // result to rules that have no attribute.
+                const eventTopicEntries = Object.entries(eventTopic).filter(
+                    ([, value]) => value !== null && value !== undefined,
+                );
                 const valueConditions = eventTopicEntries.map(([eventTopicSubKey, eventTopicSubVal]) =>
                     partialMatchOnEventTopic
                         ? aql`(el.trigger.eventTopic.${eventTopicSubKey} == ${eventTopicSubVal} OR el.trigger.eventTopic.${eventTopicSubKey} == null)`
@@ -180,8 +186,8 @@ export default function (
                 return join([...valueConditions, ...subsetConstraint], ' AND ');
             };
 
-            const customFilterConditions =
-                params.filters?.trigger !== undefined
+            const customFilterConditions = {
+                ...(params.filters?.trigger !== undefined
                     ? {
                           trigger: (
                               _filterKey: string,
@@ -197,7 +203,18 @@ export default function (
                               return parts.length ? join(parts, ' AND ') : join([]);
                           },
                       }
-                    : {};
+                    : {}),
+                ...(params.filters?.version !== undefined
+                    ? {
+                          // "Contains", case-insensitive. Kept server-side so callers pass a plain string
+                          // instead of an AQL LIKE pattern.
+                          version: (
+                              _filterKey: string,
+                              filterVal: string | boolean | string[] | Record<string, unknown>,
+                          ): GeneratedAqlQuery => aql`LIKE(el.version, ${`%${String(filterVal)}%`}, true)`,
+                      }
+                    : {}),
+            };
 
             return dbUtils.findCoreEntity<IAutomationRule, IAutomationRuleDbDocument>({
                 ...findCoreEntityParams,
