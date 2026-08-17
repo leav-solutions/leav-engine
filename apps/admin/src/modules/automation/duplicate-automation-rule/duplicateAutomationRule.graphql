@@ -1,0 +1,5 @@
+mutation DuplicateAutomationRule($ruleId: ID!, $label: String!) {
+    duplicateAutomationRule(ruleId: $ruleId, label: $label) {
+        id
+    }
+}

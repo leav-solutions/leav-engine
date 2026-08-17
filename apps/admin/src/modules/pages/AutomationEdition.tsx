@@ -17,6 +17,8 @@ export const AutomationEdition = () => {
 
     const handleSubmit = async (values: AutomationFormValues): Promise<boolean> => editAutomationRule(id!, values);
 
+    const handleDuplicated = (newRuleId: string) => navigate(`${AdminAbsolutePaths.automation}/edit/${newRuleId}`);
+
     if (dataLoading) {
         return <KitLoader />;
     }
@@ -27,11 +29,14 @@ export const AutomationEdition = () => {
 
     return (
         <AutomationForm
+            key={id} // force a remount on duplication redirect: same route, new record (see useAutomationFormData baseline sync)
             initialValues={data}
             mutationLoading={loading}
             formType={AutomationRuleJsonSchemaFormType.edition}
             onSubmit={handleSubmit}
             onCancel={handleBack}
+            ruleId={id}
+            onDuplicated={handleDuplicated}
         />
     );
 };

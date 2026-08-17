@@ -271,6 +271,18 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -354,6 +366,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -573,6 +587,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -961,12 +977,19 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1342,6 +1365,14 @@ export type DeleteAutomationRuleMutationVariables = Exact<{
 
 
 export type DeleteAutomationRuleMutation = { deleteAutomationRule: { id: string } };
+
+export type DuplicateAutomationRuleMutationVariables = Exact<{
+  ruleId: Scalars['ID']['input'];
+  label: Scalars['String']['input'];
+}>;
+
+
+export type DuplicateAutomationRuleMutation = { duplicateAutomationRule: { id: string } };
 
 export type UpdateAutomationRuleMutationVariables = Exact<{
   rule: UpdateAutomationRuleInput;
@@ -2452,6 +2483,40 @@ export function useDeleteAutomationRuleMutation(baseOptions?: Apollo.MutationHoo
 export type DeleteAutomationRuleMutationHookResult = ReturnType<typeof useDeleteAutomationRuleMutation>;
 export type DeleteAutomationRuleMutationResult = Apollo.MutationResult<DeleteAutomationRuleMutation>;
 export type DeleteAutomationRuleMutationOptions = Apollo.BaseMutationOptions<DeleteAutomationRuleMutation, DeleteAutomationRuleMutationVariables>;
+export const DuplicateAutomationRuleDocument = gql`
+    mutation DuplicateAutomationRule($ruleId: ID!, $label: String!) {
+  duplicateAutomationRule(ruleId: $ruleId, label: $label) {
+    id
+  }
+}
+    `;
+export type DuplicateAutomationRuleMutationFn = Apollo.MutationFunction<DuplicateAutomationRuleMutation, DuplicateAutomationRuleMutationVariables>;
+
+/**
+ * __useDuplicateAutomationRuleMutation__
+ *
+ * To run a mutation, you first call `useDuplicateAutomationRuleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDuplicateAutomationRuleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [duplicateAutomationRuleMutation, { data, loading, error }] = useDuplicateAutomationRuleMutation({
+ *   variables: {
+ *      ruleId: // value for 'ruleId'
+ *      label: // value for 'label'
+ *   },
+ * });
+ */
+export function useDuplicateAutomationRuleMutation(baseOptions?: Apollo.MutationHookOptions<DuplicateAutomationRuleMutation, DuplicateAutomationRuleMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DuplicateAutomationRuleMutation, DuplicateAutomationRuleMutationVariables>(DuplicateAutomationRuleDocument, options);
+      }
+export type DuplicateAutomationRuleMutationHookResult = ReturnType<typeof useDuplicateAutomationRuleMutation>;
+export type DuplicateAutomationRuleMutationResult = Apollo.MutationResult<DuplicateAutomationRuleMutation>;
+export type DuplicateAutomationRuleMutationOptions = Apollo.BaseMutationOptions<DuplicateAutomationRuleMutation, DuplicateAutomationRuleMutationVariables>;
 export const UpdateAutomationRuleDocument = gql`
     mutation UpdateAutomationRule($rule: UpdateAutomationRuleInput!) {
   updateAutomationRule(rule: $rule) {
