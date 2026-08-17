@@ -14,7 +14,7 @@ import fs from 'fs';
 import {GraphQLError} from 'graphql';
 import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 import {type ServerOptions} from 'graphql-ws';
-import * as graphqlWS from 'graphql-ws/lib/use/ws';
+import * as graphqlWS from 'graphql-ws/use/ws';
 import {createServer, type IncomingHttpHeaders} from 'http';
 import {type IUtils} from '../utils/utils';
 import {type ILogger} from '@leav/logger';
