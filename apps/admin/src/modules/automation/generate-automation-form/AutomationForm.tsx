@@ -1,5 +1,5 @@
 import {KitButton, KitGrid, KitIdCard, KitLoader, KitSpace} from 'aristid-ds';
-import {useRef} from 'react';
+import {useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {BackButton} from '../../ui/button/BackButton';
 import {PageContainer} from '../../ui/page/PageContainer';
@@ -22,6 +22,8 @@ import {ArrayFieldItemTemplate} from './templates/ArrayFieldItemTemplate';
 import {useAutomationFormData} from './utils/useAutomationFormData';
 import {useAutomationFormNavigation} from './utils/useAutomationFormNavigation';
 import {makeTransformErrors} from './utils/transformErrors';
+import {DuplicateAutomationRuleButton} from '../duplicate-automation-rule/DuplicateAutomationRuleButton';
+import {DuplicateAutomationRuleModal} from '../duplicate-automation-rule/DuplicateAutomationRuleModal';
 
 type AutomationFormProps = {
     initialValues: AutomationFormValues | null;
@@ -29,12 +31,23 @@ type AutomationFormProps = {
     formType: AutomationRuleJsonSchemaFormType;
     onSubmit: (values: AutomationFormValues) => Promise<boolean>;
     onCancel: () => void;
+    ruleId?: string;
+    onDuplicated?: (newRuleId: string) => void;
 };
 
-export const AutomationForm = ({initialValues, mutationLoading, formType, onSubmit, onCancel}: AutomationFormProps) => {
+export const AutomationForm = ({
+    initialValues,
+    mutationLoading,
+    formType,
+    onSubmit,
+    onCancel,
+    ruleId,
+    onDuplicated,
+}: AutomationFormProps) => {
     const {t} = useTranslation();
     const formRef = useRef(null);
     const isCreationForm = formType === AutomationRuleJsonSchemaFormType.creation;
+    const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState(false);
 
     const {formSchema, uiSchema, loading: schemaLoading} = useGetAutomationRuleForm({formType});
 
@@ -52,80 +65,105 @@ export const AutomationForm = ({initialValues, mutationLoading, formType, onSubm
         formRef.current?.submit();
     };
 
+    // Duplication only makes sense once a rule exists, i.e. on the edition form.
+    const canDuplicate = !isCreationForm && !!ruleId && !!onDuplicated;
+
+    const handleRuleDuplicated = (newRuleId: string) => {
+        setIsDuplicateModalOpen(false);
+        onDuplicated?.(newRuleId);
+    };
+
     return (
-        <KitGrid.KitRow>
-            <KitGrid.KitCol
-                xs={{span: COL_RESPONSIVE_CONFIG.xs.span, push: COL_RESPONSIVE_CONFIG.xs.push}}
-                sm={{span: COL_RESPONSIVE_CONFIG.sm.span, push: COL_RESPONSIVE_CONFIG.sm.push}}
-                md={{span: COL_RESPONSIVE_CONFIG.md.span, push: COL_RESPONSIVE_CONFIG.md.push}}
-                xl={{span: COL_RESPONSIVE_CONFIG.xl.span, push: COL_RESPONSIVE_CONFIG.xl.push}}
-                xxl={{span: COL_RESPONSIVE_CONFIG.xxl.span, push: COL_RESPONSIVE_CONFIG.xxl.push}}
-            >
-                <PageContainer>
-                    <PageHeader
-                        extraAlignLeft={
-                            <KitSpace direction="horizontal" size="xs">
-                                <BackButton onClick={onCancel} />
-                                <KitIdCard
-                                    title={
-                                        isCreationForm
-                                            ? t('automation.form.create.title')
-                                            : t('automation.form.edit.title')
-                                    }
-                                    size="s"
-                                />
-                            </KitSpace>
-                        }
-                        extraAlignRight={
-                            <KitSpace direction="horizontal" size="xs">
-                                <KitButton size="m" onClick={onCancel}>
-                                    {t('admin.cancel')}
-                                </KitButton>
-                                <KitButton
-                                    size="m"
-                                    type="primary"
-                                    onClick={handleSubmitClick}
-                                    loading={mutationLoading}
-                                    disabled={!hasUnsavedChanges || mutationLoading || schemaLoading}
-                                    icon={<FontAwesomeIcon icon={isCreationForm ? faPlus : faSave} />}
-                                >
-                                    {isCreationForm ? t('admin.create') : t('admin.save')}
-                                </KitButton>
-                            </KitSpace>
-                        }
-                    />
-                    {schemaLoading && <KitLoader />}
-                    {!schemaLoading && formSchema && uiSchema && (
-                        <Form<AutomationFormValues>
-                            ref={formRef}
-                            schema={formSchema}
-                            uiSchema={uiSchema}
-                            formData={formData}
-                            validator={validator}
-                            formContext={{
-                                addPipelineStep,
-                                pipelineStepsData: formData?.pipeline?.steps,
-                            }}
-                            widgets={{
-                                TextWidget,
-                                SelectWidget,
-                                CheckboxWidget,
-                            }}
-                            templates={{
-                                ObjectFieldTemplate,
-                                FieldTemplate,
-                                ArrayFieldTemplate,
-                                ArrayFieldItemTemplate,
-                            }}
-                            onChange={handleChange}
-                            onSubmit={handleFormSubmit}
-                            transformErrors={makeTransformErrors(t)}
-                            noHtml5Validate
-                            showErrorList={false}
+        <>
+            <KitGrid.KitRow>
+                <KitGrid.KitCol
+                    xs={{span: COL_RESPONSIVE_CONFIG.xs.span, push: COL_RESPONSIVE_CONFIG.xs.push}}
+                    sm={{span: COL_RESPONSIVE_CONFIG.sm.span, push: COL_RESPONSIVE_CONFIG.sm.push}}
+                    md={{span: COL_RESPONSIVE_CONFIG.md.span, push: COL_RESPONSIVE_CONFIG.md.push}}
+                    xl={{span: COL_RESPONSIVE_CONFIG.xl.span, push: COL_RESPONSIVE_CONFIG.xl.push}}
+                    xxl={{span: COL_RESPONSIVE_CONFIG.xxl.span, push: COL_RESPONSIVE_CONFIG.xxl.push}}
+                >
+                    <PageContainer>
+                        <PageHeader
+                            extraAlignLeft={
+                                <KitSpace direction="horizontal" size="xs">
+                                    <BackButton onClick={onCancel} />
+                                    <KitIdCard
+                                        title={
+                                            isCreationForm
+                                                ? t('automation.form.create.title')
+                                                : t('automation.form.edit.title')
+                                        }
+                                        size="s"
+                                    />
+                                </KitSpace>
+                            }
+                            extraAlignRight={
+                                <KitSpace direction="horizontal" size="xs">
+                                    <KitButton size="m" onClick={onCancel}>
+                                        {t('admin.cancel')}
+                                    </KitButton>
+                                    {canDuplicate && (
+                                        <DuplicateAutomationRuleButton
+                                            variant="labelled"
+                                            onClick={() => setIsDuplicateModalOpen(true)}
+                                            disabled={hasUnsavedChanges}
+                                            disabledReason={t('automation.duplicate.unsaved_changes')}
+                                        />
+                                    )}
+                                    <KitButton
+                                        size="m"
+                                        type="primary"
+                                        onClick={handleSubmitClick}
+                                        loading={mutationLoading}
+                                        disabled={!hasUnsavedChanges || mutationLoading || schemaLoading}
+                                        icon={<FontAwesomeIcon icon={isCreationForm ? faPlus : faSave} />}
+                                    >
+                                        {isCreationForm ? t('admin.create') : t('admin.save')}
+                                    </KitButton>
+                                </KitSpace>
+                            }
                         />
-                    )}
-                </PageContainer>
-            </KitGrid.KitCol>
-        </KitGrid.KitRow>
+                        {schemaLoading && <KitLoader />}
+                        {!schemaLoading && formSchema && uiSchema && (
+                            <Form<AutomationFormValues>
+                                ref={formRef}
+                                schema={formSchema}
+                                uiSchema={uiSchema}
+                                formData={formData}
+                                validator={validator}
+                                formContext={{
+                                    addPipelineStep,
+                                    pipelineStepsData: formData?.pipeline?.steps,
+                                }}
+                                widgets={{
+                                    TextWidget,
+                                    SelectWidget,
+                                    CheckboxWidget,
+                                }}
+                                templates={{
+                                    ObjectFieldTemplate,
+                                    FieldTemplate,
+                                    ArrayFieldTemplate,
+                                    ArrayFieldItemTemplate,
+                                }}
+                                onChange={handleChange}
+                                onSubmit={handleFormSubmit}
+                                transformErrors={makeTransformErrors(t)}
+                                noHtml5Validate
+                                showErrorList={false}
+                            />
+                        )}
+                    </PageContainer>
+                </KitGrid.KitCol>
+            </KitGrid.KitRow>
+            {canDuplicate && (
+                <DuplicateAutomationRuleModal
+                    rule={isDuplicateModalOpen ? {id: ruleId, label: initialValues?.label ?? ''} : null}
+                    onClose={() => setIsDuplicateModalOpen(false)}
+                    onDuplicated={handleRuleDuplicated}
+                />
+            )}
+        </>
     );
 };

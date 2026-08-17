@@ -176,6 +176,7 @@ export default function ({
 
                     extend type Mutation {
                         createAutomationRule(rule: CreateAutomationRuleInput!): AutomationRule!,
+                        duplicateAutomationRule(ruleId: ID!, label: String!): AutomationRule!,
                         updateAutomationRule(rule: UpdateAutomationRuleInput!): AutomationRule!,
                         deleteAutomationRule(ruleId: ID!): AutomationRule!
                     }
@@ -215,6 +216,13 @@ export default function ({
                             ctx: IQueryInfos,
                         ): Promise<IAutomationRule> {
                             return automationDomain.createAutomationRule({rule, ctx});
+                        },
+                        async duplicateAutomationRule(
+                            _parent,
+                            {ruleId, label}: {ruleId: string; label: string},
+                            ctx: IQueryInfos,
+                        ): Promise<IAutomationRule> {
+                            return automationDomain.duplicateAutomationRule({ruleId, label, ctx});
                         },
                         async updateAutomationRule(
                             _,

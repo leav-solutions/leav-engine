@@ -77,6 +77,30 @@ mutation UpdateAutomationRule($rule: UpdateAutomationRuleInput!) {
     }
 }
 
+mutation DuplicateAutomationRule($ruleId: ID!, $label: String!) {
+    duplicateAutomationRule(ruleId: $ruleId, label: $label) {
+        id
+        label
+        description
+        version
+        active
+        trigger {
+            synchronous
+            eventAction
+            eventTopic {
+                library
+            }
+        }
+        pipeline {
+            steps {
+                type
+                name
+                params
+            }
+        }
+    }
+}
+
 mutation DeleteAutomationRule($ruleId: ID!) {
     deleteAutomationRule(ruleId: $ruleId) {
         id

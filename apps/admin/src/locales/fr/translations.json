@@ -622,6 +622,18 @@
                 "content": "Vous avez des modifications non enregistrées. Si vous quittez cette page, vos modifications seront perdues."
             },
             "required": "Ce champ est requis."
+        },
+        "duplicate": {
+            "action": "Dupliquer",
+            "default_name": "Copie de {{name}}",
+            "unsaved_changes": "Enregistrez vos modifications avant de dupliquer la règle",
+            "modal": {
+                "title": "Dupliquer la règle d’automatisation",
+                "name_label": "Nom de la copie",
+                "info": "La copie sera créée inactive. Activez-la manuellement lorsque vous serez prêt."
+            },
+            "success": "Règle d’automatisation dupliquée",
+            "error": "Une erreur est survenue lors de la duplication de la règle d’automatisation"
         }
     },
     "error": {

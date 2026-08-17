@@ -1,4 +1,4 @@
-import {KitIdCard, KitTable, KitTag} from 'aristid-ds';
+import {KitIdCard, KitSpace, KitTable, KitTag} from 'aristid-ds';
 import {type ComponentProps} from 'react';
 import {useTranslation} from 'react-i18next';
 import {automationTableContainer} from './automationTable.module.css';
@@ -6,6 +6,7 @@ import {useTableScrollableHeight} from '../../../utils/useTableScrollableHeight'
 import {type AutomationRulesData} from '../get-automation-rules-data/useGetAutomationRulesData';
 import {AutomationCell} from './cell/AutomationCell';
 import {DeleteAutomationRuleButton} from '../../delete-automation-rule/DeleteAutomationRuleButton';
+import {DuplicateAutomationRuleButton} from '../../duplicate-automation-rule/DuplicateAutomationRuleButton';
 
 const ColumnWidth = {
     XS: '10ch',
@@ -22,6 +23,7 @@ type AutomationTableProps = {
     onPageSizeChange: (page: number, size: number) => void;
     onRowClick: (record: AutomationRulesData) => void;
     onDelete: (ruleId: string) => void;
+    onDuplicate: (record: AutomationRulesData) => void;
 };
 
 export const AutomationTable = ({
@@ -33,6 +35,7 @@ export const AutomationTable = ({
     onPageSizeChange,
     onRowClick,
     onDelete,
+    onDuplicate,
 }: AutomationTableProps) => {
     const {t} = useTranslation();
     const {containerRef, scrollHeight} = useTableScrollableHeight(true);
@@ -43,7 +46,14 @@ export const AutomationTable = ({
             dataIndex: 'name',
             key: 'name',
             render: (name: string, record: AutomationRulesData) => (
-                <AutomationCell hoverAction={<DeleteAutomationRuleButton onClick={() => onDelete(record.id)} />}>
+                <AutomationCell
+                    hoverAction={
+                        <KitSpace direction="horizontal" size="xs">
+                            <DuplicateAutomationRuleButton onClick={() => onDuplicate(record)} />
+                            <DeleteAutomationRuleButton onClick={() => onDelete(record.id)} />
+                        </KitSpace>
+                    }
+                >
                     {name}
                 </AutomationCell>
             ),

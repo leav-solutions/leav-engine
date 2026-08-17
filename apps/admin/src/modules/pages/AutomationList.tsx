@@ -1,4 +1,5 @@
 import {KitIdCard, KitLoader} from 'aristid-ds';
+import {useState} from 'react';
 import {Navigate, useNavigate} from 'react-router-dom';
 import {AdminAbsolutePaths} from '../routes/paths';
 import {AutomationTable} from '../automation/list-automation-rules/table/AutomationTable';
@@ -8,6 +9,7 @@ import {
     type AutomationRulesData,
 } from '../automation/list-automation-rules/get-automation-rules-data/useGetAutomationRulesData';
 import {useDeleteAutomationRule} from '../automation/delete-automation-rule/useDeleteAutomationRule';
+import {DuplicateAutomationRuleModal} from '../automation/duplicate-automation-rule/DuplicateAutomationRuleModal';
 import {AutomationToolbar} from '../automation/list-automation-rules/toolbar/AutomationToolbar';
 import {PageContainer} from '../ui/page/PageContainer';
 import {PageHeader} from '../ui/page/PageHeader';
@@ -25,6 +27,7 @@ export const AutomationList = () => {
     const {t} = useTranslation();
     const {deleteAutomationRule} = useDeleteAutomationRule();
     const {openConfirmModal} = useConfirmModal();
+    const [ruleToDuplicate, setRuleToDuplicate] = useState<AutomationRulesData | null>(null);
 
     const handleRowClick = (record: AutomationRulesData) => {
         navigate(`${AdminAbsolutePaths.automation}/edit/${record.id}`);
@@ -37,6 +40,11 @@ export const AutomationList = () => {
             onOk: () => deleteAutomationRule(ruleId),
             dangerConfirm: true,
         });
+    };
+
+    const handleDuplicated = (newRuleId: string) => {
+        setRuleToDuplicate(null);
+        navigate(`${AdminAbsolutePaths.automation}/edit/${newRuleId}`);
     };
 
     if (error) {
@@ -69,9 +77,15 @@ export const AutomationList = () => {
                         onPageSizeChange={handlePageSizeChange}
                         onRowClick={handleRowClick}
                         onDelete={handleDelete}
+                        onDuplicate={setRuleToDuplicate}
                     />
                 )}
             </PageContentContainer>
+            <DuplicateAutomationRuleModal
+                rule={ruleToDuplicate ? {id: ruleToDuplicate.id, label: ruleToDuplicate.name} : null}
+                onClose={() => setRuleToDuplicate(null)}
+                onDuplicated={handleDuplicated}
+            />
         </PageContainer>
     );
 };

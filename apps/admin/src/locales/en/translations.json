@@ -622,6 +622,18 @@
                 "content": "You have unsaved changes. If you leave this page, your changes will be lost."
             },
             "required": "This field is required."
+        },
+        "duplicate": {
+            "action": "Duplicate",
+            "default_name": "Copy of {{name}}",
+            "unsaved_changes": "Save your changes before duplicating the rule",
+            "modal": {
+                "title": "Duplicate automation rule",
+                "name_label": "Copy name",
+                "info": "The copy will be created inactive. Activate it manually when you are ready."
+            },
+            "success": "Automation rule duplicated",
+            "error": "An error occurred while duplicating the automation rule"
         }
     },
     "error": {
