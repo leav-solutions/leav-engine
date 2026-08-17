@@ -97,6 +97,38 @@ query GetRecordByIdLinkValuesProperty($libraryId: ID!, $recordId: String!, $attr
     }
 }
 
+query ListDistinctValues($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput], $searchQuery: String) {
+    listDistinctValues(
+        library: $library
+        attribute: $attribute
+        recordFilters: $recordFilters
+        searchQuery: $searchQuery
+    ) {
+        count
+        ... on TreeDistinctValues {
+            treeNode: value {
+                id
+            }
+        }
+    }
+}
+
+mutation SaveValueBulk(
+    $libraryId: ID!
+    $attributeId: ID!
+    $recordsFilters: [RecordFilterInput]
+    $searchQuery: String
+    $mapping: [SaveValueBulkMappingInput!]!
+) {
+    saveValueBulk(
+        libraryId: $libraryId
+        attributeId: $attributeId
+        recordsFilters: $recordsFilters
+        searchQuery: $searchQuery
+        mapping: $mapping
+    )
+}
+
 query GetRecordByIdTreeValuesProperty($libraryId: ID!, $recordId: String!, $attributeId: ID!) {
     records(library: $libraryId, filters: [{field: "id", condition: EQUAL, value: $recordId}]) {
         list {

@@ -34,6 +34,8 @@ export const useEditAttributeMassAction = ({
 
     // Represent the current selection, used to apply modifications to correct records
     const [massSelectionFilters, setMassSelectionFilters] = useState<RecordFilterInput[]>([]);
+    // Fulltext search of the current selection (only set on "select all"), scoped alongside the filters
+    const [massSelectionSearchQuery, setMassSelectionSearchQuery] = useState<string | undefined>();
 
     const editableAttributes = useMassEditableAttributes({libraryId: view.libraryId});
 
@@ -56,6 +58,7 @@ export const useEditAttributeMassAction = ({
     const _closeModal = () => {
         setOpenModal(false);
         setMassSelectionFilters([]);
+        setMassSelectionSearchQuery(undefined);
         setSelectedAttribute(null);
         resetEditionMapping();
     };
@@ -74,6 +77,7 @@ export const useEditAttributeMassAction = ({
             variables: {
                 libraryId: view.libraryId,
                 recordsFilters: massSelectionFilters,
+                searchQuery: massSelectionSearchQuery,
                 attributeId: selectedAttribute.id,
                 mapping: editionMapping.mapping,
             },
@@ -113,8 +117,9 @@ export const useEditAttributeMassAction = ({
             label: t('explorer.massAction.editAttribute'),
             icon: <FontAwesomeIcon icon={faEdit} />,
             deselectAll: false,
-            callback: (_massSelectionFilter: RecordFilterInput[]) => {
+            callback: (_massSelectionFilter: RecordFilterInput[], _massSelection, _searchQuery?: string) => {
                 setMassSelectionFilters(_massSelectionFilter);
+                setMassSelectionSearchQuery(_searchQuery);
                 setSelectedAttribute(null);
                 resetEditionMapping();
                 setOpenModal(true);
@@ -151,6 +156,7 @@ export const useEditAttributeMassAction = ({
                             libraryId={view.libraryId}
                             attribute={selectedAttribute}
                             massSelectionFilters={massSelectionFilters}
+                            massSelectionSearchQuery={massSelectionSearchQuery}
                             setAttributeMapping={applyMappingChange}
                         />
                     ) : selectedAttribute.isSimpleWorkflow ? (
@@ -158,6 +164,7 @@ export const useEditAttributeMassAction = ({
                             libraryId={view.libraryId}
                             attribute={selectedAttribute}
                             massSelectionFilters={massSelectionFilters}
+                            massSelectionSearchQuery={massSelectionSearchQuery}
                             setAttributeMapping={applyMappingChange}
                         />
                     ) : selectedAttribute.isMonoDependencyWorkflow ? (
@@ -165,6 +172,7 @@ export const useEditAttributeMassAction = ({
                             libraryId={view.libraryId}
                             attribute={selectedAttribute}
                             massSelectionFilters={massSelectionFilters}
+                            massSelectionSearchQuery={massSelectionSearchQuery}
                             setAttributeMapping={applyMonoDependencyWorkflowChange}
                         />
                     ) : null)}

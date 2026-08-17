@@ -7,12 +7,14 @@ export const useTreeNodesCandidates = ({
     dependencyAttributeNodeId,
     libraryId,
     massSelectionFilters,
+    massSelectionSearchQuery,
 }: {
     attributeId: string;
     dependencyAttributeId?: string;
     dependencyAttributeNodeId?: string;
     libraryId: string;
     massSelectionFilters: RecordFilterInput[];
+    massSelectionSearchQuery?: string;
 }): {
     candidateNodes: Array<{
         currentNode: {
@@ -36,6 +38,7 @@ export const useTreeNodesCandidates = ({
             attributeId,
             libraryId,
             recordFilters: massSelectionFilters,
+            searchQuery: massSelectionSearchQuery,
             attributeDependentValue: dependencyAttributeId
                 ? {
                       attributeId: dependencyAttributeId,

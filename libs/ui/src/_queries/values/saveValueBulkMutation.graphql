@@ -1,8 +1,15 @@
 mutation SAVE_VALUE_BULK(
     $libraryId: ID!
     $recordsFilters: [RecordFilterInput]!
+    $searchQuery: String
     $attributeId: ID!
     $mapping: [SaveValueBulkMappingInput!]!
 ) {
-    saveValueBulk(libraryId: $libraryId, recordsFilters: $recordsFilters, attributeId: $attributeId, mapping: $mapping)
+    saveValueBulk(
+        libraryId: $libraryId
+        recordsFilters: $recordsFilters
+        searchQuery: $searchQuery
+        attributeId: $attributeId
+        mapping: $mapping
+    )
 }

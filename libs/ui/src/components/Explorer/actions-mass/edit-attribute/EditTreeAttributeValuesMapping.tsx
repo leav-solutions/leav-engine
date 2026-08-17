@@ -11,6 +11,7 @@ export const EditTreeAttributeValuesMapping = ({
     dependencyAttributeNodeId,
     setAttributeMapping,
     massSelectionFilters,
+    massSelectionSearchQuery,
 }: {
     libraryId: string;
     attribute: MassEditableAttribute;
@@ -18,6 +19,7 @@ export const EditTreeAttributeValuesMapping = ({
     dependencyAttributeNodeId?: string;
     setAttributeMapping: SetAttributeMapping;
     massSelectionFilters: RecordFilterInput[];
+    massSelectionSearchQuery?: string;
 }) => {
     const {candidateNodes, loading} = useTreeNodesCandidates({
         attributeId: attribute.id,
@@ -25,6 +27,7 @@ export const EditTreeAttributeValuesMapping = ({
         dependencyAttributeNodeId,
         libraryId,
         massSelectionFilters,
+        massSelectionSearchQuery,
     });
 
     if (loading) {

@@ -355,6 +355,8 @@ export enum EventAction {
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
   DATA_IMPORT_START = 'DATA_IMPORT_START',
+  DTO_LOG_ERROR = 'DTO_LOG_ERROR',
+  DTO_LOG_IMPORT_RECORD = 'DTO_LOG_IMPORT_RECORD',
   EXPORT_END = 'EXPORT_END',
   EXPORT_START = 'EXPORT_START',
   GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
@@ -570,6 +572,8 @@ export enum LogAction {
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
   DATA_IMPORT_START = 'DATA_IMPORT_START',
+  DTO_LOG_ERROR = 'DTO_LOG_ERROR',
+  DTO_LOG_IMPORT_RECORD = 'DTO_LOG_IMPORT_RECORD',
   EXPORT_END = 'EXPORT_END',
   EXPORT_START = 'EXPORT_START',
   GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
@@ -963,7 +967,6 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
@@ -1203,6 +1206,7 @@ export type ViewV2CreateInput = {
 
 export type ViewV2DisplayAttributeInput = {
   attributeId: Scalars['ID']['input'];
+  isGroupBy?: InputMaybe<Scalars['Boolean']['input']>;
   visible: Scalars['Boolean']['input'];
 };
 
@@ -1433,7 +1437,7 @@ export type TreeLightFragment = { id: string, label?: any | null };
 
 export type TreeNodeChildFragment = { id: string, order?: number | null, childrenCount?: number | null, record: { id: string, active: Array<{ value?: any | null }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ id: string, record: { id: string, library: { id: string, label?: any | null }, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null, permissions: { access_tree: boolean, detach: boolean, edit_children: boolean } };
 
-export type ViewDetailsFragment = { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null };
+export type ViewDetailsFragment = { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } | null, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null };
 
 export type ViewDetailsFilterFragment = { field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null };
 
@@ -1462,7 +1466,14 @@ export type LinkAttributeDetailsFragment = { label?: any | null, type: Attribute
 
 export type TreeAttributeDetailsFragment = { id: string, label?: any | null, linked_tree?: { id: string, label?: any | null } | null };
 
-export type AttributePropertiesFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null };
+export type AttributePropertiesLinkAttributeStandardAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null };
+
+export type AttributePropertiesTreeAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null };
+
+export type AttributePropertiesFragment =
+  | AttributePropertiesLinkAttributeStandardAttributeFragment
+  | AttributePropertiesTreeAttributeFragment
+;
 
 export type PropertyValueLinkValueFragment = { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
 
@@ -1476,7 +1487,10 @@ export type PropertyValueFragment =
   | PropertyValueValueFragment
 ;
 
-export type LinkPropertyLinkValueFragment = { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }, values: Array<
+export type LinkPropertyLinkValueFragment = { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, attributeProperties:
+        | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }
+        | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null }
+      , values: Array<
         | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
         | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
         | { valuePayload?: any | null, valueRawPayload?: any | null }
@@ -1763,7 +1777,7 @@ export type ActivateNewRecordMutationVariables = Exact<{
 }>;
 
 
-export type ActivateNewRecordMutation = { activateNewRecord: { record?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, valuesErrors?: Array<{ type: string, attribute: string, input?: string | null, message: string }> | null } };
+export type ActivateNewRecordMutation = { activateNewRecord: { record?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, valuesErrors?: Array<{ type: string, attribute?: string | null, input?: string | null, message: string }> | null } };
 
 export type ActivateRecordsMutationVariables = Exact<{
   libraryId: Scalars['String']['input'];
@@ -1781,7 +1795,7 @@ export type CreateRecordMutationVariables = Exact<{
 }>;
 
 
-export type CreateRecordMutation = { createRecord: { record?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, valuesErrors?: Array<{ type: string, attribute: string, input?: string | null, message: string }> | null } };
+export type CreateRecordMutation = { createRecord: { record?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, valuesErrors?: Array<{ type: string, attribute?: string | null, input?: string | null, message: string }> | null } };
 
 export type DeactivateRecordsMutationVariables = Exact<{
   libraryId: Scalars['String']['input'];
@@ -1867,13 +1881,6 @@ export type RecordUpdateSubscription = { recordUpdate: { record: { id: string, w
         | { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, treeValue?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null }
         | { payload?: any | null, raw_payload?: any | null, value?: any | null, raw_value?: any | null, id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null }
        }> } };
-
-export type RecordUpdateLightSubscriptionVariables = Exact<{
-  filters?: InputMaybe<RecordUpdateFilterInput>;
-}>;
-
-
-export type RecordUpdateLightSubscription = { recordUpdate: { record: { id: string }, updatedValues: Array<{ attribute: string }> } };
 
 export type GetRecordsFromLibraryQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
@@ -2011,11 +2018,12 @@ export type SaveValueBatchMutation = { saveValueBatch: { values?: Array<
       | { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, linkValue?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null }
       | { id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, treeValue?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } }, ancestors?: Array<{ record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } }> | null } | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null }
       | { payload?: any | null, raw_payload?: any | null, value?: any | null, raw_value?: any | null, id_value?: string | null, isInherited?: boolean | null, isCalculated?: boolean | null, modified_at?: number | null, created_at?: number | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null, attribute: { id: string, format?: AttributeFormat | null, type: AttributeType, system: boolean }, metadata?: Array<{ name: string, value?: { id_value?: string | null, modified_at?: number | null, created_at?: number | null, payload?: any | null, raw_payload?: any | null, modified_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, created_by?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null, version?: Array<{ treeId: string, treeNode?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } } | null } | null> | null } | null } | null> | null }
-    > | null, errors?: Array<{ type: string, attribute: string, input?: string | null, message: string }> | null } };
+    > | null, errors?: Array<{ type: string, attribute?: string | null, input?: string | null, message: string }> | null } };
 
 export type SaveValueBulkMutationVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   recordsFilters: Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
   attributeId: Scalars['ID']['input'];
   mapping: Array<SaveValueBulkMappingInput> | SaveValueBulkMappingInput;
 }>;
@@ -2035,21 +2043,21 @@ export type GetViewQueryVariables = Exact<{
 }>;
 
 
-export type GetViewQuery = { view: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
+export type GetViewQuery = { view: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } | null, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
 
 export type GetViewsListQueryVariables = Exact<{
   libraryId: Scalars['String']['input'];
 }>;
 
 
-export type GetViewsListQuery = { views: { totalCount: number, list: Array<{ id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null }> } };
+export type GetViewsListQuery = { views: { totalCount: number, list: Array<{ id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } | null, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null }> } };
 
 export type SaveViewMutationVariables = Exact<{
   view: ViewInput;
 }>;
 
 
-export type SaveViewMutation = { saveView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
+export type SaveViewMutation = { saveView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } | null, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
 
 export type AttributeWithValuesForMassEditionQueryVariables = Exact<{
   attributeId: Scalars['ID']['input'];
@@ -2112,7 +2120,10 @@ export type ExplorerLibraryDataQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerLibraryDataQuery = { records: { totalCount?: number | null, list: Array<{ id: string, active: boolean, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, permissions: { create_record: boolean, delete_record: boolean }, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }, values: Array<
+export type ExplorerLibraryDataQuery = { records: { totalCount?: number | null, list: Array<{ id: string, active: boolean, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, permissions: { create_record: boolean, delete_record: boolean }, properties: Array<{ attributeId: string, attributeProperties:
+          | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }
+          | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null }
+        , values: Array<
           | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
           | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
           | { valuePayload?: any | null, valueRawPayload?: any | null }
@@ -2127,7 +2138,10 @@ export type ExplorerLinkDataQueryVariables = Exact<{
 
 
 export type ExplorerLinkDataQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, library: { id: string } }, property: Array<
-        | { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, attributeProperties: { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }, values: Array<
+        | { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, attributeProperties:
+                | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }
+                | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null }
+              , values: Array<
                 | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
                 | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
                 | { valuePayload?: any | null, valueRawPayload?: any | null }
@@ -2190,6 +2204,7 @@ export type TreeAttributeRemappingQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   attributeId: Scalars['ID']['input'];
   recordFilters: Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
   attributeDependentValue?: InputMaybe<AttributeDependentValueInput>;
 }>;
 
@@ -2204,16 +2219,49 @@ export type UpdateViewMutationVariables = Exact<{
 }>;
 
 
-export type UpdateViewMutation = { updateView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } }, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
+export type UpdateViewMutation = { updateView: { id: string, shared: boolean, label: any, description?: any | null, color?: string | null, display: { size?: ViewSizes | null, type: ViewTypes }, created_by?: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } | null, filters?: Array<{ field?: string | null, value?: string | null, condition?: RecordFilterCondition | null, operator?: RecordFilterOperator | null, withEmptyValues?: boolean | null, tree?: { id: string, label?: any | null } | null }> | null, sort?: Array<{ field: string, order: SortOrder }> | null, valuesVersions?: Array<{ treeId: string, treeNode: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } }> | null, attributes?: Array<{ id: string }> | null } };
 
 export type ValuesOccurrencesForDependencyQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   dependencyAttributeId: Scalars['ID']['input'];
   recordFilters: Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
 export type ValuesOccurrencesForDependencyQuery = { listDistinctValues?: Array<{ treeNode?: { id: string, record: { id: string, whoAmI: { label?: string | null } } } | null }> | null };
+
+export type KanbanAxisAttributeQueryVariables = Exact<{
+  attributeId: Scalars['ID']['input'];
+}>;
+
+
+export type KanbanAxisAttributeQuery = { attributes?: { list: Array<
+      | { id: string, multiple_values: boolean }
+      | { id: string, multiple_values: boolean, linked_tree?: { id: string } | null }
+    > } | null };
+
+export type KanbanTransitionsQueryVariables = Exact<{
+  attributeId: Scalars['ID']['input'];
+}>;
+
+
+export type KanbanTransitionsQuery = { attributes?: { list: Array<
+      | { id: string, permissions: { edit_value: boolean } }
+      | { id: string, tree_values?: Array<{ node?: { id: string } | null, allowedDependentValues?: Array<{ nodeId?: string | null }> | null }> | null, permissions: { edit_value: boolean } }
+    > } | null };
+
+export type ListDistinctValuesQueryVariables = Exact<{
+  library: Scalars['ID']['input'];
+  attribute: Scalars['ID']['input'];
+  recordFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+}>;
+
+
+export type ListDistinctValuesQuery = { listDistinctValues?: Array<
+    | { count: number }
+    | { count: number, value?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string } } } } | null }
+  > | null };
 
 export type TreeFiltersDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID']['input'];
@@ -2289,6 +2337,13 @@ export type GlobalSettingsFlagsQueryVariables = Exact<{ [key: string]: never; }>
 
 
 export type GlobalSettingsFlagsQuery = { globalSettings: { settings?: any | null } };
+
+export type RecordUpdateLightSubscriptionVariables = Exact<{
+  filters?: InputMaybe<RecordUpdateFilterInput>;
+}>;
+
+
+export type RecordUpdateLightSubscription = { recordUpdate: { record: { id: string }, updatedValues: Array<{ attribute: string }> } };
 
 export const RecordIdentityFragmentDoc = gql`
     fragment RecordIdentity on Record {
@@ -3073,6 +3128,11 @@ export const AttributePropertiesFragmentDoc = gql`
   multiple_values
   multi_link_display_option
   multi_tree_display_option
+  ... on TreeAttribute {
+    linked_tree {
+      id
+    }
+  }
 }
     `;
 export const PropertyValueFragmentDoc = gql`
@@ -4833,41 +4893,6 @@ export function useRecordUpdateSubscription(baseOptions?: Apollo.SubscriptionHoo
       }
 export type RecordUpdateSubscriptionHookResult = ReturnType<typeof useRecordUpdateSubscription>;
 export type RecordUpdateSubscriptionResult = Apollo.SubscriptionResult<RecordUpdateSubscription>;
-export const RecordUpdateLightDocument = gql`
-    subscription RECORD_UPDATE_LIGHT($filters: RecordUpdateFilterInput) {
-  recordUpdate(filters: $filters) {
-    record {
-      id
-    }
-    updatedValues {
-      attribute
-    }
-  }
-}
-    `;
-
-/**
- * __useRecordUpdateLightSubscription__
- *
- * To run a query within a React component, call `useRecordUpdateLightSubscription` and pass it any options that fit your needs.
- * When your component renders, `useRecordUpdateLightSubscription` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useRecordUpdateLightSubscription({
- *   variables: {
- *      filters: // value for 'filters'
- *   },
- * });
- */
-export function useRecordUpdateLightSubscription(baseOptions?: Apollo.SubscriptionHookOptions<RecordUpdateLightSubscription, RecordUpdateLightSubscriptionVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<RecordUpdateLightSubscription, RecordUpdateLightSubscriptionVariables>(RecordUpdateLightDocument, options);
-      }
-export type RecordUpdateLightSubscriptionHookResult = ReturnType<typeof useRecordUpdateLightSubscription>;
-export type RecordUpdateLightSubscriptionResult = Apollo.SubscriptionResult<RecordUpdateLightSubscription>;
 export const GetRecordsFromLibraryDocument = gql`
     query getRecordsFromLibrary($libraryId: ID!, $pagination: RecordsPagination, $filters: [RecordFilterInput]) {
   records(library: $libraryId, filters: $filters, pagination: $pagination) {
@@ -5563,10 +5588,11 @@ export type SaveValueBatchMutationHookResult = ReturnType<typeof useSaveValueBat
 export type SaveValueBatchMutationResult = Apollo.MutationResult<SaveValueBatchMutation>;
 export type SaveValueBatchMutationOptions = Apollo.BaseMutationOptions<SaveValueBatchMutation, SaveValueBatchMutationVariables>;
 export const SaveValueBulkDocument = gql`
-    mutation SAVE_VALUE_BULK($libraryId: ID!, $recordsFilters: [RecordFilterInput]!, $attributeId: ID!, $mapping: [SaveValueBulkMappingInput!]!) {
+    mutation SAVE_VALUE_BULK($libraryId: ID!, $recordsFilters: [RecordFilterInput]!, $searchQuery: String, $attributeId: ID!, $mapping: [SaveValueBulkMappingInput!]!) {
   saveValueBulk(
     libraryId: $libraryId
     recordsFilters: $recordsFilters
+    searchQuery: $searchQuery
     attributeId: $attributeId
     mapping: $mapping
   )
@@ -5589,6 +5615,7 @@ export type SaveValueBulkMutationFn = Apollo.MutationFunction<SaveValueBulkMutat
  *   variables: {
  *      libraryId: // value for 'libraryId'
  *      recordsFilters: // value for 'recordsFilters'
+ *      searchQuery: // value for 'searchQuery'
  *      attributeId: // value for 'attributeId'
  *      mapping: // value for 'mapping'
  *   },
@@ -6451,11 +6478,12 @@ export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeSuspenseQueryHookResult = ReturnType<typeof useMeSuspenseQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const TreeAttributeRemappingDocument = gql`
-    query TreeAttributeRemapping($libraryId: ID!, $attributeId: ID!, $recordFilters: [RecordFilterInput]!, $attributeDependentValue: AttributeDependentValueInput) {
+    query TreeAttributeRemapping($libraryId: ID!, $attributeId: ID!, $recordFilters: [RecordFilterInput]!, $searchQuery: String, $attributeDependentValue: AttributeDependentValueInput) {
   listDistinctValues(
     library: $libraryId
     attribute: $attributeId
     recordFilters: $recordFilters
+    searchQuery: $searchQuery
   ) {
     count
     ... on TreeDistinctValues {
@@ -6503,6 +6531,7 @@ export const TreeAttributeRemappingDocument = gql`
  *      libraryId: // value for 'libraryId'
  *      attributeId: // value for 'attributeId'
  *      recordFilters: // value for 'recordFilters'
+ *      searchQuery: // value for 'searchQuery'
  *      attributeDependentValue: // value for 'attributeDependentValue'
  *   },
  * });
@@ -6560,11 +6589,12 @@ export type UpdateViewMutationHookResult = ReturnType<typeof useUpdateViewMutati
 export type UpdateViewMutationResult = Apollo.MutationResult<UpdateViewMutation>;
 export type UpdateViewMutationOptions = Apollo.BaseMutationOptions<UpdateViewMutation, UpdateViewMutationVariables>;
 export const ValuesOccurrencesForDependencyDocument = gql`
-    query ValuesOccurrencesForDependency($libraryId: ID!, $dependencyAttributeId: ID!, $recordFilters: [RecordFilterInput]!) {
+    query ValuesOccurrencesForDependency($libraryId: ID!, $dependencyAttributeId: ID!, $recordFilters: [RecordFilterInput]!, $searchQuery: String) {
   listDistinctValues(
     library: $libraryId
     attribute: $dependencyAttributeId
     recordFilters: $recordFilters
+    searchQuery: $searchQuery
   ) {
     ... on TreeDistinctValues {
       treeNode: value {
@@ -6596,6 +6626,7 @@ export const ValuesOccurrencesForDependencyDocument = gql`
  *      libraryId: // value for 'libraryId'
  *      dependencyAttributeId: // value for 'dependencyAttributeId'
  *      recordFilters: // value for 'recordFilters'
+ *      searchQuery: // value for 'searchQuery'
  *   },
  * });
  */
@@ -6618,6 +6649,180 @@ export type ValuesOccurrencesForDependencyQueryHookResult = ReturnType<typeof us
 export type ValuesOccurrencesForDependencyLazyQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencyLazyQuery>;
 export type ValuesOccurrencesForDependencySuspenseQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencySuspenseQuery>;
 export type ValuesOccurrencesForDependencyQueryResult = Apollo.QueryResult<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>;
+export const KanbanAxisAttributeDocument = gql`
+    query KanbanAxisAttribute($attributeId: ID!) {
+  attributes(filters: {id: $attributeId}) {
+    list {
+      id
+      multiple_values
+      ... on TreeAttribute {
+        linked_tree {
+          id
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useKanbanAxisAttributeQuery__
+ *
+ * To run a query within a React component, call `useKanbanAxisAttributeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useKanbanAxisAttributeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useKanbanAxisAttributeQuery({
+ *   variables: {
+ *      attributeId: // value for 'attributeId'
+ *   },
+ * });
+ */
+export function useKanbanAxisAttributeQuery(baseOptions: Apollo.QueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables> & ({ variables: KanbanAxisAttributeQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
+      }
+export function useKanbanAxisAttributeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
+        }
+// @ts-ignore
+export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>;
+export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanAxisAttributeQuery | undefined, KanbanAxisAttributeQueryVariables>;
+export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
+        }
+export type KanbanAxisAttributeQueryHookResult = ReturnType<typeof useKanbanAxisAttributeQuery>;
+export type KanbanAxisAttributeLazyQueryHookResult = ReturnType<typeof useKanbanAxisAttributeLazyQuery>;
+export type KanbanAxisAttributeSuspenseQueryHookResult = ReturnType<typeof useKanbanAxisAttributeSuspenseQuery>;
+export type KanbanAxisAttributeQueryResult = Apollo.QueryResult<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>;
+export const KanbanTransitionsDocument = gql`
+    query KanbanTransitions($attributeId: ID!) {
+  attributes(filters: {id: $attributeId}) {
+    list {
+      id
+      permissions {
+        edit_value
+      }
+      ... on TreeAttribute {
+        tree_values {
+          node {
+            id
+          }
+          allowedDependentValues {
+            nodeId
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useKanbanTransitionsQuery__
+ *
+ * To run a query within a React component, call `useKanbanTransitionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useKanbanTransitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useKanbanTransitionsQuery({
+ *   variables: {
+ *      attributeId: // value for 'attributeId'
+ *   },
+ * });
+ */
+export function useKanbanTransitionsQuery(baseOptions: Apollo.QueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables> & ({ variables: KanbanTransitionsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>(KanbanTransitionsDocument, options);
+      }
+export function useKanbanTransitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>(KanbanTransitionsDocument, options);
+        }
+// @ts-ignore
+export function useKanbanTransitionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>;
+export function useKanbanTransitionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanTransitionsQuery | undefined, KanbanTransitionsQueryVariables>;
+export function useKanbanTransitionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>(KanbanTransitionsDocument, options);
+        }
+export type KanbanTransitionsQueryHookResult = ReturnType<typeof useKanbanTransitionsQuery>;
+export type KanbanTransitionsLazyQueryHookResult = ReturnType<typeof useKanbanTransitionsLazyQuery>;
+export type KanbanTransitionsSuspenseQueryHookResult = ReturnType<typeof useKanbanTransitionsSuspenseQuery>;
+export type KanbanTransitionsQueryResult = Apollo.QueryResult<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>;
+export const ListDistinctValuesDocument = gql`
+    query ListDistinctValues($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput]) {
+  listDistinctValues(
+    library: $library
+    attribute: $attribute
+    recordFilters: $recordFilters
+  ) {
+    count
+    ... on TreeDistinctValues {
+      value {
+        id
+        record {
+          id
+          whoAmI {
+            id
+            label
+            color
+            library {
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useListDistinctValuesQuery__
+ *
+ * To run a query within a React component, call `useListDistinctValuesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useListDistinctValuesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useListDistinctValuesQuery({
+ *   variables: {
+ *      library: // value for 'library'
+ *      attribute: // value for 'attribute'
+ *      recordFilters: // value for 'recordFilters'
+ *   },
+ * });
+ */
+export function useListDistinctValuesQuery(baseOptions: Apollo.QueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables> & ({ variables: ListDistinctValuesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>(ListDistinctValuesDocument, options);
+      }
+export function useListDistinctValuesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>(ListDistinctValuesDocument, options);
+        }
+// @ts-ignore
+export function useListDistinctValuesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>): Apollo.UseSuspenseQueryResult<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>;
+export function useListDistinctValuesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>): Apollo.UseSuspenseQueryResult<ListDistinctValuesQuery | undefined, ListDistinctValuesQueryVariables>;
+export function useListDistinctValuesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>(ListDistinctValuesDocument, options);
+        }
+export type ListDistinctValuesQueryHookResult = ReturnType<typeof useListDistinctValuesQuery>;
+export type ListDistinctValuesLazyQueryHookResult = ReturnType<typeof useListDistinctValuesLazyQuery>;
+export type ListDistinctValuesSuspenseQueryHookResult = ReturnType<typeof useListDistinctValuesSuspenseQuery>;
+export type ListDistinctValuesQueryResult = Apollo.QueryResult<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>;
 export const TreeFiltersDataQueryDocument = gql`
     query TreeFiltersDataQuery($treeId: ID!, $startAt: ID, $accessRecordByDefaultPermission: AccessRecordByDefaultPermissionInput) {
   treeContent(
@@ -7050,213 +7255,38 @@ export type GlobalSettingsFlagsQueryHookResult = ReturnType<typeof useGlobalSett
 export type GlobalSettingsFlagsLazyQueryHookResult = ReturnType<typeof useGlobalSettingsFlagsLazyQuery>;
 export type GlobalSettingsFlagsSuspenseQueryHookResult = ReturnType<typeof useGlobalSettingsFlagsSuspenseQuery>;
 export type GlobalSettingsFlagsQueryResult = Apollo.QueryResult<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>;
-// --- Kanban operations (ExplorerV2) ---
-
-export type KanbanAxisAttributeQueryVariables = Exact<{
-  attributeId: Scalars['ID']['input'];
-}>;
-
-
-export type KanbanAxisAttributeQuery = { attributes?: { list: Array<
-      | { id: string, multiple_values: boolean }
-      | { id: string, multiple_values: boolean, linked_tree?: { id: string } | null }
-    > } | null };
-
-export type KanbanTransitionsQueryVariables = Exact<{
-  attributeId: Scalars['ID']['input'];
-}>;
-
-
-export type KanbanTransitionsQuery = { attributes?: { list: Array<
-      | { id: string, permissions: { edit_value: boolean } }
-      | { id: string, tree_values?: Array<{ node?: { id: string } | null, allowedDependentValues?: Array<{ nodeId?: string | null }> | null }> | null, permissions: { edit_value: boolean } }
-    > } | null };
-
-export type ListDistinctValuesQueryVariables = Exact<{
-  library: Scalars['ID']['input'];
-  attribute: Scalars['ID']['input'];
-  recordFilters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
-}>;
-
-
-export type ListDistinctValuesQuery = { listDistinctValues?: Array<
-    | { count: number }
-    | { count: number, value?: { id: string, record: { id: string, whoAmI: { id: string, label?: string | null, color?: string | null, library: { id: string } } } } | null }
-  > | null };
-
-export const KanbanAxisAttributeDocument = gql`
-    query KanbanAxisAttribute($attributeId: ID!) {
-  attributes(filters: {ids: [$attributeId]}) {
-    list {
+export const RecordUpdateLightDocument = gql`
+    subscription RECORD_UPDATE_LIGHT($filters: RecordUpdateFilterInput) {
+  recordUpdate(filters: $filters) {
+    record {
       id
-      multiple_values
-      ... on TreeAttribute {
-        linked_tree {
-          id
-        }
-      }
+    }
+    updatedValues {
+      attribute
     }
   }
 }
     `;
 
 /**
- * __useKanbanAxisAttributeQuery__
+ * __useRecordUpdateLightSubscription__
  *
- * To run a query within a React component, call `useKanbanAxisAttributeQuery` and pass it any options that fit your needs.
- * When your component renders, `useKanbanAxisAttributeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useRecordUpdateLightSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useRecordUpdateLightSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useKanbanAxisAttributeQuery({
+ * const { data, loading, error } = useRecordUpdateLightSubscription({
  *   variables: {
- *      attributeId: // value for 'attributeId'
+ *      filters: // value for 'filters'
  *   },
  * });
  */
-export function useKanbanAxisAttributeQuery(baseOptions: Apollo.QueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables> & ({ variables: KanbanAxisAttributeQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useRecordUpdateLightSubscription(baseOptions?: Apollo.SubscriptionHookOptions<RecordUpdateLightSubscription, RecordUpdateLightSubscriptionVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
+        return Apollo.useSubscription<RecordUpdateLightSubscription, RecordUpdateLightSubscriptionVariables>(RecordUpdateLightDocument, options);
       }
-export function useKanbanAxisAttributeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
-        }
-// @ts-ignore
-export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>;
-export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanAxisAttributeQuery | undefined, KanbanAxisAttributeQueryVariables>;
-export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
-        }
-export type KanbanAxisAttributeQueryHookResult = ReturnType<typeof useKanbanAxisAttributeQuery>;
-export type KanbanAxisAttributeLazyQueryHookResult = ReturnType<typeof useKanbanAxisAttributeLazyQuery>;
-export type KanbanAxisAttributeSuspenseQueryHookResult = ReturnType<typeof useKanbanAxisAttributeSuspenseQuery>;
-export type KanbanAxisAttributeQueryResult = Apollo.QueryResult<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>;
-
-export const KanbanTransitionsDocument = gql`
-    query KanbanTransitions($attributeId: ID!) {
-  attributes(filters: {id: $attributeId}) {
-    list {
-      id
-      permissions {
-        edit_value
-      }
-      ... on TreeAttribute {
-        tree_values {
-          node {
-            id
-          }
-          allowedDependentValues {
-            nodeId
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useKanbanTransitionsQuery__
- *
- * To run a query within a React component, call `useKanbanTransitionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useKanbanTransitionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useKanbanTransitionsQuery({
- *   variables: {
- *      attributeId: // value for 'attributeId'
- *   },
- * });
- */
-export function useKanbanTransitionsQuery(baseOptions: Apollo.QueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables> & ({ variables: KanbanTransitionsQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>(KanbanTransitionsDocument, options);
-      }
-export function useKanbanTransitionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>(KanbanTransitionsDocument, options);
-        }
-// @ts-ignore
-export function useKanbanTransitionsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>;
-export function useKanbanTransitionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanTransitionsQuery | undefined, KanbanTransitionsQueryVariables>;
-export function useKanbanTransitionsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>(KanbanTransitionsDocument, options);
-        }
-export type KanbanTransitionsQueryHookResult = ReturnType<typeof useKanbanTransitionsQuery>;
-export type KanbanTransitionsLazyQueryHookResult = ReturnType<typeof useKanbanTransitionsLazyQuery>;
-export type KanbanTransitionsSuspenseQueryHookResult = ReturnType<typeof useKanbanTransitionsSuspenseQuery>;
-export type KanbanTransitionsQueryResult = Apollo.QueryResult<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>;
-
-export const ListDistinctValuesDocument = gql`
-    query ListDistinctValues($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput]) {
-  listDistinctValues(
-    library: $library
-    attribute: $attribute
-    recordFilters: $recordFilters
-  ) {
-    count
-    ... on TreeDistinctValues {
-      value {
-        id
-        record {
-          id
-          whoAmI {
-            id
-            label
-            color
-            library {
-              id
-            }
-          }
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useListDistinctValuesQuery__
- *
- * To run a query within a React component, call `useListDistinctValuesQuery` and pass it any options that fit your needs.
- * When your component renders, `useListDistinctValuesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useListDistinctValuesQuery({
- *   variables: {
- *      library: // value for 'library'
- *      attribute: // value for 'attribute'
- *      recordFilters: // value for 'recordFilters'
- *   },
- * });
- */
-export function useListDistinctValuesQuery(baseOptions: Apollo.QueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables> & ({ variables: ListDistinctValuesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>(ListDistinctValuesDocument, options);
-      }
-export function useListDistinctValuesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>(ListDistinctValuesDocument, options);
-        }
-// @ts-ignore
-export function useListDistinctValuesSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>): Apollo.UseSuspenseQueryResult<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>;
-export function useListDistinctValuesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>): Apollo.UseSuspenseQueryResult<ListDistinctValuesQuery | undefined, ListDistinctValuesQueryVariables>;
-export function useListDistinctValuesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>(ListDistinctValuesDocument, options);
-        }
-export type ListDistinctValuesQueryHookResult = ReturnType<typeof useListDistinctValuesQuery>;
-export type ListDistinctValuesLazyQueryHookResult = ReturnType<typeof useListDistinctValuesLazyQuery>;
-export type ListDistinctValuesSuspenseQueryHookResult = ReturnType<typeof useListDistinctValuesSuspenseQuery>;
-export type ListDistinctValuesQueryResult = Apollo.QueryResult<ListDistinctValuesQuery, ListDistinctValuesQueryVariables>;
+export type RecordUpdateLightSubscriptionHookResult = ReturnType<typeof useRecordUpdateLightSubscription>;
+export type RecordUpdateLightSubscriptionResult = Apollo.SubscriptionResult<RecordUpdateLightSubscription>;

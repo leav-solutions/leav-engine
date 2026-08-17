@@ -270,6 +270,8 @@ export default function ({
                             attribute: ID!,
                             """ Filters to apply on records, same filters as for records query """
                             recordFilters: [RecordFilterInput],
+                            """ Fulltext search to apply on records, same as for records query """
+                            searchQuery: String,
                             version: [ValueVersionInput],
                         ): [GenericDistinctValues!]
                     }
@@ -290,7 +292,7 @@ export default function ({
                         ): saveValueBatchResult!
 
                         """ Save values in bulk for all records matching the filters """
-                        saveValueBulk(libraryId: ID!, recordsFilters: [RecordFilterInput], attributeId: ID!, mapping: [SaveValueBulkMappingInput!]!): ID!
+                        saveValueBulk(libraryId: ID!, recordsFilters: [RecordFilterInput], searchQuery: String, attributeId: ID!, mapping: [SaveValueBulkMappingInput!]!): ID!
 
                         """ The returned values are the deleted ones """ 
                         deleteValue(library: ID!, recordId: ID!, attribute: ID!, value: ValueInput): [GenericValue!]!
@@ -303,7 +305,7 @@ export default function ({
                     Query: {
                         async listDistinctValues(
                             _,
-                            {library, attribute, recordFilters, version},
+                            {library, attribute, recordFilters, searchQuery, version},
                             ctx: IQueryInfos,
                         ): Promise<Array<{value: IBaseValue; attribute: string; count: number}>> {
                             const formattedVersion =
@@ -318,7 +320,7 @@ export default function ({
                                 libraryId: library,
                                 attributeId: attribute,
                                 recordFilters,
-                                options: {version: formattedVersion},
+                                options: {version: formattedVersion, fulltextSearch: searchQuery},
                                 ctx,
                             });
 
@@ -344,11 +346,13 @@ export default function ({
                             {
                                 libraryId,
                                 recordsFilters,
+                                searchQuery,
                                 attributeId,
                                 mapping,
                             }: {
                                 libraryId: string;
                                 recordsFilters?: IRecordFilterLight[];
+                                searchQuery?: string;
                                 attributeId: string;
                                 mapping: Array<{
                                     dependenciesFilters?: IRecordFilterLight[];
@@ -363,6 +367,7 @@ export default function ({
                             return saveValueBulkTask.saveValueBulk({
                                 libraryId,
                                 recordsFilters,
+                                fulltextSearch: searchQuery,
                                 attributeId,
                                 mapping,
                                 ctx,

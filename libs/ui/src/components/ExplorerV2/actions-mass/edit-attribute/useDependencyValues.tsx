@@ -11,10 +11,12 @@ export const useDependencyValues = ({
     libraryId,
     monoDependencyAttribute,
     massSelectionFilters,
+    massSelectionSearchQuery,
 }: {
     libraryId: string;
     monoDependencyAttribute: {id: string; linkedTreeLibraryId: string};
     massSelectionFilters: RecordFilterInput[];
+    massSelectionSearchQuery?: string;
 }): {dependencyValues: DependencyValue[]; loading: boolean} => {
     const {t} = useSharedTranslation();
 
@@ -23,6 +25,7 @@ export const useDependencyValues = ({
             libraryId,
             dependencyAttributeId: monoDependencyAttribute.id,
             recordFilters: massSelectionFilters,
+            searchQuery: massSelectionSearchQuery,
         },
     });
 

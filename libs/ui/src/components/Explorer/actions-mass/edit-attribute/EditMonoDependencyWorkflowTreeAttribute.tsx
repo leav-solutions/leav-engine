@@ -10,11 +10,13 @@ export const EditMonoDependencyWorkflowTreeAttribute = ({
     libraryId,
     attribute,
     massSelectionFilters,
+    massSelectionSearchQuery,
     setAttributeMapping,
 }: {
     libraryId: string;
     attribute: MassEditableAttribute;
     massSelectionFilters: RecordFilterInput[];
+    massSelectionSearchQuery?: string;
     setAttributeMapping: SetAttributeMappingWithDependency;
 }) => {
     const {t} = useSharedTranslation();
@@ -27,6 +29,7 @@ export const EditMonoDependencyWorkflowTreeAttribute = ({
         libraryId,
         monoDependencyAttribute,
         massSelectionFilters,
+        massSelectionSearchQuery,
     });
 
     const isLoaderVisible = useDelayedLoading(loading);
@@ -62,6 +65,7 @@ export const EditMonoDependencyWorkflowTreeAttribute = ({
                                         dependencyAttributeId={dependencyAttributeId}
                                         dependencyAttributeNodeId={dependencyAttributeNodeId}
                                         massSelectionFilters={filtersWithDependency}
+                                        massSelectionSearchQuery={massSelectionSearchQuery}
                                         setAttributeMapping={({before, after, occurrenceCount}) => {
                                             setAttributeMapping({
                                                 before,
