@@ -185,26 +185,35 @@ Modèle à trois niveaux : Admin → Library → Record.
 
 ---
 
-## Export SDO — surface d'API pour les plugins
+## Export SDO — fonctions d'export
 
 `src/domain/sdo/` exporte une bibliothèque en SDO à partir d'une config déclarative
-(`globalSettings.settings.sdo.mapping`). Quand cette config ne suffit pas, un plugin prend le relais via
-`registerSDOExportMappingFunctions` (un chemin SDO, avec `exportFunctionConfig` pour sa config
-d'instance) ou `registerExtendSDOFunctions` (tout le SDO déjà construit), plus
-`additionalAttributeTriggers` / `additionalLibraryTriggers` pour le déclenchement.
+(`globalSettings.settings.sdo.mapping`). Quand cette config ne suffit pas, une `exportFunction` produit
+la valeur d'un chemin SDO (avec `exportFunctionConfig` pour sa config d'instance), un
+`extendSDOFunction` post-traite tout le SDO déjà construit, et
+`additionalAttributeTriggers` / `additionalLibraryTriggers` couvrent le déclenchement.
+
+Le registre des `exportFunction` a **deux alimentations** : les fonctions **natives** du core
+(`NATIVE_SDO_EXPORT_FUNCTIONS`, dans [`src/domain/sdo/export/exportFunctions/`](src/domain/sdo/export/exportFunctions/)),
+utilisables par simple déclaration dans le mapping — leurs noms sont réservés — et celles qu'un plugin
+enregistre via `registerSDOExportMappingFunctions`. **Regarder le catalogue natif avant d'écrire un
+plugin.**
 
 Une `exportFunction` reçoit le record complet : elle peut produire un **bloc entier** tout en gardant
-son chemin SDO déclaré dans le mapping. Une telle entrée **omet `leavAttributeId`** — ce n'est pas
-cosmétique, c'est ce qui empêche l'import d'écrire le bloc calculé dans un attribut.
+son chemin SDO déclaré dans le mapping. Une telle entrée **omet `leavAttributeId`**, ce qui la rend au
+passage invisible pour l'import — comme l'est toute entrée portant un `exportFunction`.
 
-> ⚠️ Deux pièges qui coûtent du temps :
+> ⚠️ Trois pièges qui coûtent du temps :
 >
 > - un attribut lu par une fonction d'export n'est mappé à **aucun** chemin SDO, donc `hasSDOAttribute`
 >   filtre son événement et **aucun export n'est émis** → `additionalAttributeTriggers` ;
-> - réutiliser un attribut réel comme faux porteur d'un bloc calculé le rend **importable**, et un
->   document entrant écrase alors cet attribut.
+> - réutiliser un attribut réel comme faux porteur d'un bloc calculé rend le mapping trompeur (le bloc
+>   n'a rien à voir avec l'attribut) ;
+> - une fonction d'export reçoit `values`, les valeurs **brutes** de l'attribut — déclarer un
+>   `exportFunction` court-circuite la conversion en uuid. Ce n'est pas ce que le mapping générique
+>   exporterait.
 
-→ Contrat complet, pièges et exemples : [`docs/sdo-export-plugins.md`](../../docs/sdo-export-plugins.md).
+→ Contrat complet, catalogue natif, pièges et exemples : [`docs/sdo-export-functions.md`](../../docs/sdo-export-functions.md).
 
 ---
 
