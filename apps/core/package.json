@@ -58,7 +58,7 @@
         "graphql-request": "7.4.0",
         "graphql-tag": "2.12.7",
         "prettier": "3.9.6",
-        "tsx": "4.23.11",
+        "tsx": "4.23.12",
         "typescript": "7.0.2",
         "vitest": "4.1.10"
     },
@@ -86,7 +86,7 @@
         "cookie-parser": "1.4.7",
         "cors": "2.8.6",
         "dataloader": "2.2.3",
-        "dayjs": "1.11.21",
+        "dayjs": "1.11.22",
         "exceljs": "4.4.0",
         "exiftool-vendored": "37.2.0",
         "express": "4.22.2",

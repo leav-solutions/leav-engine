@@ -28,9 +28,9 @@
     "license": "LGPL3",
     "stableVersion": "1.0.0",
     "dependencies": {
-        "@hono/node-server": "2.1.0",
+        "@hono/node-server": "2.1.1",
         "@leav/logger": "workspace:libs/logger",
-        "hono": "4.13.1"
+        "hono": "4.13.2"
     },
     "devDependencies": {
         "@types/node": "24.13.3",
