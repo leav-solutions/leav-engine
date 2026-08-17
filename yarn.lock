@@ -11064,7 +11064,7 @@ __metadata:
     cors: "npm:2.8.6"
     dataloader: "npm:2.2.3"
     dayjs: "npm:1.11.22"
-    eventsource: "npm:4.1.1"
+    eventsource: "npm:5.1.0"
     exceljs: "npm:4.4.0"
     exiftool-vendored: "npm:37.2.0"
     express: "npm:4.22.2"
@@ -12558,12 +12558,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventsource@npm:4.1.1":
-  version: 4.1.1
-  resolution: "eventsource@npm:4.1.1"
+"eventsource-parser@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "eventsource-parser@npm:4.0.0"
+  checksum: 10/a206c1dea4b05f97840e21b792db1b3f286e065c9f878f3fb6cf139181b6bc9550b399517bb74e3d405a19a0399625cf1e851e230bcfe4cb11b4d9558457fe69
+  languageName: node
+  linkType: hard
+
+"eventsource@npm:5.1.0":
+  version: 5.1.0
+  resolution: "eventsource@npm:5.1.0"
   dependencies:
-    eventsource-parser: "npm:^3.0.1"
-  checksum: 10/fa1e55bd05c3ecf7768ae75ece4be9961e2b3104877b974eee10dd0eaafd0813b7d25a3ba1a7d72d16ab72abb3155a2c9156e9f0a20b1673dac95426fe12b768
+    eventsource-parser: "npm:^4.0.0"
+  checksum: 10/696fb3cfecc0b66d25d857c879c2f050ce6d88fefc60ea84c001434fb6ce9ed63dd3c7e6a8f914620825e0db0ab22c3a76b0f060d06045e93d61209006cf2a8d
   languageName: node
   linkType: hard
 
