@@ -40,7 +40,7 @@
         "react-flag-kit": "1.1.1",
         "react-i18next": "12",
         "react-router-dom": "6.30.4",
-        "zod": "3.25.76"
+        "zod": "4.4.3"
     },
     "resolutions": {
         "@types/react": "18.3.31",

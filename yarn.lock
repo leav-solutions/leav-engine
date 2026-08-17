@@ -4212,7 +4212,7 @@ __metadata:
     typescript: "npm:7.0.2"
     vite: "npm:8.2.1"
     vitest: "npm:4.1.10"
-    zod: "npm:3.25.76"
+    zod: "npm:4.4.3"
   peerDependencies:
     "@apollo/client": ">=3.8.1"
     aristid-ds: 17.1.0-63930cf
@@ -9387,7 +9387,7 @@ __metadata:
     vite-plugin-dynamic-base: "npm:1.4.1"
     vite-plugin-svgr: "npm:4.5.0"
     vitest: "npm:4.1.10"
-    zod: "npm:3.25.76"
+    zod: "npm:4.4.3"
   languageName: unknown
   linkType: soft
 
@@ -11099,7 +11099,7 @@ __metadata:
     typescript: "npm:7.0.2"
     vitest: "npm:4.1.10"
     ws: "npm:8.21.3"
-    zod: "npm:4.3.6"
+    zod: "npm:4.4.3"
   languageName: unknown
   linkType: soft
 
@@ -15924,7 +15924,7 @@ __metadata:
     graphql-tag: "npm:2.12.7"
     typescript: "npm:7.0.2"
     vitest: "npm:4.1.10"
-    zod: "npm:4.3.6"
+    zod: "npm:4.4.3"
   languageName: unknown
   linkType: soft
 
@@ -16107,7 +16107,7 @@ __metadata:
     tsx: "npm:4.23.12"
     typescript: "npm:7.0.2"
     vitest: "npm:4.1.10"
-    zod: "npm:4.3.6"
+    zod: "npm:4.4.3"
   languageName: unknown
   linkType: soft
 
@@ -21591,21 +21591,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:3.25.76":
-  version: 3.25.76
-  resolution: "zod@npm:3.25.76"
-  checksum: 10/f0c963ec40cd96858451d1690404d603d36507c1fc9682f2dae59ab38b578687d542708a7fdbf645f77926f78c9ed558f57c3d3aa226c285f798df0c4da16995
-  languageName: node
-  linkType: hard
-
-"zod@npm:4.3.6":
-  version: 4.3.6
-  resolution: "zod@npm:4.3.6"
-  checksum: 10/25fc0f62e01b557b4644bf0b393bbaf47542ab30877c37837ea8caf314a8713d220c7d7fe51f68ffa72f0e1018ddfa34d96f1973d23033f5a2a5a9b6b9d9da01
-  languageName: node
-  linkType: hard
-
-"zod@npm:^3.25 || ^4.0, zod@npm:^3.25.0 || ^4.0.0":
+"zod@npm:4.4.3, zod@npm:^3.25 || ^4.0, zod@npm:^3.25.0 || ^4.0.0":
   version: 4.4.3
   resolution: "zod@npm:4.4.3"
   checksum: 10/804b9a42aa8f35f2b3c5a8dff906291cb749115f83ee2afe3576d70b5b5c53c965365c7f4967690647a9c54af9838ff232a85ff9577a0a36c44b68bc6cdefe36

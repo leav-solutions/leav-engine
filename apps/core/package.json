@@ -114,7 +114,7 @@
         "progress-stream": "2.0.0",
         "redis": "6.2.1",
         "ws": "8.21.3",
-        "zod": "4.3.6"
+        "zod": "4.4.3"
     },
     "stableVersion": "1.0.0-alpha2"
 }
