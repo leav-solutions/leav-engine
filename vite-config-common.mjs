@@ -65,12 +65,12 @@ export const commonConfig = rootPath => ({
     plugins: [svgr(), react(), jsonHmr(), devIndexHtmlReplaceVarsPlugin()],
     resolve: {
         alias: [
-            {find: '@leav/utils', replacement: path.resolve(__dirname, 'libs/utils/src')},
-            {find: '@leav/ui', replacement: path.resolve(__dirname, 'libs/ui/src')},
-            {find: 'react-i18next', replacement: path.resolve(__dirname, 'node_modules/react-i18next')},
+            {find: '@leav/utils', replacement: path.resolve(import.meta.dirname, 'libs/utils/src')},
+            {find: '@leav/ui', replacement: path.resolve(import.meta.dirname, 'libs/ui/src')},
+            {find: 'react-i18next', replacement: path.resolve(import.meta.dirname, 'node_modules/react-i18next')},
             {
                 find: /_ui\/(.*)/,
-                replacement: path.resolve(__dirname, 'libs/ui/src/$1'),
+                replacement: path.resolve(import.meta.dirname, 'libs/ui/src/$1'),
             },
         ],
     },

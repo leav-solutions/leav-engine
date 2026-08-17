@@ -4,18 +4,21 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
 import {dynamicBase} from 'vite-plugin-dynamic-base';
-import {commonConfig, devIndexHtmlReplaceVarsPlugin} from '../../vite-config-common';
+import {commonConfig, devIndexHtmlReplaceVarsPlugin} from '../../vite-config-common.mjs';
 
 export default () => {
-    const conf = commonConfig(__dirname);
+    const conf = commonConfig(import.meta.dirname);
     return defineConfig({
         ...conf,
         resolve: {
             alias: [
                 ...conf.resolve.alias,
-                {find: 'themingVar', replacement: path.resolve(__dirname, './src/themingVar')},
-                {find: '../../theme.config', replacement: path.resolve(__dirname, './src/semantic-ui/theme.config')},
-                {find: 'semantic-ui/site', replacement: path.resolve(__dirname, './src/semantic-ui/site')},
+                {find: 'themingVar', replacement: path.resolve(import.meta.dirname, './src/themingVar')},
+                {
+                    find: '../../theme.config',
+                    replacement: path.resolve(import.meta.dirname, './src/semantic-ui/theme.config'),
+                },
+                {find: 'semantic-ui/site', replacement: path.resolve(import.meta.dirname, './src/semantic-ui/site')},
             ],
         },
         plugins: [

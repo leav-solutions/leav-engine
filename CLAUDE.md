@@ -166,7 +166,7 @@ docker exec -i $(docker container ls -aqf "name=core") yarn run test:e2e
 >
 > **Aucun `dist/` n'est commité** : `.gitignore` couvre `apps/*/dist` et `libs/*/dist`. En local, les
 > apps ne consomment pas le `dist` des libs mais leurs **sources**, via les alias de
-> [`vite-config-common.js`](vite-config-common.js) (`@leav/ui`, `_ui/*` → `libs/ui/src`) — donc
+> [`vite-config-common.mjs`](vite-config-common.mjs) (`@leav/ui`, `_ui/*` → `libs/ui/src`) — donc
 > `tscheck` et les tests passent sans build préalable. En CI, ce sont les jobs `build-npm-leav-*` qui
 > buildent et publient les libs. Un `yarn build` local ne sert qu'à vérifier le bundle.
 

@@ -7,7 +7,7 @@ WORKDIR /build
 
 # Copy required files for builds
 COPY .yarn ./.yarn
-COPY *.json yarn.lock .yarnrc.yml vite-config-common.js ./
+COPY *.json yarn.lock .yarnrc.yml vite-config-common.mjs ./
 COPY apps/ ./apps
 COPY libs/ ./libs
 
@@ -27,7 +27,7 @@ WORKDIR /install
 # And install only production dependencies for core
 RUN rsync -av \
     --exclude=".yarn/cache" \
-    --exclude="vite-config-*.js" \
+    --exclude="vite-config-*.mjs" \
     --exclude="babel.config.json" \
     --exclude="tsconfig.json" \
     --exclude="node_modules/" \
