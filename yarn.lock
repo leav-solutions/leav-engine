@@ -11381,7 +11381,7 @@ __metadata:
     graphql-upload: "npm:16.0.2"
     graphql-ws: "npm:5.16.2"
     handlebars: "npm:4.7.9"
-    hyperformula: "npm:3.3.0"
+    hyperformula: "npm:3.4.0"
     i18next: "npm:22.5.1"
     i18next-fs-backend: "npm:2.6.7"
     jexl-extended: "npm:2.0.4"
@@ -14390,13 +14390,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hyperformula@npm:3.3.0":
-  version: 3.3.0
-  resolution: "hyperformula@npm:3.3.0"
+"hyperformula@npm:3.4.0":
+  version: 3.4.0
+  resolution: "hyperformula@npm:3.4.0"
   dependencies:
     chevrotain: "npm:^6.5.0"
     tiny-emitter: "npm:^2.1.0"
-  checksum: 10/ce972d33955c56467bb673db0ff369a54e97f45c8ac4e5a5061859ca2c9241ade030db9ec7ddd77c57202db01026c433e2cff7269aae30049945e727a06b1f4c
+  checksum: 10/dff16161925859d95c1b45ee6c97793742433637587703b5f23452b2f11690b5c8e1b5189719d1b39f9b97c1cb463174f3e701b064eb72e30f215f8c6d9d6f34
   languageName: node
   linkType: hard
 
