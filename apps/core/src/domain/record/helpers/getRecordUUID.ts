@@ -3,16 +3,16 @@ import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IRecordRepo} from '../../../infra/record/recordRepo';
 
 /**
- * The uuid of a record — how an SDO references an entity, whether in `system.systemId` or in a mapped
- * link/tree value. `null` when the record is gone or carries no uuid.
+ * The uuid of a record — its stable, instance-independent identifier, and the way an SDO references an
+ * entity. `null` when the record is gone or carries no uuid.
  */
-export type GetRecordUUID = (libraryId: string, recordId: string, ctx: IQueryInfos) => Promise<string | null>;
+export type GetRecordUUIDHelper = (libraryId: string, recordId: string, ctx: IQueryInfos) => Promise<string | null>;
 
 interface IDeps {
     'core.infra.record': IRecordRepo;
 }
 
-export default function ({'core.infra.record': recordRepo}: IDeps): GetRecordUUID {
+export default function ({'core.infra.record': recordRepo}: IDeps): GetRecordUUIDHelper {
     return async (libraryId, recordId, ctx) =>
         (
             await recordRepo.getRecord({

@@ -1,4 +1,5 @@
 import {logger} from '@leav/logger';
+import pMap from 'p-map';
 import {AttributeTypes, type IAttribute} from '../../../../_types/attribute';
 import {ErrorTypes} from '../../../../_types/errors';
 import {type IQueryInfos} from '../../../../_types/queryInfos';
@@ -12,14 +13,19 @@ import {
 import {type ILinkValue, type ITreeValue, type IValue} from '../../../../_types/value';
 import LeavError from '../../../../errors/LeavError';
 import {type IRecordDomain} from '../../../record/recordDomain';
-import {type GetRecordUUID} from '../../helpers/getRecordUUID';
 
 interface IDeps {
     'core.domain.record': IRecordDomain;
-    'core.domain.sdo.helpers.getRecordUUID': GetRecordUUID;
 }
 
 const fnName = NATIVE_SDO_EXPORT_FUNCTIONS.TO_ID_LABEL;
+
+/**
+ * A link can hold a lot of entities (a PAC with hundreds, even thousands of campaigns), and each pair
+ * costs a uuid lookup plus a record identity resolution. Resolving them all at once would fire that
+ * many concurrent db reads; bound the fan-out instead.
+ */
+const RESOLUTION_CONCURRENCY = 20;
 
 const LINKED_ATTRIBUTE_TYPES = [AttributeTypes.SIMPLE_LINK, AttributeTypes.ADVANCED_LINK, AttributeTypes.TREE];
 
@@ -79,27 +85,22 @@ const _assertUsableConfig = (attributeProps: IAttribute | undefined, format: SDO
  * Multivalued attribute (`format: "array"`) → an array in the order leav returns the values;
  * single-valued (`format: "object"`) → one object, or `null` when the attribute holds no value.
  */
-export default function ({
-    'core.domain.record': recordDomain,
-    'core.domain.sdo.helpers.getRecordUUID': getRecordUUID,
-}: IDeps): ISDOExportMappingFunction {
-    const _toIdLabel = async (
-        linkedRecord: IRecord,
-        attributeProps: IAttribute,
-        ctx: IQueryInfos,
-    ): Promise<ISDOIdLabel> => {
-        // A tree can hold records of several libraries, hence no single `linked_library` to rely on.
-        const library = attributeProps.linked_library ?? linkedRecord.library;
+export default function ({'core.domain.record': recordDomain}: IDeps): ISDOExportMappingFunction {
+    const _toIdLabel = async (linkedRecord: IRecord, ctx: IQueryInfos): Promise<ISDOIdLabel> => {
+        // Always the record's OWN library, never the attribute's `linked_library`: a tree holds records
+        // of several libraries, and the link repos derive the payload's library from the value edge, so
+        // it is the authoritative one in every case.
+        const {id, library} = linkedRecord;
 
         const [uuid, recordIdentity] = await Promise.all([
-            getRecordUUID(library, linkedRecord.id, ctx),
-            recordDomain.getRecordIdentity({id: linkedRecord.id, library}, ctx),
+            recordDomain.getRecordUUID(library, id, ctx),
+            recordDomain.getRecordIdentity({id, library}, ctx),
         ]);
 
         if (uuid === null) {
             // Degrade rather than throw: throwing here would nack the message and drop the WHOLE export
             // over one unreferenceable entity.
-            logger.warn(`[SDO] ${fnName}: no uuid found for ${library}/${linkedRecord.id}, exporting id: null`);
+            logger.warn(`[SDO] ${fnName}: no uuid found for ${library}/${id}, exporting id: null`);
         }
 
         return {
@@ -107,7 +108,7 @@ export default function ({
             // `getLabel` is null when the target library configures no label, and resolves to null when
             // it configures one the record has no value for. Both fall back to the leav id, as
             // exportDomain and indexationManagerDomain already do.
-            label: (await recordIdentity.getLabel?.()) || linkedRecord.id,
+            label: (await recordIdentity.getLabel?.()) || id,
         };
     };
 
@@ -118,7 +119,10 @@ export default function ({
             .map(value => _getLinkedRecord(value, linkedAttribute))
             .filter((linkedRecord): linkedRecord is IRecord => linkedRecord !== null);
 
-        const pairs = await Promise.all(linkedRecords.map(record => _toIdLabel(record, linkedAttribute, ctx)));
+        // pMap preserves input order, so the pairs stay in the order leav returns the values.
+        const pairs = await pMap(linkedRecords, record => _toIdLabel(record, ctx), {
+            concurrency: RESOLUTION_CONCURRENCY,
+        });
 
         return _isMultiple(linkedAttribute) ? pairs : (pairs[0] ?? null);
     };

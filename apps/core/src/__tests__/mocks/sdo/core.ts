@@ -20,6 +20,7 @@ export const mockRecordDomain: Mockify<IRecordDomain> = {
     find: vi.fn(),
     getRecordFieldValue: vi.fn(),
     getRecordIdentity: vi.fn(),
+    getRecordUUID: vi.fn(),
     deactivateRecord: vi.fn(),
     activateRecord: vi.fn(),
     deactivateRecordsBatch: vi.fn(),

@@ -62,7 +62,6 @@ const expectedSDOSystemContent = {
 };
 
 const mockGetAttributeByPath = vi.fn();
-const mockGetRecordUUID = vi.fn();
 const mockToIDLabel = vi.fn<ISDOExportMappingFunction>();
 
 const deps: ToAny<ISDODomainDeps> = {
@@ -72,7 +71,6 @@ const deps: ToAny<ISDODomainDeps> = {
     'core.domain.globalSettings': mockGlobalSettingsDomain,
     'core.domain.eventsManager': mockEventsManagerDomain,
     'core.domain.value': mockValueDomain,
-    'core.domain.sdo.helpers.getRecordUUID': mockGetRecordUUID,
     'core.domain.sdo.export.exportFunctions.toIDLabel': mockToIDLabel,
     config: {sdo: {clientId: 'leav-client', applicationName: 'leav'}},
 };
@@ -101,7 +99,7 @@ describe('sdoDomain', () => {
         mockEventsManagerDomain.sendDatabaseEvent.mockResolvedValue(undefined);
         mockRecordDomain.find.mockResolvedValue({list: []} as IListWithCursor<IRecord>);
         mockSDOUtils.tmpRecordIdToUuid.mockImplementation((recordId: string) => recordId);
-        mockGetRecordUUID.mockImplementation(async (_libraryId: string, recordId: string) => recordId);
+        mockRecordDomain.getRecordUUID.mockImplementation(async (_libraryId: string, recordId: string) => recordId);
         mockRecordDomain.getRecordIdentity.mockResolvedValue({
             getLabel: vi.fn().mockResolvedValue('record-label'),
         } as unknown as IRecordIdentity);
@@ -683,7 +681,7 @@ describe('sdoDomain', () => {
 
             // The uuid resolution the generic mapping performs was skipped entirely: the only calls left
             // are the two system ones (creator / last modificator).
-            expect(mockGetRecordUUID).not.toHaveBeenCalledWith('statuses', '1000', expect.anything());
+            expect(mockRecordDomain.getRecordUUID).not.toHaveBeenCalledWith('statuses', '1000', expect.anything());
 
             expect(sdo).toMatchObject({
                 name: mockSDO.name,

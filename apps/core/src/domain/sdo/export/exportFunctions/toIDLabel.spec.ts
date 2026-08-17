@@ -7,11 +7,8 @@ import {type ILinkValue, type ITreeValue} from '../../../../_types/value';
 import {mockRecordDomain, mockSystemQueryContext} from '../../../../__tests__/mocks/sdo/core';
 import toIDLabel from './toIDLabel';
 
-const mockGetRecordUUID = vi.fn();
-
 const deps: ToAny<Parameters<typeof toIDLabel>[0]> = {
     'core.domain.record': mockRecordDomain,
-    'core.domain.sdo.helpers.getRecordUUID': mockGetRecordUUID,
 };
 
 const advancedLinkMulti: IAttribute = {
@@ -40,7 +37,7 @@ const treeValue = (id: string, library = 'statuses'): ITreeValue =>
 
 /** Every record's label is `label-<id>`, and every uuid `uuid-<id>`. */
 const _mockNominalResolution = () => {
-    mockGetRecordUUID.mockImplementation(async (_library: string, recordId: string) => `uuid-${recordId}`);
+    mockRecordDomain.getRecordUUID.mockImplementation(async (_library: string, recordId: string) => `uuid-${recordId}`);
     mockRecordDomain.getRecordIdentity.mockImplementation(
         async ({id}) => ({getLabel: vi.fn().mockResolvedValue(`label-${id}`)}) as unknown as IRecordIdentity,
     );
@@ -86,8 +83,37 @@ describe('toIDLabel', () => {
                 {id: 'uuid-7', label: 'label-7'},
             ]);
             // A tree has no linked_library: the library comes from the record the node carries.
-            expect(mockGetRecordUUID).toHaveBeenCalledWith('statuses', '42', mockSystemQueryContext);
-            expect(mockGetRecordUUID).not.toHaveBeenCalledWith(expect.anything(), 'node-42', expect.anything());
+            expect(mockRecordDomain.getRecordUUID).toHaveBeenCalledWith('statuses', '42', mockSystemQueryContext);
+            expect(mockRecordDomain.getRecordUUID).not.toHaveBeenCalledWith(
+                expect.anything(),
+                'node-42',
+                expect.anything(),
+            );
+        });
+
+        it('[+] Should resolve each value against its OWN library on a multi-library tree', async () => {
+            // A tree can hold records of several libraries, so the library is read off each value, never
+            // off the attribute. Two entities can then legitimately share an id.
+            const res = await _toIDLabel({
+                record: {id: 'entity', library: 'campaigns'},
+                values: [treeValue('42', 'statuses'), treeValue('42', 'thematics')],
+                attributeProps: treeMulti,
+                format: 'array',
+                ctx: mockSystemQueryContext,
+            });
+
+            expect(res).toEqual([
+                {id: 'uuid-42', label: 'label-42'},
+                {id: 'uuid-42', label: 'label-42'},
+            ]);
+            expect(mockRecordDomain.getRecordIdentity).toHaveBeenCalledWith(
+                {id: '42', library: 'statuses'},
+                mockSystemQueryContext,
+            );
+            expect(mockRecordDomain.getRecordIdentity).toHaveBeenCalledWith(
+                {id: '42', library: 'thematics'},
+                mockSystemQueryContext,
+            );
         });
 
         it('[+] Should return a single object for a simple link', async () => {
@@ -172,7 +198,7 @@ describe('toIDLabel', () => {
     it('[+] Should degrade to a null id, with a warning, rather than drop the whole export', async () => {
         // Throwing here would nack the message and lose the export of every other attribute.
         const loggerSpy = vi.spyOn(logger, 'warn').mockImplementation(() => undefined);
-        mockGetRecordUUID.mockResolvedValue(null);
+        mockRecordDomain.getRecordUUID.mockResolvedValue(null);
 
         const res = await _toIDLabel({
             record: {id: 'entity', library: 'campaigns'},

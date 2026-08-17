@@ -36,7 +36,6 @@ import {ErrorTypes} from '../../_types/errors';
 import {type IQueryInfos} from '../../_types/queryInfos';
 import {type IConfig} from '../../_types/config';
 import {SystemLibraries} from '../../_constants/systemLibraries';
-import {type GetRecordUUID} from './helpers/getRecordUUID';
 
 export interface ISDODomainDeps {
     'core.domain.globalSettings': IGlobalSettingsDomain;
@@ -45,7 +44,6 @@ export interface ISDODomainDeps {
     'core.domain.attribute.helpers.getAttributeByPath': GetAttributeByPath;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.value': IValueDomain;
-    'core.domain.sdo.helpers.getRecordUUID': GetRecordUUID;
     'core.domain.sdo.export.exportFunctions.toIDLabel': ISDOExportMappingFunction;
     config: IConfig;
 }
@@ -99,7 +97,6 @@ export default function ({
     'core.domain.globalSettings': globalSettingsDomain,
     'core.domain.eventsManager': eventsManager,
     'core.domain.value': valueDomain,
-    'core.domain.sdo.helpers.getRecordUUID': getRecordUUID,
     'core.domain.sdo.export.exportFunctions.toIDLabel': toIDLabel,
     config,
 }: ISDODomainDeps): ISDODomain {
@@ -242,13 +239,13 @@ export default function ({
             case AttributeTypes.SIMPLE_LINK: {
                 const simpleLinkedRecord = (values?.[0] as ILinkValue)?.payload;
                 return simpleLinkedRecord
-                    ? getRecordUUID(simpleLinkedRecord.library, simpleLinkedRecord.id, ctx)
+                    ? recordDomain.getRecordUUID(simpleLinkedRecord.library, simpleLinkedRecord.id, ctx)
                     : null;
             }
             case AttributeTypes.ADVANCED_LINK: {
                 const advLinksUuids = await Promise.all(
                     (values as ILinkValue[]).map(async link =>
-                        link.payload ? getRecordUUID(link.payload?.library, link.payload?.id, ctx) : null,
+                        link.payload ? recordDomain.getRecordUUID(link.payload?.library, link.payload?.id, ctx) : null,
                     ),
                 );
                 return attributeProperty.multiple_values ? advLinksUuids : (advLinksUuids[0] ?? null);
@@ -257,7 +254,11 @@ export default function ({
                 const treeLinkUuids = await Promise.all(
                     (values as ITreeValue[]).map(async treeValue =>
                         treeValue.payload?.record
-                            ? getRecordUUID(treeValue.payload.record.library, treeValue.payload.record.id, ctx)
+                            ? recordDomain.getRecordUUID(
+                                  treeValue.payload.record.library,
+                                  treeValue.payload.record.id,
+                                  ctx,
+                              )
                             : null,
                     ),
                 );
@@ -526,9 +527,13 @@ export default function ({
                 system: {
                     systemId: record.uuid,
                     systemActive: record.active,
-                    systemCreator: await getRecordUUID(SystemLibraries.USERS, record.created_by, ctx),
+                    systemCreator: await recordDomain.getRecordUUID(SystemLibraries.USERS, record.created_by, ctx),
                     systemCreationDate: record.created_at,
-                    systemLastModificator: await getRecordUUID(SystemLibraries.USERS, record.modified_by, ctx),
+                    systemLastModificator: await recordDomain.getRecordUUID(
+                        SystemLibraries.USERS,
+                        record.modified_by,
+                        ctx,
+                    ),
                     systemLastModifiedDate: record.modified_at,
                     systemLabel: await recordIdentity.getLabel?.(),
                     applicationIds: {...legacyApplicationIds, [config.sdo.applicationName]: record.id},
