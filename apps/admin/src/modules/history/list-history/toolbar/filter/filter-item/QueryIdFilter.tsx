@@ -2,9 +2,9 @@ import {KitFilter, KitInput, KitTypography} from 'aristid-ds';
 import {type ComponentProps, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {filterItemContainer} from './queryIdFilter.module.css';
-import {FilterDropdownFooter} from './shared/FilterDropdownFooter';
-import {FilterDropdownContainer} from './shared/FilterDropdownContainer';
-import {DEBOUNCE_DELAY_MS} from '../../constants';
+import {FilterDropdownFooter} from '../../../../../ui/filter/FilterDropdownFooter';
+import {FilterDropdownContainer} from '../../../../../ui/filter/FilterDropdownContainer';
+import {DEBOUNCE_DELAY_MS} from '../../../../../ui/filter/constants';
 
 type QueryIdFilterProps = {
     loading: boolean;

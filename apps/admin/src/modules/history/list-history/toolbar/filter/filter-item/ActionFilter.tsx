@@ -2,9 +2,9 @@ import {useState} from 'react';
 import {KitFilter} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
 import {LogAction} from '../../../../../../_gqlTypes';
-import {FilterDropdownFooter} from './shared/FilterDropdownFooter';
-import {FilterDropdownContainer} from './shared/FilterDropdownContainer';
-import {FilterDropdownSearch} from './shared/FilterDropdownSearch';
+import {FilterDropdownFooter} from '../../../../../ui/filter/FilterDropdownFooter';
+import {FilterDropdownContainer} from '../../../../../ui/filter/FilterDropdownContainer';
+import {FilterDropdownSearch} from '../../../../../ui/filter/FilterDropdownSearch';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons';
 

@@ -8,7 +8,7 @@ import {
     dateFilterDivider,
     rangePickerDropdownContainer,
 } from './dateFilter.module.css';
-import {FilterDropdownFooter} from './shared/FilterDropdownFooter';
+import {FilterDropdownFooter} from '../../../../../ui/filter/FilterDropdownFooter';
 import {type DateFilterValue} from '../../types';
 
 type DateFilterProps = {
