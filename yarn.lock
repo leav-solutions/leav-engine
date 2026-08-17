@@ -9269,7 +9269,7 @@ __metadata:
     i18next-xhr-backend: "npm:3.2.2"
     jsoneditor: "npm:9.10.5"
     jsoneditor-react: "npm:3.1.2"
-    less: "npm:4.8.1"
+    less: "npm:4.9.0"
     lodash: "npm:4.18.1"
     prop-types: "npm:15.8.1"
     react: "npm:18.3.1"
@@ -15646,9 +15646,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"less@npm:4.8.1":
-  version: 4.8.1
-  resolution: "less@npm:4.8.1"
+"less@npm:4.9.0":
+  version: 4.9.0
+  resolution: "less@npm:4.9.0"
   dependencies:
     copy-anything: "npm:^3.0.5"
     errno: "npm:^0.1.1"
@@ -15676,7 +15676,7 @@ __metadata:
       optional: true
   bin:
     lessc: bin/lessc
-  checksum: 10/2594c9b366c3d77b7e711b51c2f04848504b6c4f927b4665e46bd5a21b823ae6e60178b48f73c6b2c7b4b2b478aa82a2f4416d5245d1d70c6d0add4e46393ecd
+  checksum: 10/61f8f40d0029dc411b3fae523c6d5d415e51f45cf48bb821febe8cbd0d03994884980c2dfd41af6e5307f7986fb931a84db20ec5e735d385eb8a40bc5cfe7eb7
   languageName: node
   linkType: hard
 
