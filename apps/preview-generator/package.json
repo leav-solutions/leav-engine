@@ -33,7 +33,7 @@
         "@leav/message-broker": "workspace:libs/message-broker",
         "@leav/monitoring-server": "workspace:libs/monitoring-server",
         "@leav/utils": "workspace:*",
-        "fast-xml-parser": "5.10.1"
+        "fast-xml-parser": "5.11.0"
     },
     "stableVersion": "1.0.0"
 }
