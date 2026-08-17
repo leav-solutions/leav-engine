@@ -271,6 +271,18 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
+export type CampaignToRenew = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
+export type CampaignToUpdateDates = {
+  endDate: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  startDate: Scalars['String']['input'];
+};
+
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -335,6 +347,7 @@ export enum EventAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_CHAIN_DEPTH_EXCEEDED = 'AUTOMATION_CHAIN_DEPTH_EXCEEDED',
   AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
   AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
   AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
@@ -353,6 +366,8 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -551,6 +566,7 @@ export enum LogAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_CHAIN_DEPTH_EXCEEDED = 'AUTOMATION_CHAIN_DEPTH_EXCEEDED',
   AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
   AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
   AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
@@ -571,6 +587,8 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
+  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
+  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -959,12 +977,19 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
+  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
+
+export type ThematicToRenew = {
+  campaignId: Scalars['String']['input'];
+  thematicId: Scalars['String']['input'];
+};
 
 export enum TreeBehavior {
   files = 'files',
@@ -1327,6 +1352,14 @@ export type UpdateAutomationRuleMutationVariables = Exact<{
 
 
 export type UpdateAutomationRuleMutation = { updateAutomationRule: { id: string, label: string, description?: string | null, active: boolean, modifiedAt: number, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null }, pipeline: { steps: Array<{ type: AutomationRuleActions, name?: string | null, params: any }> } } };
+
+export type DuplicateAutomationRuleMutationVariables = Exact<{
+  ruleId: Scalars['ID']['input'];
+  label: Scalars['String']['input'];
+}>;
+
+
+export type DuplicateAutomationRuleMutation = { duplicateAutomationRule: { id: string, label: string, description?: string | null, version?: string | null, active: boolean, trigger: { synchronous: boolean, eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null } | null }, pipeline: { steps: Array<{ type: AutomationRuleActions, name?: string | null, params: any }> } } };
 
 export type DeleteAutomationRuleMutationVariables = Exact<{
   ruleId: Scalars['ID']['input'];
@@ -1800,6 +1833,31 @@ export const UpdateAutomationRuleDocument = gql`
     description
     active
     modifiedAt
+    trigger {
+      synchronous
+      eventAction
+      eventTopic {
+        library
+      }
+    }
+    pipeline {
+      steps {
+        type
+        name
+        params
+      }
+    }
+  }
+}
+    `;
+export const DuplicateAutomationRuleDocument = gql`
+    mutation DuplicateAutomationRule($ruleId: ID!, $label: String!) {
+  duplicateAutomationRule(ruleId: $ruleId, label: $label) {
+    id
+    label
+    description
+    version
+    active
     trigger {
       synchronous
       eventAction
@@ -2387,6 +2445,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     UpdateAutomationRule(variables: UpdateAutomationRuleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<UpdateAutomationRuleMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<UpdateAutomationRuleMutation>({ document: UpdateAutomationRuleDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'UpdateAutomationRule', 'mutation', variables);
+    },
+    DuplicateAutomationRule(variables: DuplicateAutomationRuleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DuplicateAutomationRuleMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DuplicateAutomationRuleMutation>({ document: DuplicateAutomationRuleDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DuplicateAutomationRule', 'mutation', variables);
     },
     DeleteAutomationRule(variables: DeleteAutomationRuleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteAutomationRuleMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteAutomationRuleMutation>({ document: DeleteAutomationRuleDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteAutomationRule', 'mutation', variables);

@@ -2,6 +2,8 @@ import {EventAction} from '@leav/utils';
 import {type IAutomationRule} from '../../_types/automation';
 import {type IConfig} from '../../_types/config';
 import {type IQueryInfos} from '../../_types/queryInfos';
+import PermissionError from '../../errors/PermissionError';
+import ValidationError from '../../errors/ValidationError';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import automationDomain, {type IAutomationDomainDeps} from './automationDomain';
 import {type IAutomationRulesCache} from './automationRulesCache';
@@ -171,6 +173,96 @@ describe('automationDomain', () => {
 
             expect(pipelineDomain.executePipeline).toHaveBeenCalledTimes(1);
             expect(eventsManagerDomain.sendDatabaseEvent).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('duplicateAutomationRule', () => {
+        const buildDuplicateDomain = ({
+            source = buildRule({active: true}),
+            hasPermission = true,
+        }: {source?: IAutomationRule | null; hasPermission?: boolean} = {}) => {
+            const adminPermissionDomain = {
+                getAdminPermission: vi.fn().mockResolvedValue(hasPermission),
+            };
+            const automationRuleRepo = {
+                getAutomationRules: vi.fn().mockResolvedValue({
+                    list: source ? [source] : [],
+                    totalCount: source ? 1 : 0,
+                }),
+                createAutomationRule: vi.fn().mockImplementation(async rule => ({...rule, id: 'new-rule-id'})),
+            };
+            const automationTriggers = {
+                validateAutomationRuleTrigger: vi.fn().mockResolvedValue(undefined),
+            };
+            const pipelineDomain = {
+                validatePipeline: vi.fn().mockResolvedValue(undefined),
+            };
+            const rulesCache = {invalidate: vi.fn().mockResolvedValue(undefined)};
+            const eventsManagerDomain = {sendDatabaseEvent: vi.fn().mockResolvedValue(undefined)};
+
+            const domain = automationDomain({
+                config: {automation: {maxChainDepth: 5}} as IConfig,
+                'core.domain.automation.triggers': automationTriggers,
+                'core.domain.permission.admin': adminPermissionDomain,
+                'core.domain.eventsManager': eventsManagerDomain,
+                'core.domain.automation.pipeline': pipelineDomain,
+                'core.domain.automation.rulesCache': rulesCache,
+                'core.infra.automation.rule': automationRuleRepo,
+            } as unknown as IAutomationDomainDeps);
+
+            return {domain, automationRuleRepo};
+        };
+
+        it('creates an inactive copy carrying the source trigger, pipeline, description and version', async () => {
+            const source = buildRule({active: true, label: 'My rule', description: 'desc', version: '1.0'});
+            const {domain, automationRuleRepo} = buildDuplicateDomain({source});
+
+            const copy = await domain.duplicateAutomationRule({
+                ruleId: source.id,
+                label: 'Copy of My rule',
+                ctx: mockCtx,
+            });
+
+            expect(automationRuleRepo.createAutomationRule).toHaveBeenCalledWith(
+                {
+                    label: 'Copy of My rule',
+                    description: 'desc',
+                    version: '1.0',
+                    trigger: source.trigger,
+                    pipeline: source.pipeline,
+                    active: false,
+                },
+                mockCtx,
+            );
+            expect(copy.id).toBe('new-rule-id');
+            expect(copy.active).toBe(false);
+        });
+
+        it('stores the caller label as-is, without deriving it from the source', async () => {
+            const {domain, automationRuleRepo} = buildDuplicateDomain({source: buildRule({label: 'My rule'})});
+
+            await domain.duplicateAutomationRule({ruleId: 'rule-id', label: 'Something else', ctx: mockCtx});
+
+            expect(automationRuleRepo.createAutomationRule).toHaveBeenCalledWith(
+                expect.objectContaining({label: 'Something else'}),
+                mockCtx,
+            );
+        });
+
+        it('throws a validation error when the source rule does not exist', async () => {
+            const {domain} = buildDuplicateDomain({source: null});
+
+            await expect(
+                domain.duplicateAutomationRule({ruleId: 'unknown', label: 'Copie', ctx: mockCtx}),
+            ).rejects.toBeInstanceOf(ValidationError);
+        });
+
+        it('throws a permission error when the user cannot manage automation', async () => {
+            const {domain} = buildDuplicateDomain({hasPermission: false});
+
+            await expect(
+                domain.duplicateAutomationRule({ruleId: 'rule-id', label: 'Copie', ctx: mockCtx}),
+            ).rejects.toBeInstanceOf(PermissionError);
         });
     });
 });

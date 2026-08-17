@@ -69,6 +69,15 @@ export interface IAutomationDomain {
         ctx: IQueryInfos;
     }): Promise<UiSchema>;
     createAutomationRule({rule, ctx}: {rule: ICreateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
+    duplicateAutomationRule({
+        ruleId,
+        label,
+        ctx,
+    }: {
+        ruleId: string;
+        label: string;
+        ctx: IQueryInfos;
+    }): Promise<IAutomationRule>;
     updateAutomationRule({rule, ctx}: {rule: IUpdateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     deleteAutomationRule({ruleId, ctx}: {ruleId: string; ctx: IQueryInfos}): Promise<IAutomationRule>;
     triggerRules(params: ITriggerRulesParams): Promise<void>;
@@ -133,6 +142,50 @@ export default function ({
         } finally {
             triggerRulesFetchDuration.record(Date.now() - start, {event_action: event.action, synchronous});
         }
+    };
+
+    const _createAutomationRule = async ({
+        rule,
+        ctx,
+    }: {
+        rule: ICreateAutomationRule;
+        ctx: IQueryInfos;
+    }): Promise<IAutomationRule> => {
+        await _hasManageAutomationPermissionOrThrow(ctx);
+
+        await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
+        await pipelineDomain.validatePipeline(
+            _pipelineValidationFromRule({
+                pipeline: rule.pipeline,
+                trigger: rule.trigger,
+            }),
+            ctx,
+        );
+
+        if (rule.active && !rule.pipeline.steps.length) {
+            throw new ValidationError<IAutomationRule>({
+                pipeline: Errors.AUTOMATION_RULE_PIPELINE_EMPTY,
+            });
+        }
+
+        const newAutomationRule = await automationRuleRepo.createAutomationRule(rule, ctx);
+
+        await automationRulesCache.invalidate(newAutomationRule.id);
+
+        logger.debug(`Created new automation rule with id ${newAutomationRule.id}`);
+
+        await eventsManagerDomain.sendDatabaseEvent<EventAction.AUTOMATION_RULE_CREATE>(
+            {
+                action: EventAction.AUTOMATION_RULE_CREATE,
+                topic: {
+                    automationRule: newAutomationRule.id,
+                },
+                after: newAutomationRule,
+            },
+            ctx,
+        );
+
+        return newAutomationRule;
     };
 
     return {
@@ -238,42 +291,35 @@ export default function ({
             await _hasManageAutomationPermissionOrThrow(ctx);
             return automationUiJsonSchemaFormDomain.getAutomationRuleUiJsonSchemaForm({formType, ctx});
         },
-        async createAutomationRule({rule, ctx}) {
+        createAutomationRule: _createAutomationRule,
+        async duplicateAutomationRule({ruleId, label, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
 
-            await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
-            await pipelineDomain.validatePipeline(
-                _pipelineValidationFromRule({
-                    pipeline: rule.pipeline,
-                    trigger: rule.trigger,
-                }),
-                ctx,
-            );
+            const {list} = await automationRuleRepo.getAutomationRules({filters: {id: ruleId}}, ctx);
+            const sourceRule = list[0];
 
-            if (rule.active && !rule.pipeline.steps.length) {
+            if (!sourceRule) {
                 throw new ValidationError<IAutomationRule>({
-                    pipeline: Errors.AUTOMATION_RULE_PIPELINE_EMPTY,
+                    id: {msg: Errors.UNKNOWN_AUTOMATION_RULE, vars: {ruleId}},
                 });
             }
 
-            const newAutomationRule = await automationRuleRepo.createAutomationRule(rule, ctx);
-
-            await automationRulesCache.invalidate(newAutomationRule.id);
-
-            logger.debug(`Created new automation rule with id ${newAutomationRule.id}`);
-
-            await eventsManagerDomain.sendDatabaseEvent<EventAction.AUTOMATION_RULE_CREATE>(
-                {
-                    action: EventAction.AUTOMATION_RULE_CREATE,
-                    topic: {
-                        automationRule: newAutomationRule.id,
-                    },
-                    after: newAutomationRule,
+            // The caller owns the label it validated (the admin prefills "Copy of <name>", then lets
+            // the user edit it), so it is stored as-is.
+            //
+            // A copy is always created inactive: two active rules on the same trigger would both run,
+            // so switching to the new version has to stay an explicit, manual gesture.
+            return _createAutomationRule({
+                rule: {
+                    label,
+                    description: sourceRule.description,
+                    version: sourceRule.version,
+                    trigger: sourceRule.trigger,
+                    pipeline: sourceRule.pipeline,
+                    active: false,
                 },
                 ctx,
-            );
-
-            return newAutomationRule;
+            });
         },
         async updateAutomationRule({rule, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);

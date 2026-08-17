@@ -442,6 +442,64 @@ describe('Automation', () => {
         });
     });
 
+    describe('duplicate automation rule', () => {
+        test('duplicates an active rule as an inactive copy', async () => {
+            // A rule can only be active with a non-empty pipeline (AUTOMATION_RULE_PIPELINE_EMPTY).
+            const source = (
+                await adminUserSdk.CreateAutomationRule({
+                    rule: {
+                        label: 'Rule to duplicate',
+                        description: 'Source description',
+                        version: '1.0',
+                        active: true,
+                        trigger: {
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {library: 'users'},
+                        },
+                        pipeline: {
+                            steps: [
+                                {
+                                    type: AutomationRuleActions.condition,
+                                    name: 'my-condition',
+                                    params: {expression: 'true'},
+                                },
+                            ],
+                        },
+                    },
+                })
+            ).createAutomationRule;
+
+            const copy = (
+                await adminUserSdk.DuplicateAutomationRule({ruleId: source.id, label: 'Copy of Rule to duplicate'})
+            ).duplicateAutomationRule;
+
+            expect(copy.id).not.toBe(source.id);
+            expect(copy.label).toBe('Copy of Rule to duplicate');
+            expect(copy.active).toBe(false);
+            expect(copy.description).toBe('Source description');
+            expect(copy.version).toBe('1.0');
+            expect(copy.trigger).toEqual(source.trigger);
+            expect(copy.pipeline).toEqual(source.pipeline);
+
+            // The source rule must be left untouched (still active).
+            const rules = await adminUserSdk.GetAutomationRules({filters: {id: source.id}});
+            expect(rules.automationRules.list[0].active).toBe(true);
+        });
+
+        test('fails on an unknown rule id', async () => {
+            await expect(
+                adminUserSdk.DuplicateAutomationRule({ruleId: 'unknown-id', label: 'Copie'}),
+            ).rejects.toThrow();
+        });
+
+        test('non-admin user cannot duplicate a rule', async () => {
+            await expect(nonAdminUserSdk.DuplicateAutomationRule({ruleId: 'whatever', label: 'Copie'})).rejects.toThrow(
+                'Action forbidden',
+            );
+        });
+    });
+
     describe('get automation rule form', () => {
         test('creation json schema has correct structure for RJSF', async () => {
             const result = await adminUserSdk.GetAutomationRuleForm({
