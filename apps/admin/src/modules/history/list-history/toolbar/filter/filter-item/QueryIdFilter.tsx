@@ -1,10 +1,5 @@
-import {KitFilter, KitInput, KitTypography} from 'aristid-ds';
-import {type ComponentProps, useEffect, useRef, useState} from 'react';
 import {useTranslation} from 'react-i18next';
-import {filterItemContainer} from './queryIdFilter.module.css';
-import {FilterDropdownFooter} from '../../../../../ui/filter/FilterDropdownFooter';
-import {FilterDropdownContainer} from '../../../../../ui/filter/FilterDropdownContainer';
-import {DEBOUNCE_DELAY_MS} from '../../../../../ui/filter/constants';
+import {TextFilter} from '../../../../../ui/filter/TextFilter';
 
 type QueryIdFilterProps = {
     loading: boolean;
@@ -15,61 +10,14 @@ type QueryIdFilterProps = {
 
 export const QueryIdFilter = ({loading, value, onChange, onReset}: QueryIdFilterProps) => {
     const {t} = useTranslation();
-    const [inputValue, setInputValue] = useState(value ?? '');
-    const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-    useEffect(() => {
-        if (debounceTimerRef.current) {
-            clearTimeout(debounceTimerRef.current);
-        }
-
-        setInputValue(value ?? '');
-
-        return () => {
-            if (debounceTimerRef.current) {
-                clearTimeout(debounceTimerRef.current);
-            }
-        };
-    }, [value]);
-
-    const _handleChange: ComponentProps<typeof KitInput>['onChange'] = event => {
-        const newValue = event.target.value;
-        setInputValue(newValue);
-
-        if (debounceTimerRef.current) {
-            clearTimeout(debounceTimerRef.current);
-        }
-
-        debounceTimerRef.current = setTimeout(() => {
-            onChange(newValue.length > 0 ? newValue : null);
-        }, DEBOUNCE_DELAY_MS);
-    };
 
     return (
-        <KitFilter
+        <TextFilter
             label={t('logs.filters.query_id.label')}
-            active={value !== null}
-            expandable
-            showSingleValue
+            value={value}
+            onChange={onChange}
+            onReset={onReset}
             disabled={loading}
-            values={value ? [value] : []}
-            dropDownProps={{
-                popupRender: () => (
-                    <FilterDropdownContainer>
-                        <div className={filterItemContainer}>
-                            <KitTypography.Text size="fontSize6">{t('logs.filters.query_id.label')}</KitTypography.Text>
-                            <KitInput
-                                placeholder={t('logs.filters.query_id.label')}
-                                value={inputValue}
-                                onChange={_handleChange}
-                                allowClear
-                                size="middle"
-                            />
-                        </div>
-                        <FilterDropdownFooter onReset={onReset} />
-                    </FilterDropdownContainer>
-                ),
-            }}
         />
     );
 };
