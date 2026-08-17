@@ -139,16 +139,6 @@ export default defineConfig([
             'no-throw-literal': 'error',
             'no-undef-init': 'error',
             '@typescript-eslint/no-unused-expressions': ['error', {allowShortCircuit: true}],
-            '@typescript-eslint/no-unused-vars': [
-                'error',
-                {
-                    ignoreRestSiblings: true,
-                    argsIgnorePattern: '^_',
-                    caughtErrorsIgnorePattern: '^_',
-                    destructuredArrayIgnorePattern: '^_',
-                    varsIgnorePattern: '^_',
-                },
-            ],
             'object-shorthand': 'error',
             'one-var': ['error', 'never'],
             'prefer-object-spread': 'error',
