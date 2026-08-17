@@ -1407,6 +1407,18 @@ export type GetAutomationRulesDataQueryVariables = Exact<{
 
 export type GetAutomationRulesDataQuery = { automationRules: { totalCount: number, list: Array<{ id: string, label: string, version?: string | null, active: boolean, modifiedAt: number, modifiedBy?: { whoAmI: { label?: string | null } } | null, trigger: { eventAction: AutomationRuleEventAction, eventTopic?: { library?: string | null, attribute?: string | null } | null }, pipeline: { steps: Array<{ name?: string | null }> } }> } };
 
+export type GetAttributesForFilterQueryVariables = Exact<{
+  filters?: InputMaybe<AttributesFiltersInput>;
+}>;
+
+
+export type GetAttributesForFilterQuery = { attributes?: { list: Array<{ id: string, label?: any | null }> } | null };
+
+export type GetLibrariesForFilterQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLibrariesForFilterQuery = { libraries?: { list: Array<{ id: string, label?: any | null }> } | null };
+
 export type GetHistoryDataQueryVariables = Exact<{
   filters?: InputMaybe<LogFilterInput>;
   sort?: InputMaybe<LogSortInput>;
@@ -2730,6 +2742,97 @@ export type GetAutomationRulesDataQueryHookResult = ReturnType<typeof useGetAuto
 export type GetAutomationRulesDataLazyQueryHookResult = ReturnType<typeof useGetAutomationRulesDataLazyQuery>;
 export type GetAutomationRulesDataSuspenseQueryHookResult = ReturnType<typeof useGetAutomationRulesDataSuspenseQuery>;
 export type GetAutomationRulesDataQueryResult = Apollo.QueryResult<GetAutomationRulesDataQuery, GetAutomationRulesDataQueryVariables>;
+export const GetAttributesForFilterDocument = gql`
+    query GetAttributesForFilter($filters: AttributesFiltersInput) {
+  attributes(filters: $filters) {
+    list {
+      id
+      label
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAttributesForFilterQuery__
+ *
+ * To run a query within a React component, call `useGetAttributesForFilterQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAttributesForFilterQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAttributesForFilterQuery({
+ *   variables: {
+ *      filters: // value for 'filters'
+ *   },
+ * });
+ */
+export function useGetAttributesForFilterQuery(baseOptions?: Apollo.QueryHookOptions<GetAttributesForFilterQuery, GetAttributesForFilterQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAttributesForFilterQuery, GetAttributesForFilterQueryVariables>(GetAttributesForFilterDocument, options);
+      }
+export function useGetAttributesForFilterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAttributesForFilterQuery, GetAttributesForFilterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAttributesForFilterQuery, GetAttributesForFilterQueryVariables>(GetAttributesForFilterDocument, options);
+        }
+// @ts-ignore
+export function useGetAttributesForFilterSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetAttributesForFilterQuery, GetAttributesForFilterQueryVariables>): Apollo.UseSuspenseQueryResult<GetAttributesForFilterQuery, GetAttributesForFilterQueryVariables>;
+export function useGetAttributesForFilterSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAttributesForFilterQuery, GetAttributesForFilterQueryVariables>): Apollo.UseSuspenseQueryResult<GetAttributesForFilterQuery | undefined, GetAttributesForFilterQueryVariables>;
+export function useGetAttributesForFilterSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetAttributesForFilterQuery, GetAttributesForFilterQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetAttributesForFilterQuery, GetAttributesForFilterQueryVariables>(GetAttributesForFilterDocument, options);
+        }
+export type GetAttributesForFilterQueryHookResult = ReturnType<typeof useGetAttributesForFilterQuery>;
+export type GetAttributesForFilterLazyQueryHookResult = ReturnType<typeof useGetAttributesForFilterLazyQuery>;
+export type GetAttributesForFilterSuspenseQueryHookResult = ReturnType<typeof useGetAttributesForFilterSuspenseQuery>;
+export type GetAttributesForFilterQueryResult = Apollo.QueryResult<GetAttributesForFilterQuery, GetAttributesForFilterQueryVariables>;
+export const GetLibrariesForFilterDocument = gql`
+    query GetLibrariesForFilter {
+  libraries {
+    list {
+      id
+      label
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetLibrariesForFilterQuery__
+ *
+ * To run a query within a React component, call `useGetLibrariesForFilterQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLibrariesForFilterQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLibrariesForFilterQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetLibrariesForFilterQuery(baseOptions?: Apollo.QueryHookOptions<GetLibrariesForFilterQuery, GetLibrariesForFilterQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLibrariesForFilterQuery, GetLibrariesForFilterQueryVariables>(GetLibrariesForFilterDocument, options);
+      }
+export function useGetLibrariesForFilterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLibrariesForFilterQuery, GetLibrariesForFilterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLibrariesForFilterQuery, GetLibrariesForFilterQueryVariables>(GetLibrariesForFilterDocument, options);
+        }
+// @ts-ignore
+export function useGetLibrariesForFilterSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetLibrariesForFilterQuery, GetLibrariesForFilterQueryVariables>): Apollo.UseSuspenseQueryResult<GetLibrariesForFilterQuery, GetLibrariesForFilterQueryVariables>;
+export function useGetLibrariesForFilterSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLibrariesForFilterQuery, GetLibrariesForFilterQueryVariables>): Apollo.UseSuspenseQueryResult<GetLibrariesForFilterQuery | undefined, GetLibrariesForFilterQueryVariables>;
+export function useGetLibrariesForFilterSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetLibrariesForFilterQuery, GetLibrariesForFilterQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetLibrariesForFilterQuery, GetLibrariesForFilterQueryVariables>(GetLibrariesForFilterDocument, options);
+        }
+export type GetLibrariesForFilterQueryHookResult = ReturnType<typeof useGetLibrariesForFilterQuery>;
+export type GetLibrariesForFilterLazyQueryHookResult = ReturnType<typeof useGetLibrariesForFilterLazyQuery>;
+export type GetLibrariesForFilterSuspenseQueryHookResult = ReturnType<typeof useGetLibrariesForFilterSuspenseQuery>;
+export type GetLibrariesForFilterQueryResult = Apollo.QueryResult<GetLibrariesForFilterQuery, GetLibrariesForFilterQueryVariables>;
 export const GetHistoryDataDocument = gql`
     query GetHistoryData($filters: LogFilterInput, $sort: LogSortInput, $pagination: Pagination) {
   logs(filters: $filters, sort: $sort, pagination: $pagination) {

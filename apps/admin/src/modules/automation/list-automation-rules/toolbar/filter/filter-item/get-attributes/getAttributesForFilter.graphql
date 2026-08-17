@@ -1,0 +1,8 @@
+query GetAttributesForFilter($filters: AttributesFiltersInput) {
+    attributes(filters: $filters) {
+        list {
+            id
+            label
+        }
+    }
+}

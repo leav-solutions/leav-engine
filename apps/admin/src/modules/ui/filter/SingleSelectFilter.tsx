@@ -1,7 +1,5 @@
 import {useState} from 'react';
 import {KitFilter, KitLoader} from 'aristid-ds';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCheck} from '@fortawesome/free-solid-svg-icons';
 import {FilterDropdownContainer} from './FilterDropdownContainer';
 import {FilterDropdownFooter} from './FilterDropdownFooter';
 import {FilterDropdownSearch} from './FilterDropdownSearch';
@@ -36,10 +34,6 @@ export const SingleSelectFilter = <TValue extends string>({
     const items = options.map(option => ({
         key: option.value,
         label: option.label,
-        extra:
-            value === option.value ? (
-                <FontAwesomeIcon color="var(--general-utilities-text-blue)" icon={faCheck} />
-            ) : undefined,
     }));
 
     const filteredItems = search
@@ -72,7 +66,12 @@ export const SingleSelectFilter = <TValue extends string>({
     const selectedLabel = options.find(option => option.value === value)?.label ?? null;
 
     return (
+        // `key={resetKey}` forces KitFilter to remount on every close: KitDropDown keeps rendering
+        // the trigger button it cloned when the popup last opened, so an `onChange`/`onReset` that
+        // fires from inside the popup (e.g. the footer's "Réinitialiser") is applied to the state
+        // but the chip's `active`/`values` never visually update until the next open/close cycle.
         <KitFilter
+            key={resetKey}
             label={label}
             active={value !== null}
             expandable

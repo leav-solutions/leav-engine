@@ -600,6 +600,14 @@
                 }
             }
         },
+        "filters": {
+            "library": {"label": "Bibliothèque"},
+            "attribute": {"label": "Attribut"},
+            "trigger": {"label": "Déclencheur"},
+            "status": {"label": "Statut"},
+            "execution_mode": {"label": "Exécution", "synchronous": "Synchrone", "asynchronous": "Asynchrone"},
+            "version": {"label": "Version"}
+        },
         "form": {
             "create": {
                 "title": "Nouvelle automatisation",

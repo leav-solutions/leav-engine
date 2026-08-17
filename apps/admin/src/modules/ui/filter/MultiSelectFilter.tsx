@@ -1,7 +1,5 @@
 import {useState} from 'react';
 import {KitFilter, KitLoader} from 'aristid-ds';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCheck} from '@fortawesome/free-solid-svg-icons';
 import {FilterDropdownContainer} from './FilterDropdownContainer';
 import {FilterDropdownFooter} from './FilterDropdownFooter';
 import {FilterDropdownSearch} from './FilterDropdownSearch';
@@ -36,9 +34,6 @@ export const MultiSelectFilter = <TValue extends string>({
     const items = options.map(option => ({
         key: option.value,
         label: option.label,
-        extra: value.includes(option.value) ? (
-            <FontAwesomeIcon color="var(--general-utilities-text-blue)" icon={faCheck} />
-        ) : undefined,
     }));
 
     const filteredItems = search
@@ -72,7 +67,10 @@ export const MultiSelectFilter = <TValue extends string>({
     const selectedLabels = options.filter(option => value.includes(option.value)).map(option => option.label);
 
     return (
+        // See SingleSelectFilter: `key={resetKey}` forces a remount on close so the chip's
+        // `active`/`values` catch up with a reset/onChange applied from inside the popup.
         <KitFilter
+            key={resetKey}
             label={label}
             active={value.length > 0}
             expandable

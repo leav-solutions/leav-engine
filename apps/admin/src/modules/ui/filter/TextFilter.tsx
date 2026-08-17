@@ -16,6 +16,7 @@ type TextFilterProps = {
 
 export const TextFilter = ({label, value, onChange, onReset, disabled, placeholder}: TextFilterProps) => {
     const [inputValue, setInputValue] = useState(value ?? '');
+    const [resetKey, setResetKey] = useState(0);
     const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
@@ -45,8 +46,20 @@ export const TextFilter = ({label, value, onChange, onReset, disabled, placehold
         }, DEBOUNCE_DELAY_MS);
     };
 
+    const _handleOpenChange = (nextOpen: boolean) => {
+        if (!nextOpen) {
+            setResetKey(k => k + 1);
+        }
+    };
+
+    const _handleReset = () => {
+        setResetKey(k => k + 1);
+        onReset();
+    };
+
     return (
         <KitFilter
+            key={resetKey}
             label={label}
             active={value !== null}
             expandable
@@ -54,6 +67,7 @@ export const TextFilter = ({label, value, onChange, onReset, disabled, placehold
             disabled={disabled}
             values={value ? [value] : []}
             dropDownProps={{
+                onOpenChange: _handleOpenChange,
                 popupRender: () => (
                     <FilterDropdownContainer>
                         <div className={filterItemContainer}>
@@ -66,7 +80,7 @@ export const TextFilter = ({label, value, onChange, onReset, disabled, placehold
                                 size="middle"
                             />
                         </div>
-                        <FilterDropdownFooter onReset={onReset} />
+                        <FilterDropdownFooter onReset={_handleReset} />
                     </FilterDropdownContainer>
                 ),
             }}
