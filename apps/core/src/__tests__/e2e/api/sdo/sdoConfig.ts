@@ -1,4 +1,4 @@
-import {type ISDOSettings} from '../../../../_types/sdo';
+import {type ISDOSettings, NATIVE_SDO_EXPORT_FUNCTIONS} from '../../../../_types/sdo';
 import {CommonAttributes, UsersAttributes} from '../../../../_constants/systemAttributes';
 
 // EXPORT
@@ -18,6 +18,13 @@ export const SDO_EXPORTS_TREE_MONO_ATTRIBUTE_ID = 'sdo_export_test_tree_mono';
 export const SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID = 'sdo_export_test_tree_multi';
 export const SDO_EXPORTS_DATE_RANGE_ATTRIBUTE_ID = 'sdo_export_test_date_range';
 export const SDO_EXPORTS_EMBEDDED_ATTRIBUTE_ID = 'sdo_export_test_embedded';
+
+// To test the native `toIDLabel` export function (LEAVC-1106).
+// The linked library takes a real text label so an exported `label` is distinguishable from the id;
+// the "unlabelled" one configures no recordIdentityConf at all, to cover the fallback on the leav id.
+export const SDO_EXPORTS_LINKED_LABEL_ATTRIBUTE_ID = 'sdo_export_test_linked_label';
+export const SDO_EXPORTS_UNLABELLED_LIBRARY_ID = 'test_sdo_exports_unlabelled';
+export const SDO_EXPORTS_UNLABELLED_LINK_ATTRIBUTE_ID = 'sdo_export_test_unlabelled_link';
 
 // To test extendSDOFunction and additionalLibraryTriggers features
 export const SDO_EXPORTS_EXTENDED_LIBRARY_ID = 'test_sdo_exports_extended';
@@ -126,6 +133,35 @@ export const sdoGlobalSettings: ISDOSettings = {
                     leavAttributeId: `${SDO_EXPORTS_EMBEDDED_ATTRIBUTE_ID}.city.zipcode`,
                     valueRequired: false,
                     format: 'string',
+                },
+                // Native `toIDLabel` export function (LEAVC-1106): the attribute is designated directly,
+                // with no dotted path, and one entry produces the whole {id, label} pair.
+                // The link/tree attributes below are ALSO mapped above without an export function: the
+                // two forms coexist on the same attribute, which is the non-regression guarantee.
+                'info.advancedLinkMultiPairs': {
+                    leavAttributeId: SDO_EXPORTS_ADVANCED_LINK_MULTI_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'array',
+                    exportFunction: NATIVE_SDO_EXPORT_FUNCTIONS.TO_ID_LABEL,
+                },
+                'info.treeMultiPairs': {
+                    leavAttributeId: SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'array',
+                    exportFunction: NATIVE_SDO_EXPORT_FUNCTIONS.TO_ID_LABEL,
+                },
+                'info.simpleLinkPair': {
+                    leavAttributeId: SDO_EXPORTS_SIMPLE_LINK_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'object',
+                    exportFunction: NATIVE_SDO_EXPORT_FUNCTIONS.TO_ID_LABEL,
+                },
+                // Target library without recordIdentityConf → label falls back to the leav id
+                'info.unlabelledPairs': {
+                    leavAttributeId: SDO_EXPORTS_UNLABELLED_LINK_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'array',
+                    exportFunction: NATIVE_SDO_EXPORT_FUNCTIONS.TO_ID_LABEL,
                 },
             },
         },
