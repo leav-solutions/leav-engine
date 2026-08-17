@@ -76,9 +76,13 @@ Aucune valeur sur l'attribut donne `[]` en `array` et `null` en `object`.
 sur un attribut arbre dont les nœuds proviennent de plusieurs bibliothèques, deux entités de
 bibliothèques différentes peuvent porter le même id sans que le consommateur puisse les distinguer.
 
-**L'import ne sait pas consommer cette forme.** Une entrée portant un `exportFunction` est écartée à
-l'import : réécrire des objets `{id, label}` dans l'attribut de liaison le détruirait. La réciproque
-(quel champ sert de clé de résolution de l'entité cible ?) reste à spécifier dans un ticket dédié.
+⚠️ **Déclarer `skipImport: true`.** L'import ne sait pas consommer cette forme : réécrire des objets
+`{id, label}` dans l'attribut de liaison le détruirait. Or le core **n'en déduit rien tout seul** —
+porter un `exportFunction` ne rend pas une entrée non importable en général (une fonction peut très
+bien produire une valeur parfaitement réimportable). C'est donc au mapping de le dire, avec le même
+`skipImport` que n'importe quelle autre entrée export-only. Obligatoire dès que la bibliothèque est
+`importEnable`. La réciproque (quel champ sert de clé de résolution de l'entité cible ?) reste à
+spécifier dans un ticket dédié.
 
 **Deux pièges de résolution du label**, hérités de `getRecordIdentity` :
 
@@ -133,9 +137,12 @@ ni `attributeProps`** (il n'y a pas d'attribut porteur dont les tirer).
 
 C'est aussi ce qui dit à l'import qu'il n'y a rien à écrire. L'import ne sait écrire que dans un
 attribut unique : il écarte les entrées sans `leavAttributeId`, comme il écarte les chemins pointés
-**et toute entrée portant un `exportFunction`**
-([`sdoImportDomain.ts`](../apps/core/src/domain/sdo/import/sdoImportDomain.ts)) — la valeur produite
-par une fonction n'a pas la forme que l'attribut stocke.
+([`sdoImportDomain.ts`](../apps/core/src/domain/sdo/import/sdoImportDomain.ts)).
+
+En revanche, il **n'écarte pas** une entrée au seul motif qu'elle porte un `exportFunction` : la
+fonction peut produire une valeur réimportable, et c'est le mapping — via `skipImport` — qui tranche.
+Une entrée dont la fonction change la **forme** de la valeur (comme `toIDLabel`) doit donc déclarer
+`skipImport: true` sur une bibliothèque `importEnable`.
 
 Rappels sur les valeurs falsy :
 

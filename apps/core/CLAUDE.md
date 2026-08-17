@@ -201,17 +201,18 @@ plugin.**
 
 Une `exportFunction` reçoit le record complet : elle peut produire un **bloc entier** tout en gardant
 son chemin SDO déclaré dans le mapping. Une telle entrée **omet `leavAttributeId`**, ce qui la rend au
-passage invisible pour l'import — comme l'est toute entrée portant un `exportFunction`.
+passage invisible pour l'import.
 
 > ⚠️ Trois pièges qui coûtent du temps :
 >
 > - un attribut lu par une fonction d'export n'est mappé à **aucun** chemin SDO, donc `hasSDOAttribute`
 >   filtre son événement et **aucun export n'est émis** → `additionalAttributeTriggers` ;
-> - réutiliser un attribut réel comme faux porteur d'un bloc calculé rend le mapping trompeur (le bloc
->   n'a rien à voir avec l'attribut) ;
 > - une fonction d'export reçoit `values`, les valeurs **brutes** de l'attribut — déclarer un
 >   `exportFunction` court-circuite la conversion en uuid. Ce n'est pas ce que le mapping générique
->   exporterait.
+>   exporterait ;
+> - porter un `exportFunction` ne rend **pas** une entrée non importable : le core ne le déduit pas, une
+>   fonction pouvant produire une valeur réimportable. Une entrée dont la fonction change la forme de la
+>   valeur doit déclarer `skipImport: true` sur une bibliothèque `importEnable`.
 
 → Contrat complet, catalogue natif, pièges et exemples : [`docs/sdo-export-functions.md`](../../docs/sdo-export-functions.md).
 

@@ -248,12 +248,9 @@ export default function ({
             // A path (e.g. "category.color") can't be resolved to a single writable attribute — skip it.
             .filter(([, sdoAttr]) => !sdoAttr.leavAttributeId.includes('.'))
             // Explicitly excluded from the import by the mapping (LEAVC-1091) — the export still uses it.
+            // This is also how an entry whose `exportFunction` reshapes the value opts out: the mapping
+            // says so, the core does not infer it (a function may well produce an importable value).
             .filter(([, sdoAttr]) => !sdoAttr.skipImport)
-            // The exported value is produced by an export function, so it does not have the shape the
-            // attribute stores: `toIDLabel` on a link attribute exports `{id, label}` objects, which
-            // written back would destroy the link. Consuming these forms is a ticket of its own
-            // (LEAVC-1106), and until then such an entry is export-only.
-            .filter(([, sdoAttr]) => !sdoAttr.exportFunction)
             .filter(([sdoKey]) => {
                 const value = _.get(sdo.content, sdoKey);
                 return value !== undefined && value !== '';
