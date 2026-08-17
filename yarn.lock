@@ -8951,7 +8951,7 @@ __metadata:
     fomantic-ui-less: "npm:2.9.4"
     formik: "npm:1.5.8"
     graphql: "npm:16.14.2"
-    graphql-ws: "npm:5.16.2"
+    graphql-ws: "npm:6.2.1"
     happy-dom: "npm:20.11.2"
     hex-rgba: "npm:1.0.2"
     i18next: "npm:22.5.1"
@@ -9371,7 +9371,7 @@ __metadata:
     classnames: "npm:2.5.1"
     dayjs: "npm:1.11.22"
     graphql: "npm:16.14.2"
-    graphql-ws: "npm:5.16.2"
+    graphql-ws: "npm:6.2.1"
     happy-dom: "npm:20.11.2"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.2.2"
@@ -11076,7 +11076,7 @@ __metadata:
     graphql-tag: "npm:2.12.7"
     graphql-type-json: "npm:0.3.2"
     graphql-upload: "npm:16.0.2"
-    graphql-ws: "npm:5.16.2"
+    graphql-ws: "npm:6.2.1"
     handlebars: "npm:4.7.9"
     hyperformula: "npm:3.4.0"
     i18next: "npm:22.5.1"
@@ -13731,12 +13731,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-ws@npm:5.16.2":
-  version: 5.16.2
-  resolution: "graphql-ws@npm:5.16.2"
+"graphql-ws@npm:6.2.1":
+  version: 6.2.1
+  resolution: "graphql-ws@npm:6.2.1"
   peerDependencies:
-    graphql: ">=0.11 <=16"
-  checksum: 10/6647bfe640b467f27aaf5ee044c1d114fe266e82cda4ebbb4368d5a4e98df5d2de9d6be70d28eb5e821d87fbf8964c3a8a18abf87c76d4f148800fd8e0488c3d
+    "@fastify/websocket": ^10 || ^11
+    crossws: ~0.3
+    graphql: ^15.10.1 || ^16 || ^17
+    ws: ^8
+  peerDependenciesMeta:
+    "@fastify/websocket":
+      optional: true
+    crossws:
+      optional: true
+    ws:
+      optional: true
+  checksum: 10/ec73d011ca7e19ce24d27fe01e1be9efb5fca82ddbc25fa43325f8d8b13037a22aed1393d29aefb5a9a5fbef7fc2817f9a5102ccefab25e64e6774a938ffac56
   languageName: node
   linkType: hard
 
@@ -17456,7 +17466,7 @@ __metadata:
     aristid-ds: "npm:17.1.0-63930cf"
     cross-fetch: "npm:3.2.0"
     graphql: "npm:16.14.2"
-    graphql-ws: "npm:5.16.2"
+    graphql-ws: "npm:6.2.1"
     happy-dom: "npm:20.11.2"
     i18next: "npm:22.5.1"
     i18next-browser-languagedetector: "npm:7.2.2"
