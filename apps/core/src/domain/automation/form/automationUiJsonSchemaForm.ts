@@ -93,7 +93,9 @@ export default function ({
                         {
                             title: translator.t('automation.form.sections.info', {lng}),
                             step: '1',
-                            fields: isEdition ? ['active', 'label', 'description'] : ['label', 'description'],
+                            fields: isEdition
+                                ? ['active', 'label', 'description', 'version']
+                                : ['label', 'description', 'version'],
                             defaultOpen: true,
                         },
                         {
@@ -129,6 +131,10 @@ export default function ({
                 description: {
                     'ui:title': translator.t('automation.form.info.description', {lng}),
                     'ui:placeholder': translator.t('automation.form.info.description_placeholder', {lng}),
+                },
+                version: {
+                    'ui:title': translator.t('automation.form.info.version', {lng}),
+                    'ui:placeholder': translator.t('automation.form.info.version_placeholder', {lng}),
                 },
                 trigger: {
                     eventAction: {

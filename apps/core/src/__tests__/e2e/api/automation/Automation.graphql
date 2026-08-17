@@ -4,11 +4,14 @@ query GetAutomationRules($filters: AutomationRulesFiltersInput) {
             id
             label
             description
+            version
             active
             createdAt
             createdBy
             modifiedAt
-            modifiedBy
+            modifiedBy {
+                id
+            }
             trigger {
                 synchronous
                 eventAction

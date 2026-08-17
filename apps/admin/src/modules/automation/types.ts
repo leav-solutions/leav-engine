@@ -15,6 +15,7 @@ export type AutomationFormValues = {
     active?: boolean;
     label: string;
     description: string;
+    version?: string;
     trigger?: AutomationRuleTriggerInput;
     pipeline?: {steps: PipelineStep[]};
 };

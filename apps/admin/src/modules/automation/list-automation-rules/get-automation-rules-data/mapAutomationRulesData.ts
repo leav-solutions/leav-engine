@@ -11,12 +11,17 @@ const _getTarget = (
         .filter(Boolean)
         .join(TARGET_SEPARATOR);
 
+const _formatDate = (date: number): string => new Date(date * 1000).toLocaleString();
+
 export const mapAutomationRulesData = (data: GetAutomationRulesDataQuery['automationRules']): AutomationRulesData[] =>
     data?.list?.map(automation => ({
         id: automation.id,
         name: automation.label,
+        version: automation.version ?? '',
         trigger: automation.trigger.eventAction,
         target: _getTarget(automation.trigger.eventTopic),
         nb_actions: automation.pipeline?.steps.length ?? 0,
         active: automation.active,
+        modifiedAt: _formatDate(automation.modifiedAt),
+        modifiedBy: automation.modifiedBy?.whoAmI.label ?? '',
     }));

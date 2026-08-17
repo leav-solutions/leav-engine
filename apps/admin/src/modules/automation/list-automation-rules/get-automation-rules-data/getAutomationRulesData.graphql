@@ -8,7 +8,14 @@ query getAutomationRulesData(
         list {
             id
             label
+            version
             active
+            modifiedAt
+            modifiedBy {
+                whoAmI {
+                    label
+                }
+            }
             trigger {
                 eventAction
                 eventTopic {

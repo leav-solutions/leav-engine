@@ -333,7 +333,9 @@
                 "label": "Automation name",
                 "label_placeholder": "Add the name of the automation",
                 "description": "Description",
-                "description_placeholder": "Describe the objective of this automation"
+                "description_placeholder": "Describe the objective of this automation",
+                "version": "Version",
+                "version_placeholder": "E.g. v1.2"
             },
             "trigger": {
                 "event_action": "Trigger type",

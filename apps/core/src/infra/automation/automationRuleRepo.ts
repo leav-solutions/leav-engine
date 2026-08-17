@@ -27,6 +27,7 @@ type IAutomationRuleBaseDocument = {
 
     label: string;
     description?: string;
+    version?: string;
     active: boolean;
     trigger: {
         synchronous: boolean;

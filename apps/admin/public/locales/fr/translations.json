@@ -581,10 +581,13 @@
         "table": {
             "column": {
                 "name": "Nom",
+                "version": "Version",
                 "trigger": "Déclencheur",
                 "target": "Cible",
                 "nb_actions": "NB. Actions",
-                "status": "Statut"
+                "status": "Statut",
+                "modified_at": "Modifiée le",
+                "modified_by": "Modifiée par"
             },
             "action": {
                 "delete": {

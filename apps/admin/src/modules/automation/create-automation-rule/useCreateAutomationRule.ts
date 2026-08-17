@@ -34,7 +34,7 @@ export const useCreateAutomationRule = () => {
     };
 
     const handleCreateAutomation = async (rule: AutomationFormValues): Promise<string | null> => {
-        const {label, description, trigger, pipeline} = rule;
+        const {label, description, version, trigger, pipeline} = rule;
 
         try {
             const {data, errors} = await createAutomationRule({
@@ -43,6 +43,7 @@ export const useCreateAutomationRule = () => {
                         active: INACTIVE_RULE,
                         label,
                         description,
+                        version,
                         trigger,
                         pipeline: pipeline ?? EMPTY_PIPELINE,
                     },

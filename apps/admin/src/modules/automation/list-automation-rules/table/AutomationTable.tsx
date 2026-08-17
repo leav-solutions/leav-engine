@@ -49,6 +49,13 @@ export const AutomationTable = ({
             ),
         },
         {
+            title: t('automation.table.column.version'),
+            dataIndex: 'version',
+            key: 'version',
+            width: ColumnWidth.XS,
+            render: (version: string) => <AutomationCell>{version}</AutomationCell>,
+        },
+        {
             title: t('automation.table.column.trigger'),
             dataIndex: 'trigger',
             key: 'trigger',
@@ -65,7 +72,7 @@ export const AutomationTable = ({
             title: t('automation.table.column.nb_actions'),
             dataIndex: 'nb_actions',
             key: 'nb_actions',
-            width: ColumnWidth.S,
+            width: ColumnWidth.XS,
             render: (nbActions: number) => <KitTag style={{width: 'fit-content'}}>{String(nbActions)}</KitTag>,
         },
         {
@@ -78,6 +85,20 @@ export const AutomationTable = ({
                     <KitIdCard description={active ? t('admin.active') : t('admin.inactive')} />
                 </KitTag>
             ),
+        },
+        {
+            title: t('automation.table.column.modified_at'),
+            dataIndex: 'modifiedAt',
+            key: 'modifiedAt',
+            width: ColumnWidth.M,
+            render: (modifiedAt: string) => <AutomationCell>{modifiedAt}</AutomationCell>,
+        },
+        {
+            title: t('automation.table.column.modified_by'),
+            dataIndex: 'modifiedBy',
+            key: 'modifiedBy',
+            width: ColumnWidth.M,
+            render: (modifiedBy: string) => <AutomationCell>{modifiedBy}</AutomationCell>,
         },
     ];
 

@@ -11,6 +11,8 @@ import {type IPaginationParams, type ISortParams, type IList} from '../../_types
 import {type IAutomationTriggersRegistry} from '../..//domain/automation/triggers/automationTriggersRegistry';
 import {type IAutomationAction} from '../../domain/automation/actions/_types';
 import {type IAutomationActionsRegistry} from '../../domain/automation/automationActionsRegistry';
+import {type IUserDomain} from '../../domain/user/userDomain';
+import {type IRecord} from '../../_types/record';
 import {type IAppModule} from '../../_types/shared';
 import {type IGraphqlAppModule} from '../graphql/graphqlApp';
 import {type RJSFSchema, type UiSchema} from '@rjsf/utils';
@@ -21,6 +23,7 @@ interface IAutomationAppDeps {
     'core.domain.automation': IAutomationDomain;
     'core.domain.automation.triggers.registry': IAutomationTriggersRegistry;
     'core.domain.automation.actionsRegistry': IAutomationActionsRegistry;
+    'core.domain.user': IUserDomain;
 }
 
 export interface IGetAutomationRulesArgs {
@@ -38,6 +41,7 @@ export default function ({
     'core.domain.automation': automationDomain,
     'core.domain.automation.triggers.registry': automationTriggersRegistry,
     'core.domain.automation.actionsRegistry': automationActionsRegistry,
+    'core.domain.user': userDomain,
 }: IAutomationAppDeps): ICoreAutomationApp {
     return {
         async getGraphQLSchema(): Promise<IAppGraphQLSchema> {
@@ -70,11 +74,12 @@ export default function ({
                         createdAt: Int!,
                         createdBy: String!,
                         modifiedAt: Int!,
-                        modifiedBy: String!
-                        
+                        modifiedBy: Record
+
                         id: ID!,
                         label: String!,
                         description: String,
+                        version: String,
                         active: Boolean!,
                         trigger: AutomationRuleTrigger!,
                         pipeline: AutomationRulePipeline!
@@ -139,15 +144,17 @@ export default function ({
                     input CreateAutomationRuleInput {
                         label: String!,
                         description: String,
+                        version: String,
                         trigger: AutomationRuleTriggerInput!
                         pipeline: AutomationRulePipelineInput!
                         active: Boolean!
                     }
-                    
+
                     input UpdateAutomationRuleInput {
                         id: ID!,
                         label: String,
                         description: String,
+                        version: String,
                         active: Boolean,
                         trigger: AutomationRuleTriggerInput
                         pipeline: AutomationRulePipelineInput
@@ -223,6 +230,10 @@ export default function ({
                         ): Promise<IAutomationRule> {
                             return automationDomain.deleteAutomationRule({ruleId, ctx});
                         },
+                    },
+                    AutomationRule: {
+                        modifiedBy: async (rule: IAutomationRule, _, ctx: IQueryInfos): Promise<IRecord | null> =>
+                            userDomain.getUserRecord(rule.modifiedBy, ctx),
                     },
                 },
             };

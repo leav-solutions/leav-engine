@@ -31,7 +31,7 @@ export const useEditAutomationRule = () => {
     };
 
     const handleEditAutomation = async (id: string, rule: AutomationFormValues): Promise<boolean> => {
-        const {active, label, description, trigger, pipeline} = rule;
+        const {active, label, description, version, trigger, pipeline} = rule;
 
         try {
             const {errors} = await updateAutomationRule({
@@ -41,6 +41,7 @@ export const useEditAutomationRule = () => {
                         active,
                         label,
                         description,
+                        version,
                         trigger,
                         pipeline,
                     },
