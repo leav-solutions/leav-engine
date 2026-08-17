@@ -3,6 +3,7 @@ import {existsSync} from 'fs';
 import {asValue, createContainer, InjectionMode} from 'awilix';
 import {type IUtils} from './utils/utils';
 import {initPlugins} from './pluginsLoader';
+import {type ICoreDepsList} from './depsList';
 
 vi.mock('./config', () => ({
     getConfig: vi.fn().mockResolvedValue({}),
@@ -11,7 +12,7 @@ vi.mock('./config', () => ({
 const fixturesFolder = './src/__tests__/fixtures/pluginsLoaderPlugin';
 
 const makeContainer = (registerPlugin = vi.fn()) => {
-    const container = createContainer({injectionMode: InjectionMode.PROXY});
+    const container = createContainer<ICoreDepsList>({injectionMode: InjectionMode.PROXY});
 
     const utils: Mockify<IUtils> = {
         fileExists: vi.fn(async (p: string) => existsSync(p)),

@@ -1,5 +1,6 @@
-import {asFunction, type AwilixContainer} from 'awilix';
+import {asFunction} from 'awilix';
 import {type ILogger} from '@leav/logger';
+import {type IDepsManager} from '../../../depsManager';
 import {type IMigration} from '../../../_types/migration';
 import {type IQueryInfos} from '../../../_types/queryInfos';
 import {type IDbService} from '../dbService';
@@ -13,7 +14,7 @@ interface IExecuteMigrationParams {
     migrationsDir: string;
     prefix?: string;
     deps?: {
-        depsManager: AwilixContainer;
+        depsManager: IDepsManager;
         dbService: IDbService;
         logger: ILogger;
         cacheService: ICachesService;

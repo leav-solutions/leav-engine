@@ -1,7 +1,7 @@
-import {type AwilixContainer} from 'awilix';
 import type Joi from 'joi';
 import isEmpty from 'lodash/isEmpty';
 import ValidationError from '../../errors/ValidationError';
+import {type IDepsManager} from '../../depsManager';
 import {
     type IActionsListFunction,
     type ActionsListParams,
@@ -51,7 +51,7 @@ export interface IActionsListDomain {
 }
 
 export interface IActionsListDomainDeps {
-    'core.depsManager': AwilixContainer;
+    'core.depsManager': IDepsManager;
     translator: i18n;
 }
 

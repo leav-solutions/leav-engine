@@ -78,7 +78,7 @@
         "@trpc/server": "11.18.0",
         "add-filename-increment": "1.0.0",
         "arangojs": "8.8.1",
-        "awilix": "12.1.1",
+        "awilix": "13.0.5",
         "bcryptjs": "2.4.3",
         "cacache": "21.0.1",
         "commander": "15.0.0",

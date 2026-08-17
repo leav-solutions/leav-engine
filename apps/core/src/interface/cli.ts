@@ -2,7 +2,7 @@ import {logger} from '@leav/logger';
 import {type ICoreImportApp} from '../app/core/importApp';
 import {Command} from 'commander';
 import {type IDbUtils} from '../infra/db/dbUtils';
-import {type AwilixContainer} from 'awilix';
+import {type IDepsManager} from '../depsManager';
 
 export interface ICliInterface {
     run(): Promise<void>;
@@ -11,7 +11,7 @@ export interface ICliInterface {
 interface IDeps {
     'core.app.core.import': ICoreImportApp;
     'core.infra.db.dbUtils': IDbUtils;
-    'core.depsManager': AwilixContainer;
+    'core.depsManager': IDepsManager;
 }
 
 export default function ({

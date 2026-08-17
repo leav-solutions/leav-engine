@@ -1,6 +1,6 @@
 import {type AmqpMessageHandler} from '@leav/message-broker';
 import {EventAction} from '@leav/utils';
-import {type AwilixContainer} from 'awilix';
+import {type IDepsManager} from '../../depsManager';
 import {type IEventsManagerDomain} from '../eventsManager/eventsManagerDomain';
 import {type IAdminPermissionDomain} from '../permission/adminPermissionDomain';
 import Joi from 'joi';
@@ -79,7 +79,7 @@ export interface ITasksManagerDomainDeps {
     config: Config.IConfig;
     'core.infra.tasksManager.rabbitMQ': ITasksManagerRabbitMQ;
     'core.infra.task': ITaskRepo;
-    'core.depsManager': AwilixContainer;
+    'core.depsManager': IDepsManager;
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.domain.permission.admin': IAdminPermissionDomain;
     'core.utils.logger': ILogger;

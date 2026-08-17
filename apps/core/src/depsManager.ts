@@ -14,6 +14,9 @@ import path from 'path';
 import {existsSync} from 'fs';
 import {appRootPath} from './rootPath';
 import {isTscCjsDoubleWrap} from './utils/helpers/isTscCjsDoubleWrap';
+import {type ICoreDepsList} from './depsList';
+
+export type IDepsManager = AwilixContainer<ICoreDepsList>;
 
 export const registerModules = async (
     container: AwilixContainer,
@@ -80,7 +83,7 @@ export const registerModules = async (
 
 export async function initDI(additionalModulesToRegister?: {
     [registerKey: string]: any;
-}): Promise<{coreContainer: AwilixContainer; pluginsContainer: AwilixContainer}> {
+}): Promise<{coreContainer: IDepsManager; pluginsContainer: IDepsManager}> {
     const srcFolder = __dirname;
     // Add a few extra dependencies
     const coreConf = await getConfig();
@@ -92,7 +95,7 @@ export async function initDI(additionalModulesToRegister?: {
     const modulesGlob = '+(app|domain|infra|interface|utils)/**/index.+(ts|js)';
 
     /*** CORE ***/
-    const coreContainer = createContainer({
+    const coreContainer = createContainer<ICoreDepsList>({
         injectionMode: InjectionMode.PROXY,
     });
 

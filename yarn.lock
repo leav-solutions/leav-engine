@@ -9759,12 +9759,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"awilix@npm:12.1.1":
-  version: 12.1.1
-  resolution: "awilix@npm:12.1.1"
+"awilix@npm:13.0.5":
+  version: 13.0.5
+  resolution: "awilix@npm:13.0.5"
   dependencies:
     fast-glob: "npm:^3.3.3"
-  checksum: 10/612b6bdb7557a0ca31517b0c480414688db1d0b6d537d5f2f5ee2fd4274b8f14b746a4aad76ac9f07fb0fd730d6b322efe4b81a3ac803d7b3e632520b89e1026
+  checksum: 10/6c6fc8a8804918617b7791bc2838f713e6822072431347211081ecc80082ab3054769d48ebc0e62aabc2968078ec7bba5f76b9612f718c8013005cfcc751b74b
   languageName: node
   linkType: hard
 
@@ -11054,7 +11054,7 @@ __metadata:
     "@types/ws": "npm:8.18.1"
     add-filename-increment: "npm:1.0.0"
     arangojs: "npm:8.8.1"
-    awilix: "npm:12.1.1"
+    awilix: "npm:13.0.5"
     axios: "npm:1.19.0"
     bcryptjs: "npm:2.4.3"
     cacache: "npm:21.0.1"

@@ -1,7 +1,7 @@
 import './pluginsModuleResolver';
 import {logger} from '@leav/logger';
 import {type ICorePluginsApp} from './app/core/pluginsApp';
-import {asValue, type AwilixContainer} from 'awilix';
+import {asValue} from 'awilix';
 import * as fs from 'fs';
 import {type IExtensionPoints} from './_types/extensionPoints';
 import {type IAppModule} from './_types/shared';
@@ -11,8 +11,9 @@ import {type IUtils} from './utils/utils';
 import {appRootPath} from './rootPath';
 import {isTscCjsDoubleWrap} from './utils/helpers/isTscCjsDoubleWrap';
 import {resolveIndexFilePath} from './utils/helpers/resolveIndexFilePath';
+import {type IDepsManager} from './depsManager';
 
-export const initPlugins = async (pluginsPath: string[], depsManager: AwilixContainer) => {
+export const initPlugins = async (pluginsPath: string[], depsManager: IDepsManager) => {
     if (!pluginsPath.length) {
         return;
     }

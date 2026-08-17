@@ -13,6 +13,7 @@ import {TREES_COLLECTION_NAME} from '../tree/treeRepo';
 import {type IDbService} from './dbService';
 import dbUtils, {type IDbUtils} from './dbUtils';
 import loadMigrationFile from './helpers/loadMigrationFile';
+import {type IDepsManager} from '../../depsManager';
 
 vi.mock('./helpers/loadMigrationFile');
 vi.mock('awilix', async () => {
@@ -374,7 +375,7 @@ describe('dbUtils', () => {
                 config: mockConf as IConfig,
             });
 
-            await testDbUtils.migrate(mockDepsManager as awilix.AwilixContainer);
+            await testDbUtils.migrate(mockDepsManager as IDepsManager);
 
             expect(mockRun1).toBeCalled();
             expect(mockRun2).toBeCalled();
