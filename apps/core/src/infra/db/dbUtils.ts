@@ -1,9 +1,9 @@
 import {aql} from 'arangojs';
 import {type GeneratedAqlQuery, join} from 'arangojs/aql';
 import {CollectionType} from 'arangojs/collection';
-import {type AwilixContainer} from 'awilix';
 import * as fs from 'fs';
 import * as path from 'path';
+import {type IDepsManager} from '../../depsManager';
 import {type ILogger} from '@leav/logger';
 import {type IConfig} from '../../_types/config';
 import {type IList, type IPaginationParams, type ISortParams} from '../../_types/list';
@@ -41,7 +41,7 @@ export interface IFindCoreEntityParams<T extends ICoreEntity, DbDocument extends
 }
 
 export interface IDbUtils {
-    migrate?(depsManager: AwilixContainer): Promise<void>;
+    migrate?(depsManager: IDepsManager): Promise<void>;
     cleanup?<T extends object>(record: object): T;
     convertToDoc?<T extends {id?: string | string[]}>(obj: T): Omit<T, 'id'> & {_key?: string | string[]};
     isCollectionExists?(name: string): Promise<boolean>;
@@ -134,7 +134,7 @@ export default function ({
          *
          * @param depsManager
          */
-        async migrate(depsManager: AwilixContainer): Promise<void> {
+        async migrate(depsManager: IDepsManager): Promise<void> {
             await _initMigrationsCollection();
             const ctx: IQueryInfos = {
                 userId: config.defaultUserId,

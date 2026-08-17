@@ -5,9 +5,8 @@ import {logger} from '@leav/logger';
 import {appRootPath} from '../../../rootPath';
 import fs from 'fs';
 import path from 'path';
-import {type AwilixContainer} from 'awilix';
 import {getConfig} from '../../../config';
-import {initDI} from '../../../depsManager';
+import {type IDepsManager, initDI} from '../../../depsManager';
 import i18nextInit from '../../../i18nextInit';
 import {ECacheType, type ICachesService} from '../../../infra/cache/cacheService';
 import {initRedis} from '../../../infra/cache';
@@ -55,7 +54,7 @@ const _setupFakePlugin = async () => {
     }
 };
 
-export const init = async (conf: IConfig): Promise<{coreContainer: AwilixContainer; dbUtils: IDbUtils}> => {
+export const init = async (conf: IConfig): Promise<{coreContainer: IDepsManager; dbUtils: IDbUtils}> => {
     // Init i18next
     const translator = await i18nextInit(conf);
 
@@ -106,7 +105,7 @@ const _createRequiredDirectories = async conf => {
     await fs.promises.mkdir(filesDir, {recursive: true});
 };
 
-const _createUsersAndGroups = async (coreContainer: AwilixContainer, project: TestProject) => {
+const _createUsersAndGroups = async (coreContainer: IDepsManager, project: TestProject) => {
     const recordDomain: IRecordDomain = coreContainer.cradle['core.domain.record'];
     const treeDomain: ITreeDomain = coreContainer.cradle['core.domain.tree'];
     const getSystemQueryContext: GetSystemQueryContext = coreContainer.cradle['core.utils.getSystemQueryContext'];

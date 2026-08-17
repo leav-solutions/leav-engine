@@ -1,7 +1,7 @@
 import {makeExecutableSchema} from '@graphql-tools/schema';
-import {type AwilixContainer} from 'awilix';
 import {type GraphQLResolveInfo, type GraphQLSchema, Kind} from 'graphql';
 import {merge} from 'lodash';
+import {type IDepsManager} from '../../depsManager';
 import {type IUtils} from '../../utils/utils';
 import {type IAppGraphQLSchema} from '../../_types/graphql';
 import {type IAppModule} from '../../_types/shared';
@@ -25,7 +25,7 @@ function isGraphqlAppModule(app: IAppModule | IGraphqlAppModule): app is IGraphq
 }
 
 interface IDeps {
-    'core.depsManager'?: AwilixContainer;
+    'core.depsManager'?: IDepsManager;
     'core.utils'?: IUtils;
 }
 

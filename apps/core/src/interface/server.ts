@@ -5,7 +5,7 @@ import {type IApplicationApp} from '../app/application/applicationApp';
 import {type IAuthApp} from '../app/auth/authApp';
 import {type ICoreApp} from '../app/core/coreApp';
 import {type IGraphqlApp} from '../app/graphql/graphqlApp';
-import {type AwilixContainer} from 'awilix';
+import {type IDepsManager} from '../depsManager';
 import compression from 'compression';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
@@ -65,7 +65,7 @@ interface IDeps {
     'core.app.helpers.initQueryContext'?: InitQueryContextFunc;
     'core.utils.logger'?: ILogger;
     'core.utils'?: IUtils;
-    'core.depsManager'?: AwilixContainer;
+    'core.depsManager'?: IDepsManager;
 }
 
 export default function ({

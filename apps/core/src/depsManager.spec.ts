@@ -10,7 +10,9 @@ const fixturesFolder = path.resolve(__dirname, './__tests__/fixtures/depsManager
 describe('depsManager', () => {
     describe('registerModules', () => {
         test('Should unwrap a re-exported default export from a compiled CommonJS module', async () => {
-            const container = createContainer({injectionMode: InjectionMode.PROXY});
+            const container = createContainer<{utils: {fileExists: () => Promise<boolean>}}>({
+                injectionMode: InjectionMode.PROXY,
+            });
             await registerModules(container, fixturesFolder, '**/index.+(ts|js)');
 
             const utils = container.cradle.utils;
@@ -20,7 +22,9 @@ describe('depsManager', () => {
         });
 
         test('Should register named exports under their own key, unaffected by the default-unwrap guard', async () => {
-            const container = createContainer({injectionMode: InjectionMode.PROXY});
+            const container = createContainer<{'utils.namedThing': unknown; 'infra.namedOnly': unknown}>({
+                injectionMode: InjectionMode.PROXY,
+            });
             await registerModules(container, fixturesFolder, '**/index.+(ts|js)');
 
             // depsManager registers any function export as an Awilix factory (invoked eagerly via

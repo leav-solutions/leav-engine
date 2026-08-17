@@ -1,5 +1,5 @@
 import {logger} from '@leav/logger';
-import {type AwilixContainer} from 'awilix';
+import {type IDepsManager} from '../../depsManager';
 import {type IAutomationAction, type AutomationRuleActions} from './actions/_types';
 
 export interface IAutomationActionsRegistry {
@@ -9,7 +9,7 @@ export interface IAutomationActionsRegistry {
 }
 
 export interface IAutomationActionsRegistryDeps {
-    'core.depsManager': AwilixContainer;
+    'core.depsManager': IDepsManager;
 }
 
 const ACTION_MODULE_DISCOVERY_REGEX = /^core\.domain\.automation\.actions\.[^.]+$/;

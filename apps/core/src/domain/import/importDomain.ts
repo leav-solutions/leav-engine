@@ -8,7 +8,7 @@ import {type ITasksManagerDomain} from '../tasksManager/tasksManagerDomain';
 import {type ITreeDomain} from '../tree/treeDomain';
 import {type IValueDomain} from '../value/valueDomain';
 import {type IPermissionDomain} from '../permission/permissionDomain';
-import {type AwilixContainer} from 'awilix';
+import {type IDepsManager} from '../../depsManager';
 import ExcelJS from 'exceljs';
 import fs from 'fs';
 import {type i18n} from 'i18next';
@@ -130,7 +130,7 @@ export interface IImportDomainDeps {
     'core.domain.eventsManager': IEventsManagerDomain;
     'core.infra.cache.cacheService': ICachesService;
     'core.infra.db.dbUtils': IDbUtils;
-    'core.depsManager': AwilixContainer;
+    'core.depsManager': IDepsManager;
     config: Config.IConfig;
     translator: i18n;
     'core.utils': IUtils;
