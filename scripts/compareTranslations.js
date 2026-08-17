@@ -3,7 +3,7 @@
 const fs = require('fs');
 
 const moduleLocalesPaths = [
-    'apps/admin/public/locales/',
+    'apps/admin/src/locales/',
     'apps/core/src/locales/',
     'apps/login/src/locales/',
     'apps/portal/src/locales/',
