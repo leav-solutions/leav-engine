@@ -763,7 +763,7 @@ describe('SDO Exports', () => {
 
     test('an export mapping function builds a computed SDO path from its own config', async () => {
         // The `info.computed` mapping entry declares no leavAttributeId: the plugin function is still
-        // called, receives the entry's exportFunctionConfig, and gets neither value nor attributeProps.
+        // called, receives the entry's exportFunctionConfig, and gets neither values nor attributeProps.
         const {createRecord: target} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_EXTENDED_LIBRARY_ID});
         const {uuid: targetUUID} = target.record;
 
@@ -776,7 +776,7 @@ describe('SDO Exports', () => {
                     computed: {
                         computedFrom: target.record.id,
                         config: SDO_EXPORTS_COMPUTED_FUNCTION_CONFIG,
-                        hasValue: false,
+                        hasValues: false,
                         hasAttributeProps: false,
                     },
                 },

@@ -118,13 +118,13 @@ export default function ({
 
     /**
      * Export mapping function on a COMPUTED SDO path: its entry declares no `leavAttributeId`, so it
-     * gets neither `value` nor `attributeProps` and builds everything off the record and its own config.
+     * gets neither `values` nor `attributeProps` and builds everything off the record and its own config.
      */
-    const _computeSdoBlock: ISDOExportMappingFunction = async ({record, value, attributeProps, config}) => ({
+    const _computeSdoBlock: ISDOExportMappingFunction = async ({record, values, attributeProps, config}) => ({
         computedFrom: record.id,
         config: config ?? null,
         // Proves the core hands over nothing when the entry designates no source attribute
-        hasValue: value !== undefined,
+        hasValues: values !== undefined,
         hasAttributeProps: attributeProps !== undefined,
     });
 
