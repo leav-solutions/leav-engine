@@ -224,6 +224,12 @@ Corollaire pour tester : `docker compose up` ne prouve rien sur ce point, puisqu
 monorepo entier. Il faut soit builder l'image, soit forcer un `yarn install` dans le conteneur pour
 que son arbre reflète les `package.json` modifiés.
 
+> 🐳 Avant de toucher à un Dockerfile de `docker/DOCKERFILES/build/`, lire
+> [`docker/DOCKERFILES/build/README.md`](docker/DOCKERFILES/build/README.md). Ces fichiers sont
+> découpés en étapes pour le cache et le parallélisme : ne jamais copier de sources avant l'étape
+> `deps`, garder une étape par workspace buildable, et ne pas remettre le tamponnage de version dans
+> le contexte de build.
+
 ### Deux règles à connaître avant de toucher un `package.json`
 
 - **« Déclaré » ≠ « utilisé », et « importé » ≠ « déclaré ».** Un package peut être indispensable

@@ -90,6 +90,11 @@ chez un collègue qui n'est pas derrière un tel proxy — le montage est ignor�
 d'origine de l'image reste intact. L'instruction est donc inerte partout sauf sur le poste qui en
 a besoin, et il n'y a rien à commiter.
 
+Dans les Dockerfiles de `docker/DOCKERFILES/build/`, ces `RUN` sortants ne sont plus regroupés :
+depuis le découpage en étapes, il y a l'`apk add` de l'étape `base`, le `yarn install` de `deps`, le
+`yarn workspaces focus --production` d'`assemble` et l'`apk add` du `runner`. Ajouter le mount sur
+celle(s) qui échoue(nt), pas forcément sur toutes.
+
 Pour la stack locale, déclarer le secret dans un `docker/docker-compose.override.yml`
 **gitignoré** :
 
