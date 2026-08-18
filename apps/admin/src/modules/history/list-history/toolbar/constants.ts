@@ -13,5 +13,3 @@ export const DEFAULT_QUERY_ID: string | null = null;
 export const DEFAULT_ACTIONS: LogAction[] = [];
 
 export const DEFAULT_USER_ID: string | null = null;
-
-export const DEBOUNCE_DELAY_MS = 300;

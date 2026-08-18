@@ -2,14 +2,14 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faTrash} from '@fortawesome/free-solid-svg-icons';
 import {KitButton} from 'aristid-ds';
 import {useTranslation} from 'react-i18next';
-import {resetButton} from './resetButton.module.css';
+import {resetButton} from './FiltersResetButton.module.css';
 
-type ResetButtonProps = {
+type FiltersResetButtonProps = {
     loading: boolean;
     onReset: () => void;
 };
 
-export const ResetButton = ({loading, onReset}: ResetButtonProps) => {
+export const FiltersResetButton = ({loading, onReset}: FiltersResetButtonProps) => {
     const {t} = useTranslation();
 
     return (

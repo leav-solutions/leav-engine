@@ -600,6 +600,14 @@
                 }
             }
         },
+        "filters": {
+            "library": {"label": "Library"},
+            "attribute": {"label": "Attribute"},
+            "trigger": {"label": "Trigger"},
+            "status": {"label": "Status"},
+            "execution_mode": {"label": "Execution", "synchronous": "Synchronous", "asynchronous": "Asynchronous"},
+            "version": {"label": "Version"}
+        },
         "form": {
             "create": {
                 "title": "New automation",

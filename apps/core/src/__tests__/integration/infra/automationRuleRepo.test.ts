@@ -214,133 +214,243 @@ describe('automationRuleRepo', () => {
         });
     });
 
-    describe('getAutomationRules with partialMatchOnEventTopic', () => {
-        const libraryId = 'my_library';
-        const attributeId = 'my_attribute';
-        const treeId = 'my_tree';
+    describe('getAutomationRules', () => {
+        describe('filtering on eventTopic', () => {
+            const libraryId = 'my_library';
+            const attributeId = 'my_attribute';
+            const treeId = 'my_tree';
 
-        const makeRule = (label: string, eventTopic: AutomationRuleEventTopic) =>
-            automationRuleRepo.createAutomationRule(
-                {
-                    label,
-                    trigger: {synchronous: false, eventAction: EventAction.RECORD_INIT, eventTopic},
-                    pipeline: {steps: []},
-                    active: false,
-                },
-                ctx,
-            );
+            const makeRule = (label: string, eventTopic: AutomationRuleEventTopic) =>
+                automationRuleRepo.createAutomationRule(
+                    {
+                        label,
+                        trigger: {synchronous: false, eventAction: EventAction.RECORD_INIT, eventTopic},
+                        pipeline: {steps: []},
+                        active: false,
+                    },
+                    ctx,
+                );
 
-        beforeEach(async () => {
-            await makeRule('Rule with library topic', {library: libraryId});
-            await makeRule('Rule with attribute topic', {attribute: attributeId});
-            await makeRule('Rule with library and attribute topic', {library: libraryId, attribute: attributeId});
-            await makeRule('Rule with unrelated topic', {library: 'other_library'});
-            await makeRule('Rule with extra tree key', {library: libraryId, tree: treeId});
-            await makeRule('Rule with empty eventTopic', {});
+            beforeEach(async () => {
+                await makeRule('Rule with library topic', {library: libraryId});
+                await makeRule('Rule with attribute topic', {attribute: attributeId});
+                await makeRule('Rule with library and attribute topic', {
+                    library: libraryId,
+                    attribute: attributeId,
+                });
+                await makeRule('Rule with unrelated topic', {library: 'other_library'});
+                await makeRule('Rule with extra tree key', {library: libraryId, tree: treeId});
+                await makeRule('Rule with empty eventTopic', {});
+            });
+
+            describe('with partialMatchOnEventTopic', () => {
+                it('returns rules whose eventTopic keys are a subset of the filter and whose values match', async () => {
+                    const rules = await automationRuleRepo.getAutomationRules(
+                        {
+                            filters: {
+                                trigger: {
+                                    eventTopic: {library: libraryId, attribute: attributeId},
+                                },
+                            },
+                            partialMatchOnEventTopic: true,
+                            withCount: true,
+                        },
+                        ctx,
+                    );
+
+                    expect(rules.list).toHaveLength(4);
+                    expect(rules.list.map(r => r.label)).toEqual(
+                        expect.arrayContaining([
+                            'Rule with library topic',
+                            'Rule with attribute topic',
+                            'Rule with library and attribute topic',
+                            'Rule with empty eventTopic',
+                        ]),
+                    );
+                    expect(rules.totalCount).toBe(4);
+                });
+
+                it('rejects rules that contain an eventTopic key not present in the filter', async () => {
+                    const rules = await automationRuleRepo.getAutomationRules(
+                        {
+                            filters: {
+                                trigger: {
+                                    eventTopic: {library: libraryId},
+                                },
+                            },
+                            partialMatchOnEventTopic: true,
+                            withCount: true,
+                        },
+                        ctx,
+                    );
+
+                    expect(rules.list).toHaveLength(2);
+                    expect(rules.list.map(r => r.label)).toEqual(
+                        expect.arrayContaining(['Rule with library topic', 'Rule with empty eventTopic']),
+                    );
+                    expect(rules.totalCount).toBe(2);
+                });
+
+                it('should return only the exact-matching rule when partialMatchOnEventTopic is false', async () => {
+                    const rules = await automationRuleRepo.getAutomationRules(
+                        {
+                            filters: {
+                                trigger: {
+                                    eventTopic: {library: libraryId, attribute: attributeId},
+                                },
+                            },
+                            partialMatchOnEventTopic: false,
+                            withCount: true,
+                        },
+                        ctx,
+                    );
+
+                    expect(rules.list).toHaveLength(1);
+                    expect(rules.list.map(r => r.label)).toEqual(
+                        expect.arrayContaining(['Rule with library and attribute topic']),
+                    );
+                    expect(rules.totalCount).toBe(1);
+                });
+
+                it('should return no rules when no eventTopic field matches in partial mode', async () => {
+                    const rules = await automationRuleRepo.getAutomationRules(
+                        {
+                            filters: {
+                                trigger: {
+                                    eventTopic: {library: 'nonexistent_library'},
+                                },
+                            },
+                            partialMatchOnEventTopic: true,
+                            withCount: true,
+                        },
+                        ctx,
+                    );
+
+                    expect(rules.list).toHaveLength(1);
+                    expect(rules.list.map(r => r.label)).toEqual(
+                        expect.arrayContaining(['Rule with empty eventTopic']),
+                    );
+                    expect(rules.totalCount).toBe(1);
+                });
+
+                it('should ignore partialMatchOnEventTopic when no eventTopic filter is provided', async () => {
+                    const rules = await automationRuleRepo.getAutomationRules(
+                        {
+                            filters: {
+                                trigger: {
+                                    eventAction: EventAction.RECORD_INIT,
+                                },
+                            },
+                            partialMatchOnEventTopic: true,
+                            withCount: true,
+                        },
+                        ctx,
+                    );
+
+                    expect(rules.totalCount).toBe(6);
+                });
+            });
+
+            it('returns rules matching a library filter regardless of whether they also have an attribute', async () => {
+                const rules = await automationRuleRepo.getAutomationRules(
+                    {
+                        filters: {
+                            trigger: {
+                                eventTopic: {library: libraryId},
+                            },
+                        },
+                        withCount: true,
+                    },
+                    ctx,
+                );
+
+                // Without partialMatchOnEventTopic, there is no "subset" constraint: any rule whose
+                // eventTopic.library matches is returned, whatever its other eventTopic keys.
+                expect(rules.list.map(r => r.label)).toEqual(
+                    expect.arrayContaining([
+                        'Rule with library topic',
+                        'Rule with library and attribute topic',
+                        'Rule with extra tree key',
+                    ]),
+                );
+                expect(rules.totalCount).toBe(3);
+            });
+
+            it('does not restrict on attribute when eventTopic.attribute is explicitly null', async () => {
+                const rules = await automationRuleRepo.getAutomationRules(
+                    {
+                        filters: {
+                            trigger: {
+                                eventTopic: {library: libraryId, attribute: null},
+                            },
+                        },
+                        withCount: true,
+                    },
+                    ctx,
+                );
+
+                // Same result as filtering on library alone: a null attribute must not turn into
+                // `eventTopic.attribute == null`, which would silently drop rules that do have one.
+                expect(rules.list.map(r => r.label)).toEqual(
+                    expect.arrayContaining([
+                        'Rule with library topic',
+                        'Rule with library and attribute topic',
+                        'Rule with extra tree key',
+                    ]),
+                );
+                expect(rules.totalCount).toBe(3);
+            });
         });
 
-        it('returns rules whose eventTopic keys are a subset of the filter and whose values match', async () => {
-            const rules = await automationRuleRepo.getAutomationRules(
-                {
-                    filters: {
-                        trigger: {
-                            eventTopic: {library: libraryId, attribute: attributeId},
-                        },
+        describe('with version filter', () => {
+            beforeEach(async () => {
+                await automationRuleRepo.createAutomationRule(
+                    {
+                        label: 'Rule v1.2.3',
+                        version: 'v1.2.3',
+                        active: false,
+                        trigger: {synchronous: false, eventAction: EventAction.RECORD_INIT},
+                        pipeline: {steps: []},
                     },
-                    partialMatchOnEventTopic: true,
-                    withCount: true,
-                },
-                ctx,
-            );
-
-            expect(rules.list).toHaveLength(4);
-            expect(rules.list.map(r => r.label)).toEqual(
-                expect.arrayContaining([
-                    'Rule with library topic',
-                    'Rule with attribute topic',
-                    'Rule with library and attribute topic',
-                    'Rule with empty eventTopic',
-                ]),
-            );
-            expect(rules.totalCount).toBe(4);
-        });
-
-        it('rejects rules that contain an eventTopic key not present in the filter', async () => {
-            const rules = await automationRuleRepo.getAutomationRules(
-                {
-                    filters: {
-                        trigger: {
-                            eventTopic: {library: libraryId},
-                        },
+                    ctx,
+                );
+                await automationRuleRepo.createAutomationRule(
+                    {
+                        label: 'Rule v2.0.0',
+                        version: 'v2.0.0',
+                        active: false,
+                        trigger: {synchronous: false, eventAction: EventAction.RECORD_INIT},
+                        pipeline: {steps: []},
                     },
-                    partialMatchOnEventTopic: true,
-                    withCount: true,
-                },
-                ctx,
-            );
+                    ctx,
+                );
+            });
 
-            expect(rules.list).toHaveLength(2);
-            expect(rules.list.map(r => r.label)).toEqual(
-                expect.arrayContaining(['Rule with library topic', 'Rule with empty eventTopic']),
-            );
-            expect(rules.totalCount).toBe(2);
-        });
-
-        it('should return only the exact-matching rule when partialMatchOnEventTopic is false', async () => {
-            const rules = await automationRuleRepo.getAutomationRules(
-                {
-                    filters: {
-                        trigger: {
-                            eventTopic: {library: libraryId, attribute: attributeId},
-                        },
+            it('matches on a partial, case-insensitive version', async () => {
+                const rules = await automationRuleRepo.getAutomationRules(
+                    {
+                        filters: {version: '1.2'},
+                        withCount: true,
                     },
-                    partialMatchOnEventTopic: false,
-                    withCount: true,
-                },
-                ctx,
-            );
+                    ctx,
+                );
 
-            expect(rules.list).toHaveLength(1);
-            expect(rules.list.map(r => r.label)).toEqual(
-                expect.arrayContaining(['Rule with library and attribute topic']),
-            );
-            expect(rules.totalCount).toBe(1);
-        });
+                expect(rules.list).toHaveLength(1);
+                expect(rules.list[0].label).toBe('Rule v1.2.3');
+            });
 
-        it('should return no rules when no eventTopic field matches in partial mode', async () => {
-            const rules = await automationRuleRepo.getAutomationRules(
-                {
-                    filters: {
-                        trigger: {
-                            eventTopic: {library: 'nonexistent_library'},
-                        },
+            it('matches regardless of case', async () => {
+                const rules = await automationRuleRepo.getAutomationRules(
+                    {
+                        filters: {version: 'V1.2'},
+                        withCount: true,
                     },
-                    partialMatchOnEventTopic: true,
-                    withCount: true,
-                },
-                ctx,
-            );
+                    ctx,
+                );
 
-            expect(rules.list).toHaveLength(1);
-            expect(rules.list.map(r => r.label)).toEqual(expect.arrayContaining(['Rule with empty eventTopic']));
-            expect(rules.totalCount).toBe(1);
-        });
-
-        it('should ignore partialMatchOnEventTopic when no eventTopic filter is provided', async () => {
-            const rules = await automationRuleRepo.getAutomationRules(
-                {
-                    filters: {
-                        trigger: {
-                            eventAction: EventAction.RECORD_INIT,
-                        },
-                    },
-                    partialMatchOnEventTopic: true,
-                    withCount: true,
-                },
-                ctx,
-            );
-
-            expect(rules.totalCount).toBe(6);
+                expect(rules.list).toHaveLength(1);
+                expect(rules.list[0].label).toBe('Rule v1.2.3');
+            });
         });
     });
 });
