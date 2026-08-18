@@ -1,3 +1,4 @@
+import packageJson from '../package.json';
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
 import {StreamableHTTPServerTransport} from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import express, {type Request, type Response} from 'express';
@@ -62,8 +63,7 @@ app.all('/mcp', authenticate, async (req: Request, res: Response) => {
 
     const server = new McpServer({
         name: 'mcp-runtime',
-        // npm_package_version is injected by Node when running via `node .` after `npm run build`
-        version: process.env.npm_package_version ?? '0.0.0',
+        version: packageJson.version ?? '0.0.0',
     });
 
     // Register every tool on this server instance before connecting.
