@@ -5,28 +5,61 @@
 # Exceptions for preview-generator are handled by the "target" feature of buildkit.
 # More info here: https://docs.docker.com/build/building/multi-stage/#differences-between-legacy-builder-and-buildkit
 
-# Create base builder
-FROM node:24.19.0-alpine3.24 AS builder
+# The stages are not cosmetic: they exist so Docker can cache. One rule to preserve: never copy
+# sources before the `deps` stage, or every source change reinstalls the app's dependencies.
+
+ARG NODE_IMAGE=node:24.19.0-alpine3.24
+
+# rsync is used by the manifests and assemble stages. Installed once here so it is already in the
+# cache of every stage that needs it — the runtime stages do not derive from this one.
+FROM ${NODE_IMAGE} AS base
+RUN apk --no-cache --update add rsync
+
+# Keep only what the install reads. This stage is replayed on every source change, but its *output*
+# is stable, so the install stage below stays cached as long as no package.json and no lockfile
+# moves. `apps/*/scripts/` is required: apps/admin runs one of them in a postinstall.
+FROM base AS manifests
+WORKDIR /src
+COPY . .
+RUN rsync -am \
+    --include='*/' \
+    --include='package.json' \
+    --include='yarn.lock' \
+    --include='.yarnrc.yml' \
+    --include='.yarn/releases/***' \
+    --include='apps/*/scripts/***' \
+    --exclude='*' \
+    /src/ /manifests/
+
+# Dev dependencies of $APP only — `yarn workspaces focus` installs what that workspace declares
+# (plus its linked workspace libs), not the hoisted monorepo tree. This is what catches phantom
+# dependencies, see the root CLAUDE.md.
+# The cache mount targets the `cacheFolder` of .yarnrc.yml (project-local, since
+# `enableGlobalCache: false`), so downloaded archives survive from one build to the next.
+FROM base AS deps
 ARG APP
 WORKDIR /build
+COPY --from=manifests /manifests/ ./
+RUN --mount=type=cache,target=/build/.yarn/cache,sharing=locked \
+    yarn workspaces focus $APP
 
-# Copy required files for builds
-COPY .yarn ./.yarn
-COPY *.json yarn.lock .yarnrc.yml ./
-COPY apps/ ./apps
+# These apps only build their own sources plus the shared libs.
+FROM deps AS build
+ARG APP
+COPY *.json ./
 COPY libs/ ./libs
+COPY apps/$APP ./apps/$APP
+RUN yarn workspace $APP build
 
-# Install dev module to build app
-RUN yarn workspaces focus $APP && \
-    yarn workspace $APP build && \
-    apk --no-cache --update add rsync
-
+FROM build AS assemble
+ARG APP
 WORKDIR /install
 
 # Copy only production files for $APP and its dependencies
 # We use rsync to be able to include/exclude files and folders easily
 # And install only production dependencies for $APP
-RUN rsync -av \
+RUN --mount=type=cache,target=/build/.yarn/cache,sharing=locked \
+    rsync -am \
     --exclude=".yarn/cache" \
     --exclude="vite-config-*.js" \
     --exclude="babel.config.json" \
@@ -54,14 +87,25 @@ RUN rsync -av \
     yarn workspaces focus $APP --production && \
     rm -rf .yarn yarn.lock .yarnrc.yml
 
+# Append the build metadata here rather than rewriting versions in the build context: mutating
+# every package.json before `docker build` would invalidate every layer on every commit. `ARG` is
+# declared after the expensive RUN above so that only this one-second step is replayed when it
+# changes. Each package keeps its own semver and only gains a `+<metadata>` suffix, so the result
+# stays a valid version. Empty on tags: the committed versions are the correct ones.
+ARG VERSION_METADATA
+RUN if [ -n "$VERSION_METADATA" ]; then \
+    find /install \( -name package.json -o -name manifest.json \) -not -path '*/node_modules/*' \
+    -exec node -e 'const fs=require("fs");const f=process.argv[1];const j=JSON.parse(fs.readFileSync(f,"utf8"));if(j.version){j.version=String(j.version).split("+")[0]+"+"+process.env.VERSION_METADATA;fs.writeFileSync(f,JSON.stringify(j,null,4))}' {} \; ; \
+    fi
+
 # Shared runtime base. Not a build target on its own: the actual final images are
 # `runner` and `runner-preview-generator` below. Kept separate so apk can be purged
 # per leaf (preview-generator still needs apk to install its extra libs).
-FROM node:24.19.0-alpine3.24 AS runner-base
+FROM ${NODE_IMAGE} AS runner-base
 ARG APP
 WORKDIR /app
 
-COPY --from=builder /install ./
+COPY --from=assemble /install ./
 
 # Get ready for runtime
 WORKDIR /app/apps/$APP

@@ -24,6 +24,12 @@
 /imports/
 /docs/
 
+# Le cache Yarn est fourni par un `--mount=type=cache` dans les Dockerfiles de docker/DOCKERFILES/build.
+# Le laisser entrer ferait un contexte de ~250 Mo en local (il n'existe pas en CI, où le repo est
+# cloné à neuf) et les deux builds ne testeraient pas la même chose.
+/.yarn/cache/
+/.yarn/install-state.gz
+
 **/node_modules/
 **/dist/
 **/jest-*config.json
