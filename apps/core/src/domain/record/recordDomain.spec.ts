@@ -23,6 +23,7 @@ import {type ICreateRecordValueError} from './_types';
 const depsBase: ToAny<IRecordDomainDeps> = {
     'core.infra.record': vi.fn(),
     'core.domain.record.helpers.getRecordIdentity': vi.fn(),
+    'core.domain.record.helpers.getRecordUUID': vi.fn(),
     'core.domain.attribute': vi.fn(),
     'core.domain.value': vi.fn(),
     'core.domain.permission.record': vi.fn(),

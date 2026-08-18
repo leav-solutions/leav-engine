@@ -23,6 +23,9 @@ import {
     SDO_EXPORTS_EXTEND_TRIGGER_LINK_ATTRIBUTE_ID,
     SDO_EXPORTS_EXTEND_UNMAPPED_ATTRIBUTE_ID,
     SDO_EXPORTS_COMPUTED_FUNCTION_CONFIG,
+    SDO_EXPORTS_LINKED_LABEL_ATTRIBUTE_ID,
+    SDO_EXPORTS_UNLABELLED_LIBRARY_ID,
+    SDO_EXPORTS_UNLABELLED_LINK_ATTRIBUTE_ID,
 } from './sdoConfig';
 import {getConfig} from '../../../../config';
 import {type IConfig} from '../../../../_types/config';
@@ -49,11 +52,40 @@ describe('SDO Exports', () => {
             },
         });
 
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_EXPORTS_LINKED_LABEL_ATTRIBUTE_ID,
+                type: AttributeType.simple,
+                format: AttributeFormat.text,
+                label: {fr: 'SDO export test libellé lié', en: 'SDO export test linked label'},
+            },
+        });
+
         await adminUserSdk.SaveLibrary({
             library: {
                 id: SDO_EXPORTS_LINKED_LIBRARY_ID,
                 label: {fr: 'Test SDO liée', en: 'Test SDO linked'},
-                recordIdentityConf: {label: 'id'},
+                attributes: [SDO_EXPORTS_LINKED_LABEL_ATTRIBUTE_ID],
+                // A real text label, so `toIDLabel` exports a label distinguishable from the id
+                recordIdentityConf: {label: SDO_EXPORTS_LINKED_LABEL_ATTRIBUTE_ID},
+            },
+        });
+
+        // No recordIdentityConf at all: covers `toIDLabel`'s fallback of the label on the leav id
+        await adminUserSdk.SaveLibrary({
+            library: {
+                id: SDO_EXPORTS_UNLABELLED_LIBRARY_ID,
+                label: {fr: 'Test SDO liée sans libellé', en: 'Test SDO linked without label'},
+            },
+        });
+
+        await adminUserSdk.SaveAttribute({
+            attribute: {
+                id: SDO_EXPORTS_UNLABELLED_LINK_ATTRIBUTE_ID,
+                type: AttributeType.advanced_link,
+                linked_library: SDO_EXPORTS_UNLABELLED_LIBRARY_ID,
+                multiple_values: true,
+                label: {fr: 'SDO export test lien sans libellé', en: 'SDO export test unlabelled link'},
             },
         });
 
@@ -178,6 +210,7 @@ describe('SDO Exports', () => {
                     SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID,
                     SDO_EXPORTS_DATE_RANGE_ATTRIBUTE_ID,
                     SDO_EXPORTS_EMBEDDED_ATTRIBUTE_ID,
+                    SDO_EXPORTS_UNLABELLED_LINK_ATTRIBUTE_ID,
                 ],
                 recordIdentityConf: {label: 'id'},
             },
@@ -730,7 +763,7 @@ describe('SDO Exports', () => {
 
     test('an export mapping function builds a computed SDO path from its own config', async () => {
         // The `info.computed` mapping entry declares no leavAttributeId: the plugin function is still
-        // called, receives the entry's exportFunctionConfig, and gets neither value nor attributeProps.
+        // called, receives the entry's exportFunctionConfig, and gets neither values nor attributeProps.
         const {createRecord: target} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_EXTENDED_LIBRARY_ID});
         const {uuid: targetUUID} = target.record;
 
@@ -743,11 +776,156 @@ describe('SDO Exports', () => {
                     computed: {
                         computedFrom: target.record.id,
                         config: SDO_EXPORTS_COMPUTED_FUNCTION_CONFIG,
-                        hasValue: false,
+                        hasValues: false,
                         hasAttributeProps: false,
                     },
                 },
             },
+        });
+    });
+
+    describe('toIDLabel — the native {id, label} export function (LEAVC-1106)', () => {
+        /** A linked record plus the label value its library's record identity points at. */
+        const _createLabelledLinkedRecord = async (label: string) => {
+            const {createRecord: linked} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LINKED_LIBRARY_ID});
+            await adminUserSdk.SaveValue({
+                libraryId: SDO_EXPORTS_LINKED_LIBRARY_ID,
+                recordId: linked.record.id,
+                attributeId: SDO_EXPORTS_LINKED_LABEL_ATTRIBUTE_ID,
+                value: {payload: label},
+            });
+            return linked.record;
+        };
+
+        test('exports a multivalued advanced link as an ordered array of {id, label}', async () => {
+            const linkedA = await _createLabelledLinkedRecord('Status A');
+            const linkedB = await _createLabelledLinkedRecord('Status B');
+
+            const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+            const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+            const createMsg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+            // No value on the attribute → empty array, not a missing path
+            expect((createMsg.content as any).info?.advancedLinkMultiPairs).toEqual([]);
+
+            await adminUserSdk.SaveValue({
+                libraryId: SDO_EXPORTS_LIBRARY_ID,
+                recordId,
+                attributeId: SDO_EXPORTS_ADVANCED_LINK_MULTI_ATTRIBUTE_ID,
+                value: {payload: linkedA.id},
+            });
+            await adminUserSdk.SaveValue({
+                libraryId: SDO_EXPORTS_LIBRARY_ID,
+                recordId,
+                attributeId: SDO_EXPORTS_ADVANCED_LINK_MULTI_ATTRIBUTE_ID,
+                value: {payload: linkedB.id},
+            });
+
+            const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+            expect((msg.content as any).info?.advancedLinkMultiPairs).toEqual(
+                expect.arrayContaining([
+                    {id: linkedA.uuid, label: 'Status A'},
+                    {id: linkedB.uuid, label: 'Status B'},
+                ]),
+            );
+
+            // Non-regression: the same attribute stays exported as a plain uuid array on its own path
+            expect((msg.content as any).info?.advancedLinkMulti).toEqual(
+                expect.arrayContaining([linkedA.uuid, linkedB.uuid]),
+            );
+        });
+
+        test('exports a multivalued tree attribute as {id, label} of the entity carried by each node', async () => {
+            const linkedA = await _createLabelledLinkedRecord('Node A');
+            const linkedB = await _createLabelledLinkedRecord('Node B');
+            const {treeAddElement: nodeA} = await adminUserSdk.TreeAddElement({
+                treeId: SDO_EXPORTS_TREE_ID,
+                element: {id: linkedA.id, library: SDO_EXPORTS_LINKED_LIBRARY_ID},
+            });
+            const {treeAddElement: nodeB} = await adminUserSdk.TreeAddElement({
+                treeId: SDO_EXPORTS_TREE_ID,
+                element: {id: linkedB.id, library: SDO_EXPORTS_LINKED_LIBRARY_ID},
+            });
+
+            const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+            const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+            await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+            await adminUserSdk.SaveValue({
+                libraryId: SDO_EXPORTS_LIBRARY_ID,
+                recordId,
+                attributeId: SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID,
+                value: {payload: nodeA.id},
+            });
+            await adminUserSdk.SaveValue({
+                libraryId: SDO_EXPORTS_LIBRARY_ID,
+                recordId,
+                attributeId: SDO_EXPORTS_TREE_MULTI_ATTRIBUTE_ID,
+                value: {payload: nodeB.id},
+            });
+
+            const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+            // The uuids are those of the records, never of the tree nodes (nodeA.id / nodeB.id)
+            expect((msg.content as any).info?.treeMultiPairs).toEqual(
+                expect.arrayContaining([
+                    {id: linkedA.uuid, label: 'Node A'},
+                    {id: linkedB.uuid, label: 'Node B'},
+                ]),
+            );
+        });
+
+        test('exports a single-valued link as one {id, label} object', async () => {
+            const linked = await _createLabelledLinkedRecord('The one status');
+
+            const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+            const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+            const createMsg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+            // No value on a single-valued attribute → no value exported
+            expect((createMsg.content as any).info?.simpleLinkPair).toBeNull();
+
+            await adminUserSdk.SaveValue({
+                libraryId: SDO_EXPORTS_LIBRARY_ID,
+                recordId,
+                attributeId: SDO_EXPORTS_SIMPLE_LINK_ATTRIBUTE_ID,
+                value: {payload: linked.id},
+            });
+
+            const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+            expect((msg.content as any).info?.simpleLinkPair).toEqual({
+                id: linked.uuid,
+                label: 'The one status',
+            });
+            // Same attribute, still exported as a bare uuid on its own SDO path
+            expect((msg.content as any).info?.simpleLink).toBe(linked.uuid);
+        });
+
+        test('falls back on the leav id when the target library configures no label', async () => {
+            const {createRecord: unlabelled} = await adminUserSdk.CreateRecord({
+                library: SDO_EXPORTS_UNLABELLED_LIBRARY_ID,
+            });
+
+            const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+            const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+            await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+            await adminUserSdk.SaveValue({
+                libraryId: SDO_EXPORTS_LIBRARY_ID,
+                recordId,
+                attributeId: SDO_EXPORTS_UNLABELLED_LINK_ATTRIBUTE_ID,
+                value: {payload: unlabelled.record.id},
+            });
+
+            const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+            expect((msg.content as any).info?.unlabelledPairs).toEqual([
+                {id: unlabelled.record.uuid, label: unlabelled.record.id},
+            ]);
         });
     });
 

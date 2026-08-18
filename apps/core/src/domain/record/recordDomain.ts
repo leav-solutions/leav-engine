@@ -33,6 +33,7 @@ import {type CreateRecordHelper} from './helpers/createRecord';
 import {type ILogger} from '@leav/logger';
 import {type FindRecordsHelper} from './helpers/findRecords';
 import {type GetRecordIdentityHelper} from './helpers/getRecordIdentity';
+import {type GetRecordUUIDHelper} from './helpers/getRecordUUID';
 
 export interface IDuplicateRecordRules {
     attributesToDuplicate?: Array<{
@@ -101,6 +102,8 @@ export interface IRecordDomain {
 
     getRecordIdentity(record: IRecord, ctx: IQueryInfos): Promise<IRecordIdentity>;
 
+    getRecordUUID(libraryId: string, recordId: string, ctx: IQueryInfos): Promise<string | null>;
+
     deactivateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord>;
 
     activateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord>;
@@ -141,6 +144,7 @@ export interface IRecordDomainDeps {
     'core.domain.record.helpers.deleteRecord': DeleteRecordHelper;
     'core.domain.record.helpers.findRecords': FindRecordsHelper;
     'core.domain.record.helpers.getRecordIdentity': GetRecordIdentityHelper;
+    'core.domain.record.helpers.getRecordUUID': GetRecordUUIDHelper;
     'core.domain.record.helpers.sendRecordUpdateEvent': SendRecordUpdateEventHelper;
     'core.infra.form': IFormRepo;
     'core.domain.eventsManager': IEventsManagerDomain;
@@ -156,6 +160,7 @@ export default function ({
     'core.domain.permission.record': recordPermissionDomain,
     'core.domain.record.helpers.findRecords': findRecordsHelper,
     'core.domain.record.helpers.getRecordIdentity': getRecordIdentityHelper,
+    'core.domain.record.helpers.getRecordUUID': getRecordUUIDHelper,
     'core.domain.record.helpers.createRecord': createRecordHelper,
     'core.domain.record.helpers.deleteRecord': deleteRecordHelper,
     'core.domain.record.helpers.sendRecordUpdateEvent': sendRecordUpdateEvent,
@@ -401,6 +406,7 @@ export default function ({
             return deleteRecordHelper(library, id, ctx);
         },
         getRecordIdentity: getRecordIdentityHelper,
+        getRecordUUID: getRecordUUIDHelper,
         getRecordFieldValue: valueDomain.getRecordFieldValue,
         async deactivateRecord(record: IRecord, ctx: IQueryInfos): Promise<IRecord> {
             const savedValues = await valueDomain.saveValue({

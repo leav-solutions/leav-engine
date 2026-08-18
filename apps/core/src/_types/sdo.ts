@@ -1,6 +1,7 @@
 import {type IAttribute} from './attribute';
 import {type IQueryInfos} from './queryInfos';
 import {type IRecord} from './record';
+import {type IValue} from './value';
 
 export type SDOAction = 'CREATE' | 'UPDATE';
 
@@ -152,26 +153,58 @@ export interface ISDOSettings {
 }
 
 /**
- * Plugin function producing the value of one SDO path on export, named by the mapping entry's
+ * Function producing the value of one SDO path on export, named by the mapping entry's
  * `exportFunction`. Its result goes through the entry's `format` before being set at its SDO path.
+ * Either registered by a plugin (`registerSDOExportMappingFunctions`) or provided by the core
+ * (`NATIVE_SDO_EXPORT_FUNCTIONS`).
  *
- * It is free to ignore `value` and build the whole thing off `record` — that is how a computed block
+ * It is free to ignore `values` and build the whole thing off `record` — that is how a computed block
  * (aggregating linked records, reading a different attribute per hierarchy level…) gets exported while
- * remaining declared in the mapping. Such an entry needs no `leavAttributeId`, in which case `value`
+ * remaining declared in the mapping. Such an entry needs no `leavAttributeId`, in which case `values`
  * and `attributeProps` are absent.
  */
 export type ISDOExportMappingFunction = (params: {
     record: IRecord;
-    /** Value of the entry's `leavAttributeId`, already resolved and mapped (uuids for links/trees). */
-    value?: unknown;
+    /**
+     * RAW values of the entry's `leavAttributeId`, as `getRecordFieldValue` returns them — NOT the
+     * value the generic mapping would have exported. Declaring an `exportFunction` short-circuits
+     * `_mapRecordAttributeValue`, precisely so links and trees stay `IRecord`s (`ILinkValue.payload`,
+     * `ITreeValue.payload.record`) instead of being flattened to uuids.
+     */
+    values?: IValue[];
     /** Properties of the entry's carrier attribute — e.g. `linked_tree` for a tree attribute. */
     attributeProps?: IAttribute;
+    /**
+     * The entry's declared `format`. Handed over so a function can reject a format contradicting the
+     * shape it produces, rather than letting `_cleanValue` silently coerce it (`array` on a
+     * single-valued attribute becomes `[]`).
+     */
+    format: SDOMappingAttributeFormat;
     /** The entry's `exportFunctionConfig`, opaque to the core. */
     config?: Record<string, unknown>;
     ctx: IQueryInfos;
 }) => Promise<unknown>;
 
 export type ISDOExportMappingFunctions<Keys extends string = string> = Record<Keys, ISDOExportMappingFunction>;
+
+/**
+ * Export functions the core provides itself, usable by simply naming them in the mapping — no plugin
+ * to write or deploy. They are pre-registered in the same registry as the plugin ones, and their names
+ * are reserved: a plugin registering one of them is rejected rather than silently shadowing it.
+ */
+export const NATIVE_SDO_EXPORT_FUNCTIONS = {
+    TO_ID_LABEL: 'toIDLabel',
+} as const;
+
+/**
+ * What `toIDLabel` produces per linked entity. `id` is the entity's uuid, the SDO-wide way of
+ * referencing an entity; `label` follows the target library's record identity, falling back to the
+ * leav id.
+ */
+export interface ISDOIdLabel {
+    id: string | null;
+    label: string;
+}
 
 /**
  * Plugin function extending a whole SDO export. Receives the full LEAV record and the

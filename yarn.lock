@@ -11099,6 +11099,7 @@ __metadata:
     node-cron: "npm:4.6.0"
     nodemailer: "npm:9.0.5"
     openid-client: "npm:5.7.1"
+    p-map: "npm:7.0.4"
     prettier: "npm:3.9.6"
     progress-stream: "npm:2.0.0"
     redis: "npm:6.2.1"
@@ -17087,7 +17088,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-map@npm:^7.0.2":
+"p-map@npm:7.0.4, p-map@npm:^7.0.2":
   version: 7.0.4
   resolution: "p-map@npm:7.0.4"
   checksum: 10/ef48c3b2e488f31c693c9fcc0df0ef76518cf6426a495cf9486ebbb0fd7f31aef7f90e96f72e0070c0ff6e3177c9318f644b512e2c29e3feee8d7153fcb6782e

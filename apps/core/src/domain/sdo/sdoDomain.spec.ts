@@ -7,7 +7,6 @@ import {
     mockEventsManagerDomain,
     mockGlobalSettingsDomain,
     mockRecordDomain,
-    mockRecordRepo,
     mockSystemQueryContext,
     mockValueDomain,
 } from '../../__tests__/mocks/sdo/core';
@@ -23,6 +22,7 @@ import {
     type ISDO,
     type IExtendSDOFunction,
     type ISDOExportMappingFunction,
+    NATIVE_SDO_EXPORT_FUNCTIONS,
 } from '../../_types/sdo';
 import {EventAction} from '@leav/utils';
 import {mockSDOUtils} from '../../__tests__/mocks/sdo/domains';
@@ -62,6 +62,7 @@ const expectedSDOSystemContent = {
 };
 
 const mockGetAttributeByPath = vi.fn();
+const mockToIDLabel = vi.fn<ISDOExportMappingFunction>();
 
 const deps: ToAny<ISDODomainDeps> = {
     'core.utils.sdo': mockSDOUtils,
@@ -70,7 +71,7 @@ const deps: ToAny<ISDODomainDeps> = {
     'core.domain.globalSettings': mockGlobalSettingsDomain,
     'core.domain.eventsManager': mockEventsManagerDomain,
     'core.domain.value': mockValueDomain,
-    'core.infra.record': mockRecordRepo,
+    'core.domain.sdo.export.exportFunctions.toIDLabel': mockToIDLabel,
     config: {sdo: {clientId: 'leav-client', applicationName: 'leav'}},
 };
 
@@ -98,7 +99,7 @@ describe('sdoDomain', () => {
         mockEventsManagerDomain.sendDatabaseEvent.mockResolvedValue(undefined);
         mockRecordDomain.find.mockResolvedValue({list: []} as IListWithCursor<IRecord>);
         mockSDOUtils.tmpRecordIdToUuid.mockImplementation((recordId: string) => recordId);
-        mockRecordRepo.getRecord.mockImplementation(async ({recordId}) => ({uuid: recordId}));
+        mockRecordDomain.getRecordUUID.mockImplementation(async (_libraryId: string, recordId: string) => recordId);
         mockRecordDomain.getRecordIdentity.mockResolvedValue({
             getLabel: vi.fn().mockResolvedValue('record-label'),
         } as unknown as IRecordIdentity);
@@ -625,28 +626,26 @@ describe('sdoDomain', () => {
             });
         });
 
-        it('[+] Should map attribute with export mappingFunction', async () => {
+        it('[+] Should map attribute with export mappingFunction, handing it the RAW values', async () => {
+            // Declaring an exportFunction short-circuits _mapRecordAttributeValue: the function gets the
+            // ITreeValue as leav returns it — with its IRecord payload — not the uuid the generic
+            // mapping would have exported. Without that, a function needing getRecordIdentity is stuck.
             jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
             mockRecordDomain.find.mockResolvedValueOnce({
                 list: [{id: 'entity', attribute: 'attribute value', ...mockRecordSystemData}],
             } as unknown as IListWithCursor<IRecord>);
-            mockRecordDomain.getRecordFieldValue.mockResolvedValueOnce([
-                {
-                    payload: {record: {id: '1000'}},
-                } as ITreeValue,
-            ]);
+            const treeValues = [{payload: {record: {id: '1000', library: 'statuses'}}} as ITreeValue];
+            mockRecordDomain.getRecordFieldValue.mockResolvedValueOnce(treeValues);
 
-            _sdoDomain.registerSDOExportMappingFunctions({
-                statusTree: vi.fn().mockResolvedValueOnce({
-                    id: 1000,
-                    value: 'A valider',
-                }),
+            const treeAttribute = {id: 'treeAttribute', type: AttributeTypes.TREE, linked_tree: 'my_status_tree'};
+            const statusTree = vi.fn<ISDOExportMappingFunction>().mockResolvedValueOnce({
+                id: 1000,
+                value: 'A valider',
             });
+            _sdoDomain.registerSDOExportMappingFunctions({statusTree});
 
             mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
-                [uuidAttribute, {id: 'treeAttribute', type: AttributeTypes.TREE, linked_tree: 'my_status_tree'}].find(
-                    a => a.id === attributePath,
-                ),
+                [uuidAttribute, treeAttribute].find(a => a.id === attributePath),
             );
 
             const simpleLinkSchemaMapping: ISDOMapping = {
@@ -671,6 +670,19 @@ describe('sdoDomain', () => {
                 mockSystemQueryContext,
             );
 
+            expect(statusTree).toHaveBeenCalledWith({
+                record: expect.objectContaining({id: 'entity'}),
+                values: treeValues,
+                attributeProps: treeAttribute,
+                format: 'object',
+                config: undefined,
+                ctx: mockSystemQueryContext,
+            });
+
+            // The uuid resolution the generic mapping performs was skipped entirely: the only calls left
+            // are the two system ones (creator / last modificator).
+            expect(mockRecordDomain.getRecordUUID).not.toHaveBeenCalledWith('statuses', '1000', expect.anything());
+
             expect(sdo).toMatchObject({
                 name: mockSDO.name,
                 action: 'CREATE',
@@ -681,6 +693,110 @@ describe('sdoDomain', () => {
                     },
                 },
             });
+        });
+
+        it('[+] Should still map the generic value when another SDO path exports the same attribute directly', async () => {
+            // The short-circuit is per attribute, not per entry: as soon as ONE path exports the
+            // attribute without a function, the mapped form is still needed.
+            jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
+            mockRecordDomain.find.mockResolvedValueOnce({
+                list: [{id: 'entity', ...mockRecordSystemData}],
+            } as unknown as IListWithCursor<IRecord>);
+            mockRecordDomain.getRecordFieldValue.mockResolvedValueOnce([
+                {payload: {id: '1000', library: 'statuses'}} as ILinkValue,
+            ]);
+
+            const linkAttribute = {id: 'linkAttribute', type: AttributeTypes.SIMPLE_LINK, linked_library: 'statuses'};
+            mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                [uuidAttribute, linkAttribute].find(a => a.id === attributePath),
+            );
+
+            _sdoDomain.registerSDOExportMappingFunctions({
+                pairs: vi.fn<ISDOExportMappingFunction>().mockResolvedValue({id: 'uuid-1000', label: 'A valider'}),
+            });
+
+            const sdo = await _sdoDomain.getRecordSDO(
+                mockSDOMapping[mockSDO.name].leavLibraryId,
+                'entity',
+                {
+                    [mockSDO.name]: {
+                        ...mockSDOMapping[mockSDO.name],
+                        sdoAttributes: {
+                            'info.statusUuid': {
+                                leavAttributeId: 'linkAttribute',
+                                valueRequired: false,
+                                format: 'string',
+                            },
+                            'info.status': {
+                                leavAttributeId: 'linkAttribute',
+                                valueRequired: false,
+                                format: 'object',
+                                exportFunction: 'pairs',
+                            },
+                        },
+                    },
+                },
+                'CREATE',
+                mockSystemQueryContext,
+            );
+
+            // Resolved once for both entries, and the uuid mapping did run for the direct one.
+            const attributeReads = mockRecordDomain.getRecordFieldValue.mock.calls.filter(
+                ([{attributePath}]) => attributePath === 'linkAttribute',
+            );
+            expect(attributeReads).toHaveLength(1);
+            expect((sdo as ISDO).content).toMatchObject({
+                info: {statusUuid: '1000', status: {id: 'uuid-1000', label: 'A valider'}},
+            });
+        });
+
+        it('[-] Should refuse to let a plugin override a native export function', async () => {
+            // Shadowing a native name would silently change what every mapping naming it exports.
+            expect(() =>
+                _sdoDomain.registerSDOExportMappingFunctions({
+                    [NATIVE_SDO_EXPORT_FUNCTIONS.TO_ID_LABEL]: vi.fn<ISDOExportMappingFunction>(),
+                }),
+            ).toThrow('toIDLabel is a native SDO export function');
+        });
+
+        it('[+] Should pre-register the native export functions, callable without any plugin', async () => {
+            jsonschemaSpy.mockReturnValueOnce({} as ValidatorResult);
+            mockRecordDomain.find.mockResolvedValueOnce({
+                list: [{id: 'entity', ...mockRecordSystemData}],
+            } as unknown as IListWithCursor<IRecord>);
+            const linkValues = [{payload: {id: '1000', library: 'statuses'}} as ILinkValue];
+            mockRecordDomain.getRecordFieldValue.mockResolvedValueOnce(linkValues);
+
+            const linkAttribute = {id: 'linkAttribute', type: AttributeTypes.SIMPLE_LINK, linked_library: 'statuses'};
+            mockGetAttributeByPath.mockImplementation(async ({attributePath}) =>
+                [uuidAttribute, linkAttribute].find(a => a.id === attributePath),
+            );
+            mockToIDLabel.mockResolvedValueOnce({id: 'uuid-1000', label: 'A valider'});
+
+            const sdo = await _sdoDomain.getRecordSDO(
+                mockSDOMapping[mockSDO.name].leavLibraryId,
+                'entity',
+                {
+                    [mockSDO.name]: {
+                        ...mockSDOMapping[mockSDO.name],
+                        sdoAttributes: {
+                            'info.status': {
+                                leavAttributeId: 'linkAttribute',
+                                valueRequired: false,
+                                format: 'object',
+                                exportFunction: NATIVE_SDO_EXPORT_FUNCTIONS.TO_ID_LABEL,
+                            },
+                        },
+                    },
+                },
+                'CREATE',
+                mockSystemQueryContext,
+            );
+
+            expect(mockToIDLabel).toHaveBeenCalledWith(
+                expect.objectContaining({values: linkValues, attributeProps: linkAttribute, format: 'object'}),
+            );
+            expect((sdo as ISDO).content).toMatchObject({info: {status: {id: 'uuid-1000', label: 'A valider'}}});
         });
 
         it('[+] Should export null for a declared but unmapped SDO path, without an export function', async () => {
@@ -779,6 +895,7 @@ describe('sdoDomain', () => {
 
             expect(computedFunction).toHaveBeenCalledWith({
                 record: expect.objectContaining({id: 'entity'}),
+                format: 'object',
                 config: exportFunctionConfig,
                 ctx: mockSystemQueryContext,
             });
