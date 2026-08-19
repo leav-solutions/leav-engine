@@ -19,6 +19,9 @@ import {
     type UIFilter,
 } from '../_types';
 import {filtersInitialState} from '../context/filtersInitialState';
+import {LangContext} from '_ui/contexts';
+
+const enLangContext = {lang: ['en'], availableLangs: ['fr', 'en'], defaultLang: 'en', setLang: () => undefined};
 
 const getAllConditionOptions = (base: ReturnType<typeof render>['baseElement']) =>
     base.getElementsByClassName('rc-virtual-list')[0].getElementsByClassName('kit-select-option');
@@ -283,7 +286,7 @@ describe('CommonFilterItem', () => {
     });
 
     describe('date filter', () => {
-        const date = {unix: '1730761200', formatted: dayjs.unix(1730761200).format('YYYY-MM-DD')};
+        const date = {unix: '1730761200', formatted: dayjs.unix(1730761200).format('DD/MM/YYYY')};
 
         test('should render simple filter', async () => {
             const filter: UIFilter = {
@@ -304,6 +307,31 @@ describe('CommonFilterItem', () => {
             const textInput = screen.getByRole('textbox');
             await waitFor(() => expect(textInput).toBeVisible());
             expect(textInput).toHaveValue(date.formatted);
+        });
+
+        test('should render simple filter formatted MM/DD/YYYY when the current language is english', async () => {
+            const filter: UIFilter = {
+                id: 'test',
+                attribute: {
+                    label: 'date filter',
+                    id: 'date filter',
+                    format: gqlTypes.AttributeFormat.date,
+                    type: AttributeType.simple,
+                },
+                field: 'test',
+                value: date.unix,
+                condition: AttributeConditionFilter.EQUAL,
+            };
+
+            render(
+                <LangContext.Provider value={enLangContext}>
+                    <CommonFilterItem filter={filter} />
+                </LangContext.Provider>,
+            );
+            await userEvent.click(screen.getByRole('button', {name: /date/}));
+            const textInput = screen.getByRole('textbox');
+            await waitFor(() => expect(textInput).toBeVisible());
+            expect(textInput).toHaveValue(dayjs.unix(1730761200).format('MM/DD/YYYY'));
         });
 
         test('should render an DateRangePicker if condition is BETWEEN', async () => {

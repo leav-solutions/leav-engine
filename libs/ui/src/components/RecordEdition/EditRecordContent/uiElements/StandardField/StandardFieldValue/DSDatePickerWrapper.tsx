@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import {setDateToUTCNoon} from '_ui/_utils';
 import {type IStandFieldValueContentProps} from './_types';
 import {type IKitDatePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
+import {useDateFormat} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EMPTY_INITIAL_VALUE_STRING} from '../../../antdUtils';
 
@@ -15,7 +16,6 @@ const KitDatePickerStyled = styled(KitDatePicker)`
 
 export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps<IKitDatePicker>> = ({
     value,
-    presentationValue,
     isLastValueOfMultivalues,
     removeLastValueOfMultivalues,
     onChange,
@@ -39,6 +39,7 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
     const hasChangedRef = useRef(false);
     const [isFocused, setIsFocused] = useState(focusedDefaultValue);
     const isErrors = errors.length > 0;
+    const dateFormat = useDateFormat();
 
     // TODO: Remove inheritedValues[0] and calculatedValues[0] when we will have a proper way to override multiple values. For now, those attributes are set in readonly mode.
     const _resetToInheritedOrCalculatedValue = async () => {
@@ -105,7 +106,7 @@ export const DSDatePickerWrapper: FunctionComponent<IStandFieldValueContentProps
             autoFocus={isFocused}
             open={attribute.multiple_values ? isFocused : undefined}
             value={value}
-            format={isFocused || isErrors || !presentationValue ? undefined : () => presentationValue}
+            format={dateFormat}
             readonly={readonly}
             allowClear={
                 !!value &&
