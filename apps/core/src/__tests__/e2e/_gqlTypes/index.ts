@@ -259,6 +259,7 @@ export type AutomationRulesFiltersInput = {
   id?: InputMaybe<Scalars['ID']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
+  version?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AutomationRulesSortInput = {
@@ -1368,6 +1369,21 @@ export type DeleteAutomationRuleMutationVariables = Exact<{
 
 export type DeleteAutomationRuleMutation = { deleteAutomationRule: { id: string } };
 
+export type SetAutomationRulesActiveMutationVariables = Exact<{
+  ruleIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+  active: Scalars['Boolean']['input'];
+}>;
+
+
+export type SetAutomationRulesActiveMutation = { setAutomationRulesActive: Array<{ id: string, active: boolean }> };
+
+export type DeleteAutomationRulesMutationVariables = Exact<{
+  ruleIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+}>;
+
+
+export type DeleteAutomationRulesMutation = { deleteAutomationRules: Array<{ id: string }> };
+
 export type GetAutomationRuleFormQueryVariables = Exact<{
   formType: AutomationRuleJsonSchemaFormType;
 }>;
@@ -1878,6 +1894,21 @@ export const DuplicateAutomationRuleDocument = gql`
 export const DeleteAutomationRuleDocument = gql`
     mutation DeleteAutomationRule($ruleId: ID!) {
   deleteAutomationRule(ruleId: $ruleId) {
+    id
+  }
+}
+    `;
+export const SetAutomationRulesActiveDocument = gql`
+    mutation SetAutomationRulesActive($ruleIds: [ID!]!, $active: Boolean!) {
+  setAutomationRulesActive(ruleIds: $ruleIds, active: $active) {
+    id
+    active
+  }
+}
+    `;
+export const DeleteAutomationRulesDocument = gql`
+    mutation DeleteAutomationRules($ruleIds: [ID!]!) {
+  deleteAutomationRules(ruleIds: $ruleIds) {
     id
   }
 }
@@ -2451,6 +2482,12 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     DeleteAutomationRule(variables: DeleteAutomationRuleMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteAutomationRuleMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DeleteAutomationRuleMutation>({ document: DeleteAutomationRuleDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteAutomationRule', 'mutation', variables);
+    },
+    SetAutomationRulesActive(variables: SetAutomationRulesActiveMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<SetAutomationRulesActiveMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<SetAutomationRulesActiveMutation>({ document: SetAutomationRulesActiveDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'SetAutomationRulesActive', 'mutation', variables);
+    },
+    DeleteAutomationRules(variables: DeleteAutomationRulesMutationVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<DeleteAutomationRulesMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<DeleteAutomationRulesMutation>({ document: DeleteAutomationRulesDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'DeleteAutomationRules', 'mutation', variables);
     },
     GetAutomationRuleForm(variables: GetAutomationRuleFormQueryVariables, requestHeaders?: GraphQLClientRequestHeaders, signal?: RequestInit['signal']): Promise<GetAutomationRuleFormQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetAutomationRuleFormQuery>({ document: GetAutomationRuleFormDocument, variables, requestHeaders: { ...requestHeaders, ...wrappedRequestHeaders }, signal }), 'GetAutomationRuleForm', 'query', variables);

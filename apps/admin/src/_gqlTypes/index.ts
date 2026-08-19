@@ -1398,6 +1398,21 @@ export type GetAutomationRuleDetailsQueryVariables = Exact<{
 
 export type GetAutomationRuleDetailsQuery = { automationRules: { list: Array<{ id: string, label: string, description?: string | null, version?: string | null, active: boolean, trigger: { eventAction: AutomationRuleEventAction, synchronous: boolean, eventTopic?: { library?: string | null, attribute?: string | null } | null }, pipeline: { steps: Array<{ type: AutomationRuleActions, name?: string | null, params: any }> } }> } };
 
+export type SetAutomationRulesActiveMutationVariables = Exact<{
+  ruleIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+  active: Scalars['Boolean']['input'];
+}>;
+
+
+export type SetAutomationRulesActiveMutation = { setAutomationRulesActive: Array<{ id: string }> };
+
+export type DeleteAutomationRulesMutationVariables = Exact<{
+  ruleIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+}>;
+
+
+export type DeleteAutomationRulesMutation = { deleteAutomationRules: Array<{ id: string }> };
+
 export type GetAutomationRulesDataQueryVariables = Exact<{
   filters?: InputMaybe<AutomationRulesFiltersInput>;
   pagination?: InputMaybe<Pagination>;
@@ -2673,6 +2688,73 @@ export type GetAutomationRuleDetailsQueryHookResult = ReturnType<typeof useGetAu
 export type GetAutomationRuleDetailsLazyQueryHookResult = ReturnType<typeof useGetAutomationRuleDetailsLazyQuery>;
 export type GetAutomationRuleDetailsSuspenseQueryHookResult = ReturnType<typeof useGetAutomationRuleDetailsSuspenseQuery>;
 export type GetAutomationRuleDetailsQueryResult = Apollo.QueryResult<GetAutomationRuleDetailsQuery, GetAutomationRuleDetailsQueryVariables>;
+export const SetAutomationRulesActiveDocument = gql`
+    mutation SetAutomationRulesActive($ruleIds: [ID!]!, $active: Boolean!) {
+  setAutomationRulesActive(ruleIds: $ruleIds, active: $active) {
+    id
+  }
+}
+    `;
+export type SetAutomationRulesActiveMutationFn = Apollo.MutationFunction<SetAutomationRulesActiveMutation, SetAutomationRulesActiveMutationVariables>;
+
+/**
+ * __useSetAutomationRulesActiveMutation__
+ *
+ * To run a mutation, you first call `useSetAutomationRulesActiveMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetAutomationRulesActiveMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setAutomationRulesActiveMutation, { data, loading, error }] = useSetAutomationRulesActiveMutation({
+ *   variables: {
+ *      ruleIds: // value for 'ruleIds'
+ *      active: // value for 'active'
+ *   },
+ * });
+ */
+export function useSetAutomationRulesActiveMutation(baseOptions?: Apollo.MutationHookOptions<SetAutomationRulesActiveMutation, SetAutomationRulesActiveMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SetAutomationRulesActiveMutation, SetAutomationRulesActiveMutationVariables>(SetAutomationRulesActiveDocument, options);
+      }
+export type SetAutomationRulesActiveMutationHookResult = ReturnType<typeof useSetAutomationRulesActiveMutation>;
+export type SetAutomationRulesActiveMutationResult = Apollo.MutationResult<SetAutomationRulesActiveMutation>;
+export type SetAutomationRulesActiveMutationOptions = Apollo.BaseMutationOptions<SetAutomationRulesActiveMutation, SetAutomationRulesActiveMutationVariables>;
+export const DeleteAutomationRulesDocument = gql`
+    mutation DeleteAutomationRules($ruleIds: [ID!]!) {
+  deleteAutomationRules(ruleIds: $ruleIds) {
+    id
+  }
+}
+    `;
+export type DeleteAutomationRulesMutationFn = Apollo.MutationFunction<DeleteAutomationRulesMutation, DeleteAutomationRulesMutationVariables>;
+
+/**
+ * __useDeleteAutomationRulesMutation__
+ *
+ * To run a mutation, you first call `useDeleteAutomationRulesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteAutomationRulesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteAutomationRulesMutation, { data, loading, error }] = useDeleteAutomationRulesMutation({
+ *   variables: {
+ *      ruleIds: // value for 'ruleIds'
+ *   },
+ * });
+ */
+export function useDeleteAutomationRulesMutation(baseOptions?: Apollo.MutationHookOptions<DeleteAutomationRulesMutation, DeleteAutomationRulesMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteAutomationRulesMutation, DeleteAutomationRulesMutationVariables>(DeleteAutomationRulesDocument, options);
+      }
+export type DeleteAutomationRulesMutationHookResult = ReturnType<typeof useDeleteAutomationRulesMutation>;
+export type DeleteAutomationRulesMutationResult = Apollo.MutationResult<DeleteAutomationRulesMutation>;
+export type DeleteAutomationRulesMutationOptions = Apollo.BaseMutationOptions<DeleteAutomationRulesMutation, DeleteAutomationRulesMutationVariables>;
 export const GetAutomationRulesDataDocument = gql`
     query getAutomationRulesData($filters: AutomationRulesFiltersInput, $pagination: Pagination, $sort: AutomationRulesSortInput) {
   automationRules(filters: $filters, pagination: $pagination, sort: $sort) {

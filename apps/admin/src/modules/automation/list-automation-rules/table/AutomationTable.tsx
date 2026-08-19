@@ -1,7 +1,7 @@
 import {KitIdCard, KitSpace, KitTable, KitTag} from 'aristid-ds';
 import {type ComponentProps} from 'react';
 import {useTranslation} from 'react-i18next';
-import {automationTableContainer} from './automationTable.module.css';
+import {scrollableTableContainer} from '../../../utils/scrollableTable.module.css';
 import {useTableScrollableHeight} from '../../../utils/useTableScrollableHeight';
 import {type AutomationRulesData} from '../get-automation-rules-data/useGetAutomationRulesData';
 import {AutomationCell} from './cell/AutomationCell';
@@ -24,6 +24,9 @@ type AutomationTableProps = {
     onRowClick: (record: AutomationRulesData) => void;
     onDelete: (ruleId: string) => void;
     onDuplicate: (record: AutomationRulesData) => void;
+    selectedRuleIds: string[];
+    onSelectionChange: (selectedRules: AutomationRulesData[]) => void;
+    disableRowCheckboxes: boolean;
 };
 
 export const AutomationTable = ({
@@ -36,6 +39,9 @@ export const AutomationTable = ({
     onRowClick,
     onDelete,
     onDuplicate,
+    selectedRuleIds,
+    onSelectionChange,
+    disableRowCheckboxes,
 }: AutomationTableProps) => {
     const {t} = useTranslation();
     const {containerRef, scrollHeight} = useTableScrollableHeight(true);
@@ -113,7 +119,7 @@ export const AutomationTable = ({
     ];
 
     return (
-        <div className={automationTableContainer} ref={containerRef}>
+        <div className={scrollableTableContainer} ref={containerRef}>
             <KitTable
                 dataSource={data}
                 rowKey="id"
@@ -122,6 +128,18 @@ export const AutomationTable = ({
                     onClick: () => onRowClick(record),
                     style: {cursor: 'pointer'},
                 })}
+                rowSelection={{
+                    type: 'checkbox',
+                    columnTitle: ' ',
+                    selectedRowKeys: selectedRuleIds,
+                    // Without this, antd only caches row objects for the currently rendered page: `selectedRows`
+                    // in `onChange` would silently drop rows selected on a page no longer in `dataSource`,
+                    // truncating a cross-page selection instead of preserving it.
+                    preserveSelectedRowKeys: true,
+                    onChange: (_selectedRowKeys, selectedRows) =>
+                        onSelectionChange(selectedRows as AutomationRulesData[]),
+                    getCheckboxProps: disableRowCheckboxes ? () => ({disabled: true}) : undefined,
+                }}
                 headerLineSize="s"
                 lineSize="s" //TODO: Replace by "xs" when it will be available
                 scroll={{

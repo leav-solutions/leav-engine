@@ -25,7 +25,7 @@ export type UseGetAutomationRulesParams = {
 };
 
 export const useGetAutomationRulesData = ({currentPage, pageSize, filters}: UseGetAutomationRulesParams) => {
-    const {data, loading, error} = useGetAutomationRulesDataQuery({
+    const {data, loading, error, refetch} = useGetAutomationRulesDataQuery({
         fetchPolicy: 'no-cache',
         variables: {
             filters,
@@ -46,6 +46,7 @@ export const useGetAutomationRulesData = ({currentPage, pageSize, filters}: UseG
             total: 0,
             loading,
             error,
+            refetch,
         };
     }
 
@@ -54,5 +55,6 @@ export const useGetAutomationRulesData = ({currentPage, pageSize, filters}: UseG
         total: data.automationRules?.totalCount ?? 0,
         loading,
         error,
+        refetch,
     };
 };

@@ -1,4 +1,4 @@
-import {KitIdCard, KitLoader} from 'aristid-ds';
+import {KitIdCard, KitLoader, KitSnackBarProvider} from 'aristid-ds';
 import {useState} from 'react';
 import {Navigate, useNavigate} from 'react-router-dom';
 import {AdminAbsolutePaths} from '../routes/paths';
@@ -12,6 +12,10 @@ import {useDeleteAutomationRule} from '../automation/delete-automation-rule/useD
 import {DuplicateAutomationRuleModal} from '../automation/duplicate-automation-rule/DuplicateAutomationRuleModal';
 import {AutomationToolbar} from '../automation/list-automation-rules/toolbar/AutomationToolbar';
 import {useAutomationFilters} from '../automation/list-automation-rules/toolbar/filter/useAutomationFilters';
+import {useAutomationRulesSelection} from '../automation/list-automation-rules/actions-mass/useAutomationRulesSelection';
+import {useAutomationRulesMassActions} from '../automation/list-automation-rules/actions-mass/useAutomationRulesMassActions';
+import {SelectAllAutomationRulesCheckbox} from '../automation/list-automation-rules/actions-mass/SelectAllAutomationRulesCheckbox';
+import {AUTOMATION_MASS_ACTIONS_SNACKBAR_ID} from '../automation/list-automation-rules/actions-mass/constants';
 import {PageContainer} from '../ui/page/PageContainer';
 import {PageHeader} from '../ui/page/PageHeader';
 import {PageContentContainer} from '../ui/page/PageContentContainer';
@@ -24,7 +28,21 @@ export const AutomationList = () => {
     const {gqlFilters, filtersValues, onFilterChange, onFilterReset} = useAutomationFilters({
         onFilterChange: resetPage,
     });
-    const {data, total, loading, error} = useGetAutomationRulesData({currentPage, pageSize, filters: gqlFilters});
+    const {data, total, loading, error, refetch} = useGetAutomationRulesData({
+        currentPage,
+        pageSize,
+        filters: gqlFilters,
+    });
+    const {
+        selectedRules,
+        selectedRuleIds,
+        isAllFilteredSelected,
+        isSelectingAll,
+        selectRules,
+        selectAllFiltered,
+        clearSelection,
+    } = useAutomationRulesSelection({total, pageSize, filters: gqlFilters, visibleRules: data});
+    useAutomationRulesMassActions({selectedRules, clearSelection, refetchRules: refetch, resetPage});
     // const {isOpen, selectedRecord, openDetails, closeDetails} = useAutomationDetails();  //TODO: Use similar hook as for history, but for automation
 
     const {t} = useTranslation();
@@ -64,10 +82,18 @@ export const AutomationList = () => {
             <PageContentContainer>
                 <AutomationToolbar
                     loading={loading}
-                    total={total}
                     filtersValues={filtersValues}
                     onFilterChange={onFilterChange}
                     onFilterReset={onFilterReset}
+                    selectAllCheckbox={
+                        <SelectAllAutomationRulesCheckbox
+                            total={total}
+                            selectedCount={selectedRules.length}
+                            loading={loading || isSelectingAll}
+                            onSelectAll={selectAllFiltered}
+                            onClearSelection={clearSelection}
+                        />
+                    }
                 />
                 {loading ? (
                     <KitLoader />
@@ -82,6 +108,9 @@ export const AutomationList = () => {
                         onRowClick={handleRowClick}
                         onDelete={handleDelete}
                         onDuplicate={setRuleToDuplicate}
+                        selectedRuleIds={selectedRuleIds}
+                        onSelectionChange={selectRules}
+                        disableRowCheckboxes={isAllFilteredSelected}
                     />
                 )}
             </PageContentContainer>
@@ -90,6 +119,7 @@ export const AutomationList = () => {
                 onClose={() => setRuleToDuplicate(null)}
                 onDuplicated={handleDuplicated}
             />
+            <KitSnackBarProvider id={AUTOMATION_MASS_ACTIONS_SNACKBAR_ID} />
         </PageContainer>
     );
 };

@@ -500,6 +500,113 @@ describe('Automation', () => {
         });
     });
 
+    describe('bulk actions on automation rules', () => {
+        const createRule = async (label: string, {active = false, withPipeline = true} = {}) =>
+            (
+                await adminUserSdk.CreateAutomationRule({
+                    rule: {
+                        label,
+                        active,
+                        trigger: {
+                            synchronous: true,
+                            eventAction: AutomationRuleEventAction.RECORD_INIT,
+                            eventTopic: {library: 'users'},
+                        },
+                        pipeline: {
+                            steps: withPipeline
+                                ? [{type: AutomationRuleActions.condition, params: {expression: 'true'}}]
+                                : [],
+                        },
+                    },
+                })
+            ).createAutomationRule;
+
+        const getRule = async (ruleId: string) =>
+            (await adminUserSdk.GetAutomationRules({filters: {id: ruleId}})).automationRules.list[0];
+
+        describe('setAutomationRulesActive', () => {
+            test('activates then deactivates several rules at once', async () => {
+                const firstRule = await createRule('Bulk activate rule 1');
+                const secondRule = await createRule('Bulk activate rule 2');
+                const ruleIds = [firstRule.id, secondRule.id];
+
+                const activatedRules = (await adminUserSdk.SetAutomationRulesActive({ruleIds, active: true}))
+                    .setAutomationRulesActive;
+
+                expect(activatedRules).toEqual([
+                    {id: firstRule.id, active: true},
+                    {id: secondRule.id, active: true},
+                ]);
+                expect((await getRule(firstRule.id)).active).toBe(true);
+                expect((await getRule(secondRule.id)).active).toBe(true);
+
+                const deactivatedRules = (await adminUserSdk.SetAutomationRulesActive({ruleIds, active: false}))
+                    .setAutomationRulesActive;
+
+                expect(deactivatedRules).toEqual([
+                    {id: firstRule.id, active: false},
+                    {id: secondRule.id, active: false},
+                ]);
+                expect((await getRule(firstRule.id)).active).toBe(false);
+                expect((await getRule(secondRule.id)).active).toBe(false);
+            });
+
+            test('is not transactional: rules processed before the failing one stay updated', async () => {
+                const validRule = await createRule('Bulk activate valid rule');
+                const emptyPipelineRule = await createRule('Bulk activate empty rule', {withPipeline: false});
+
+                await expect(
+                    adminUserSdk.SetAutomationRulesActive({
+                        ruleIds: [validRule.id, emptyPipelineRule.id],
+                        active: true,
+                    }),
+                ).rejects.toThrow('Cannot activate an automation rule with an empty pipeline');
+
+                expect((await getRule(validRule.id)).active).toBe(true);
+                expect((await getRule(emptyPipelineRule.id)).active).toBe(false);
+            });
+
+            test('unknown rule id throws UNKNOWN_AUTOMATION_RULE', async () => {
+                await expect(
+                    adminUserSdk.SetAutomationRulesActive({ruleIds: ['nonexistent-rule-id'], active: true}),
+                ).rejects.toThrow(/Unknown automation rule/);
+            });
+
+            test('non-admin user cannot activate rules in bulk', async () => {
+                await expect(
+                    nonAdminUserSdk.SetAutomationRulesActive({ruleIds: ['whatever'], active: true}),
+                ).rejects.toThrow('Action forbidden');
+            });
+        });
+
+        describe('deleteAutomationRules', () => {
+            test('deletes several rules at once', async () => {
+                const firstRule = await createRule('Bulk delete rule 1');
+                const secondRule = await createRule('Bulk delete rule 2');
+
+                const deletedRules = (
+                    await adminUserSdk.DeleteAutomationRules({ruleIds: [firstRule.id, secondRule.id]})
+                ).deleteAutomationRules;
+
+                expect(deletedRules).toEqual([{id: firstRule.id}, {id: secondRule.id}]);
+                expect(await getRule(firstRule.id)).toBeUndefined();
+                expect(await getRule(secondRule.id)).toBeUndefined();
+            });
+
+            test('unknown rule id throws UNKNOWN_AUTOMATION_RULE', async () => {
+                await expect(adminUserSdk.DeleteAutomationRules({ruleIds: ['nonexistent-rule-id']})).rejects.toThrow(
+                    /Unknown automation rule/,
+                );
+            });
+
+            test('non-admin user cannot delete rules in bulk', async () => {
+                await expect(nonAdminUserSdk.DeleteAutomationRules({ruleIds: ['whatever']})).rejects.toThrow(
+                    'Action forbidden',
+                );
+            });
+        });
+    });
+
     describe('get automation rule form', () => {
         test('creation json schema has correct structure for RJSF', async () => {
             const result = await adminUserSdk.GetAutomationRuleForm({

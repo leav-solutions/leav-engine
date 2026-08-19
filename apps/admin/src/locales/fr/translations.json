@@ -598,6 +598,42 @@
                     "success": "Règle d’automatisation supprimée",
                     "error": "Une erreur est survenue lors de la suppression de la règle d’automatisation"
                 }
+            },
+            "mass_action": {
+                "selected_one": "{{count}} règle sélectionnée",
+                "selected_other": "{{count}} règles sélectionnées",
+                "partial_success_one": "{{count}} règle a bien été traitée, les autres restent inchangées.",
+                "partial_success_other": "{{count}} règles ont bien été traitées, les autres restent inchangées.",
+                "activate": {
+                    "label": "Activer",
+                    "skipped_empty_pipeline_one": "{{count}} règle sélectionnée n’a aucune action et ne peut pas être activée.",
+                    "skipped_empty_pipeline_other": "{{count}} règles sélectionnées n’ont aucune action et ne peuvent pas être activées.",
+                    "success_one": "{{count}} règle d’automatisation activée",
+                    "success_other": "{{count}} règles d’automatisation activées",
+                    "error_one": "{{count}} règle n’a pas pu être activée",
+                    "error_other": "{{count}} règles n’ont pas pu être activées"
+                },
+                "deactivate": {
+                    "label": "Désactiver",
+                    "success_one": "{{count}} règle d’automatisation désactivée",
+                    "success_other": "{{count}} règles d’automatisation désactivées",
+                    "error_one": "{{count}} règle n’a pas pu être désactivée",
+                    "error_other": "{{count}} règles n’ont pas pu être désactivées"
+                },
+                "delete": {
+                    "label": "Supprimer",
+                    "confirm": {
+                        "title": "Supprimer les règles d’automatisation",
+                        "content_one": "Êtes-vous sûr de vouloir supprimer cette règle ? Cette action est irréversible.",
+                        "content_other": "Êtes-vous sûr de vouloir supprimer ces {{count}} règles ? Cette action est irréversible.",
+                        "active_warning_one": "{{count}} règle sélectionnée est active : sa suppression retire immédiatement son comportement de la production.",
+                        "active_warning_other": "{{count}} règles sélectionnées sont actives : leur suppression retire immédiatement leur comportement de la production."
+                    },
+                    "success_one": "{{count}} règle d’automatisation supprimée",
+                    "success_other": "{{count}} règles d’automatisation supprimées",
+                    "error_one": "{{count}} règle n’a pas pu être supprimée",
+                    "error_other": "{{count}} règles n’ont pas pu être supprimées"
+                }
             }
         },
         "filters": {

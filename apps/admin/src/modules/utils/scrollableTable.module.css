@@ -1,0 +1,14 @@
+.scrollableTableContainer {
+    flex: 1 1 min-content;
+    overflow: hidden;
+}
+
+/*
+ * Aligns the pagination spacing with the Explorer of @leav/ui, which renders its own pagination
+ * outside of the table with 16px above it. No margin below: the air under the pagination comes from
+ * the page content container padding, and Ant Design's own 8px would add up to it.
+ * Ant Design's selector specificity has to be matched to be overridden.
+ */
+.scrollableTableContainer :global(.ant-table-wrapper .ant-table-pagination.ant-pagination) {
+    margin: calc(var(--general-spacing-s) * 1px) auto 0;
+}

@@ -598,6 +598,42 @@
                     "success": "Automation rule deleted",
                     "error": "An error occurred while deleting the automation rule"
                 }
+            },
+            "mass_action": {
+                "selected_one": "{{count}} rule selected",
+                "selected_other": "{{count}} rules selected",
+                "partial_success_one": "{{count}} rule was processed, the others are unchanged.",
+                "partial_success_other": "{{count}} rules were processed, the others are unchanged.",
+                "activate": {
+                    "label": "Activate",
+                    "skipped_empty_pipeline_one": "{{count}} selected rule has no action and cannot be activated.",
+                    "skipped_empty_pipeline_other": "{{count}} selected rules have no action and cannot be activated.",
+                    "success_one": "{{count}} automation rule activated",
+                    "success_other": "{{count}} automation rules activated",
+                    "error_one": "{{count}} rule could not be activated",
+                    "error_other": "{{count}} rules could not be activated"
+                },
+                "deactivate": {
+                    "label": "Deactivate",
+                    "success_one": "{{count}} automation rule deactivated",
+                    "success_other": "{{count}} automation rules deactivated",
+                    "error_one": "{{count}} rule could not be deactivated",
+                    "error_other": "{{count}} rules could not be deactivated"
+                },
+                "delete": {
+                    "label": "Delete",
+                    "confirm": {
+                        "title": "Delete automation rules",
+                        "content_one": "Are you sure you want to delete this rule? This action is irreversible.",
+                        "content_other": "Are you sure you want to delete these {{count}} rules? This action is irreversible.",
+                        "active_warning_one": "{{count}} selected rule is active: deleting it immediately removes its behaviour from production.",
+                        "active_warning_other": "{{count}} selected rules are active: deleting them immediately removes their behaviour from production."
+                    },
+                    "success_one": "{{count}} automation rule deleted",
+                    "success_other": "{{count}} automation rules deleted",
+                    "error_one": "{{count}} rule could not be deleted",
+                    "error_other": "{{count}} rules could not be deleted"
+                }
             }
         },
         "filters": {

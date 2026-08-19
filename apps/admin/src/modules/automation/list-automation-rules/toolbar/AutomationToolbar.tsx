@@ -1,6 +1,6 @@
 import {KitDivider} from 'aristid-ds';
+import {type ReactNode} from 'react';
 import {Toolbar} from '../../../ui/toolbar/Toolbar';
-import {TotalResult} from '../../../ui/toolbar/total-result/TotalResult';
 import {FiltersResetButton} from '../../../ui/filter/FiltersResetButton';
 import {CreateButton} from './create-button/CreateButton';
 import {LibraryFilter} from './filter/filter-item/LibraryFilter';
@@ -13,23 +13,23 @@ import {type AutomationFiltersValues, type OnAutomationFilterChange} from './fil
 
 type AutomationToolbarProps = {
     loading: boolean;
-    total: number;
     filtersValues: AutomationFiltersValues;
     onFilterChange: OnAutomationFilterChange;
     onFilterReset: () => void;
+    selectAllCheckbox: ReactNode;
 };
 
 export const AutomationToolbar = ({
     loading,
-    total,
     filtersValues,
     onFilterChange,
     onFilterReset,
+    selectAllCheckbox,
 }: AutomationToolbarProps) => (
     <Toolbar
         extraAlignLeft={
             <>
-                <TotalResult loading={loading} total={total} />
+                {selectAllCheckbox}
                 <KitDivider orientation="vertical" />
                 <LibraryFilter
                     loading={loading}

@@ -4,7 +4,7 @@ import {HistoryCell} from './cell/HistoryCell';
 import {CopyCell} from './cell/CopyCell';
 import {useTranslation} from 'react-i18next';
 import {useTableScrollableHeight} from '../../../utils/useTableScrollableHeight';
-import {historyTableContainer} from './historyTable.module.css';
+import {scrollableTableContainer} from '../../../utils/scrollableTable.module.css';
 import {type HistoryData} from '../../types';
 
 type HistoryTableProps = {
@@ -86,7 +86,7 @@ export const HistoryTable = ({
     ];
 
     return (
-        <div className={historyTableContainer} ref={containerRef}>
+        <div className={scrollableTableContainer} ref={containerRef}>
             <KitTable
                 dataSource={data}
                 columns={tableColumns}
