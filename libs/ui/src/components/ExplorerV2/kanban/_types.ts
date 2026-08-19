@@ -1,4 +1,4 @@
-import {type IExplorerData, type IItemData, type IKanbanDataSource} from '../_types';
+import {type IItemData, type IKanbanDataSource} from '../_types';
 import {type KanbanColumnsState} from './kanbanColumnsReducer';
 
 export interface IKanbanColumnsDataOptions {
@@ -19,7 +19,6 @@ export interface IKanbanColumnsData {
      * keys) during the reload window instead of flickering to 0/empty.
      */
     isReloading: boolean;
-    attributesProperties: IExplorerData['attributes'];
     columnStatesById: KanbanColumnsState;
     loadMore: (columnId: string) => void;
     /** Optimistically reflects a successful drag & drop write in the column states (cards + counts). */

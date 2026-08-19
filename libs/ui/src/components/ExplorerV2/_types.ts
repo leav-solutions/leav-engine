@@ -2,7 +2,7 @@ import {type Override} from '@leav/utils';
 import type * as z from 'zod/v4';
 import {type ViewSettingsTabSchema} from '_ui/hooks/usePanelMessenger/schema';
 import {
-    type AttributePropertiesFragment,
+    type ExplorerV2AttributePropertiesFragment,
     type PropertyValueFragment,
     type RecordFilterCondition,
     type RecordFilterInput,
@@ -16,11 +16,25 @@ import {type UIFilter} from '../Filters/_types';
 
 export type MassSelection = Key[] | typeof MASS_SELECTION_ALL;
 
+/** Distributive, unlike `Override` alone: keeps the fragment union's members, hence the
+ *  TreeAttribute-only fields (`linked_tree`, `permissions_conf_dependent_values`). */
+type WithLocalizedLabel<T> = T extends unknown ? Override<T, {label: string}> : never;
+
+/** ONE attribute's metadata, label already localized. */
+export type AttributeProperties = WithLocalizedLabel<ExplorerV2AttributePropertiesFragment>;
+
+/** EVERY attribute of the library, keyed by attribute id. Loaded upfront
+ *  (`useExplorerLibraryMetadata`), no longer derived from the first record. */
+export type AttributesPropertiesById = {[attributeId: string]: AttributeProperties};
+
+/** What a cell renderer needs: everything but the label (owned by the column header). */
+export type CellAttributeProperties = Pick<
+    AttributeProperties,
+    'id' | 'type' | 'format' | 'multiple_values' | 'multi_link_display_option' | 'multi_tree_display_option'
+>;
+
 export interface IExplorerData {
     totalCount: number;
-    attributes: {
-        [attributeId: string]: Override<AttributePropertiesFragment, {label: string}>;
-    };
     records: IItemData[];
 }
 
@@ -193,7 +207,7 @@ export interface IKanbanDataSource {
 export interface IDataViewChildProps {
     dataGroupedFilteredSorted: IItemData[];
     itemActions: IItemAction[];
-    attributesProperties: IExplorerData['attributes'];
+    attributesProperties: AttributesPropertiesById;
     attributesToDisplay: string[];
     paginationProps?: {
         pageSizeOptions: number[];

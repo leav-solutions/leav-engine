@@ -1,12 +1,11 @@
-import {type SystemTranslation} from '_ui/types';
 import {type RecordFilterInput} from '_ui/_gqlTypes';
 
 export const DO_NOT_CHANGE = '__do_not_change__';
 
 export type MassEditableAttribute = {
     id: string;
-    label?: SystemTranslation;
-    dependencies: Array<{id: string; label?: SystemTranslation; linkedTreeLibraryId: string}>;
+    label: string;
+    dependencies: Array<{id: string; linkedTreeLibraryId: string}>;
     hasEmptyDependency: boolean;
     isSimpleWorkflow: boolean;
     isMonoDependencyWorkflow: boolean;

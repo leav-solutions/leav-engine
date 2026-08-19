@@ -49,13 +49,13 @@ import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {MASS_SELECTION_ALL, SNACKBAR_MASS_ID} from './_constants';
 import {useExplorerCountData} from './_queries/useExplorerCountData';
+import {useExplorerLibraryMetadata} from './_queries/useExplorerLibraryMetadata';
 import {getLibraryRequestValuesList} from './_queries/getLibraryRequestValuesList';
 import {useKanbanColumnsData} from './kanban/useKanbanColumnsData';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
 const emptyArray = [];
-const emptyObject = {};
 
 const ExplorerHeaderDivStyled = styled.div`
     display: flex;
@@ -236,6 +236,12 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             }),
             [ephemeralView, currentView],
         );
+
+        const {
+            attributesProperties,
+            behavior: libraryBehavior,
+            loading: metadataLoading,
+        } = useExplorerLibraryMetadata({libraryId: view.libraryId});
 
         const isViewReady = currentView !== undefined && !viewSettingsLoading;
 
@@ -445,11 +451,15 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
 
         // Loader states, delayed so a fast request never flashes a spinner:
         // - `viewSettingsLoading` / `loadingData`: the explorer's own bootstrap + records query;
+        // - `metadataLoading`: the library/attributes metadata query — records and metadata now arrive
+        //   through two separate requests; without this gate, a window where records have arrived but
+        //   attributes haven't yet would make TableView dereference `attributesProperties[id].label` on
+        //   an undefined entry. It also lets the kanban skip its own loading flag (see KanbanView).
         // - `isViewLoading`: the host is still resolving WHICH view to show and hasn't sent the real
         //   `currentView` yet — without this the explorer would paint its default (list) view and flash a
         //   table before a kanban (or any non-list) view arrives. Omitted by uncontrolled consumers → they
         //   keep rendering immediately (no behaviour change).
-        const isExplorerLoading = loadingData || viewSettingsLoading || Boolean(isViewLoading);
+        const isExplorerLoading = loadingData || viewSettingsLoading || metadataLoading || Boolean(isViewLoading);
         const isLoaderVisible = useDelayedLoading(isExplorerLoading);
 
         const isAllowedFreeEntry = !(entrypoint.type === 'library' && !entrypoint.allowFreeEntry);
@@ -489,6 +499,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         const {generatePreviewsMassAction, GeneratePreviewsModal} = useGeneratePreviewsMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('generatePreviews'),
             store: {view},
+            libraryBehavior,
             totalCount: totalCountFiltered,
             onGeneratePreviews: defaultCallbacks?.mass?.generatePreviews,
         });
@@ -503,6 +514,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         const {editAttributeMassAction, editAttributeMassActionModal} = useEditAttributeMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('editAttribute'),
             store: {view},
+            attributesProperties,
             totalCount: totalCountFiltered,
         });
 
@@ -626,7 +638,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                             groupByAttributeId={view.groupByAttributeId}
                             kanbanColumns={isPerColumnKanban ? kanbanColumnsData : undefined}
                             dataGroupedFilteredSorted={data?.records ?? emptyArray}
-                            attributesProperties={data?.attributes ?? emptyObject}
+                            attributesProperties={attributesProperties}
                             attributesToDisplay={
                                 /* ⚠️ whoAmI column will always be displayed first*/ view.attributesIds
                             }

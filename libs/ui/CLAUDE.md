@@ -106,6 +106,20 @@ src/
 > Le schéma GraphQL complet est disponible sur **`http://core.leav.localhost/graphql`**
 > quand le core est lancé (`docker compose up`).
 
+> ⚠️ **Collision de noms au codegen entre `Explorer/_queries/` et `ExplorerV2/_queries/`** :
+> [`codegen.ts`](codegen.ts) agrège tous les `src/**/*.graphql` dans un **seul** fichier généré. Un
+> nom d'opération/fragment partagé entre les deux dossiers ne casse la génération que tant que les
+> deux documents restent **byte-identiques** — c'est ainsi que plusieurs `.graphql` de v1 et v2 ont pu
+> partager un nom pendant longtemps. Dès que l'un des deux diverge, il faut le **renommer côté v2**
+> (v1 est legacy et ne bouge pas). Piège : après un renommage oublié, l'ancien nom v1 **existe
+> toujours** dans `_gqlTypes` (v1 le fournit encore) → un import v2 non renommé compile
+> **silencieusement** et repart chercher le document v1. Garde-fou à lancer après toute modification
+> d'un `.graphql` partagé (doit ne rien retourner, en adaptant les noms à l'opération concernée) :
+>
+> ```bash
+> grep -rn "NomDeLOpérationV1Oublié" libs/ui/src/components/ExplorerV2
+> ```
+
 ---
 
 ## Explorer — structure de référence

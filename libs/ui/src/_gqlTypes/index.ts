@@ -153,6 +153,7 @@ export enum AttributeFormat {
 export type AttributeInput = {
   actions_list?: InputMaybe<ActionsListConfigurationInput>;
   character_limit?: InputMaybe<Scalars['Int']['input']>;
+  column_split_enabled?: InputMaybe<Scalars['Boolean']['input']>;
   description?: InputMaybe<Scalars['SystemTranslationOptional']['input']>;
   embedded_fields?: InputMaybe<Array<InputMaybe<EmbeddedAttributeInput>>>;
   format?: InputMaybe<AttributeFormat>;
@@ -259,6 +260,7 @@ export type AutomationRulesFiltersInput = {
   id?: InputMaybe<Scalars['ID']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   trigger?: InputMaybe<PartialAutomationRuleTriggerInput>;
+  version?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type AutomationRulesSortInput = {
@@ -295,6 +297,7 @@ export type CreateAutomationRuleInput = {
   label: Scalars['String']['input'];
   pipeline: AutomationRulePipelineInput;
   trigger: AutomationRuleTriggerInput;
+  version?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CreateRecordDataInput = {
@@ -346,6 +349,7 @@ export enum EventAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_CHAIN_DEPTH_EXCEEDED = 'AUTOMATION_CHAIN_DEPTH_EXCEEDED',
   AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
   AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
   AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
@@ -355,8 +359,8 @@ export enum EventAction {
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
   DATA_IMPORT_START = 'DATA_IMPORT_START',
-  DTO_LOG_ERROR = 'DTO_LOG_ERROR',
-  DTO_LOG_IMPORT_RECORD = 'DTO_LOG_IMPORT_RECORD',
+  DTO_IMPORT_ERROR = 'DTO_IMPORT_ERROR',
+  DTO_IMPORT_SUCCESS = 'DTO_IMPORT_SUCCESS',
   EXPORT_END = 'EXPORT_END',
   EXPORT_START = 'EXPORT_START',
   GLOBAL_SETTINGS_SAVE = 'GLOBAL_SETTINGS_SAVE',
@@ -369,9 +373,10 @@ export enum EventAction {
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
-  SDO_LOG_ERROR = 'SDO_LOG_ERROR',
-  SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
-  SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
+  SDO_EXPORT_ERROR = 'SDO_EXPORT_ERROR',
+  SDO_EXPORT_SUCCESS = 'SDO_EXPORT_SUCCESS',
+  SDO_IMPORT_ERROR = 'SDO_IMPORT_ERROR',
+  SDO_IMPORT_SUCCESS = 'SDO_IMPORT_SUCCESS',
   TASKS_DELETE = 'TASKS_DELETE',
   TREE_ADD_ELEMENT = 'TREE_ADD_ELEMENT',
   TREE_DELETE = 'TREE_DELETE',
@@ -563,6 +568,7 @@ export enum LogAction {
   APP_SAVE = 'APP_SAVE',
   ATTRIBUTE_DELETE = 'ATTRIBUTE_DELETE',
   ATTRIBUTE_SAVE = 'ATTRIBUTE_SAVE',
+  AUTOMATION_CHAIN_DEPTH_EXCEEDED = 'AUTOMATION_CHAIN_DEPTH_EXCEEDED',
   AUTOMATION_PIPELINE_FAILURE = 'AUTOMATION_PIPELINE_FAILURE',
   AUTOMATION_PIPELINE_SUCCESS = 'AUTOMATION_PIPELINE_SUCCESS',
   AUTOMATION_RULE_CREATE = 'AUTOMATION_RULE_CREATE',
@@ -572,6 +578,8 @@ export enum LogAction {
   CONFIG_IMPORT_START = 'CONFIG_IMPORT_START',
   DATA_IMPORT_END = 'DATA_IMPORT_END',
   DATA_IMPORT_START = 'DATA_IMPORT_START',
+  DTO_IMPORT_ERROR = 'DTO_IMPORT_ERROR',
+  DTO_IMPORT_SUCCESS = 'DTO_IMPORT_SUCCESS',
   DTO_LOG_ERROR = 'DTO_LOG_ERROR',
   DTO_LOG_IMPORT_RECORD = 'DTO_LOG_IMPORT_RECORD',
   EXPORT_END = 'EXPORT_END',
@@ -586,6 +594,10 @@ export enum LogAction {
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
+  SDO_EXPORT_ERROR = 'SDO_EXPORT_ERROR',
+  SDO_EXPORT_SUCCESS = 'SDO_EXPORT_SUCCESS',
+  SDO_IMPORT_ERROR = 'SDO_IMPORT_ERROR',
+  SDO_IMPORT_SUCCESS = 'SDO_IMPORT_SUCCESS',
   SDO_LOG_ERROR = 'SDO_LOG_ERROR',
   SDO_LOG_EXPORT_RECORD = 'SDO_LOG_EXPORT_RECORD',
   SDO_LOG_IMPORT_RECORD = 'SDO_LOG_IMPORT_RECORD',
@@ -967,6 +979,7 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
+  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
@@ -1073,6 +1086,7 @@ export type UpdateAutomationRuleInput = {
   label?: InputMaybe<Scalars['String']['input']>;
   pipeline?: InputMaybe<AutomationRulePipelineInput>;
   trigger?: InputMaybe<AutomationRuleTriggerInput>;
+  version?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UploadFiltersInput = {
@@ -1516,6 +1530,31 @@ export type LibraryAttributeFragment =
 ;
 
 export type LibraryAttributeLinkFragment = { linked_library?: { id: string, label?: any | null, attributes?: Array<{ id: string, type: AttributeType, format?: AttributeFormat | null, label?: any | null }> | null } | null };
+
+export type ExplorerV2LinkPropertyLinkValueFragment = { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, values: Array<
+        | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
+        | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
+        | { valuePayload?: any | null, valueRawPayload?: any | null }
+      > }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
+
+export type ExplorerV2LinkPropertyTreeValueValueFragment = { id_value?: string | null };
+
+export type ExplorerV2LinkPropertyFragment =
+  | ExplorerV2LinkPropertyLinkValueFragment
+  | ExplorerV2LinkPropertyTreeValueValueFragment
+;
+
+export type ExplorerV2AttributePropertiesLinkAttributeStandardAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null };
+
+export type ExplorerV2AttributePropertiesTreeAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+      | { id: string }
+      | { id: string, linked_tree?: { libraries: Array<{ library: { id: string } }> } | null }
+    > } | null };
+
+export type ExplorerV2AttributePropertiesFragment =
+  | ExplorerV2AttributePropertiesLinkAttributeStandardAttributeFragment
+  | ExplorerV2AttributePropertiesTreeAttributeFragment
+;
 
 export type RecordHistoryLogEntryFragment = { action?: LogAction | null, time: number, topic?: { attribute?:
       | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean }
@@ -2231,15 +2270,38 @@ export type ValuesOccurrencesForDependencyQueryVariables = Exact<{
 
 export type ValuesOccurrencesForDependencyQuery = { listDistinctValues?: Array<{ treeNode?: { id: string, record: { id: string, whoAmI: { label?: string | null } } } | null }> | null };
 
-export type KanbanAxisAttributeQueryVariables = Exact<{
-  attributeId: Scalars['ID']['input'];
+export type ExplorerV2LibraryDataQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+  attributeIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+  pagination?: InputMaybe<RecordsPagination>;
+  filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
+  multipleSort?: InputMaybe<Array<RecordSortInput> | RecordSortInput>;
+  searchQuery?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
-export type KanbanAxisAttributeQuery = { attributes?: { list: Array<
-      | { id: string, multiple_values: boolean }
-      | { id: string, multiple_values: boolean, linked_tree?: { id: string } | null }
-    > } | null };
+export type ExplorerV2LibraryDataQuery = { records: { totalCount?: number | null, list: Array<{ id: string, active: boolean, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } }, permissions: { create_record: boolean, delete_record: boolean }, properties: Array<{ attributeId: string, values: Array<
+          | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
+          | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
+          | { valuePayload?: any | null, valueRawPayload?: any | null }
+        > }> }> } };
+
+export type ExplorerV2LinkDataQueryVariables = Exact<{
+  attributeIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+  parentLibraryId: Scalars['ID']['input'];
+  parentRecordId?: InputMaybe<Scalars['String']['input']>;
+  linkAttributeId: Scalars['ID']['input'];
+}>;
+
+
+export type ExplorerV2LinkDataQuery = { records: { list: Array<{ id: string, whoAmI: { id: string, library: { id: string } }, property: Array<
+        | { id_value?: string | null, payload?: { id: string, properties: Array<{ attributeId: string, values: Array<
+                | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
+                | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
+                | { valuePayload?: any | null, valueRawPayload?: any | null }
+              > }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
+        | { id_value?: string | null }
+      > }> } };
 
 export type KanbanTransitionsQueryVariables = Exact<{
   attributeId: Scalars['ID']['input'];
@@ -2250,6 +2312,19 @@ export type KanbanTransitionsQuery = { attributes?: { list: Array<
       | { id: string, permissions: { edit_value: boolean } }
       | { id: string, tree_values?: Array<{ node?: { id: string } | null, allowedDependentValues?: Array<{ nodeId?: string | null }> | null }> | null, permissions: { edit_value: boolean } }
     > } | null };
+
+export type ExplorerV2LibraryMetadataQueryVariables = Exact<{
+  libraryId: Scalars['ID']['input'];
+}>;
+
+
+export type ExplorerV2LibraryMetadataQuery = { libraries?: { list: Array<{ id: string, behavior: LibraryBehavior, attributes?: Array<
+        | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }
+        | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+              | { id: string }
+              | { id: string, linked_tree?: { libraries: Array<{ library: { id: string } }> } | null }
+            > } | null }
+      > | null }> } | null };
 
 export type ListDistinctValuesQueryVariables = Exact<{
   library: Scalars['ID']['input'];
@@ -3204,6 +3279,53 @@ export const LibraryAttributeFragmentDoc = gql`
   ...LibraryAttributeLink
 }
     ${LibraryAttributeLinkFragmentDoc}`;
+export const ExplorerV2LinkPropertyFragmentDoc = gql`
+    fragment ExplorerV2LinkProperty on GenericValue {
+  id_value
+  ... on LinkValue {
+    payload {
+      ...RecordIdentity
+      properties(attributeIds: $attributeIds) {
+        attributeId
+        values {
+          ...PropertyValue
+        }
+      }
+    }
+  }
+}
+    ${RecordIdentityFragmentDoc}
+${PropertyValueFragmentDoc}`;
+export const ExplorerV2AttributePropertiesFragmentDoc = gql`
+    fragment ExplorerV2AttributeProperties on Attribute {
+  id
+  label
+  type
+  format
+  multiple_values
+  multi_link_display_option
+  multi_tree_display_option
+  ... on TreeAttribute {
+    linked_tree {
+      id
+    }
+    permissions_conf_dependent_values {
+      dependenciesTreeAttributes {
+        id
+        ... on TreeAttribute {
+          linked_tree {
+            libraries {
+              library {
+                id
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+    `;
 export const RecordHistoryLogAttributeFragmentDoc = gql`
     fragment RecordHistoryLogAttribute on LogAttribute {
   ... on StandardAttribute {
@@ -6649,57 +6771,136 @@ export type ValuesOccurrencesForDependencyQueryHookResult = ReturnType<typeof us
 export type ValuesOccurrencesForDependencyLazyQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencyLazyQuery>;
 export type ValuesOccurrencesForDependencySuspenseQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencySuspenseQuery>;
 export type ValuesOccurrencesForDependencyQueryResult = Apollo.QueryResult<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>;
-export const KanbanAxisAttributeDocument = gql`
-    query KanbanAxisAttribute($attributeId: ID!) {
-  attributes(filters: {id: $attributeId}) {
+export const ExplorerV2LibraryDataDocument = gql`
+    query ExplorerV2LibraryData($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
+  records(
+    library: $libraryId
+    filters: $filters
+    pagination: $pagination
+    multipleSort: $multipleSort
+    searchQuery: $searchQuery
+  ) {
+    totalCount
     list {
-      id
-      multiple_values
-      ... on TreeAttribute {
-        linked_tree {
-          id
+      ...RecordIdentity
+      active
+      permissions {
+        create_record
+        delete_record
+      }
+      properties(attributeIds: $attributeIds) {
+        attributeId
+        values {
+          ...PropertyValue
         }
       }
     }
   }
 }
-    `;
+    ${RecordIdentityFragmentDoc}
+${PropertyValueFragmentDoc}`;
 
 /**
- * __useKanbanAxisAttributeQuery__
+ * __useExplorerV2LibraryDataQuery__
  *
- * To run a query within a React component, call `useKanbanAxisAttributeQuery` and pass it any options that fit your needs.
- * When your component renders, `useKanbanAxisAttributeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useExplorerV2LibraryDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExplorerV2LibraryDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useKanbanAxisAttributeQuery({
+ * const { data, loading, error } = useExplorerV2LibraryDataQuery({
  *   variables: {
- *      attributeId: // value for 'attributeId'
+ *      libraryId: // value for 'libraryId'
+ *      attributeIds: // value for 'attributeIds'
+ *      pagination: // value for 'pagination'
+ *      filters: // value for 'filters'
+ *      multipleSort: // value for 'multipleSort'
+ *      searchQuery: // value for 'searchQuery'
  *   },
  * });
  */
-export function useKanbanAxisAttributeQuery(baseOptions: Apollo.QueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables> & ({ variables: KanbanAxisAttributeQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+export function useExplorerV2LibraryDataQuery(baseOptions: Apollo.QueryHookOptions<ExplorerV2LibraryDataQuery, ExplorerV2LibraryDataQueryVariables> & ({ variables: ExplorerV2LibraryDataQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
+        return Apollo.useQuery<ExplorerV2LibraryDataQuery, ExplorerV2LibraryDataQueryVariables>(ExplorerV2LibraryDataDocument, options);
       }
-export function useKanbanAxisAttributeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>) {
+export function useExplorerV2LibraryDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerV2LibraryDataQuery, ExplorerV2LibraryDataQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
+          return Apollo.useLazyQuery<ExplorerV2LibraryDataQuery, ExplorerV2LibraryDataQueryVariables>(ExplorerV2LibraryDataDocument, options);
         }
 // @ts-ignore
-export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>;
-export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>): Apollo.UseSuspenseQueryResult<KanbanAxisAttributeQuery | undefined, KanbanAxisAttributeQueryVariables>;
-export function useKanbanAxisAttributeSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>) {
+export function useExplorerV2LibraryDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExplorerV2LibraryDataQuery, ExplorerV2LibraryDataQueryVariables>): Apollo.UseSuspenseQueryResult<ExplorerV2LibraryDataQuery, ExplorerV2LibraryDataQueryVariables>;
+export function useExplorerV2LibraryDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ExplorerV2LibraryDataQuery, ExplorerV2LibraryDataQueryVariables>): Apollo.UseSuspenseQueryResult<ExplorerV2LibraryDataQuery | undefined, ExplorerV2LibraryDataQueryVariables>;
+export function useExplorerV2LibraryDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ExplorerV2LibraryDataQuery, ExplorerV2LibraryDataQueryVariables>) {
           const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>(KanbanAxisAttributeDocument, options);
+          return Apollo.useSuspenseQuery<ExplorerV2LibraryDataQuery, ExplorerV2LibraryDataQueryVariables>(ExplorerV2LibraryDataDocument, options);
         }
-export type KanbanAxisAttributeQueryHookResult = ReturnType<typeof useKanbanAxisAttributeQuery>;
-export type KanbanAxisAttributeLazyQueryHookResult = ReturnType<typeof useKanbanAxisAttributeLazyQuery>;
-export type KanbanAxisAttributeSuspenseQueryHookResult = ReturnType<typeof useKanbanAxisAttributeSuspenseQuery>;
-export type KanbanAxisAttributeQueryResult = Apollo.QueryResult<KanbanAxisAttributeQuery, KanbanAxisAttributeQueryVariables>;
+export type ExplorerV2LibraryDataQueryHookResult = ReturnType<typeof useExplorerV2LibraryDataQuery>;
+export type ExplorerV2LibraryDataLazyQueryHookResult = ReturnType<typeof useExplorerV2LibraryDataLazyQuery>;
+export type ExplorerV2LibraryDataSuspenseQueryHookResult = ReturnType<typeof useExplorerV2LibraryDataSuspenseQuery>;
+export type ExplorerV2LibraryDataQueryResult = Apollo.QueryResult<ExplorerV2LibraryDataQuery, ExplorerV2LibraryDataQueryVariables>;
+export const ExplorerV2LinkDataDocument = gql`
+    query ExplorerV2LinkData($attributeIds: [ID!]!, $parentLibraryId: ID!, $parentRecordId: String, $linkAttributeId: ID!) {
+  records(
+    library: $parentLibraryId
+    filters: [{field: "id", condition: EQUAL, value: $parentRecordId}]
+    retrieveInactive: true
+  ) {
+    list {
+      id
+      whoAmI {
+        id
+        library {
+          id
+        }
+      }
+      property(attribute: $linkAttributeId) {
+        ...ExplorerV2LinkProperty
+      }
+    }
+  }
+}
+    ${ExplorerV2LinkPropertyFragmentDoc}`;
+
+/**
+ * __useExplorerV2LinkDataQuery__
+ *
+ * To run a query within a React component, call `useExplorerV2LinkDataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExplorerV2LinkDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExplorerV2LinkDataQuery({
+ *   variables: {
+ *      attributeIds: // value for 'attributeIds'
+ *      parentLibraryId: // value for 'parentLibraryId'
+ *      parentRecordId: // value for 'parentRecordId'
+ *      linkAttributeId: // value for 'linkAttributeId'
+ *   },
+ * });
+ */
+export function useExplorerV2LinkDataQuery(baseOptions: Apollo.QueryHookOptions<ExplorerV2LinkDataQuery, ExplorerV2LinkDataQueryVariables> & ({ variables: ExplorerV2LinkDataQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExplorerV2LinkDataQuery, ExplorerV2LinkDataQueryVariables>(ExplorerV2LinkDataDocument, options);
+      }
+export function useExplorerV2LinkDataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerV2LinkDataQuery, ExplorerV2LinkDataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExplorerV2LinkDataQuery, ExplorerV2LinkDataQueryVariables>(ExplorerV2LinkDataDocument, options);
+        }
+// @ts-ignore
+export function useExplorerV2LinkDataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExplorerV2LinkDataQuery, ExplorerV2LinkDataQueryVariables>): Apollo.UseSuspenseQueryResult<ExplorerV2LinkDataQuery, ExplorerV2LinkDataQueryVariables>;
+export function useExplorerV2LinkDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ExplorerV2LinkDataQuery, ExplorerV2LinkDataQueryVariables>): Apollo.UseSuspenseQueryResult<ExplorerV2LinkDataQuery | undefined, ExplorerV2LinkDataQueryVariables>;
+export function useExplorerV2LinkDataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ExplorerV2LinkDataQuery, ExplorerV2LinkDataQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExplorerV2LinkDataQuery, ExplorerV2LinkDataQueryVariables>(ExplorerV2LinkDataDocument, options);
+        }
+export type ExplorerV2LinkDataQueryHookResult = ReturnType<typeof useExplorerV2LinkDataQuery>;
+export type ExplorerV2LinkDataLazyQueryHookResult = ReturnType<typeof useExplorerV2LinkDataLazyQuery>;
+export type ExplorerV2LinkDataSuspenseQueryHookResult = ReturnType<typeof useExplorerV2LinkDataSuspenseQuery>;
+export type ExplorerV2LinkDataQueryResult = Apollo.QueryResult<ExplorerV2LinkDataQuery, ExplorerV2LinkDataQueryVariables>;
 export const KanbanTransitionsDocument = gql`
     query KanbanTransitions($attributeId: ID!) {
   attributes(filters: {id: $attributeId}) {
@@ -6758,6 +6959,55 @@ export type KanbanTransitionsQueryHookResult = ReturnType<typeof useKanbanTransi
 export type KanbanTransitionsLazyQueryHookResult = ReturnType<typeof useKanbanTransitionsLazyQuery>;
 export type KanbanTransitionsSuspenseQueryHookResult = ReturnType<typeof useKanbanTransitionsSuspenseQuery>;
 export type KanbanTransitionsQueryResult = Apollo.QueryResult<KanbanTransitionsQuery, KanbanTransitionsQueryVariables>;
+export const ExplorerV2LibraryMetadataDocument = gql`
+    query ExplorerV2LibraryMetadata($libraryId: ID!) {
+  libraries(filters: {id: [$libraryId]}) {
+    list {
+      id
+      behavior
+      attributes {
+        ...ExplorerV2AttributeProperties
+      }
+    }
+  }
+}
+    ${ExplorerV2AttributePropertiesFragmentDoc}`;
+
+/**
+ * __useExplorerV2LibraryMetadataQuery__
+ *
+ * To run a query within a React component, call `useExplorerV2LibraryMetadataQuery` and pass it any options that fit your needs.
+ * When your component renders, `useExplorerV2LibraryMetadataQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useExplorerV2LibraryMetadataQuery({
+ *   variables: {
+ *      libraryId: // value for 'libraryId'
+ *   },
+ * });
+ */
+export function useExplorerV2LibraryMetadataQuery(baseOptions: Apollo.QueryHookOptions<ExplorerV2LibraryMetadataQuery, ExplorerV2LibraryMetadataQueryVariables> & ({ variables: ExplorerV2LibraryMetadataQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ExplorerV2LibraryMetadataQuery, ExplorerV2LibraryMetadataQueryVariables>(ExplorerV2LibraryMetadataDocument, options);
+      }
+export function useExplorerV2LibraryMetadataLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ExplorerV2LibraryMetadataQuery, ExplorerV2LibraryMetadataQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ExplorerV2LibraryMetadataQuery, ExplorerV2LibraryMetadataQueryVariables>(ExplorerV2LibraryMetadataDocument, options);
+        }
+// @ts-ignore
+export function useExplorerV2LibraryMetadataSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<ExplorerV2LibraryMetadataQuery, ExplorerV2LibraryMetadataQueryVariables>): Apollo.UseSuspenseQueryResult<ExplorerV2LibraryMetadataQuery, ExplorerV2LibraryMetadataQueryVariables>;
+export function useExplorerV2LibraryMetadataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ExplorerV2LibraryMetadataQuery, ExplorerV2LibraryMetadataQueryVariables>): Apollo.UseSuspenseQueryResult<ExplorerV2LibraryMetadataQuery | undefined, ExplorerV2LibraryMetadataQueryVariables>;
+export function useExplorerV2LibraryMetadataSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<ExplorerV2LibraryMetadataQuery, ExplorerV2LibraryMetadataQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<ExplorerV2LibraryMetadataQuery, ExplorerV2LibraryMetadataQueryVariables>(ExplorerV2LibraryMetadataDocument, options);
+        }
+export type ExplorerV2LibraryMetadataQueryHookResult = ReturnType<typeof useExplorerV2LibraryMetadataQuery>;
+export type ExplorerV2LibraryMetadataLazyQueryHookResult = ReturnType<typeof useExplorerV2LibraryMetadataLazyQuery>;
+export type ExplorerV2LibraryMetadataSuspenseQueryHookResult = ReturnType<typeof useExplorerV2LibraryMetadataSuspenseQuery>;
+export type ExplorerV2LibraryMetadataQueryResult = Apollo.QueryResult<ExplorerV2LibraryMetadataQuery, ExplorerV2LibraryMetadataQueryVariables>;
 export const ListDistinctValuesDocument = gql`
     query ListDistinctValues($library: ID!, $attribute: ID!, $recordFilters: [RecordFilterInput]) {
   listDistinctValues(

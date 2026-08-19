@@ -1,28 +1,13 @@
-import {localizedTranslation} from '@leav/utils';
-import {type ExplorerLibraryDataQuery} from '_ui/_gqlTypes';
+import {type ExplorerV2LibraryDataQuery} from '_ui/_gqlTypes';
 import {type IExplorerData} from '../_types';
 
 /**
- * Maps an ExplorerLibraryData response to the explorer data shape. Shared by `useExplorerData`
+ * Maps an ExplorerV2LibraryData response to the explorer data shape. Shared by `useExplorerData`
  * (single paginated set) and the kanban per-column loading (one response per column page), so both
- * produce strictly identical records.
+ * produce strictly identical records. Data only — attribute metadata is loaded upfront by
+ * `useExplorerLibraryMetadata`.
  */
-export const mapLibraryDataToExplorerData = (
-    data: ExplorerLibraryDataQuery,
-    libraryId: string,
-    availableLangs: string[],
-): IExplorerData => {
-    const attributes = data.records.list.length
-        ? data.records.list[0].properties.reduce((acc, property) => {
-              acc[property.attributeId] = {
-                  ...property.attributeProperties,
-                  label: localizedTranslation(property.attributeProperties.label, availableLangs),
-              };
-
-              return acc;
-          }, {})
-        : {};
-
+export const mapLibraryDataToExplorerData = (data: ExplorerV2LibraryDataQuery, libraryId: string): IExplorerData => {
     const records = data.records.list.map(({whoAmI, active, permissions, properties}) => ({
         libraryId,
         key: whoAmI.id, // For <KitTable /> only
@@ -42,7 +27,6 @@ export const mapLibraryDataToExplorerData = (
 
     return {
         totalCount: data.records.totalCount ?? 0,
-        attributes,
         records,
     };
 };

@@ -1,12 +1,12 @@
 import {render, screen} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {
-    type AttributePropertiesFragment,
     AttributeType,
     MultiDisplayOption,
     type PropertyValueLinkValueFragment,
     type PropertyValueTreeValueFragment,
 } from '_ui/_gqlTypes';
+import {type CellAttributeProperties} from '../_types';
 import {TableCell} from './TableCell';
 
 describe('TableCell component', () => {
@@ -22,7 +22,7 @@ describe('TableCell component', () => {
             ];
 
             test('Should display IdCard', async () => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     type: AttributeType.advanced_link,
                     multiple_values: false,
@@ -36,7 +36,7 @@ describe('TableCell component', () => {
             });
 
             test('Should display a tag when the display option is tag', async () => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     type: AttributeType.advanced_link,
                     multiple_values: false,
@@ -55,7 +55,7 @@ describe('TableCell component', () => {
                 ['badge_qty', MultiDisplayOption.badge_qty],
                 ['omitted', undefined],
             ])('Should display IdCard when the display option is %s', async (_, multiLinkDisplayOption) => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     type: AttributeType.advanced_link,
                     multiple_values: false,
@@ -79,7 +79,7 @@ describe('TableCell component', () => {
             ];
 
             test('Should display IdCard', async () => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     type: AttributeType.tree,
                     multiple_values: false,
@@ -93,7 +93,7 @@ describe('TableCell component', () => {
             });
 
             test('Should display a tag when the display option is tag', async () => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     type: AttributeType.tree,
                     multiple_values: false,
@@ -112,7 +112,7 @@ describe('TableCell component', () => {
                 ['badge_qty', MultiDisplayOption.badge_qty],
                 ['omitted', undefined],
             ])('Should display IdCard when the display option is %s', async (_, multiTreeDisplayOption) => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     type: AttributeType.tree,
                     multiple_values: false,
@@ -165,7 +165,7 @@ describe('TableCell component', () => {
             ];
 
             test('Should display list of avatar as default', async () => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     multiple_values: true,
                     multi_link_display_option: MultiDisplayOption.avatar,
@@ -183,7 +183,7 @@ describe('TableCell component', () => {
             });
 
             test('Should display only quantity of links', async () => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     multiple_values: true,
                     multi_link_display_option: MultiDisplayOption.badge_qty,
@@ -196,7 +196,7 @@ describe('TableCell component', () => {
             });
 
             test('Should display list of tag', async () => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     multiple_values: true,
                     multi_link_display_option: MultiDisplayOption.tag,
@@ -254,7 +254,7 @@ describe('TableCell component', () => {
             ];
 
             test('Should display list of avatar as default', async () => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     multiple_values: true,
                     multi_tree_display_option: MultiDisplayOption.avatar,
@@ -272,7 +272,7 @@ describe('TableCell component', () => {
             });
 
             test('Should display only quantity of trees', async () => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     multiple_values: true,
                     multi_tree_display_option: MultiDisplayOption.badge_qty,
@@ -285,7 +285,7 @@ describe('TableCell component', () => {
             });
 
             test('Should display list of tag', async () => {
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     multiple_values: true,
                     multi_tree_display_option: MultiDisplayOption.tag,
@@ -315,7 +315,7 @@ describe('TableCell component', () => {
                     // No color → default primary (blue) tag, white text
                     {linkPayload: {id: 'r3', whoAmI: {...mockRecord, label: 'Default', color: null}}},
                 ];
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     multiple_values: true,
                     multi_link_display_option: MultiDisplayOption.tag,
@@ -349,7 +349,7 @@ describe('TableCell component', () => {
                     {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, label: 'Dark', color: '#000080'}}}},
                     {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, label: 'Default', color: null}}}},
                 ];
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     multiple_values: true,
                     multi_tree_display_option: MultiDisplayOption.tag,
@@ -381,7 +381,7 @@ describe('TableCell component', () => {
                 const linkValue: PropertyValueLinkValueFragment[] = [
                     {linkPayload: {id: 'r1', whoAmI: {...mockRecord, label: 'Light', color: '#f8e58c'}}},
                 ];
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     multiple_values: false,
                     multi_link_display_option: MultiDisplayOption.tag,
@@ -401,7 +401,7 @@ describe('TableCell component', () => {
                 const treeValue: PropertyValueTreeValueFragment[] = [
                     {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, label: 'Light', color: '#f8e58c'}}}},
                 ];
-                const attributeProperties: AttributePropertiesFragment = {
+                const attributeProperties: CellAttributeProperties = {
                     id: 'default',
                     multiple_values: false,
                     multi_tree_display_option: MultiDisplayOption.tag,

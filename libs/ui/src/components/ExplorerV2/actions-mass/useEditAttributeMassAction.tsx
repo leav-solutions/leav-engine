@@ -2,13 +2,11 @@ import {useEffect, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEdit} from '@fortawesome/free-solid-svg-icons';
 import {KitAlert, KitNotification, KitSelect, KitSpace, KitTypography} from 'aristid-ds';
-import {localizedTranslation} from '@leav/utils';
 import {type RecordFilterInput, useSaveValueBulkMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION} from '_ui/constants';
-import {useLang} from '_ui/hooks';
 import {MASS_SELECTION_ALL} from '../_constants';
-import {type FeatureHook} from '../_types';
+import {type AttributesPropertiesById, type FeatureHook} from '../_types';
 import {type IViewSettingsState} from '../manage-view-settings-v2';
 import {EditTreeAttributeValuesMapping} from './edit-attribute/EditTreeAttributeValuesMapping';
 import {EditAttributeMassActionModal} from './edit-attribute/EditAttributeMassActionModal';
@@ -20,14 +18,15 @@ import {useEditionMappingState} from './edit-attribute/useEditionMappingState';
 export const useEditAttributeMassAction = ({
     isEnabled,
     store: {view},
+    attributesProperties,
     totalCount,
 }: FeatureHook<{
     store: {
         view: IViewSettingsState;
     };
+    attributesProperties: AttributesPropertiesById;
     totalCount: number;
 }>) => {
-    const {lang: availableLanguages} = useLang();
     const {t} = useSharedTranslation();
 
     const [openModal, setOpenModal] = useState(false);
@@ -37,7 +36,7 @@ export const useEditAttributeMassAction = ({
     // Fulltext search of the current selection (only set on "select all"), scoped alongside the filters
     const [massSelectionSearchQuery, setMassSelectionSearchQuery] = useState<string | undefined>();
 
-    const editableAttributes = useMassEditableAttributes({libraryId: view.libraryId});
+    const editableAttributes = useMassEditableAttributes(attributesProperties);
 
     const [selectedAttribute, setSelectedAttribute] = useState<MassEditableAttribute | null>(null);
     const [executeSaveValueBulk] = useSaveValueBulkMutation({
@@ -142,7 +141,7 @@ export const useEditAttributeMassAction = ({
                         allowClear={false}
                         placeholder={t('explorer.massAction.editAttribute_attribute_select_placeholder')}
                         options={editableAttributes.map(attribute => ({
-                            label: localizedTranslation(attribute.label, availableLanguages),
+                            label: attribute.label,
                             value: attribute.id,
                         }))}
                         onChange={(attributeId: string) => {

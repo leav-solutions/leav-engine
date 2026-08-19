@@ -1,15 +1,14 @@
-import {localizedTranslation} from '@leav/utils';
 import {useMemo} from 'react';
-import {useGetRecordUpdatesSubscription, useLang} from '_ui/hooks';
+import {useGetRecordUpdatesSubscription} from '_ui/hooks';
 import {type Entrypoint, type IEntrypointLink, type IExplorerData, type SerializedView} from '../_types';
 import {
-    type ExplorerLinkDataQuery,
-    type LinkPropertyLinkValueFragment,
+    type ExplorerV2LinkDataQuery,
+    type ExplorerV2LinkPropertyLinkValueFragment,
     type SortOrder,
-    useExplorerLibraryDataLazyQuery,
-    useExplorerLibraryDataQuery,
     useExplorerLinkAttributeQuery,
-    useExplorerLinkDataQuery,
+    useExplorerV2LibraryDataLazyQuery,
+    useExplorerV2LibraryDataQuery,
+    useExplorerV2LinkDataQuery,
 } from '_ui/_gqlTypes';
 import {type UIFilter} from '_ui/components/Filters/_types';
 import {prepareFiltersForRequest} from '_ui/components/Filters';
@@ -20,25 +19,11 @@ import {getLibraryRequestValuesList} from './getLibraryRequestValuesList';
 
 export const dateValuesSeparator = '\n';
 
-const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableLangs: string[]): IExplorerData => {
-    const attributes = data.records.list.length
-        ? ((data.records.list[0].property[0] as LinkPropertyLinkValueFragment)?.payload?.properties ?? []).reduce(
-              (acc, property) => {
-                  acc[property.attributeId] = {
-                      ...property.attributeProperties,
-                      label: localizedTranslation(property.attributeProperties.label, availableLangs),
-                  };
-
-                  return acc;
-              },
-              {},
-          )
-        : {};
-
+const _mappingLink = (data: ExplorerV2LinkDataQuery, libraryId: string): IExplorerData => {
     const records =
         (data.records.list.length &&
             data.records.list[0].property
-                .map((linkValue: LinkPropertyLinkValueFragment, index: number) => {
+                .map((linkValue: ExplorerV2LinkPropertyLinkValueFragment, index: number) => {
                     if (!linkValue.payload) {
                         return null;
                     }
@@ -70,7 +55,6 @@ const _mappingLink = (data: ExplorerLinkDataQuery, libraryId: string, availableL
 
     return {
         totalCount: records.length,
-        attributes,
         records,
     };
 };
@@ -103,8 +87,6 @@ export const useExplorerData = ({
     // A returned promise has its rejection swallowed with the reload's one.
     refetchCount?: () => void | Promise<unknown>;
 }) => {
-    const {lang: availableLangs} = useLang();
-
     const isLibrary = entrypoint.type === 'library';
     const isLink = entrypoint.type === 'link';
 
@@ -120,7 +102,7 @@ export const useExplorerData = ({
         data: linkData,
         loading: linkLoading,
         refetch: linkRefetch,
-    } = useExplorerLinkDataQuery({
+    } = useExplorerV2LinkDataQuery({
         fetchPolicy: 'network-only',
         skip: skip || !isLink || !isLinkAttributeAllowed,
         variables: {
@@ -138,7 +120,7 @@ export const useExplorerData = ({
         data: libraryData,
         loading: libraryLoading,
         refetch: libraryRefetch,
-    } = useExplorerLibraryDataQuery({
+    } = useExplorerV2LibraryDataQuery({
         fetchPolicy: 'network-only',
         skip: skip || !isLibrary,
         variables: {
@@ -151,18 +133,18 @@ export const useExplorerData = ({
         },
     });
 
-    const [fetchLibraryRecord] = useExplorerLibraryDataLazyQuery();
+    const [fetchLibraryRecord] = useExplorerV2LibraryDataLazyQuery();
 
     const isMultivalue = !!attributeData?.attributes?.list?.[0]?.multiple_values;
     const canEditLinkAttributeValues = !!attributeData?.attributes?.list?.[0]?.permissions?.edit_value;
 
     const memoizedData = useMemo(() => {
         if (isLibrary) {
-            return libraryData ? mapLibraryDataToExplorerData(libraryData, libraryId, availableLangs) : null;
+            return libraryData ? mapLibraryDataToExplorerData(libraryData, libraryId) : null;
         }
 
         if (isLink) {
-            return linkData ? _mappingLink(linkData, libraryId, availableLangs) : null;
+            return linkData ? _mappingLink(linkData, libraryId) : null;
         }
 
         return null;

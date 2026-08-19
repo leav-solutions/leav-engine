@@ -108,7 +108,7 @@ export const TableView = memo(
 
         const getColumnProps = (attributeName: string) =>
             ({
-                title: () => attributesProperties[attributeName].label,
+                title: () => attributesProperties[attributeName]?.label,
                 ellipsis: useSmallHeaderSize,
                 width: getFieldColumnWidth(attributesProperties[attributeName]),
                 shouldCellUpdate: (record, prevRecord) =>
@@ -122,7 +122,10 @@ export const TableView = memo(
                 ),
             }) satisfies KitTableColumnType<IItemData>;
 
-        const columns = attributesToDisplay.map(getColumnProps);
+        // `attributesProperties` covers every REAL attribute of the library (loaded independently of
+        // any record): a stale attribute id left in the view (deleted attribute, cloned view) is the
+        // only way `attributesProperties[id]` can miss, so it is filtered out here rather than crashing.
+        const columns = attributesToDisplay.filter(id => attributesProperties[id]).map(getColumnProps);
 
         const whoIAmColumn = useWhoAmIColumn({
             ...getColumnProps(WHO_AM_I_COLUMN),

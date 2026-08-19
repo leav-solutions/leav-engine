@@ -1,0 +1,49 @@
+# The library's metadata and the metadata of ALL its attributes, loaded once upfront (Explorer.tsx):
+# the records queries now carry data only. Covers the column headers and cells
+# (label/type/format/multi_*), the kanban grouping axis (linked_tree), the mass-edition workflow
+# classification (permissions_conf_dependent_values) and the generate-previews action gate
+# (behavior). Replaces the derivation from records.list[0] and the MassEditableAttributes,
+# KanbanAxisAttribute and GET_LIBRARY_BY_ID queries.
+fragment ExplorerV2AttributeProperties on Attribute {
+    id
+    label
+    type
+    format
+    multiple_values
+    multi_link_display_option
+    multi_tree_display_option
+    ... on TreeAttribute {
+        # Tree backing the kanban axis (columns = its root nodes).
+        linked_tree {
+            id
+        }
+        # Workflow dependencies: they classify the attribute for mass edition
+        # (hasEmptyDependency / isSimpleWorkflow / isMonoDependencyWorkflow).
+        permissions_conf_dependent_values {
+            dependenciesTreeAttributes {
+                id
+                ... on TreeAttribute {
+                    linked_tree {
+                        libraries {
+                            library {
+                                id
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+query ExplorerV2LibraryMetadata($libraryId: ID!) {
+    libraries(filters: {id: [$libraryId]}) {
+        list {
+            id
+            behavior
+            attributes {
+                ...ExplorerV2AttributeProperties
+            }
+        }
+    }
+}

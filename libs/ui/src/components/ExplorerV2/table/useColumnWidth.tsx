@@ -1,5 +1,5 @@
 import {isTypeStandard} from '@leav/utils';
-import {type IExplorerData} from '../_types';
+import {type CellAttributeProperties} from '../_types';
 import {useEffect, useRef, useState} from 'react';
 import {AttributeFormat} from '_ui/_gqlTypes';
 
@@ -12,7 +12,7 @@ const FieldColumnWidth = {
     LARGE: 300,
 };
 
-const _getFieldColumWidth = (field: IExplorerData['attributes'][string]): number => {
+const _getFieldColumWidth = (field?: CellAttributeProperties): number => {
     if (!field || !isTypeStandard(field.type) || field.multiple_values) {
         return FieldColumnWidth.LARGE;
     }
