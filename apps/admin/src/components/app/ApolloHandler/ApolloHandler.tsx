@@ -14,7 +14,6 @@ import {
 import {onError} from '@apollo/client/link/error';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';
 import {getMainDefinition} from '@apollo/client/utilities';
-import fetch from 'cross-fetch';
 import {CloseCode, createClient} from 'graphql-ws';
 import useRedirectToLogin from '../../../hooks/useRedirectToLogin';
 import {cacheTypePolicies} from './cacheTypePolicies';

@@ -14,7 +14,6 @@ import {getMainDefinition} from '@apollo/client/utilities';
 import {onError} from '@apollo/client/link/error';
 import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
 import {message} from 'antd';
-import fetch from 'cross-fetch';
 import {CloseCode, createClient} from 'graphql-ws';
 import {type FunctionComponent, type PropsWithChildren, useMemo} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -89,7 +88,6 @@ const ApolloHandler: FunctionComponent<PropsWithChildren> = ({children}) => {
             splitLink,
             new HttpLink({
                 uri: (operation: Operation) => `${ORIGIN_URL}/${API_ENDPOINT}?&opName=${operation.operationName}`,
-                fetch,
             }),
         ]),
         cache: new InMemoryCache({

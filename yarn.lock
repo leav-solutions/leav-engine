@@ -8946,7 +8946,6 @@ __metadata:
     "@uiw/react-json-view": "npm:2.0.0-alpha.43"
     "@vitejs/plugin-react": "npm:6.0.5"
     aristid-ds: "npm:17.1.0-63930cf"
-    cross-fetch: "npm:3.2.0"
     dayjs: "npm:1.11.22"
     fomantic-ui-less: "npm:2.9.4"
     formik: "npm:1.5.8"
@@ -11200,7 +11199,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:3.2.0, cross-fetch@npm:^3.1.5":
+"cross-fetch@npm:^3.1.5":
   version: 3.2.0
   resolution: "cross-fetch@npm:3.2.0"
   dependencies:
@@ -17465,7 +17464,6 @@ __metadata:
     "@types/react-dom": "npm:18.3.7"
     "@vitejs/plugin-react": "npm:6.0.5"
     aristid-ds: "npm:17.1.0-63930cf"
-    cross-fetch: "npm:3.2.0"
     graphql: "npm:16.14.2"
     graphql-ws: "npm:6.2.1"
     happy-dom: "npm:20.11.2"
