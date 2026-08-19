@@ -85,7 +85,7 @@ describe('tRPC router', () => {
             const client = await createClient();
             let subscription;
 
-            const promise = new Promise<void>(async (resolve, reject) => {
+            const promise = new Promise<void>((resolve, reject) => {
                 subscription = client.onStatusChange.subscribe(undefined, {
                     onData: data => {
                         if (data.campaignId === 'subscribe_c4') {

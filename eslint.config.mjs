@@ -32,8 +32,6 @@ export default defineConfig([
      */
     {
         rules: {
-            // eslint / typescript-eslint recommended
-            'no-async-promise-executor': 'off',
             // react recommended
             'react/jsx-no-target-blank': 'off',
             // jsx-a11y recommended
