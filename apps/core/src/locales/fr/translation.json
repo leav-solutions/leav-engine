@@ -38,6 +38,7 @@
         "INVALID_ATTRIBUTE_FILTER_FORMAT": "Un filtre sur un attribut doit avoir une condition, un champ et une valeur",
         "INVALID_ATTRIBUTE_FOR_LIBRARY": "L'attribut {{attribute}} n'est pas utilisé par la bibliothèque {{library}}",
         "INVALID_ATTRIBUTES": "Attributs non valides: {{attributes}}",
+        "INVALID_COLUMN_SPLIT_CONF": "Impossible d'activer l'éclatement de colonne : le type d'attribut est {{type}}, il doit être de type arbre ou avoir une liste de valeurs fermée",
         "INVALID_NESTED_ATTRIBUTE_PATH": "L'attribut {{attribute}} n'est pas un lien ou un attribut étendu, impossible d'accéder aux sous-attributs",
         "INVALID_DATE_RANGE": "La date de début doit être inférieur à la date de fin",
         "INVALID_EMAIL": "Email non valide",

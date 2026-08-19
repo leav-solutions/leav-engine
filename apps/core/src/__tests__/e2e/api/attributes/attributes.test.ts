@@ -481,4 +481,89 @@ describe('Attributes', () => {
             ).rejects.toThrow(/must be of type tree/);
         });
     });
+
+    describe('Column split configuration', () => {
+        const columnSplitLibId = 'test_attribute_column_split_library';
+        const columnSplitTreeId = 'test_attribute_column_split_tree';
+        const columnSplitTreeAttrId = 'test_attribute_column_split_on_tree';
+        const columnSplitClosedAttrId = 'test_attribute_column_split_on_closed_list';
+        const columnSplitOpenAttrId = 'test_attribute_column_split_on_open_list';
+        const columnSplitNoListAttrId = 'test_attribute_column_split_on_no_list';
+
+        beforeAll(async () => {
+            await adminUserSdk.SaveLibrary({library: {id: columnSplitLibId, label: {en: 'Test lib'}}});
+            await gqlSaveTree(columnSplitTreeId, 'Test tree column split', [columnSplitLibId]);
+
+            await gqlSaveAttribute({
+                id: columnSplitTreeAttrId,
+                type: AttributeTypes.TREE,
+                linkedTree: columnSplitTreeId,
+                label: 'Test attr column split on tree',
+            });
+
+            await makeGraphQlCall(`mutation {
+                saveAttribute(
+                    attribute: {
+                        id: "${columnSplitClosedAttrId}",
+                        type: advanced,
+                        format: text,
+                        label: {fr: "Test attr", en: "Test attr en"},
+                        values_list: {enable: true, allowFreeEntry: false, values: ["value1", "value2"]}
+                    }
+                ) { id }
+            }`);
+
+            await makeGraphQlCall(`mutation {
+                saveAttribute(
+                    attribute: {
+                        id: "${columnSplitOpenAttrId}",
+                        type: advanced,
+                        format: text,
+                        label: {fr: "Test attr", en: "Test attr en"},
+                        values_list: {enable: true, allowFreeEntry: true, values: ["value1", "value2"]}
+                    }
+                ) { id }
+            }`);
+
+            await gqlSaveAttribute({
+                id: columnSplitNoListAttrId,
+                type: AttributeTypes.SIMPLE,
+                label: 'Test attr column split without values list',
+            });
+        });
+
+        test('Should save on a tree attribute and be relisted', async () => {
+            const {saveAttribute} = await adminUserSdk.SaveAttribute({
+                attribute: {id: columnSplitTreeAttrId, column_split_enabled: true},
+            });
+
+            expect(saveAttribute.column_split_enabled).toBe(true);
+
+            const res = await makeGraphQlCall(`{
+                attributes(filters: {id: "${columnSplitTreeAttrId}"}) { list { column_split_enabled } }
+            }`);
+
+            expect(res.data.data.attributes.list[0].column_split_enabled).toBe(true);
+        });
+
+        test('Should save on a standard attribute with a closed values list', async () => {
+            const {saveAttribute} = await adminUserSdk.SaveAttribute({
+                attribute: {id: columnSplitClosedAttrId, column_split_enabled: true},
+            });
+
+            expect(saveAttribute.column_split_enabled).toBe(true);
+        });
+
+        test('Should reject on a standard attribute with an open (free entry) values list', async () => {
+            await expect(
+                adminUserSdk.SaveAttribute({attribute: {id: columnSplitOpenAttrId, column_split_enabled: true}}),
+            ).rejects.toThrow(/must be a tree or have a closed values list/);
+        });
+
+        test('Should reject on a standard attribute without any values list', async () => {
+            await expect(
+                adminUserSdk.SaveAttribute({attribute: {id: columnSplitNoListAttrId, column_split_enabled: true}}),
+            ).rejects.toThrow(/must be a tree or have a closed values list/);
+        });
+    });
 });

@@ -1,7 +1,15 @@
 import userEvent from '@testing-library/user-event';
 import {type MockedResponse} from '@apollo/client/testing';
 import {ENABLE_TREE_ATTRIBUTE_V2_FORM} from '@leav/utils';
-import {mockAttrAdvLink, mockAttrSimpleLink, mockAttrTree, mockAttrTreeMultival} from '../../__mocks__/attributes';
+import {
+    mockAttrAdvLink,
+    mockAttrSimple,
+    mockAttrSimpleLink,
+    mockAttrSimpleWithOpenValuesList,
+    mockAttrSimpleWithValuesList,
+    mockAttrTree,
+    mockAttrTreeMultival,
+} from '../../__mocks__/attributes';
 import {
     type AttributeDetailsLinkAttributeFragment,
     type AttributeDetailsTreeAttributeFragment,
@@ -115,10 +123,12 @@ describe('AttributeDisplayTab', () => {
         expect(screen.getByText('attributes.display.default_expanded_closed')).toBeInTheDocument();
         expect(screen.getByText('attributes.display.display_root_node')).toBeInTheDocument();
         expect(screen.getByText('attributes.display.max_depth')).toBeInTheDocument();
-        expect(screen.getAllByText('admin.no')).toHaveLength(2);
+        // showSelectChildrenButton, showSelectDescendantsButton, and the column split switch
+        expect(screen.getAllByText('admin.no')).toHaveLength(3);
 
+        // 4 tree_selection_conf switches + the column split switch (mockAttrTree is eligible: type tree)
         const switches = screen.getAllByRole('switch');
-        expect(switches).toHaveLength(4);
+        expect(switches).toHaveLength(5);
         switches.forEach(switchElement => expect(switchElement).not.toBeChecked());
     });
 
@@ -141,7 +151,8 @@ describe('AttributeDisplayTab', () => {
         expect(screen.getByText('attributes.display.default_expanded_open')).toBeInTheDocument();
         expect(screen.getByRole('spinbutton')).toHaveValue('3');
         expect(screen.getByText('admin.yes')).toBeInTheDocument();
-        expect(screen.getByText('admin.no')).toBeInTheDocument();
+        // showSelectDescendantsButton and the (still unchanged) column split switch
+        expect(screen.getAllByText('admin.no')).toHaveLength(2);
         await waitFor(() => expect(screen.getByText('Node A')).toBeInTheDocument());
     });
 
@@ -156,7 +167,7 @@ describe('AttributeDisplayTab', () => {
             ],
         });
 
-        await userEvent.click(screen.getAllByRole('switch')[0]);
+        await userEvent.click(screen.getByRole('switch', {name: 'attributes.display.selectable_nodes'}));
 
         expect(screen.getByText('attributes.display.selectable_nodes_leaves_only')).toBeInTheDocument();
         await waitFor(() => expect(saveCalled).toBe(true));
@@ -203,10 +214,10 @@ describe('AttributeDisplayTab', () => {
             ],
         });
 
-        await userEvent.click(screen.getAllByRole('switch')[1]);
+        await userEvent.click(screen.getByRole('switch', {name: 'attributes.display.default_expanded'}));
 
         await waitFor(() => expect(screen.getByText('attributes.display.default_expanded_closed')).toBeInTheDocument());
-        expect(screen.getAllByRole('switch')[1]).not.toBeChecked();
+        expect(screen.getByRole('switch', {name: 'attributes.display.default_expanded'})).not.toBeChecked();
     });
 
     test('Show both sections on a multi-valued tree attribute', async () => {
@@ -296,7 +307,8 @@ describe('AttributeDisplayTab', () => {
 
         expect(screen.getByText('attributes.display.section_explorer')).toBeInTheDocument();
         expect(screen.queryByText('attributes.display.section_form')).not.toBeInTheDocument();
-        expect(screen.queryByRole('switch')).not.toBeInTheDocument();
+        // Only the column split switch remains: the four tree_selection_conf switches leave with the Form section
+        expect(screen.getAllByRole('switch')).toHaveLength(1);
     });
 
     test('Save the display option as a root field of the attribute, not inside tree_selection_conf', async () => {
@@ -334,5 +346,88 @@ describe('AttributeDisplayTab', () => {
         await userEvent.click(await screen.findByText('attributes.multi_display_options.tag'));
 
         await waitFor(() => expect(saveCalled).toBe(true));
+    });
+
+    describe('Column split)', () => {
+        test('Not shown on an attribute that is neither a tree nor a closed values list', async () => {
+            _renderTab(mockAttrSimple, {apolloMocks: []});
+
+            expect(screen.queryByText('attributes.display.column_split')).not.toBeInTheDocument();
+        });
+
+        test('Not shown on an attribute with an open (free entry) values list', async () => {
+            _renderTab(mockAttrSimpleWithOpenValuesList, {apolloMocks: []});
+
+            expect(screen.queryByText('attributes.display.column_split')).not.toBeInTheDocument();
+        });
+
+        test('Shown, unchecked by default, on an attribute with a closed values list', async () => {
+            _renderTab(mockAttrSimpleWithValuesList, {apolloMocks: []});
+
+            expect(screen.getByText('attributes.display.column_split')).toBeInTheDocument();
+            expect(screen.getByRole('switch')).not.toBeChecked();
+            expect(screen.getByText('admin.no')).toBeInTheDocument();
+        });
+
+        test('Shown on a tree attribute', async () => {
+            _renderTab(mockAttrTree);
+
+            expect(screen.getByText('attributes.display.column_split')).toBeInTheDocument();
+        });
+
+        test('Save on toggle', async () => {
+            let saveCalled = false;
+            _renderTab(mockAttrSimpleWithValuesList, {
+                apolloMocks: [
+                    {
+                        request: {
+                            query: SaveAttributeDocument,
+                            variables: {
+                                attrData: {id: mockAttrSimpleWithValuesList.id, column_split_enabled: true},
+                            },
+                        },
+                        result: () => {
+                            saveCalled = true;
+                            return {
+                                data: {
+                                    saveAttribute: {
+                                        ...mockAttrSimpleWithValuesList,
+                                        __typename: 'StandardAttribute',
+                                        column_split_enabled: true,
+                                    },
+                                },
+                            };
+                        },
+                    },
+                ],
+            });
+
+            await userEvent.click(screen.getByRole('switch'));
+
+            await waitFor(() => expect(saveCalled).toBe(true));
+            expect(screen.getByRole('switch')).toBeChecked();
+            expect(screen.getByText('admin.yes')).toBeInTheDocument();
+        });
+
+        test('Revert the switch when the save fails', async () => {
+            _renderTab(mockAttrSimpleWithValuesList, {
+                apolloMocks: [
+                    {
+                        request: {
+                            query: SaveAttributeDocument,
+                            variables: {
+                                attrData: {id: mockAttrSimpleWithValuesList.id, column_split_enabled: true},
+                            },
+                        },
+                        error: new Error('Save failed'),
+                    },
+                ],
+            });
+
+            await userEvent.click(screen.getByRole('switch'));
+
+            await waitFor(() => expect(screen.getByRole('switch')).not.toBeChecked());
+            expect(screen.getByText('admin.no')).toBeInTheDocument();
+        });
     });
 });

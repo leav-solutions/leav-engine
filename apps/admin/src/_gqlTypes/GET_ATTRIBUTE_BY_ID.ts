@@ -82,6 +82,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute {
     settings: JSONObject | null;
     multi_link_display_option: MultiDisplayOption | null;
     multi_tree_display_option: MultiDisplayOption | null;
+    column_split_enabled?: boolean | null;
     metadata_fields: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_permissions_conf | null;
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_StandardAttribute_versions_conf | null;
@@ -161,6 +162,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute {
     settings: JSONObject | null;
     multi_link_display_option: MultiDisplayOption | null;
     multi_tree_display_option: MultiDisplayOption | null;
+    column_split_enabled?: boolean | null;
     metadata_fields: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_permissions_conf | null;
     versions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_LinkAttribute_versions_conf | null;
@@ -254,6 +256,7 @@ export interface GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute {
     settings: JSONObject | null;
     multi_link_display_option: MultiDisplayOption | null;
     multi_tree_display_option: MultiDisplayOption | null;
+    column_split_enabled?: boolean | null;
     metadata_fields: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_metadata_fields[] | null;
     permissions_conf: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf | null;
     permissions_conf_dependent_values?: GET_ATTRIBUTE_BY_ID_attributes_list_TreeAttribute_permissions_conf_dependent_values | null;

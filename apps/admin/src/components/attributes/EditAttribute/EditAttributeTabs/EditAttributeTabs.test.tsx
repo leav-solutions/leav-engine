@@ -5,6 +5,8 @@ import {
     mockAttrAdvLink,
     mockAttrSimple,
     mockAttrSimpleLink,
+    mockAttrSimpleWithOpenValuesList,
+    mockAttrSimpleWithValuesList,
     mockAttrTree,
 } from '../../../../__mocks__/attributes';
 import EditAttributeTabs from './EditAttributeTabs';
@@ -139,6 +141,18 @@ describe('EditAttributeTabs', () => {
                     settings: {[ENABLE_TREE_ATTRIBUTE_V2_FORM]: true, [ENABLE_TREE_ATTRIBUTE_V2_MODAL]: true},
                 },
             });
+
+            expect(screen.queryByText(/display/)).not.toBeInTheDocument();
+        });
+
+        test('Show the display tab for a standard attribute with a closed values list (LEAVC-1075)', async () => {
+            render(<EditAttributeTabs attribute={{...mockAttrSimpleWithValuesList}} />);
+
+            expect(screen.getByText(/display/)).toBeInTheDocument();
+        });
+
+        test('Hide the display tab for a standard attribute with an open (free entry) values list', async () => {
+            render(<EditAttributeTabs attribute={{...mockAttrSimpleWithOpenValuesList}} />);
 
             expect(screen.queryByText(/display/)).not.toBeInTheDocument();
         });

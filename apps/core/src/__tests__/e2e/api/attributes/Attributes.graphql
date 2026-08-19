@@ -1,6 +1,7 @@
 mutation SaveAttribute($attribute: AttributeInput) {
     saveAttribute(attribute: $attribute) {
         id
+        column_split_enabled
     }
 }
 

@@ -32,6 +32,7 @@ const base: GET_ATTRIBUTE_BY_ID_attributes_list = {
     libraries: null,
     multi_link_display_option: MultiDisplayOption.avatar,
     multi_tree_display_option: MultiDisplayOption.avatar,
+    column_split_enabled: false,
     smart_filter: null,
 };
 
@@ -43,6 +44,17 @@ export const mockAttrSimpleWithValuesList = {
     values_list: {
         enable: true,
         allowFreeEntry: false,
+        allowListUpdate: false,
+        values: ['value 1', 'value 2'],
+    },
+    unique: null,
+};
+export const mockAttrSimpleWithOpenValuesList = {
+    ...mockAttrSimple,
+    id: 'simple_attribute_with_open_values_list',
+    values_list: {
+        enable: true,
+        allowFreeEntry: true,
         allowListUpdate: false,
         values: ['value 1', 'value 2'],
     },

@@ -270,6 +270,34 @@ const _validateTreeSelectionConf = async (
 };
 
 /**
+ * Check that column_split_enabled is only allowed on an attribute with a closed values list
+ * (enabled, no free entry), or on a tree attribute. Same rule as the front's
+ * `isValidGroupingAxis` (ADR-011).
+ *
+ * @param attrData
+ */
+const _validateColumnSplitConf = (attrData: IAttribute): ErrorFieldDetail<IAttribute> => {
+    const columnSplitErrors: ErrorFieldDetail<IAttribute> = {};
+
+    if (!attrData.column_split_enabled) {
+        return columnSplitErrors;
+    }
+
+    const hasClosedVocabulary =
+        attrData.type === AttributeTypes.TREE ||
+        Boolean(attrData.values_list?.enable && !attrData.values_list?.allowFreeEntry);
+
+    if (!hasClosedVocabulary) {
+        columnSplitErrors.column_split_enabled = {
+            msg: Errors.INVALID_COLUMN_SPLIT_CONF,
+            vars: {type: attrData.type},
+        };
+    }
+
+    return columnSplitErrors;
+};
+
+/**
  * Check if attribute has are required fields based on its type and format
  *
  * @param attrData
@@ -380,6 +408,7 @@ export const validateAttributeData = async (
         _validateVersionProfile(attrData, deps, ctx),
         _validateDependentValuesPermissionsConf(attrData, deps, ctx),
         _validateTreeSelectionConf(attrData, deps, ctx),
+        _validateColumnSplitConf(attrData),
     ];
 
     const validationRes = await Promise.all(validationFuncs);

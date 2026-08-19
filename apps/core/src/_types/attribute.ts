@@ -31,6 +31,7 @@ export interface IAttribute extends ICoreEntity {
     settings?: IKeyValue<any>;
     multi_link_display_option?: MultiDisplayOption;
     multi_tree_display_option?: MultiDisplayOption;
+    column_split_enabled?: boolean;
 
     /**
      * only for tree attribute

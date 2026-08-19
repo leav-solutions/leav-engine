@@ -12,6 +12,7 @@ import {localizedLabel} from '../../../../utils/utils';
 import {
     AttributeType,
     type AttributeDetailsLinkAttributeFragment,
+    type AttributeDetailsStandardAttributeFragment,
     type AttributeDetailsTreeAttributeFragment,
 } from '../../../../_gqlTypes';
 import {type OnAttributePostSaveFunc} from '../EditAttribute';
@@ -23,7 +24,7 @@ import PermissionsTab from './PermissionsTab';
 import ValuesListTab from './ValuesListTab';
 import CustomConfigTab from './CustomConfigTab';
 import DependenciesTab from './DependenciesTab';
-import {AttributeDisplayTab} from '../../../../modules/attribute-display';
+import {AttributeDisplayTab, isColumnSplitEligible} from '../../../../modules/attribute-display';
 
 interface IEditAttributeTabsProps {
     attribute?: GET_ATTRIBUTE_BY_ID_attributes_list;
@@ -75,11 +76,9 @@ function EditAttributeTabs({
 
         const isDependenciesAllowed = attribute.type === AttributeType.tree && !attribute.multiple_values;
 
-        const isDisplayTabAllowed = [
-            AttributeType.tree,
-            AttributeType.simple_link,
-            AttributeType.advanced_link,
-        ].includes(attribute.type);
+        const isDisplayTabAllowed =
+            [AttributeType.tree, AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type) ||
+            isColumnSplitEligible(attribute);
 
         const isFormatExtended = attribute.format === 'extended';
 
@@ -117,7 +116,10 @@ function EditAttributeTabs({
         }
 
         if (isDisplayTabAllowed) {
-            type DisplayTabAttribute = AttributeDetailsLinkAttributeFragment | AttributeDetailsTreeAttributeFragment;
+            type DisplayTabAttribute =
+                | AttributeDetailsStandardAttributeFragment
+                | AttributeDetailsLinkAttributeFragment
+                | AttributeDetailsTreeAttributeFragment;
 
             panes.push({
                 key: 'display',
