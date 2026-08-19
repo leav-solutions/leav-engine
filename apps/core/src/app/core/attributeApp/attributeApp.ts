@@ -138,6 +138,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                 multiple_values: Boolean!,
                 multi_link_display_option: MultiDisplayOption
                 multi_tree_display_option: MultiDisplayOption
+                column_split_enabled: Boolean
                 versions_conf: ValuesVersionsConf,
                 input_types: ActionListIOTypes!,
                 output_types: ActionListIOTypes!,
@@ -291,6 +292,7 @@ export default function (deps: IDeps): ICoreAttributeApp {
                         settings: JSONObject
                         multi_link_display_option: MultiDisplayOption
                         multi_tree_display_option: MultiDisplayOption
+                        column_split_enabled: Boolean
                         """ only for link or standard attribute """
                         smart_filter: SmartFilterConfInput
                     }

@@ -14,6 +14,7 @@ export const attributeDetailsFragment = gql`
         multiple_values
         multi_link_display_option
         multi_tree_display_option
+        column_split_enabled
         metadata_fields {
             id
             label
@@ -56,6 +57,12 @@ export const attributeDetailsFragment = gql`
             smart_filter {
                 enable
             }
+            values_list {
+                ... on StandardStringValuesListConf {
+                    enable
+                    allowFreeEntry
+                }
+            }
         }
 
         ... on LinkAttribute {
@@ -65,6 +72,10 @@ export const attributeDetailsFragment = gql`
             reverse_link
             smart_filter {
                 enable
+            }
+            values_list {
+                enable
+                allowFreeEntry
             }
         }
         ... on TreeAttribute {

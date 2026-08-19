@@ -185,7 +185,10 @@
             "show_select_children_button": "Select children button",
             "show_select_descendants_button": "Select descendants button",
             "save_error": "Could not save the selection configuration",
-            "display_option_save_error": "Could not save the display mode"
+            "display_option_save_error": "Could not save the display mode",
+            "column_split": "Column split",
+            "column_split_helper": "Allows this attribute's column to be split into one sub-column per value, in the explorer.",
+            "column_split_save_error": "Could not save the column split setting"
         },
         "smart_filter": {
             "enable": "Enable smart filter"

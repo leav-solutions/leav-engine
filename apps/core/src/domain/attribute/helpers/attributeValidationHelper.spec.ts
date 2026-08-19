@@ -127,4 +127,66 @@ describe('attributeValidationHelper', () => {
             expect(errors).toEqual({tree_selection_conf: Errors.UNKNOWN_NODE});
         });
     });
+
+    describe('column_split_enabled', () => {
+        const mockTreeRepo: Mockify<ITreeRepo> = {isNodePresent: global.__mockPromise(true)};
+
+        test('Should not validate anything when disabled', async () => {
+            const errors = await validateAttributeData(mockAttrSimple, _getDeps(mockTreeRepo), ctx);
+
+            expect(errors).toEqual({});
+        });
+
+        test('Should accept on a tree attribute', async () => {
+            const errors = await validateAttributeData(
+                {...mockAttrTree, column_split_enabled: true} as IAttribute,
+                _getDeps(mockTreeRepo),
+                ctx,
+            );
+
+            expect(errors).toEqual({});
+        });
+
+        test('Should accept on an attribute with a closed values list', async () => {
+            const errors = await validateAttributeData(
+                {
+                    ...mockAttrSimple,
+                    column_split_enabled: true,
+                    values_list: {enable: true, allowFreeEntry: false},
+                } as IAttribute,
+                _getDeps(mockTreeRepo),
+                ctx,
+            );
+
+            expect(errors).toEqual({});
+        });
+
+        test('Should reject on an attribute with an open values list', async () => {
+            const errors = await validateAttributeData(
+                {
+                    ...mockAttrSimple,
+                    column_split_enabled: true,
+                    values_list: {enable: true, allowFreeEntry: true},
+                } as IAttribute,
+                _getDeps(mockTreeRepo),
+                ctx,
+            );
+
+            expect(errors).toEqual({
+                column_split_enabled: {msg: Errors.INVALID_COLUMN_SPLIT_CONF, vars: {type: AttributeTypes.SIMPLE}},
+            });
+        });
+
+        test('Should reject on an attribute without any values list', async () => {
+            const errors = await validateAttributeData(
+                {...mockAttrSimple, column_split_enabled: true} as IAttribute,
+                _getDeps(mockTreeRepo),
+                ctx,
+            );
+
+            expect(errors).toEqual({
+                column_split_enabled: {msg: Errors.INVALID_COLUMN_SPLIT_CONF, vars: {type: AttributeTypes.SIMPLE}},
+            });
+        });
+    });
 });
