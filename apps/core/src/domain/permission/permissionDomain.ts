@@ -510,7 +510,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     ctx,
                 });
                 break;
-            case PermissionTypes.TREE_LIBRARY:
+            case PermissionTypes.TREE_LIBRARY: {
                 const [treeId, libraryId] = applyTo.split('/');
 
                 perm = await treeLibraryPermissionDomain.getTreeLibraryPermission({
@@ -520,6 +520,7 @@ export default function (deps: IPermissionDomainDeps): IPermissionDomain {
                     ctx,
                 });
                 break;
+            }
             case PermissionTypes.APPLICATION:
                 action = action as ApplicationPermissionsActions;
                 perm = await applicationPermissionDomain.getApplicationPermission({

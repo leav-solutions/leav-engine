@@ -128,7 +128,7 @@ export const usePanelMessenger = (options?: IUsePanelMessengerOptions) => {
                 return;
             }
             switch (message.type) {
-                case 'register':
+                case 'register': {
                     const frames = window.frames;
                     // Due to weak typing on Window, we cannot iterate directly on window.frames
                     // eslint-disable-next-line @typescript-eslint/prefer-for-of
@@ -140,6 +140,7 @@ export const usePanelMessenger = (options?: IUsePanelMessengerOptions) => {
 
                     dispatch({type: 'is-registered', id: message.id}, message.id);
                     break;
+                }
                 case 'unregister':
                     if (registry.current[message.id]) {
                         delete registry.current[message.id];

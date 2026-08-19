@@ -88,10 +88,11 @@ export default function ({'core.infra.elasticsearch.service': esService, config}
                             },
                         });
                         break;
-                    case 'topic':
+                    case 'topic': {
                         const res = _flattenTopicFilter({topic: value});
                         acc = [...acc, ...res];
                         break;
+                    }
                 }
 
                 return acc;

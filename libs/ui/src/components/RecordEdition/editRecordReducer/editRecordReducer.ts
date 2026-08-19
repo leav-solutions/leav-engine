@@ -165,7 +165,7 @@ const editRecordReducer = (
             return {...state, enableSidebar: action.enabled};
         case EditRecordReducerActionsTypes.SET_SIDEBAR_DEFAULT_HIDDEN:
             return {...state, sidebarDefaultHidden: action.value};
-        case EditRecordReducerActionsTypes.SET_ACTIVE_VALUE:
+        case EditRecordReducerActionsTypes.SET_ACTIVE_VALUE: {
             const newSidebarContent =
                 action.attribute !== null
                     ? EditRecordSidebarContentTypeMap.VALUE_DETAILS
@@ -214,6 +214,7 @@ const editRecordReducer = (
                 },
                 sidebarContent: newSidebarContent,
             };
+        }
         case EditRecordReducerActionsTypes.SET_SIDEBAR_CONTENT:
             return {...state, sidebarContent: action.content};
         case EditRecordReducerActionsTypes.SET_SIDEBAR_IS_OPEN:
@@ -230,7 +231,7 @@ const editRecordReducer = (
             return {...state, refreshRequested: true};
         case EditRecordReducerActionsTypes.REFRESH_DONE:
             return {...state, refreshRequested: false};
-        case EditRecordReducerActionsTypes.ADD_EXTERNAL_UPDATE:
+        case EditRecordReducerActionsTypes.ADD_EXTERNAL_UPDATE: {
             const newState = {...state};
             const newModifiers = state.externalUpdate?.modifiers.find(({id}) => id === action.modifier.id)
                 ? (newState.externalUpdate?.modifiers ?? [])
@@ -253,6 +254,7 @@ const editRecordReducer = (
             };
 
             return newState;
+        }
         case EditRecordReducerActionsTypes.CLEAR_EXTERNAL_UPDATE:
             return {...state, externalUpdate: {...initialState.externalUpdate}};
         default:

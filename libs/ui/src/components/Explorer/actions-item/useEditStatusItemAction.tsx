@@ -195,7 +195,7 @@ export const useEditStatusItemAction = ({
                                 }
 
                                 return _activateItem(item);
-                            case 'link':
+                            case 'link': {
                                 const linkRes = await deleteRecordLinkMutation({
                                     variables: {
                                         library: entrypoint.parentLibraryId,
@@ -209,6 +209,7 @@ export const useEditStatusItemAction = ({
                                 });
                                 onRemove?.(item);
                                 return linkRes;
+                            }
                             default:
                                 return;
                         }

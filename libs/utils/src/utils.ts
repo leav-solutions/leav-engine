@@ -70,9 +70,10 @@ export const stringToColor = (str: string | null = '', format = 'hsl', saturatio
     switch (format) {
         case 'hex':
             return _hslToHex(hue, saturation, luminosity);
-        case 'rgb':
+        case 'rgb': {
             const [r, g, b] = _hslToRgb(hue, saturation, luminosity);
             return `rgb(${r},${g},${b})`;
+        }
         case 'hsl':
             return `hsl(${hue}, ${saturation}%, ${luminosity}%)`;
         default:

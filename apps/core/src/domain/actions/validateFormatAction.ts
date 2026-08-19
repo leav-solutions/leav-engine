@@ -29,7 +29,7 @@ export default function (): IActionsListFunction {
                 switch (attribute.format) {
                     case AttributeFormats.TEXT:
                     case AttributeFormats.RICH_TEXT:
-                    case AttributeFormats.ENCRYPTED:
+                    case AttributeFormats.ENCRYPTED: {
                         schema = Joi.string().allow('', null);
                         const embeddedAttribute = attribute as IEmbeddedAttribute;
                         if (embeddedAttribute.validation_regex) {
@@ -37,6 +37,7 @@ export default function (): IActionsListFunction {
                         }
 
                         break;
+                    }
                     case AttributeFormats.NUMERIC:
                         schema = Joi.number().allow('', null);
                         break;
@@ -68,7 +69,7 @@ export default function (): IActionsListFunction {
                             to: Joi.date().timestamp('unix').raw().required(),
                         });
                         break;
-                    case AttributeFormats.COLOR:
+                    case AttributeFormats.COLOR: {
                         const hexPattern = /^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})$/;
                         const rgbPattern = /^rgb\(\s?\d{1,3},\s?\d{1,3},\s?\d{1,3}\s?\)$/;
                         const rgbaPattern = /^rgba\(\s?\d{1,3},\s?\d{1,3},\s?\d{1,3},\s?(0|1|0?\.\d+)\s?\)$/;
@@ -85,6 +86,7 @@ export default function (): IActionsListFunction {
                         );
 
                         break;
+                    }
                 }
 
                 return schema;

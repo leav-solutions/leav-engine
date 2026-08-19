@@ -175,7 +175,7 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
                 currentPage: 1,
                 execSearch: true,
             };
-        case ActionTypes.SELECTION_ADD:
+        case ActionTypes.SELECTION_ADD: {
             const addedSelection = state.multipleSelection
                 ? Array.from(new Set(state.selection).add(action.data))
                 : [action.data];
@@ -187,7 +187,8 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
                 ...state,
                 selection: addedSelection,
             };
-        case ActionTypes.SELECTION_REMOVE:
+        }
+        case ActionTypes.SELECTION_REMOVE: {
             const substractedSelection = state.selection.filter(e => e.id !== action.data.id);
             const callbackRemove = state.onSelectionChanged;
             if (callbackRemove !== null) {
@@ -197,6 +198,7 @@ const reducer = (state: IReducerState, action: IReducerAction): IReducerState =>
                 ...state,
                 selection: substractedSelection,
             };
+        }
         default:
             return state;
     }
