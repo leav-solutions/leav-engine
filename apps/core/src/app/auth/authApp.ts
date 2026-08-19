@@ -262,17 +262,21 @@ export default function ({
                         return res.status(401);
                     }
 
-                    const {code} = req.query;
-
                     const queryId = convertOIDCIdentifier.decodeIdentifierFromBase64Url(req.params.identifierBase64Url);
 
                     try {
-                        const oidcTokenSet = await oidcClientService.getTokensFromCodes({
-                            authorizationCode: code as string,
-                            queryId,
-                        });
+                        // v6 derives redirect_uri from the path, which must match the authorization step, and
+                        // validates the query params (iss, session_state…), which must be kept as received
+                        const callbackUrl = new URL(
+                            `${config.server.publicUrl}/auth/oidc/verify/${req.params.identifierBase64Url}`,
+                        );
+                        callbackUrl.search = new URL(req.originalUrl, config.server.publicUrl).search;
+                        const oidcTokenSet = await oidcClientService.getTokensFromCodes({callbackUrl, queryId});
 
                         const decodedToken = jwt.decode(oidcTokenSet.id_token) as jwt.JwtPayload;
+                        if (!decodedToken) {
+                            throw new AuthenticationError('Missing or malformed id_token in OIDC response');
+                        }
                         const decodedAccessToken = jwt.decode(oidcTokenSet.access_token) as jwt.JwtPayload;
                         const email = decodedToken[config.auth.oidc.idTokenUserClaim];
 
@@ -376,7 +380,7 @@ export default function ({
                             }
                         }
 
-                        logger.error(`Auth oidc verify error ${err.stack}`);
+                        logger.error(`Auth oidc verify error ${err.stack}`, {cause: err.cause});
                         return next(err);
                     }
                 },
