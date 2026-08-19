@@ -6,6 +6,7 @@ import {type CurrentView} from '../_types';
 import {useCurrentView} from '../useCurrentView';
 import {CurrentViewContext} from '../CurrentViewContext';
 import {CurrentViewStoreProvider} from '../CurrentViewStoreProvider';
+import {DEFAULT_DRAFT_VIEW_ID} from '../_constants';
 
 // usePanelEventHandlers comes from @leav/ui; keep useLang/useUser real (provided by the test render).
 vi.mock('@leav/ui', async () => ({
@@ -23,9 +24,11 @@ vi.mock('../../tabs/tab-catalog/useLastUsedView', () => ({
 
 // Permission is resolved via an isAllowed query; stub the hook so the provider test stays isolated
 // from Apollo. `false` mirrors a non-manager: the default-view draft is never seeded (these tests
-// assert the plain empty state). Manager seeding is covered in CurrentViewSection.spec.
+// assert the plain empty state). Manager seeding is covered in CurrentViewSection.spec, except the
+// `INIT_DEFAULT_VIEW` vs. `isViewResolving` race covered in the `describe` below, which needs `true`.
+const mockUseCanManageViews = vi.fn((_libraryId?: string) => false);
 vi.mock('../useCanManageViews', () => ({
-    useCanManageViews: () => false,
+    useCanManageViews: (libraryId?: string) => mockUseCanManageViews(libraryId),
 }));
 
 const mockUseGetViewV2Query = vi.fn();
@@ -97,9 +100,22 @@ const ResolvingProbe = () => {
     return <div>resolving:{String(isViewResolving)}</div>;
 };
 
+// Reads both signals needed to catch the `INIT_DEFAULT_VIEW` vs. `isViewResolving` race: whether the
+// synthetic empty draft has been seeded into the reducer, and whether resolution is still in flight.
+const DraftProbe = () => {
+    const {view, isViewResolving} = useContext(CurrentViewContext);
+
+    return (
+        <div>
+            resolving:{String(isViewResolving)} draft:{String(view?.id === DEFAULT_DRAFT_VIEW_ID)}
+        </div>
+    );
+};
+
 beforeEach(() => {
     vi.clearAllMocks();
     mockUseLastUsedView.mockReturnValue({lastUsedViewId: undefined, loading: false, saveLastUsedView: vi.fn()});
+    mockUseCanManageViews.mockReturnValue(false);
     mockViewV2ById({'view-1': makeView()});
 });
 
@@ -328,6 +344,40 @@ describe('CurrentViewStoreProvider', () => {
             );
 
             expect(screen.getByText('resolving:false')).toBeInTheDocument();
+        });
+    });
+
+    // Regression: `INIT_DEFAULT_VIEW` used to seed the synthetic empty draft off `isEmptyView` alone,
+    // which reads `true` transiently while view resolution is still in flight (see the comment on
+    // `isViewResolving` above) — flashing ExplorerV2 a defined-but-empty `currentView` (ADR-006) before
+    // the real (last-used/configured) view has had a chance to resolve, firing its records/count queries
+    // for nothing. Only a `manage_views` user reaches this path (`INIT_DEFAULT_VIEW`'s other guard).
+    describe('INIT_DEFAULT_VIEW vs. isViewResolving (the regression)', () => {
+        it('does not seed the empty draft while resolution is still in flight, only once it genuinely settles empty', async () => {
+            mockUseCanManageViews.mockReturnValue(true);
+            mockUseLastUsedView.mockReturnValue({lastUsedViewId: undefined, loading: true, saveLastUsedView: vi.fn()});
+            mockUseGetViewV2Query.mockReturnValue({data: undefined});
+
+            const {rerender} = render(
+                <CurrentViewStoreProvider viewId={undefined} displayedLibraryId="my_lib">
+                    <DraftProbe />
+                </CurrentViewStoreProvider>,
+            );
+
+            // Last-used-view lookup still in flight, no id pinned: `isEmptyView` already reads `true`,
+            // but the draft must NOT be seeded until resolution actually settles.
+            expect(screen.getByText('resolving:true draft:false')).toBeInTheDocument();
+
+            // Resolution settles on "nothing pinned" (no last-used view, no configured id): NOW the
+            // draft may be seeded.
+            mockUseLastUsedView.mockReturnValue({lastUsedViewId: undefined, loading: false, saveLastUsedView: vi.fn()});
+            rerender(
+                <CurrentViewStoreProvider viewId={undefined} displayedLibraryId="my_lib">
+                    <DraftProbe />
+                </CurrentViewStoreProvider>,
+            );
+
+            expect(await screen.findByText('resolving:false draft:true')).toBeInTheDocument();
         });
     });
 });
