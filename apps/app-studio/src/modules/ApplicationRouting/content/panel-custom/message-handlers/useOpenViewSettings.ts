@@ -1,4 +1,4 @@
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from '../../../router/useRouteParams';
 import {usePanelEventHandlers} from '@leav/ui';
 import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 import {useApplicationSettingsContext} from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
@@ -18,7 +18,7 @@ export const useOpenViewSettings = (): {
     openViewSettings: IUsePanelMessengerOptions['handlers']['onOpenViewSettings'];
 } => {
     const [application] = useApplicationSettingsContext();
-    const {panelId, recordPanelId} = useParams();
+    const {panelId, recordPanelId} = useRouteParams();
     const {dispatch} = usePanelEventHandlers<AppStudioInternalEvent>();
 
     return {

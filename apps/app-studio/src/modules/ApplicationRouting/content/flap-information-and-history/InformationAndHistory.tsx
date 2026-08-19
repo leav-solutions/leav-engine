@@ -1,4 +1,4 @@
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from '../../router/useRouteParams';
 import {KitDivider} from 'aristid-ds';
 import {InformationAndHistoryHeader} from './InformationAndHistoryHeader';
 import {
@@ -11,7 +11,7 @@ import {RecordHistoryContainer} from './record-history/RecordHistoryContainer';
 import cn from 'classnames';
 
 export const InformationAndHistory = () => {
-    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId} = useParams();
+    const {flapRecordId, flapLibraryId} = useRouteParams();
 
     return (
         <div className={cn('informationAndHistory', informationAndHistoryContainer)}>

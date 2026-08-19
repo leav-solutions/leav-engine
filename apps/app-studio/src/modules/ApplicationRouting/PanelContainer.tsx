@@ -1,5 +1,6 @@
 import {type FunctionComponent, type ReactNode, useCallback, useEffect, useRef, useState} from 'react';
-import {useMatch, useNavigate, useParams} from 'react-router-dom';
+import {useMatch, useNavigate} from 'react-router-dom';
+import {useRouteParams} from './router/useRouteParams';
 import cn from 'classnames';
 import {Explorer, SUBMIT_BUTTONS_PORTAL} from '@leav/ui';
 import {KitModal, KitSidePanel} from 'aristid-ds';
@@ -37,8 +38,7 @@ export const PanelContainer: FunctionComponent<PanelContainerProps> = ({children
     const [modalExtraRightElement, setModalExtraRightElement] = useState<HTMLElement>();
     const [sliderVoletHostElement, setSliderVoletHostElement] = useState<HTMLElement | null>(null);
     const [application] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
-        useParams();
+    const {recordId, where, recordPanelId, flapPanelId} = useRouteParams();
     const navigate = useNavigate();
     const {currentPanel} = retrievePanelDetails({application, recordPanelId});
     const {previousRecordPanelId, isPreviousPanelFirstLevel} = retrievePreviousPanelURLParams({

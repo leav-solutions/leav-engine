@@ -1,5 +1,5 @@
 import {useMemo} from 'react';
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from '../../../../router/useRouteParams';
 import {useCurrentView} from '../../store-current-view/useCurrentView';
 import {useApplicationSettingsContext} from '../../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from '../../../../utils/retrievePanelDetails';
@@ -16,7 +16,7 @@ import {retrievePanelDetails} from '../../../../utils/retrievePanelDetails';
 export const useDelegatedDisplayIframeSource = (): string | undefined => {
     const {origin} = useCurrentView();
     const applicationCtx = useApplicationSettingsContext();
-    const {panelId, recordPanelId} = useParams();
+    const {panelId, recordPanelId} = useRouteParams();
 
     return useMemo(() => {
         const application = applicationCtx?.[0];
