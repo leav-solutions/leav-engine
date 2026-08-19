@@ -1,0 +1,11 @@
+mutation SetAutomationRulesActive($ruleIds: [ID!]!, $active: Boolean!) {
+    setAutomationRulesActive(ruleIds: $ruleIds, active: $active) {
+        id
+    }
+}
+
+mutation DeleteAutomationRules($ruleIds: [ID!]!) {
+    deleteAutomationRules(ruleIds: $ruleIds) {
+        id
+    }
+}

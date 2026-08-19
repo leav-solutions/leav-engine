@@ -179,7 +179,9 @@ export default function ({
                         createAutomationRule(rule: CreateAutomationRuleInput!): AutomationRule!,
                         duplicateAutomationRule(ruleId: ID!, label: String!): AutomationRule!,
                         updateAutomationRule(rule: UpdateAutomationRuleInput!): AutomationRule!,
-                        deleteAutomationRule(ruleId: ID!): AutomationRule!
+                        deleteAutomationRule(ruleId: ID!): AutomationRule!,
+                        setAutomationRulesActive(ruleIds: [ID!]!, active: Boolean!): [AutomationRule!]!
+                        deleteAutomationRules(ruleIds: [ID!]!): [AutomationRule!]!
                     }
                 `,
                 resolvers: {
@@ -238,6 +240,20 @@ export default function ({
                             ctx: IQueryInfos,
                         ): Promise<IAutomationRule> {
                             return automationDomain.deleteAutomationRule({ruleId, ctx});
+                        },
+                        async setAutomationRulesActive(
+                            _parent,
+                            {ruleIds, active}: {ruleIds: string[]; active: boolean},
+                            ctx: IQueryInfos,
+                        ): Promise<IAutomationRule[]> {
+                            return automationDomain.setAutomationRulesActive({ruleIds, active, ctx});
+                        },
+                        async deleteAutomationRules(
+                            _parent,
+                            {ruleIds}: {ruleIds: string[]},
+                            ctx: IQueryInfos,
+                        ): Promise<IAutomationRule[]> {
+                            return automationDomain.deleteAutomationRules({ruleIds, ctx});
                         },
                     },
                     AutomationRule: {

@@ -107,6 +107,19 @@ mutation DeleteAutomationRule($ruleId: ID!) {
     }
 }
 
+mutation SetAutomationRulesActive($ruleIds: [ID!]!, $active: Boolean!) {
+    setAutomationRulesActive(ruleIds: $ruleIds, active: $active) {
+        id
+        active
+    }
+}
+
+mutation DeleteAutomationRules($ruleIds: [ID!]!) {
+    deleteAutomationRules(ruleIds: $ruleIds) {
+        id
+    }
+}
+
 query GetAutomationRuleForm($formType: AutomationRuleJsonSchemaFormType!) {
     automationRuleForm(formType: $formType) {
         jsonSchema

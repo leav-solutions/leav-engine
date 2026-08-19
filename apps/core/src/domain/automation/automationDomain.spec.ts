@@ -265,4 +265,147 @@ describe('automationDomain', () => {
             ).rejects.toBeInstanceOf(PermissionError);
         });
     });
+
+    describe('bulk actions', () => {
+        const buildBulkDomain = ({hasPermission = true}: {hasPermission?: boolean} = {}) => {
+            const adminPermissionDomain = {
+                getAdminPermission: vi.fn().mockResolvedValue(hasPermission),
+            };
+            const automationRuleRepo = {
+                // Used by the empty-pipeline guard when a rule is activated without a pipeline of its own
+                // (bulk activation only ever sends {id, active}): a non-empty pipeline here keeps that guard
+                // out of the way of these tests, which are about the batching, not that validation.
+                getAutomationRules: vi.fn().mockResolvedValue({
+                    list: [
+                        buildRule({
+                            pipeline: {
+                                steps: [
+                                    {
+                                        type: '',
+                                        params: undefined,
+                                    },
+                                ],
+                            },
+                        }),
+                    ],
+                }),
+                updateAutomationRule: vi.fn().mockImplementation(async rule => buildRule(rule)),
+                deleteAutomationRule: vi.fn().mockImplementation(async ruleId => buildRule({id: ruleId})),
+            };
+            const automationTriggers = {
+                validateAutomationRuleTrigger: vi.fn().mockResolvedValue(undefined),
+            };
+            const pipelineDomain = {
+                validatePipeline: vi.fn().mockResolvedValue(undefined),
+            };
+            const rulesCache = {invalidate: vi.fn().mockResolvedValue(undefined)};
+            const eventsManagerDomain = {sendDatabaseEvent: vi.fn().mockResolvedValue(undefined)};
+
+            const domain = automationDomain({
+                config: {automation: {maxChainDepth: 5}} as IConfig,
+                'core.domain.automation.triggers': automationTriggers,
+                'core.domain.permission.admin': adminPermissionDomain,
+                'core.domain.eventsManager': eventsManagerDomain,
+                'core.domain.automation.pipeline': pipelineDomain,
+                'core.domain.automation.rulesCache': rulesCache,
+                'core.infra.automation.rule': automationRuleRepo,
+            } as unknown as IAutomationDomainDeps);
+
+            return {domain, automationRuleRepo, rulesCache, eventsManagerDomain, adminPermissionDomain};
+        };
+
+        describe('setAutomationRulesActive', () => {
+            it('calls the unitary update once per rule id, with {id, active}', async () => {
+                const {domain, automationRuleRepo} = buildBulkDomain();
+
+                await domain.setAutomationRulesActive({ruleIds: ['1', '2', '3'], active: false, ctx: mockCtx});
+
+                expect(automationRuleRepo.updateAutomationRule).toHaveBeenCalledTimes(3);
+                expect(automationRuleRepo.updateAutomationRule).toHaveBeenCalledWith({id: '1', active: false}, mockCtx);
+                expect(automationRuleRepo.updateAutomationRule).toHaveBeenCalledWith({id: '2', active: false}, mockCtx);
+                expect(automationRuleRepo.updateAutomationRule).toHaveBeenCalledWith({id: '3', active: false}, mockCtx);
+            });
+
+            // This is the invariant behind D3: going through the unitary method rather than a single bulk
+            // AQL is what keeps the rules cache and the events in sync with each write.
+            it('invalidates the rules cache and emits an event once per rule', async () => {
+                const {domain, rulesCache, eventsManagerDomain} = buildBulkDomain();
+
+                await domain.setAutomationRulesActive({ruleIds: ['1', '2'], active: true, ctx: mockCtx});
+
+                expect(rulesCache.invalidate).toHaveBeenCalledTimes(2);
+                expect(eventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledTimes(2);
+            });
+
+            it('rejects with a permission error and calls the repo for no rule when the permission is missing', async () => {
+                const {domain, automationRuleRepo} = buildBulkDomain({hasPermission: false});
+
+                await expect(
+                    domain.setAutomationRulesActive({ruleIds: ['1'], active: true, ctx: mockCtx}),
+                ).rejects.toBeInstanceOf(PermissionError);
+                expect(automationRuleRepo.updateAutomationRule).not.toHaveBeenCalled();
+            });
+
+            it('returns an empty array and writes nothing when no rule id is given', async () => {
+                const {domain, automationRuleRepo} = buildBulkDomain();
+
+                const result = await domain.setAutomationRulesActive({ruleIds: [], active: true, ctx: mockCtx});
+
+                expect(result).toEqual([]);
+                expect(automationRuleRepo.updateAutomationRule).not.toHaveBeenCalled();
+            });
+
+            // A stale id in the admin list (another admin deleted the rule meanwhile) must surface as a
+            // validation error, not as an internal error on the missing pipeline of a rule that is not there.
+            it('rejects with a validation error when a rule id does not exist', async () => {
+                const {domain, automationRuleRepo} = buildBulkDomain();
+                automationRuleRepo.getAutomationRules.mockResolvedValue({list: []});
+
+                await expect(
+                    domain.setAutomationRulesActive({ruleIds: ['unknown'], active: true, ctx: mockCtx}),
+                ).rejects.toBeInstanceOf(ValidationError);
+                expect(automationRuleRepo.updateAutomationRule).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('deleteAutomationRules', () => {
+            it('calls the unitary delete once per rule id', async () => {
+                const {domain, automationRuleRepo} = buildBulkDomain();
+
+                await domain.deleteAutomationRules({ruleIds: ['1', '2', '3'], ctx: mockCtx});
+
+                expect(automationRuleRepo.deleteAutomationRule).toHaveBeenCalledTimes(3);
+                expect(automationRuleRepo.deleteAutomationRule).toHaveBeenCalledWith('1', mockCtx);
+                expect(automationRuleRepo.deleteAutomationRule).toHaveBeenCalledWith('2', mockCtx);
+                expect(automationRuleRepo.deleteAutomationRule).toHaveBeenCalledWith('3', mockCtx);
+            });
+
+            it('invalidates the rules cache and emits an event once per rule', async () => {
+                const {domain, rulesCache, eventsManagerDomain} = buildBulkDomain();
+
+                await domain.deleteAutomationRules({ruleIds: ['1', '2'], ctx: mockCtx});
+
+                expect(rulesCache.invalidate).toHaveBeenCalledTimes(2);
+                expect(eventsManagerDomain.sendDatabaseEvent).toHaveBeenCalledTimes(2);
+            });
+
+            it('rejects with a permission error and calls the repo for no rule when the permission is missing', async () => {
+                const {domain, automationRuleRepo} = buildBulkDomain({hasPermission: false});
+
+                await expect(domain.deleteAutomationRules({ruleIds: ['1'], ctx: mockCtx})).rejects.toBeInstanceOf(
+                    PermissionError,
+                );
+                expect(automationRuleRepo.deleteAutomationRule).not.toHaveBeenCalled();
+            });
+
+            it('returns an empty array and writes nothing when no rule id is given', async () => {
+                const {domain, automationRuleRepo} = buildBulkDomain();
+
+                const result = await domain.deleteAutomationRules({ruleIds: [], ctx: mockCtx});
+
+                expect(result).toEqual([]);
+                expect(automationRuleRepo.deleteAutomationRule).not.toHaveBeenCalled();
+            });
+        });
+    });
 });

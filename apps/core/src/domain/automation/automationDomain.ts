@@ -80,6 +80,12 @@ export interface IAutomationDomain {
     }): Promise<IAutomationRule>;
     updateAutomationRule({rule, ctx}: {rule: IUpdateAutomationRule; ctx: IQueryInfos}): Promise<IAutomationRule>;
     deleteAutomationRule({ruleId, ctx}: {ruleId: string; ctx: IQueryInfos}): Promise<IAutomationRule>;
+    setAutomationRulesActive(params: {
+        ruleIds: string[];
+        active: boolean;
+        ctx: IQueryInfos;
+    }): Promise<IAutomationRule[]>;
+    deleteAutomationRules(params: {ruleIds: string[]; ctx: IQueryInfos}): Promise<IAutomationRule[]>;
     triggerRules(params: ITriggerRulesParams): Promise<void>;
 }
 
@@ -186,6 +192,123 @@ export default function ({
         );
 
         return newAutomationRule;
+    };
+
+    const _updateAutomationRule = async ({
+        rule,
+        ctx,
+    }: {
+        rule: IUpdateAutomationRule;
+        ctx: IQueryInfos;
+    }): Promise<IAutomationRule> => {
+        await _hasManageAutomationPermissionOrThrow(ctx);
+
+        // Lazily fetched: only the validations below need the stored rule, and an update can be a plain
+        // field change that the repository resolves on its own.
+        const getCurrentRuleIfNeeded = _.once(async () => {
+            const {list} = await automationRuleRepo.getAutomationRules({filters: {id: rule.id}}, ctx);
+            const currentRule = list[0];
+
+            if (!currentRule) {
+                throw new ValidationError<IAutomationRule>({
+                    id: {msg: Errors.UNKNOWN_AUTOMATION_RULE, vars: {ruleId: rule.id}},
+                });
+            }
+
+            return currentRule;
+        });
+
+        if (rule.trigger) {
+            await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
+        }
+
+        if (rule.pipeline) {
+            await pipelineDomain.validatePipeline(
+                _pipelineValidationFromRule({
+                    pipeline: rule.pipeline,
+                    trigger: rule.trigger || (await getCurrentRuleIfNeeded()).trigger,
+                }),
+                ctx,
+            );
+        }
+
+        if (rule.active && !rule.pipeline?.steps?.length) {
+            if ((await getCurrentRuleIfNeeded()).pipeline.steps.length === 0) {
+                throw new ValidationError<IAutomationRule>({
+                    pipeline: Errors.AUTOMATION_RULE_PIPELINE_EMPTY,
+                });
+            }
+        }
+
+        const updatedAutomationRule = await automationRuleRepo
+            .updateAutomationRule(rule, ctx)
+            // TODO: This catch block should be removed once the repository handles ArangoError and throws DBError instead.
+            // Ticket: https://aristid.atlassian.net/browse/LEAVC-777
+            .catch((error: unknown) => {
+                if (isArangoError(error) && error.code === 404) {
+                    throw new ValidationError<IAutomationRule>({
+                        id: {msg: Errors.UNKNOWN_AUTOMATION_RULE, vars: {ruleId: rule.id}},
+                    });
+                }
+
+                throw error;
+            });
+
+        await automationRulesCache.invalidate(updatedAutomationRule.id);
+
+        logger.debug(`Updated automation rule with id ${updatedAutomationRule.id}`);
+
+        await eventsManagerDomain.sendDatabaseEvent<EventAction.AUTOMATION_RULE_UPDATE>(
+            {
+                action: EventAction.AUTOMATION_RULE_UPDATE,
+                topic: {
+                    automationRule: updatedAutomationRule.id,
+                },
+                after: updatedAutomationRule,
+            },
+            ctx,
+        );
+
+        return updatedAutomationRule;
+    };
+
+    const _deleteAutomationRule = async ({
+        ruleId,
+        ctx,
+    }: {
+        ruleId: string;
+        ctx: IQueryInfos;
+    }): Promise<IAutomationRule> => {
+        await _hasManageAutomationPermissionOrThrow(ctx);
+
+        const deletedAutomationRule = await automationRuleRepo
+            .deleteAutomationRule(ruleId, ctx) // TODO: This catch block should be removed once the repository handles ArangoError and throws DBError instead.
+            // Ticket: https://aristid.atlassian.net/browse/LEAVC-777
+            .catch((error: unknown) => {
+                if (isArangoError(error) && error.code === 404) {
+                    throw new ValidationError<IAutomationRule>({
+                        id: {msg: Errors.UNKNOWN_AUTOMATION_RULE, vars: {ruleId}},
+                    });
+                }
+
+                throw error;
+            });
+
+        await automationRulesCache.invalidate(deletedAutomationRule.id);
+
+        logger.debug(`Deleted automation rule with id ${ruleId}`);
+
+        await eventsManagerDomain.sendDatabaseEvent<EventAction.AUTOMATION_RULE_DELETE>(
+            {
+                action: EventAction.AUTOMATION_RULE_DELETE,
+                topic: {
+                    automationRule: deletedAutomationRule.id,
+                },
+            },
+            ctx,
+        );
+
+        return deletedAutomationRule;
     };
 
     return {
@@ -321,97 +444,37 @@ export default function ({
                 ctx,
             });
         },
-        async updateAutomationRule({rule, ctx}) {
+        updateAutomationRule: _updateAutomationRule,
+        deleteAutomationRule: _deleteAutomationRule,
+        /**
+         * Rules are processed one at a time, through the unitary methods on purpose: each one validates the
+         * rule, invalidates `automationRulesCache` and emits its `AUTOMATION_RULE_*` event. A single bulk AQL
+         * would leave the rules cache stale, and the engine would keep running deactivated rules.
+         *
+         * Not transactional: an error mid-batch leaves the previous rules updated. The caller is expected to
+         * refresh its view rather than to expect a rollback — same contract as `activateRecordsBatch`.
+         */
+        async setAutomationRulesActive({ruleIds, active, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
 
-            const getCurrentRuleIfNeeded = _.once(() =>
-                automationRuleRepo.getAutomationRules({filters: {id: rule.id}}, ctx).then(res => res.list[0]),
-            );
+            const updatedRules: IAutomationRule[] = [];
 
-            if (rule.trigger) {
-                await automationTriggers.validateAutomationRuleTrigger(rule.trigger, ctx);
+            for (const ruleId of ruleIds) {
+                updatedRules.push(await _updateAutomationRule({rule: {id: ruleId, active}, ctx}));
             }
 
-            if (rule.pipeline) {
-                await pipelineDomain.validatePipeline(
-                    _pipelineValidationFromRule({
-                        pipeline: rule.pipeline,
-                        trigger: rule.trigger || (await getCurrentRuleIfNeeded()).trigger,
-                    }),
-                    ctx,
-                );
-            }
-
-            if (rule.active && !rule.pipeline?.steps?.length) {
-                if ((await getCurrentRuleIfNeeded()).pipeline.steps.length === 0) {
-                    throw new ValidationError<IAutomationRule>({
-                        pipeline: Errors.AUTOMATION_RULE_PIPELINE_EMPTY,
-                    });
-                }
-            }
-
-            const updatedAutomationRule = await automationRuleRepo
-                .updateAutomationRule(rule, ctx)
-                // TODO: This catch block should be removed once the repository handles ArangoError and throws DBError instead.
-                // Ticket: https://aristid.atlassian.net/browse/LEAVC-777
-                .catch((error: unknown) => {
-                    if (isArangoError(error) && error.code === 404) {
-                        throw new ValidationError<IAutomationRule>({
-                            id: {msg: Errors.UNKNOWN_AUTOMATION_RULE, vars: {ruleId: rule.id}},
-                        });
-                    }
-
-                    throw error;
-                });
-
-            await automationRulesCache.invalidate(updatedAutomationRule.id);
-
-            logger.debug(`Updated automation rule with id ${updatedAutomationRule.id}`);
-
-            await eventsManagerDomain.sendDatabaseEvent<EventAction.AUTOMATION_RULE_UPDATE>(
-                {
-                    action: EventAction.AUTOMATION_RULE_UPDATE,
-                    topic: {
-                        automationRule: updatedAutomationRule.id,
-                    },
-                    after: updatedAutomationRule,
-                },
-                ctx,
-            );
-
-            return updatedAutomationRule;
+            return updatedRules;
         },
-        async deleteAutomationRule({ruleId, ctx}) {
+        async deleteAutomationRules({ruleIds, ctx}) {
             await _hasManageAutomationPermissionOrThrow(ctx);
 
-            const deletedAutomationRule = await automationRuleRepo
-                .deleteAutomationRule(ruleId, ctx) // TODO: This catch block should be removed once the repository handles ArangoError and throws DBError instead.
-                // Ticket: https://aristid.atlassian.net/browse/LEAVC-777
-                .catch((error: unknown) => {
-                    if (isArangoError(error) && error.code === 404) {
-                        throw new ValidationError<IAutomationRule>({
-                            id: {msg: Errors.UNKNOWN_AUTOMATION_RULE, vars: {ruleId}},
-                        });
-                    }
+            const deletedRules: IAutomationRule[] = [];
 
-                    throw error;
-                });
+            for (const ruleId of ruleIds) {
+                deletedRules.push(await _deleteAutomationRule({ruleId, ctx}));
+            }
 
-            await automationRulesCache.invalidate(deletedAutomationRule.id);
-
-            logger.debug(`Deleted automation rule with id ${ruleId}`);
-
-            await eventsManagerDomain.sendDatabaseEvent<EventAction.AUTOMATION_RULE_DELETE>(
-                {
-                    action: EventAction.AUTOMATION_RULE_DELETE,
-                    topic: {
-                        automationRule: deletedAutomationRule.id,
-                    },
-                },
-                ctx,
-            );
-
-            return deletedAutomationRule;
+            return deletedRules;
         },
     };
 }
