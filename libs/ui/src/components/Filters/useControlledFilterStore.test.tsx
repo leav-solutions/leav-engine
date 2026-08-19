@@ -566,4 +566,73 @@ describe('useControlledFilterStore', () => {
             expect.objectContaining({attributes: [{id: 'category'}], withEmptyValues: true}),
         ]);
     });
+
+    // `isSeeded` closes the one-render window where `filtersData.filters` still reflects the PREVIOUS
+    // (possibly empty) seed right after `leanFilters` changes structurally — the mechanism ExplorerV2's
+    // records/count queries defer on to avoid firing once against a stale/empty filter set.
+    describe('isSeeded', () => {
+        it('stays false while attribute metadata is still loading, then true once SEED has settled', async () => {
+            // Force the genuine one-render lag: SEED bails out early while `loading` is true (the
+            // `useExplorerAttributesQuery` mock, driving `useViewFiltersConverter`'s `loading`), so
+            // `isSeeded` must NOT flip true during that window.
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
+                data: undefined,
+                loading: true,
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
+
+            const {result, rerender} = renderHook(
+                ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib'}),
+                {initialProps: {leanFilters: [leanStatus(['active'])]}},
+            );
+
+            expect(result.current.isSeeded).toBe(false);
+            expect(result.current.filtersData.filters).toHaveLength(0);
+
+            // Attribute metadata resolves.
+            vi.mocked(useExplorerAttributesQuery).mockReturnValue({
+                data: {attributes: {list: [STATUS_ATTRIBUTE, TREE_ATTRIBUTE, SMART_LINK_ATTRIBUTE]}},
+                loading: false,
+            } as unknown as ReturnType<typeof useExplorerAttributesQuery>);
+            rerender({leanFilters: [leanStatus(['active'])]});
+
+            await waitFor(() => expect(result.current.isSeeded).toBe(true));
+            expect(result.current.filtersData.filters).toHaveLength(1);
+        });
+
+        it('reads true immediately (no attribute/filter to seed) when leanFilters is empty', async () => {
+            const {result} = renderHook(() => useControlledFilterStore({leanFilters: [], libraryId: 'lib'}));
+
+            await waitFor(() => expect(result.current.isSeeded).toBe(true));
+            expect(result.current.filtersData.filters).toHaveLength(0);
+        });
+
+        it('drops back to false on a STRUCTURAL change (a filter pinned/unpinned), settling true again', async () => {
+            const {result, rerender} = renderHook(
+                ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib'}),
+                {initialProps: {leanFilters: [leanStatus(['active'])]}},
+            );
+            await waitFor(() => expect(result.current.isSeeded).toBe(true));
+
+            // A second filter is pinned: the pinned attribute-path SET changes (structural), not just a value.
+            rerender({leanFilters: [leanStatus(['active']), leanSmart(['t1'])]});
+
+            await waitFor(() => expect(result.current.filtersData.filters).toHaveLength(2));
+            expect(result.current.isSeeded).toBe(true);
+        });
+
+        it('stays true across a VALUE-only edit (never re-triggers the wait)', async () => {
+            const {result, rerender} = renderHook(
+                ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib'}),
+                {initialProps: {leanFilters: [leanStatus(['active'])]}},
+            );
+            await waitFor(() => expect(result.current.isSeeded).toBe(true));
+
+            // Same attribute path, different value (e.g. adopted from the hub) — NOT structural.
+            rerender({leanFilters: [leanStatus(['archived'])]});
+
+            expect(result.current.isSeeded).toBe(true);
+            await waitFor(() => expect((result.current.filtersData.filters[0] as UIFilter).value).toBe('archived'));
+            expect(result.current.isSeeded).toBe(true);
+        });
+    });
 });

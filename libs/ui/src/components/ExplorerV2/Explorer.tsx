@@ -287,7 +287,11 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             [onFiltersChange],
         );
 
-        const {filtersData, dispatch: filtersDispatch} = useControlledFilterStore({
+        const {
+            filtersData,
+            dispatch: filtersDispatch,
+            isSeeded: isFiltersSeeded,
+        } = useControlledFilterStore({
             leanFilters: userLeanFilters,
             libraryId: view.libraryId,
             viewId: view.viewId,
@@ -334,7 +338,11 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             filters: requestFilters,
             // Kept alive on the per-column kanban path: the count is grouping-independent (library
             // total) and feeds the "X / Y" results count next to the mass-selection checkbox.
-            skip: !isViewReady,
+            // `!isFiltersSeeded`: the internal filter store starts empty and only adopts `requestFilters`
+            // one render after `currentView.filters` changes (see `useControlledFilterStore`'s `isSeeded`)
+            // — without this, the FIRST request after a view/filter change would fire against a stale/
+            // empty filter set, immediately superseded by a second, correct one.
+            skip: !isViewReady || !isFiltersSeeded,
         });
         const totalCountLibrary = useStickyValue(rawTotalCountLibrary, countLoading);
 
@@ -353,13 +361,13 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             sorts: view.sort,
             filters: requestFilters,
             filtersOperator,
-            skip: !isViewReady || isPerColumnKanban,
+            skip: !isViewReady || !isFiltersSeeded || isPerColumnKanban,
             refetchCount,
         }); // TODO: refresh when go back on page
 
         const kanbanDataSource = useMemo<IKanbanDataSource | undefined>(
             () =>
-                isPerColumnKanban && isViewReady
+                isPerColumnKanban && isViewReady && isFiltersSeeded
                     ? {
                           libraryId: view.libraryId,
                           attributeIds: queryAttributeIds,
@@ -375,6 +383,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             [
                 isPerColumnKanban,
                 isViewReady,
+                isFiltersSeeded,
                 view.libraryId,
                 queryAttributeIds,
                 requestFilters,
@@ -459,7 +468,16 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         //   `currentView` yet — without this the explorer would paint its default (list) view and flash a
         //   table before a kanban (or any non-list) view arrives. Omitted by uncontrolled consumers → they
         //   keep rendering immediately (no behaviour change).
-        const isExplorerLoading = loadingData || viewSettingsLoading || metadataLoading || Boolean(isViewLoading);
+        // - `isViewReady && !isFiltersSeeded`: the records/count queries are skipped during this window
+        //   (see above), so `loadingData` alone reads `false` here — without folding it in, the explorer
+        //   would briefly read `hasNoResults` (data === null) and flash the empty placeholder instead of
+        //   staying on the loader through the hand-off from "view ready" to "filters seeded".
+        const isExplorerLoading =
+            loadingData ||
+            viewSettingsLoading ||
+            metadataLoading ||
+            Boolean(isViewLoading) ||
+            (isViewReady && !isFiltersSeeded);
         const isLoaderVisible = useDelayedLoading(isExplorerLoading);
 
         const isAllowedFreeEntry = !(entrypoint.type === 'library' && !entrypoint.allowFreeEntry);

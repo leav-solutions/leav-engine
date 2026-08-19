@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useReducer, useRef} from 'react';
+import {useEffect, useMemo, useReducer, useRef, useState} from 'react';
 import {type RecordFilterCondition} from '_ui/_gqlTypes';
 import {type SerializedFilter} from '../ExplorerV2/_types';
 import {FiltersActionTypes, filtersReducer} from './context/filtersReducer';
@@ -109,6 +109,12 @@ interface IUseControlledFilterStoreProps {
  * 3. **EMIT** (store → hub, value/removal): when the store's lean projection diverges from
  *    `lastSyncedLeanRef`, a local edit/removal happened → emit the WHOLE lean set ONCE, then re-sync the
  *    ref. `lastSyncedLeanRef` (keyed on the lean VALUE, not object identity) is what suppresses echoes.
+ *
+ * Returned `isSeeded` flags whether SEED has settled for the CURRENT `leanFilters` (structurally): the
+ * reducer starts empty and only picks up `leanFilters` through the SEED effect above, so there is always
+ * one render where `filtersData.filters` still reflects the PREVIOUS (possibly empty) seed. A consumer
+ * that fires a request from `filtersData` (e.g. `Explorer.tsx`'s records query) should defer it on
+ * `!isSeeded` to avoid firing once against a stale/empty filter set right after `leanFilters` changes.
  */
 export const useControlledFilterStore = ({
     leanFilters,
@@ -239,6 +245,16 @@ export const useControlledFilterStore = ({
     const initialFiltersRef = useRef<UIFilter[]>([]);
     const prevStructuralRef = useRef<string | null>(null);
 
+    // Tracks the structural signature this SEED effect has last actually settled for (set at every exit
+    // point EXCEPT the `loading` one — resolution still in flight is not "seeded"). Compared against the
+    // CURRENT `structuralSignature`, not a one-shot latch: reads `false` again the instant the pinned
+    // filter set changes structurally, so a consumer (`Explorer.tsx`) can defer its first data fetch until
+    // the store has genuinely adopted `leanFilters` — closing the one-render window where `filtersData`
+    // still reflects the PREVIOUS (possibly empty) seed. A value-only edit never changes
+    // `structuralSignature`, so ordinary filter editing never re-triggers this wait.
+    const [seededSignature, setSeededSignature] = useState<string | null>(null);
+    const isSeeded = seededSignature === structuralSignature;
+
     // 1. SEED / reseed on structural (or metadata / tree-resolution) change, merge-preserving live filter
     //    objects by id. For trees, a genuine live user selection (`userNodes` set) is preserved; otherwise
     //    the (possibly just-resolved) seed wins so a reloaded tree filter upgrades from empty to resolved.
@@ -249,6 +265,7 @@ export const useControlledFilterStore = ({
         // Nothing to seed and the store is already empty → skip the RESET (it would allocate a new state
         // object and force a no-op re-render for the common no-filters explorer).
         if (seedFiltersRef.current.length === 0 && filtersDataRef.current.filters.length === 0) {
+            setSeededSignature(structuralSignature);
             return;
         }
         const existingById = new Map((filtersDataRef.current.filters as UIFilter[]).map(filter => [filter.id, filter]));
@@ -327,6 +344,7 @@ export const useControlledFilterStore = ({
                 loading: false,
             },
         });
+        setSeededSignature(structuralSignature);
         // `lastSyncedLeanRef` is NOT touched here: the RESET only lands on the NEXT render, so updating the
         // ref now would make EMIT (running this same commit on the stale, still-old store) see a phantom
         // divergence and emit. EMIT owns the ref and recognises the seed as an echo via the hub comparison.
@@ -412,5 +430,5 @@ export const useControlledFilterStore = ({
         });
     }, [smartLabelsById, filtersData.filters]);
 
-    return {filtersData, dispatch};
+    return {filtersData, dispatch, isSeeded};
 };
