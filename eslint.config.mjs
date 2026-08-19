@@ -159,10 +159,4 @@ export default defineConfig([
             'no-console': ['error', {allow: ['warn', 'error', 'info']}],
         },
     },
-    {
-        files: ['apps/app-studio/**'],
-        rules: {
-            '@typescript-eslint/no-unused-vars': 'off',
-        },
-    },
 ]);

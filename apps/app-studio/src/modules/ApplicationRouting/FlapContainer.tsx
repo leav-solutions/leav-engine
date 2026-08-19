@@ -1,7 +1,8 @@
 import {forwardRef} from 'react';
 import {KitSidePanel} from 'aristid-ds';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
+import {useRouteParams} from './router/useRouteParams';
 import {RelativePaths} from './router/paths';
 import {PanelHeader} from './header/PanelHeader';
 import {FlapContent} from './content/FlapContent';
@@ -10,7 +11,7 @@ import {flapContainer} from './flap.module.css';
 export const FlapContainer = forwardRef<KitSidePanelRef>((_, refFlap) => {
     const navigate = useNavigate();
 
-    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId} = useParams();
+    const {where, flapRecordId, flapLibraryId} = useRouteParams();
 
     if (where === 'slider') {
         return <FlapContent />;

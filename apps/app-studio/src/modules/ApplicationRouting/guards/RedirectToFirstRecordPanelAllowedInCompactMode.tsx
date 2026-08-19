@@ -1,12 +1,13 @@
 import {type FunctionComponent, type PropsWithChildren} from 'react';
-import {generatePath, Navigate, useParams} from 'react-router-dom';
+import {generatePath, Navigate} from 'react-router-dom';
+import {useRouteParams} from '../router/useRouteParams';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {AbsolutePaths, RelativePaths} from '../router/paths';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 
 export const RedirectToFirstRecordPanelAllowedInCompactMode: FunctionComponent<PropsWithChildren> = ({children}) => {
     const [application] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
+    const {panelId, where, recordPanelId} = useRouteParams();
 
     const {currentPanel, libraryId} = retrievePanelDetails({application, recordPanelId, panelId});
 

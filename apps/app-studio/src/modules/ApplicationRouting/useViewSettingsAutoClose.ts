@@ -1,5 +1,5 @@
 import {useEffect, useLayoutEffect, useRef} from 'react';
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from './router/useRouteParams';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from './utils/retrievePanelDetails';
 import {resetPanelViewSettingsInApplication} from './utils/updatePanelViewSettingsInApplication';
@@ -25,8 +25,7 @@ import {getIsViewSettingsVoletActive} from './utils/getIsViewSettingsVoletActive
  */
 export const useViewSettingsAutoClose = (hasNextLevelPanel: boolean): void => {
     const [application, setApplication] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
-        useParams();
+    const {panelId, recordPanelId, flapPanelId} = useRouteParams();
 
     const hasFlapPanel = flapPanelId !== undefined;
     const {currentPanel, libraryId, panelType} = retrievePanelDetails({application, recordPanelId, panelId});

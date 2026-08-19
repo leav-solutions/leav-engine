@@ -1,7 +1,7 @@
 import {useMemo} from 'react';
 import {KitSidePanel} from 'aristid-ds';
 import cn from 'classnames';
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from './router/useRouteParams';
 import {type UIFilter, ThroughConditionFilter, usePanelEventHandlers} from '@leav/ui';
 import {PanelViewSettings} from './content/panel-view-settings/PanelViewSettings';
 import {VoletFiltersProvider} from './content/panel-view-settings/store-current-view/VoletFiltersProvider';
@@ -18,7 +18,7 @@ import {fullscreenVolet} from './viewSettingsContainer.module.css';
 
 export const ViewSettingsContainer = () => {
     const [application, setApplication] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
+    const {workspaceId, panelId, recordId, where, recordPanelId} = useRouteParams();
     const {fullscreenPanelId} = useFullscreen();
 
     const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({

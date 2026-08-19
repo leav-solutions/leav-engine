@@ -1,5 +1,6 @@
 import {useState} from 'react';
-import {useLocation, useParams} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
+import {useRouteParams} from '../../../../router/useRouteParams';
 import {useTranslation} from 'react-i18next';
 import {useCreateThread} from '../useCreateThread';
 import {useGetThreadQuery, usePostDiscussionCommentMutation} from '../../../../../../__generated__';
@@ -21,7 +22,7 @@ export const usePostDiscussionComment = ({recordId, libraryId}: IUseThreadAction
     const location = useLocation();
     const createThread = useCreateThread();
     const statusesOptions = useThreadStatusOptions();
-    const {workspaceId, panelId, where: currentWhere} = useParams();
+    const {where: currentWhere} = useRouteParams();
 
     const {onCommentSubmitted, onCommentMentionAdded} = getThreadActionCallbacks({where: currentWhere}) ?? {};
 

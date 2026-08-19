@@ -1,5 +1,5 @@
 import {useContext, useMemo, useRef, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from '../../../../router/useRouteParams';
 import {useLang, usePanelIFrameHandlers} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
 import {ColumnsSettings} from './ColumnsSettings';
@@ -23,7 +23,7 @@ export const TabDisplay = () => {
     // display mode and its settings — app-studio never renders columns or a timeline for it. An
     // explorer view (no origin) keeps the native display tab below (source resolves to undefined).
     const displayViewSettingsIframeSource = useDelegatedDisplayIframeSource();
-    const {panelId, recordPanelId} = useParams();
+    const {panelId, recordPanelId} = useRouteParams();
 
     // Host → delegated volet iframe sync: this display-settings iframe (e.g. planning's configureViewV2)
     // needs the hub's serialized view both at mount AND on every later change (volet edit, RESET, view

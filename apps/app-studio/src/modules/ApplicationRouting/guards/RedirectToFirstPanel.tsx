@@ -1,12 +1,13 @@
 import {type FunctionComponent} from 'react';
-import {generatePath, Navigate, useParams} from 'react-router-dom';
+import {generatePath, Navigate} from 'react-router-dom';
+import {useRouteParams} from '../router/useRouteParams';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {AbsolutePaths} from '../router/paths';
 import {getTreeWorkspacePanelId} from '../utils/treeWorkspacePanel';
 
 export const RedirectToFirstPanel: FunctionComponent = () => {
     const [application] = useApplicationSettingsContext();
-    const {workspaceId} = useParams();
+    const {workspaceId} = useRouteParams();
 
     const workspace = application.workspaces.find(({id}) => id === workspaceId);
 

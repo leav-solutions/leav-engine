@@ -1,5 +1,5 @@
 import {useContext, useEffect, useRef} from 'react';
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from '../../../router/useRouteParams';
 import {type SerializedViewV2} from '@leav/ui';
 import {CurrentViewContext} from '../../panel-view-settings/store-current-view/CurrentViewContext';
 
@@ -19,7 +19,7 @@ export const useSyncViewToIframe = (
     pushViewSettingsUpdate: (data: {targetPanelId: string; serializedView: SerializedViewV2}) => void,
 ) => {
     const {serializedView} = useContext(CurrentViewContext);
-    const {panelId, recordPanelId} = useParams();
+    const {panelId, recordPanelId} = useRouteParams();
     const targetPanelId = recordPanelId ?? panelId;
     const lastPushedRef = useRef<string | null>(null);
 

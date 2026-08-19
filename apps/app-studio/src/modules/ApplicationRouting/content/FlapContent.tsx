@@ -1,10 +1,9 @@
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from '../router/useRouteParams';
 import {InformationAndHistory} from './flap-information-and-history/InformationAndHistory';
 import {Thread} from './flap-thread/Thread';
 
 export const FlapContent = () => {
-    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
-        useParams();
+    const {flapPanelId} = useRouteParams();
 
     if (flapPanelId === 'info-history') {
         return <InformationAndHistory />;

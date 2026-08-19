@@ -1,7 +1,7 @@
 import {type FunctionComponent, useContext} from 'react';
 import {LangContext} from '@leav/ui';
 import {localizedTranslation} from '@leav/utils';
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from '../router/useRouteParams';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 import {isCreationPanel} from '../utils/isCreationPanel';
@@ -31,7 +31,7 @@ export const PanelHeader: FunctionComponent<{
     const [application] = useApplicationSettingsContext();
     const {lang} = useContext(LangContext);
     const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} =
-        useParams();
+        useRouteParams();
 
     const {libraryId, panelType, currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
 

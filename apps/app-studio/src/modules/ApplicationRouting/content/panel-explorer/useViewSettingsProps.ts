@@ -1,5 +1,5 @@
 import {type ComponentProps, useCallback, useContext} from 'react';
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from '../../router/useRouteParams';
 import {type ExplorerV2, type SerializedFilter, type SerializedViewV2, useLang, usePanelEventHandlers} from '@leav/ui';
 import {retrievePanelDetails} from '../../utils/retrievePanelDetails';
 import {useApplicationSettingsContext} from '../../../../config/application-instance/application-settings/useApplicationSettingsContext';
@@ -22,7 +22,7 @@ export const useViewSettingsProps = (): {
     isViewLoading?: boolean;
 } => {
     const [application] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
+    const {panelId, recordPanelId} = useRouteParams();
     const {lang} = useLang();
 
     const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({

@@ -1,5 +1,5 @@
 import {type FunctionComponent, useContext, useEffect, useRef} from 'react';
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from '../../router/useRouteParams';
 import {LangContext, usePanelIFrameHandlers, type RecordCreatedMessage, type ViewSettingsUpdateMessage} from '@leav/ui';
 import {CurrentViewContext} from '../panel-view-settings/store-current-view/CurrentViewContext';
 import {useOpenNotification} from './message-handlers/useOpenNotification';
@@ -46,7 +46,7 @@ export const PanelCustom: FunctionComponent<IPanelCustomProps> = ({source, title
     const {exitFullscreen} = useFullscreen();
 
     const {serializedView} = useContext(CurrentViewContext);
-    const {workspaceId, panelId, recordId: _recordId, where, recordPanelId} = useParams();
+    const {panelId, recordPanelId} = useRouteParams();
     const targetPanelId = recordPanelId ?? panelId;
 
     // The `onRequestCurrentView` handler needs `pushViewSettingsUpdate`, but that pusher is produced by

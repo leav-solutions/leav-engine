@@ -1,5 +1,6 @@
 import {type FunctionComponent, type PropsWithChildren} from 'react';
-import {generatePath, Navigate, useParams} from 'react-router-dom';
+import {generatePath, Navigate} from 'react-router-dom';
+import {useRouteParams} from '../router/useRouteParams';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {AbsolutePaths, RelativePaths} from '../router/paths';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
@@ -8,7 +9,7 @@ import {isCreationPanel} from '../utils/isCreationPanel';
 // Creation panels (LEAV form or delegated iframe) are always shown as top-level popups.
 export const RedirectCreationPanelToPopup: FunctionComponent<PropsWithChildren> = ({children}) => {
     const [application] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
+    const {panelId, recordId, where, recordPanelId} = useRouteParams();
     const {currentPanel} = retrievePanelDetails({application, recordPanelId, panelId});
 
     if (!currentPanel) {

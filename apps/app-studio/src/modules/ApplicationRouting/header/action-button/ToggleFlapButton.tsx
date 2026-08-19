@@ -2,7 +2,8 @@ import {faComment, faInfo} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitTooltip} from 'aristid-ds';
 import {type FunctionComponent} from 'react';
-import {generatePath, useNavigate, useParams, useSearchParams} from 'react-router-dom';
+import {generatePath, useNavigate, useSearchParams} from 'react-router-dom';
+import {useRouteParams} from '../../router/useRouteParams';
 import {RelativePaths} from '../../router/paths';
 import {useTranslation} from 'react-i18next';
 import {FLAP_THREAD_PANEL_ID, FLAP_INFO_AND_HISTORY_PANEL_ID, BLANK_PANEL_ID} from '../../../../constants';
@@ -29,7 +30,7 @@ export const ToggleFlapButton: FunctionComponent<IToggleFlapButtonProps> = ({
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const redirectUrl = searchParams.get(REDIRECT_URL_QUERY_PARAM);
-    const {recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId, panelId} = useParams();
+    const {recordPanelId, flapRecordId, flapLibraryId, flapPanelId} = useRouteParams();
     const {t} = useTranslation();
 
     const isInfoAndHistoryFlap = targetFlapPanelId === FLAP_INFO_AND_HISTORY_PANEL_ID;

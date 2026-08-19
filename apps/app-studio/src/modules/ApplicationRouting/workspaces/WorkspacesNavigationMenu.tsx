@@ -1,6 +1,7 @@
 import {KitAvatar, KitIdCard, KitSideMenu, KitTypography} from 'aristid-ds';
 import {useMemo, useState, type ComponentProps, useContext} from 'react';
-import {useNavigate, generatePath, useParams, Outlet} from 'react-router-dom';
+import {useNavigate, generatePath, Outlet} from 'react-router-dom';
+import {useRouteParams} from '../router/useRouteParams';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {type IconProp} from '@fortawesome/fontawesome-svg-core';
 import {localizedTranslation} from '@leav/utils';
@@ -18,7 +19,7 @@ import {matomoEvents} from '../../../services/analytics/constants/matomoEvents';
 
 export const WorkspacesNavigationMenu = () => {
     const [application] = useApplicationSettingsContext();
-    const {workspaceId} = useParams();
+    const {workspaceId} = useRouteParams();
     const {lang} = useContext(LangContext);
     const {isMenuOpen, handleToggleMenu} = useMenuOpenStorage();
     const {t} = useTranslation();

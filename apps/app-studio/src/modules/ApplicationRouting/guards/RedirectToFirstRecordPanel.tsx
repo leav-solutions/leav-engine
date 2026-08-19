@@ -1,12 +1,13 @@
 import {type FunctionComponent} from 'react';
-import {generatePath, Navigate, useParams} from 'react-router-dom';
+import {generatePath, Navigate} from 'react-router-dom';
+import {useRouteParams} from '../router/useRouteParams';
 import {useApplicationSettingsContext} from '../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {retrievePanelDetails} from '../utils/retrievePanelDetails';
 import {AbsolutePaths} from '../router/paths';
 
 export const RedirectToFirstRecordPanel: FunctionComponent = () => {
     const [application] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where} = useParams();
+    const {workspaceId, panelId, recordId, where} = useRouteParams();
 
     const {libraryId} = retrievePanelDetails({application, panelId});
 

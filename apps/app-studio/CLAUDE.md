@@ -292,24 +292,24 @@ URL pattern : `/:workspaceId/:panelId/:recordId?/:where?/:recordPanelId?`
 - Flap : `.../flap/:flapRecordId/:flapLibraryId/:flapPanelId`
 - `retrievePanelDetails()` — utilitaire pour retrouver un panneau par ID dans la config
 
-### Convention `useParams()`
+### Convention `useRouteParams()`
 
-Toujours destructurer les params dans l'ordre de l'URL, même si certains ne sont pas utilisés.
-S'arrêter au dernier param utile pour le composant.
+Utiliser `useRouteParams()` (`router/useRouteParams.ts`), pas `useParams` de `react-router-dom`
+directement : il type exactement les clés valides (`workspaceId`, `panelId`, `recordId`, `where`,
+`recordPanelId`, `flapRecordId`, `flapLibraryId`, `flapPanelId`), donc une clé mal orthographiée ou mal
+renommée est une erreur de compilation plutôt qu'un `undefined` silencieux.
+
+Ne destructurer que les params réellement utilisés par le composant — pas besoin d'inclure les params
+intermédiaires non utilisés pour "documenter" la profondeur de route :
 
 ```ts
-// ✅ composant qui n'a besoin que de panelId — on s'arrête là
-const {workspaceId, panelId} = useParams();
-
-// ✅ composant qui a besoin de where — on inclut tout jusqu'à where
-const {workspaceId, panelId, recordId, where} = useParams();
-
-// ❌ on ne saute pas un param intermédiaire
-const {workspaceId, where} = useParams();
+// ✅ ne destructure que ce dont le composant a besoin
+const {panelId} = useRouteParams();
+const {panelId, where} = useRouteParams();
 ```
 
-Ordre complet : `workspaceId` → `panelId` → `recordId` → `where` → `recordPanelId`
-→ `flapRecordId` → `flapLibraryId` → `flapPanelId`
+Ordre complet des params (cumulés selon la profondeur de route) : `workspaceId` → `panelId` →
+`recordId` → `where` → `recordPanelId` → `flapRecordId` → `flapLibraryId` → `flapPanelId`.
 
 ---
 

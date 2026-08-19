@@ -2,7 +2,8 @@ import {useState, type FunctionComponent} from 'react';
 import {faExpand, faTableColumns, faWindowRestore} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitDropDown, KitTooltip} from 'aristid-ds';
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
+import {useRouteParams} from '../../router/useRouteParams';
 import {RelativePaths} from '../../router/paths';
 import {useTranslation} from 'react-i18next';
 import {DisplayModeItem} from './DisplayModeItem';
@@ -11,7 +12,7 @@ import {type Where} from '_ui/hooks/usePanelMessenger/types';
 export const PanelDisplayModeSelector: FunctionComponent = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
-    const {recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} = useParams();
+    const {recordId, where, recordPanelId, flapRecordId, flapLibraryId, flapPanelId} = useRouteParams();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const hasFlapAlreadyOpen = flapPanelId !== undefined;

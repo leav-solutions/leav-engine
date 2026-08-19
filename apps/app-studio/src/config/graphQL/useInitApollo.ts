@@ -1,6 +1,6 @@
 import {CloseCode, createClient} from 'graphql-ws';
 import {gqlPossibleTypes, useRedirectToLogin} from '@leav/ui';
-import {ApolloClient, from, HttpLink, InMemoryCache, type Observable, type ServerError, split} from '@apollo/client';
+import {ApolloClient, from, InMemoryCache, type Observable, type ServerError, split} from '@apollo/client';
 import {onError} from '@apollo/client/link/error';
 import {ApolloLink, type NextLink, type Operation} from '@apollo/client/link/core';
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions';

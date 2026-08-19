@@ -1,7 +1,7 @@
 import {KitDivider, KitEmpty, KitAvatar, KitThread, KitComment, KitLoader} from 'aristid-ds';
 import {type FunctionComponent, useEffect, useRef} from 'react';
 import {ThreadReplyBox} from './thread-reply-box/ThreadReplyBox';
-import {useParams} from 'react-router-dom';
+import {useRouteParams} from '../../router/useRouteParams';
 import {useThreads} from './useThreads/useThreads';
 import {StatusBar} from './thread-status-bar/ThreadStatusBar';
 import {useUser} from '_ui/hooks';
@@ -11,7 +11,7 @@ import {useClearThreadActionCallbacksOnClose} from './useClearThreadActionCallba
 
 export const Thread: FunctionComponent = () => {
     const {userData} = useUser();
-    const {workspaceId, panelId, recordId, where, recordPanelId, flapRecordId, flapLibraryId} = useParams();
+    const {where, flapRecordId, flapLibraryId} = useRouteParams();
 
     useClearThreadActionCallbacksOnClose(where);
 

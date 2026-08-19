@@ -1,4 +1,5 @@
-import {generatePath, useNavigate, useParams} from 'react-router-dom';
+import {generatePath, useNavigate} from 'react-router-dom';
+import {useRouteParams} from '../../../router/useRouteParams';
 import {type IUsePanelMessengerOptions} from '_ui/hooks/usePanelMessenger/types';
 import {useApplicationSettingsContext} from '../../../../../config/application-instance/application-settings/useApplicationSettingsContext';
 import {RelativePaths} from '../../../router/paths';
@@ -23,7 +24,7 @@ export const useNavigateToPanel = (): {
     navigateToPanel: IUsePanelMessengerOptions['handlers']['onNavigateToPanel'];
 } => {
     const navigate = useNavigate();
-    const {workspaceId, panelId: currentPanelId, recordId: currentRecordId, where: currentWhere} = useParams();
+    const {where: currentWhere} = useRouteParams();
 
     const [application] = useApplicationSettingsContext();
 

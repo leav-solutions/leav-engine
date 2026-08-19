@@ -1,6 +1,7 @@
 import {type FunctionComponent, useCallback, useEffect, useState} from 'react';
 import {createPortal} from 'react-dom';
-import {useMatch, useParams, useRoutes} from 'react-router-dom';
+import {useMatch, useRoutes} from 'react-router-dom';
+import {useRouteParams} from './router/useRouteParams';
 import cn from 'classnames';
 import {type KitSidePanelRef} from 'aristid-ds/dist/Kit/Navigation/SidePanel/types';
 import {useApplicationSettingsContext} from '../../config/application-instance/application-settings/useApplicationSettingsContext';
@@ -28,17 +29,7 @@ type PanelProps = {
 export const Panel: FunctionComponent<PanelProps> = ({sliderVoletHostElement = null}) => {
     const [modalExtraRightElement, setModalExtraRightElement] = useState<HTMLElement>();
     const [application] = useApplicationSettingsContext();
-    const {
-        workspaceId,
-        panelId,
-        recordId,
-        where,
-        recordPanelId,
-        flapRecordId,
-        flapLibraryId,
-        flapPanelId,
-        '*': nextLevelPath,
-    } = useParams();
+    const {workspaceId, panelId, recordId, where, recordPanelId, flapPanelId, '*': nextLevelPath} = useRouteParams();
     const {currentPanel, libraryId, panelType, displayedLibraryId} = retrievePanelDetails({
         application,
         recordPanelId,

@@ -1,5 +1,6 @@
 import {type FunctionComponent} from 'react';
-import {useNavigate, useParams} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
+import {useRouteParams} from '../../router/useRouteParams';
 import type * as z from 'zod/v4';
 import {type creationPanelSchema, EditRecordPage, useExecuteSaveValueBatchMutation} from '@leav/ui';
 import {RelativePaths} from '../../router/paths';
@@ -17,7 +18,7 @@ interface IPanelCreationFormProps {
 export const PanelCreationForm: FunctionComponent<IPanelCreationFormProps> = ({formId, libraryId}) => {
     const navigate = useNavigate();
     const [application] = useApplicationSettingsContext();
-    const {workspaceId, panelId, recordId, where, recordPanelId} = useParams();
+    const {workspaceId, recordId, where, recordPanelId} = useRouteParams();
 
     const {currentPanel} = retrievePanelDetails({application, recordPanelId}) as {currentPanel: CreationFormPanel};
     const {saveValues} = useExecuteSaveValueBatchMutation();
