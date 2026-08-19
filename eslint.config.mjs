@@ -165,21 +165,4 @@ export default defineConfig([
             '@typescript-eslint/no-unused-vars': 'off',
         },
     },
-    {
-        files: ['apps/core/src/**/*.ts'],
-        rules: {
-            'no-restricted-imports': [
-                'error',
-                {
-                    patterns: [
-                        // Forbid @leav/core/* import in leav core, temporary for https://aristid.atlassian.net/browse/LEAVC-812
-                        {
-                            group: ['@leav/core/*'],
-                            message: "Don't use @leav/core imports in core : use relative imports instead",
-                        },
-                    ],
-                },
-            ],
-        },
-    },
 ]);
