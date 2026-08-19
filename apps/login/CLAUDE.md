@@ -32,7 +32,6 @@ Pour auditer, utiliser le skill [`audit-dependencies`](../../.claude/skills/audi
 | `happy-dom`                                | `environment: 'happy-dom'` dans `vitest.config.ts` (chaîne, pas import).                                                                                                                                                                            |
 | `typescript`                               | Binaire `tsc` du script `tscheck`.                                                                                                                                                                                                                  |
 | `@types/node`                              | `vitest.config.ts` importe `path`, `vite.config.js` utilise `__dirname`/`process.env`. Absent du `types` de `tsconfig.spec.json` (`["vitest/globals"]`), donc chargé via `tsconfig.build.json` qui n'a pas de `types` (→ tous les `@types/*`).      |
-| `vite-plugin-rewrite-all`                  | Contourne un bug d'URL quand la clé de reset password est passée en paramètre (cf. commentaire dans `vite.config.js`).                                                                                                                              |
 
 ### Non déclarées à dessein
 
