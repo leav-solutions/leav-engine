@@ -1,64 +1,88 @@
 import {initOIDCClient} from '../oidcClient';
 import {type IConfig} from '../../../_types/config';
-import {Issuer} from 'openid-client';
+import {None, allowInsecureRequests, discovery} from 'openid-client';
 import {type Mock} from 'vitest';
 
-const clientMock = vi.fn();
-
-class ClientClassMock {
-    public constructor(...args: any) {
-        clientMock(...args);
-    }
-}
+const discoveryMock = discovery as Mock;
+const NoneMock = None as Mock;
 
 vi.mock('openid-client', () => ({
-    Issuer: {
-        discover: vi.fn(() => ({
-            Client: ClientClassMock,
-        })),
-    },
+    discovery: vi.fn(),
+    // None is a factory — None() returns the ClientAuth handler
+    None: vi.fn().mockReturnValue(vi.fn()),
+    allowInsecureRequests: vi.fn(),
 }));
 
 describe('initOIDCClient', () => {
-    const discoverMock = Issuer.discover as Mock;
     beforeEach(() => {
-        discoverMock.mockClear();
-        clientMock.mockClear();
+        vi.clearAllMocks();
     });
 
-    it('should discover wellKnownEndpoint', async () => {
+    it('should call discovery with wellKnownEndpoint, clientId and None() for HTTPS', async () => {
+        const mockConfiguration = {issuer: 'https://example.com'};
+        discoveryMock.mockResolvedValueOnce(mockConfiguration);
+
         const config = {
             auth: {
                 oidc: {
-                    wellKnownEndpoint: 'wellKnownEndpoint',
+                    wellKnownEndpoint: 'https://example.com/.well-known/openid-configuration',
+                    clientId: 'clientId',
                 },
             },
         };
 
         await initOIDCClient(config as IConfig);
 
-        expect(discoverMock).toHaveBeenCalledTimes(1);
-        expect(discoverMock).toHaveBeenCalledWith(config.auth.oidc.wellKnownEndpoint);
+        expect(NoneMock).toHaveBeenCalledTimes(1);
+        expect(discoveryMock).toHaveBeenCalledTimes(1);
+        expect(discoveryMock).toHaveBeenCalledWith(
+            new URL(config.auth.oidc.wellKnownEndpoint),
+            config.auth.oidc.clientId,
+            undefined,
+            NoneMock.mock.results[0].value, // result of None()
+            {execute: []}, // HTTPS → no allowInsecureRequests
+        );
     });
 
-    it('should return a new client', async () => {
+    it('should include allowInsecureRequests in execute for HTTP endpoints', async () => {
+        const mockConfiguration = {issuer: 'http://example.com'};
+        discoveryMock.mockResolvedValueOnce(mockConfiguration);
+
         const config = {
             auth: {
                 oidc: {
-                    wellKnownEndpoint: 'wellKnownEndpoint',
+                    wellKnownEndpoint: 'http://example.com/.well-known/openid-configuration',
                     clientId: 'clientId',
                 },
             },
         };
-        clientMock.mockResolvedValueOnce('client');
 
-        const clientResult = await initOIDCClient(config as IConfig);
+        await initOIDCClient(config as IConfig);
 
-        expect(clientMock).toHaveBeenCalledTimes(1);
-        expect(clientMock).toHaveBeenCalledWith({
-            client_id: config.auth.oidc.clientId,
-            token_endpoint_auth_method: 'none',
-        });
-        expect(clientResult).toBeInstanceOf(ClientClassMock);
+        expect(discoveryMock).toHaveBeenCalledWith(
+            new URL(config.auth.oidc.wellKnownEndpoint),
+            config.auth.oidc.clientId,
+            undefined,
+            NoneMock.mock.results[0].value,
+            {execute: [allowInsecureRequests]},
+        );
+    });
+
+    it('should return the configuration from discovery', async () => {
+        const mockConfiguration = {issuer: 'https://example.com'};
+        discoveryMock.mockResolvedValueOnce(mockConfiguration);
+
+        const config = {
+            auth: {
+                oidc: {
+                    wellKnownEndpoint: 'https://example.com/.well-known/openid-configuration',
+                    clientId: 'clientId',
+                },
+            },
+        };
+
+        const result = await initOIDCClient(config as IConfig);
+
+        expect(result).toBe(mockConfiguration);
     });
 });

@@ -30,6 +30,12 @@ import {type IUserDomain} from '../../../domain/user/userDomain';
 import AuthenticationError from '../../../errors/AuthenticationError';
 import {CommonAttributes} from '../../../_constants/systemAttributes';
 
+const MOCK_PUBLIC_URL = 'https://public-url.example.com';
+const MOCK_VERIFY_PATH = '/auth/oidc/verify/whatever';
+const MOCK_VERIFY_QUERY = 'code=authCode&lang=fr&iss=https%3A%2F%2Fsso.example.com%2Frealms%2FLEAV&session_state=sess';
+// a reverse proxy may forward a rewritten path, the callback url must still be rebuilt from publicUrl
+const MOCK_FORWARDED_PATH = `/internal${MOCK_VERIFY_PATH}`;
+
 const depsBase: ToAny<IAuthAppDeps> = {
     'core.domain.value': vi.fn(),
     'core.infra.record': vi.fn(),
@@ -212,7 +218,7 @@ describe('authApp', () => {
                     oidc: {enable: true},
                 },
                 server: {
-                    publicUrl: 'test://publicUrl',
+                    publicUrl: MOCK_PUBLIC_URL,
                 },
             };
 
@@ -243,7 +249,7 @@ describe('authApp', () => {
             expect(oidcClientServiceMock.getAuthorizationUrl).toHaveBeenCalledTimes(1);
             expect(oidcClientServiceMock.getAuthorizationUrl).toHaveBeenCalledWith({
                 queryId: 'queryId',
-                redirectUri: 'test://publicUrl/auth/oidc/verify/cXVlcnlJZA',
+                redirectUri: `${MOCK_PUBLIC_URL}/auth/oidc/verify/cXVlcnlJZA`,
             });
             expect(response.redirect).toHaveBeenCalledTimes(1);
             expect(response.redirect).toHaveBeenCalledWith('oidcLoginUrl');
@@ -585,7 +591,7 @@ describe('authApp', () => {
                     cookie: {sameSite: 'lax', secure: false},
                     oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client'},
                 },
-                server: {},
+                server: {publicUrl: MOCK_PUBLIC_URL},
             };
 
             const mockRecordDomain = {
@@ -640,6 +646,7 @@ describe('authApp', () => {
 
             const request: any = {
                 params: {identifierBase64Url: 'whatever'},
+                originalUrl: `${MOCK_FORWARDED_PATH}?${MOCK_VERIFY_QUERY}`,
                 query: {code: 'authCode', lang: 'fr'},
                 body: {requestId: '0'},
                 headers: {host: 'host', 'user-agent': 'jest'},
@@ -653,6 +660,10 @@ describe('authApp', () => {
             await verifyHandler(request, response, vi.fn());
 
             // Assert
+            expect(mockOidcService.getTokensFromCodes).toHaveBeenCalledWith({
+                callbackUrl: new URL(`${MOCK_PUBLIC_URL}${MOCK_VERIFY_PATH}?${MOCK_VERIFY_QUERY}`),
+                queryId: 'queryId',
+            });
             expect(mockRecordDomain.createRecord).not.toHaveBeenCalled();
             expect(response.redirect).toHaveBeenCalledWith('redirectUrl');
             expect(postOidcLoginCallback).toHaveBeenCalledWith(
@@ -673,6 +684,7 @@ describe('authApp', () => {
                     cookie: {sameSite: 'lax', secure: false},
                     oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: false},
                 },
+                server: {publicUrl: MOCK_PUBLIC_URL},
             };
 
             const mockRecordDomain = {
@@ -710,6 +722,7 @@ describe('authApp', () => {
 
             const request: any = {
                 params: {identifierBase64Url: 'whatever'},
+                originalUrl: `${MOCK_FORWARDED_PATH}?${MOCK_VERIFY_QUERY}`,
                 query: {code: 'authCode', lang: 'fr'},
                 body: {requestId: '0'},
                 headers: {host: 'host', 'user-agent': 'jest'},
@@ -743,7 +756,7 @@ describe('authApp', () => {
                         enableAutoProvisioning: true,
                     },
                 },
-                server: {},
+                server: {publicUrl: MOCK_PUBLIC_URL},
             };
 
             const mockRecordDomain = {
@@ -795,6 +808,7 @@ describe('authApp', () => {
 
             const request: any = {
                 params: {identifierBase64Url: 'whatever'},
+                originalUrl: `${MOCK_FORWARDED_PATH}?${MOCK_VERIFY_QUERY}`,
                 query: {code: 'authCode', lang: 'fr'},
                 body: {requestId: '0'},
                 headers: {host: 'host', 'user-agent': 'jest'},
@@ -839,7 +853,7 @@ describe('authApp', () => {
                     cookie: {sameSite: 'lax', secure: false},
                     oidc: {enable: true, idTokenUserClaim: 'email', clientId: 'client', enableAutoProvisioning: true},
                 },
-                server: {},
+                server: {publicUrl: MOCK_PUBLIC_URL},
             };
 
             const mockRecordDomain = {
@@ -888,6 +902,7 @@ describe('authApp', () => {
 
             const request: any = {
                 params: {identifierBase64Url: 'whatever'},
+                originalUrl: `${MOCK_FORWARDED_PATH}?${MOCK_VERIFY_QUERY}`,
                 query: {code: 'authCode', lang: 'fr'},
                 body: {requestId: '0'},
                 headers: {host: 'host', 'user-agent': 'jest'},
