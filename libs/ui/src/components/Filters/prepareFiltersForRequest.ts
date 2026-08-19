@@ -25,7 +25,7 @@ const _getDateAtNoon = (date: number): string => dayjs.unix(Number(date)).add(12
 
 const _getDateRequestFilters = ({field, condition, value}: IUIFilterStandard): RecordFilterInput[] => {
     switch (condition) {
-        case RecordFilterCondition.BETWEEN:
+        case RecordFilterCondition.BETWEEN: {
             const [from, to] = value!.split(dateValuesSeparator);
             return [
                 {
@@ -37,6 +37,7 @@ const _getDateRequestFilters = ({field, condition, value}: IUIFilterStandard): R
                     }),
                 },
             ];
+        }
         case RecordFilterCondition.NOT_EQUAL:
             return [
                 {

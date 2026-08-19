@@ -137,7 +137,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                             ),
                             type: value.valuePayload ? 'primary' : ('neutral' as IKitTag['type']),
                         };
-                    case AttributeFormat.color:
+                    case AttributeFormat.color: {
                         const color = new AggregationColor(value.valueRawPayload);
                         return {
                             children: (
@@ -151,6 +151,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                                 />
                             ),
                         };
+                    }
                     case AttributeFormat.date_range:
                         return {
                             children: (
@@ -160,7 +161,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                             ),
                             type: 'primary',
                         };
-                    default:
+                    default: {
                         const valueContent =
                             attributeProperties.format === AttributeFormat.encrypted
                                 ? '●●●●●●●●●●●●'
@@ -169,6 +170,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                             children: <KitTypography.Text color={TOOLTIP_COLOR}>{valueContent}</KitTypography.Text>,
                             type: 'primary',
                         };
+                    }
                 }
             });
             return <TableTagGroup tags={tags} />;
@@ -259,7 +261,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
             }
 
             switch (attributeProperties.format) {
-                case AttributeFormat.boolean:
+                case AttributeFormat.boolean: {
                     const valueToDisplay = value.valuePayload ? t('global.yes') : t('global.no');
                     content = (
                         <KitTag key={attributeProperties.id} type={value.valuePayload ? 'primary' : 'neutral'}>
@@ -267,7 +269,8 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         </KitTag>
                     );
                     break;
-                case AttributeFormat.rich_text:
+                }
+                case AttributeFormat.rich_text: {
                     const tmp = document.createElement('div');
                     tmp.innerHTML = DOMPurify.sanitize(value.valuePayload);
                     const textContent = tmp.textContent;
@@ -280,7 +283,8 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         </>
                     );
                     break;
-                case AttributeFormat.color:
+                }
+                case AttributeFormat.color: {
                     const color = new AggregationColor(value.valueRawPayload);
                     content = (
                         <>
@@ -294,10 +298,11 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         </>
                     );
                     break;
+                }
                 case AttributeFormat.date_range:
                     content = _getDateRangeValueContent(value.valuePayload);
                     break;
-                default:
+                default: {
                     const valueContent =
                         attributeProperties.format === AttributeFormat.encrypted ? '●●●●●●●●●●●●' : value.valuePayload;
                     content = (
@@ -306,6 +311,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         </KitTypography.AdvancedText>
                     );
                     break;
+                }
             }
         }
 

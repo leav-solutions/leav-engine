@@ -22,10 +22,11 @@ const localReducer = (state, action) => {
     switch (action.type) {
         case LocalActionTypes.ADD_FILTER:
             return [...state, {...emptyFilter}];
-        case LocalActionTypes.REMOVE_FILTER:
+        case LocalActionTypes.REMOVE_FILTER: {
             const stateCopy = [...state];
             stateCopy.splice(action.data, 1);
             return stateCopy;
+        }
         case LocalActionTypes.CHANGE_VALUE:
             state[action.data.index] = {...state[action.data.index], value: action.data.value};
             return [...state];

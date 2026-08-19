@@ -125,14 +125,16 @@ function ValuesListForm({attribute, onSubmit}: IValuesListFormProps): JSX.Elemen
 
                     break;
                 case AttributeType.simple_link:
-                case AttributeType.advanced_link:
+                case AttributeType.advanced_link: {
                     const linkValues = conf.values as ILinkValuesList[];
                     valuesToSave = linkValues ? linkValues.map(v => v.whoAmI.id) : [];
                     break;
-                case AttributeType.tree:
+                }
+                case AttributeType.tree: {
                     const treeValues = conf.values as ITreeValuesList[];
                     valuesToSave = treeValues ? treeValues.map(v => v.id) : [];
                     break;
+                }
             }
 
             return valuesToSave.filter(v => v !== '');
