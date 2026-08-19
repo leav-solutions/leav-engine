@@ -1,23 +1,26 @@
-import {render, screen} from '_ui/_tests/testUtils';
+import {render, screen, waitFor} from '_ui/_tests/testUtils';
 import {DSRangePickerWrapper} from './DSRangePickerWrapper';
 import userEvent from '@testing-library/user-event';
 import {Form} from 'antd';
 import dayjs from 'dayjs';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {type CalculatedFlags, type InheritedFlags} from '../../shared/calculatedInheritedFlags';
+import {LangContext} from '_ui/contexts';
+
+const enLangContext = {lang: ['en'], availableLangs: ['fr', 'en'], defaultLang: 'en', setLang: () => undefined};
 
 const todayDate = dayjs();
 const tomorrowDate = dayjs().add(1, 'day');
 const formatedDates = (date: dayjs.Dayjs) => ({
-    formated: date.format('YYYY-MM-DD'),
+    formated: date.format('DD/MM/YYYY'),
+    formatedEn: date.format('MM/DD/YYYY'),
+    titleFormated: date.format('YYYY-MM-DD'),
     timestamp: date.unix().toString(),
     atNoon: date.set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0),
     atNoonTimestamp: date.set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0).unix(),
 });
 const todayDateFormated = formatedDates(todayDate);
 const tomorrowDateFormated = formatedDates(tomorrowDate);
-
-const presentationDate = 'From December 05, 2024 To December 06, 2024';
 
 const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValues: false,
@@ -75,13 +78,12 @@ describe('DSRangePickerWrapper', () => {
         mockHandleBlur.mockReset();
     });
 
-    test('Should display presentationValue By default', async () => {
+    test('Should display the value formatted for the current language', async () => {
         render(
             <Form>
                 <Form.Item>
                     <DSRangePickerWrapper
                         value={[todayDate, tomorrowDate]}
-                        presentationValue={presentationDate}
                         attribute={mockFormAttribute}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
@@ -93,7 +95,33 @@ describe('DSRangePickerWrapper', () => {
             </Form>,
         );
 
-        expect(screen.getAllByRole('textbox')[0]).toHaveValue(presentationDate);
+        const rangePickerInputs = screen.getAllByRole('textbox');
+        expect(rangePickerInputs[0]).toHaveValue(todayDateFormated.formated);
+        expect(rangePickerInputs[1]).toHaveValue(tomorrowDateFormated.formated);
+    });
+
+    test('Should display the value formatted MM/DD/YYYY when the current language is english', async () => {
+        render(
+            <LangContext.Provider value={enLangContext}>
+                <Form>
+                    <Form.Item>
+                        <DSRangePickerWrapper
+                            value={[todayDate, tomorrowDate]}
+                            attribute={mockFormAttribute}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                            onChange={mockOnChange}
+                            handleSubmit={mockHandleSubmit}
+                        />
+                    </Form.Item>
+                </Form>
+            </LangContext.Provider>,
+        );
+
+        const rangePickerInputs = screen.getAllByRole('textbox');
+        expect(rangePickerInputs[0]).toHaveValue(todayDateFormated.formatedEn);
+        expect(rangePickerInputs[1]).toHaveValue(tomorrowDateFormated.formatedEn);
     });
 
     test('Should display the value if focused', async () => {
@@ -102,7 +130,6 @@ describe('DSRangePickerWrapper', () => {
                 <Form.Item>
                     <DSRangePickerWrapper
                         value={[todayDate, tomorrowDate]}
-                        presentationValue={presentationDate}
                         attribute={mockFormAttribute}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
@@ -121,13 +148,57 @@ describe('DSRangePickerWrapper', () => {
         expect(rangePickerInputs[1]).toHaveValue(tomorrowDateFormated.formated);
     });
 
+    test('Should display both dates formatted when idle, without needing focus', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSRangePickerWrapper
+                        value={[todayDate, tomorrowDate]}
+                        attribute={mockFormAttribute}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>,
+        );
+
+        const rangePickerInputs = screen.getAllByRole('textbox');
+        await waitFor(() => expect(rangePickerInputs[0]).toHaveValue(todayDateFormated.formated));
+        expect(rangePickerInputs[1]).toHaveValue(tomorrowDateFormated.formated);
+    });
+
+    test('Should show the "enter a period" placeholder on the first field when idle with no value', async () => {
+        render(
+            <Form>
+                <Form.Item>
+                    <DSRangePickerWrapper
+                        attribute={mockFormAttribute}
+                        readonly={notReadonly}
+                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                        onChange={mockOnChange}
+                        handleSubmit={mockHandleSubmit}
+                    />
+                </Form.Item>
+            </Form>,
+        );
+
+        const rangePickerInputs = screen.getAllByRole('textbox');
+        await waitFor(() =>
+            expect(rangePickerInputs[0]).toHaveAttribute('placeholder', 'record_edition.placeholder.enter_a_period'),
+        );
+        expect(rangePickerInputs[1]).toHaveAttribute('placeholder', '');
+    });
+
     test('Should be disabled when readonly', async () => {
         render(
             <Form>
                 <Form.Item>
                     <DSRangePickerWrapper
                         value={[todayDate, tomorrowDate]}
-                        presentationValue={presentationDate}
                         attribute={mockFormAttribute}
                         readonly={readonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
@@ -161,8 +232,8 @@ describe('DSRangePickerWrapper', () => {
         const textInput = screen.getAllByRole('textbox')[0];
         await user.click(textInput);
 
-        await user.click(screen.getAllByTitle(todayDateFormated.formated)[0]);
-        await user.click(screen.getAllByTitle(tomorrowDateFormated.formated)[0]);
+        await user.click(screen.getAllByTitle(todayDateFormated.titleFormated)[0]);
+        await user.click(screen.getAllByTitle(tomorrowDateFormated.titleFormated)[0]);
 
         expect(mockOnChange).toHaveBeenCalledWith(
             [todayDateFormated.atNoon, tomorrowDateFormated.atNoon],
@@ -199,8 +270,8 @@ describe('DSRangePickerWrapper', () => {
 
         const rangePickerInputs = screen.getAllByRole('textbox');
         await user.click(rangePickerInputs[0]);
-        await user.click(screen.getAllByTitle(todayDateFormated.formated)[0]);
-        await user.click(screen.getAllByTitle(tomorrowDateFormated.formated)[0]);
+        await user.click(screen.getAllByTitle(todayDateFormated.titleFormated)[0]);
+        await user.click(screen.getAllByTitle(tomorrowDateFormated.titleFormated)[0]);
 
         expect(mockOnChange).toHaveBeenCalledTimes(1);
         expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
@@ -223,7 +294,6 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item name="rangePickerTest">
                         <DSRangePickerWrapper
                             value={[todayDate, tomorrowDate]}
-                            presentationValue={presentationDate}
                             attribute={mockFormAttribute}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
@@ -278,7 +348,6 @@ describe('DSRangePickerWrapper', () => {
                     <Form.Item name="rangePickerTest">
                         <DSRangePickerWrapper
                             value={[todayDate, tomorrowDate]}
-                            presentationValue={presentationDate}
                             attribute={mockFormAttribute}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithCalculatedValue}

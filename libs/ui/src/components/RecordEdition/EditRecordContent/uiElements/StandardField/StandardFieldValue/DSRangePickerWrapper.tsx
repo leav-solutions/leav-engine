@@ -7,14 +7,15 @@ import {type StandardValueTypes} from '../../../_types';
 import {setDateToUTCNoon} from '_ui/_utils';
 import {type IStandFieldValueContentProps} from './_types';
 import {type IKitRangePicker} from 'aristid-ds/dist/Kit/DataEntry/DatePicker/types';
+import {useDateFormat} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {EMPTY_INITIAL_VALUE_UNDEFINED} from '../../../antdUtils';
 
 const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{
-    $shouldUsePresentationLayout: boolean;
+    $shouldMergeEmptyFields: boolean;
 }>`
-    ${({$shouldUsePresentationLayout}) =>
-        $shouldUsePresentationLayout &&
+    ${({$shouldMergeEmptyFields}) =>
+        $shouldMergeEmptyFields &&
         `   &.ant-picker.ant-picker-range {
             div:nth-child(n+3) {
                 display: none;
@@ -25,7 +26,6 @@ const KitDatePickerRangePickerStyled = styled(KitDatePicker.RangePicker)<{
 
 export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProps<IKitRangePicker>> = ({
     value,
-    presentationValue,
     isLastValueOfMultivalues,
     removeLastValueOfMultivalues,
     onChange,
@@ -48,10 +48,12 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
     const {t} = useSharedTranslation();
 
     const isErrors = errors.length > 0;
+    const dateFormat = useDateFormat();
 
-    // we slow down the css so that presentationValue does not flash before being hidden
-    const [usePresentationLayout, setUsePresentationLayout] = useState(false);
-    useEffect(() => setUsePresentationLayout(!isFocused && !isErrors), [isFocused, isErrors]);
+    // Merge the two empty inputs into one so the "enter a period" placeholder reads as a single field.
+    // Slowed down via effect so the un-merged layout doesn't flash before being hidden.
+    const [shouldMergeEmptyFields, setShouldMergeEmptyFields] = useState(false);
+    useEffect(() => setShouldMergeEmptyFields(!isFocused && !isErrors && !value), [isFocused, isErrors, value]);
 
     // TODO: Remove inheritedValues[0] and calculatedValues[0] when we will have a proper way to override multiple values. For now, those attributes are set in readonly mode.
     const _resetToInheritedOrCalculatedValue = async () => {
@@ -128,7 +130,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             autoFocus={isFocused}
             open={attribute.multiple_values ? isFocused : undefined}
             value={value}
-            format={!isFocused && !isErrors && !!presentationValue ? () => presentationValue : undefined}
+            format={dateFormat}
             readonly={readonly}
             allowClear={
                 !!value &&
@@ -142,7 +144,7 @@ export const DSRangePickerWrapper: FunctionComponent<IStandFieldValueContentProp
             onChange={_handleDateChange}
             onOpenChange={_handleOpenChange}
             placeholder={placeholderToDisplay}
-            $shouldUsePresentationLayout={usePresentationLayout}
+            $shouldMergeEmptyFields={shouldMergeEmptyFields}
         />
     );
 };

@@ -6,6 +6,7 @@ import {AttributeConditionFilter} from '_ui/types';
 import {type IFilterChildrenDropDownProps} from './_types';
 import {dateValuesSeparator} from '_ui/components/Explorer/_queries/useExplorerData';
 import {type RecordFilterCondition} from '_ui/_gqlTypes';
+import {useDateFormat} from '_ui/hooks';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck, faCircleExclamation} from '@fortawesome/free-solid-svg-icons';
@@ -94,6 +95,7 @@ const PresetItem: FunctionComponent<{
 export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownProps> = ({filter, onFilterChange}) => {
     const datePickerRef = useRef<HTMLDivElement>(null);
     const {t} = useSharedTranslation();
+    const dateFormat = useDateFormat();
 
     const onClickPreset = (presetCondition: RecordFilterCondition) => () => {
         if (filter.condition === presetCondition) {
@@ -109,8 +111,8 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
 
     const _onDateChanged: ComponentProps<typeof KitDatePicker>['onChange'] = value => {
         const date = Array.isArray(value) ? value[0] : value;
-        const formattedToday = dayjs().format('YYYY-MM-DD');
-        const formattedValue = date ? date.format('YYYY-MM-DD') : null;
+        const formattedToday = dayjs().format(dateFormat);
+        const formattedValue = date ? date.format(dateFormat) : null;
         const condition =
             filter.condition === AttributeConditionFilter.TODAY && formattedValue !== formattedToday
                 ? AttributeConditionFilter.EQUAL
@@ -120,7 +122,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
             ...filter,
             condition,
             value: date ? String(date.unix()) : null,
-            formattedValue: date ? date.format('YYYY-MM-DD') : null, //TODO: Date format should come from the backend (will be adress in a later ticket)
+            formattedValue,
         });
     };
 
@@ -136,7 +138,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
                 dateTo = dateTo.endOf('day');
 
                 value = dateFrom.unix() + dateValuesSeparator + dateTo.unix();
-                formattedValue = dateFrom.format('YYYY-MM-DD') + ' -> ' + dateTo.format('YYYY-MM-DD'); //TODO: Date format should come from the backend (will be adress in a later ticket)
+                formattedValue = dateFrom.format(dateFormat) + ' -> ' + dateTo.format(dateFormat);
             }
         }
 
@@ -198,6 +200,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
                             open
                             getPopupContainer={() => datePickerRef.current ?? document.body}
                             value={filter.value ? getDateRangeValue(filter.value) : null}
+                            format={dateFormat}
                             onChange={_onDateRangeChanged}
                         />
                     ) : (
@@ -211,6 +214,7 @@ export const DateAttributeDropDown: FunctionComponent<IFilterChildrenDropDownPro
                                       ? dayjs()
                                       : null
                             }
+                            format={dateFormat}
                             showNow={false}
                             onChange={_onDateChanged}
                         />

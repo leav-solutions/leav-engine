@@ -5,16 +5,19 @@ import {Form} from 'antd';
 import dayjs from 'dayjs';
 import {mockFormAttribute} from '_ui/__mocks__/common/attribute';
 import {type CalculatedFlags, type InheritedFlags} from '../../shared/calculatedInheritedFlags';
+import {LangContext} from '_ui/contexts';
+
+const enLangContext = {lang: ['en'], availableLangs: ['fr', 'en'], defaultLang: 'en', setLang: () => undefined};
 
 const firstDayOfMonthDate = dayjs().startOf('month');
-const firstDayOfMonthDateFormatted = firstDayOfMonthDate.format('YYYY-MM-DD');
+const firstDayOfMonthDateFormatted = firstDayOfMonthDate.format('DD/MM/YYYY');
+const firstDayOfMonthDateFormattedEn = firstDayOfMonthDate.format('MM/DD/YYYY');
 const firstDayOfMonthDateTimestamp = firstDayOfMonthDate.unix().toString();
 const firstDayOfMonthDateAtNoon = firstDayOfMonthDate
     .set('hour', 12)
     .set('minute', 0)
     .set('second', 0)
     .set('millisecond', 0);
-const presentationDate = 'December 05, 2024';
 
 const calculatedFlagsWithoutCalculatedValue: CalculatedFlags = {
     isCalculatedValues: false,
@@ -72,28 +75,7 @@ describe('DSDatePickerWrapper', () => {
         mockHandleBlur.mockReset();
     });
 
-    test('Should display presentationValue By default', async () => {
-        render(
-            <Form>
-                <Form.Item>
-                    <DSDatePickerWrapper
-                        value={firstDayOfMonthDate}
-                        presentationValue={presentationDate}
-                        attribute={mockFormAttribute}
-                        readonly={notReadonly}
-                        calculatedFlags={calculatedFlagsWithoutCalculatedValue}
-                        inheritedFlags={inheritedFlagsWithoutInheritedValue}
-                        onChange={mockOnChange}
-                        handleSubmit={mockHandleSubmit}
-                    />
-                </Form.Item>
-            </Form>,
-        );
-
-        expect(screen.getByRole('textbox')).toHaveValue(presentationDate);
-    });
-
-    test('Should display the value if presentationValue is empty', async () => {
+    test('Should display the value formatted for the current language', async () => {
         render(
             <Form>
                 <Form.Item>
@@ -113,13 +95,34 @@ describe('DSDatePickerWrapper', () => {
         expect(screen.getByRole('textbox')).toHaveValue(firstDayOfMonthDateFormatted);
     });
 
+    test('Should display the value formatted MM/DD/YYYY when the current language is english', async () => {
+        render(
+            <LangContext.Provider value={enLangContext}>
+                <Form>
+                    <Form.Item>
+                        <DSDatePickerWrapper
+                            value={firstDayOfMonthDate}
+                            attribute={mockFormAttribute}
+                            readonly={notReadonly}
+                            calculatedFlags={calculatedFlagsWithoutCalculatedValue}
+                            inheritedFlags={inheritedFlagsWithoutInheritedValue}
+                            onChange={mockOnChange}
+                            handleSubmit={mockHandleSubmit}
+                        />
+                    </Form.Item>
+                </Form>
+            </LangContext.Provider>,
+        );
+
+        expect(screen.getByRole('textbox')).toHaveValue(firstDayOfMonthDateFormattedEn);
+    });
+
     test('Should display the value if focused', async () => {
         render(
             <Form>
                 <Form.Item>
                     <DSDatePickerWrapper
                         value={firstDayOfMonthDate}
-                        presentationValue={presentationDate}
                         attribute={mockFormAttribute}
                         readonly={notReadonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
@@ -142,7 +145,6 @@ describe('DSDatePickerWrapper', () => {
                 <Form.Item>
                     <DSDatePickerWrapper
                         value={firstDayOfMonthDate}
-                        presentationValue={presentationDate}
                         attribute={mockFormAttribute}
                         readonly={readonly}
                         calculatedFlags={calculatedFlagsWithoutCalculatedValue}
@@ -227,7 +229,6 @@ describe('DSDatePickerWrapper', () => {
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
                             value={firstDayOfMonthDate}
-                            presentationValue={presentationDate}
                             attribute={mockFormAttribute}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithoutCalculatedValue}
@@ -282,7 +283,6 @@ describe('DSDatePickerWrapper', () => {
                     <Form.Item name="datePickerTest">
                         <DSDatePickerWrapper
                             value={firstDayOfMonthDate}
-                            presentationValue={presentationDate}
                             attribute={mockFormAttribute}
                             readonly={notReadonly}
                             calculatedFlags={calculatedFlagsWithCalculatedValue}

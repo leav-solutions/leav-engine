@@ -72,6 +72,8 @@ export const getPreviewSize = (size?: PreviewSize, simplistic = false) => {
 export const setDateToUTCNoon = (date: dayjs.Dayjs): dayjs.Dayjs =>
     date.set('hour', 12).set('minute', 0).set('second', 0).set('millisecond', 0);
 
+export const getDateFormatByLang = (lang: string): string => (lang === 'fr' ? 'DD/MM/YYYY' : 'MM/DD/YYYY');
+
 export const getTreeRecordKey = (record: RecordIdentityFragment): string => `${record.whoAmI.library.id}/${record.id}`;
 
 export const stringifyDateRangeValue = (value: IDateRangeValue, t: TFunction): string =>
