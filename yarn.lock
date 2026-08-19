@@ -10859,13 +10859,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"connect-history-api-fallback@npm:^1.6.0":
-  version: 1.6.0
-  resolution: "connect-history-api-fallback@npm:1.6.0"
-  checksum: 10/59f013870e987f2e921218b88ad99e6b469a058ee7dd35561a360968fd4260f236b5523b7387ddec8991f9f9fbddda098f830ddc701f12c1bfb1f49d5f4b13c1
-  languageName: node
-  linkType: hard
-
 "constant-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "constant-case@npm:3.0.4"
@@ -15912,7 +15905,6 @@ __metadata:
     typescript: "npm:7.0.2"
     vite: "npm:8.2.1"
     vite-plugin-dynamic-base: "npm:1.4.1"
-    vite-plugin-rewrite-all: "npm:1.0.2"
     vite-plugin-svgr: "npm:4.5.0"
     vitest: "npm:4.1.10"
   languageName: unknown
@@ -20788,17 +20780,6 @@ __metadata:
   peerDependencies:
     vite: ">= 2.9.5"
   checksum: 10/093039600c0a97a510ecfc85aa6b3df8ff434e5c5735b3db1ec43bf42957c0c1170cb1816fa245c299b27d8d8978a0499a68b4a7e3932f29931569e3a85bf5ec
-  languageName: node
-  linkType: hard
-
-"vite-plugin-rewrite-all@npm:1.0.2":
-  version: 1.0.2
-  resolution: "vite-plugin-rewrite-all@npm:1.0.2"
-  dependencies:
-    connect-history-api-fallback: "npm:^1.6.0"
-  peerDependencies:
-    vite: ^2.0.0 || ^3.0.0 || ^4.0.0
-  checksum: 10/aa3f27309da1c1c84ff6f8de1838d7d1bf5089823ff5393873cf63aef3739eb3c291a3df28172af1945d5f86e9d530213aea08fce813282ab9ac47babcc680d2
   languageName: node
   linkType: hard
 
