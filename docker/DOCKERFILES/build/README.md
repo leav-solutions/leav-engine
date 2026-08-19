@@ -64,7 +64,7 @@ Yarn doit réécrire le lockfile (YN0028).
 ## Version : tamponnée dans l'image, pas dans le contexte
 
 La version affichée par le core (query GraphQL `version`, qui lit
-`process.env.npm_package_version`) et celle des `manifest.json` d'applications sont posées **dans
+celle du `package.json`) et celle des `manifest.json` d'applications sont posées **dans
 l'image**, par l'étape `assemble`, à partir du build-arg `VERSION_METADATA` :
 
 ```

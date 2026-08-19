@@ -1,3 +1,5 @@
+import packageJson from '../../../package.json';
+
 export interface ICoreDomain {
     getVersion(): string;
 }
@@ -5,7 +7,7 @@ export interface ICoreDomain {
 export default function (): ICoreDomain {
     return {
         getVersion(): string {
-            return process.env.npm_package_version ?? '';
+            return packageJson.version ?? '';
         },
     };
 }
