@@ -54,15 +54,21 @@ describe('integration test automate-scan', () => {
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        await new Promise<void>(async (resolve, reject) => {
-            await initRabbitMQ(msg => {
-                debugLog && console.log(new Date(), '[create] Message received from RabbitMQ:', msg);
-                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('CREATE'));
-                resolve();
-            }).catch(reject);
+        await new Promise<void>((resolve, reject) => {
+            (async () => {
+                try {
+                    await initRabbitMQ(msg => {
+                        debugLog && console.log(new Date(), '[create] Message received from RabbitMQ:', msg);
+                        expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('CREATE'));
+                        resolve();
+                    });
 
-            debugLog && console.log(new Date(), '[create] Creating file for test');
-            await fs.promises.writeFile(pathTmpFile, Math.random().toString());
+                    debugLog && console.log(new Date(), '[create] Creating file for test');
+                    await fs.promises.writeFile(pathTmpFile, Math.random().toString());
+                } catch (error) {
+                    reject(error);
+                }
+            })();
         });
     });
 
@@ -81,15 +87,21 @@ describe('integration test automate-scan', () => {
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        await new Promise<void>(async (resolve, reject) => {
-            await initRabbitMQ(msg => {
-                debugLog && console.log(new Date(), '[update] Message received from RabbitMQ:', msg);
-                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('UPDATE'));
-                resolve();
-            }).catch(reject);
+        await new Promise<void>((resolve, reject) => {
+            (async () => {
+                try {
+                    await initRabbitMQ(msg => {
+                        debugLog && console.log(new Date(), '[update] Message received from RabbitMQ:', msg);
+                        expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('UPDATE'));
+                        resolve();
+                    });
 
-            debugLog && console.log(new Date(), '[update] Updating file for test');
-            await fs.promises.writeFile(pathTmpFile, Math.random().toString());
+                    debugLog && console.log(new Date(), '[update] Updating file for test');
+                    await fs.promises.writeFile(pathTmpFile, Math.random().toString());
+                } catch (error) {
+                    reject(error);
+                }
+            })();
         });
     });
 
@@ -108,15 +120,21 @@ describe('integration test automate-scan', () => {
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        await new Promise<void>(async (resolve, reject) => {
-            await initRabbitMQ(msg => {
-                debugLog && console.log(new Date(), '[delete] Message received from RabbitMQ:', msg);
-                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('REMOVE'));
-                resolve();
-            }).catch(reject);
+        await new Promise<void>((resolve, reject) => {
+            (async () => {
+                try {
+                    await initRabbitMQ(msg => {
+                        debugLog && console.log(new Date(), '[delete] Message received from RabbitMQ:', msg);
+                        expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('REMOVE'));
+                        resolve();
+                    });
 
-            debugLog && console.log(new Date(), '[delete] Deleting file for test');
-            await fs.promises.unlink(pathTmpFile);
+                    debugLog && console.log(new Date(), '[delete] Deleting file for test');
+                    await fs.promises.unlink(pathTmpFile);
+                } catch (error) {
+                    reject(error);
+                }
+            })();
         });
     });
 
@@ -136,15 +154,21 @@ describe('integration test automate-scan', () => {
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        await new Promise<void>(async (resolve, reject) => {
-            await initRabbitMQ(msg => {
-                debugLog && console.log(new Date(), '[rename] Message received from RabbitMQ:', msg);
-                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
-                resolve();
-            }).catch(reject);
+        await new Promise<void>((resolve, reject) => {
+            (async () => {
+                try {
+                    await initRabbitMQ(msg => {
+                        debugLog && console.log(new Date(), '[rename] Message received from RabbitMQ:', msg);
+                        expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
+                        resolve();
+                    });
 
-            debugLog && console.log(new Date(), '[rename] Renaming file for test');
-            await fs.promises.rename(pathTmpFile, newPathTmpFile);
+                    debugLog && console.log(new Date(), '[rename] Renaming file for test');
+                    await fs.promises.rename(pathTmpFile, newPathTmpFile);
+                } catch (error) {
+                    reject(error);
+                }
+            })();
         });
     });
 
@@ -168,15 +192,21 @@ describe('integration test automate-scan', () => {
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        await new Promise<void>(async (resolve, reject) => {
-            await initRabbitMQ(msg => {
-                debugLog && console.log(new Date(), '[move] Message received from RabbitMQ:', msg);
-                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
-                resolve();
-            }).catch(reject);
+        await new Promise<void>((resolve, reject) => {
+            (async () => {
+                try {
+                    await initRabbitMQ(msg => {
+                        debugLog && console.log(new Date(), '[move] Message received from RabbitMQ:', msg);
+                        expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
+                        resolve();
+                    });
 
-            debugLog && console.log(new Date(), '[move] Moving file for test');
-            await fs.promises.rename(pathTmpFile, newPathTmpFile);
+                    debugLog && console.log(new Date(), '[move] Moving file for test');
+                    await fs.promises.rename(pathTmpFile, newPathTmpFile);
+                } catch (error) {
+                    reject(error);
+                }
+            })();
         });
     });
 
@@ -199,15 +229,21 @@ describe('integration test automate-scan', () => {
         // Need the watcher to work
         expect(watcher).toBeDefined();
 
-        await new Promise<void>(async (resolve, reject) => {
-            await initRabbitMQ(msg => {
-                debugLog && console.log(new Date(), '[move & rename] Message received from RabbitMQ:', msg);
-                expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
-                resolve();
-            }).catch(reject);
+        await new Promise<void>((resolve, reject) => {
+            (async () => {
+                try {
+                    await initRabbitMQ(msg => {
+                        debugLog && console.log(new Date(), '[move & rename] Message received from RabbitMQ:', msg);
+                        expect(msg).toEqual(expect.stringContaining('file') && expect.stringContaining('MOVE'));
+                        resolve();
+                    });
 
-            debugLog && console.log(new Date(), '[move & rename] Moving and renaming file for test');
-            await fs.promises.rename(pathTmpFile, newPathTmpFile);
+                    debugLog && console.log(new Date(), '[move & rename] Moving and renaming file for test');
+                    await fs.promises.rename(pathTmpFile, newPathTmpFile);
+                } catch (error) {
+                    reject(error);
+                }
+            })();
         });
     });
 
