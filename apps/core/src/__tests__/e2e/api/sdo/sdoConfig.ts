@@ -46,6 +46,23 @@ export const SDO_TEST_ATTRIBUTE_ID = 'sdo_test_value';
 // Mapped with `skipImport: true` to cover the attribute exclusion (LEAVC-1091)
 export const SDO_TEST_SKIPPED_ATTRIBUTE_ID = 'sdo_test_skipped_value';
 
+// One attribute per type/cardinality the import domain dispatches on, mirroring the export section:
+// an incoming SDO carries UUIDs for links and trees, which the import has to resolve to leav ids —
+// and, for a tree, to the *node* carrying the record.
+export const SDO_IMPORTS_LINKED_LIBRARY_ID = 'test_sdo_imports_linked';
+export const SDO_IMPORTS_LINKED_LABEL_ATTRIBUTE_ID = 'sdo_import_test_linked_label';
+export const SDO_IMPORTS_TREE_ID = 'test_sdo_imports_tree';
+export const SDO_IMPORTS_SIMPLE_LINK_ATTRIBUTE_ID = 'sdo_import_test_simple_link';
+export const SDO_IMPORTS_ADVANCED_LINK_MONO_ATTRIBUTE_ID = 'sdo_import_test_advanced_link_mono';
+export const SDO_IMPORTS_ADVANCED_LINK_MULTI_ATTRIBUTE_ID = 'sdo_import_test_advanced_link_multi';
+export const SDO_IMPORTS_ADVANCED_MONO_ATTRIBUTE_ID = 'sdo_import_test_advanced_mono';
+export const SDO_IMPORTS_ADVANCED_MULTI_ATTRIBUTE_ID = 'sdo_import_test_advanced_multi';
+export const SDO_IMPORTS_TREE_MONO_ATTRIBUTE_ID = 'sdo_import_test_tree_mono';
+export const SDO_IMPORTS_TREE_MULTI_ATTRIBUTE_ID = 'sdo_import_test_tree_multi';
+// Mapped through its `.from` / `.to` sub-paths (LEAVC-786), exported but NEVER imported: a dotted
+// path does not designate a single writable attribute.
+export const SDO_IMPORTS_DATE_RANGE_ATTRIBUTE_ID = 'sdo_import_test_date_range';
+
 // An entity mapped without `importEnable`, hence not importable (LEAVC-1091). Its own library so
 // the ignored-import assertions can't interfere with the nominal import tests.
 export const SDO_IMPORTS_DISABLED_LIBRARY_ID = 'test_sdo_imports_disabled';
@@ -61,8 +78,16 @@ export const DTO_IMPORTS_LIBRARY_ID = 'test_dto_imports';
 export const DTO_TEST_ATTRIBUTE_ID = 'dto_test_value';
 // Mapped with `valueRequired: true` to cover the mandatory field rejection (LEAVC-956)
 export const DTO_TEST_MANDATORY_ATTRIBUTE_ID = 'dto_test_mandatory_value';
+// Mapped `valueRequired: true` AND `skipImport: true`: excluded from the import, hence never
+// mandatory (LEAVC-1091 x LEAVC-956) — requiring an attribute we decided not to write would reject
+// the operation for nothing.
+export const DTO_TEST_SKIPPED_MANDATORY_ATTRIBUTE_ID = 'dto_test_skipped_mandatory_value';
 // Mapped under the `identifier` block, which the statement reports back from what leav stores
 export const DTO_TEST_IDENTIFIER_ATTRIBUTE_ID = 'dto_test_identifier_code';
+// One link attribute, to prove the SDO import domain's UUID resolution holds through the DTO flow
+// too. The rest of the type matrix is covered by sdoImports.test.ts — the domain is shared.
+export const DTO_IMPORTS_LINKED_LIBRARY_ID = 'test_dto_imports_linked';
+export const DTO_TEST_LINK_ATTRIBUTE_ID = 'dto_test_link';
 
 // A payload type mapped without `importEnable`: known to the instance, but not importable
 export const DTO_IMPORTS_DISABLED_LIBRARY_ID = 'test_dto_imports_disabled';
@@ -208,6 +233,52 @@ export const sdoGlobalSettings: ISDOSettings = {
                     format: 'string',
                     skipImport: true,
                 },
+                'info.simpleLink': {
+                    leavAttributeId: SDO_IMPORTS_SIMPLE_LINK_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'string',
+                },
+                'info.advancedLinkMono': {
+                    leavAttributeId: SDO_IMPORTS_ADVANCED_LINK_MONO_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'string',
+                },
+                'info.advancedLinkMulti': {
+                    leavAttributeId: SDO_IMPORTS_ADVANCED_LINK_MULTI_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'array',
+                },
+                'info.advancedMono': {
+                    leavAttributeId: SDO_IMPORTS_ADVANCED_MONO_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'string',
+                },
+                'info.advancedMulti': {
+                    leavAttributeId: SDO_IMPORTS_ADVANCED_MULTI_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'array',
+                },
+                'info.treeMono': {
+                    leavAttributeId: SDO_IMPORTS_TREE_MONO_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'string',
+                },
+                'info.treeMulti': {
+                    leavAttributeId: SDO_IMPORTS_TREE_MULTI_ATTRIBUTE_ID,
+                    valueRequired: false,
+                    format: 'array',
+                },
+                // Sub-paths of a period attribute: exported (LEAVC-786) but not importable
+                'info.startDate': {
+                    leavAttributeId: `${SDO_IMPORTS_DATE_RANGE_ATTRIBUTE_ID}.from`,
+                    valueRequired: false,
+                    format: 'number',
+                },
+                'info.endDate': {
+                    leavAttributeId: `${SDO_IMPORTS_DATE_RANGE_ATTRIBUTE_ID}.to`,
+                    valueRequired: false,
+                    format: 'number',
+                },
             },
         },
         // Mapped without `importEnable`: an SDO received for this entity is acked and ignored
@@ -232,6 +303,18 @@ export const sdoGlobalSettings: ISDOSettings = {
                 'info.mandatoryValue': {
                     leavAttributeId: DTO_TEST_MANDATORY_ATTRIBUTE_ID,
                     valueRequired: true,
+                    format: 'string',
+                },
+                // Required AND excluded from the import: `skipImport` wins, the operation passes
+                'info.skippedMandatoryValue': {
+                    leavAttributeId: DTO_TEST_SKIPPED_MANDATORY_ATTRIBUTE_ID,
+                    valueRequired: true,
+                    format: 'string',
+                    skipImport: true,
+                },
+                'info.link': {
+                    leavAttributeId: DTO_TEST_LINK_ATTRIBUTE_ID,
+                    valueRequired: false,
                     format: 'string',
                 },
                 'identifier.testCode': {
