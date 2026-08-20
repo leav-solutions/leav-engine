@@ -2318,7 +2318,7 @@ export type ExplorerV2LibraryMetadataQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerV2LibraryMetadataQuery = { libraries?: { list: Array<{ id: string, behavior: LibraryBehavior, attributes?: Array<
+export type ExplorerV2LibraryMetadataQuery = { libraries?: { list: Array<{ id: string, label?: any | null, behavior: LibraryBehavior, permissions?: { create_record: boolean } | null, attributes?: Array<
         | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }
         | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
               | { id: string }
@@ -6964,7 +6964,11 @@ export const ExplorerV2LibraryMetadataDocument = gql`
   libraries(filters: {id: [$libraryId]}) {
     list {
       id
+      label
       behavior
+      permissions {
+        create_record
+      }
       attributes {
         ...ExplorerV2AttributeProperties
       }

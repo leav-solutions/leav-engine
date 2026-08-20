@@ -19,7 +19,9 @@ const metadataMock = (overrides: Record<string, unknown> = {}): MockedResponse =
                     {
                         __typename: 'Library',
                         id: libraryId,
+                        label: {fr: 'Campagnes', en: 'Campaigns'},
                         behavior: LibraryBehavior.standard,
+                        permissions: {__typename: 'LibraryPermissions', create_record: true},
                         attributes: [
                             {
                                 __typename: 'StandardAttribute',
@@ -42,19 +44,21 @@ const metadataMock = (overrides: Record<string, unknown> = {}): MockedResponse =
 
 describe('useExplorerLibraryMetadata', () => {
     describe('when libraryId is empty', () => {
-        it('should skip the query and return an empty map, no behavior, not loading', () => {
+        it('should skip the query and return an empty map, no library details, not loading', () => {
             const {result} = renderHook(() => useExplorerLibraryMetadata({libraryId: ''}));
 
             expect(result.current).toEqual({
                 attributesProperties: {},
+                label: null,
                 behavior: null,
+                hasCreateRecordPermission: false,
                 loading: false,
             });
         });
     });
 
     describe('when the query resolves', () => {
-        it('should map attributes by id with the label localized, and surface the behavior', async () => {
+        it('should map attributes by id with the label localized, and surface the library details', async () => {
             const {result} = renderHook(() => useExplorerLibraryMetadata({libraryId}), {
                 mocks: [metadataMock()],
             });
@@ -64,6 +68,8 @@ describe('useExplorerLibraryMetadata', () => {
             await waitFor(() => expect(result.current.loading).toBe(false));
 
             expect(result.current.behavior).toBe(LibraryBehavior.standard);
+            expect(result.current.label).toEqual({fr: 'Campagnes', en: 'Campaigns'});
+            expect(result.current.hasCreateRecordPermission).toBe(true);
             expect(result.current.attributesProperties).toEqual({
                 label: expect.objectContaining({id: 'label', label: 'Libellé'}),
             });

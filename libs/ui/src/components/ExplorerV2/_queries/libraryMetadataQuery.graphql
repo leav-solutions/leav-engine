@@ -1,9 +1,10 @@
 # The library's metadata and the metadata of ALL its attributes, loaded once upfront (Explorer.tsx):
 # the records queries now carry data only. Covers the column headers and cells
 # (label/type/format/multi_*), the kanban grouping axis (linked_tree), the mass-edition workflow
-# classification (permissions_conf_dependent_values) and the generate-previews action gate
-# (behavior). Replaces the derivation from records.list[0] and the MassEditableAttributes,
-# KanbanAxisAttribute and GET_LIBRARY_BY_ID queries.
+# classification (permissions_conf_dependent_values), the generate-previews action gate (behavior),
+# the explorer title (label) and the create action (behavior picks the creation modal,
+# permissions.create_record gates the button). Replaces the derivation from records.list[0] and the
+# MassEditableAttributes, KanbanAxisAttribute, GET_LIBRARY_BY_ID and ExplorerLibraryDetails queries.
 fragment ExplorerV2AttributeProperties on Attribute {
     id
     label
@@ -40,7 +41,11 @@ query ExplorerV2LibraryMetadata($libraryId: ID!) {
     libraries(filters: {id: [$libraryId]}) {
         list {
             id
+            label
             behavior
+            permissions {
+                create_record
+            }
             attributes {
                 ...ExplorerV2AttributeProperties
             }

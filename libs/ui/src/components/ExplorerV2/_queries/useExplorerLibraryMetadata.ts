@@ -2,6 +2,7 @@ import {localizedTranslation} from '@leav/utils';
 import {useMemo} from 'react';
 import {useLang} from '_ui/hooks';
 import {type LibraryBehavior, useExplorerV2LibraryMetadataQuery} from '_ui/_gqlTypes';
+import {type SystemTranslation} from '_ui/types/scalars';
 import {type AttributeProperties, type AttributesPropertiesById} from '../_types';
 
 const emptyMap: AttributesPropertiesById = {};
@@ -17,7 +18,9 @@ export const useExplorerLibraryMetadata = ({
     libraryId: string;
 }): {
     attributesProperties: AttributesPropertiesById;
+    label: SystemTranslation | null;
     behavior: LibraryBehavior | null;
+    hasCreateRecordPermission: boolean;
     loading: boolean;
 } => {
     const {lang: availableLangs} = useLang();
@@ -28,6 +31,8 @@ export const useExplorerLibraryMetadata = ({
         skip: !libraryId,
         variables: {libraryId},
     });
+
+    const library = data?.libraries?.list[0];
 
     const attributesProperties = useMemo(() => {
         const attributes = data?.libraries?.list[0]?.attributes;
@@ -48,7 +53,9 @@ export const useExplorerLibraryMetadata = ({
 
     return {
         attributesProperties,
-        behavior: data?.libraries?.list[0]?.behavior ?? null,
+        label: library?.label ?? null,
+        behavior: library?.behavior ?? null,
+        hasCreateRecordPermission: library?.permissions?.create_record ?? false,
         // No flash on a refetch or a language change, and false when the query is skipped.
         loading: loading && !data,
     };

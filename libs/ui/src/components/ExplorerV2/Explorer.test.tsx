@@ -461,54 +461,6 @@ describe('Explorer', () => {
 
     const campaignName = 'Campagnes';
 
-    const mockLibraryDetailsQueryResultList = {
-        id: 'campaigns',
-        label: {
-            en: 'Campaigns',
-            fr: campaignName,
-        },
-        permissions: {
-            create_record: true,
-        },
-    };
-
-    const mockFilesLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
-        loading: false,
-        called: true,
-        data: {
-            libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.files}],
-            },
-        },
-    };
-    const mockDirectoriesLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
-        loading: false,
-        called: true,
-        data: {
-            libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.directories}],
-            },
-        },
-    };
-    const mockStandardLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
-        loading: false,
-        called: true,
-        data: {
-            libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.standard}],
-            },
-        },
-    };
-    const mockJoinLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
-        loading: false,
-        called: true,
-        data: {
-            libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.join}],
-            },
-        },
-    };
-
     const defaultLibraryMetadataAttributes = [
         simpleMockAttribute,
         booleanMockAttribute,
@@ -521,11 +473,21 @@ describe('Explorer', () => {
         multivalDateRangeMockAttribute,
     ] satisfies gqlTypes.ExplorerV2LibraryMetadataQuery['libraries']['list'][number]['attributes'];
 
-    // Replaces the (now removed) GET_LIBRARY_BY_ID + MassEditableAttributes queries: the library's
-    // behavior (previews gate) and every attribute of the library (mass-edition classification, kanban
-    // axis, columns/cells) come from this single upfront query. Without this mock the attributes map is
-    // empty across the WHOLE suite (no column headers, no cells, `isExplorerLoading` stuck).
-    const mockExplorerV2LibraryMetadataQueryResult: Mockify<typeof gqlTypes.useExplorerV2LibraryMetadataQuery> = {
+    // Replaces the (now removed) GET_LIBRARY_BY_ID, MassEditableAttributes and ExplorerLibraryDetails
+    // queries: the library's label (title), behavior (previews gate + which creation modal),
+    // create_record permission (create button) and every attribute of the library (mass-edition
+    // classification, kanban axis, columns/cells) come from this single upfront query. Without this
+    // mock the attributes map is empty across the WHOLE suite (no column headers, no cells,
+    // `isExplorerLoading` stuck).
+    const mockLibraryMetadata = ({
+        behavior = gqlTypes.LibraryBehavior.standard,
+        canCreateRecord = true,
+        attributes = defaultLibraryMetadataAttributes,
+    }: {
+        behavior?: gqlTypes.LibraryBehavior;
+        canCreateRecord?: boolean;
+        attributes?: gqlTypes.ExplorerV2LibraryMetadataQuery['libraries']['list'][number]['attributes'];
+    } = {}): Mockify<typeof gqlTypes.useExplorerV2LibraryMetadataQuery> => ({
         loading: false,
         called: true,
         data: {
@@ -533,13 +495,29 @@ describe('Explorer', () => {
                 list: [
                     {
                         id: 'campaigns',
-                        behavior: gqlTypes.LibraryBehavior.standard,
-                        attributes: defaultLibraryMetadataAttributes,
+                        label: {
+                            en: 'Campaigns',
+                            fr: campaignName,
+                        },
+                        behavior,
+                        permissions: {
+                            create_record: canCreateRecord,
+                        },
+                        attributes,
                     },
                 ],
             },
         },
-    };
+    });
+
+    const spyLibraryMetadataQuery = (
+        options?: Parameters<typeof mockLibraryMetadata>[0],
+    ): ReturnType<typeof vi.spyOn> =>
+        vi
+            .spyOn(gqlTypes, 'useExplorerV2LibraryMetadataQuery')
+            .mockReturnValue(
+                mockLibraryMetadata(options) as gqlTypes.ExplorerV2LibraryMetadataQueryResult,
+            ) as ReturnType<typeof vi.spyOn>;
 
     const mockExplorerAttributesQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
         loading: false,
@@ -898,10 +876,6 @@ describe('Explorer', () => {
             () => mockExplorerV2LinkDataQueryResult as gqlTypes.ExplorerV2LinkDataQueryResult,
         );
 
-        vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-            () => mockStandardLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
-        );
-
         vi.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
             () => mockExplorerAttributesQueryResult as gqlTypes.ExplorerAttributesQueryResult,
         );
@@ -919,9 +893,7 @@ describe('Explorer', () => {
 
         vi.spyOn(gqlTypes, 'useMeQuery').mockReturnValue(mockMeResult as gqlTypes.MeQueryResult);
 
-        vi.spyOn(gqlTypes, 'useExplorerV2LibraryMetadataQuery').mockReturnValue(
-            mockExplorerV2LibraryMetadataQueryResult as gqlTypes.ExplorerV2LibraryMetadataQueryResult,
-        );
+        spyLibraryMetadataQuery();
 
         // TODO: useless except for remove logs warning `No more mocked`
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
@@ -1709,24 +1681,7 @@ describe('Explorer', () => {
             test('should not display the primary actions button if link library data is empty and user permission for create_record on linked library is set to false', () => {
                 spyUseExplorerV2LibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
 
-                vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-                    () =>
-                        ({
-                            loading: false,
-                            called: true,
-                            data: {
-                                libraries: {
-                                    list: [
-                                        {
-                                            ...mockLibraryDetailsQueryResultList,
-                                            permissions: {create_record: false},
-                                            behavior: gqlTypes.LibraryBehavior.standard,
-                                        },
-                                    ],
-                                },
-                            },
-                        }) as gqlTypes.ExplorerLibraryDetailsQueryResult,
-                );
+                spyLibraryMetadataQuery({canCreateRecord: false});
 
                 render(<ExplorerV2 entrypoint={{...linkEntrypoint}} showCreateOnNoResultOnly />, {
                     mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock],
@@ -1750,9 +1705,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new file when library has files behavior', async () => {
-            vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-                () => mockFilesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
-            );
+            spyLibraryMetadataQuery({behavior: gqlTypes.LibraryBehavior.files});
             render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
@@ -1761,9 +1714,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new directory when library has directories behavior', async () => {
-            vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-                () => mockDirectoriesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
-            );
+            spyLibraryMetadataQuery({behavior: gqlTypes.LibraryBehavior.directories});
             render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
@@ -1785,9 +1736,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new record when library has join behavior', async () => {
-            vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-                () => mockJoinLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
-            );
+            spyLibraryMetadataQuery({behavior: gqlTypes.LibraryBehavior.join});
             const onCreate = vi.fn();
             render(<ExplorerV2 entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />);
 
@@ -3708,33 +3657,21 @@ describe('Explorer', () => {
         // the same upstream attributes map as every other attribute, so the "status" tree attribute is
         // added to the ExplorerV2LibraryMetadata mock rather than spying a separate hook.
         const mockKanbanAxis = (treeId: string | null = KANBAN_TREE) =>
-            vi.spyOn(gqlTypes, 'useExplorerV2LibraryMetadataQuery').mockReturnValue({
-                loading: false,
-                called: true,
-                data: {
-                    libraries: {
-                        list: [
-                            {
-                                id: 'campaigns',
-                                behavior: gqlTypes.LibraryBehavior.standard,
-                                attributes: [
-                                    ...defaultLibraryMetadataAttributes,
-                                    {
-                                        id: 'status',
-                                        label: {fr: 'Statut', en: 'Status'},
-                                        type: gqlTypes.AttributeType.tree,
-                                        format: null,
-                                        multiple_values: false,
-                                        multi_link_display_option: null,
-                                        multi_tree_display_option: null,
-                                        linked_tree: treeId ? {id: treeId} : null,
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                },
-            } as unknown as ReturnType<typeof gqlTypes.useExplorerV2LibraryMetadataQuery>);
+            spyLibraryMetadataQuery({
+                attributes: [
+                    ...defaultLibraryMetadataAttributes,
+                    {
+                        id: 'status',
+                        label: {fr: 'Statut', en: 'Status'},
+                        type: gqlTypes.AttributeType.tree,
+                        format: null,
+                        multiple_values: false,
+                        multi_link_display_option: null,
+                        multi_tree_display_option: null,
+                        linked_tree: treeId ? {id: treeId} : null,
+                    } as gqlTypes.ExplorerV2LibraryMetadataQuery['libraries']['list'][number]['attributes'][number],
+                ],
+            });
 
         const axisNode = (id: string, label: string, color: string | null = null, library = 'statuses') => ({
             id: `node-${id}`,

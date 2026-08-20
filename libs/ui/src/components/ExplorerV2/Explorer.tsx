@@ -239,7 +239,9 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {
             attributesProperties,
+            label: libraryLabel,
             behavior: libraryBehavior,
+            hasCreateRecordPermission,
             loading: metadataLoading,
         } = useExplorerLibraryMetadata({libraryId: view.libraryId});
 
@@ -490,6 +492,9 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
             isVisible: showCreatePrimaryButton,
             libraryId: view.libraryId,
+            libraryLabel,
+            libraryBehavior,
+            hasCreateRecordPermission,
             canCreateAndLinkValue: canEditLinkAttributeValues,
             onCreate: defaultCallbacks?.primary?.create,
             joinLibraryContext,
@@ -625,7 +630,12 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                             <KitTypography.Title level="h3">
                                 {
                                     !viewSettingsLoading && (
-                                        <ExplorerTitle library={view.libraryId} title={title} entrypoint={entrypoint} />
+                                        <ExplorerTitle
+                                            libraryLabel={libraryLabel}
+                                            isLibraryLabelLoading={metadataLoading}
+                                            title={title}
+                                            entrypoint={entrypoint}
+                                        />
                                     ) /*TODO: manage loading*/
                                 }
                             </KitTypography.Title>
