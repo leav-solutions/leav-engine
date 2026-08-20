@@ -9,7 +9,9 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 const StyledTableNameCellContainer = styled.div`
     position: relative;
-    display: inline-flex;
+    /* Block-level, not inline-flex: an inline box sits on the cell baseline, and an IdCard
+       carrying a color bar pushes that baseline down, adding the line-height leading below it. */
+    display: flex;
     align-items: center;
     width: 100%;
 `;
@@ -73,7 +75,7 @@ export const TableNameCell = ({item, itemActions, hasColorConfigured}: ITableNam
                         return (
                             <KitTooltip key={actionIndex} title={resolveItemActionProp(item, label)}>
                                 <KitButton
-                                    size="m"
+                                    size="s"
                                     aria-label={resolveItemActionProp(item, label)}
                                     icon={resolveItemActionProp(item, icon)}
                                     onClick={event => _handleButtonClick(event, callback)}
@@ -108,7 +110,7 @@ export const TableNameCell = ({item, itemActions, hasColorConfigured}: ITableNam
                     >
                         <KitTooltip title={t('explorer.more-actions')}>
                             <KitButton
-                                size="m"
+                                size="s"
                                 aria-label={t('explorer.more-actions') ?? undefined}
                                 icon={<FontAwesomeIcon icon={faEllipsisH} />}
                                 onClick={event => event.stopPropagation()}

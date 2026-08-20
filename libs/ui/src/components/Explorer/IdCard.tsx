@@ -20,6 +20,7 @@ export const IdCard: FunctionComponent<IIdCardProps> = ({item}) => {
 
     return (
         <KitIdCard
+            size="xxs-medium"
             avatarProps={avatarProps}
             title={label ?? id}
             description={subLabel ?? undefined}

@@ -1,7 +1,7 @@
 import {useMemo} from 'react';
 import {useMeasure} from '@uidotdev/usehooks';
 
-const headerTableHeight = 56;
+const headerTableHeight = 48;
 export const defaultPaginationHeight = 56;
 
 export const useTableScrollableHeight = (withPagination: boolean) => {

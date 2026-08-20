@@ -13,7 +13,7 @@ import {TableNameCell} from './TableNameCell';
 import cn from 'classnames';
 import {throttle} from 'lodash';
 
-const tableRowHeight = 56;
+const tableRowHeight = 48;
 const tableHeaderMinLineHeight = 22;
 
 const DataViewContainerDivStyled = styled.div`
@@ -42,7 +42,6 @@ const StyledTable = styled(KitTable)`
     .ant-table-thead > tr > th {
         padding-top: calc(var(--general-spacing-xxs) * 1px) !important;
         padding-bottom: calc(var(--general-spacing-xxs) * 1px) !important;
-        height: ${tableRowHeight}px;
 
         .ant-table-cell {
             min-height: ${tableHeaderMinLineHeight}px;
@@ -192,7 +191,7 @@ export const DataView: FunctionComponent<IDataViewProps> = memo(
                         'row-clickable': itemActionToUseOnRowClick,
                     })}
                     showHeader={dataGroupedFilteredSorted.length > 0 && !hideTableHeader}
-                    headerLineSize={useSmallHeaderSize ? 's' : 'm'}
+                    headerLineSize="s"
                     columns={[whoIAmColumn, ...columns]}
                     tableLayout="fixed"
                     scroll={{

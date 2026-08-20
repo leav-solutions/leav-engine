@@ -141,6 +141,35 @@ d'`IdCard` (nom, cellule `link`, cellule `tree`) résout sa propre entrée du lo
 > d'où la sentinelle `DO_NOT_CHANGE`) est documentée dans
 > [`Explorer/CLAUDE.md`](../Explorer/CLAUDE.md#édition-en-masse--la-sémantique-de-after-dans-savevaluebulk).
 
+### Densité du tableau (format S) — où se règle quoi
+
+| Ce qu'on veut régler               | Où                                                                   |
+| ---------------------------------- | -------------------------------------------------------------------- |
+| Hauteur de ligne (corps)           | `tableRowHeight` dans `table/TableView.tsx` (`min-height` du styled) |
+| Hauteur de l'en-tête               | prop `headerLineSize` de `KitTable` (`'s'` → 48px, `'m'` → 56px)     |
+| Hauteur du scroll du corps         | `headerTableHeight` dans `table/useTableScrollableHeight.ts`         |
+| Hauteur des boutons d'action ligne | prop `size` des `KitButton` de `table/TableNameCell.tsx`             |
+| Gabarit de l'IdCard de ligne       | prop `size` du `KitIdCard` de `cells/IdCard.tsx`                     |
+
+> ⚠️ **Poser `height` sur `.ant-table-thead > tr > th` depuis le styled component ne sert à rien** :
+> la règle du DS, qui descend de `._kit-table_… .ant-table-wrapper` jusqu'au `th`, gagne toujours en
+> spécificité. L'en-tête se règle **uniquement** par `headerLineSize`. Corollaire : `headerTableHeight`
+> (calcul de la hauteur scrollable) doit être tenu à la main en miroir du token DS correspondant —
+> rien ne les relie.
+
+Le `height` posé par le DS sur un `th` est un **plancher**, pas un plafond : un libellé de colonne
+qui passe sur plusieurs lignes fait grandir la ligne d'en-tête au lieu d'être rogné.
+
+Depuis le passage de l'explorateur en S (LEAVC-1135), la prop publique `useSmallHeaderSize` ne pilote
+plus la taille de l'en-tête (toujours `'s'`) mais seulement l'`ellipsis` des colonnes.
+
+> ⚠️ **Le conteneur de la cellule « nom » doit rester block-level** (`display: flex`, pas
+> `inline-flex`). Une boîte inline se pose sur la baseline de la cellule ; quand l'IdCard porte une
+> barre de couleur, sa baseline tombe sur son bord bas et le `line-height: 22px` de la cellule ajoute
+> son demi-interligne **sous** la boîte — la ligne mesurait alors 49,19px au lieu de 48 et décalait
+> toutes les colonnes par rapport à l'en-tête. Le symptôme n'apparaît que sur les records qui ont une
+> couleur, et il était masqué tant que le plancher valait 56px.
+
 ---
 
 ## Édition en masse d'attribut (`actions-mass/edit-attribute/`)
