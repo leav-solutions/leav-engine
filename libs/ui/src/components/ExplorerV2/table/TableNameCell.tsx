@@ -36,9 +36,10 @@ const resolveItemActionProp = <T extends IItemAction[keyof IItemAction]>(
 interface ITableNameCellProps {
     item: IItemData;
     itemActions: IItemAction[];
+    hasColorConfigured: boolean;
 }
 
-export const TableNameCell = ({item, itemActions}: ITableNameCellProps) => {
+export const TableNameCell = ({item, itemActions, hasColorConfigured}: ITableNameCellProps) => {
     const {t} = useSharedTranslation();
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +62,7 @@ export const TableNameCell = ({item, itemActions}: ITableNameCellProps) => {
 
     return (
         <StyledTableNameCellContainer ref={containerRef}>
-            <IdCard item={item.whoAmI} />
+            <IdCard item={item.whoAmI} hasColorConfigured={hasColorConfigured} />
             <StyledActionsList className="actions-list">
                 {itemsActionsWithCallbackToDisplay.map(
                     ({label, icon, isDanger, callback, disabled, useItemDeletePermission}, actionIndex) => {

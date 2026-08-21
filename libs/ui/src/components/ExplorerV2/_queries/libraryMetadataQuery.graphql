@@ -13,10 +13,25 @@ fragment ExplorerV2AttributeProperties on Attribute {
     multiple_values
     multi_link_display_option
     multi_tree_display_option
+    ... on LinkAttribute {
+        linked_library {
+            id
+            recordIdentityConf {
+                color
+            }
+        }
+    }
     ... on TreeAttribute {
-        # Tree backing the kanban axis (columns = its root nodes).
         linked_tree {
             id
+            libraries {
+                library {
+                    id
+                    recordIdentityConf {
+                        color
+                    }
+                }
+            }
         }
         # Workflow dependencies: they classify the attribute for mass edition
         # (hasEmptyDependency / isSimpleWorkflow / isMonoDependencyWorkflow).
@@ -43,6 +58,9 @@ query ExplorerV2LibraryMetadata($libraryId: ID!) {
             id
             label
             behavior
+            recordIdentityConf {
+                color
+            }
             permissions {
                 create_record
             }

@@ -8,7 +8,7 @@ import {
     type PropertyValueValueFragment,
     MultiDisplayOption,
 } from '_ui/_gqlTypes';
-import {type CellAttributeProperties} from '../_types';
+import {type CellAttributeProperties, type LibraryColorConfigById} from '../_types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import DOMPurify from 'dompurify';
 import {KitAvatar, KitBadge, KitIdCard, KitSpace, KitTag, KitTypography} from 'aristid-ds';
@@ -72,6 +72,7 @@ const RightIcon = styled(FontAwesomeIcon)`
 interface ITableCellProps {
     values: PropertyValueFragment[];
     attributeProperties: CellAttributeProperties;
+    libraryColorConfigById?: LibraryColorConfigById;
 }
 
 const TOOLTIP_COLOR = '#ffffff';
@@ -96,7 +97,11 @@ const _buildLinkTreeTag = (label: string | null | undefined, color: string | nul
     return {style: {backgroundColor: color, borderColor: color}, children};
 };
 
-export const TableCell: FunctionComponent<ITableCellProps> = ({values, attributeProperties}) => {
+export const TableCell: FunctionComponent<ITableCellProps> = ({
+    values,
+    attributeProperties,
+    libraryColorConfigById = {},
+}) => {
     const {t} = useSharedTranslation();
 
     const _getDateRangeValueContent = useCallback((value: PropertyValueValueFragment['valuePayload']) => {
@@ -329,7 +334,13 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                 return <TableTagGroup tags={[_buildLinkTreeTag(whoAmI.label, whoAmI.color)]} />;
             }
 
-            content = !whoAmI?.label ? null : <IdCard key={attributeProperties.id} item={whoAmI} />;
+            content = !whoAmI?.label ? null : (
+                <IdCard
+                    key={attributeProperties.id}
+                    item={whoAmI}
+                    hasColorConfigured={libraryColorConfigById[whoAmI.library.id] ?? true}
+                />
+            );
         }
 
         if (isLinkValue(value, attributeProperties)) {
@@ -339,7 +350,13 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                 return <TableTagGroup tags={[_buildLinkTreeTag(whoAmI.label, whoAmI.color)]} />;
             }
 
-            content = !whoAmI ? null : <IdCard key={attributeProperties.id} item={whoAmI} />;
+            content = !whoAmI ? null : (
+                <IdCard
+                    key={attributeProperties.id}
+                    item={whoAmI}
+                    hasColorConfigured={libraryColorConfigById[whoAmI.library.id] ?? true}
+                />
+            );
         }
 
         return <StyledCenteringWrapper>{content}</StyledCenteringWrapper>;

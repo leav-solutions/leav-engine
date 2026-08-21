@@ -7,9 +7,10 @@ const NO_COLOR = 'transparent';
 
 interface IIdCardProps {
     item: RecordIdentityFragment['whoAmI'];
+    hasColorConfigured?: boolean;
 }
 
-export const IdCard: FunctionComponent<IIdCardProps> = ({item}) => {
+export const IdCard: FunctionComponent<IIdCardProps> = ({item, hasColorConfigured = true}) => {
     const {id, label, preview, subLabel, color} = item;
     const itemLabel = label ?? id;
     const avatarProps: IKitAvatar = {label: itemLabel};
@@ -23,7 +24,7 @@ export const IdCard: FunctionComponent<IIdCardProps> = ({item}) => {
             avatarProps={avatarProps}
             title={label ?? id}
             description={subLabel ?? undefined}
-            color={color ?? NO_COLOR}
+            color={hasColorConfigured ? (color ?? NO_COLOR) : (color ?? undefined)}
         />
     );
 };

@@ -1544,15 +1544,18 @@ export type ExplorerV2LinkPropertyFragment =
   | ExplorerV2LinkPropertyTreeValueValueFragment
 ;
 
-export type ExplorerV2AttributePropertiesLinkAttributeStandardAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null };
+export type ExplorerV2AttributePropertiesLinkAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, recordIdentityConf?: { color?: string | null } | null } | null };
 
-export type ExplorerV2AttributePropertiesTreeAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+export type ExplorerV2AttributePropertiesStandardAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null };
+
+export type ExplorerV2AttributePropertiesTreeAttributeFragment = { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, libraries: Array<{ library: { id: string, recordIdentityConf?: { color?: string | null } | null } }> } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
       | { id: string }
       | { id: string, linked_tree?: { libraries: Array<{ library: { id: string } }> } | null }
     > } | null };
 
 export type ExplorerV2AttributePropertiesFragment =
-  | ExplorerV2AttributePropertiesLinkAttributeStandardAttributeFragment
+  | ExplorerV2AttributePropertiesLinkAttributeFragment
+  | ExplorerV2AttributePropertiesStandardAttributeFragment
   | ExplorerV2AttributePropertiesTreeAttributeFragment
 ;
 
@@ -2318,9 +2321,10 @@ export type ExplorerV2LibraryMetadataQueryVariables = Exact<{
 }>;
 
 
-export type ExplorerV2LibraryMetadataQuery = { libraries?: { list: Array<{ id: string, label?: any | null, behavior: LibraryBehavior, permissions?: { create_record: boolean } | null, attributes?: Array<
+export type ExplorerV2LibraryMetadataQuery = { libraries?: { list: Array<{ id: string, label?: any | null, behavior: LibraryBehavior, recordIdentityConf?: { color?: string | null } | null, permissions?: { create_record: boolean } | null, attributes?: Array<
+        | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_library?: { id: string, recordIdentityConf?: { color?: string | null } | null } | null }
         | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null }
-        | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
+        | { id: string, label?: any | null, type: AttributeType, format?: AttributeFormat | null, multiple_values: boolean, multi_link_display_option?: MultiDisplayOption | null, multi_tree_display_option?: MultiDisplayOption | null, linked_tree?: { id: string, libraries: Array<{ library: { id: string, recordIdentityConf?: { color?: string | null } | null } }> } | null, permissions_conf_dependent_values?: { dependenciesTreeAttributes: Array<
               | { id: string }
               | { id: string, linked_tree?: { libraries: Array<{ library: { id: string } }> } | null }
             > } | null }
@@ -3305,9 +3309,25 @@ export const ExplorerV2AttributePropertiesFragmentDoc = gql`
   multiple_values
   multi_link_display_option
   multi_tree_display_option
+  ... on LinkAttribute {
+    linked_library {
+      id
+      recordIdentityConf {
+        color
+      }
+    }
+  }
   ... on TreeAttribute {
     linked_tree {
       id
+      libraries {
+        library {
+          id
+          recordIdentityConf {
+            color
+          }
+        }
+      }
     }
     permissions_conf_dependent_values {
       dependenciesTreeAttributes {
@@ -6966,6 +6986,9 @@ export const ExplorerV2LibraryMetadataDocument = gql`
       id
       label
       behavior
+      recordIdentityConf {
+        color
+      }
       permissions {
         create_record
       }

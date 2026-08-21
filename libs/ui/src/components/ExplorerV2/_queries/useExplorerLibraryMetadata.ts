@@ -4,9 +4,10 @@ import {useMemo} from 'react';
 import {useLang} from '_ui/hooks';
 import {type LibraryBehavior, useExplorerV2LibraryMetadataQuery} from '_ui/_gqlTypes';
 import {type SystemTranslation} from '_ui/types/scalars';
-import {type AttributeProperties, type AttributesPropertiesById} from '../_types';
+import {type AttributeProperties, type AttributesPropertiesById, type LibraryColorConfigById} from '../_types';
 
 const emptyMap: AttributesPropertiesById = {};
+const emptyColorConfigMap: LibraryColorConfigById = {};
 
 /**
  * Loads the library's metadata and the metadata of ALL its attributes ONCE, upfront: the records
@@ -19,6 +20,7 @@ export const useExplorerLibraryMetadata = ({
     libraryId: string;
 }): {
     attributesProperties: AttributesPropertiesById;
+    libraryColorConfigById: LibraryColorConfigById;
     label: SystemTranslation | null;
     behavior: LibraryBehavior | null;
     hasCreateRecordPermission: boolean;
@@ -53,8 +55,31 @@ export const useExplorerLibraryMetadata = ({
         }, {});
     }, [library, availableLangs]);
 
+    const libraryColorConfigById = useMemo(() => {
+        if (!library) {
+            return emptyColorConfigMap;
+        }
+
+        const map: LibraryColorConfigById = {[library.id]: !!library.recordIdentityConf?.color};
+
+        for (const attribute of library.attributes ?? []) {
+            if ('linked_library' in attribute && attribute.linked_library) {
+                map[attribute.linked_library.id] = !!attribute.linked_library.recordIdentityConf?.color;
+            }
+
+            if ('linked_tree' in attribute) {
+                for (const {library: linkedLibrary} of attribute.linked_tree?.libraries ?? []) {
+                    map[linkedLibrary.id] = !!linkedLibrary.recordIdentityConf?.color;
+                }
+            }
+        }
+
+        return map;
+    }, [library]);
+
     return {
         attributesProperties,
+        libraryColorConfigById,
         label: library?.label ?? null,
         behavior: library?.behavior ?? null,
         hasCreateRecordPermission: library?.permissions?.create_record ?? false,

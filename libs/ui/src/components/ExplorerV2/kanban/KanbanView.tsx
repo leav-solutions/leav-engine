@@ -52,6 +52,7 @@ const NO_DROPPABLE_COLUMNS: ReadonlySet<string> = new Set();
 export const KanbanView = ({
     dataGroupedFilteredSorted,
     attributesProperties,
+    libraryColorConfigById,
     attributesToDisplay,
     itemActions,
     groupByAttributeId,
@@ -291,6 +292,7 @@ export const KanbanView = ({
                                 kanbanColumn={col}
                                 cardAttributeIds={cardAttributeIds}
                                 attributesProperties={attributesProperties}
+                                libraryColorConfigById={libraryColorConfigById}
                                 isDragEnabled={isDragEnabled}
                                 isSelected={isMassSelectionAll || selectedKeys.includes(card.key)}
                                 onSelect={isSelectionEnabled ? makeCardSelectHandler(card) : undefined}
@@ -308,6 +310,7 @@ export const KanbanView = ({
                                 card={activeDrag.card}
                                 cardAttributeIds={cardAttributeIds}
                                 attributesProperties={attributesProperties}
+                                libraryColorConfigById={libraryColorConfigById}
                                 isSelected={isMassSelectionAll || selectedKeys.includes(activeDrag.card.key)}
                             />
                         </div>

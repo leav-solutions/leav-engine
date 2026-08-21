@@ -91,18 +91,47 @@ app-studio importe). Construit par `panel-view-settings/store-current-view/viewV
 
 ## Internes
 
-| Fichier / dossier           | Rôle                                                                                                                                                                                                                                                                                                          |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `useViewSettingsReducer.ts` | Fusionne `currentView` (config display reçue) + état éphémère local (recherche, pagination, sélection de masse)                                                                                                                                                                                               |
-| `manage-view-settings-v2/`  | `store-view-settings/`, `useOpenViewSettingsV2.tsx`, type `ViewType`, `defaultPageSizeOptions`                                                                                                                                                                                                                |
-| store de filtres            | `useControlledFilterStore` (`@leav/ui`), **toujours interne**, semé depuis `currentView.filters` (lean) ; émet via `onFiltersChange` (echo-suppressed)                                                                                                                                                        |
-| `ExplorerFilters.tsx`       | Barre de chips de filtres (pinned uniquement) — plus de chip de tri (LEAVC-588)                                                                                                                                                                                                                               |
-| `_queries/`                 | `useExplorerData` (records — **données uniquement**, plus aucune métadonnée d'attribut), `useExplorerCountData` (compte total), `useExplorerLibraryMetadata` (library + **tous** ses attributs, label déjà localisé, chargés une fois en amont dans `Explorer.tsx` et redescendus en props — voir ci-dessous) |
-| `DataView.tsx`              | Routeur de mode d'affichage sur `viewType` : `kanban` → `kanban/KanbanView`, sinon `table/TableView`                                                                                                                                                                                                          |
-| `table/`                    | Mode Tableau : `TableView` + layout table-only (`TableNameCell`, `useColumnWidth`, `useTableScrollableHeight`)                                                                                                                                                                                                |
-| `kanban/`                   | Mode Kanban complet : rendu, pagination per-column et DnD — voir section dédiée                                                                                                                                                                                                                               |
-| `cells/`                    | Rendu de cellule **partagé** entre les modes (`TableCell`, `IdCard`, `TableTagGroup`) — utilisé par `table/` **et** `kanban/` (cartes)                                                                                                                                                                        |
-| `grouping/`                 | Regroupement partagé (`buildKanbanColumns`, `isValidGroupingAxis`, `groupFilters`, types `_types.ts`)                                                                                                                                                                                                         |
+| Fichier / dossier           | Rôle                                                                                                                                                                                                                                                                                                                                                                 |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useViewSettingsReducer.ts` | Fusionne `currentView` (config display reçue) + état éphémère local (recherche, pagination, sélection de masse)                                                                                                                                                                                                                                                      |
+| `manage-view-settings-v2/`  | `store-view-settings/`, `useOpenViewSettingsV2.tsx`, type `ViewType`, `defaultPageSizeOptions`                                                                                                                                                                                                                                                                       |
+| store de filtres            | `useControlledFilterStore` (`@leav/ui`), **toujours interne**, semé depuis `currentView.filters` (lean) ; émet via `onFiltersChange` (echo-suppressed)                                                                                                                                                                                                               |
+| `ExplorerFilters.tsx`       | Barre de chips de filtres (pinned uniquement) — plus de chip de tri (LEAVC-588)                                                                                                                                                                                                                                                                                      |
+| `_queries/`                 | `useExplorerData` (records — **données uniquement**, plus aucune métadonnée d'attribut), `useExplorerCountData` (compte total), `useExplorerLibraryMetadata` (library + **tous** ses attributs, label déjà localisé, chargés une fois en amont dans `Explorer.tsx` et redescendus en props — voir ci-dessous ; dérive aussi `libraryColorConfigById`, voir plus bas) |
+| `DataView.tsx`              | Routeur de mode d'affichage sur `viewType` : `kanban` → `kanban/KanbanView`, sinon `table/TableView`                                                                                                                                                                                                                                                                 |
+| `table/`                    | Mode Tableau : `TableView` + layout table-only (`TableNameCell`, `useColumnWidth`, `useTableScrollableHeight`)                                                                                                                                                                                                                                                       |
+| `kanban/`                   | Mode Kanban complet : rendu, pagination per-column et DnD — voir section dédiée                                                                                                                                                                                                                                                                                      |
+| `cells/`                    | Rendu de cellule **partagé** entre les modes (`TableCell`, `IdCard`, `TableTagGroup`) — utilisé par `table/` **et** `kanban/` (cartes)                                                                                                                                                                                                                               |
+| `grouping/`                 | Regroupement partagé (`buildKanbanColumns`, `isValidGroupingAxis`, `groupFilters`, types `_types.ts`)                                                                                                                                                                                                                                                                |
+
+> ⚠️ `cells/IdCard.tsx`, `cells/TableCell.tsx` et `table/TableNameCell.tsx` sont des **copies** de
+> leurs homologues v1 (`Explorer/IdCard.tsx`, `Explorer/TableCell.tsx`, `Explorer/TableNameCell.tsx`)
+> — `IdCard.tsx` est byte-identique, les deux autres ne diffèrent que par le type des propriétés
+> d'attribut consommé (`CellAttributeProperties` local ici vs `AttributePropertiesFragment` direct
+> en v1). Ce n'est documenté nulle part ailleurs : une correction générique touchant leur rendu est
+> normalement à porter dans les deux dossiers (vérifier avec `diff -rq`), comme pour
+> `actions-mass/edit-attribute/` — sauf décision explicite de ne pas la porter en v1 (cf. juste
+> en dessous).
+
+### Réserver l'espace couleur de l'`IdCard` uniquement si la Library le configure (LEAVC-1133)
+
+`IdCard` ne rend le bandeau couleur (`.card-color`) que si `hasColorConfigured` (prop, défaut
+`true`) est vrai — sinon, sans valeur de couleur, aucun bandeau n'est rendu (pas d'espace réservé).
+Sans cette info, on ne peut pas distinguer « la Library n'a pas d'attribut couleur configuré » de
+« l'attribut est configuré mais vide pour ce record » : `whoAmI.color` (résolu côté serveur) est
+`null` dans les deux cas, d'où le besoin de la config de la Library elle-même
+(`recordIdentityConf.color`).
+
+`libraryColorConfigById` (`useExplorerLibraryMetadata`) est un lookup `libraryId → boolean` qui
+couvre **plusieurs** Libraries, pas seulement celle de l'entrypoint — un `IdCard` peut afficher un
+record de la Library ciblée par un attribut `link` (`linked_library`), ou de n'importe laquelle des
+Libraries liées à l'arbre d'un attribut `tree` (`linked_tree.libraries`, potentiellement plusieurs
+par colonne). Les trois sont résolues en **un seul aller-retour réseau** (`ExplorerV2LibraryMetadata`
+étendue, pas de query en cascade) : `linked_library`/`linked_tree.libraries.library` sont des champs
+`Library` à part entière côté schéma, non filtrés par le `$libraryId` de la query racine — voir les
+resolvers `attributeApp.ts`/`treeApp.ts` côté `apps/core` si le doute revient. Chaque site d'appel
+d'`IdCard` (nom, cellule `link`, cellule `tree`) résout sa propre entrée du lookup via
+`whoAmI.library.id` et retombe sur `true` (réserve l'espace) si l'id est absent de la map.
 
 > ⚠️ `actions-mass/edit-attribute/` **n'est plus une copie intégrale** de son homologue v1 :
 > `useMassEditableAttributes.tsx` (dérivation pure depuis `attributesProperties`, sans requête) et
