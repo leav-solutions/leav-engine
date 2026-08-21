@@ -5,3 +5,14 @@
 @pageBackground: #FFFFFF;
 @activeItemColor: #DEF4FF;
 @linkHoverColor: @primaryColor;
+
+/* No Lato @font-face: those 16 files weigh 1.9MB of assets for nothing, since src/index.css (loaded
+   after semantic.less) already puts the body in `sans-serif`. The `.ui.*` components therefore fall
+   back to @fallbackFonts (system-ui, -apple-system, Segoe UI, Roboto, …).
+   Do not blank out @fontName though: it opens the @pageFont/@headerFont list, which would then
+   start with a comma — an invalid `font-family`. */
+@importFonts: false;
+
+/* IE 11 is out of the app's browserslist (`not dead`): drops the duplicate .woff sources of every
+   @font-face along with the `-ms-*` hacks. */
+@supportIE: false;

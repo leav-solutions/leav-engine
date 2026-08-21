@@ -1,7 +1,7 @@
 import ApolloHandler from './components/app/ApolloHandler';
 import App from './components/app/App';
 import ErrorDisplay from './components/shared/ErrorDisplay';
-import 'fomantic-ui-less/semantic.less';
+import './semantic-ui/semantic.less';
 import {Suspense, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom/client';
 import {Provider as ReduxProvider} from 'react-redux';
