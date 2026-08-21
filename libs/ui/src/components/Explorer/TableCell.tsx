@@ -11,7 +11,7 @@ import {
 } from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import DOMPurify from 'dompurify';
-import {KitAvatar, KitBadge, KitIdCard, KitSpace, KitTag, KitTypography} from 'aristid-ds';
+import {KitAvatar, KitIdCard, KitSpace, KitTag, KitTypography} from 'aristid-ds';
 import {type IKitTag} from 'aristid-ds/dist/Kit/DataDisplay/Tag/types';
 import {getContrastColor} from 'aristid-ds/dist/utils/functions';
 import styled from 'styled-components';
@@ -191,7 +191,14 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                     );
 
                 case MultiDisplayOption.badge_qty:
-                    return <KitBadge overflowCount={Infinity} count={values.length} color="primary" />;
+                    // Wrapped: the design system makes `KitTag` a `display: flex` block, so left bare
+                    // in the cell it would stretch to the full column width. As a flex item it
+                    // shrinks back to its content.
+                    return (
+                        <StyledCenteringWrapper>
+                            <KitTag type="primary">{values.length}</KitTag>
+                        </StyledCenteringWrapper>
+                    );
 
                 case MultiDisplayOption.avatar:
                 default:
@@ -230,7 +237,14 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
                         />
                     );
                 case MultiDisplayOption.badge_qty:
-                    return <KitBadge overflowCount={Infinity} count={values.length} color="primary" />;
+                    // Wrapped: the design system makes `KitTag` a `display: flex` block, so left bare
+                    // in the cell it would stretch to the full column width. As a flex item it
+                    // shrinks back to its content.
+                    return (
+                        <StyledCenteringWrapper>
+                            <KitTag type="primary">{values.length}</KitTag>
+                        </StyledCenteringWrapper>
+                    );
                 case MultiDisplayOption.avatar:
                 default:
                     return (

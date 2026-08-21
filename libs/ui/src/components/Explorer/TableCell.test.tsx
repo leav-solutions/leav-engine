@@ -200,7 +200,7 @@ describe('TableCell component', () => {
 
                 render(<TableCell values={linkValues} attributeProperties={attributeProperties} />);
 
-                expect(screen.getByText(linkValues.length)).toBeVisible();
+                expect(screen.getByText(linkValues.length).closest('.ant-tag')).toBeVisible();
             });
 
             test('Should display list of tag', async () => {
@@ -297,7 +297,7 @@ describe('TableCell component', () => {
 
                 render(<TableCell values={treeValues} attributeProperties={attributeProperties} />);
 
-                expect(screen.getByText(treeValues.length)).toBeVisible();
+                expect(screen.getByText(treeValues.length).closest('.ant-tag')).toBeVisible();
             });
 
             test('Should display list of tag', async () => {
