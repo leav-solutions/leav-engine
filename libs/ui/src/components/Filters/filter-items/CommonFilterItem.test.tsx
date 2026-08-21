@@ -904,6 +904,10 @@ describe('CommonFilterItem', () => {
         });
 
         describe('date filter', () => {
+            const dateUnix = '1730761200';
+            const dateFormatted = dayjs.unix(1730761200).format('DD/MM/YYYY');
+            const dateFormattedEn = dayjs.unix(1730761200).format('MM/DD/YYYY');
+
             const dateFilter = (condition: RecordFilterCondition): IUIFilterStandard => ({
                 id: 'test',
                 attribute: {
@@ -913,19 +917,62 @@ describe('CommonFilterItem', () => {
                     type: AttributeType.simple,
                 },
                 field: 'date_attr',
-                value: '1730761200',
+                value: dateUnix,
+                // Deliberately stale/mismatched: the chip must recompute from `value`, not trust this
+                // snapshot (frozen in whichever locale was active when the value was picked).
                 formattedValue: '2024-11-04',
                 condition,
             });
 
             test.each([
-                [AttributeConditionFilter.EQUAL, '= 2024-11-04'],
-                [AttributeConditionFilter.NOT_EQUAL, '≠ 2024-11-04'],
-                [AttributeConditionFilter.LESS_THAN, '< 2024-11-04'],
-                [AttributeConditionFilter.GREATER_THAN, '> 2024-11-04'],
-            ])('with %s shows the formatted value prefixed', (condition, expected) => {
+                [AttributeConditionFilter.EQUAL, '='],
+                [AttributeConditionFilter.NOT_EQUAL, '≠'],
+                [AttributeConditionFilter.LESS_THAN, '<'],
+                [AttributeConditionFilter.GREATER_THAN, '>'],
+            ])('with %s shows the value recomputed from the raw value, prefixed', (condition, symbol) => {
                 render(<CommonFilterItem filter={dateFilter(condition)} />);
-                expect(screen.getByText(expected)).toBeVisible();
+                expect(screen.getByText(`${symbol} ${dateFormatted}`)).toBeVisible();
+            });
+
+            test('shows the value formatted MM/DD/YYYY when the current language is english (non-regression)', () => {
+                render(
+                    <LangContext.Provider value={enLangContext}>
+                        <CommonFilterItem filter={dateFilter(AttributeConditionFilter.EQUAL)} />
+                    </LangContext.Provider>,
+                );
+                expect(screen.getByText(`= ${dateFormattedEn}`)).toBeVisible();
+            });
+
+            test('with BETWEEN shows both bounds recomputed from the raw range value, prefixed', () => {
+                const tomorrowUnix = 1730761200 + 86_400;
+                const filter: IUIFilterStandard = {
+                    ...dateFilter(AttributeConditionFilter.BETWEEN),
+                    value: `${dateUnix}\n${tomorrowUnix}`,
+                    formattedValue: 'stale -> stale',
+                };
+
+                render(<CommonFilterItem filter={filter} />);
+
+                // t() returns the raw i18n key in tests → the prefix is the "filters.between" key.
+                expect(
+                    screen.getByText(
+                        `filters.between ${dateFormatted} -> ${dayjs.unix(tomorrowUnix).format('DD/MM/YYYY')}`,
+                    ),
+                ).toBeVisible();
+            });
+
+            test('with TODAY shows today formatted for the current language, not ISO (non-regression)', () => {
+                render(<CommonFilterItem filter={dateFilter(AttributeConditionFilter.TODAY)} />);
+                expect(screen.getByText(dayjs().format('DD/MM/YYYY'))).toBeVisible();
+            });
+
+            test('with TODAY shows today formatted MM/DD/YYYY when the current language is english', () => {
+                render(
+                    <LangContext.Provider value={enLangContext}>
+                        <CommonFilterItem filter={dateFilter(AttributeConditionFilter.TODAY)} />
+                    </LangContext.Provider>,
+                );
+                expect(screen.getByText(dayjs().format('MM/DD/YYYY'))).toBeVisible();
             });
         });
 
