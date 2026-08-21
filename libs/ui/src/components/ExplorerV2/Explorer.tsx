@@ -243,6 +243,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             behavior: libraryBehavior,
             hasCreateRecordPermission,
             loading: metadataLoading,
+            error: metadataError,
         } = useExplorerLibraryMetadata({libraryId: view.libraryId});
 
         const isViewReady = currentView !== undefined && !viewSettingsLoading;
@@ -633,6 +634,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                                         <ExplorerTitle
                                             libraryLabel={libraryLabel}
                                             isLibraryLabelLoading={metadataLoading}
+                                            libraryError={metadataError}
                                             title={title}
                                             entrypoint={entrypoint}
                                         />

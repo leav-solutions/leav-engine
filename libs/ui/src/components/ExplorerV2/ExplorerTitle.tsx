@@ -1,4 +1,5 @@
 import {localizedTranslation} from '@leav/utils';
+import {type ApolloError} from '@apollo/client';
 import {useExplorerLinkAttributeQuery} from '_ui/_gqlTypes';
 import useLang from '_ui/hooks/useLang/useLang';
 import {type SystemTranslation} from '_ui/types/scalars';
@@ -10,6 +11,8 @@ interface IExplorerTitleProps {
     title?: string;
     libraryLabel: SystemTranslation | null;
     isLibraryLabelLoading: boolean;
+    /** Error from the upstream library metadata query (`useExplorerLibraryMetadata`), if any. */
+    libraryError?: ApolloError;
     entrypoint: Entrypoint;
 }
 
@@ -18,6 +21,7 @@ export const ExplorerTitle: FunctionComponent<IExplorerTitleProps> = ({
     title,
     libraryLabel,
     isLibraryLabelLoading,
+    libraryError,
     entrypoint,
 }) => {
     const {
@@ -42,8 +46,8 @@ export const ExplorerTitle: FunctionComponent<IExplorerTitleProps> = ({
     }
 
     // TODO: handle error and bad library ID
-    if (attributeError) {
-        return <span>{attributeError.message}</span>;
+    if (libraryError || attributeError) {
+        return <span>{libraryError?.message ?? attributeError?.message}</span>;
     }
 
     let label;

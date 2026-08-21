@@ -1,4 +1,5 @@
 import {localizedTranslation} from '@leav/utils';
+import {type ApolloError} from '@apollo/client';
 import {useMemo} from 'react';
 import {useLang} from '_ui/hooks';
 import {type LibraryBehavior, useExplorerV2LibraryMetadataQuery} from '_ui/_gqlTypes';
@@ -22,12 +23,13 @@ export const useExplorerLibraryMetadata = ({
     behavior: LibraryBehavior | null;
     hasCreateRecordPermission: boolean;
     loading: boolean;
+    error?: ApolloError;
 } => {
     const {lang: availableLangs} = useLang();
 
     // No `fetchPolicy: 'network-only'`: configuration metadata, stable for the explorer's lifetime,
     // shared across cache between two explorers of the same library (unlike the records queries).
-    const {data, loading} = useExplorerV2LibraryMetadataQuery({
+    const {data, loading, error} = useExplorerV2LibraryMetadataQuery({
         skip: !libraryId,
         variables: {libraryId},
     });
@@ -35,7 +37,7 @@ export const useExplorerLibraryMetadata = ({
     const library = data?.libraries?.list[0];
 
     const attributesProperties = useMemo(() => {
-        const attributes = data?.libraries?.list[0]?.attributes;
+        const attributes = library?.attributes;
         if (!attributes?.length) {
             return emptyMap;
         }
@@ -49,7 +51,7 @@ export const useExplorerLibraryMetadata = ({
 
             return acc;
         }, {});
-    }, [data, availableLangs]);
+    }, [library, availableLangs]);
 
     return {
         attributesProperties,
@@ -58,5 +60,6 @@ export const useExplorerLibraryMetadata = ({
         hasCreateRecordPermission: library?.permissions?.create_record ?? false,
         // No flash on a refetch or a language change, and false when the query is skipped.
         loading: loading && !data,
+        error,
     };
 };
