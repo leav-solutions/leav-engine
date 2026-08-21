@@ -87,7 +87,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum(rate(events_database_sent_total{k8s_namespace_name=\"$namespace\"}[$rate_window])) * 60",
+                    "expr": "sum(rate(leav_events_database_sent_total{k8s_namespace_name=\"$namespace\"}[$rate_window])) * 60",
                     "range": true,
                     "refId": "A"
                 }
@@ -159,7 +159,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum(rate(events_database_sent_total{k8s_namespace_name=\"$namespace\",outcome=\"error\"}[$rate_window])) / clamp_min(sum(rate(events_database_sent_total{k8s_namespace_name=\"$namespace\"}[$rate_window])), 1e-9)",
+                    "expr": "sum(rate(leav_events_database_sent_total{k8s_namespace_name=\"$namespace\",outcome=\"error\"}[$rate_window])) / clamp_min(sum(rate(leav_events_database_sent_total{k8s_namespace_name=\"$namespace\"}[$rate_window])), 1e-9)",
                     "range": true,
                     "refId": "A"
                 }
@@ -221,7 +221,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum(rate(events_database_payload_size_bytes_sum{k8s_namespace_name=\"$namespace\"}[$rate_window]))",
+                    "expr": "sum(rate(leav_events_database_payload_size_bytes_sum{k8s_namespace_name=\"$namespace\"}[$rate_window]))",
                     "range": true,
                     "refId": "A"
                 }
@@ -334,7 +334,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum by (event_action, outcome) (rate(events_database_sent_total{k8s_namespace_name=\"$namespace\"}[$rate_window]))",
+                    "expr": "sum by (event_action, outcome) (rate(leav_events_database_sent_total{k8s_namespace_name=\"$namespace\"}[$rate_window]))",
                     "legendFormat": "{{event_action}} / {{outcome}}",
                     "range": true,
                     "refId": "A"
@@ -436,7 +436,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "histogram_quantile(0.5, sum by (le) (rate(events_database_payload_size_bytes_bucket{k8s_namespace_name=\"$namespace\"}[$rate_window])))",
+                    "expr": "histogram_quantile(0.5, sum by (le) (rate(leav_events_database_payload_size_bytes_bucket{k8s_namespace_name=\"$namespace\"}[$rate_window])))",
                     "legendFormat": "p50",
                     "range": true,
                     "refId": "A"
@@ -447,7 +447,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "histogram_quantile(0.95, sum by (le) (rate(events_database_payload_size_bytes_bucket{k8s_namespace_name=\"$namespace\"}[$rate_window])))",
+                    "expr": "histogram_quantile(0.95, sum by (le) (rate(leav_events_database_payload_size_bytes_bucket{k8s_namespace_name=\"$namespace\"}[$rate_window])))",
                     "legendFormat": "p95",
                     "range": true,
                     "refId": "B"
@@ -550,7 +550,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum by (event_action) (rate(events_database_payload_size_bytes_sum{k8s_namespace_name=\"$namespace\"}[$rate_window])) / clamp_min(sum by (event_action) (rate(events_database_payload_size_bytes_count{k8s_namespace_name=\"$namespace\"}[$rate_window])), 1e-9)",
+                    "expr": "sum by (event_action) (rate(leav_events_database_payload_size_bytes_sum{k8s_namespace_name=\"$namespace\"}[$rate_window])) / clamp_min(sum by (event_action) (rate(leav_events_database_payload_size_bytes_count{k8s_namespace_name=\"$namespace\"}[$rate_window])), 1e-9)",
                     "legendFormat": "{{event_action}}",
                     "range": true,
                     "refId": "A"
@@ -652,7 +652,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "histogram_quantile(0.95, sum by (le, event_action) (rate(events_database_publish_duration_milliseconds_bucket{k8s_namespace_name=\"$namespace\"}[$rate_window])))",
+                    "expr": "histogram_quantile(0.95, sum by (le, event_action) (rate(leav_events_database_publish_duration_milliseconds_bucket{k8s_namespace_name=\"$namespace\"}[$rate_window])))",
                     "legendFormat": "{{event_action}}",
                     "range": true,
                     "refId": "A"
@@ -729,7 +729,7 @@
                     "type": "prometheus",
                     "uid": "${datasource}"
                 },
-                "definition": "label_values(events_database_sent_total,k8s_namespace_name)",
+                "definition": "label_values(leav_events_database_sent_total,k8s_namespace_name)",
                 "hide": 0,
                 "includeAll": false,
                 "multi": false,
@@ -737,7 +737,7 @@
                 "options": [],
                 "query": {
                     "qryType": 1,
-                    "query": "label_values(events_database_sent_total,k8s_namespace_name)",
+                    "query": "label_values(leav_events_database_sent_total,k8s_namespace_name)",
                     "refId": "PrometheusVariableQueryEditor-VariableQuery"
                 },
                 "refresh": 1,
