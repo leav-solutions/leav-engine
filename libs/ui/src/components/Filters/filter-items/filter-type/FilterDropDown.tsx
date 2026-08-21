@@ -10,7 +10,6 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faClockRotateLeft, faTrash} from '@fortawesome/free-solid-svg-icons';
 
 const FilterDropDownStyledDiv = styled.div`
-    min-width: 327px;
     max-height: 600px;
     display: flex;
     flex-direction: column;
