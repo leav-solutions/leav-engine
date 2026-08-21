@@ -9,6 +9,7 @@ import {type IQueryInfos} from '../../_types/queryInfos';
 import {Errors} from '../../_types/errors';
 import {type IDbPayloadInternal} from '../../_types/events';
 import {type IEventsManagerRabbitMQ} from '../../infra/eventsManager/eventsManagerRabbitMQ';
+import {databaseEventPayloadSize, databaseEventPublishDuration, databaseEventsCounter} from './_metrics';
 
 export interface IEventsManagerDomain {
     sendDatabaseEvent<DBPayloadAction extends EventAction | unknown>(
@@ -99,7 +100,7 @@ export default function ({
         async initPubSubEventsConsumer() {
             await eventsManagerRabbitMQ.consumePubSubEvents(_onPubSubMessage);
         },
-        sendDatabaseEvent<DBPayloadAction extends EventAction | unknown>(
+        async sendDatabaseEvent<DBPayloadAction extends EventAction | unknown>(
             payload: IDbPayloadInternal<DBPayloadAction>,
             ctx: IQueryInfos,
         ) {
@@ -109,9 +110,21 @@ export default function ({
                 ..._buildEventEnvelope(payload, ctx),
                 automationDepth: ctx.automationDepth,
             });
-            return eventsManagerRabbitMQ
-                .publishDatabaseEvent(envelope)
-                .catch(e => logger.error(`Error while sending event to rabbitMQ: ${e.stack}`));
+
+            const attributes = {event_action: payload.action};
+            databaseEventPayloadSize.record(Buffer.byteLength(envelope, 'utf8'), attributes);
+
+            const start = Date.now();
+            let outcome: 'success' | 'error' = 'success';
+            try {
+                await eventsManagerRabbitMQ.publishDatabaseEvent(envelope);
+            } catch (e) {
+                outcome = 'error';
+                logger.error(`Error while sending event to rabbitMQ: ${e.stack}`);
+            } finally {
+                databaseEventsCounter.add(1, {...attributes, outcome});
+                databaseEventPublishDuration.record(Date.now() - start, {...attributes, outcome});
+            }
         },
         sendPubSubEvent(payload: IPubSubPayload, ctx: IQueryInfos) {
             return eventsManagerRabbitMQ

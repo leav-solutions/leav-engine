@@ -7,6 +7,13 @@ import {mockCtx} from '../../__tests__/mocks/shared';
 import eventsManager, {type IEventsManagerDomainDeps} from './eventsManagerDomain';
 import {type IEventsManagerRabbitMQ} from '../../infra/eventsManager/eventsManagerRabbitMQ';
 import {type ILogger} from '@leav/logger';
+import {databaseEventPayloadSize, databaseEventPublishDuration, databaseEventsCounter} from './_metrics';
+
+vi.mock('./_metrics', () => ({
+    databaseEventsCounter: {add: vi.fn()},
+    databaseEventPayloadSize: {record: vi.fn()},
+    databaseEventPublishDuration: {record: vi.fn()},
+}));
 
 const debugLog = false;
 const logger: Mockify<ILogger> = {
@@ -98,6 +105,67 @@ describe('Events Manager', () => {
         );
 
         expect(mockEventsManagerRabbitMQ.publishDatabaseEvent).toBeCalledTimes(1);
+        expect(databaseEventsCounter.add).toBeCalledWith(1, {
+            event_action: EventAction.LIBRARY_SAVE,
+            outcome: 'success',
+        });
+        expect(databaseEventPublishDuration.record).toBeCalledWith(expect.any(Number), {
+            event_action: EventAction.LIBRARY_SAVE,
+            outcome: 'success',
+        });
+        expect(databaseEventPayloadSize.record).toBeCalledWith(expect.any(Number), {
+            event_action: EventAction.LIBRARY_SAVE,
+        });
+    });
+
+    test('records the payload size in bytes, not string length', async () => {
+        const events = eventsManager({
+            ...depsBase,
+            config: conf as IConfig,
+            'core.utils': mockUtils as IUtils,
+        });
+
+        const after = {id: 'test', label: 'éàü 🎉'};
+        await events.sendDatabaseEvent<EventAction.LIBRARY_SAVE>(
+            {action: EventAction.LIBRARY_SAVE, topic: {library: 'test'}, after},
+            ctx,
+        );
+
+        const actualEnvelope: string = mockEventsManagerRabbitMQ.publishDatabaseEvent!.mock.calls[0][0];
+        const expectedSize = Buffer.byteLength(actualEnvelope, 'utf8');
+
+        expect(expectedSize).not.toBe(actualEnvelope.length);
+        expect(databaseEventPayloadSize.record).toBeCalledWith(expectedSize, {
+            event_action: EventAction.LIBRARY_SAVE,
+        });
+    });
+
+    test('resolves and reports outcome=error when the broker publish fails', async () => {
+        mockEventsManagerRabbitMQ.publishDatabaseEvent!.mockRejectedValueOnce(new Error('broker down'));
+
+        const events = eventsManager({
+            ...depsBase,
+            config: conf as IConfig,
+            'core.utils': mockUtils as IUtils,
+            'core.utils.logger': logger as ILogger,
+        });
+
+        await expect(
+            events.sendDatabaseEvent<EventAction.LIBRARY_SAVE>(
+                {action: EventAction.LIBRARY_SAVE, topic: {library: 'test'}, after: {id: 'test'}},
+                ctx,
+            ),
+        ).resolves.toBeUndefined();
+
+        expect(logger.error).toBeCalled();
+        expect(databaseEventsCounter.add).toBeCalledWith(1, {
+            event_action: EventAction.LIBRARY_SAVE,
+            outcome: 'error',
+        });
+        expect(databaseEventPublishDuration.record).toBeCalledWith(expect.any(Number), {
+            event_action: EventAction.LIBRARY_SAVE,
+            outcome: 'error',
+        });
     });
 
     test('send pubsub event', async () => {
