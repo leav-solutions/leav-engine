@@ -13,7 +13,7 @@ interface IIdCardProps {
 export const IdCard: FunctionComponent<IIdCardProps> = ({item, hasColorConfigured = true}) => {
     const {id, label, preview, subLabel, color} = item;
     const itemLabel = label ?? id;
-    const avatarProps: IKitAvatar = {label: itemLabel};
+    const avatarProps: IKitAvatar = {label: itemLabel, shape: 'square'};
 
     if (preview) {
         avatarProps.src = preview.small as string;
