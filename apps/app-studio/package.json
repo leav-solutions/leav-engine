@@ -27,7 +27,7 @@
         "@leav/ui": "workspace:libs/ui",
         "@leav/utils": "workspace:libs/utils",
         "apollo-upload-client": "18.0.1",
-        "aristid-ds": "17.1.0-28f1cbd",
+        "aristid-ds": "17.1.0-25da0e9",
         "classnames": "2.5.1",
         "dayjs": "1.11.22",
         "graphql": "16.14.2",
