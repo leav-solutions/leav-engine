@@ -43,6 +43,7 @@ interface ITreeSelectNodeData {
     checkable: boolean;
     disabled: boolean;
     disableCheckbox: boolean;
+    closable?: boolean;
     children?: ITreeSelectNodeData[];
 }
 
@@ -53,6 +54,7 @@ const _toLabel = (title: ITreeSelectionNode['title'], nodeId: string): string =>
 const _toTreeSelectData = (
     nodes: ITreeSelectionNode[],
     renderTitle?: (node: ITreeSelectionNode) => ReactNode,
+    lockedNodeId?: string,
 ): ITreeSelectNodeData[] =>
     nodes.map(node => ({
         value: node.id,
@@ -63,8 +65,22 @@ const _toTreeSelectData = (
         checkable: node.checkable,
         disabled: node.disabled,
         disableCheckbox: node.disabled || !node.checkable,
-        children: node.children.length > 0 ? _toTreeSelectData(node.children, renderTitle) : undefined,
+        closable: node.id === lockedNodeId ? false : undefined,
+        children: node.children.length > 0 ? _toTreeSelectData(node.children, renderTitle, lockedNodeId) : undefined,
     }));
+
+/** The locked value, standing in for the whole tree until it is loaded. */
+const _toLockedNodeData = (nodeId: string, label: string): ITreeSelectNodeData => ({
+    value: nodeId,
+    key: nodeId,
+    title: label,
+    label,
+    selectable: true,
+    checkable: true,
+    disabled: false,
+    disableCheckbox: false,
+    closable: false,
+});
 
 type TreeFieldV2Props = IFormElementProps<ICommonFieldsSettings>;
 
@@ -85,6 +101,11 @@ type TreeFieldV2Props = IFormElementProps<ICommonFieldsSettings>;
  * `@rc-component/tree-select`), which would put the buttons inside the tags and inside the closed
  * field: `treeNodeLabelProp` points the selector at a separate plain-text `label` instead. The search
  * filters on that same `label`, since the title is no longer text.
+ *
+ * The last value of a required multivalued attribute is locked with `closable: false` on its node
+ * (LEAVC-1129): a required attribute cannot be emptied, so its removal was only ever answered by a
+ * backend error. Locking goes through `treeData` because that is where `aristid-ds` reads it from,
+ * which is why the node is seeded there while the tree is still loading.
  *
  * On a multivalued attribute, `showCheckedStrategy` is forced to `SHOW_ALL`: antd's default
  * `SHOW_CHILD` strategy hides the tag of a node once every one of its children is also checked,
@@ -191,9 +212,16 @@ const TreeFieldV2: FunctionComponent<TreeFieldV2Props> = ({
         onDeleteMultipleValues,
     });
 
-    const selectedNodeIds = (Array.isArray(value) ? value : value ? [value] : []).map(
-        selectedValue => selectedValue.value,
-    );
+    const selectedValues = Array.isArray(value) ? value : value ? [value] : [];
+    const selectedNodeIds = selectedValues.map(selectedValue => selectedValue.value);
+
+    // A required attribute cannot be emptied, so the last value of a multivalued one is not removable:
+    // the backend rejects the deletion, and offering it only ever produced an error (LEAVC-1129).
+    const lockedNodeId =
+        attribute.required && attribute.multiple_values && selectedNodeIds.length === 1
+            ? selectedNodeIds[0]
+            : undefined;
+    const lockedNodeLabel = selectedValues.find(selectedValue => selectedValue.value === lockedNodeId)?.label ?? '';
 
     // `handleChange` and the value array are rebuilt on every render: read through a ref so that they
     // never invalidate the memoized `treeData`, which the selection already invalidates by content
@@ -222,7 +250,11 @@ const TreeFieldV2: FunctionComponent<TreeFieldV2Props> = ({
     // The pseudo root stands for the tree itself and carries no value: only real nodes are offered
     const treeData = useMemo(() => {
         if (!rootNode) {
-            return [];
+            // `rc-tree-select` resolves the closability of a tag from the node matching its value and
+            // treats a value it finds no node for as closable (`convert2LabelValues`), so the lock
+            // would simply be ignored while the tree is not loaded. The locked value is therefore
+            // handed over on its own until the real nodes replace it.
+            return lockedNodeId ? [_toLockedNodeData(lockedNodeId, lockedNodeLabel)] : [];
         }
 
         // Left as a plain string when there is no group button to render: zero visual change, and no
@@ -243,10 +275,12 @@ const TreeFieldV2: FunctionComponent<TreeFieldV2Props> = ({
               )
             : undefined;
 
-        return _toTreeSelectData(rootNode.record === null ? rootNode.children : [rootNode], renderTitle);
+        return _toTreeSelectData(rootNode.record === null ? rootNode.children : [rootNode], renderTitle, lockedNodeId);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         rootNode,
+        lockedNodeId,
+        lockedNodeLabel,
         nodesById,
         getDescendants,
         showGroupButtons,

@@ -392,6 +392,90 @@ describe('TreeFieldV2', () => {
         expect(onValueDelete).toHaveBeenCalledWith({id_value: 'value2'}, attributeId);
     });
 
+    /**
+     * Close icons of the tags shown in the closed value slot. `aristid-ds` only renders one on a tag it
+     * accepts to close, so their count is what tells a locked value from a removable one.
+     */
+    const _valueTagCloseIcons = (container: HTMLElement) =>
+        Array.from(container.querySelectorAll('.ant-select-content .ant-tag-close-icon'));
+
+    test('Offers no close icon on the last value of a required multi-valued attribute (LEAVC-1129)', async () => {
+        const {container} = _renderField({
+            element: _element({
+                multipleValues: true,
+                required: true,
+                values: [_backendValue('branch', 'value1')],
+            }),
+        });
+
+        // Deliberately without opening the dropdown: the tree is lazily loaded, so this is the state
+        // the record form opens in — and the one the removal was offered in
+        await screen.findByRole('combobox');
+        expect(_selectedValueContent(container)).toHaveTextContent('branch');
+        expect(_valueTagCloseIcons(container)).toHaveLength(0);
+    });
+
+    test('Keeps every close icon while a required multi-valued attribute holds several values', async () => {
+        const {container} = _renderField({
+            element: _element({
+                multipleValues: true,
+                required: true,
+                values: [_backendValue('branch', 'value1'), _backendValue('otherLeaf', 'value2')],
+            }),
+        });
+
+        await screen.findByRole('combobox');
+        expect(_valueTagCloseIcons(container)).toHaveLength(2);
+    });
+
+    test('Keeps the close icon on the last value of a multi-valued attribute that is not required', async () => {
+        const {container} = _renderField({
+            element: _element({
+                multipleValues: true,
+                values: [_backendValue('branch', 'value1')],
+            }),
+        });
+
+        await screen.findByRole('combobox');
+        expect(_valueTagCloseIcons(container)).toHaveLength(1);
+    });
+
+    test('Locks the last value left after a deletion on a required multi-valued attribute', async () => {
+        const onValueDelete = vi.fn().mockResolvedValue({status: APICallStatus.SUCCESS});
+        const {container} = _renderField({
+            element: _element({
+                multipleValues: true,
+                required: true,
+                values: [_backendValue('branch', 'value1'), _backendValue('otherLeaf', 'value2')],
+            }),
+            onValueDelete,
+        });
+
+        await userEvent.click(_valueTagCloseIcons(container)[1]);
+
+        await waitFor(() => expect(onValueDelete).toHaveBeenCalledWith({id_value: 'value2'}, attributeId));
+        // The remaining value becomes the one the backend would refuse to delete
+        await waitFor(() => expect(_valueTagCloseIcons(container)).toHaveLength(0));
+        expect(_selectedValueContent(container)).toHaveTextContent('branch');
+    });
+
+    test('Disables the checkbox of the locked node once the tree is loaded (LEAVC-1129)', async () => {
+        const {container} = _renderField({
+            element: _element({
+                multipleValues: true,
+                required: true,
+                values: [_backendValue('branch', 'value1')],
+            }),
+        });
+
+        await _openDropdown();
+
+        // Unchecking is the other way out of a required attribute, and antd only honours `disabled`
+        const branchRow = (await _findNode('branch'))?.closest('.ant-select-tree-treenode');
+        expect(branchRow?.querySelector('.ant-select-tree-checkbox-disabled')).not.toBeNull();
+        expect(_valueTagCloseIcons(container)).toHaveLength(0);
+    });
+
     test('Deletes the values cleared on a multi-valued attribute without the tree being loaded', async () => {
         const onDeleteMultipleValues = vi.fn().mockResolvedValue({status: APICallStatus.SUCCESS});
         const {container} = _renderField({
