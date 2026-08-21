@@ -85,10 +85,32 @@ function calculateAverage(numbers: number[]): number {
 }
 ```
 
-- Prefer clean and explicit code over comments. If necessary, explain the why, not the how.
-- Comments are written in English, like the rest of the codebase.
 - [Functional programming](https://en.wikipedia.org/wiki/Functional_programming) is preferred. Classes are allowed only for specific situations (like a custom `Error` class)
 - Use pure functions as much as possible. Avoid mutating params.
+
+## Comments
+
+- Default to no comment. Good naming and a clear structure should make the "what" obvious on their own.
+- A comment only earns its place if it captures a non-obvious "why": a hidden constraint, a subtle invariant, a workaround for a specific bug, something that would surprise the reader.
+- Never restate what the next line already says.
+- Never reference the current task, ticket or MR (`// fix LEAVC-1234`, `// added for the X flow`) — that belongs in the commit/MR description, not in code that outlives it.
+- Before writing a comment, check whether renaming or extracting would remove the need for it.
+- Comments are written in English, like the rest of the codebase.
+
+```ts
+// Bad — restates the code, references the ticket
+// Loop through users and keep only the active ones (fix for LEAVC-1234)
+const activeUsers = users.filter(u => {
+    return u.active; // check active flag
+});
+
+// Good — self-descriptive, no comment needed
+const activeUsers = users.filter(user => user.active);
+
+// Good — the comment earns its place: a non-obvious constraint
+// ArangoDB traversal depth is capped at 5 by the driver; deeper trees are chunked below.
+const MAX_TRAVERSAL_DEPTH = 5;
+```
 
 ## Naming
 
