@@ -136,6 +136,11 @@ Chaque app dans `apps/`, peut avoir son propre `CLAUDE.md` avec ses spécificit�
 
 ## Commandes essentielles
 
+> 🚫 **Ne jamais commit directement sur `develop`** (ni sur une autre branche protégée). Tout
+> changement passe par une branche dédiée et une MR — y compris pour un changement de doc seul.
+> Avant un premier commit dans une tâche, vérifier la branche courante (`git branch --show-current`)
+> et en créer une si nécessaire.
+
 ```bash
 # Installation
 yarn install
@@ -277,7 +282,6 @@ Règles d'application :
 - **Pas de doc creuse** : ne rien ajouter qui paraphrase le code, redise un diff ou raconte
   l'historique de la tâche. Si rien n'est impacté et qu'il n'y a rien de non-évident à consigner,
   ne rien écrire.
-- **Commit séparé** avec le type conventionnel `docs`, dans la même MR que le code.
 - **Le dire explicitement** en fin de tâche : soit ce qui a été mis à jour ou ajouté, soit qu'il
   n'y avait rien à documenter. Ne jamais laisser cette vérification silencieuse.
 
