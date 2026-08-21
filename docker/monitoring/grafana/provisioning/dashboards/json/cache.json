@@ -97,7 +97,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum(rate(cache_memoize_total{k8s_namespace_name=\"$namespace\",outcome=\"hit\"}[$rate_window])) / clamp_min(sum(rate(cache_memoize_total{k8s_namespace_name=\"$namespace\"}[$rate_window])), 1e-9)",
+                    "expr": "sum(rate(leav_cache_memoize_total{k8s_namespace_name=\"$namespace\",outcome=\"hit\"}[$rate_window])) / clamp_min(sum(rate(leav_cache_memoize_total{k8s_namespace_name=\"$namespace\"}[$rate_window])), 1e-9)",
                     "range": true,
                     "refId": "A"
                 }
@@ -159,7 +159,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum(rate(cache_memoize_total{k8s_namespace_name=\"$namespace\"}[$rate_window])) * 60",
+                    "expr": "sum(rate(leav_cache_memoize_total{k8s_namespace_name=\"$namespace\"}[$rate_window])) * 60",
                     "range": true,
                     "refId": "A"
                 }
@@ -229,7 +229,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum(rate(cache_redis_errors_total{k8s_namespace_name=\"$namespace\"}[$rate_window])) * 60",
+                    "expr": "sum(rate(leav_cache_redis_errors_total{k8s_namespace_name=\"$namespace\"}[$rate_window])) * 60",
                     "range": true,
                     "refId": "A"
                 }
@@ -291,7 +291,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "max(cache_redis_keys_count{k8s_namespace_name=\"$namespace\",db=\"cache\"})",
+                    "expr": "max(leav_cache_redis_keys_count{k8s_namespace_name=\"$namespace\",db=\"cache\"})",
                     "range": true,
                     "refId": "A"
                 }
@@ -404,7 +404,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum by (outcome) (rate(cache_memoize_total{k8s_namespace_name=\"$namespace\"}[$rate_window]))",
+                    "expr": "sum by (outcome) (rate(leav_cache_memoize_total{k8s_namespace_name=\"$namespace\"}[$rate_window]))",
                     "legendFormat": "{{outcome}}",
                     "range": true,
                     "refId": "A"
@@ -506,7 +506,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "histogram_quantile(0.95, sum by (le, outcome) (rate(cache_memoize_compute_duration_milliseconds_bucket{k8s_namespace_name=\"$namespace\"}[$rate_window])))",
+                    "expr": "histogram_quantile(0.95, sum by (le, outcome) (rate(leav_cache_memoize_compute_duration_milliseconds_bucket{k8s_namespace_name=\"$namespace\"}[$rate_window])))",
                     "legendFormat": "{{outcome}}",
                     "range": true,
                     "refId": "A"
@@ -620,7 +620,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "histogram_quantile(0.95, sum by (le, operation, db) (rate(cache_redis_operation_duration_milliseconds_bucket{k8s_namespace_name=\"$namespace\"}[$rate_window])))",
+                    "expr": "histogram_quantile(0.95, sum by (le, operation, db) (rate(leav_cache_redis_operation_duration_milliseconds_bucket{k8s_namespace_name=\"$namespace\"}[$rate_window])))",
                     "legendFormat": "{{db}} / {{operation}}",
                     "range": true,
                     "refId": "A"
@@ -722,7 +722,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "sum by (operation, db) (rate(cache_redis_errors_total{k8s_namespace_name=\"$namespace\"}[$rate_window]))",
+                    "expr": "sum by (operation, db) (rate(leav_cache_redis_errors_total{k8s_namespace_name=\"$namespace\"}[$rate_window]))",
                     "legendFormat": "{{db}} / {{operation}}",
                     "range": true,
                     "refId": "A"
@@ -837,7 +837,7 @@
                         "uid": "$datasource"
                     },
                     "editorMode": "code",
-                    "expr": "max by (db) (cache_redis_keys_count{k8s_namespace_name=\"$namespace\"})",
+                    "expr": "max by (db) (leav_cache_redis_keys_count{k8s_namespace_name=\"$namespace\"})",
                     "legendFormat": "{{db}}",
                     "range": true,
                     "refId": "A"
@@ -914,7 +914,7 @@
                     "type": "prometheus",
                     "uid": "${datasource}"
                 },
-                "definition": "label_values(cache_memoize_total,k8s_namespace_name)",
+                "definition": "label_values(leav_cache_memoize_total,k8s_namespace_name)",
                 "hide": 0,
                 "includeAll": false,
                 "multi": false,
@@ -922,7 +922,7 @@
                 "options": [],
                 "query": {
                     "qryType": 1,
-                    "query": "label_values(cache_memoize_total,k8s_namespace_name)",
+                    "query": "label_values(leav_cache_memoize_total,k8s_namespace_name)",
                     "refId": "PrometheusVariableQueryEditor-VariableQuery"
                 },
                 "refresh": 1,

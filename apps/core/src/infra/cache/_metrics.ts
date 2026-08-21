@@ -2,7 +2,7 @@ import opentelemetry, {type Counter, type Histogram} from '@opentelemetry/api';
 
 const meter = opentelemetry.metrics.getMeter('cache', '0.1.0');
 
-export const memoizeCounter: Counter = meter.createCounter('cache.memoize.total', {
+export const memoizeCounter: Counter = meter.createCounter('leav.cache.memoize.total', {
     description:
         'Number of `cachesService.memoize()` calls, by `outcome`. A `hit` means the value was already ' +
         'available in the per-request DataLoader or in Redis and the compute function was skipped; a `miss` ' +
@@ -11,7 +11,7 @@ export const memoizeCounter: Counter = meter.createCounter('cache.memoize.total'
         'runs once (deduplicated by `memoizeWithLock`).',
 });
 
-export const memoizeComputeDuration: Histogram = meter.createHistogram('cache.memoize.compute.duration', {
+export const memoizeComputeDuration: Histogram = meter.createHistogram('leav.cache.memoize.compute.duration', {
     description:
         'Duration of the compute function passed to `memoize()`, executed only on a cache miss. This is the ' +
         'cost that caching amortizes on a hit. `outcome=error` means the compute function threw and no value ' +
@@ -20,7 +20,7 @@ export const memoizeComputeDuration: Histogram = meter.createHistogram('cache.me
     advice: {explicitBucketBoundaries: [1, 5, 25, 100, 500, 1000, 2000, 5000]},
 });
 
-export const redisOperationDuration: Histogram = meter.createHistogram('cache.redis.operation.duration', {
+export const redisOperationDuration: Histogram = meter.createHistogram('leav.cache.redis.operation.duration', {
     description:
         'Duration of a Redis command issued by the RAM cache service (`ramService`), by `operation` ' +
         '(get/set/del/flush) and `outcome`. `db` distinguishes the Redis database this ramService instance ' +
@@ -29,7 +29,7 @@ export const redisOperationDuration: Histogram = meter.createHistogram('cache.re
     advice: {explicitBucketBoundaries: [1, 5, 25, 100, 500, 1000, 2000, 5000]},
 });
 
-export const redisErrorsCounter: Counter = meter.createCounter('cache.redis.errors.total', {
+export const redisErrorsCounter: Counter = meter.createCounter('leav.cache.redis.errors.total', {
     description:
         'Number of Redis command failures observed by the RAM cache service, by `operation` and `db` ' +
         '(`cache` or `session`, see `cache.redis.operation.duration`). Includes failures from the ' +
@@ -37,6 +37,6 @@ export const redisErrorsCounter: Counter = meter.createCounter('cache.redis.erro
         'swallowed silently.',
 });
 
-export const cacheKeysCountGauge = meter.createObservableGauge('cache.redis.keys.count', {
+export const cacheKeysCountGauge = meter.createObservableGauge('leav.cache.redis.keys.count', {
     description: 'Current number of keys in a Redis database, as reported by `DBSIZE`, by `db` (`cache` or `session`).',
 });
