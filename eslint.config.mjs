@@ -32,8 +32,6 @@ export default defineConfig([
      */
     {
         rules: {
-            // react recommended
-            'react/jsx-no-target-blank': 'off',
             // jsx-a11y recommended
             'jsx-a11y/no-autofocus': 'off',
             'jsx-a11y/click-events-have-key-events': 'off',
@@ -41,8 +39,6 @@ export default defineConfig([
             'jsx-a11y/aria-role': 'off',
             'jsx-a11y/no-noninteractive-element-interactions': 'off',
             'jsx-a11y/interactive-supports-focus': 'off',
-            'jsx-a11y/media-has-caption': 'off',
-            'jsx-a11y/iframe-has-title': 'off',
             // react-hooks v7 (incl. the new React Compiler rules)
             'react-hooks/preserve-manual-memoization': 'off',
             'react-hooks/refs': 'off',
@@ -120,7 +116,6 @@ export default defineConfig([
             'dot-notation': 'error',
             eqeqeq: ['warn', 'always', {null: 'ignore'}],
             'guard-for-in': 'error',
-            'id-match': 'error',
             'max-classes-per-file': ['error', 1],
             'no-bitwise': 'error',
             'no-caller': 'error',

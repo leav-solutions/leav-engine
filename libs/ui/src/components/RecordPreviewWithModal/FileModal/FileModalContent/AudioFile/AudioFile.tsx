@@ -17,7 +17,9 @@ function AudioFile({fileData, fallback}: IFileViewerProps): JSX.Element {
             onError={() => {
                 setHasFailed(true);
             }}
-        />
+        >
+            <track kind="captions" src="" label="No captions available" />
+        </audio>
     );
 }
 
