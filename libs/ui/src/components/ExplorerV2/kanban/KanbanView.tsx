@@ -23,7 +23,6 @@ import {CARD_DRAG_ACTIVATION_DISTANCE} from '../_constants';
 import {KanbanColumn} from './KanbanColumn';
 import {KanbanCard, type IKanbanDragData} from './KanbanCard';
 import {KanbanCardContent} from './KanbanCardContent';
-import {useKanbanAxisAttribute} from './useKanbanAxisAttribute';
 import {type IKanbanColumnsData} from './_types';
 import {assembleKanbanColumns} from './assembleKanbanColumns';
 import {useKanbanTransitions} from './useKanbanTransitions';
@@ -62,9 +61,12 @@ export const KanbanView = ({
     const {t} = useSharedTranslation();
     const isPerColumn = kanbanColumns !== undefined;
 
-    // Axis metadata is loaded upfront, independently from the records: attributesProperties are
-    // derived from the first loaded record, so an empty board would never resolve its tree there.
-    const {isAxisLoading, linkedTreeId: treeId, isAxisMultiple} = useKanbanAxisAttribute(groupByAttributeId);
+    // Axis metadata (linked_tree, multiple_values) is read straight from the upstream-loaded map
+    // (`useExplorerLibraryMetadata`, `Explorer.tsx`) — never derived from the records, so it is
+    // available even for an empty board.
+    const axisAttribute = groupByAttributeId ? attributesProperties[groupByAttributeId] : undefined;
+    const treeId = axisAttribute && 'linked_tree' in axisAttribute ? (axisAttribute.linked_tree?.id ?? null) : null;
+    const isAxisMultiple = axisAttribute?.multiple_values ?? false;
 
     const {data: treeData, loading: treeLoading} = useTreeNodeChildrenQuery({
         skip: !treeId,
@@ -86,7 +88,6 @@ export const KanbanView = ({
         // While the board reloads (reset → fresh counts) the column states are wiped: without this flag
         // every column would claim "no records" (count 0) and flash the empty label — see KanbanColumn.
         isReloading: isBoardReloading = false,
-        attributesProperties: perColumnAttributesProperties = {},
         columnStatesById = {},
         loadMore,
         applyCardMove,
@@ -152,14 +153,27 @@ export const KanbanView = ({
         [activeDrag, columns, transitionsByNodeId],
     );
 
-    // On the per-column path the cards are loaded in the hook, so their attributes properties are too.
-    const cardAttributesProperties = isPerColumn ? perColumnAttributesProperties : attributesProperties;
-
     // The card's displayed attributes are the visible display columns (the axis itself may be hidden).
-    // Restricted to those whose properties are already loaded: on the per-column path the properties are
-    // accumulated from the loaded pages, so a freshly added display attribute lands in attributesToDisplay
-    // one render before its properties arrive — rendering it then would crash TableCell on undefined.
-    const cardAttributeIds = attributesToDisplay.filter(attributeId => cardAttributesProperties[attributeId]);
+    // Restricted to those whose properties are actually loaded: `attributesProperties` covers every
+    // REAL attribute of the library, so this only guards against a stale attribute id left in the
+    // view (e.g. a deleted attribute, a cloned view) — never against a load-order race, since
+    // `Explorer.tsx` only mounts `DataView` once the metadata map has loaded.
+    const cardAttributeIds = attributesToDisplay.filter(attributeId => attributesProperties[attributeId]);
+
+    // Diagnostics: a missing id isn't always a stale one (deleted attribute, cloned view) — it can
+    // also be a metadata query failure or a stale cache entry (see `useExplorerLibraryMetadata`),
+    // both of which silently hide ALL card attributes rather than just one. Keyed on the id set (not
+    // on `attributesProperties` itself) so this doesn't re-fire on every unrelated re-render.
+    const missingAttributeIdsSignature = attributesToDisplay
+        .filter(attributeId => !attributesProperties[attributeId])
+        .join(',');
+    useEffect(() => {
+        if (missingAttributeIdsSignature) {
+            console.warn(
+                `[ExplorerV2] KanbanView: attribute id(s) not found in attributesProperties, hidden from cards: ${missingAttributeIdsSignature}`,
+            );
+        }
+    }, [missingAttributeIdsSignature]);
 
     const onCardClickAction = itemActions.find(action => action.useItemActionOnRowClick && !action.disabled);
 
@@ -231,10 +245,12 @@ export const KanbanView = ({
         }
     };
 
-    // First loading state: the columns themselves aren't ready (axis metadata + tree nodes + counts).
-    // Delayed so a fast query never flashes a spinner, and — since Explorer.tsx skips useExplorerData
-    // on the per-column path — so that a filter/search/sort re-query shows a loader instead of a blank board.
-    const isColumnsLoading = isAxisLoading || treeLoading || isInitialLoading;
+    // First loading state: the columns themselves aren't ready (tree nodes + counts). Axis metadata
+    // is not part of this gate: it comes from `attributesProperties`, already loaded before
+    // `Explorer.tsx` mounts `DataView` at all. Delayed so a fast query never flashes a spinner, and —
+    // since Explorer.tsx skips useExplorerData on the per-column path — so that a filter/search/sort
+    // re-query shows a loader instead of a blank board.
+    const isColumnsLoading = treeLoading || isInitialLoading;
     const isInitialLoaderVisible = useDelayedLoading(isColumnsLoading);
 
     if (isInitialLoaderVisible) {
@@ -274,7 +290,7 @@ export const KanbanView = ({
                                 card={card}
                                 kanbanColumn={col}
                                 cardAttributeIds={cardAttributeIds}
-                                attributesProperties={cardAttributesProperties}
+                                attributesProperties={attributesProperties}
                                 isDragEnabled={isDragEnabled}
                                 isSelected={isMassSelectionAll || selectedKeys.includes(card.key)}
                                 onSelect={isSelectionEnabled ? makeCardSelectHandler(card) : undefined}
@@ -291,7 +307,7 @@ export const KanbanView = ({
                             <KanbanCardContent
                                 card={activeDrag.card}
                                 cardAttributeIds={cardAttributeIds}
-                                attributesProperties={cardAttributesProperties}
+                                attributesProperties={attributesProperties}
                                 isSelected={isMassSelectionAll || selectedKeys.includes(activeDrag.card.key)}
                             />
                         </div>

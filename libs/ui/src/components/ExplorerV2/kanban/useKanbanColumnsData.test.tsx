@@ -1,7 +1,7 @@
 import {type MockedResponse} from '@apollo/client/testing';
 import {act, renderHook, waitFor} from '_ui/_tests/testUtils';
 import {
-    ExplorerLibraryDataDocument,
+    ExplorerV2LibraryDataDocument,
     ListDistinctValuesDocument,
     RecordFilterCondition,
     RecordUpdateLightDocument,
@@ -107,7 +107,7 @@ const pageMock = ({
     delay?: number;
 }): MockedResponse => ({
     request: {
-        query: ExplorerLibraryDataDocument,
+        query: ExplorerV2LibraryDataDocument,
         variables: {
             libraryId: LIBRARY,
             attributeIds: ATTRIBUTE_IDS,

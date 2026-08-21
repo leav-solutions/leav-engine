@@ -1,10 +1,5 @@
 import {type Key, type ReactElement, useCallback, useMemo, useState} from 'react';
-import {
-    LibraryBehavior,
-    useForcePreviewsGenerationMutation,
-    useGetLibraryByIdQuery,
-    type RecordFilterInput,
-} from '_ui/_gqlTypes';
+import {LibraryBehavior, useForcePreviewsGenerationMutation, type RecordFilterInput} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type FeatureHook, type IMassActions} from '../_types';
 import {type IViewSettingsState} from '../manage-view-settings-v2';
@@ -27,12 +22,14 @@ interface IUseGeneratePreviewsMassActionReturn {
 export const useGeneratePreviewsMassAction = ({
     isEnabled,
     store: {view},
+    libraryBehavior,
     totalCount,
     onGeneratePreviews,
 }: FeatureHook<{
     store: {
         view: IViewSettingsState;
     };
+    libraryBehavior: LibraryBehavior | null;
     totalCount: number;
     onGeneratePreviews?: IMassActions['callback'];
 }>): IUseGeneratePreviewsMassActionReturn => {
@@ -41,11 +38,6 @@ export const useGeneratePreviewsMassAction = ({
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [massSelectionFilter, setMassSelectionFilter] = useState<RecordFilterInput[] | undefined>();
     const [startPreviewsGeneration, {loading: isGeneratingPreviews}] = useForcePreviewsGenerationMutation();
-    const {data: libraryData} = useGetLibraryByIdQuery({
-        variables: {
-            id: view.libraryId,
-        },
-    });
 
     const _handleConfirmGeneratePreviews = useCallback(
         async (previewSizes: Key[], isFailedOnly: boolean) => {
@@ -128,7 +120,7 @@ export const useGeneratePreviewsMassAction = ({
         />
     ) : null;
 
-    const isLibraryFileBehavior = libraryData?.libraries?.list?.[0]?.behavior === LibraryBehavior.files;
+    const isLibraryFileBehavior = libraryBehavior === LibraryBehavior.files;
 
     return {
         generatePreviewsMassAction: isEnabled && isLibraryFileBehavior ? _generatePreviewsMassAction : null,

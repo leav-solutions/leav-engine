@@ -1,7 +1,6 @@
 import {type FunctionComponent, type ReactNode, useCallback} from 'react';
 import {
     AttributeFormat,
-    type AttributePropertiesFragment,
     AttributeType,
     type PropertyValueFragment,
     type PropertyValueLinkValueFragment,
@@ -9,6 +8,7 @@ import {
     type PropertyValueValueFragment,
     MultiDisplayOption,
 } from '_ui/_gqlTypes';
+import {type CellAttributeProperties} from '../_types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import DOMPurify from 'dompurify';
 import {KitAvatar, KitBadge, KitIdCard, KitSpace, KitTag, KitTypography} from 'aristid-ds';
@@ -23,30 +23,30 @@ import {faArrowRight, faCalendar, faListAlt} from '@fortawesome/free-solid-svg-i
 
 const isStandardValue = (
     v: PropertyValueFragment,
-    attribute: AttributePropertiesFragment,
+    attribute: CellAttributeProperties,
 ): v is PropertyValueValueFragment => [AttributeType.simple, AttributeType.advanced].includes(attribute.type);
 const isStandardValues = (
     values: PropertyValueFragment[],
-    attribute: AttributePropertiesFragment,
+    attribute: CellAttributeProperties,
 ): values is PropertyValueValueFragment[] => values.every(value => isStandardValue(value, attribute));
 
 const isLinkValue = (
     v: PropertyValueFragment,
-    attribute: AttributePropertiesFragment,
+    attribute: CellAttributeProperties,
 ): v is PropertyValueLinkValueFragment =>
     [AttributeType.simple_link, AttributeType.advanced_link].includes(attribute.type);
 const isLinkValues = (
     values: PropertyValueFragment[],
-    attribute: AttributePropertiesFragment,
+    attribute: CellAttributeProperties,
 ): values is PropertyValueLinkValueFragment[] => values.every(value => isLinkValue(value, attribute));
 
 const isTreeValue = (
     v: PropertyValueFragment,
-    attribute: AttributePropertiesFragment,
+    attribute: CellAttributeProperties,
 ): v is PropertyValueTreeValueFragment => [AttributeType.tree].includes(attribute.type);
 const isTreeValues = (
     values: PropertyValueFragment[],
-    attribute: AttributePropertiesFragment,
+    attribute: CellAttributeProperties,
 ): values is PropertyValueTreeValueFragment[] => values.every(value => isTreeValue(value, attribute));
 
 const isDateRangeValue = (v: PropertyValueValueFragment['valuePayload']): v is {from: string; to: string} =>
@@ -71,7 +71,7 @@ const RightIcon = styled(FontAwesomeIcon)`
 
 interface ITableCellProps {
     values: PropertyValueFragment[];
-    attributeProperties: AttributePropertiesFragment;
+    attributeProperties: CellAttributeProperties;
 }
 
 const TOOLTIP_COLOR = '#ffffff';
@@ -113,7 +113,7 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({values, attribute
     }, []);
 
     const _getFirstValue = useCallback(
-        (value: PropertyValueValueFragment['valuePayload'], attribute: AttributePropertiesFragment) => {
+        (value: PropertyValueValueFragment['valuePayload'], attribute: CellAttributeProperties) => {
             if (isStandardValue(value, attribute) && attribute.format === AttributeFormat.boolean) {
                 if (!value || value.valuePayload === null) {
                     return {valuePayload: false};

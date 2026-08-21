@@ -44,9 +44,15 @@ ne boucle pas).
 - `LOAD_VIEW` **sème les deux snapshots** (chargement initial + écho serveur après save/save-as).
 - `INIT_DEFAULT_VIEW` **sème les deux snapshots** avec un brouillon synthétique vide
   (`createDefaultView`, id sentinelle `DEFAULT_DRAFT_VIEW_ID`). Semé par `CurrentViewStoreProvider`
-  **uniquement pour un admin** sur la vue par défaut (`isEmptyView`) → corrige la roue « attributs
-  disponibles » (qui lit `view.library`), rend la vue éditable (`isDirty`/Reset) et sérialisée pour
-  l'aperçu live d'ExplorerV2. « Enregistrer sous » crée une vraie vue à partir de ce brouillon.
+  **uniquement pour un admin** sur la vue par défaut (`isEmptyView`), et **seulement une fois la
+  résolution stabilisée** (`!isViewResolving`) → corrige la roue « attributs disponibles » (qui lit
+  `view.library`), rend la vue éditable (`isDirty`/Reset) et sérialisée pour l'aperçu live
+  d'ExplorerV2. « Enregistrer sous » crée une vraie vue à partir de ce brouillon.
+  ⚠️ **Piège corrigé** : `isEmptyView` seul peut lire `true` transitoirement pendant que
+  `currentViewId` se résout encore (cf. le commentaire sur `isViewResolving`) — sans le garde
+  `!isViewResolving`, le brouillon était semé avant que la vraie vue (configurée ou dernière
+  utilisée) ait fini de charger, et `ExplorerV2` recevait un `currentView` défini-mais-vide pendant
+  une fenêtre, déclenchant ses requêtes de records/compte pour rien.
 - `SET_SHARED` écrit **symétriquement** sur `view` et `savedView` (cf. fingerprint ci-dessus).
 - Les actions display/sort/filtre sont déléguées à un sous-reducer pur `viewReducer(view, action)`.
 - `SET_AVAILABLE_FILTERS` sème un filtre rendu disponible avec une condition **`EQUAL`** par défaut

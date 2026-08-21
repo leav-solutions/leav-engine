@@ -167,6 +167,7 @@ const KitButtonStyled = styled(KitButton)`...`;
 - A test coverage of 100% is not mandatory. Tests must make sense and give confidence in the code.
 - Snapshot tests must only be used in very specific situations. They're very sensitive and subject to a lot of false-positives. Prefer testing the logic and business rules of your code.
 - **Assert on the exact expected value.** Avoid loose, truthiness-based matchers like `toBeFalsy()` / `toBeTruthy()`: they pass for a whole range of values and hide regressions (e.g. `toBeFalsy()` accepts `false`, `0`, `''`, `null`, `undefined` and `NaN` alike). Assert precisely what you expect instead — `toBe(false)`, `toBeNull()`, `toBe(0)`, `toBe('')`, `toBeUndefined()`, etc.
+- **Never assert on `console.*` (front) or `logger.*` (back, e.g. `logger.debug`).** Diagnostic logging is free to change wording, move, or disappear without being a behavior change — a test pinned to it breaks for the wrong reason and pressures the log message to stay frozen. Test the actual behavior (return value, rendered output, thrown error, mutation) instead of spying on the logging call.
 
 ```ts
 // Bad — passes for false, 0, '', null, undefined, NaN

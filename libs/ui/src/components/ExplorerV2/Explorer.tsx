@@ -49,13 +49,13 @@ import {usePagination} from './usePagination';
 import {useViewSettingsReducer} from './useViewSettingsReducer';
 import {MASS_SELECTION_ALL, SNACKBAR_MASS_ID} from './_constants';
 import {useExplorerCountData} from './_queries/useExplorerCountData';
+import {useExplorerLibraryMetadata} from './_queries/useExplorerLibraryMetadata';
 import {getLibraryRequestValuesList} from './_queries/getLibraryRequestValuesList';
 import {useKanbanColumnsData} from './kanban/useKanbanColumnsData';
 
 const isNotEmpty = <T extends unknown[]>(union: T): union is Exclude<T, []> => union.length > 0;
 
 const emptyArray = [];
-const emptyObject = {};
 
 const ExplorerHeaderDivStyled = styled.div`
     display: flex;
@@ -237,6 +237,15 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             [ephemeralView, currentView],
         );
 
+        const {
+            attributesProperties,
+            label: libraryLabel,
+            behavior: libraryBehavior,
+            hasCreateRecordPermission,
+            loading: metadataLoading,
+            error: metadataError,
+        } = useExplorerLibraryMetadata({libraryId: view.libraryId});
+
         const isViewReady = currentView !== undefined && !viewSettingsLoading;
 
         /**
@@ -281,7 +290,11 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             [onFiltersChange],
         );
 
-        const {filtersData, dispatch: filtersDispatch} = useControlledFilterStore({
+        const {
+            filtersData,
+            dispatch: filtersDispatch,
+            isSeeded: isFiltersSeeded,
+        } = useControlledFilterStore({
             leanFilters: userLeanFilters,
             libraryId: view.libraryId,
             viewId: view.viewId,
@@ -328,7 +341,11 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             filters: requestFilters,
             // Kept alive on the per-column kanban path: the count is grouping-independent (library
             // total) and feeds the "X / Y" results count next to the mass-selection checkbox.
-            skip: !isViewReady,
+            // `!isFiltersSeeded`: the internal filter store starts empty and only adopts `requestFilters`
+            // one render after `currentView.filters` changes (see `useControlledFilterStore`'s `isSeeded`)
+            // — without this, the FIRST request after a view/filter change would fire against a stale/
+            // empty filter set, immediately superseded by a second, correct one.
+            skip: !isViewReady || !isFiltersSeeded,
         });
         const totalCountLibrary = useStickyValue(rawTotalCountLibrary, countLoading);
 
@@ -347,13 +364,13 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             sorts: view.sort,
             filters: requestFilters,
             filtersOperator,
-            skip: !isViewReady || isPerColumnKanban,
+            skip: !isViewReady || !isFiltersSeeded || isPerColumnKanban,
             refetchCount,
         }); // TODO: refresh when go back on page
 
         const kanbanDataSource = useMemo<IKanbanDataSource | undefined>(
             () =>
-                isPerColumnKanban && isViewReady
+                isPerColumnKanban && isViewReady && isFiltersSeeded
                     ? {
                           libraryId: view.libraryId,
                           attributeIds: queryAttributeIds,
@@ -369,6 +386,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             [
                 isPerColumnKanban,
                 isViewReady,
+                isFiltersSeeded,
                 view.libraryId,
                 queryAttributeIds,
                 requestFilters,
@@ -445,11 +463,24 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
 
         // Loader states, delayed so a fast request never flashes a spinner:
         // - `viewSettingsLoading` / `loadingData`: the explorer's own bootstrap + records query;
+        // - `metadataLoading`: the library/attributes metadata query — records and metadata now arrive
+        //   through two separate requests; without this gate, a window where records have arrived but
+        //   attributes haven't yet would make TableView dereference `attributesProperties[id].label` on
+        //   an undefined entry. It also lets the kanban skip its own loading flag (see KanbanView).
         // - `isViewLoading`: the host is still resolving WHICH view to show and hasn't sent the real
         //   `currentView` yet — without this the explorer would paint its default (list) view and flash a
         //   table before a kanban (or any non-list) view arrives. Omitted by uncontrolled consumers → they
         //   keep rendering immediately (no behaviour change).
-        const isExplorerLoading = loadingData || viewSettingsLoading || Boolean(isViewLoading);
+        // - `isViewReady && !isFiltersSeeded`: the records/count queries are skipped during this window
+        //   (see above), so `loadingData` alone reads `false` here — without folding it in, the explorer
+        //   would briefly read `hasNoResults` (data === null) and flash the empty placeholder instead of
+        //   staying on the loader through the hand-off from "view ready" to "filters seeded".
+        const isExplorerLoading =
+            loadingData ||
+            viewSettingsLoading ||
+            metadataLoading ||
+            Boolean(isViewLoading) ||
+            (isViewReady && !isFiltersSeeded);
         const isLoaderVisible = useDelayedLoading(isExplorerLoading);
 
         const isAllowedFreeEntry = !(entrypoint.type === 'library' && !entrypoint.allowFreeEntry);
@@ -462,6 +493,9 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             isEnabled: isNotEmpty(defaultPrimaryActions) && defaultPrimaryActions.includes('create'),
             isVisible: showCreatePrimaryButton,
             libraryId: view.libraryId,
+            libraryLabel,
+            libraryBehavior,
+            hasCreateRecordPermission,
             canCreateAndLinkValue: canEditLinkAttributeValues,
             onCreate: defaultCallbacks?.primary?.create,
             joinLibraryContext,
@@ -489,6 +523,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         const {generatePreviewsMassAction, GeneratePreviewsModal} = useGeneratePreviewsMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('generatePreviews'),
             store: {view},
+            libraryBehavior,
             totalCount: totalCountFiltered,
             onGeneratePreviews: defaultCallbacks?.mass?.generatePreviews,
         });
@@ -503,6 +538,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         const {editAttributeMassAction, editAttributeMassActionModal} = useEditAttributeMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('editAttribute'),
             store: {view},
+            attributesProperties,
             totalCount: totalCountFiltered,
         });
 
@@ -595,7 +631,13 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                             <KitTypography.Title level="h3">
                                 {
                                     !viewSettingsLoading && (
-                                        <ExplorerTitle library={view.libraryId} title={title} entrypoint={entrypoint} />
+                                        <ExplorerTitle
+                                            libraryLabel={libraryLabel}
+                                            isLibraryLabelLoading={metadataLoading}
+                                            libraryError={metadataError}
+                                            title={title}
+                                            entrypoint={entrypoint}
+                                        />
                                     ) /*TODO: manage loading*/
                                 }
                             </KitTypography.Title>
@@ -626,7 +668,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                             groupByAttributeId={view.groupByAttributeId}
                             kanbanColumns={isPerColumnKanban ? kanbanColumnsData : undefined}
                             dataGroupedFilteredSorted={data?.records ?? emptyArray}
-                            attributesProperties={data?.attributes ?? emptyObject}
+                            attributesProperties={attributesProperties}
                             attributesToDisplay={
                                 /* ⚠️ whoAmI column will always be displayed first*/ view.attributesIds
                             }

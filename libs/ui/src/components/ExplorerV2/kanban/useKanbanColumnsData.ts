@@ -1,16 +1,15 @@
 import {useApolloClient} from '@apollo/client';
 import {useCallback, useEffect, useMemo, useReducer, useRef, useState} from 'react';
-import {useLang} from '_ui/hooks';
 import {
-    ExplorerLibraryDataDocument,
+    ExplorerV2LibraryDataDocument,
     useListDistinctValuesQuery,
-    type ExplorerLibraryDataQuery,
-    type ExplorerLibraryDataQueryVariables,
+    type ExplorerV2LibraryDataQuery,
+    type ExplorerV2LibraryDataQueryVariables,
     type RecordFilterInput,
 } from '_ui/_gqlTypes';
 import {useWatchLibraryRecordUpdates} from '_ui/modules/watch-record-updates';
 import {KANBAN_COLUMN_PAGE_SIZE, KANBAN_SELF_WRITE_ECHO_WINDOW_MS} from '../_constants';
-import {type IExplorerData, type IItemData} from '../_types';
+import {type IItemData} from '../_types';
 import {NO_AXIS_VALUE_COLUMN_ID} from '../grouping/buildKanbanColumns';
 import {appendGroupFilter, buildNoValueGroupFilter, buildTreeGroupEqualityFilter} from '../grouping/groupFilters';
 import {mapLibraryDataToExplorerData} from '../_queries/mapLibraryDataToExplorerData';
@@ -31,10 +30,8 @@ export const useKanbanColumnsData = ({
     selfWriteEchoWindowMs = KANBAN_SELF_WRITE_ECHO_WINDOW_MS,
 }: IKanbanColumnsDataOptions): IKanbanColumnsData => {
     const apolloClient = useApolloClient();
-    const {lang: availableLangs} = useLang();
 
     const [columnStatesById, dispatch] = useReducer(kanbanColumnsReducer, {});
-    const [attributesProperties, setAttributesProperties] = useState<IExplorerData['attributes']>({});
     // True from a board reset (view change or external record update) until the fresh counts land.
     // Consumers (Explorer.tsx) freeze the values they derive from columnStatesById on it, so the
     // results count and the mass-selection wiring don't flicker to 0/empty during the reload window.
@@ -101,7 +98,7 @@ export const useKanbanColumnsData = ({
             const pageSignature = requestSignatureRef.current;
             dispatch({type: 'cardsLoadStarted', columnId});
 
-            const variables: ExplorerLibraryDataQueryVariables = {
+            const variables: ExplorerV2LibraryDataQueryVariables = {
                 libraryId: dataSource.libraryId,
                 attributeIds: dataSource.attributeIds,
                 pagination: {limit: KANBAN_COLUMN_PAGE_SIZE, offset},
@@ -113,8 +110,8 @@ export const useKanbanColumnsData = ({
             // apolloClient.query (not the generated hook): N independent one-shot queries fan out per
             // column, each with its own offset/lifecycle, not a single reactive query tied to a render.
             apolloClient
-                .query<ExplorerLibraryDataQuery>({
-                    query: ExplorerLibraryDataDocument,
+                .query<ExplorerV2LibraryDataQuery>({
+                    query: ExplorerV2LibraryDataDocument,
                     fetchPolicy: 'network-only',
                     variables,
                 })
@@ -123,8 +120,7 @@ export const useKanbanColumnsData = ({
                         return;
                     }
 
-                    const pageData = mapLibraryDataToExplorerData(data, dataSource.libraryId, availableLangs);
-                    setAttributesProperties(previous => ({...previous, ...pageData.attributes}));
+                    const pageData = mapLibraryDataToExplorerData(data, dataSource.libraryId);
                     dispatch({
                         type: 'cardsLoaded',
                         columnId,
@@ -144,7 +140,7 @@ export const useKanbanColumnsData = ({
                 });
         },
         // eslint-disable-next-line react-hooks/exhaustive-deps -- dataSource is captured through its signature
-        [isEnabled, requestSignature, axisAttributeId, apolloClient, availableLangs],
+        [isEnabled, requestSignature, axisAttributeId, apolloClient],
     );
 
     // Chains loadPage calls for one column until it has re-loaded as many cards as it held before the
@@ -176,7 +172,6 @@ export const useKanbanColumnsData = ({
         requestSignatureRef.current = requestSignature;
         setIsReloading(true);
         dispatch({type: 'reset'});
-        setAttributesProperties({});
         // eslint-disable-next-line react-hooks/exhaustive-deps -- only the view change (requestSignature) should trigger this reset, not every columnStatesById update
     }, [requestSignature]);
 
@@ -216,7 +211,6 @@ export const useKanbanColumnsData = ({
         requestSignatureRef.current = `${requestSignature}#reload-${manualReloadCounterRef.current}`;
         setIsReloading(true);
         dispatch({type: 'reset'});
-        setAttributesProperties({});
         return refetchCounts();
     };
 
@@ -337,7 +331,6 @@ export const useKanbanColumnsData = ({
         // recordUpdate) keeps the previous counts, so the board is never unmounted mid-refetch.
         isInitialLoading: isCountsLoading && !countsData,
         isReloading,
-        attributesProperties,
         columnStatesById,
         loadMore,
         applyCardMove,

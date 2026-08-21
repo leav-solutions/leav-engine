@@ -115,13 +115,24 @@ export const CurrentViewStoreProvider = ({
     // in-progress edits AND replaces a stale real view still held in the reducer when we fall back to
     // `isEmptyView`.
     useEffect(() => {
-        if (isEmptyView && canManageViews && displayedLibraryId && view?.id !== DEFAULT_DRAFT_VIEW_ID) {
+        // `isEmptyView` alone can read `true` transiently while `currentViewId` is still resolving (see
+        // the comment on `isViewResolving` above) — without this guard, the empty draft gets seeded, and
+        // `serializedView` stays defined (its own `view.id === DEFAULT_DRAFT_VIEW_ID` branch) even once
+        // the real (configured/last-used) view resolves moments later, so ExplorerV2 briefly receives a
+        // defined-but-empty `currentView` and fires its records/count queries against it for nothing.
+        if (
+            isEmptyView &&
+            !isViewResolving &&
+            canManageViews &&
+            displayedLibraryId &&
+            view?.id !== DEFAULT_DRAFT_VIEW_ID
+        ) {
             dispatch({
                 type: 'INIT_DEFAULT_VIEW',
                 payload: {library: displayedLibraryId, createdBy: {id: userData?.userId ?? '', label: ''}, origin},
             });
         }
-    }, [isEmptyView, canManageViews, displayedLibraryId, view?.id, userData?.userId, origin]);
+    }, [isEmptyView, isViewResolving, canManageViews, displayedLibraryId, view?.id, userData?.userId, origin]);
 
     // The live (possibly unsaved) view, serialized for ExplorerV2's controlled `currentView` prop.
     // Gated on `!isEmptyView` so switching from a valid id to an unresolvable one drops the Explorer

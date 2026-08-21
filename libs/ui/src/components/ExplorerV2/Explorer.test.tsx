@@ -85,7 +85,7 @@ const simpleMockAttribute = {
     type: gqlTypes.AttributeType.simple,
     format: gqlTypes.AttributeFormat.text,
     multiple_values: false,
-} satisfies gqlTypes.AttributePropertiesFragment;
+} satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const booleanMockAttribute = {
     id: 'boolean_attribute',
@@ -96,7 +96,7 @@ const booleanMockAttribute = {
     type: gqlTypes.AttributeType.simple,
     format: gqlTypes.AttributeFormat.boolean,
     multiple_values: false,
-} satisfies gqlTypes.AttributePropertiesFragment;
+} satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const linkMockAttribute = {
     ...simpleMockAttribute,
@@ -106,7 +106,7 @@ const linkMockAttribute = {
         en: 'My link attribute',
     },
     type: gqlTypes.AttributeType.advanced_link,
-} satisfies gqlTypes.AttributePropertiesFragment;
+} satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const multivalLinkMockAttribute = {
     ...linkMockAttribute,
@@ -117,7 +117,7 @@ const multivalLinkMockAttribute = {
     },
     multiple_values: true,
     // multi_link_display_option: gqlTypes.MultiLinkDisplayOption.avatar // default value
-} satisfies gqlTypes.AttributePropertiesFragment;
+} satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const simpleRichTextMockAttribute = {
     id: 'simple_rich_text',
@@ -128,7 +128,7 @@ const simpleRichTextMockAttribute = {
         fr: 'Mon simple texte enrichi',
         en: 'My simple rich text',
     },
-} satisfies gqlTypes.AttributePropertiesFragment;
+} satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const simpleColorMockAttribute = {
     id: 'simple_color',
@@ -139,7 +139,7 @@ const simpleColorMockAttribute = {
         fr: 'Ma simple couleur',
         en: 'My simple color',
     },
-} satisfies gqlTypes.AttributePropertiesFragment;
+} satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const multivalColorMockAttribute = {
     ...simpleColorMockAttribute,
@@ -149,7 +149,7 @@ const multivalColorMockAttribute = {
         fr: 'Mon attribut couleur multiple',
         en: 'My color attribute multi-valued',
     },
-} satisfies gqlTypes.AttributePropertiesFragment;
+} satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const simpleDateRangeMockAttribute = {
     id: 'simple_date_range',
@@ -160,7 +160,7 @@ const simpleDateRangeMockAttribute = {
         fr: 'Ma simple période',
         en: 'My simple date range',
     },
-} satisfies gqlTypes.AttributePropertiesFragment;
+} satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const multivalDateRangeMockAttribute = {
     ...simpleDateRangeMockAttribute,
@@ -171,7 +171,7 @@ const multivalDateRangeMockAttribute = {
         fr: 'Ma période multival',
         en: 'My multivalued date range',
     },
-} satisfies gqlTypes.AttributePropertiesFragment;
+} satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 describe('Explorer', () => {
     const recordId1 = '613982168';
@@ -207,7 +207,6 @@ describe('Explorer', () => {
             properties: [
                 {
                     attributeId: simpleMockAttribute.id,
-                    attributeProperties: simpleMockAttribute,
                     values: [
                         {
                             valuePayload: recordId1,
@@ -216,7 +215,6 @@ describe('Explorer', () => {
                 },
                 {
                     attributeId: linkMockAttribute.id,
-                    attributeProperties: linkMockAttribute,
                     values: [
                         {
                             linkPayload: {id: mockRecord.id, whoAmI: mockRecord},
@@ -225,7 +223,6 @@ describe('Explorer', () => {
                 },
                 {
                     attributeId: multivalLinkMockAttribute.id,
-                    attributeProperties: multivalLinkMockAttribute,
                     values: [
                         {
                             linkPayload: {
@@ -264,7 +261,6 @@ describe('Explorer', () => {
                 },
                 {
                     attributeId: simpleRichTextMockAttribute.id,
-                    attributeProperties: simpleRichTextMockAttribute,
                     values: [
                         {
                             valuePayload: enrichTextRecord1,
@@ -273,7 +269,6 @@ describe('Explorer', () => {
                 },
                 {
                     attributeId: simpleColorMockAttribute.id,
-                    attributeProperties: simpleColorMockAttribute,
                     values: [
                         {
                             valuePayload: colorRecord1,
@@ -282,12 +277,10 @@ describe('Explorer', () => {
                 },
                 {
                     attributeId: multivalColorMockAttribute.id,
-                    attributeProperties: multivalColorMockAttribute,
                     values: [{valuePayload: '#00FF00'}, {valuePayload: '#FF0000'}, {valuePayload: '#0000FF'}],
                 },
                 {
                     attributeId: booleanMockAttribute.id,
-                    attributeProperties: booleanMockAttribute,
                     values: [
                         {
                             valuePayload: true,
@@ -296,7 +289,6 @@ describe('Explorer', () => {
                 },
                 {
                     attributeId: simpleDateRangeMockAttribute.id,
-                    attributeProperties: simpleDateRangeMockAttribute,
                     values: [
                         {
                             valuePayload: dateRangeRecord1,
@@ -305,7 +297,6 @@ describe('Explorer', () => {
                 },
                 {
                     attributeId: multivalDateRangeMockAttribute.id,
-                    attributeProperties: multivalDateRangeMockAttribute,
                     values: [
                         {
                             valuePayload: dateRangeRecord1,
@@ -315,6 +306,9 @@ describe('Explorer', () => {
                         },
                     ],
                 },
+                // Real records always carry one `properties` entry per requested attributeId (empty
+                // `values` when unset) — the kanban tests below request 'status' as their display column.
+                {attributeId: 'status', values: []},
             ],
         },
         {
@@ -341,7 +335,6 @@ describe('Explorer', () => {
             properties: [
                 {
                     attributeId: simpleMockAttribute.id,
-                    attributeProperties: simpleMockAttribute,
                     values: [
                         {
                             valuePayload: recordId2,
@@ -350,7 +343,6 @@ describe('Explorer', () => {
                 },
                 {
                     attributeId: linkMockAttribute.id,
-                    attributeProperties: linkMockAttribute,
                     values: [
                         {
                             linkPayload: {id: mockRecord.id, whoAmI: mockRecord},
@@ -359,12 +351,10 @@ describe('Explorer', () => {
                 },
                 {
                     attributeId: multivalLinkMockAttribute.id,
-                    attributeProperties: multivalLinkMockAttribute,
                     values: [],
                 },
                 {
                     attributeId: simpleRichTextMockAttribute.id,
-                    attributeProperties: simpleRichTextMockAttribute,
                     values: [
                         {
                             valuePayload: enrichTextRecord2,
@@ -373,7 +363,6 @@ describe('Explorer', () => {
                 },
                 {
                     attributeId: simpleColorMockAttribute.id,
-                    attributeProperties: simpleColorMockAttribute,
                     values: [
                         {
                             valuePayload: colorRecord2,
@@ -382,29 +371,26 @@ describe('Explorer', () => {
                 },
                 {
                     attributeId: multivalColorMockAttribute.id,
-                    attributeProperties: multivalColorMockAttribute,
                     values: [],
                 },
                 {
                     attributeId: booleanMockAttribute.id,
-                    attributeProperties: booleanMockAttribute,
                     values: [],
                 },
                 {
                     attributeId: simpleDateRangeMockAttribute.id,
-                    attributeProperties: simpleDateRangeMockAttribute,
                     values: [],
                 },
                 {
                     attributeId: multivalDateRangeMockAttribute.id,
-                    attributeProperties: multivalDateRangeMockAttribute,
                     values: [],
                 },
+                {attributeId: 'status', values: []},
             ],
         },
-    ] satisfies gqlTypes.ExplorerLibraryDataQuery['records']['list'];
+    ] satisfies gqlTypes.ExplorerV2LibraryDataQuery['records']['list'];
 
-    const mockEmptyExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
+    const mockEmptyExplorerQueryResult: Mockify<typeof gqlTypes.useExplorerV2LibraryDataQuery> = {
         loading: false,
         called: true,
         data: {
@@ -416,7 +402,7 @@ describe('Explorer', () => {
     };
 
     const refetchLibraryData = vi.fn();
-    const mockExplorerLibraryDataQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
+    const mockExplorerV2LibraryDataQueryResult: Mockify<typeof gqlTypes.useExplorerV2LibraryDataQuery> = {
         loading: false,
         called: true,
         refetch: refetchLibraryData,
@@ -440,7 +426,7 @@ describe('Explorer', () => {
         },
     };
 
-    const mockExplorerLinkDataQueryResultProperty = [
+    const mockExplorerV2LinkDataQueryResultProperty = [
         {
             id_value: '0',
             payload: mockRecords[0],
@@ -451,7 +437,7 @@ describe('Explorer', () => {
         },
     ];
 
-    const mockExplorerLinkDataQueryResult: Mockify<typeof gqlTypes.useExplorerLinkDataQuery> = {
+    const mockExplorerV2LinkDataQueryResult: Mockify<typeof gqlTypes.useExplorerV2LinkDataQuery> = {
         loading: false,
         called: true,
         refetch: vi.fn(),
@@ -466,7 +452,7 @@ describe('Explorer', () => {
                                 id: 'campaigns',
                             },
                         },
-                        property: mockExplorerLinkDataQueryResultProperty,
+                        property: mockExplorerV2LinkDataQueryResultProperty,
                     },
                 ],
             },
@@ -475,73 +461,63 @@ describe('Explorer', () => {
 
     const campaignName = 'Campagnes';
 
-    const mockLibraryDetailsQueryResultList = {
-        id: 'campaigns',
-        label: {
-            en: 'Campaigns',
-            fr: campaignName,
-        },
-        permissions: {
-            create_record: true,
-        },
-    };
+    const defaultLibraryMetadataAttributes = [
+        simpleMockAttribute,
+        booleanMockAttribute,
+        linkMockAttribute,
+        multivalLinkMockAttribute,
+        simpleRichTextMockAttribute,
+        simpleColorMockAttribute,
+        multivalColorMockAttribute,
+        simpleDateRangeMockAttribute,
+        multivalDateRangeMockAttribute,
+    ] satisfies gqlTypes.ExplorerV2LibraryMetadataQuery['libraries']['list'][number]['attributes'];
 
-    const mockFilesLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
+    // Replaces the (now removed) GET_LIBRARY_BY_ID, MassEditableAttributes and ExplorerLibraryDetails
+    // queries: the library's label (title), behavior (previews gate + which creation modal),
+    // create_record permission (create button) and every attribute of the library (mass-edition
+    // classification, kanban axis, columns/cells) come from this single upfront query. Without this
+    // mock the attributes map is empty across the WHOLE suite (no column headers, no cells,
+    // `isExplorerLoading` stuck).
+    const mockLibraryMetadata = ({
+        behavior = gqlTypes.LibraryBehavior.standard,
+        canCreateRecord = true,
+        attributes = defaultLibraryMetadataAttributes,
+    }: {
+        behavior?: gqlTypes.LibraryBehavior;
+        canCreateRecord?: boolean;
+        attributes?: gqlTypes.ExplorerV2LibraryMetadataQuery['libraries']['list'][number]['attributes'];
+    } = {}): Mockify<typeof gqlTypes.useExplorerV2LibraryMetadataQuery> => ({
         loading: false,
         called: true,
         data: {
             libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.files}],
+                list: [
+                    {
+                        id: 'campaigns',
+                        label: {
+                            en: 'Campaigns',
+                            fr: campaignName,
+                        },
+                        behavior,
+                        permissions: {
+                            create_record: canCreateRecord,
+                        },
+                        attributes,
+                    },
+                ],
             },
         },
-    };
-    const mockDirectoriesLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
-        loading: false,
-        called: true,
-        data: {
-            libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.directories}],
-            },
-        },
-    };
-    const mockStandardLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
-        loading: false,
-        called: true,
-        data: {
-            libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.standard}],
-            },
-        },
-    };
-    const mockJoinLibraryDetailsQueryResult: Mockify<typeof gqlTypes.useExplorerLibraryDetailsQuery> = {
-        loading: false,
-        called: true,
-        data: {
-            libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.join}],
-            },
-        },
-    };
+    });
 
-    const mockGetLibraryByIdQueryResult: Mockify<typeof gqlTypes.useGetLibraryByIdQuery> = {
-        loading: false,
-        called: true,
-        data: {
-            libraries: {
-                list: [{...mockLibraryDetailsQueryResultList, behavior: gqlTypes.LibraryBehavior.standard}],
-            },
-        },
-    };
-
-    const mockMassEditableAttributesQueryResult: Mockify<typeof gqlTypes.useMassEditableAttributesQuery> = {
-        loading: false,
-        called: true,
-        data: {
-            attributes: {
-                list: [],
-            },
-        },
-    };
+    const spyLibraryMetadataQuery = (
+        options?: Parameters<typeof mockLibraryMetadata>[0],
+    ): ReturnType<typeof vi.spyOn> =>
+        vi
+            .spyOn(gqlTypes, 'useExplorerV2LibraryMetadataQuery')
+            .mockReturnValue(
+                mockLibraryMetadata(options) as gqlTypes.ExplorerV2LibraryMetadataQueryResult,
+            ) as ReturnType<typeof vi.spyOn>;
 
     const mockExplorerAttributesQueryResult: Mockify<typeof gqlTypes.useExplorerAttributesQuery> = {
         loading: false,
@@ -741,7 +717,7 @@ describe('Explorer', () => {
         },
     };
 
-    let spyUseExplorerLibraryDataQuery: ReturnType<typeof vi.spyOn>;
+    let spyUseExplorerV2LibraryDataQuery: ReturnType<typeof vi.spyOn>;
 
     const libraryEntrypoint: IEntrypointLibrary = {
         type: 'library',
@@ -882,24 +858,22 @@ describe('Explorer', () => {
     beforeEach(() => {
         const fetch = vi.fn();
 
-        spyUseExplorerLibraryDataQuery = vi
-            .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
-            .mockImplementation(() => mockExplorerLibraryDataQueryResult as gqlTypes.ExplorerLibraryDataQueryResult);
+        spyUseExplorerV2LibraryDataQuery = vi
+            .spyOn(gqlTypes, 'useExplorerV2LibraryDataQuery')
+            .mockImplementation(
+                () => mockExplorerV2LibraryDataQueryResult as gqlTypes.ExplorerV2LibraryDataQueryResult,
+            );
 
         vi.spyOn(gqlTypes, 'useExplorerLibraryCountDataQuery').mockImplementation(
             () => mockExplorerLibraryCountDataQueryResult as gqlTypes.ExplorerLibraryCountDataQueryHookResult,
         );
 
-        vi.spyOn(gqlTypes, 'useExplorerLibraryDataLazyQuery').mockImplementation(
-            () => [fetch] as unknown as gqlTypes.ExplorerLibraryDataLazyQueryHookResult,
+        vi.spyOn(gqlTypes, 'useExplorerV2LibraryDataLazyQuery').mockImplementation(
+            () => [fetch] as unknown as gqlTypes.ExplorerV2LibraryDataLazyQueryHookResult,
         );
 
-        vi.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
-            () => mockExplorerLinkDataQueryResult as gqlTypes.ExplorerLinkDataQueryResult,
-        );
-
-        vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-            () => mockStandardLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
+        vi.spyOn(gqlTypes, 'useExplorerV2LinkDataQuery').mockImplementation(
+            () => mockExplorerV2LinkDataQueryResult as gqlTypes.ExplorerV2LinkDataQueryResult,
         );
 
         vi.spyOn(gqlTypes, 'useExplorerAttributesQuery').mockImplementation(
@@ -919,13 +893,7 @@ describe('Explorer', () => {
 
         vi.spyOn(gqlTypes, 'useMeQuery').mockReturnValue(mockMeResult as gqlTypes.MeQueryResult);
 
-        vi.spyOn(gqlTypes, 'useGetLibraryByIdQuery').mockReturnValue(
-            mockGetLibraryByIdQueryResult as gqlTypes.GetLibraryByIdQueryResult,
-        );
-
-        vi.spyOn(gqlTypes, 'useMassEditableAttributesQuery').mockReturnValue(
-            mockMassEditableAttributesQueryResult as gqlTypes.MassEditableAttributesQueryResult,
-        );
+        spyLibraryMetadataQuery();
 
         // TODO: useless except for remove logs warning `No more mocked`
         useGetRecordUpdatesSubscriptionMock.mockReturnValue({
@@ -1172,20 +1140,36 @@ describe('Explorer', () => {
     });
 
     test('Should display message on empty data (default)', async () => {
-        spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+        spyUseExplorerV2LibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
         render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
         expect(screen.getByText(/empty-data/)).toBeVisible();
     });
 
     test('Should display message on empty data (custom)', async () => {
-        spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+        spyUseExplorerV2LibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
 
         const emptyCustomMessage = 'EmptyCustomMessage';
 
         render(<ExplorerV2 entrypoint={libraryEntrypoint} emptyPlaceholder={emptyCustomMessage} />);
 
         expect(screen.getByText(emptyCustomMessage)).toBeVisible();
+    });
+
+    test('does not mount the data view while the attributes metadata query is still loading', async () => {
+        // Metadata now comes from its own query, separate from the records query: as long as it is
+        // loading, `isExplorerLoading` must stay true so TableView never dereferences
+        // `attributesProperties[id].label` before the map exists.
+        vi.spyOn(gqlTypes, 'useExplorerV2LibraryMetadataQuery').mockReturnValue({
+            loading: true,
+            called: true,
+            data: undefined,
+        } as gqlTypes.ExplorerV2LibraryMetadataQueryResult);
+
+        render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
+
+        expect(screen.queryByRole('table')).not.toBeInTheDocument();
+        expect(screen.queryByText(/empty-data/)).not.toBeInTheDocument();
     });
 
     test('Should display the list of records in a table with attributes values', async () => {
@@ -1347,8 +1331,8 @@ describe('Explorer', () => {
     });
 
     test('Should be able to activate a record with default actions', async () => {
-        spyUseExplorerLibraryDataQuery.mockReturnValue({
-            ...mockExplorerLibraryDataQueryResult,
+        spyUseExplorerV2LibraryDataQuery.mockReturnValue({
+            ...mockExplorerV2LibraryDataQueryResult,
             data: {
                 records: {
                     totalCount: mockRecords.length,
@@ -1509,8 +1493,8 @@ describe('Explorer', () => {
 
     test('refreshes a listed record in place when it changes', async () => {
         const fetchRecord = vi.fn();
-        vi.spyOn(gqlTypes, 'useExplorerLibraryDataLazyQuery').mockImplementation(
-            () => [fetchRecord] as unknown as gqlTypes.ExplorerLibraryDataLazyQueryHookResult,
+        vi.spyOn(gqlTypes, 'useExplorerV2LibraryDataLazyQuery').mockImplementation(
+            () => [fetchRecord] as unknown as gqlTypes.ExplorerV2LibraryDataLazyQueryHookResult,
         );
         // a record already displayed in the list gets updated
         fireRecordUpdateLightEvent(recordId1, ['title']);
@@ -1662,7 +1646,7 @@ describe('Explorer', () => {
             });
 
             test('should not display the primary actions button if library data is empty and entrypoint is not a library', () => {
-                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+                spyUseExplorerV2LibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
                 render(<ExplorerV2 entrypoint={linkEntrypoint} showCreateOnNoResultOnly />, {
                     mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock],
                 });
@@ -1670,7 +1654,7 @@ describe('Explorer', () => {
             });
 
             test('multiple actions should be in a dropdown', async () => {
-                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+                spyUseExplorerV2LibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
                 render(<ExplorerV2 entrypoint={libraryEntrypoint} primaryActions={customPrimaryActions} />);
 
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
@@ -1687,7 +1671,7 @@ describe('Explorer', () => {
             });
 
             test('should not display the primary actions button if library data is empty and entrypoint has allowFreeEntry set to false', () => {
-                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+                spyUseExplorerV2LibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
                 render(
                     <ExplorerV2 entrypoint={{...libraryEntrypoint, allowFreeEntry: false}} showCreateOnNoResultOnly />,
                 );
@@ -1695,26 +1679,9 @@ describe('Explorer', () => {
             });
 
             test('should not display the primary actions button if link library data is empty and user permission for create_record on linked library is set to false', () => {
-                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+                spyUseExplorerV2LibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
 
-                vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-                    () =>
-                        ({
-                            loading: false,
-                            called: true,
-                            data: {
-                                libraries: {
-                                    list: [
-                                        {
-                                            ...mockLibraryDetailsQueryResultList,
-                                            permissions: {create_record: false},
-                                            behavior: gqlTypes.LibraryBehavior.standard,
-                                        },
-                                    ],
-                                },
-                            },
-                        }) as gqlTypes.ExplorerLibraryDetailsQueryResult,
-                );
+                spyLibraryMetadataQuery({canCreateRecord: false});
 
                 render(<ExplorerV2 entrypoint={{...linkEntrypoint}} showCreateOnNoResultOnly />, {
                     mocks: [ExplorerLinkAttributeWithoutPermissionsQueryMock],
@@ -1723,13 +1690,13 @@ describe('Explorer', () => {
             });
 
             test('should not display the primary actions button if library data is empty and hidePrimaryActions is set to true', () => {
-                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+                spyUseExplorerV2LibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
                 render(<ExplorerV2 entrypoint={libraryEntrypoint} showCreateOnNoResultOnly hidePrimaryActions />);
                 expect(screen.queryByRole('button', {name: 'explorer.create-one'})).not.toBeInTheDocument();
             });
 
             test('should display the primary actions button if library data is empty and entrypoint is a library and allowFreeEntry is set to true', () => {
-                spyUseExplorerLibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
+                spyUseExplorerV2LibraryDataQuery.mockReturnValue(mockEmptyExplorerQueryResult);
                 render(
                     <ExplorerV2 entrypoint={{...libraryEntrypoint, allowFreeEntry: true}} showCreateOnNoResultOnly />,
                 );
@@ -1738,9 +1705,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new file when library has files behavior', async () => {
-            vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-                () => mockFilesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
-            );
+            spyLibraryMetadataQuery({behavior: gqlTypes.LibraryBehavior.files});
             render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
@@ -1749,9 +1714,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new directory when library has directories behavior', async () => {
-            vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-                () => mockDirectoriesLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
-            );
+            spyLibraryMetadataQuery({behavior: gqlTypes.LibraryBehavior.directories});
             render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
 
             await user.click(screen.getByRole('button', {name: 'explorer.create-one'}));
@@ -1773,9 +1736,7 @@ describe('Explorer', () => {
         });
 
         test('Should be able to create a new record when library has join behavior', async () => {
-            vi.spyOn(gqlTypes, 'useExplorerLibraryDetailsQuery').mockImplementation(
-                () => mockJoinLibraryDetailsQueryResult as gqlTypes.ExplorerLibraryDetailsQueryResult,
-            );
+            spyLibraryMetadataQuery({behavior: gqlTypes.LibraryBehavior.join});
             const onCreate = vi.fn();
             render(<ExplorerV2 entrypoint={libraryEntrypoint} defaultCallbacks={{primary: {create: onCreate}}} />);
 
@@ -2011,7 +1972,7 @@ describe('Explorer', () => {
     });
 
     test('Should be able to make a fulltext search', async () => {
-        const mockExplorerLibraryDataQueryResultWithSearch: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
+        const mockExplorerV2LibraryDataQueryResultWithSearch: Mockify<typeof gqlTypes.useExplorerV2LibraryDataQuery> = {
             loading: false,
             called: true,
             data: {
@@ -2045,17 +2006,17 @@ describe('Explorer', () => {
         };
         // ExplorerV2 no longer accepts a view-level pageSize (it is ephemeral; options [20, 50]).
         // Report a totalCount above the default page size so the data spans more than one page.
-        const mockExplorerLibraryDataQueryResultMultiplePages = {
-            ...mockExplorerLibraryDataQueryResult,
+        const mockExplorerV2LibraryDataQueryResultMultiplePages = {
+            ...mockExplorerV2LibraryDataQueryResult,
             data: {records: {totalCount: 40, list: mockRecords}},
         };
         const spy = vi
-            .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+            .spyOn(gqlTypes, 'useExplorerV2LibraryDataQuery')
             .mockImplementation(
                 ({variables}) =>
                     (variables?.searchQuery
-                        ? mockExplorerLibraryDataQueryResultWithSearch
-                        : mockExplorerLibraryDataQueryResultMultiplePages) as gqlTypes.ExplorerLibraryDataQueryResult,
+                        ? mockExplorerV2LibraryDataQueryResultWithSearch
+                        : mockExplorerV2LibraryDataQueryResultMultiplePages) as gqlTypes.ExplorerV2LibraryDataQueryResult,
             );
 
         render(
@@ -2098,46 +2059,47 @@ describe('Explorer', () => {
     });
 
     describe('With filters', () => {
-        const mockExplorerLibraryDataQueryResultWithFilters: Mockify<typeof gqlTypes.useExplorerLibraryDataQuery> = {
-            loading: false,
-            called: true,
-            data: {
-                records: {
-                    list: [
-                        {
-                            id: '613982168',
-                            permissions: {
-                                delete_record: true,
-                            },
-                            whoAmI: {
+        const mockExplorerV2LibraryDataQueryResultWithFilters: Mockify<typeof gqlTypes.useExplorerV2LibraryDataQuery> =
+            {
+                loading: false,
+                called: true,
+                data: {
+                    records: {
+                        list: [
+                            {
                                 id: '613982168',
-                                label: 'Christmas 2024',
-                                subLabel: 'Du 20 décembre 2024 au 31 décembre 2024',
-                                color: null,
-                                library: {
-                                    id: 'campaigns',
-                                    label: {
-                                        en: 'Campaigns',
-                                        fr: 'Campagnes',
-                                    },
+                                permissions: {
+                                    delete_record: true,
                                 },
-                                preview: null,
+                                whoAmI: {
+                                    id: '613982168',
+                                    label: 'Christmas 2024',
+                                    subLabel: 'Du 20 décembre 2024 au 31 décembre 2024',
+                                    color: null,
+                                    library: {
+                                        id: 'campaigns',
+                                        label: {
+                                            en: 'Campaigns',
+                                            fr: 'Campagnes',
+                                        },
+                                    },
+                                    preview: null,
+                                },
+                                properties: [],
                             },
-                            properties: [],
-                        },
-                    ],
+                        ],
+                    },
                 },
-            },
-        };
+            };
 
         test('should handle filters for the request and for the display', async () => {
             const spy = vi
-                .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+                .spyOn(gqlTypes, 'useExplorerV2LibraryDataQuery')
                 .mockImplementation(
                     ({variables}) =>
                         (Array.isArray(variables?.filters) && variables.filters.length
-                            ? mockExplorerLibraryDataQueryResultWithFilters
-                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult,
+                            ? mockExplorerV2LibraryDataQueryResultWithFilters
+                            : mockExplorerV2LibraryDataQueryResult) as gqlTypes.ExplorerV2LibraryDataQueryResult,
                 );
 
             render(
@@ -2185,12 +2147,12 @@ describe('Explorer', () => {
 
         test('Should handle filters for the request and for the display with OR operator', async () => {
             const spy = vi
-                .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+                .spyOn(gqlTypes, 'useExplorerV2LibraryDataQuery')
                 .mockImplementation(
                     ({variables}) =>
                         (Array.isArray(variables?.filters) && variables.filters.length
-                            ? mockExplorerLibraryDataQueryResultWithFilters
-                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult,
+                            ? mockExplorerV2LibraryDataQueryResultWithFilters
+                            : mockExplorerV2LibraryDataQueryResult) as gqlTypes.ExplorerV2LibraryDataQueryResult,
                 );
 
             render(
@@ -2255,12 +2217,12 @@ describe('Explorer', () => {
         // condition in the request.
         test('seeds a lean filter into the records request as a plain condition', async () => {
             const spy = vi
-                .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+                .spyOn(gqlTypes, 'useExplorerV2LibraryDataQuery')
                 .mockImplementation(
                     ({variables}) =>
                         (Array.isArray(variables?.filters) && variables.filters.length
-                            ? mockExplorerLibraryDataQueryResultWithFilters
-                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult,
+                            ? mockExplorerV2LibraryDataQueryResultWithFilters
+                            : mockExplorerV2LibraryDataQueryResult) as gqlTypes.ExplorerV2LibraryDataQueryResult,
                 );
 
             render(
@@ -2331,12 +2293,12 @@ describe('Explorer', () => {
         // (f) Standalone usage (no host callback): the store still seeds and feeds the records request.
         test('seeds and queries records with no onFiltersChange callback (standalone)', () => {
             const spy = vi
-                .spyOn(gqlTypes, 'useExplorerLibraryDataQuery')
+                .spyOn(gqlTypes, 'useExplorerV2LibraryDataQuery')
                 .mockImplementation(
                     ({variables}) =>
                         (Array.isArray(variables?.filters) && variables.filters.length
-                            ? mockExplorerLibraryDataQueryResultWithFilters
-                            : mockExplorerLibraryDataQueryResult) as gqlTypes.ExplorerLibraryDataQueryResult,
+                            ? mockExplorerV2LibraryDataQueryResultWithFilters
+                            : mockExplorerV2LibraryDataQueryResult) as gqlTypes.ExplorerV2LibraryDataQueryResult,
                 );
 
             expect(() =>
@@ -2504,7 +2466,7 @@ describe('Explorer', () => {
 
             expect(actionCallback).toBeCalledWith(
                 expect.objectContaining({
-                    id_value: mockExplorerLinkDataQueryResultProperty[0].id_value,
+                    id_value: mockExplorerV2LinkDataQueryResultProperty[0].id_value,
                 }),
             );
         });
@@ -2677,15 +2639,15 @@ describe('Explorer', () => {
         it('should inform about selection all with pagination (page only)', async () => {
             // GIVEN a fake response data with only the first record
             const [firstRecord, secondRecord] = mockRecords;
-            spyUseExplorerLibraryDataQuery.mockReturnValue({
-                ...mockExplorerLibraryDataQueryResult,
+            spyUseExplorerV2LibraryDataQuery.mockReturnValue({
+                ...mockExplorerV2LibraryDataQueryResult,
                 data: {
                     records: {
                         totalCount: 25,
                         list: [firstRecord],
                     },
                 },
-            } as gqlTypes.ExplorerLibraryDataQueryResult);
+            } as gqlTypes.ExplorerV2LibraryDataQueryResult);
 
             // AND a simple mass test action
             const testMassAction = {
@@ -2747,15 +2709,15 @@ describe('Explorer', () => {
             expect(within(firstSelectRowCell).getByRole('checkbox')).toBeChecked();
 
             // GIVEN the second call to data on second page return the second record
-            spyUseExplorerLibraryDataQuery.mockReturnValue({
-                ...mockExplorerLibraryDataQueryResult,
+            spyUseExplorerV2LibraryDataQuery.mockReturnValue({
+                ...mockExplorerV2LibraryDataQueryResult,
                 data: {
                     records: {
                         totalCount: 25,
                         list: [secondRecord],
                     },
                 },
-            } as gqlTypes.ExplorerLibraryDataQueryResult);
+            } as gqlTypes.ExplorerV2LibraryDataQueryResult);
             // WHEN the user goes on the second page
             const nextPageElement = screen.getByTitle<HTMLLIElement>('Next Page');
             await user.click(within(nextPageElement).getByRole<HTMLButtonElement>('button'));
@@ -2792,15 +2754,15 @@ describe('Explorer', () => {
         it('should inform about selection with pagination (all in once)', async () => {
             // GIVEN the first call to data return only the first record
             const [firstRecord, secondRecord] = mockRecords;
-            spyUseExplorerLibraryDataQuery.mockReturnValue({
-                ...mockExplorerLibraryDataQueryResult,
+            spyUseExplorerV2LibraryDataQuery.mockReturnValue({
+                ...mockExplorerV2LibraryDataQueryResult,
                 data: {
                     records: {
                         totalCount: 25,
                         list: [firstRecord],
                     },
                 },
-            } as gqlTypes.ExplorerLibraryDataQueryResult);
+            } as gqlTypes.ExplorerV2LibraryDataQueryResult);
 
             // AND a simple mass test action is set
             const testMassAction = {
@@ -2874,15 +2836,15 @@ describe('Explorer', () => {
             expect(within(firstRecordRow).getByRole('button', {name: /deactivate-item/})).toBeDisabled();
 
             // GIVEN the second call about data is mocked to return the second record
-            spyUseExplorerLibraryDataQuery.mockReturnValue({
-                ...mockExplorerLibraryDataQueryResult,
+            spyUseExplorerV2LibraryDataQuery.mockReturnValue({
+                ...mockExplorerV2LibraryDataQueryResult,
                 data: {
                     records: {
                         totalCount: 25,
                         list: [secondRecord],
                     },
                 },
-            } as gqlTypes.ExplorerLibraryDataQueryResult);
+            } as gqlTypes.ExplorerV2LibraryDataQueryResult);
             // WHEN the user clicks on the next page to get the second record
             const nextPageElement = screen.getByTitle<HTMLLIElement>('Next Page');
             await user.click(within(nextPageElement).getByRole<HTMLButtonElement>('button'));
@@ -3118,8 +3080,8 @@ describe('Explorer', () => {
         };
 
         test('Should disable delete action on record without delete_record Permission', async () => {
-            const mockExplorerLibraryDataQueryWithPermissionsResult: Mockify<
-                typeof gqlTypes.useExplorerLibraryDataQuery
+            const mockExplorerV2LibraryDataQueryWithPermissionsResult: Mockify<
+                typeof gqlTypes.useExplorerV2LibraryDataQuery
             > = {
                 loading: false,
                 called: true,
@@ -3131,8 +3093,8 @@ describe('Explorer', () => {
                     },
                 },
             };
-            vi.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
-                () => mockExplorerLibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerLibraryDataQueryResult,
+            vi.spyOn(gqlTypes, 'useExplorerV2LibraryDataQuery').mockImplementation(
+                () => mockExplorerV2LibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerV2LibraryDataQueryResult,
             );
 
             render(
@@ -3157,8 +3119,8 @@ describe('Explorer', () => {
         });
 
         test('Should disable activate action on record without create_record Permission', async () => {
-            const mockExplorerLibraryDataQueryWithPermissionsResult: Mockify<
-                typeof gqlTypes.useExplorerLibraryDataQuery
+            const mockExplorerV2LibraryDataQueryWithPermissionsResult: Mockify<
+                typeof gqlTypes.useExplorerV2LibraryDataQuery
             > = {
                 loading: false,
                 called: true,
@@ -3177,8 +3139,8 @@ describe('Explorer', () => {
                     },
                 },
             };
-            vi.spyOn(gqlTypes, 'useExplorerLibraryDataQuery').mockImplementation(
-                () => mockExplorerLibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerLibraryDataQueryResult,
+            vi.spyOn(gqlTypes, 'useExplorerV2LibraryDataQuery').mockImplementation(
+                () => mockExplorerV2LibraryDataQueryWithPermissionsResult as gqlTypes.ExplorerV2LibraryDataQueryResult,
             );
 
             render(
@@ -3313,7 +3275,7 @@ describe('Explorer', () => {
 
             expect(within(toolbar).queryByText(booleanMockAttribute.label.fr)).not.toBeInTheDocument();
 
-            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+            expect(spyUseExplorerV2LibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: expect.objectContaining({
                         filters: expect.arrayContaining([
@@ -3432,7 +3394,7 @@ describe('Explorer', () => {
             const toolbar = screen.getByRole('list', {name: /toolbar/});
             expect(toolbar).toBeVisible();
 
-            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+            expect(spyUseExplorerV2LibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: expect.objectContaining({
                         multipleSort: [
@@ -3451,7 +3413,7 @@ describe('Explorer', () => {
         });
 
         test('Should not display linked items if entrypoint is of type link and the user does not have access to the attribute', async () => {
-            const mockExplorerLinkDataQueryEmptyResult: Mockify<typeof gqlTypes.useExplorerLinkDataQuery> = {
+            const mockExplorerV2LinkDataQueryEmptyResult: Mockify<typeof gqlTypes.useExplorerV2LinkDataQuery> = {
                 loading: false,
                 called: true,
                 refetch: vi.fn(),
@@ -3473,8 +3435,8 @@ describe('Explorer', () => {
                 },
             };
 
-            vi.spyOn(gqlTypes, 'useExplorerLinkDataQuery').mockImplementation(
-                () => mockExplorerLinkDataQueryEmptyResult as gqlTypes.ExplorerLinkDataQueryResult,
+            vi.spyOn(gqlTypes, 'useExplorerV2LinkDataQuery').mockImplementation(
+                () => mockExplorerV2LinkDataQueryEmptyResult as gqlTypes.ExplorerV2LinkDataQueryResult,
             );
 
             render(
@@ -3562,7 +3524,7 @@ describe('Explorer', () => {
         test('Should call the library data query with filters for values list', async () => {
             render(<ExplorerV2 entrypoint={{...libraryEntrypoint, valuesList: mockValuesList}} />);
 
-            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+            expect(spyUseExplorerV2LibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: expect.objectContaining(expectedFiltersWithValuesList),
                 }),
@@ -3584,7 +3546,7 @@ describe('Explorer', () => {
             const searchInput = screen.getByRole('textbox', {name: /search/});
             await userEvent.type(searchInput, 'Hall{Enter}');
 
-            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+            expect(spyUseExplorerV2LibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: expect.objectContaining(expectedFiltersWithValuesList),
                 }),
@@ -3593,7 +3555,7 @@ describe('Explorer', () => {
             const clearButton = screen.getByLabelText('clear');
             await user.click(clearButton);
 
-            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+            expect(spyUseExplorerV2LibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: expect.objectContaining(expectedFiltersWithValuesList),
                 }),
@@ -3615,7 +3577,7 @@ describe('Explorer', () => {
             const searchInput = screen.getByRole('textbox', {name: /search/});
             await userEvent.type(searchInput, 'Hall{Enter}');
 
-            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+            expect(spyUseExplorerV2LibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: expect.objectContaining(expectedFiltersWithValuesListAndFulltextSearch),
                 }),
@@ -3624,7 +3586,7 @@ describe('Explorer', () => {
             const clearButton = screen.getByLabelText('clear');
             await user.click(clearButton);
 
-            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(
+            expect(spyUseExplorerV2LibraryDataQuery).toHaveBeenCalledWith(
                 expect.objectContaining({
                     variables: expect.objectContaining(expectedFiltersWithValuesList),
                 }),
@@ -3647,6 +3609,26 @@ describe('Explorer', () => {
                 expect(screen.getByRole('columnheader', {name: simpleMockAttribute.label.fr})).toBeInTheDocument();
             });
             expect(screen.queryByRole('columnheader', {name: linkMockAttribute.label.fr})).not.toBeInTheDocument();
+        });
+
+        test('a stale attribute id (deleted attribute, cloned view) renders no column for it, without crashing', async () => {
+            // Unlike before, `attributesProperties` covers every REAL attribute of the library
+            // (independent of records): an id absent from that map is now a genuine possibility
+            // (deleted attribute, cloned view) rather than a load-order race — TableView must filter
+            // it out instead of dereferencing `.label` on `undefined`.
+            render(
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    defaultMassActions={[]}
+                    ignoreViewByDefault
+                    currentView={{attributesIds: [simpleMockAttribute.id, 'deleted_attribute']}}
+                />,
+            );
+
+            await waitFor(() => {
+                expect(screen.getByRole('columnheader', {name: simpleMockAttribute.label.fr})).toBeInTheDocument();
+            });
+            expect(screen.getAllByRole('columnheader')).toHaveLength(2); // whoAmI + simpleMockAttribute only
         });
     });
 
@@ -3671,15 +3653,25 @@ describe('Explorer', () => {
             ...overrides,
         });
 
+        // Axis metadata (linked_tree, multiple_values) is no longer a dedicated query: it comes from
+        // the same upstream attributes map as every other attribute, so the "status" tree attribute is
+        // added to the ExplorerV2LibraryMetadata mock rather than spying a separate hook.
         const mockKanbanAxis = (treeId: string | null = KANBAN_TREE) =>
-            vi.spyOn(gqlTypes, 'useKanbanAxisAttributeQuery').mockReturnValue({
-                data: {
-                    attributes: {
-                        list: [{id: 'status', multiple_values: false, ...(treeId ? {linked_tree: {id: treeId}} : {})}],
-                    },
-                },
-                loading: false,
-            } as unknown as ReturnType<typeof gqlTypes.useKanbanAxisAttributeQuery>);
+            spyLibraryMetadataQuery({
+                attributes: [
+                    ...defaultLibraryMetadataAttributes,
+                    {
+                        id: 'status',
+                        label: {fr: 'Statut', en: 'Status'},
+                        type: gqlTypes.AttributeType.tree,
+                        format: null,
+                        multiple_values: false,
+                        multi_link_display_option: null,
+                        multi_tree_display_option: null,
+                        linked_tree: treeId ? {id: treeId} : null,
+                    } as gqlTypes.ExplorerV2LibraryMetadataQuery['libraries']['list'][number]['attributes'][number],
+                ],
+            });
 
         const axisNode = (id: string, label: string, color: string | null = null, library = 'statuses') => ({
             id: `node-${id}`,
@@ -3726,7 +3718,11 @@ describe('Explorer', () => {
             },
             active: true,
             permissions: {__typename: 'RecordPermissions', create_record: true, delete_record: true},
-            properties: [],
+            // The server returns one `properties` entry per requested attributeId, empty `values` included
+            // (kanbanView() always displays "status") — now that TableCell renders it (attributesProperties
+            // covers every REAL library attribute, `status` included), an omitted entry would read as a
+            // crash-inducing `undefined` rather than "no value set".
+            properties: [{attributeId: 'status', values: []}],
         });
 
         const pageMock = ({
@@ -3738,8 +3734,8 @@ describe('Explorer', () => {
             offset?: number;
             records: Array<ReturnType<typeof kanbanRecord>>;
         }): MockedResponse => ({
-            request: {query: gqlTypes.ExplorerLibraryDataDocument},
-            variableMatcher: (variables: gqlTypes.ExplorerLibraryDataQueryVariables) =>
+            request: {query: gqlTypes.ExplorerV2LibraryDataDocument},
+            variableMatcher: (variables: gqlTypes.ExplorerV2LibraryDataQueryVariables) =>
                 (variables.pagination?.offset ?? 0) === offset &&
                 [variables.filters ?? []]
                     .flat()
@@ -3774,13 +3770,42 @@ describe('Explorer', () => {
 
             await screen.findByText('Draft');
             // Records are loaded per column, so the global records query stays skipped…
-            expect(spyUseExplorerLibraryDataQuery).toHaveBeenCalledWith(expect.objectContaining({skip: true}));
+            expect(spyUseExplorerV2LibraryDataQuery).toHaveBeenCalledWith(expect.objectContaining({skip: true}));
             // …but the count query runs (library total for the results count / mass selection).
             expect(gqlTypes.useExplorerLibraryCountDataQuery).toHaveBeenLastCalledWith(
                 expect.objectContaining({skip: false}),
             );
             // The board rendered its own cards (loaded per column), never the skipped global set.
             await screen.findByText('d1');
+        });
+
+        test('a display attribute is labeled on cards as soon as their column page loads, with no separate accumulation step', async () => {
+            // Attribute metadata now comes entirely from the upstream map (`useExplorerLibraryMetadata`):
+            // there is no per-page `setAttributesProperties` accumulation left to "catch up" on a later
+            // render, so a display attribute's value must already be renderable on the very first page.
+            mockKanbanAxis();
+            mockTreeNodes([axisNode('draft', 'Draft')]);
+            mockDistinctValues([treeGroup('draft', 1)]);
+
+            const draftCardWithValue = {
+                ...kanbanRecord('d1'),
+                properties: [
+                    {attributeId: 'status', values: []},
+                    {attributeId: simpleMockAttribute.id, values: [{__typename: 'Value', valuePayload: 'Hello'}]},
+                ],
+            };
+
+            render(
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    ignoreViewByDefault
+                    currentView={kanbanView({attributesIds: ['status', simpleMockAttribute.id]})}
+                />,
+                {mocks: [pageMock({column: 'draft', records: [draftCardWithValue]})]},
+            );
+
+            expect(await screen.findByText('d1')).toBeInTheDocument();
+            expect(screen.getByText('Hello')).toBeInTheDocument();
         });
 
         test('I1b — the filtered total sums the column counts and enables mass selection', async () => {

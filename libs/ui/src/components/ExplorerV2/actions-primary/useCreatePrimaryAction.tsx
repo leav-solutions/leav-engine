@@ -4,12 +4,8 @@ import {CreateDirectory, EditRecordModal, UploadFiles} from '_ui/components';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {type ISubmitMultipleResult} from '_ui/components/RecordEdition/EditRecordContent/_types';
-import {
-    AttributeType,
-    type JoinLibraryContextFragment,
-    LibraryBehavior,
-    useExplorerLibraryDetailsQuery,
-} from '_ui/_gqlTypes';
+import {AttributeType, type JoinLibraryContextFragment, LibraryBehavior} from '_ui/_gqlTypes';
+import {type SystemTranslation} from '_ui/types/scalars';
 import {type FeatureHook, type Entrypoint, type IPrimaryAction} from '../_types';
 import {CREATE_RECORD_MODAL_CLASSNAME} from '../_constants';
 import {SUCCESS_ALERT_DURATION} from '_ui/constants';
@@ -28,6 +24,9 @@ import {faPlus} from '@fortawesome/free-solid-svg-icons';
  * @param isEnabled - whether the action is present
  * @param isVisible - whether the button should be visible or not
  * @param libraryId - the library's id to add new item
+ * @param libraryLabel - the library's raw (unlocalized) label, used in the creation notification
+ * @param libraryBehavior - the library's behavior, picks which creation modal is rendered
+ * @param hasCreateRecordPermission - whether the user may create a record in that library
  * @param entrypoint - represent the current entrypoint
  * @param totalCount - used for display purpose only
  * @param onCreate - callback to let outside world known about creating item (and linking)
@@ -38,6 +37,9 @@ export const useCreatePrimaryAction = ({
     isEnabled,
     isVisible,
     libraryId,
+    libraryLabel,
+    libraryBehavior,
+    hasCreateRecordPermission,
     entrypoint,
     totalCount,
     canCreateAndLinkValue,
@@ -49,6 +51,9 @@ export const useCreatePrimaryAction = ({
     refetchCount,
 }: FeatureHook<{
     libraryId: string;
+    libraryLabel: SystemTranslation | null;
+    libraryBehavior: LibraryBehavior | null;
+    hasCreateRecordPermission: boolean;
     entrypoint: Entrypoint;
     totalCount: number;
     canCreateAndLinkValue: boolean;
@@ -71,20 +76,28 @@ export const useCreatePrimaryAction = ({
     const [isModalCreationVisible, setIsModalCreationVisible] = useState(false);
     const {saveValues} = useSaveValueBatchMutation();
 
-    const _getLibraryId = () =>
-        (joinLibraryContext?.mandatoryAttribute &&
-            'linked_library' in joinLibraryContext.mandatoryAttribute &&
-            joinLibraryContext.mandatoryAttribute.linked_library?.id) ||
-        libraryId;
+    /**
+     * On a join library the creation targets the library linked by the mandatory attribute, not the
+     * explored one. Its details (label / behavior / create_record) already travel in the form
+     * fragment (`RecordFormAttribute`), so that case needs no request either: the hook is entirely
+     * request-free, the explored library's details coming down as props from
+     * `useExplorerLibraryMetadata`.
+     */
+    const joinLinkedLibrary =
+        joinLibraryContext?.mandatoryAttribute && 'linked_library' in joinLibraryContext.mandatoryAttribute
+            ? (joinLibraryContext.mandatoryAttribute.linked_library ?? null)
+            : null;
 
-    const {data, loading, error} = useExplorerLibraryDetailsQuery({
-        variables: {libraryId: _getLibraryId()},
-        skip: !isEnabled,
-    });
+    const targetLibraryId = joinLinkedLibrary?.id ?? libraryId;
+    const targetLibraryLabel: SystemTranslation | null = joinLinkedLibrary ? joinLinkedLibrary.label : libraryLabel;
+    const targetLibraryBehavior = joinLinkedLibrary ? joinLinkedLibrary.behavior : libraryBehavior;
+    const targetCreatePermission = joinLinkedLibrary
+        ? (joinLinkedLibrary.permissions?.create_record ?? false)
+        : hasCreateRecordPermission;
 
-    const hasCreateRecordPermission = data?.libraries?.list[0]?.permissions?.create_record ?? false;
-
-    if (error || loading || !isVisible || !hasCreateRecordPermission) {
+    // A permission not known yet (metadata query still in flight, or library not found) reads as
+    // `false`: no button until the library's details have actually landed.
+    if (!isEnabled || !isVisible || !targetCreatePermission) {
         return {createPrimaryAction: null, createModal: null};
     }
 
@@ -111,14 +124,10 @@ export const useCreatePrimaryAction = ({
             showIcon: true,
             duration: SUCCESS_ALERT_DURATION,
             message: t('items_list.created_in_success.message', {
-                libName:
-                    localizedTranslation(data?.libraries?.list[0]?.label, lang) ||
-                    t('items_list.created_in_success.item'),
+                libName: localizedTranslation(targetLibraryLabel, lang) || t('items_list.created_in_success.item'),
             }),
             description: t('items_list.created_in_success.description', {
-                libName:
-                    localizedTranslation(data?.libraries?.list[0]?.label, lang) ||
-                    t('items_list.created_in_success.item'),
+                libName: localizedTranslation(targetLibraryLabel, lang) || t('items_list.created_in_success.item'),
                 itemName: label || t('items_list.created_in_success.item'),
             }),
             closable: true,
@@ -126,11 +135,11 @@ export const useCreatePrimaryAction = ({
     };
 
     let _createModal: ReactElement | null = null;
-    switch (data?.libraries?.list[0]?.behavior) {
+    switch (targetLibraryBehavior) {
         case LibraryBehavior.files:
             _createModal = (
                 <UploadFiles
-                    libraryId={_getLibraryId()}
+                    libraryId={targetLibraryId}
                     multiple
                     onClose={() => setIsModalCreationVisible(false)}
                     onCompleted={() => {
@@ -145,7 +154,7 @@ export const useCreatePrimaryAction = ({
         case LibraryBehavior.directories:
             _createModal = (
                 <CreateDirectory
-                    libraryId={_getLibraryId()}
+                    libraryId={targetLibraryId}
                     onClose={() => setIsModalCreationVisible(false)}
                     onCompleted={() => {
                         refetch();
@@ -163,7 +172,7 @@ export const useCreatePrimaryAction = ({
                     className={CREATE_RECORD_MODAL_CLASSNAME}
                     open
                     record={null}
-                    library={_getLibraryId()}
+                    library={targetLibraryId}
                     creationFormId={formId}
                     onClose={() => {
                         setIsModalCreationVisible(false);
@@ -205,7 +214,7 @@ export const useCreatePrimaryAction = ({
     }
 
     return {
-        createPrimaryAction: isEnabled ? _createPrimaryAction : null,
+        createPrimaryAction: _createPrimaryAction,
         createModal: isModalCreationVisible ? _createModal : null,
     };
 };

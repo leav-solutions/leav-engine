@@ -17,23 +17,7 @@ fragment PropertyValue on GenericValue {
     }
 }
 
-fragment AttributeProperties on Attribute {
-    id
-    label
-    type
-    format
-    multiple_values
-    multi_link_display_option
-    multi_tree_display_option
-    # The linked tree id is needed to load the kanban grouping-axis columns (the tree's nodes).
-    ... on TreeAttribute {
-        linked_tree {
-            id
-        }
-    }
-}
-
-query ExplorerLibraryData(
+query ExplorerV2LibraryData(
     $libraryId: ID!
     $attributeIds: [ID!]!
     $pagination: RecordsPagination
@@ -58,9 +42,6 @@ query ExplorerLibraryData(
             }
             properties(attributeIds: $attributeIds) {
                 attributeId
-                attributeProperties {
-                    ...AttributeProperties
-                }
                 values {
                     ...PropertyValue
                 }
@@ -69,16 +50,13 @@ query ExplorerLibraryData(
     }
 }
 
-fragment LinkProperty on GenericValue {
+fragment ExplorerV2LinkProperty on GenericValue {
     id_value
     ... on LinkValue {
         payload {
             ...RecordIdentity
             properties(attributeIds: $attributeIds) {
                 attributeId
-                attributeProperties {
-                    ...AttributeProperties
-                }
                 values {
                     ...PropertyValue
                 }
@@ -87,7 +65,7 @@ fragment LinkProperty on GenericValue {
     }
 }
 
-query ExplorerLinkData($attributeIds: [ID!]!, $parentLibraryId: ID!, $parentRecordId: String, $linkAttributeId: ID!) {
+query ExplorerV2LinkData($attributeIds: [ID!]!, $parentLibraryId: ID!, $parentRecordId: String, $linkAttributeId: ID!) {
     records(
         library: $parentLibraryId
         filters: [{field: "id", condition: EQUAL, value: $parentRecordId}]
@@ -102,7 +80,7 @@ query ExplorerLinkData($attributeIds: [ID!]!, $parentLibraryId: ID!, $parentReco
                 }
             }
             property(attribute: $linkAttributeId) {
-                ...LinkProperty
+                ...ExplorerV2LinkProperty
             }
         }
     }

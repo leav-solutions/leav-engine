@@ -98,7 +98,7 @@ Pour ExplorerV2 (et le volet app-studio), le store n'est **pas** un contexte par
 par spoke, alimenté depuis le hub lean (`currentView.filters`). Utiliser `useControlledFilterStore` :
 
 ```tsx
-const {filtersData, dispatch} = useControlledFilterStore({
+const {filtersData, dispatch, isSeeded} = useControlledFilterStore({
     leanFilters, // SerializedFilter[] non-hidden venant de currentView.filters
     libraryId,
     viewId,
@@ -122,6 +122,15 @@ un no-op ou converge en un tour) :
 3. **EMIT** (store → hub) : quand la projection lean du store diverge de `lastSyncedLeanRef`
    _et_ du hub, un `onChange(lean[])` est émis une seule fois. `lastSyncedLeanRef` (clé sur les valeurs,
    pas l'identité objet) supprime les échos : une valeur poussée par le hub n'est jamais re-émise.
+
+> ⚠️ **`isSeeded`** : le reducer démarre **toujours vide** et n'adopte `leanFilters` que via l'effet
+> SEED — il existe donc systématiquement un rendu où `filtersData.filters` reflète encore l'ancien
+> seed (potentiellement vide) après un changement de `leanFilters`. `isSeeded` (clé sur le **set**
+> d'attributs épinglés, pas les valeurs) permet à un consommateur qui déclenche une requête depuis
+> `filtersData` (ex. la requête de records d'`Explorer.tsx`) de différer son premier tir sur
+> `!isSeeded`, plutôt que de tirer une première fois contre un filtre périmé immédiatement remplacé
+> par une seconde requête correcte. Une édition de **valeur** seule ne fait jamais retomber
+> `isSeeded` à `false` — seul un changement structurel (filtre épinglé/dépinglé) le fait.
 
 > 🔁 **`initialFilters` (cible de `RESET_FILTER`)** est **stable** : reconstruit uniquement sur changement
 > **structurel** (jamais sur une édition de valeur, qui rebaseline-rait à tort). Pour les arbres, les nœuds

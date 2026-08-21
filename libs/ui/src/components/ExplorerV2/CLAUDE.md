@@ -91,30 +91,36 @@ app-studio importe). Construit par `panel-view-settings/store-current-view/viewV
 
 ## Internes
 
-| Fichier / dossier           | Rôle                                                                                                                                                   |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `useViewSettingsReducer.ts` | Fusionne `currentView` (config display reçue) + état éphémère local (recherche, pagination, sélection de masse)                                        |
-| `manage-view-settings-v2/`  | `store-view-settings/`, `useOpenViewSettingsV2.tsx`, type `ViewType`, `defaultPageSizeOptions`                                                         |
-| store de filtres            | `useControlledFilterStore` (`@leav/ui`), **toujours interne**, semé depuis `currentView.filters` (lean) ; émet via `onFiltersChange` (echo-suppressed) |
-| `ExplorerFilters.tsx`       | Barre de chips de filtres (pinned uniquement) — plus de chip de tri (LEAVC-588)                                                                        |
-| `_queries/`                 | `useExplorerData` (records), `useExplorerCountData` (compte total)                                                                                     |
-| `DataView.tsx`              | Routeur de mode d'affichage sur `viewType` : `kanban` → `kanban/KanbanView`, sinon `table/TableView`                                                   |
-| `table/`                    | Mode Tableau : `TableView` + layout table-only (`TableNameCell`, `useColumnWidth`, `useTableScrollableHeight`)                                         |
-| `kanban/`                   | Mode Kanban complet : rendu, pagination per-column et DnD — voir section dédiée                                                                        |
-| `cells/`                    | Rendu de cellule **partagé** entre les modes (`TableCell`, `IdCard`, `TableTagGroup`) — utilisé par `table/` **et** `kanban/` (cartes)                 |
-| `grouping/`                 | Regroupement partagé (`buildKanbanColumns`, `isValidGroupingAxis`, `groupFilters`, types `_types.ts`)                                                  |
+| Fichier / dossier           | Rôle                                                                                                                                                                                                                                                                                                          |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useViewSettingsReducer.ts` | Fusionne `currentView` (config display reçue) + état éphémère local (recherche, pagination, sélection de masse)                                                                                                                                                                                               |
+| `manage-view-settings-v2/`  | `store-view-settings/`, `useOpenViewSettingsV2.tsx`, type `ViewType`, `defaultPageSizeOptions`                                                                                                                                                                                                                |
+| store de filtres            | `useControlledFilterStore` (`@leav/ui`), **toujours interne**, semé depuis `currentView.filters` (lean) ; émet via `onFiltersChange` (echo-suppressed)                                                                                                                                                        |
+| `ExplorerFilters.tsx`       | Barre de chips de filtres (pinned uniquement) — plus de chip de tri (LEAVC-588)                                                                                                                                                                                                                               |
+| `_queries/`                 | `useExplorerData` (records — **données uniquement**, plus aucune métadonnée d'attribut), `useExplorerCountData` (compte total), `useExplorerLibraryMetadata` (library + **tous** ses attributs, label déjà localisé, chargés une fois en amont dans `Explorer.tsx` et redescendus en props — voir ci-dessous) |
+| `DataView.tsx`              | Routeur de mode d'affichage sur `viewType` : `kanban` → `kanban/KanbanView`, sinon `table/TableView`                                                                                                                                                                                                          |
+| `table/`                    | Mode Tableau : `TableView` + layout table-only (`TableNameCell`, `useColumnWidth`, `useTableScrollableHeight`)                                                                                                                                                                                                |
+| `kanban/`                   | Mode Kanban complet : rendu, pagination per-column et DnD — voir section dédiée                                                                                                                                                                                                                               |
+| `cells/`                    | Rendu de cellule **partagé** entre les modes (`TableCell`, `IdCard`, `TableTagGroup`) — utilisé par `table/` **et** `kanban/` (cartes)                                                                                                                                                                        |
+| `grouping/`                 | Regroupement partagé (`buildKanbanColumns`, `isValidGroupingAxis`, `groupFilters`, types `_types.ts`)                                                                                                                                                                                                         |
 
-> ⚠️ `actions-mass/edit-attribute/` est une **copie intégrale** de son homologue v1 : toute
-> correction est à porter dans les deux. La sémantique du mapping `saveValueBulk` (`after: null`
-> **vide** la valeur, « ne pas changer » = entrée omise, d'où la sentinelle `DO_NOT_CHANGE`) est
-> documentée dans [`Explorer/CLAUDE.md`](../Explorer/CLAUDE.md#édition-en-masse--la-sémantique-de-after-dans-savevaluebulk).
+> ⚠️ `actions-mass/edit-attribute/` **n'est plus une copie intégrale** de son homologue v1 :
+> `useMassEditableAttributes.tsx` (dérivation pure depuis `attributesProperties`, sans requête) et
+> `_types.ts` (`MassEditableAttribute.label: string`, `dependencies[].label` supprimé) ont
+> divergé — le reste du dossier (modales, mapping `saveValueBulk`…) reste identique. La sémantique
+> du mapping `saveValueBulk` (`after: null` **vide** la valeur, « ne pas changer » = entrée omise,
+> d'où la sentinelle `DO_NOT_CHANGE`) est documentée dans
+> [`Explorer/CLAUDE.md`](../Explorer/CLAUDE.md#édition-en-masse--la-sémantique-de-after-dans-savevaluebulk).
 
 ---
 
 ## Édition en masse d'attribut (`actions-mass/edit-attribute/`)
 
-> ⚠️ **Copie intégrale** de son homologue v1 : toute correction est à porter dans les deux
-> (vérifier avec `diff -rq` entre les deux dossiers).
+> ⚠️ **Copie intégrale de son homologue v1, sauf deux fichiers** : `useMassEditableAttributes.tsx`
+> (dérivation pure depuis `attributesProperties`, sans requête serveur ni `libraryId`) et `_types.ts`
+> (`MassEditableAttribute.label` en `string` déjà localisé, `dependencies[].label` supprimé —
+> jamais lu). Toute correction hors de ces deux fichiers est à porter dans les deux dossiers
+> (vérifier avec `diff -rq`).
 
 ### La sémantique de `after` dans `saveValueBulk`
 
@@ -140,9 +146,10 @@ Plan et décisions : [`docs/explorer-kanban-plan.md`](../../../../../docs/explor
 Colonnes = nœuds racine de l'arbre lié à l'attribut axe (`groupByAttributeId`, dérivé du marqueur
 `isGroupBy` de la vue). **Phase 1 : axe = attribut `tree` uniquement** — le picker d'app-studio filtre
 via `isValidKanbanAxis` ; le prédicat général ADR-011 (`isValidGroupingAxis`, listes fermées incluses)
-prendra le relais avec le lot 2 (LEAVC-1076). Métadonnées d'axe (`linked_tree`, `multiple_values`)
-chargées **en amont** par `useKanbanAxisAttribute` (dans `KanbanView`) — ne pas les dériver des
-records chargés (board vide).
+prendra le relais avec le lot 2 (LEAVC-1076). Les métadonnées d'attribut (dont celles de l'axe —
+`linked_tree`, `multiple_values`) ne viennent **jamais** des records : elles sont lues dans
+`attributesProperties`, chargé en amont par `useExplorerLibraryMetadata` (`Explorer.tsx`) et
+redescendu en prop à `KanbanView` — donc disponibles même quand le board n'a encore aucune carte.
 
 **Deux chemins de données** :
 
