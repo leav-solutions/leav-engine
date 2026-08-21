@@ -607,17 +607,30 @@ describe('useControlledFilterStore', () => {
         });
 
         it('drops back to false on a STRUCTURAL change (a filter pinned/unpinned), settling true again', async () => {
+            // `rerender` is wrapped in `act()`, which flushes the SEED effect (and the state update it
+            // triggers) before returning — every mock in this file resolves synchronously, so reading
+            // `result.current.isSeeded` right after `rerender()` would already see the SETTLED value,
+            // never the deferral window this test is actually about. Probing every render pass (pushed
+            // synchronously from inside the hook callback) is the only way to observe it.
+            const seenIsSeeded: boolean[] = [];
             const {result, rerender} = renderHook(
-                ({leanFilters}) => useControlledFilterStore({leanFilters, libraryId: 'lib'}),
+                ({leanFilters}) => {
+                    const store = useControlledFilterStore({leanFilters, libraryId: 'lib'});
+                    seenIsSeeded.push(store.isSeeded);
+                    return store;
+                },
                 {initialProps: {leanFilters: [leanStatus(['active'])]}},
             );
             await waitFor(() => expect(result.current.isSeeded).toBe(true));
+            seenIsSeeded.length = 0; // only care about what happens after the structural change below
 
             // A second filter is pinned: the pinned attribute-path SET changes (structural), not just a value.
             rerender({leanFilters: [leanStatus(['active']), leanSmart(['t1'])]});
 
             await waitFor(() => expect(result.current.filtersData.filters).toHaveLength(2));
             expect(result.current.isSeeded).toBe(true);
+            // The deferral window was actually crossed, not just skipped straight to the settled value.
+            expect(seenIsSeeded).toContain(false);
         });
 
         it('stays true across a VALUE-only edit (never re-triggers the wait)', async () => {
