@@ -4,7 +4,7 @@
     "baseBranchPatterns": ["develop"],
     "prHourlyLimit": 5,
     "dependencyDashboard": true,
-    "ignoreDeps": ["nwsapi"],
+    "ignoreDeps": ["nwsapi", "aristid-ds"],
     "lockFileMaintenance": {
         "enabled": true
     },
@@ -25,26 +25,24 @@
         {
             "description": "Enable npm detection",
             "enabled": true,
-            "matchManagers": ["npm"]
+            "matchManagers": ["npm"],
+            "minimumReleaseAge": "3 days"
         },
         {
             "description": "Group all npm patch updates into one PR",
             "matchUpdateTypes": ["patch"],
             "groupName": "all npm patch updates",
             "matchManagers": ["npm"],
-            "automerge": true
+            "automerge": true,
+            "minimumReleaseAge": "3 days"
         },
         {
             "description": "Update Playwright (npm + Docker image, MR commune)",
             "matchPackageNames": ["@playwright/test", "mcr.microsoft.com/playwright"],
             "matchManagers": ["gitlabci", "npm"],
             "groupName": "playwright",
-            "enabled": true
-        },
-        {
-            "description": "Ignore aristid-ds dependencies",
-            "matchPackageNames": ["aristid-ds"],
-            "enabled": false
+            "enabled": true,
+            "minimumReleaseAge": "3 days"
         }
     ]
 }
