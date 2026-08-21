@@ -21,6 +21,7 @@ export const IdCard: FunctionComponent<IIdCardProps> = ({item, hasColorConfigure
 
     return (
         <KitIdCard
+            size="xxs-medium"
             avatarProps={avatarProps}
             title={label ?? id}
             description={subLabel ?? undefined}
