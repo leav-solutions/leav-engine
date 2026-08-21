@@ -3,6 +3,8 @@ import {type IKitAvatar} from 'aristid-ds/dist/Kit/DataDisplay/Avatar/types';
 import {type FunctionComponent} from 'react';
 import {type RecordIdentityFragment} from '_ui/_gqlTypes';
 
+const NO_COLOR = 'transparent';
+
 interface IIdCardProps {
     item: RecordIdentityFragment['whoAmI'];
 }
@@ -21,7 +23,7 @@ export const IdCard: FunctionComponent<IIdCardProps> = ({item}) => {
             avatarProps={avatarProps}
             title={label ?? id}
             description={subLabel ?? undefined}
-            color={color ?? undefined}
+            color={color ?? NO_COLOR}
         />
     );
 };

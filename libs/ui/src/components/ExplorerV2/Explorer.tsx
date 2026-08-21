@@ -239,6 +239,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {
             attributesProperties,
+            libraryColorConfigById,
             label: libraryLabel,
             behavior: libraryBehavior,
             hasCreateRecordPermission,
@@ -669,6 +670,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                             kanbanColumns={isPerColumnKanban ? kanbanColumnsData : undefined}
                             dataGroupedFilteredSorted={data?.records ?? emptyArray}
                             attributesProperties={attributesProperties}
+                            libraryColorConfigById={libraryColorConfigById}
                             attributesToDisplay={
                                 /* ⚠️ whoAmI column will always be displayed first*/ view.attributesIds
                             }

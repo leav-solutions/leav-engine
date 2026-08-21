@@ -94,6 +94,7 @@ export const TableView = memo(
         dataGroupedFilteredSorted,
         attributesToDisplay,
         attributesProperties,
+        libraryColorConfigById,
         paginationProps,
         itemActions,
         selection: {onSelectItem, onSelectionChange, selectedKeys, isMassSelectionAll, mode},
@@ -118,6 +119,7 @@ export const TableView = memo(
                     <TableCell
                         attributeProperties={attributesProperties[attributeName]}
                         values={item.propertiesById[attributeName]}
+                        libraryColorConfigById={libraryColorConfigById}
                     />
                 ),
             }) satisfies KitTableColumnType<IItemData>;
@@ -144,7 +146,13 @@ export const TableView = memo(
         const whoIAmColumn = useWhoAmIColumn({
             ...getColumnProps(WHO_AM_I_COLUMN),
             fixed: 'left',
-            render: (_, item) => <TableNameCell item={item} itemActions={itemActions} />,
+            render: (_, item) => (
+                <TableNameCell
+                    item={item}
+                    itemActions={itemActions}
+                    hasColorConfigured={libraryColorConfigById[item.libraryId] ?? true}
+                />
+            ),
             shouldCellUpdate: (record, prevRecord) => isMassSelectionAll || record.whoAmI !== prevRecord.whoAmI,
         });
 

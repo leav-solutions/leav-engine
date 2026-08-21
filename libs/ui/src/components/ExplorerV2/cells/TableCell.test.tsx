@@ -416,4 +416,65 @@ describe('TableCell component', () => {
             });
         });
     });
+
+    describe('Color config gating the IdCard swatch (LEAVC-1133)', () => {
+        test('For a mono-valued link attribute, omits the swatch when the target library has no color configured', async () => {
+            const linkValue: PropertyValueLinkValueFragment[] = [
+                {linkPayload: {id: 'singlevalRecord1', whoAmI: {...mockRecord, color: null}}},
+            ];
+            const attributeProperties: CellAttributeProperties = {
+                id: 'default',
+                type: AttributeType.advanced_link,
+                multiple_values: false,
+            };
+
+            const {container} = render(
+                <TableCell
+                    values={linkValue}
+                    attributeProperties={attributeProperties}
+                    libraryColorConfigById={{[mockRecord.library.id]: false}}
+                />,
+            );
+
+            expect(container.querySelector('.card-color')).not.toBeInTheDocument();
+        });
+
+        test('For a mono-valued tree attribute, reserves the swatch space when the target library has a color configured', async () => {
+            const treeValue: PropertyValueTreeValueFragment[] = [
+                {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, color: null}}}},
+            ];
+            const attributeProperties: CellAttributeProperties = {
+                id: 'default',
+                type: AttributeType.tree,
+                multiple_values: false,
+            };
+
+            const {container} = render(
+                <TableCell
+                    values={treeValue}
+                    attributeProperties={attributeProperties}
+                    libraryColorConfigById={{[mockRecord.library.id]: true}}
+                />,
+            );
+
+            expect(container.querySelector('.card-color')).toHaveStyle({backgroundColor: 'transparent'});
+        });
+
+        test('defaults to reserving the swatch space when the library is missing from the map', async () => {
+            const linkValue: PropertyValueLinkValueFragment[] = [
+                {linkPayload: {id: 'singlevalRecord1', whoAmI: {...mockRecord, color: null}}},
+            ];
+            const attributeProperties: CellAttributeProperties = {
+                id: 'default',
+                type: AttributeType.advanced_link,
+                multiple_values: false,
+            };
+
+            const {container} = render(
+                <TableCell values={linkValue} attributeProperties={attributeProperties} libraryColorConfigById={{}} />,
+            );
+
+            expect(container.querySelector('.card-color')).toHaveStyle({backgroundColor: 'transparent'});
+        });
+    });
 });

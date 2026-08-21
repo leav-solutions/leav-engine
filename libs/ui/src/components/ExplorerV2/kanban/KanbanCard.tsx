@@ -16,6 +16,7 @@ interface IKanbanCardProps {
     kanbanColumn: IKanbanColumn;
     cardAttributeIds: string[];
     attributesProperties: IDataViewChildProps['attributesProperties'];
+    libraryColorConfigById: IDataViewChildProps['libraryColorConfigById'];
     isDragEnabled: boolean;
     isSelected: boolean;
     onSelect?: (event: CheckboxChangeEvent) => void;
@@ -27,6 +28,7 @@ export const KanbanCard = ({
     kanbanColumn,
     cardAttributeIds,
     attributesProperties,
+    libraryColorConfigById,
     isDragEnabled,
     isSelected,
     onSelect,
@@ -54,6 +56,7 @@ export const KanbanCard = ({
             card={card}
             cardAttributeIds={cardAttributeIds}
             attributesProperties={attributesProperties}
+            libraryColorConfigById={libraryColorConfigById}
             isSelected={isSelected}
             onSelect={onSelect}
         />

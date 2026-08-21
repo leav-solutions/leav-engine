@@ -49,10 +49,12 @@ describe('useExplorerLibraryMetadata', () => {
 
             expect(result.current).toEqual({
                 attributesProperties: {},
+                libraryColorConfigById: {},
                 label: null,
                 behavior: null,
                 hasCreateRecordPermission: false,
                 loading: false,
+                error: undefined,
             });
         });
     });
@@ -101,6 +103,122 @@ describe('useExplorerLibraryMetadata', () => {
             await waitFor(() => expect(result.current.loading).toBe(false));
 
             expect(result.current.attributesProperties).toEqual({});
+        });
+    });
+
+    describe('libraryColorConfigById', () => {
+        it('should key the entrypoint library by whether it has a color attribute configured', async () => {
+            const {result} = renderHook(() => useExplorerLibraryMetadata({libraryId}), {
+                mocks: [
+                    metadataMock({
+                        recordIdentityConf: {__typename: 'RecordIdentityConf', color: 'colorAttribute'},
+                    }),
+                ],
+            });
+
+            await waitFor(() => expect(result.current.loading).toBe(false));
+
+            expect(result.current.libraryColorConfigById).toEqual({[libraryId]: true});
+        });
+
+        it('should mark the entrypoint library as false when it has no color attribute configured', async () => {
+            const {result} = renderHook(() => useExplorerLibraryMetadata({libraryId}), {
+                mocks: [metadataMock({recordIdentityConf: null})],
+            });
+
+            await waitFor(() => expect(result.current.loading).toBe(false));
+
+            expect(result.current.libraryColorConfigById).toEqual({[libraryId]: false});
+        });
+
+        it("should key a link attribute's target library by its own color config", async () => {
+            const {result} = renderHook(() => useExplorerLibraryMetadata({libraryId}), {
+                mocks: [
+                    metadataMock({
+                        recordIdentityConf: null,
+                        attributes: [
+                            {
+                                __typename: 'LinkAttribute',
+                                id: 'campaign_manager',
+                                label: {fr: 'Responsable', en: 'Manager'},
+                                type: AttributeType.simple_link,
+                                format: null,
+                                multiple_values: false,
+                                multi_link_display_option: null,
+                                multi_tree_display_option: null,
+                                linked_library: {
+                                    __typename: 'Library',
+                                    id: 'users',
+                                    recordIdentityConf: {__typename: 'RecordIdentityConf', color: 'colorAttribute'},
+                                },
+                            },
+                        ],
+                    }),
+                ],
+            });
+
+            await waitFor(() => expect(result.current.loading).toBe(false));
+
+            expect(result.current.libraryColorConfigById).toEqual({[libraryId]: false, users: true});
+        });
+
+        it("should key every library linked to a tree attribute's tree by its own color config", async () => {
+            const {result} = renderHook(() => useExplorerLibraryMetadata({libraryId}), {
+                mocks: [
+                    metadataMock({
+                        recordIdentityConf: null,
+                        attributes: [
+                            {
+                                __typename: 'TreeAttribute',
+                                id: 'category',
+                                label: {fr: 'Catégorie', en: 'Category'},
+                                type: AttributeType.tree,
+                                format: null,
+                                multiple_values: false,
+                                multi_link_display_option: null,
+                                multi_tree_display_option: null,
+                                linked_tree: {
+                                    __typename: 'Tree',
+                                    id: 'categories',
+                                    libraries: [
+                                        {
+                                            __typename: 'TreeLibrary',
+                                            library: {
+                                                __typename: 'Library',
+                                                id: 'products',
+                                                recordIdentityConf: {
+                                                    __typename: 'RecordIdentityConf',
+                                                    color: 'colorAttribute',
+                                                },
+                                            },
+                                        },
+                                        {
+                                            __typename: 'TreeLibrary',
+                                            library: {
+                                                __typename: 'Library',
+                                                id: 'brands',
+                                                recordIdentityConf: null,
+                                            },
+                                        },
+                                    ],
+                                },
+                                permissions_conf_dependent_values: {
+                                    __typename: 'TreePermissionsDependentValuesConf',
+                                    dependenciesTreeAttributes: [],
+                                },
+                            },
+                        ],
+                    }),
+                ],
+            });
+
+            await waitFor(() => expect(result.current.loading).toBe(false));
+
+            expect(result.current.libraryColorConfigById).toEqual({
+                [libraryId]: false,
+                products: true,
+                brands: false,
+            });
         });
     });
 });

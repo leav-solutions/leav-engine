@@ -8,6 +8,7 @@ interface IKanbanCardContentProps {
     card: IItemData;
     cardAttributeIds: string[];
     attributesProperties: IDataViewChildProps['attributesProperties'];
+    libraryColorConfigById: IDataViewChildProps['libraryColorConfigById'];
     isSelected?: boolean;
     onSelect?: (event: CheckboxChangeEvent) => void;
 }
@@ -21,6 +22,7 @@ export const KanbanCardContent = ({
     card,
     cardAttributeIds,
     attributesProperties,
+    libraryColorConfigById,
     isSelected = false,
     onSelect,
 }: IKanbanCardContentProps) => {
@@ -43,6 +45,7 @@ export const KanbanCardContent = ({
                                 <TableCell
                                     attributeProperties={attributesProperties[attributeId]}
                                     values={card.propertiesById[attributeId]}
+                                    libraryColorConfigById={libraryColorConfigById}
                                 />
                             </div>
                         ))}

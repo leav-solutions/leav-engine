@@ -27,6 +27,13 @@ export type AttributeProperties = WithLocalizedLabel<ExplorerV2AttributeProperti
  *  (`useExplorerLibraryMetadata`), no longer derived from the first record. */
 export type AttributesPropertiesById = {[attributeId: string]: AttributeProperties};
 
+/** Whether a Library's identity card has a color attribute configured, keyed by library id. Covers
+ *  the entrypoint library plus the target(s) of every `link`/`tree` attribute (a record shown via
+ *  `IdCard` always belongs to one of these — see `useExplorerLibraryMetadata`). Missing an id means
+ *  the config genuinely wasn't reachable (stale attribute, query error); readers default to `true`
+ *  (reserve the swatch space) rather than assume `false`. */
+export type LibraryColorConfigById = {[libraryId: string]: boolean};
+
 /** What a cell renderer needs: everything but the label (owned by the column header). */
 export type CellAttributeProperties = Pick<
     AttributeProperties,
@@ -208,6 +215,7 @@ export interface IDataViewChildProps {
     dataGroupedFilteredSorted: IItemData[];
     itemActions: IItemAction[];
     attributesProperties: AttributesPropertiesById;
+    libraryColorConfigById: LibraryColorConfigById;
     attributesToDisplay: string[];
     paginationProps?: {
         pageSizeOptions: number[];
