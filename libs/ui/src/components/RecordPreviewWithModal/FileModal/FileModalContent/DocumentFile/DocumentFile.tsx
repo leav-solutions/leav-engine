@@ -30,6 +30,7 @@ function DocumentFile({fileData, fallback}: IFileViewerProps): JSX.Element {
                 data-testid="document-viewer"
                 ref={viewerRef}
                 src={`${fileData.whoAmI.preview.pdf}#toolbar=0`}
+                title={fileData.file_name[0]?.value}
                 width="100%"
                 height="100%"
                 allowFullScreen
