@@ -160,6 +160,21 @@ export const KanbanView = ({
     // `Explorer.tsx` only mounts `DataView` once the metadata map has loaded.
     const cardAttributeIds = attributesToDisplay.filter(attributeId => attributesProperties[attributeId]);
 
+    // Diagnostics: a missing id isn't always a stale one (deleted attribute, cloned view) — it can
+    // also be a metadata query failure or a stale cache entry (see `useExplorerLibraryMetadata`),
+    // both of which silently hide ALL card attributes rather than just one. Keyed on the id set (not
+    // on `attributesProperties` itself) so this doesn't re-fire on every unrelated re-render.
+    const missingAttributeIdsSignature = attributesToDisplay
+        .filter(attributeId => !attributesProperties[attributeId])
+        .join(',');
+    useEffect(() => {
+        if (missingAttributeIdsSignature) {
+            console.warn(
+                `[ExplorerV2] KanbanView: attribute id(s) not found in attributesProperties, hidden from cards: ${missingAttributeIdsSignature}`,
+            );
+        }
+    }, [missingAttributeIdsSignature]);
+
     const onCardClickAction = itemActions.find(action => action.useItemActionOnRowClick && !action.disabled);
 
     // Per-card selection, mirroring the table view: "simple" mode keeps a single key, "multiple"

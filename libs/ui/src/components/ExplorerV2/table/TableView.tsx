@@ -1,4 +1,4 @@
-import {type ComponentProps, type Key, memo, useCallback, useState} from 'react';
+import {type ComponentProps, type Key, memo, useCallback, useEffect, useState} from 'react';
 import {KitPagination, KitTable} from 'aristid-ds';
 import {type KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/types';
 import styled from 'styled-components';
@@ -125,7 +125,21 @@ export const TableView = memo(
         // `attributesProperties` covers every REAL attribute of the library (loaded independently of
         // any record): a stale attribute id left in the view (deleted attribute, cloned view) is the
         // only way `attributesProperties[id]` can miss, so it is filtered out here rather than crashing.
+        const missingAttributeIds = attributesToDisplay.filter(id => !attributesProperties[id]);
         const columns = attributesToDisplay.filter(id => attributesProperties[id]).map(getColumnProps);
+
+        // Diagnostics: a missing id isn't always a stale one (deleted attribute, cloned view) — it can
+        // also be a metadata query failure or a stale cache entry (see `useExplorerLibraryMetadata`),
+        // both of which silently hide ALL columns rather than just one. Keyed on the id set (not on
+        // `attributesProperties` itself) so this doesn't re-fire on every unrelated re-render.
+        const missingAttributeIdsSignature = missingAttributeIds.join(',');
+        useEffect(() => {
+            if (missingAttributeIdsSignature) {
+                console.warn(
+                    `[ExplorerV2] TableView: attribute id(s) not found in attributesProperties, column(s) hidden: ${missingAttributeIdsSignature}`,
+                );
+            }
+        }, [missingAttributeIdsSignature]);
 
         const whoIAmColumn = useWhoAmIColumn({
             ...getColumnProps(WHO_AM_I_COLUMN),
