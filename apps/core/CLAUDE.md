@@ -238,6 +238,28 @@ défaut une fonction qui retourne un `IMigration` (`{run(ctx)}`) — cf. modèle
 
 ---
 
+## Métriques OTel
+
+Convention de nommage des instruments : `leav.<domaine>.<sous-domaine>.<mesure>`, un `_metrics.ts`
+colocalisé par domaine (ex. [`infra/cache/_metrics.ts`](src/infra/cache/_metrics.ts),
+[`domain/automation/_metrics.ts`](src/domain/automation/_metrics.ts)), et un meter nommé d'après le
+domaine seul (`getMeter('cache', ...)`), sans préfixe.
+
+Le préfixe `leav.` existe pour rendre les collisions impossibles sur le Prometheus visé, qui est
+**partagé** entre plusieurs applications : sans lui, un `cache_*` ou un `automation_*` poussé par une
+autre application créerait un homonyme que Prometheus stocke sans erreur, mais qu'une requête
+`sum(rate(...))` mélangerait silencieusement avec le nôtre. Le meter, lui, ne porte pas ce préfixe :
+son nom est le scope d'instrumentation (exposé en `otel_scope_name`), pas un composant du nom de la
+métrique — le préfixer n'ajouterait aucun `leav_` et créerait de la confusion. Cette convention va à
+l'encontre de la recommandation OTel générale (ne pas dupliquer dans le nom ce que portent les
+attributs de ressource, ex. `OTEL_SERVICE_NAME`), mais suit celle de Prometheus (préfixe applicatif) —
+c'est un choix délibéré pour ce contexte multi-applications.
+
+Un dashboard Grafana par meter dans
+[`docker/monitoring/grafana/provisioning/dashboards/json/`](../../docker/monitoring/grafana/provisioning/dashboards/json/).
+
+---
+
 ## Tests
 
 ```bash
