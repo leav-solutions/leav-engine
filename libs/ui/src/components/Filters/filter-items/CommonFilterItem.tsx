@@ -17,7 +17,9 @@ import {
 } from '../_types';
 import {ACTIVE_ATTRIBUTE_ID} from '_ui/constants';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {useDateFormat} from '_ui/hooks';
 import {AttributeConditionFilter} from '_ui/types';
+import {dateValuesSeparator} from '../prepareFiltersForRequest';
 import dayjs from 'dayjs';
 
 const FilterStyled = styled(KitFilter)`
@@ -51,11 +53,23 @@ const getConditionPrefix = (filter: UIFilter, t: TFunction): string => {
     return conditionOption?.label ? `${conditionOption.label} ` : '';
 };
 
-const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
+// formattedValue is frozen in whichever locale was active when picked, so it can't be trusted on display.
+const _formatDateFilterValue = (value: string | null, dateFormat: string): string | null => {
+    if (!value) {
+        return null;
+    }
+    if (value.includes(dateValuesSeparator)) {
+        const [from, to] = value.split(dateValuesSeparator).map(rawDate => dayjs.unix(Number(rawDate)));
+        return `${from.format(dateFormat)} -> ${to.format(dateFormat)}`;
+    }
+    return dayjs.unix(Number(value)).format(dateFormat);
+};
+
+const getFilterValues = (filter: UIFilter, t: TFunction, dateFormat: string): string[] => {
     if (filter.condition && nullValueConditions.includes(filter.condition as RecordFilterCondition)) {
         if (filter.attribute.format === AttributeFormat.date) {
             if (filter.condition === AttributeConditionFilter.TODAY) {
-                return [dayjs().format('YYYY-MM-DD')];
+                return [dayjs().format(dateFormat)];
             } else if (filter.condition === AttributeConditionFilter.IS_EMPTY) {
                 return [t('explorer.date_presets.undefined')];
             }
@@ -88,17 +102,20 @@ const getFilterValues = (filter: UIFilter, t: TFunction): string[] => {
         return filter.value ? [...filterValues, String(filter.value)] : filterValues;
     }
 
-    if (
-        isUIFilterStandard(filter) &&
-        [AttributeFormat.date, AttributeFormat.boolean].includes(filter.attribute.format)
-    ) {
+    if (isUIFilterStandard(filter) && filter.attribute.format === AttributeFormat.date) {
+        const liveFormattedValue = _formatDateFilterValue(filter.value, dateFormat);
+        if (!liveFormattedValue) {
+            return filterValues;
+        }
+        return [...filterValues, `${getConditionPrefix(filter, t)}${liveFormattedValue}`];
+    }
+
+    if (isUIFilterStandard(filter) && filter.attribute.format === AttributeFormat.boolean) {
         if (!filter.formattedValue) {
             return filterValues;
         }
-        // Boolean selection is stored with an EQUAL condition (BooleanAttributeDropDown), but its
-        // operator is not user-chosen, so it must stay unprefixed ("Oui"/"Non"). Only dates are prefixed.
-        const prefix = filter.attribute.format === AttributeFormat.date ? getConditionPrefix(filter, t) : '';
-        return [...filterValues, `${prefix}${filter.formattedValue}`];
+        // Stored with an EQUAL condition, but that's not user-chosen, so stays unprefixed ("Oui"/"Non").
+        return [...filterValues, filter.formattedValue];
     }
 
     const valuesList = filter.attribute.valuesList;
@@ -152,6 +169,7 @@ export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
     className,
 }) => {
     const {t} = useSharedTranslation();
+    const dateFormat = useDateFormat();
 
     let canReset = true;
     let effectiveFilter = filter;
@@ -172,7 +190,7 @@ export const CommonFilterItem: FunctionComponent<ICommonFilterProps> = ({
             readonly={readonly}
             expandable={!readonly}
             label={effectiveFilter.attribute.label}
-            values={getFilterValues(effectiveFilter, t)}
+            values={getFilterValues(effectiveFilter, t, dateFormat)}
             dropDownProps={{
                 placement: 'bottomLeft',
                 popupRender: () => (
