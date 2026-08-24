@@ -417,20 +417,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aristid/eslint-plugin@npm:2.4.0":
-  version: 2.4.0
-  resolution: "@aristid/eslint-plugin@npm:2.4.0"
+"@aristid/eslint-plugin@npm:2.5.0":
+  version: 2.5.0
+  resolution: "@aristid/eslint-plugin@npm:2.5.0"
   dependencies:
     eslint: "npm:9.39.5"
     eslint-import-resolver-typescript: "npm:4.4.5"
     eslint-plugin-import: "npm:2.32.0"
     eslint-plugin-jsx-a11y: "npm:6.10.2"
+    eslint-plugin-no-only-tests: "npm:3.4.0"
     eslint-plugin-react: "npm:7.37.5"
     eslint-plugin-react-hooks: "npm:7.1.1"
     eslint-plugin-react-refresh: "npm:0.5.4"
     eslint-plugin-workspaces: "npm:0.12.1"
     typescript-eslint: "npm:8.67.0"
-  checksum: 10/06608805bae4643fbb73643f2ae095debbe29cb4ed89ed45e5bd29b3ba51e85ee14e22279d5de202a0661bce993ca63cdaf1210d58e23744830462755a68e1dd
+  checksum: 10/6a5c6255bf652f72ecc4cada22e2cf04fcad1200ae9aa020d4f4dfd4b8f36362040c39bef829cb142d18a43edd17e90582783c6902148aca006c447b649a522d
   languageName: node
   linkType: hard
 
@@ -15289,7 +15290,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "leav-monorepo@workspace:."
   dependencies:
-    "@aristid/eslint-plugin": "npm:2.4.0"
+    "@aristid/eslint-plugin": "npm:2.5.0"
     "@commitlint/cli": "npm:21.2.2"
     "@commitlint/config-conventional": "npm:21.2.2"
     "@typescript/native": "npm:typescript@^7.0.2"
@@ -15297,7 +15298,6 @@ __metadata:
     cz-conventional-changelog: "npm:3.3.0"
     eslint: "npm:9.39.5"
     eslint-formatter-gitlab: "npm:7.2.0"
-    eslint-plugin-no-only-tests: "npm:3.4.0"
     husky: "npm:6.0.0"
     lint-staged: "npm:16.4.0"
     prettier: "npm:3.9.6"

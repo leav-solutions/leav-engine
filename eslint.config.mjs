@@ -1,6 +1,5 @@
 import {defineConfig} from 'eslint/config';
 import aristid from '@aristid/eslint-plugin';
-import noOnlyTests from 'eslint-plugin-no-only-tests';
 
 export default defineConfig([
     {
@@ -50,7 +49,6 @@ export default defineConfig([
      * if we want to keep them and generalize them in other projects.
      */
     {
-        plugins: {'no-only-tests': noOnlyTests},
         rules: {
             '@typescript-eslint/adjacent-overload-signatures': 'error',
             '@typescript-eslint/array-type': ['error', {default: 'array-simple', readonly: 'array-simple'}],
@@ -140,7 +138,6 @@ export default defineConfig([
     {
         files: ['**/*.test.ts', '**/*.spec.ts', '**/*.test.tsx', '**/*.spec.tsx', '**/__tests__/**'],
         rules: {
-            'no-only-tests/no-only-tests': 'error',
             'no-console': 'off',
             '@typescript-eslint/consistent-type-assertions': 'off',
         },
