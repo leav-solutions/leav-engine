@@ -4,6 +4,7 @@ import {type KitTableColumnType} from 'aristid-ds/dist/Kit/DataDisplay/Table/typ
 import styled from 'styled-components';
 import isEqual from 'lodash/isEqual';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {type PropertyValueFragment} from '_ui/_gqlTypes';
 import {type IDataViewChildProps, type IItemData} from '../_types';
 import {TableCell} from '../cells/TableCell';
 import {defaultPaginationHeight, useTableScrollableHeight} from './useTableScrollableHeight';
@@ -12,6 +13,9 @@ import {WHO_AM_I_COLUMN} from '../_constants';
 import {TableNameCell} from './TableNameCell';
 import cn from 'classnames';
 import {throttle} from 'lodash';
+
+/** Module-level so that a count-only column keeps a stable reference across renders. */
+const emptyValues: PropertyValueFragment[] = [];
 
 const tableRowHeight = 48;
 const tableHeaderMinLineHeight = 22;
@@ -113,11 +117,14 @@ export const TableView = memo(
                 width: getFieldColumnWidth(attributesProperties[attributeName]),
                 shouldCellUpdate: (record, prevRecord) =>
                     isMassSelectionAll ||
-                    record.propertiesById[attributeName] !== prevRecord.propertiesById[attributeName],
+                    record.propertiesById[attributeName] !== prevRecord.propertiesById[attributeName] ||
+                    record.valuesCountById[attributeName] !== prevRecord.valuesCountById[attributeName],
                 render: (_, item) => (
                     <TableCell
                         attributeProperties={attributesProperties[attributeName]}
-                        values={item.propertiesById[attributeName]}
+                        // propertiesById/valuesCountById are disjoint; emptyValues keeps a stable ref.
+                        values={item.propertiesById[attributeName] ?? emptyValues}
+                        valuesCount={item.valuesCountById[attributeName]}
                         libraryColorConfigById={libraryColorConfigById}
                     />
                 ),

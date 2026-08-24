@@ -71,6 +71,8 @@ const RightIcon = styled(FontAwesomeIcon)`
 
 interface ITableCellProps {
     values: PropertyValueFragment[];
+    /** Set only for a count-only column (badge_qty): `values` is then empty. */
+    valuesCount?: number;
     attributeProperties: CellAttributeProperties;
     libraryColorConfigById?: LibraryColorConfigById;
 }
@@ -104,6 +106,7 @@ const _buildLinkTreeTag = (label: string | null | undefined, color: string | nul
 
 export const TableCell: FunctionComponent<ITableCellProps> = ({
     values,
+    valuesCount,
     attributeProperties,
     libraryColorConfigById = {},
 }) => {
@@ -135,6 +138,16 @@ export const TableCell: FunctionComponent<ITableCellProps> = ({
     );
 
     if (attributeProperties.multiple_values) {
+        // Must precede the guards below: they're `values.every(...)`, vacuously true on the empty
+        // array a count-only column carries.
+        if (valuesCount !== undefined) {
+            return (
+                <StyledCenteringWrapper>
+                    <KitTag type="primary">{valuesCount}</KitTag>
+                </StyledCenteringWrapper>
+            );
+        }
+
         if (isStandardValues(values, attributeProperties)) {
             const tags = values.map<IKitTag>(value => {
                 switch (attributeProperties.format) {

@@ -143,6 +143,7 @@ export default function ({
                         attributeProperties: Attribute!,
                         recordAttributePermissions: AttributePermissions!
                         values: [GenericValue!]!
+                        valuesCount: Int!
                     }
 
                     type RecordIdentity {
@@ -476,6 +477,12 @@ export default function ({
                             }),
                         values: async (parent: {record: IRecord; attributeId: string}, _, ctx: IQueryInfos) =>
                             _getPropertyValues(parent.record, parent.attributeId, ctx),
+                        // Cardinality only, no identity resolution — for callers like a count-badge
+                        // column (LEAVC-1119). `.length` is deliberate, not a shortcut for an AQL COUNT:
+                        // same read path as `values`, so valuesCount === values.length by construction.
+                        // Selecting both on one property reads (and, on failure, errors) twice.
+                        valuesCount: async (parent: {record: IRecord; attributeId: string}, _, ctx: IQueryInfos) =>
+                            (await _getPropertyValues(parent.record, parent.attributeId, ctx)).length,
                         recordAttributePermissions: async (
                             parent: {record: IRecord; attributeId: string},
                             _,

@@ -8,7 +8,7 @@ import {type IExplorerData} from '../_types';
  * `useExplorerLibraryMetadata`.
  */
 export const mapLibraryDataToExplorerData = (data: ExplorerV2LibraryDataQuery, libraryId: string): IExplorerData => {
-    const records = data.records.list.map(({whoAmI, active, permissions, properties}) => ({
+    const records = data.records.list.map(({whoAmI, active, permissions, properties, badgeProperties}) => ({
         libraryId,
         key: whoAmI.id, // For <KitTable /> only
         itemId: whoAmI.id, // For <KitTable /> only
@@ -23,6 +23,10 @@ export const mapLibraryDataToExplorerData = (data: ExplorerV2LibraryDataQuery, l
             ...whoAmI,
         },
         propertiesById: properties.reduce((acc, {attributeId, values}) => ({...acc, [attributeId]: values}), {}),
+        valuesCountById: badgeProperties.reduce(
+            (acc, {attributeId, valuesCount}) => ({...acc, [attributeId]: valuesCount}),
+            {},
+        ),
     }));
 
     return {

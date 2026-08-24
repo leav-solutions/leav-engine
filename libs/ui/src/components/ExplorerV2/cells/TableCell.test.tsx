@@ -67,6 +67,20 @@ describe('TableCell component', () => {
                 expect(screen.getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
                 expect(screen.getByText('Record A')).toBeVisible();
             });
+
+            test('Should still display IdCard for a mono-valued attribute even if valuesCount is (wrongly) provided', async () => {
+                const attributeProperties: CellAttributeProperties = {
+                    id: 'default',
+                    type: AttributeType.advanced_link,
+                    multiple_values: false,
+                    multi_link_display_option: MultiDisplayOption.badge_qty,
+                };
+
+                render(<TableCell values={linkValue} valuesCount={1} attributeProperties={attributeProperties} />);
+
+                expect(screen.getByRole('img')).toHaveAttribute('src', mockRecord.preview?.small);
+                expect(screen.getByText('Record A')).toBeVisible();
+            });
         });
 
         describe('For tree attribute', () => {
@@ -203,6 +217,19 @@ describe('TableCell component', () => {
                 expect(screen.getByText(linkValues.length).closest('.ant-tag')).toBeVisible();
             });
 
+            test('Should display the server-sent count, not values.length, when values is empty (LEAVC-1119)', async () => {
+                const attributeProperties: CellAttributeProperties = {
+                    id: 'default',
+                    multiple_values: true,
+                    multi_link_display_option: MultiDisplayOption.badge_qty,
+                    type: AttributeType.advanced_link,
+                };
+
+                render(<TableCell values={[]} valuesCount={42} attributeProperties={attributeProperties} />);
+
+                expect(screen.getByText('42').closest('.ant-tag')).toBeVisible();
+            });
+
             test('Should display list of tag', async () => {
                 const attributeProperties: CellAttributeProperties = {
                     id: 'default',
@@ -298,6 +325,19 @@ describe('TableCell component', () => {
                 render(<TableCell values={treeValues} attributeProperties={attributeProperties} />);
 
                 expect(screen.getByText(treeValues.length).closest('.ant-tag')).toBeVisible();
+            });
+
+            test('Should display the server-sent count, not values.length, when values is empty (LEAVC-1119)', async () => {
+                const attributeProperties: CellAttributeProperties = {
+                    id: 'default',
+                    multiple_values: true,
+                    multi_tree_display_option: MultiDisplayOption.badge_qty,
+                    type: AttributeType.tree,
+                };
+
+                render(<TableCell values={[]} valuesCount={42} attributeProperties={attributeProperties} />);
+
+                expect(screen.getByText('42').closest('.ant-tag')).toBeVisible();
             });
 
             test('Should display list of tag', async () => {
