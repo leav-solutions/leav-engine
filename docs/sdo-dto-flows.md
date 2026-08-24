@@ -51,6 +51,24 @@ Statuts émis : `SUCCESS`, `NO_CHANGE` (un `CREATE` sur un `systemId` déjà exi
 l'import — rien n'est écrit), `ERROR`. **Il n'y a pas de détection fine du non-changement** : un
 `UPDATE` appliqué vaut toujours `SUCCESS`, même si aucune valeur ne diffère réellement.
 
+### ⚠️ Deux échecs d'identification que le contrat veut fonctionnels sont techniques ici
+
+`DTOErrorCode` reprend l'intégralité du catalogue partagé avec la Data Platform, mais leav n'en émet
+aujourd'hui que six (`MANDATORY_FIELD_MISSING`, `INVALID_METHOD`, `INVALID_TYPE`, `NOT_AUTHORIZED`,
+`INVALID_FIELD_FORMAT`, `INTERNAL_ERROR`). Deux cas retombent donc sur la branche technique — donc
+**nack sans requeue, message perdu** — là où le contrat attend un rejet fonctionnel :
+
+| Cas                                  | Code attendu (contrat)        | Réel                    |
+| ------------------------------------ | ----------------------------- | ----------------------- |
+| `UPDATE` sur un `systemId` inconnu   | `IDENTIFIER_NOT_FOUND`        | `INTERNAL_ERROR` + nack |
+| lien pointant sur un uuid inexistant | `LINKED_IDENTIFIER_NOT_FOUND` | `INTERNAL_ERROR` + nack |
+
+Le second est structurant : le contrat prévoit que la Data Platform crée un ensemble d'objets liés en
+**plusieurs passes** (créer les objets, puis établir les liens). Un lien non encore résoluble est donc
+un cas **normal**, que l'émetteur doit pouvoir rejouer — pas un incident qui fait disparaître le
+message. Les tests e2e verrouillent le comportement **actuel** : les retourner avec
+[LEAVC-1131](https://aristid.atlassian.net/browse/LEAVC-1131), qui aligne le catalogue.
+
 `sdo_identifier` est construit depuis le **record leav** (uuid + dates), pas depuis le document reçu —
 c'est la raison pour laquelle `ISDOImportDomain.create/update` retournent `{record, changed}` au lieu
 de `void`. Son bloc `identifier` (identifiants métier) suit la même règle **dès que le record
@@ -98,11 +116,15 @@ sens que sur une entité `importEnable: true`, et **neutralise `valueRequired`**
 section suivante) : exiger un attribut qu'on a décidé de ne pas importer rejetterait l'opération pour
 rien.
 
-**Déploiement** : le défaut restrictif couperait les imports des instances déjà configurées. La
-migration `028-enableSdoImportOnMappedLibraries` pose donc `importEnable: true` sur chaque entité du
-mapping existant qui ne se prononce pas — sauf si les imports sont déjà coupés à la racine. Elle ne
-remplit que les clés **absentes**, donc un `false` posé ensuite par les ops survit à un rejeu. Les
-entités **ajoutées après** au mapping devront porter `importEnable: true` explicitement.
+⚠️ **Déploiement : rien ne migre les mappings existants.** Le défaut restrictif de l'entité coupe donc
+les imports SDO **et** DTO de toute instance déjà configurée (le mapping en base ne porte pas la clé)
+tant qu'on ne pose pas `importEnable: true` sur chaque entité concernée. C'est une **action
+d'exploitation** sur la custom config de chaque instance, à faire dans la même livraison que la mise à
+jour du core. Idem pour toute entité ajoutée au mapping par la suite.
+
+**Ne pas écrire de migration pour ça** : c'est un choix assumé, pas un oubli. Une migration devrait
+décider à la place de l'exploitant quelles entités sont importables sur une instance donnée — soit
+l'inverse de ce que LEAVC-1091 cherchait en rendant l'import opt-in.
 
 ## `valueRequired` : uniquement sur l'import DTO
 
@@ -114,7 +136,47 @@ consumer DTO (LEAVC-956) — ni à l'export, ni à l'import SDO, où il reste un
   **présent mais vidé** (`null` / `''` / `[]`) est rejeté.
 - un attribut `skipImport: true` n'est jamais requis, quel que soit son `valueRequired`.
 
+## Ce qu'un chemin pointé ne sait pas faire : l'import
+
+Le mapping accepte un `leavAttributeId` en **chemin pointé** — traversée de lien (`modified_by.email`)
+ou sous-champ d'un attribut `période` / `étendu` (`campaigns_dates.from`, `adresse.city.zipcode`).
+C'est une capacité **d'export uniquement** : à l'import, un chemin ne désigne pas un attribut unique
+dans lequel écrire, donc l'entrée est **écartée en silence** (elle ne fait pas échouer l'opération).
+
+Conséquence à connaître : un attribut `période` **n'est pas importable**, dans aucun des deux flux. Un
+document entrant portant `info.startDate` / `info.endDate` est accepté, et l'attribut de période reste
+vide — alors que [LEAVC-782](https://aristid.atlassian.net/browse/LEAVC-782) annonce le mapping inverse
+comme implémenté. Écart tracé par [LEAVC-1130](https://aristid.atlassian.net/browse/LEAVC-1130), et
+verrouillé en attendant par un test e2e (`sdoImports.test.ts`, « period sub-paths ») qui tombera le jour
+où la limitation sera levée — c'est le but.
+
 ## Tests
+
+Trois suites e2e dans `src/__tests__/e2e/api/sdo/`, un mapping de fixture unique (`sdoConfig.ts`)
+sauvegardé par les trois — ce qui leur permet de tourner en parallèle sans s'écraser. Répartition
+assumée : `sdoImports.test.ts` couvre le **mapping des valeurs** (les 7 types/cardinalités, le diff
+multivalué, le dé-set, les rejets), `dtoImports.test.ts` ce qui est **propre au flux DTO** (enveloppe,
+méthode, statement, codes d'erreur contractuels), `sdoExports.test.ts` la **génération** du SDO. Le
+domaine d'import étant partagé entre SDO et DTO, ne pas dupliquer la matrice des types côté DTO.
+
+Trois pièges d'écriture, tous coûteux à diagnostiquer :
+
+**Attendre l'activation, pas l'existence du record.** `recordDomain.createRecord` insère le record
+**inactif**, écrit ses valeurs, puis l'active. Un test qui attend seulement que le record existe
+(requête par uuid en `retrieveInactive: true`) le trouve dans cet état intermédiaire : il n'a encore
+aucune valeur, et une requête qui ne demande pas les inactifs ne le rend même pas. D'où le
+`expect(record.active).toBe(true)` **dans** le `vi.waitFor` du helper d'attente.
+
+**Sur l'exchange SDO, seul `clientId` distingue un export d'un import.** L'exchange est unique et
+partagé par les deux sens : une queue d'observation bindée dessus reçoit aussi les documents que le
+test vient de publier pour déclencher un import — même `name`, même `systemId`. Un prédicat qui ne
+filtre pas sur `clientId` (posé par leav sur ce qu'il exporte) confond les deux et fait passer un test
+d'absence d'export pour un test réussi.
+
+**Les bascules globales ne sont pas testables e2e.** `settings.sdo.importEnable` / `exportEnable`
+vivent dans la custom config de l'instance, partagée : les basculer en cours de run casserait les
+autres suites SDO qui tournent en parallèle (`maxWorkers: 2`). Elles restent couvertes par les
+unitaires de `importApp` / `exportApp` / `dtoImportApp`. Ne pas retenter.
 
 Les e2e du flux publient et consomment de vrais messages : `src/__tests__/e2e/api/sdo/rabbitMQUtils.ts`
 tient **un canal par usage** (un exchange sur lequel publier, une queue à écouter). C'est structurel :

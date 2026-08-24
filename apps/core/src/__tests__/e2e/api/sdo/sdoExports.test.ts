@@ -432,6 +432,49 @@ describe('SDO Exports', () => {
         await expect(waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID, SDO_EXPORT_TIMER * 4)).rejects.toThrow();
     });
 
+    test('several values saved at once are debounced into a single export carrying them all', async () => {
+        const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
+        const {id: recordId, uuid: recordUUID} = createRecord.record;
+
+        await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID); // CREATE export
+
+        /**
+         * `saveValueBatch` emits one VALUE_SAVE data event *per value*, all within one round trip: this
+         * is the burst the export buffer has to collapse. Going through a batch rather than three
+         * successive `SaveValue` calls keeps the events well inside the debounce window, which is what
+         * makes the assertion stable.
+         */
+        await adminUserSdk.SaveValueBatch({
+            library: SDO_EXPORTS_LIBRARY_ID,
+            recordId,
+            values: [
+                {attribute: SDO_EXPORTS_TEST_ATTRIBUTE_ID, payload: 'debounced'},
+                {attribute: SDO_EXPORTS_ADVANCED_MONO_ATTRIBUTE_ID, payload: 'debounced_advanced'},
+                {attribute: SDO_EXPORTS_ADVANCED_MULTI_ATTRIBUTE_ID, payload: 'debounced_multi'},
+            ],
+        });
+
+        // The very first message must already carry the three values: one per event would mean the
+        // first one only holds the first value.
+        const msg = await waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID);
+
+        expect(msg).toMatchObject({
+            action: 'UPDATE',
+            content: {
+                info: {
+                    value: 'debounced',
+                    advancedMono: 'debounced_advanced',
+                    advancedMulti: ['debounced_multi'],
+                },
+            },
+        });
+
+        // ...and it must be the only one: three exports of the same object would defeat the buffer
+        await expect(waitForSdoOf(SDO_EXPORTS_LIBRARY_ID, recordUUID, SDO_EXPORT_TIMER * 8)).rejects.toThrow(
+            'No matching message',
+        );
+    });
+
     test('deactivating a record triggers an UPDATE export message with systemActive: false', async () => {
         const {createRecord} = await adminUserSdk.CreateRecord({library: SDO_EXPORTS_LIBRARY_ID});
         const {id: recordId, uuid: recordUUID} = createRecord.record;
