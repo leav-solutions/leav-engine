@@ -109,19 +109,25 @@ describe('DTO Imports', () => {
             10000,
         );
 
-    /** Asserts that no statement is ever published for an operation (shorter timeout: nothing to wait for) */
+    /**
+     * Asserts that no statement is ever published for an operation. A statement is published right
+     * after the operation is processed, so this waits the same calibrated delay as
+     * `_waitForProcessing` rather than the generous timeout of a positive wait.
+     */
     const _expectNoStatementOf = (operationId: string) =>
         expect(
             rabbitmqClient.waitForMessage<IDTOStatement>(
                 DTO_STATEMENT_TEST_QUEUE,
                 statement => statement.operationId === operationId,
-                5000,
+                2500,
             ),
         ).rejects.toThrow('No matching message');
 
-    // No positive event to wait for when an operation must be rejected/ignored -> wait a fixed delay,
-    // longer than the processing time observed on the nominal cases.
-    const _waitForProcessing = () => new Promise(resolve => setTimeout(resolve, 5000));
+    // No positive event to wait for when an operation must be rejected/ignored -> wait a fixed delay.
+    // ⚠️ Too short a delay makes such a test pass vacuously rather than fail, hence a calibrated value:
+    // a nominal operation is applied in ~250-500ms, so 2500ms is ~10x that. Same reasoning as the SDO
+    // suite, kept in step with it.
+    const _waitForProcessing = () => new Promise(resolve => setTimeout(resolve, 2500));
 
     beforeAll(async () => {
         conf = await getConfig();
@@ -237,7 +243,7 @@ describe('DTO Imports', () => {
 
                     expect(await _getTestValue(record.id)).toBe('dto_created_value');
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         });
 
@@ -252,7 +258,7 @@ describe('DTO Imports', () => {
                     expect(record.uuid).toBe(uuid);
                     return record.id;
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
 
             // Same systemId, different value: the import must skip it instead of creating a duplicate
@@ -284,7 +290,7 @@ describe('DTO Imports', () => {
                 async () => {
                     expect(await _getTestValue(recordId)).toBe('dto_updated_value');
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         });
 
@@ -344,7 +350,7 @@ describe('DTO Imports', () => {
                 async () => {
                     expect((await _findRecords(uuid))[0].active).toBe(false);
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         }, 25000);
     });
@@ -372,7 +378,7 @@ describe('DTO Imports', () => {
                     expect(found.active).toBe(true);
                     return found;
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
 
             const linkValues = (
@@ -450,7 +456,7 @@ describe('DTO Imports', () => {
                 async () => {
                     expect(await _getTestValue(recordId)).toBe('dto_patched_value');
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         });
 

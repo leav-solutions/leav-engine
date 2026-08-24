@@ -33,11 +33,14 @@ import {SdoAttributes} from '../../../../_constants/systemAttributes';
 const SDO_IMPORTS_EXPORT_MSG_QUEUE = 'test_sdo_imports_export_queue';
 
 /**
- * How long to wait before concluding that no export was emitted: long enough for the export debounce
- * to have fired and published (`SDO_EXPORT_TIMER` is 500ms in the e2e mapping), short enough not to
- * stretch the suite.
+ * How long to wait before concluding that no export was emitted.
+ *
+ * When the wait starts the import has already completed, so only the debounce window
+ * (`SDO_EXPORT_TIMER`, 500ms here) and the publish remain — a full export round-trip measures ~800ms
+ * end to end on this suite. 8x the debounce leaves ~5x that margin: unlike the fixed waits below,
+ * being too short here shows up as a flaky red under load, so the margin is worth its 4 seconds.
  */
-const NO_EXPORT_TIMEOUT_MS = SDO_EXPORT_TIMER * 16;
+const NO_EXPORT_TIMEOUT_MS = SDO_EXPORT_TIMER * 8;
 
 describe('SDO Imports', () => {
     let conf: IConfig;
@@ -82,10 +85,16 @@ describe('SDO Imports', () => {
 
     const _publish = (sdo: unknown) => rabbitmqClient.publishToExchange(conf.sdo.exchange, sdo);
 
-    // No positive event to wait for when a message must be rejected or ignored -> wait a fixed delay,
-    // longer than the processing time observed on the nominal imports. The SDO_IMPORT_ERROR event is
-    // not an alternative: reading it back needs Elasticsearch, absent from the e2e services.
-    const _waitForProcessing = () => new Promise(resolve => setTimeout(resolve, 5000));
+    /**
+     * No positive event to wait for when a message must be rejected or ignored, so the assertion is
+     * "nothing happened" after a fixed delay. The SDO_IMPORT_ERROR event is not an alternative:
+     * reading it back needs Elasticsearch, absent from the e2e services.
+     *
+     * ⚠️ Too short a delay does not fail this kind of test, it makes it pass vacuously — so the value
+     * is calibrated, not guessed: a nominal import completes in ~250-500ms here (see the positive
+     * tests' own durations), and 2500ms is ~10x that, or ~5x a pessimistic CI.
+     */
+    const _waitForProcessing = () => new Promise(resolve => setTimeout(resolve, 2500));
 
     const _findRecords = async (recordUUID: string, libraryId = SDO_IMPORTS_LIBRARY_ID) =>
         (
@@ -114,7 +123,7 @@ describe('SDO Imports', () => {
 
                 return record;
             },
-            {timeout: 5000, interval: 1000},
+            {timeout: 5000, interval: 250},
         );
 
     const _getStandardValues = async (recordId: string, attributeId: string) =>
@@ -163,13 +172,14 @@ describe('SDO Imports', () => {
 
     /** Same, plus its position in the test tree: an incoming SDO references the record, not the node */
     const _createTreeNode = async (label: string) => {
-        const linked = await _createLinkedRecord(label);
+        const {id: recordId, uuid: recordUuid} = await _createLinkedRecord(label);
         const {treeAddElement} = await adminUserSdk.TreeAddElement({
             treeId: SDO_IMPORTS_TREE_ID,
-            element: {id: linked.id, library: SDO_IMPORTS_LINKED_LIBRARY_ID},
+            element: {id: recordId, library: SDO_IMPORTS_LINKED_LIBRARY_ID},
         });
 
-        return {...linked, nodeId: treeAddElement.id};
+        // Named after what they are: an SDO references the *record*, leav stores the *node*
+        return {recordId, recordUuid, nodeId: treeAddElement.id};
     };
 
     beforeAll(async () => {
@@ -400,7 +410,7 @@ describe('SDO Imports', () => {
                         'omp-creator-client',
                     );
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         });
 
@@ -452,7 +462,7 @@ describe('SDO Imports', () => {
                 async () => {
                     expect((await _findRecords(uuid))[0]?.active).toBe(false);
                 },
-                {timeout: 25000, interval: 1000},
+                {timeout: 25000, interval: 250},
             );
         });
 
@@ -513,7 +523,7 @@ describe('SDO Imports', () => {
                     expect(recordData.modified_by[0].payload.id).not.toBe(editorUUID);
                     expect(recordData.whoAmI.label).toBe(null); // label should not be set on import
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         });
 
@@ -533,7 +543,7 @@ describe('SDO Imports', () => {
                 async () => {
                     expect((await _findRecords(recordUUID))[0].active).toBe(false);
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         });
     });
@@ -613,7 +623,7 @@ describe('SDO Imports', () => {
             const node = await _createTreeNode('tree mono target');
             const uuid = crypto.randomUUID();
 
-            await _publish(_sdo({content: _content(uuid, {treeMono: node.uuid})}));
+            await _publish(_sdo({content: _content(uuid, {treeMono: node.recordUuid})}));
 
             const record = await _waitForRecord(uuid);
 
@@ -622,7 +632,7 @@ describe('SDO Imports', () => {
                 expect.objectContaining({
                     payload: expect.objectContaining({
                         id: node.nodeId,
-                        record: expect.objectContaining({id: node.id}),
+                        record: expect.objectContaining({id: node.recordId}),
                     }),
                 }),
             ]);
@@ -633,7 +643,7 @@ describe('SDO Imports', () => {
             const nodeB = await _createTreeNode('tree multi B');
             const uuid = crypto.randomUUID();
 
-            await _publish(_sdo({content: _content(uuid, {treeMulti: [nodeA.uuid, nodeB.uuid]})}));
+            await _publish(_sdo({content: _content(uuid, {treeMulti: [nodeA.recordUuid, nodeB.recordUuid]})}));
 
             const record = await _waitForRecord(uuid);
 
@@ -663,7 +673,7 @@ describe('SDO Imports', () => {
                     expect(await _getLinkValues(record.id, SDO_IMPORTS_ADVANCED_LINK_MULTI_ATTRIBUTE_ID)).toHaveLength(
                         2,
                     ),
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
 
             // B is kept, A must go, C must be added
@@ -680,7 +690,7 @@ describe('SDO Imports', () => {
 
                     expect(values.map(value => value.payload.id).sort()).toEqual([linkedB.id, linkedC.id].sort());
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         }, 20000);
 
@@ -689,17 +699,17 @@ describe('SDO Imports', () => {
             const nodeB = await _createTreeNode('replacement tree B');
             const uuid = crypto.randomUUID();
 
-            await _publish(_sdo({content: _content(uuid, {treeMulti: [nodeA.uuid, nodeB.uuid]})}));
+            await _publish(_sdo({content: _content(uuid, {treeMulti: [nodeA.recordUuid, nodeB.recordUuid]})}));
 
             const record = await _waitForRecord(uuid);
 
             await vi.waitFor(
                 async () =>
                     expect(await _getTreeValues(record.id, SDO_IMPORTS_TREE_MULTI_ATTRIBUTE_ID)).toHaveLength(2),
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
 
-            await _publish(_sdo({action: 'UPDATE', content: _content(uuid, {treeMulti: [nodeB.uuid]})}));
+            await _publish(_sdo({action: 'UPDATE', content: _content(uuid, {treeMulti: [nodeB.recordUuid]})}));
 
             await vi.waitFor(
                 async () => {
@@ -707,7 +717,7 @@ describe('SDO Imports', () => {
 
                     expect(values.map(value => value.payload.id)).toEqual([nodeB.nodeId]);
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         }, 20000);
     });
@@ -726,7 +736,7 @@ describe('SDO Imports', () => {
                     expect(await _getLinkValues(record.id, SDO_IMPORTS_ADVANCED_LINK_MONO_ATTRIBUTE_ID)).toHaveLength(
                         1,
                     ),
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
 
             await _publish(_sdo({action: 'UPDATE', content: _content(uuid, {advancedLinkMono: null})}));
@@ -736,7 +746,7 @@ describe('SDO Imports', () => {
                     expect(await _getLinkValues(record.id, SDO_IMPORTS_ADVANCED_LINK_MONO_ATTRIBUTE_ID)).toHaveLength(
                         0,
                     ),
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         }, 20000);
 
@@ -756,7 +766,7 @@ describe('SDO Imports', () => {
                     expect(await _getStandardValue(record.id, SDO_IMPORTS_ADVANCED_MONO_ATTRIBUTE_ID)).toBe('applied');
                     expect(await _getStandardValue(record.id, SDO_TEST_ATTRIBUTE_ID)).toBe(null);
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         }, 20000);
 
@@ -778,7 +788,7 @@ describe('SDO Imports', () => {
                     );
                     expect(await _getStandardValue(record.id, SDO_TEST_ATTRIBUTE_ID)).toBe('kept');
                 },
-                {timeout: 5000, interval: 1000},
+                {timeout: 5000, interval: 250},
             );
         }, 20000);
     });
