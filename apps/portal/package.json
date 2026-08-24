@@ -32,7 +32,7 @@
         "react": "18.3.1",
         "react-dom": "18.3.1",
         "react-i18next": "12",
-        "react-router-dom": "6.30.4",
+        "react-router-dom": "6.30.6",
         "styled-components": "6.0.8"
     },
     "devDependencies": {
@@ -50,12 +50,12 @@
         "@types/react": "18.3.31",
         "@types/react-dom": "18.3.7",
         "@vitejs/plugin-react": "6.0.5",
-        "happy-dom": "20.11.2",
+        "happy-dom": "20.11.6",
         "typescript": "7.0.2",
-        "vite": "8.2.1",
+        "vite": "8.2.2",
         "vite-plugin-dynamic-base": "1.4.1",
         "vite-plugin-svgr": "4.5.0",
-        "vitest": "4.1.10"
+        "vitest": "4.1.11"
     },
     "browserslist": {
         "production": [

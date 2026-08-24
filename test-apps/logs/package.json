@@ -24,6 +24,6 @@
         "@graphql-codegen/typescript-graphql-request": "6.4.0",
         "@graphql-codegen/typescript-operations": "5.1.0",
         "typescript": "7.0.2",
-        "vitest": "4.1.10"
+        "vitest": "4.1.11"
     }
 }
