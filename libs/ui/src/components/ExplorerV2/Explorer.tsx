@@ -538,7 +538,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {editAttributeMassAction, editAttributeMassActionModal} = useEditAttributeMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('editAttribute'),
-            store: {view},
+            store: {view, dispatch: viewSettingsDispatch},
             attributesProperties,
             totalCount: totalCountFiltered,
         });
