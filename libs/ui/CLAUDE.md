@@ -105,6 +105,12 @@ src/
 > La génération requiert un `apolloApiKey.js` valide (introspection du schéma de `apps/core`).
 > Le schéma GraphQL complet est disponible sur **`http://core.leav.localhost/graphql`**
 > quand le core est lancé (`docker compose up`).
+>
+> ⚠️ **Le générateur introspecte le core qui tourne, pas les sources** : un champ serveur tout juste
+> ajouté (`apps/core`) impose de **redémarrer le core** avant `yarn graphql-generate`, sinon le champ
+> est absent du schéma introspecté et donc du fichier généré — même si le code source du resolver est
+> déjà là. Et dans un **worktree neuf**, `apolloApiKey.js` est **gitignoré donc absent** : le recopier
+> depuis un worktree existant (ou le recréer, cf. commentaire du fichier) avant de lancer le codegen.
 
 > ⚠️ **Collision de noms au codegen entre `Explorer/_queries/` et `ExplorerV2/_queries/`** :
 > [`codegen.ts`](codegen.ts) agrège tous les `src/**/*.graphql` dans un **seul** fichier généré. Un

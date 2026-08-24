@@ -16,6 +16,8 @@ export const useDeleteLinkValues = ({
     isEnabled,
     store: {view, dispatch},
     filtersStore: {filters, filtersOperator},
+    attributeIds,
+    badgeAttributeIds,
     pagination,
     allVisibleKeys,
     onDelete,
@@ -27,6 +29,9 @@ export const useDeleteLinkValues = ({
         dispatch: Dispatch<IViewSettingsAction>;
     };
     filtersStore: IUIFiltersState;
+    /** Must match the explorer's own split, or this second query refetches the avoided identities. */
+    attributeIds: string[];
+    badgeAttributeIds: string[];
     allVisibleKeys: string[];
     onDelete?: IMassActions['callback'];
     refetch: ReturnType<typeof useExplorerData>['refetch'];
@@ -39,7 +44,8 @@ export const useDeleteLinkValues = ({
     const {data: linkData, canEditLinkAttributeValues: canUnlinkValues} = useExplorerData({
         entrypoint: view.entrypoint,
         libraryId: view.libraryId,
-        attributeIds: view.attributesIds,
+        attributeIds,
+        badgeAttributeIds,
         fulltextSearch: view.fulltextSearch,
         pagination,
         sorts: view.sort,

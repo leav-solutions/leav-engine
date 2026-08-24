@@ -1535,7 +1535,7 @@ export type ExplorerV2LinkPropertyLinkValueFragment = { id_value?: string | null
         | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
         | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
         | { valuePayload?: any | null, valueRawPayload?: any | null }
-      > }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
+      > }>, badgeProperties: Array<{ attributeId: string, valuesCount: number }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null };
 
 export type ExplorerV2LinkPropertyTreeValueValueFragment = { id_value?: string | null };
 
@@ -2276,6 +2276,7 @@ export type ValuesOccurrencesForDependencyQuery = { listDistinctValues?: Array<{
 export type ExplorerV2LibraryDataQueryVariables = Exact<{
   libraryId: Scalars['ID']['input'];
   attributeIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+  badgeAttributeIds?: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
   pagination?: InputMaybe<RecordsPagination>;
   filters?: InputMaybe<Array<InputMaybe<RecordFilterInput>> | InputMaybe<RecordFilterInput>>;
   multipleSort?: InputMaybe<Array<RecordSortInput> | RecordSortInput>;
@@ -2287,10 +2288,11 @@ export type ExplorerV2LibraryDataQuery = { records: { totalCount?: number | null
           | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
           | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
           | { valuePayload?: any | null, valueRawPayload?: any | null }
-        > }> }> } };
+        > }>, badgeProperties: Array<{ attributeId: string, valuesCount: number }> }> } };
 
 export type ExplorerV2LinkDataQueryVariables = Exact<{
   attributeIds: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
+  badgeAttributeIds?: Array<Scalars['ID']['input']> | Scalars['ID']['input'];
   parentLibraryId: Scalars['ID']['input'];
   parentRecordId?: InputMaybe<Scalars['String']['input']>;
   linkAttributeId: Scalars['ID']['input'];
@@ -2302,7 +2304,7 @@ export type ExplorerV2LinkDataQuery = { records: { list: Array<{ id: string, who
                 | { linkPayload?: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
                 | { treePayload?: { record: { id: string, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } } | null }
                 | { valuePayload?: any | null, valueRawPayload?: any | null }
-              > }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
+              > }>, badgeProperties: Array<{ attributeId: string, valuesCount: number }>, whoAmI: { id: string, label?: string | null, subLabel?: string | null, color?: string | null, preview?: IPreviewScalar | null, library: { id: string, label?: any | null } } } | null }
         | { id_value?: string | null }
       > }> } };
 
@@ -3294,6 +3296,10 @@ export const ExplorerV2LinkPropertyFragmentDoc = gql`
         values {
           ...PropertyValue
         }
+      }
+      badgeProperties: properties(attributeIds: $badgeAttributeIds) {
+        attributeId
+        valuesCount
       }
     }
   }
@@ -6792,7 +6798,7 @@ export type ValuesOccurrencesForDependencyLazyQueryHookResult = ReturnType<typeo
 export type ValuesOccurrencesForDependencySuspenseQueryHookResult = ReturnType<typeof useValuesOccurrencesForDependencySuspenseQuery>;
 export type ValuesOccurrencesForDependencyQueryResult = Apollo.QueryResult<ValuesOccurrencesForDependencyQuery, ValuesOccurrencesForDependencyQueryVariables>;
 export const ExplorerV2LibraryDataDocument = gql`
-    query ExplorerV2LibraryData($libraryId: ID!, $attributeIds: [ID!]!, $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
+    query ExplorerV2LibraryData($libraryId: ID!, $attributeIds: [ID!]!, $badgeAttributeIds: [ID!]! = [], $pagination: RecordsPagination, $filters: [RecordFilterInput], $multipleSort: [RecordSortInput!], $searchQuery: String) {
   records(
     library: $libraryId
     filters: $filters
@@ -6814,6 +6820,10 @@ export const ExplorerV2LibraryDataDocument = gql`
           ...PropertyValue
         }
       }
+      badgeProperties: properties(attributeIds: $badgeAttributeIds) {
+        attributeId
+        valuesCount
+      }
     }
   }
 }
@@ -6834,6 +6844,7 @@ ${PropertyValueFragmentDoc}`;
  *   variables: {
  *      libraryId: // value for 'libraryId'
  *      attributeIds: // value for 'attributeIds'
+ *      badgeAttributeIds: // value for 'badgeAttributeIds'
  *      pagination: // value for 'pagination'
  *      filters: // value for 'filters'
  *      multipleSort: // value for 'multipleSort'
@@ -6861,7 +6872,7 @@ export type ExplorerV2LibraryDataLazyQueryHookResult = ReturnType<typeof useExpl
 export type ExplorerV2LibraryDataSuspenseQueryHookResult = ReturnType<typeof useExplorerV2LibraryDataSuspenseQuery>;
 export type ExplorerV2LibraryDataQueryResult = Apollo.QueryResult<ExplorerV2LibraryDataQuery, ExplorerV2LibraryDataQueryVariables>;
 export const ExplorerV2LinkDataDocument = gql`
-    query ExplorerV2LinkData($attributeIds: [ID!]!, $parentLibraryId: ID!, $parentRecordId: String, $linkAttributeId: ID!) {
+    query ExplorerV2LinkData($attributeIds: [ID!]!, $badgeAttributeIds: [ID!]! = [], $parentLibraryId: ID!, $parentRecordId: String, $linkAttributeId: ID!) {
   records(
     library: $parentLibraryId
     filters: [{field: "id", condition: EQUAL, value: $parentRecordId}]
@@ -6896,6 +6907,7 @@ export const ExplorerV2LinkDataDocument = gql`
  * const { data, loading, error } = useExplorerV2LinkDataQuery({
  *   variables: {
  *      attributeIds: // value for 'attributeIds'
+ *      badgeAttributeIds: // value for 'badgeAttributeIds'
  *      parentLibraryId: // value for 'parentLibraryId'
  *      parentRecordId: // value for 'parentRecordId'
  *      linkAttributeId: // value for 'linkAttributeId'

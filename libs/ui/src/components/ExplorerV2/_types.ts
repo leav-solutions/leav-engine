@@ -56,6 +56,10 @@ export interface IItemData {
     propertiesById: {
         [attributeId: string]: PropertyValueFragment[];
     };
+    /** Cardinality of count-only (badge_qty) columns — disjoint from `propertiesById`. */
+    valuesCountById: {
+        [attributeId: string]: number;
+    };
     /**
      * Can be named `linkId` too, but for historical reason we keep old name 👴🏼.
      */
@@ -201,6 +205,8 @@ export type SetNewPage = (newCurrentPage: number, ignoredPageSize: number) => vo
 export interface IKanbanDataSource {
     libraryId: string;
     attributeIds: string[];
+    /** Count-only columns — must mirror `useExplorerData`'s split, see `splitBadgeColumns`. */
+    badgeAttributeIds: string[];
     filters: RecordFilterInput[];
     searchQuery: string;
     sorts: Array<{field: string; order: SortOrder}>;

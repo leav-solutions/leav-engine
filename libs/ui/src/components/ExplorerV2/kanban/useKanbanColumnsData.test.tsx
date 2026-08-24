@@ -27,10 +27,13 @@ const AXIS = 'status';
 const LIBRARY = 'campaigns';
 const NODE_LIB = 'statuses';
 const ATTRIBUTE_IDS = ['label', 'status'];
+// No count-only column in these fixtures: the split itself is exercised in splitBadgeColumns.test.ts.
+const BADGE_ATTRIBUTE_IDS: string[] = [];
 
 const baseDataSource: IKanbanDataSource = {
     libraryId: LIBRARY,
     attributeIds: ATTRIBUTE_IDS,
+    badgeAttributeIds: BADGE_ATTRIBUTE_IDS,
     filters: [],
     searchQuery: '',
     sorts: [],
@@ -70,6 +73,7 @@ const record = (id: string) => ({
     active: true,
     permissions: {create_record: true, delete_record: true},
     properties: [],
+    badgeProperties: [],
 });
 
 const distinctValuesMock = ({
@@ -111,6 +115,7 @@ const pageMock = ({
         variables: {
             libraryId: LIBRARY,
             attributeIds: ATTRIBUTE_IDS,
+            badgeAttributeIds: BADGE_ATTRIBUTE_IDS,
             pagination: {limit: KANBAN_COLUMN_PAGE_SIZE, offset},
             searchQuery,
             multipleSort: sorts,

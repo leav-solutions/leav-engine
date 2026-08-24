@@ -101,6 +101,7 @@ export const useKanbanColumnsData = ({
             const variables: ExplorerV2LibraryDataQueryVariables = {
                 libraryId: dataSource.libraryId,
                 attributeIds: dataSource.attributeIds,
+                badgeAttributeIds: dataSource.badgeAttributeIds,
                 pagination: {limit: KANBAN_COLUMN_PAGE_SIZE, offset},
                 searchQuery: dataSource.searchQuery,
                 multipleSort: dataSource.sorts,

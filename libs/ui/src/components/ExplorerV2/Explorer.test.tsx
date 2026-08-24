@@ -119,6 +119,16 @@ const multivalLinkMockAttribute = {
     // multi_link_display_option: gqlTypes.MultiLinkDisplayOption.avatar // default value
 } satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
+const badgeQtyLinkMockAttribute = {
+    ...multivalLinkMockAttribute,
+    id: 'link_attribute_badge_qty',
+    label: {
+        fr: 'Mon attribut liaison compteur',
+        en: 'My link attribute count badge',
+    },
+    multi_link_display_option: gqlTypes.MultiDisplayOption.badge_qty,
+} satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
+
 const simpleRichTextMockAttribute = {
     id: 'simple_rich_text',
     type: gqlTypes.AttributeType.simple,
@@ -310,6 +320,7 @@ describe('Explorer', () => {
                 // `values` when unset) — the kanban tests below request 'status' as their display column.
                 {attributeId: 'status', values: []},
             ],
+            badgeProperties: [],
         },
         {
             id: '612694174',
@@ -387,6 +398,7 @@ describe('Explorer', () => {
                 },
                 {attributeId: 'status', values: []},
             ],
+            badgeProperties: [],
         },
     ] satisfies gqlTypes.ExplorerV2LibraryDataQuery['records']['list'];
 
@@ -1999,6 +2011,7 @@ describe('Explorer', () => {
                                 preview: null,
                             },
                             properties: [],
+                            badgeProperties: [],
                         },
                     ],
                 },
@@ -2086,6 +2099,7 @@ describe('Explorer', () => {
                                     preview: null,
                                 },
                                 properties: [],
+                                badgeProperties: [],
                             },
                         ],
                     },
@@ -3632,6 +3646,78 @@ describe('Explorer', () => {
         });
     });
 
+    describe('Count badge columns (LEAVC-1119)', () => {
+        test('splits a badge_qty multivalued column into badgeAttributeIds, apart from the others', async () => {
+            spyLibraryMetadataQuery({attributes: [...defaultLibraryMetadataAttributes, badgeQtyLinkMockAttribute]});
+
+            render(
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    defaultMassActions={[]}
+                    ignoreViewByDefault
+                    currentView={{attributesIds: [simpleMockAttribute.id, badgeQtyLinkMockAttribute.id]}}
+                />,
+            );
+
+            await waitFor(() => {
+                expect(spyUseExplorerV2LibraryDataQuery).toHaveBeenCalledWith(
+                    expect.objectContaining({
+                        variables: expect.objectContaining({
+                            attributeIds: [simpleMockAttribute.id],
+                            badgeAttributeIds: [badgeQtyLinkMockAttribute.id],
+                        }),
+                    }),
+                );
+            });
+        });
+
+        test("keeps the records query skipped while the attributes metadata (the split's input) is still loading", async () => {
+            // The split depends on `attributesProperties`: firing the records query before it resolves
+            // would send the un-split attribute list, loading exactly the identities the split exists to
+            // avoid, then refiring once the split is known.
+            vi.spyOn(gqlTypes, 'useExplorerV2LibraryMetadataQuery').mockReturnValue({
+                loading: true,
+                called: true,
+                data: undefined,
+            } as gqlTypes.ExplorerV2LibraryMetadataQueryResult);
+
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
+
+            expect(spyUseExplorerV2LibraryDataQuery).toHaveBeenCalledWith(expect.objectContaining({skip: true}));
+        });
+
+        test('displays the server-sent count from badgeProperties, not a value count', async () => {
+            spyLibraryMetadataQuery({attributes: [...defaultLibraryMetadataAttributes, badgeQtyLinkMockAttribute]});
+            spyUseExplorerV2LibraryDataQuery.mockReturnValue({
+                loading: false,
+                called: true,
+                data: {
+                    records: {
+                        totalCount: 1,
+                        list: [
+                            {
+                                ...mockRecords[0],
+                                properties: [],
+                                badgeProperties: [{attributeId: badgeQtyLinkMockAttribute.id, valuesCount: 5}],
+                            },
+                        ],
+                    },
+                },
+            } as gqlTypes.ExplorerV2LibraryDataQueryResult);
+
+            render(
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    defaultMassActions={[]}
+                    ignoreViewByDefault
+                    currentView={{attributesIds: [badgeQtyLinkMockAttribute.id]}}
+                />,
+            );
+
+            expect(await screen.findByText('5')).toBeInTheDocument();
+        });
+    });
+
     // ************* NOTE ******************
     //
     // Integration coverage of the library kanban per-column wiring introduced with the board's own
@@ -3723,6 +3809,7 @@ describe('Explorer', () => {
             // covers every REAL library attribute, `status` included), an omitted entry would read as a
             // crash-inducing `undefined` rather than "no value set".
             properties: [{attributeId: 'status', values: []}],
+            badgeProperties: [],
         });
 
         const pageMock = ({

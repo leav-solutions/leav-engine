@@ -1,8 +1,12 @@
 import {type CheckboxChangeEvent} from 'antd/es/checkbox';
 import {KitItemCard} from 'aristid-ds';
+import {type PropertyValueFragment} from '_ui/_gqlTypes';
 import {type IDataViewChildProps, type IItemData} from '../_types';
 import {TableCell} from '../cells/TableCell';
 import {cardAttributes, cardAttributeRow, cardAttributeLabel} from './kanbanView.module.css';
+
+/** Module-level so that a count-only column keeps a stable reference across renders. */
+const emptyValues: PropertyValueFragment[] = [];
 
 interface IKanbanCardContentProps {
     card: IItemData;
@@ -44,7 +48,9 @@ export const KanbanCardContent = ({
                                 <span className={cardAttributeLabel}>{attributesProperties[attributeId]?.label}</span>
                                 <TableCell
                                     attributeProperties={attributesProperties[attributeId]}
-                                    values={card.propertiesById[attributeId]}
+                                    // propertiesById/valuesCountById are disjoint.
+                                    values={card.propertiesById[attributeId] ?? emptyValues}
+                                    valuesCount={card.valuesCountById[attributeId]}
                                     libraryColorConfigById={libraryColorConfigById}
                                 />
                             </div>

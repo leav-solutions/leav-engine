@@ -172,6 +172,38 @@ plus la taille de l'en-tête (toujours `'s'`) mais seulement l'`ellipsis` des co
 
 ---
 
+## Affichage cellules en badge compteur (LEAVC-1119)
+
+Une colonne de liaison ou d'arbre **multivaluée** affichée en badge compteur
+(`multi_link_display_option` / `multi_tree_display_option` = `badge_qty`) n'a besoin que d'un
+`valuesCount` côté serveur, jamais des valeurs (identité complète des entités liées, `whoAmI`
+compris). `splitBadgeColumns` (`_queries/splitBadgeColumns.ts`) répartit les `attributeIds` d'une
+vue entre `dataAttributeIds` (sélection `properties`, valeurs complètes) et `badgeAttributeIds`
+(sélection aliasée `badgeProperties`, `{attributeId, valuesCount}` seul).
+
+- **Calcul pur, pas de requête dédiée** : le split dérive uniquement d'`attributesProperties`, déjà
+  chargé en amont par `useExplorerLibraryMetadata` (voir ci-dessus)
+- **`metadataLoading` gate désormais la requête records** (`useExplorerData`, en plus de
+  `isViewReady`/`isFiltersSeeded`) : le split dépend d'`attributesProperties`, donc la requête
+  records doit rester skippée tant qu'il n'est pas connu — sinon elle partirait une première fois
+  avec la liste non découpée (chargeant exactement les identités que le split évite), puis
+  repartirait une fois le split résolu. Skip-puis-tire, jamais tire-puis-retire.
+- **`propertiesById` et `valuesCountById` sont disjoints** (`IItemData`, `_types.ts`) : un attribut
+  compté n'a **pas** d'entrée dans `propertiesById` (le serveur n'a jamais envoyé ses valeurs).
+  `TableView`/`KanbanCardContent` passent `values={item.propertiesById[id] ?? emptyValues}` (une
+  constante de module, pour garder une référence stable) et `valuesCount={item.valuesCountById[id]}`.
+- **L'axe de regroupement kanban n'est jamais compté**, même s'il est configuré en `badge_qty` :
+  `splitBadgeColumns` l'exclut explicitement du côté badge, parce que `buildKanbanColumns` lit sa
+  valeur dans `propertiesById` pour répartir les cartes — un axe compté casserait le regroupement.
+- Le mono-valué ignore `badge_qty` (le prédicat `isCountOnlyColumn` exige `multiple_values`) : il
+  reste sur le rendu IdCard, qui a besoin de l'identité complète.
+
+Le contrat de synchronisation de `useKanbanColumnsData` (per-column pagination) inclut
+`badgeAttributeIds` au même titre que `attributeIds` : les deux voyagent dans `IKanbanDataSource`
+et dans les variables de la requête par colonne.
+
+---
+
 ## Édition en masse d'attribut (`actions-mass/edit-attribute/`)
 
 > ⚠️ **Copie intégrale de son homologue v1, sauf deux fichiers** : `useMassEditableAttributes.tsx`

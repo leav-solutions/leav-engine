@@ -47,6 +47,10 @@ const _mappingLink = (data: ExplorerV2LinkDataQuery, libraryId: string): IExplor
                             (acc, {attributeId, values}) => ({...acc, [attributeId]: values}),
                             {},
                         ),
+                        valuesCountById: linkValue.payload.badgeProperties.reduce(
+                            (acc, {attributeId, valuesCount}) => ({...acc, [attributeId]: valuesCount}),
+                            {},
+                        ),
                         id_value: linkValue.id_value ?? undefined,
                     };
                 })
@@ -63,6 +67,7 @@ export const useExplorerData = ({
     entrypoint,
     libraryId,
     attributeIds,
+    badgeAttributeIds,
     fulltextSearch,
     sorts,
     pagination,
@@ -74,6 +79,8 @@ export const useExplorerData = ({
     entrypoint: Entrypoint;
     libraryId: string;
     attributeIds: string[];
+    /** Columns fetched as a count only (`badge_qty` multivalued) — see `splitBadgeColumns`. */
+    badgeAttributeIds: string[];
     fulltextSearch: string;
     sorts: Array<{
         field: string;
@@ -110,6 +117,7 @@ export const useExplorerData = ({
             parentRecordId: (entrypoint as IEntrypointLink).parentRecordId,
             linkAttributeId: (entrypoint as IEntrypointLink).linkAttributeId,
             attributeIds,
+            badgeAttributeIds,
         },
     });
 
@@ -126,6 +134,7 @@ export const useExplorerData = ({
         variables: {
             libraryId,
             attributeIds,
+            badgeAttributeIds,
             pagination,
             searchQuery: fulltextSearch,
             multipleSort: sorts,
@@ -176,6 +185,8 @@ export const useExplorerData = ({
                       variables: {
                           libraryId,
                           attributeIds,
+                          // Must match the list query's split, or this writes a cache entry the list never reads.
+                          badgeAttributeIds,
                           filters: [
                               {
                                   field: 'id',

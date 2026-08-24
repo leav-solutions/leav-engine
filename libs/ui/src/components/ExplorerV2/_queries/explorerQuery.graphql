@@ -20,6 +20,8 @@ fragment PropertyValue on GenericValue {
 query ExplorerV2LibraryData(
     $libraryId: ID!
     $attributeIds: [ID!]!
+    # Defaulted so that any caller which does not split its columns stays valid.
+    $badgeAttributeIds: [ID!]! = []
     $pagination: RecordsPagination
     $filters: [RecordFilterInput]
     $multipleSort: [RecordSortInput!]
@@ -46,6 +48,15 @@ query ExplorerV2LibraryData(
                     ...PropertyValue
                 }
             }
+            # Same field, second argument set: the count-badge columns. Aliasing is what lets one
+            # static document carry two different selection sets for the same `properties` field.
+            # Such a column only needs the cardinality of its values, never the linked identities:
+            # `valuesCount` spares the server the whole `whoAmI` resolution of every linked record,
+            # and spares the wire the values themselves (LEAVC-1119).
+            badgeProperties: properties(attributeIds: $badgeAttributeIds) {
+                attributeId
+                valuesCount
+            }
         }
     }
 }
@@ -61,11 +72,21 @@ fragment ExplorerV2LinkProperty on GenericValue {
                     ...PropertyValue
                 }
             }
+            badgeProperties: properties(attributeIds: $badgeAttributeIds) {
+                attributeId
+                valuesCount
+            }
         }
     }
 }
 
-query ExplorerV2LinkData($attributeIds: [ID!]!, $parentLibraryId: ID!, $parentRecordId: String, $linkAttributeId: ID!) {
+query ExplorerV2LinkData(
+    $attributeIds: [ID!]!
+    $badgeAttributeIds: [ID!]! = []
+    $parentLibraryId: ID!
+    $parentRecordId: String
+    $linkAttributeId: ID!
+) {
     records(
         library: $parentLibraryId
         filters: [{field: "id", condition: EQUAL, value: $parentRecordId}]

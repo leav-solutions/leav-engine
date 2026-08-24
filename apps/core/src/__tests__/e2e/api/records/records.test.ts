@@ -579,6 +579,7 @@ describe('Records', () => {
                                 ${AttributePermissionsActions.EDIT_VALUE}
                                 ${AttributePermissionsActions.ACCESS_ATTRIBUTE}
                             }
+                            valuesCount
                             values {
                                 id_value
                                 ... on Value {
@@ -610,6 +611,7 @@ describe('Records', () => {
                     attributeProperties: {
                         id: 'created_at',
                     },
+                    valuesCount: 1,
                     recordAttributePermissions: {
                         [AttributePermissionsActions.EDIT_VALUE]: true,
                         [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true,
@@ -626,6 +628,7 @@ describe('Records', () => {
                     attributeProperties: {
                         id: 'created_by',
                     },
+                    valuesCount: 1,
                     recordAttributePermissions: {
                         [AttributePermissionsActions.EDIT_VALUE]: true,
                         [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true,
@@ -646,6 +649,7 @@ describe('Records', () => {
                     attributeProperties: {
                         id: 'user_groups',
                     },
+                    valuesCount: 1,
                     recordAttributePermissions: {
                         [AttributePermissionsActions.EDIT_VALUE]: true,
                         [AttributePermissionsActions.ACCESS_ATTRIBUTE]: true,

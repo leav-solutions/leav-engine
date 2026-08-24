@@ -23,6 +23,7 @@ import {
     type ViewSettingsShortcuts,
 } from './_types';
 import {useExplorerData} from './_queries/useExplorerData';
+import {splitBadgeColumns} from './_queries/splitBadgeColumns';
 import {DataView} from './DataView';
 import {ExplorerTitle} from './ExplorerTitle';
 import {ExplorerToolbar} from './ExplorerToolbar';
@@ -331,6 +332,17 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             [view.attributesIds, view.groupByAttributeId],
         );
 
+        // Splits count-badge columns (badge_qty) out to fetch as a bare cardinality, not full values.
+        const {dataAttributeIds, badgeAttributeIds} = useMemo(
+            () =>
+                splitBadgeColumns({
+                    attributeIds: queryAttributeIds,
+                    attributesProperties,
+                    groupByAttributeId: view.groupByAttributeId,
+                }),
+            [queryAttributeIds, attributesProperties, view.groupByAttributeId],
+        );
+
         const {
             countData: rawTotalCountLibrary,
             loading: countLoading,
@@ -359,22 +371,25 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
         } = useExplorerData({
             entrypoint,
             libraryId: view.libraryId,
-            attributeIds: queryAttributeIds,
+            attributeIds: dataAttributeIds,
+            badgeAttributeIds,
             fulltextSearch: view.fulltextSearch,
             pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
             sorts: view.sort,
             filters: requestFilters,
             filtersOperator,
-            skip: !isViewReady || !isFiltersSeeded || isPerColumnKanban,
+            // metadataLoading: the split above needs attributesProperties first.
+            skip: !isViewReady || !isFiltersSeeded || metadataLoading || isPerColumnKanban,
             refetchCount,
         }); // TODO: refresh when go back on page
 
         const kanbanDataSource = useMemo<IKanbanDataSource | undefined>(
             () =>
-                isPerColumnKanban && isViewReady && isFiltersSeeded
+                isPerColumnKanban && isViewReady && isFiltersSeeded && !metadataLoading
                     ? {
                           libraryId: view.libraryId,
-                          attributeIds: queryAttributeIds,
+                          attributeIds: dataAttributeIds,
+                          badgeAttributeIds,
                           filters: prepareFiltersForRequest(
                               requestFilters,
                               filtersOperator,
@@ -388,8 +403,10 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                 isPerColumnKanban,
                 isViewReady,
                 isFiltersSeeded,
+                metadataLoading,
                 view.libraryId,
-                queryAttributeIds,
+                dataAttributeIds,
+                badgeAttributeIds,
                 requestFilters,
                 filtersOperator,
                 entrypoint,
@@ -556,6 +573,8 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
             isEnabled: isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
             store: {view, dispatch: viewSettingsDispatch},
             filtersStore,
+            attributeIds: dataAttributeIds,
+            badgeAttributeIds,
             pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
             allVisibleKeys,
             onDelete: defaultCallbacks?.mass?.deactivate,
