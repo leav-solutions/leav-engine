@@ -30,11 +30,11 @@
     "dependencies": {
         "@hono/node-server": "2.1.1",
         "@leav/logger": "workspace:libs/logger",
-        "hono": "4.13.2"
+        "hono": "4.13.3"
     },
     "devDependencies": {
         "@types/node": "24.13.3",
         "typescript": "7.0.2",
-        "vitest": "4.1.10"
+        "vitest": "4.1.11"
     }
 }

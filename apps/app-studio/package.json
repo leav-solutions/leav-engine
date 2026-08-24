@@ -29,7 +29,7 @@
         "apollo-upload-client": "18.0.1",
         "aristid-ds": "17.1.0-25da0e9",
         "classnames": "2.5.1",
-        "dayjs": "1.11.22",
+        "dayjs": "1.11.23",
         "graphql": "16.14.2",
         "graphql-ws": "6.2.1",
         "i18next": "22.5.1",
@@ -39,7 +39,7 @@
         "react-dom": "18.3.1",
         "react-flag-kit": "1.1.1",
         "react-i18next": "12",
-        "react-router-dom": "6.30.4",
+        "react-router-dom": "6.30.6",
         "zod": "4.4.3"
     },
     "resolutions": {
@@ -53,20 +53,20 @@
         "@graphql-codegen/typescript-react-apollo": "4.4.2",
         "@testing-library/jest-dom": "6.9.1",
         "@testing-library/react": "16.3.2",
-        "@testing-library/user-event": "14.6.4",
+        "@testing-library/user-event": "14.6.5",
         "@total-typescript/ts-reset": "0.6.1",
         "@types/node": "24.13.3",
         "@types/react": "18.3.31",
         "@types/react-dom": "18.3.7",
         "@vitejs/plugin-react": "6.0.5",
         "browserslist": "4.28.8",
-        "happy-dom": "20.11.2",
+        "happy-dom": "20.11.6",
         "lightningcss": "1.33.0",
         "typescript": "7.0.2",
-        "vite": "8.2.1",
+        "vite": "8.2.2",
         "vite-plugin-dynamic-base": "1.4.1",
         "vite-plugin-svgr": "4.5.0",
-        "vitest": "4.1.10"
+        "vitest": "4.1.11"
     },
     "browserslist": {
         "production": [
