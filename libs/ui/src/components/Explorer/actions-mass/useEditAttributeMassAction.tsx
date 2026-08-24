@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {type Dispatch, useEffect, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faEdit} from '@fortawesome/free-solid-svg-icons';
 import {KitAlert, KitNotification, KitSelect, KitSpace, KitTypography} from 'aristid-ds';
@@ -9,7 +9,7 @@ import {ERROR_ALERT_DURATION, INFO_NOTIFICATION_DURATION} from '_ui/constants';
 import {useLang} from '_ui/hooks';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {type FeatureHook} from '../_types';
-import {type IViewSettingsState} from '../manage-view-settings';
+import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
 import {EditTreeAttributeValuesMapping} from './edit-attribute/EditTreeAttributeValuesMapping';
 import {EditAttributeMassActionModal} from './edit-attribute/EditAttributeMassActionModal';
 import {useMassEditableAttributes} from './edit-attribute/useMassEditableAttributes';
@@ -19,11 +19,12 @@ import {useEditionMappingState} from './edit-attribute/useEditionMappingState';
 
 export const useEditAttributeMassAction = ({
     isEnabled,
-    store: {view},
+    store: {view, dispatch},
     totalCount,
 }: FeatureHook<{
     store: {
         view: IViewSettingsState;
+        dispatch: Dispatch<IViewSettingsAction>;
     };
     totalCount: number;
 }>) => {
@@ -92,6 +93,10 @@ export const useEditAttributeMassAction = ({
         });
 
         _closeModal();
+        dispatch({
+            type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
+            payload: [],
+        });
 
         KitNotification.info({
             message: t('explorer.massAction.editAttribute_submit_notification_title'),

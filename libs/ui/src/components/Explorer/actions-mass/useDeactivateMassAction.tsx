@@ -50,7 +50,7 @@ export const useDeactivateMassAction = ({
         () => ({
             label: t('explorer.massAction.deactivate'),
             icon: <FontAwesomeIcon icon={faTrash} />,
-            deselectAll: true,
+            deselectAll: false,
             callback: (massSelectionFilter, _massSelection, searchQuery) => {
                 openConfirmModal({
                     title:
