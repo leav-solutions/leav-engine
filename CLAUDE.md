@@ -264,9 +264,10 @@ délègue pas à une MR ultérieure (cf. [ADR-003](docs/adr/ADR-003-documentatio
 Deux questions à se poser, dans cet ordre :
 
 1. **Documentation impactée** — une doc existante devient-elle fausse, incomplète ou trompeuse ?
-   Passer en revue : `docs/` (y compris les ADR et les checklists de `docs/cleanup/`), le
-   `CLAUDE.md` racine, le `CLAUDE.md` du ou des workspaces touchés, les `CLAUDE.md` locaux d'un
-   dossier modifié, les `README.md`, et `CODING_GUIDELINES.md` si une convention change.
+   Passer en revue : `docs/` (y compris les ADR et, s'il en existe, les checklists de
+   `docs/cleanup/`), le `CLAUDE.md` racine, le `CLAUDE.md` du ou des workspaces touchés, les
+   `CLAUDE.md` locaux d'un dossier modifié, les `README.md`, et `CODING_GUIDELINES.md` si une
+   convention change.
    → Corriger immédiatement.
 2. **Information à ajouter** — la tâche a-t-elle produit un savoir qui n'est déductible ni du code
    ni de l'historique git ? Typiquement : un piège non évident, une raison derrière un choix
@@ -295,7 +296,6 @@ Règles d'application :
 - **AMP → instance `app-studio`** — objectif long terme de faire d'AMP une instance de `app-studio` (comme `explorer-studio`). `app-studio` devra être enrichi pour couvrir les besoins d'AMP. Permettra un nouveau cycle de nettoyage de `@leav/ui`.
 - **DX plugins `core`** — simplifier le développement des plugins core pour les consommateurs externes. Situation actuelle : imports incorrects dans `xstream/apps/plugins/`, nécessite un `git sparse-checkout` ; AMP utilise `core` via image Docker. Chantier porté par l'équipe core (Sébastien / Jérémy).
 - **Migration TypeScript `strict`** — `tsconfig.json` a `strict: true` mais court-circuité par 6 overrides (`strictNullChecks: false`, `noImplicitAny: false`, etc.). À activer progressivement, app par app — jamais en une seule PR globale.
-- **Cleanup attribut Arbre V2** (LEAVC-1077) — supprimer les feature flags `enableTreeAttributeV2Form` / `enableTreeAttributeV2Modal`, la V1 du champ arbre et de la modale de sélection, et retirer le suffixe `V2` des composants. Checklist ordonnée : [`docs/cleanup/tree-attribute-v2-cleanup.md`](docs/cleanup/tree-attribute-v2-cleanup.md).
 
 ---
 
