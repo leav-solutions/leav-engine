@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import {AntForm} from 'aristid-ds';
 import {vi} from 'vitest';
 import {
+    LibraryBehavior,
     type RecordFormAttributeTreeAttributeFragment,
     RecordPermissionsActions,
     TreeDataQueryDocument,
@@ -47,7 +48,7 @@ const _record = (id: string) => ({
         __typename: 'RecordIdentity',
         id,
         label: id,
-        library: {__typename: 'Library', id: 'categories'},
+        library: {__typename: 'Library', id: 'categories', behavior: LibraryBehavior.standard},
     },
 });
 

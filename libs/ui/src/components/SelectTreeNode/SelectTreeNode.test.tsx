@@ -1,7 +1,7 @@
 import {type MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 import {vi} from 'vitest';
-import {TreeDataQueryDocument} from '_ui/_gqlTypes';
+import {LibraryBehavior, TreeDataQueryDocument} from '_ui/_gqlTypes';
 import {render, screen, waitFor, within} from '_ui/_tests/testUtils';
 import {
     DEFAULT_TREE_SELECTION_DEPTH,
@@ -23,29 +23,42 @@ const _nodeButton = async (label: string, name: RegExp) => {
 
 const treeId = 'categories';
 
+interface IMockLibrary {
+    id: string;
+    behavior: LibraryBehavior;
+}
+
+const categoriesLibrary: IMockLibrary = {id: 'categories', behavior: LibraryBehavior.standard};
+
 // `__typename` is required: MockedProvider adds it to the documents, the cache drops what lacks it
-const _record = (id: string) => ({
+const _record = (id: string, library: IMockLibrary = categoriesLibrary) => ({
     __typename: 'Record',
     id,
     whoAmI: {
         __typename: 'RecordIdentity',
         id,
         label: id,
-        library: {__typename: 'Library', id: 'categories'},
+        library: {__typename: 'Library', ...library},
     },
 });
 
 type MockContentNode = ITreeSelectionContentNode & {__typename: string};
 
-const _node = (id: string, children: MockContentNode[] = []): MockContentNode => ({
+const _node = (id: string, children: MockContentNode[] = [], library?: IMockLibrary): MockContentNode => ({
     __typename: 'TreeNode',
     id,
     childrenCount: children.length,
-    record: _record(id),
+    record: _record(id, library),
     children,
 });
 
 const treeContent = [_node('branch', [_node('leaf1'), _node('leaf2')]), _node('otherLeaf')];
+
+// A `files` tree mixes directories and files, the case the node type icon is meant for
+const filesTreeContent = [
+    _node('directory', [], {id: 'directories', behavior: LibraryBehavior.directories}),
+    _node('blue.png', [], {id: 'files', behavior: LibraryBehavior.files}),
+];
 
 const _contentMock = ({
     startAt = null,
@@ -164,6 +177,44 @@ describe('SelectTreeNode', () => {
 
         await userEvent.click(screen.getByText('Catégories'));
         expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: treeId}), true);
+    });
+
+    test('Disables the nodes of a library outside selectableLibraries', async () => {
+        const onSelect = vi.fn();
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} selectableLibraries={['directories']} />, {
+            mocks: [_contentMock({content: filesTreeContent}), treeDataMock],
+        });
+
+        expect(await screen.findByRole('treeitem', {name: 'blue.png'})).toHaveAttribute('aria-disabled', 'true');
+        expect(screen.getByRole('treeitem', {name: 'directory'})).not.toHaveAttribute('aria-disabled', 'true');
+
+        await userEvent.click(screen.getByText('blue.png'));
+        expect(onSelect).not.toHaveBeenCalled();
+
+        await userEvent.click(screen.getByText('directory'));
+        expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: 'directory'}), true);
+    });
+
+    test('Shows a type icon on each node with showNodeTypeIcon', async () => {
+        const {container} = render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} showNodeTypeIcon />, {
+            mocks: [_contentMock({content: filesTreeContent}), treeDataMock],
+        });
+
+        await screen.findByText('blue.png');
+
+        // The pseudo root has no record, hence no icon of its own
+        expect(container.querySelectorAll('[data-icon="folder"]')).toHaveLength(1);
+        expect(container.querySelectorAll('[data-icon="file-image"]')).toHaveLength(1);
+    });
+
+    test('Does not show any type icon by default', async () => {
+        const {container} = render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} />, {
+            mocks: [_contentMock({content: filesTreeContent}), treeDataMock],
+        });
+
+        await screen.findByText('blue.png');
+
+        expect(container.querySelector('[data-icon="folder"]')).not.toBeInTheDocument();
     });
 
     test('Keeps the pseudo root unselectable with leaves_only, even with canSelectRootNode', async () => {

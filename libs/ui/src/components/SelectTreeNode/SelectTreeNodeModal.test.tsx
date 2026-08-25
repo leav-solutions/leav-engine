@@ -1,7 +1,7 @@
 import {type MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
 import {vi} from 'vitest';
-import {TreeDataQueryDocument} from '_ui/_gqlTypes';
+import {LibraryBehavior, TreeDataQueryDocument} from '_ui/_gqlTypes';
 import {render, screen, within} from '_ui/_tests/testUtils';
 import {
     DEFAULT_TREE_SELECTION_DEPTH,
@@ -20,7 +20,7 @@ const _record = (id: string) => ({
         __typename: 'RecordIdentity',
         id,
         label: id,
-        library: {__typename: 'Library', id: 'categories'},
+        library: {__typename: 'Library', id: 'categories', behavior: LibraryBehavior.standard},
     },
 });
 

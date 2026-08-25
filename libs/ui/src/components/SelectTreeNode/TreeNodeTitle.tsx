@@ -1,7 +1,9 @@
-import {faCheck, faCheckDouble, faListCheck} from '@fortawesome/free-solid-svg-icons';
+import {faCheck, faCheckDouble, faFolder, faListCheck} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitIdCard, KitTag, KitTooltip, KitTypography} from 'aristid-ds';
 import {type FunctionComponent, type MouseEvent} from 'react';
+import {LibraryBehavior} from '_ui/_gqlTypes';
+import {getFileTypeIcon} from '_ui/_utils/getFileTypeIcon';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type ITreeSelectionNode, type ITreeSelectionNodesById} from '_ui/hooks/useTreeSelection';
 import {groupButtons, treeNodeLine, treeNodeLineSection} from './treeNodeTitle.module.css';
@@ -14,6 +16,8 @@ interface ITreeNodeTitleProps {
     selectedNodes: string[];
     showSelectChildrenButton: boolean;
     showSelectDescendantsButton: boolean;
+    /** Opt-in: only a tree mixing directories and files needs to tell its node types apart. */
+    showNodeTypeIcon?: boolean;
     /** Batched on purpose: a per-node callback would read a stale selection in checkable mode. */
     onGroupSelect: (nodes: ITreeSelectionNode[], selected: boolean) => void;
 }
@@ -26,6 +30,7 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
     selectedNodes,
     showSelectChildrenButton,
     showSelectDescendantsButton,
+    showNodeTypeIcon = false,
     onGroupSelect,
 }) => {
     const {t} = useSharedTranslation();
@@ -49,6 +54,16 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
     return (
         <div className={treeNodeLine}>
             <div className={treeNodeLineSection}>
+                {showNodeTypeIcon && node.record && (
+                    <FontAwesomeIcon
+                        icon={
+                            node.libraryBehavior === LibraryBehavior.directories
+                                ? faFolder
+                                : getFileTypeIcon(node.title as string)
+                        }
+                        color={node.disabled ? 'var(--general-utilities-text-disabled)' : undefined}
+                    />
+                )}
                 <KitTypography.Text size="fontSize5" disabled={node.disabled}>
                     {node.title}
                 </KitTypography.Text>

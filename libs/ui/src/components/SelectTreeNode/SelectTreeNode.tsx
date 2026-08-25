@@ -27,6 +27,8 @@ export interface ISelectTreeNodeProps extends Partial<IResolvedTreeSelectionConf
     checkStrictly?: boolean;
     /** Lets the tree root itself be picked, for a caller selecting a location instead of a value. */
     canSelectRootNode?: boolean;
+    /** Prefixes each node with a folder / file type icon, for a tree mixing directories and files. */
+    showNodeTypeIcon?: boolean;
     /** Bypasses the cache on mount, for a caller whose own flow adds or removes nodes of the tree. */
     refreshOnMount?: boolean;
     childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
@@ -56,6 +58,7 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     checkable = false,
     checkStrictly = true,
     canSelectRootNode = false,
+    showNodeTypeIcon = false,
     refreshOnMount = false,
     childrenAsRecordValuePermissionFilter,
     dependentValuesPermissionFilter,
@@ -79,19 +82,17 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
         treeId,
         conf,
         disabledNodes,
+        selectableLibraries,
         childrenAsRecordValuePermissionFilter,
         dependentValuesPermissionFilter,
         canSelectRootNode,
         refreshOnMount,
     });
 
-    const _canSelect = (node: ITreeSelectionNode) =>
-        node.selectable &&
-        // The pseudo root node stands for the tree itself: it belongs to no library
-        (!selectableLibraries || !node.record || selectableLibraries.includes(node.record.whoAmI.library.id));
-
+    // `node.selectable` already accounts for `selectableLibraries`: the socle folds it in, and
+    // disables the nodes it rules out — the pseudo root excepted, as it belongs to no library
     const _emitCheck = (checkedKeys: string[]) => {
-        onCheck?.(checkedKeys.map(key => nodesById[key]).filter(node => node && _canSelect(node)));
+        onCheck?.(checkedKeys.map(key => nodesById[key]).filter(node => node?.selectable));
     };
 
     const _handleSelect: ComponentProps<typeof KitTree>['onSelect'] = (_, event) => {
@@ -102,7 +103,7 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
 
         const node = nodesById[String(event.node.key)];
 
-        if (!node || !_canSelect(node)) {
+        if (!node?.selectable) {
             return;
         }
 
@@ -179,6 +180,7 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
                     selectedNodes={selectedNodes}
                     showSelectChildrenButton={conf.showSelectChildrenButton}
                     showSelectDescendantsButton={conf.showSelectDescendantsButton}
+                    showNodeTypeIcon={showNodeTypeIcon}
                     onGroupSelect={_handleGroupSelect}
                 />
             )}

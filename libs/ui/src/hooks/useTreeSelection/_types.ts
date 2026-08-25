@@ -1,3 +1,4 @@
+import {type LibraryBehavior} from '_ui/_gqlTypes';
 import {type ITreeNodeWithRecord} from '_ui/types';
 
 export type TreeSelectableNodes = 'all_nodes' | 'leaves_only';
@@ -24,6 +25,8 @@ export interface ITreeSelectionNode extends ITreeNodeWithRecord {
      * *not* checking in `checkable` mode, which needs `DataNode.checkable`.
      */
     checkable: boolean;
+    /** Absent on the pseudo root, which stands for the tree itself and belongs to no library. */
+    libraryBehavior?: LibraryBehavior;
 }
 
 export interface ITreeSelectionNodesById {

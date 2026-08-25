@@ -24,6 +24,12 @@ export interface IUseTreeSelectionNodesParams {
     /** Already resolved through `resolveTreeSelectionConf`. */
     conf: IResolvedTreeSelectionConf;
     disabledNodes?: string[];
+    /**
+     * Restricts the selection to the records of these libraries, all of them by default. A node from
+     * another library is disabled rather than silently inert: a `files` tree mixes directories and
+     * files under the same bare label, so a file has to *look* like it cannot be picked.
+     */
+    selectableLibraries?: string[];
     childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
     dependentValuesPermissionFilter?: DependentValuesPermissionFilterInput;
     /** Holds every request back, for a caller loading the tree only once the user asks for it. */
@@ -73,6 +79,7 @@ export const useTreeSelectionNodes = ({
     treeId,
     conf,
     disabledNodes = [],
+    selectableLibraries,
     childrenAsRecordValuePermissionFilter,
     dependentValuesPermissionFilter,
     skip = false,
@@ -120,6 +127,7 @@ export const useTreeSelectionNodes = ({
 
     // Callers pass `disabledNodes` as an inline array: comparing its content keeps the nodes stable
     const disabledNodesKey = disabledNodes.join('|');
+    const selectableLibrariesKey = selectableLibraries?.join('|');
 
     const rootNode = useMemo<ITreeSelectionNode | null>(() => {
         if (!contentData) {
@@ -129,10 +137,14 @@ export const useTreeSelectionNodes = ({
         const isSelectable = (nodeId: string, isLeaf: boolean) =>
             !disabledNodes.includes(nodeId) && (selectableNodes === 'all_nodes' || isLeaf);
 
+        const isFromSelectableLibrary = (libraryId: string) =>
+            !selectableLibraries || selectableLibraries.includes(libraryId);
+
         const toNode = (node: ITreeSelectionContentNode, parents: string[]): ITreeSelectionNode => {
             const children = (node.children ?? []).map(child => toNode(child, [node.id, ...parents]));
             const isLeaf = !node.childrenCount;
-            const selectable = isSelectable(node.id, isLeaf);
+            const fromSelectableLibrary = isFromSelectableLibrary(node.record.whoAmI.library.id);
+            const selectable = isSelectable(node.id, isLeaf) && fromSelectableLibrary;
 
             return {
                 id: node.id,
@@ -142,9 +154,10 @@ export const useTreeSelectionNodes = ({
                 isLeaf,
                 children,
                 parents,
-                disabled: disabledNodes.includes(node.id),
+                disabled: disabledNodes.includes(node.id) || !fromSelectableLibrary,
                 selectable,
                 checkable: selectable,
+                libraryBehavior: node.record.whoAmI.library.behavior,
             };
         };
 
@@ -156,7 +169,8 @@ export const useTreeSelectionNodes = ({
             }
 
             const children = contentData.treeContent.map(node => toNode(node, [displayRootNode]));
-            const selectable = isSelectable(displayRootNode, children.length === 0);
+            const fromSelectableLibrary = isFromSelectableLibrary(rootRecord.whoAmI.library.id);
+            const selectable = isSelectable(displayRootNode, children.length === 0) && fromSelectableLibrary;
 
             return {
                 id: displayRootNode,
@@ -166,9 +180,10 @@ export const useTreeSelectionNodes = ({
                 isLeaf: children.length === 0,
                 children,
                 parents: [],
-                disabled: disabledNodes.includes(displayRootNode),
+                disabled: disabledNodes.includes(displayRootNode) || !fromSelectableLibrary,
                 selectable,
                 checkable: selectable,
+                libraryBehavior: rootRecord.whoAmI.library.behavior,
             };
         }
 
@@ -197,6 +212,7 @@ export const useTreeSelectionNodes = ({
         displayRootNode,
         selectableNodes,
         disabledNodesKey,
+        selectableLibrariesKey,
         lang,
         canSelectRootNode,
     ]);
