@@ -1,0 +1,3 @@
+.wizardContent {
+    margin-top: calc(var(--general-spacing-m) * 1px);
+}

@@ -1,0 +1,6 @@
+.destinationFrame {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px dashed var(--general-utilities-border);
+    border-radius: calc(var(--general-border-radius-s) * 1px);
+}

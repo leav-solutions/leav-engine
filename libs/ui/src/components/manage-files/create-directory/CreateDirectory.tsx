@@ -1,15 +1,17 @@
-import {App, Button, Input, Modal, type StepsProps, Steps, theme} from 'antd';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
+import {faCheck, faChevronLeft, faChevronRight} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {KitButton, KitModal, KitSpace} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type ITreeNodeWithRecord} from '_ui/types/trees';
-import {
-    type CreateDirectoryMutation,
-    TreeBehavior,
-    useCreateDirectoryMutation,
-    useDoesFileExistAsChildLazyQuery,
-    useGetTreeLibrariesQuery,
-} from '_ui/_gqlTypes';
-import {SelectTreeNode} from '_ui/components/SelectTreeNode';
+import {type CreateDirectoryMutation} from '_ui/_gqlTypes';
+import {DestinationStep} from '../shared/DestinationStep';
+import {FILES_WIZARD_MODAL_WIDTH, FilesWizardModal, useWizardSteps} from '../shared/FilesWizardModal';
+import {useDoesFileExistAsChild} from '../shared/useDoesFileExistAsChild';
+import {useFilesTreeLibraries} from '../shared/useFilesTreeLibraries';
+import {type IWizardStep} from '../_types';
+import {DirectoryNameStep} from './DirectoryNameStep';
+import {useCreateDirectory} from './useCreateDirectory';
 
 interface ICreateDirectoryProps {
     defaultSelectedKey?: string;
@@ -20,204 +22,129 @@ interface ICreateDirectoryProps {
 
 function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: ICreateDirectoryProps): JSX.Element {
     const {t} = useSharedTranslation();
-    const {token} = theme.useToken();
+
     const [selectedNodeKey, setSelectedNodeKey] = useState<string>(defaultSelectedKey);
-    const [directoryName, setDirectoryName] = useState<string>();
-    const [status, setStatus] = useState<StepsProps['status']>('wait');
-    const [currentStep, setCurrentStep] = useState(defaultSelectedKey ? 1 : 0);
-    const [treeId, setTreeId] = useState<string>();
-    const {modal} = App.useApp();
 
-    const [runDoesFileExistAsChild] = useDoesFileExistAsChildLazyQuery({
-        fetchPolicy: 'no-cache',
-    });
+    const {filesTreeId} = useFilesTreeLibraries(libraryId);
+    const {doesFileExistAsChild} = useDoesFileExistAsChild(filesTreeId);
+    const {currentStep, next, prev, reset: resetSteps} = useWizardSteps(defaultSelectedKey ? 1 : 0);
+    const {
+        directoryName,
+        setDirectoryName,
+        status,
+        loading,
+        createDirectory,
+        reset: resetDirectory,
+    } = useCreateDirectory({libraryId, onCompleted});
 
-    const _checkDirectoryExists = async (parentNode: string, name: string): Promise<boolean> => {
-        const isFileExists = await runDoesFileExistAsChild({
-            variables: {
-                treeId,
-                parentNode: parentNode !== treeId ? parentNode : null,
-                filename: name,
-            },
+    // Not `useConfirmModal`: it forces `type: 'confirm'`, which always renders a secondary button.
+    // This dialog is a plain acknowledgement, so it must offer nothing but OK.
+    const _showDuplicateNameModal = () =>
+        KitModal.warning({
+            // `warning()` overrides it anyway, but the shared dialog type requires it
+            type: 'warning',
+            width: '100%',
+            style: {content: {width: '90vw', maxWidth: FILES_WIZARD_MODAL_WIDTH}},
+            title: t('create_directory.duplicate_modal.title'),
+            content: t('create_directory.duplicate_modal.message', {directoryName}),
+            okText: t('global.ok'),
         });
 
-        return isFileExists.data.doesFileExistAsChild;
-    };
-
-    const {data: getTreeLibrariesData} = useGetTreeLibrariesQuery({
-        variables: {
-            library: libraryId,
-        },
-    });
-
-    useEffect(() => {
-        if (!getTreeLibrariesData) {
-            return;
-        }
-
-        const linkedTree = getTreeLibrariesData.trees.list.filter(
-            tree => tree.system && tree.behavior === TreeBehavior.files,
-        )[0];
-
-        if (linkedTree) {
-            setTreeId(linkedTree.id);
-        }
-    }, [getTreeLibrariesData]);
-
-    const [runCreateDirectory, {loading}] = useCreateDirectoryMutation({
-        fetchPolicy: 'no-cache',
-        onCompleted: data => {
-            if (typeof onCompleted !== 'undefined') {
-                onCompleted(data.createDirectory);
-            }
-
-            setStatus('finish');
-        },
-        onError: () => {
-            setStatus('error');
-        },
-    });
-
-    const _handleCreateClick = async () => {
-        if (await _checkDirectoryExists(selectedNodeKey, directoryName)) {
-            showDuplicateNameModal();
-            return;
-        }
-
-        setStatus('process');
-
-        await runCreateDirectory({
-            variables: {
-                library: libraryId,
-                nodeId: selectedNodeKey,
-                name: directoryName,
-            },
-        });
-
-        _onClose();
-    };
-
-    const _onClose = () => {
-        setDirectoryName('');
+    const _handleClose = () => {
+        resetDirectory();
+        resetSteps();
+        setSelectedNodeKey(defaultSelectedKey);
         onClose();
     };
 
-    const contentStyle: React.CSSProperties = {
-        marginTop: 16,
+    const _handleCreateClick = async () => {
+        if (await doesFileExistAsChild(selectedNodeKey, directoryName)) {
+            _showDuplicateNameModal();
+            return;
+        }
+
+        // Keep the modal open on failure, so the error status stays readable
+        if (await createDirectory(selectedNodeKey)) {
+            _handleClose();
+        }
     };
 
-    const next = () => {
-        setCurrentStep(currentStep + 1);
-    };
+    const _handleSelectPath = async (node: ITreeNodeWithRecord, selected: boolean) => {
+        const newSelectedNode = selected ? node : undefined;
 
-    const prev = () => {
-        setCurrentStep(currentStep - 1);
-    };
-
-    const onSelectPath = async (node: ITreeNodeWithRecord, selected: boolean) => {
-        const newSelectedNode = !selected ? undefined : node;
-
-        if (directoryName && newSelectedNode && (await _checkDirectoryExists(newSelectedNode?.id, directoryName))) {
-            showDuplicateNameModal();
+        if (directoryName && newSelectedNode && (await doesFileExistAsChild(newSelectedNode.id, directoryName))) {
+            _showDuplicateNameModal();
             return;
         }
 
         setSelectedNodeKey(newSelectedNode?.key);
     };
 
-    const showDuplicateNameModal = () => {
-        modal.warning({
-            className: 'warning-duplicate-modal',
-            closable: true,
-            open: true,
-            title: t('create_directory.duplicate_modal.title'),
-            okText: t('global.ok'),
-            content: <p>{t('create_directory.duplicate_modal.message', {directoryName})}</p>,
-        });
-    };
-
-    const steps = [
+    const steps: IWizardStep[] = [
         {
+            key: 'destination',
             title: t('create_directory.select_path_step_title'),
             content: (
-                <div
-                    data-testid="select-tree-node"
-                    style={{
-                        borderRadius: token.borderRadiusLG,
-                        border: `1px dashed ${token.colorBorder}`,
-                    }}
-                >
-                    {treeId && libraryId && (
-                        <SelectTreeNode
-                            treeId={treeId}
-                            onSelect={onSelectPath}
-                            selectedNodes={[selectedNodeKey]}
-                            canSelectRoot
-                            selectableLibraries={[libraryId]}
-                            showNodeTypeIcon
-                        />
-                    )}
-                </div>
-            ),
-        },
-        {
-            title: t('create_directory.choose_name_step_title'),
-            content: (
-                <Input
-                    data-testid="directory-name-input"
-                    placeholder={t('create_directory.directory_name')}
-                    value={directoryName}
-                    onChange={e => setDirectoryName(e.target.value)}
+                <DestinationStep
+                    treeId={filesTreeId}
+                    selectableLibraries={[libraryId]}
+                    selectedNodeKey={selectedNodeKey}
+                    onSelect={_handleSelectPath}
                 />
             ),
         },
+        {
+            key: 'name',
+            title: t('create_directory.choose_name_step_title'),
+            content: <DirectoryNameStep value={directoryName} onChange={setDirectoryName} />,
+        },
     ];
 
-    const items = steps.map(item => ({key: item.title, title: item.title}));
-
     return (
-        <Modal
-            data-testid="create-directory-modal"
+        <FilesWizardModal
             title={t('create_directory.title')}
-            open
-            width="70rem"
-            onCancel={_onClose}
+            testId="create-directory-modal"
+            steps={steps}
+            currentStep={currentStep}
+            status={status}
+            onClose={_handleClose}
             footer={
-                <div style={{marginTop: 50}}>
+                <KitSpace>
                     {currentStep > 0 && (
-                        <Button data-testid="prev-btn" onClick={() => prev()}>
+                        <KitButton
+                            data-testid="prev-btn"
+                            icon={<FontAwesomeIcon icon={faChevronLeft} />}
+                            onClick={prev}
+                        >
                             {t('create_directory.previous')}
-                        </Button>
+                        </KitButton>
                     )}
                     {currentStep < steps.length - 1 && (
-                        <Button
+                        <KitButton
                             data-testid="next-btn"
-                            disabled={!selectedNodeKey}
                             type="primary"
-                            onClick={() => next()}
+                            disabled={!selectedNodeKey}
+                            icon={<FontAwesomeIcon icon={faChevronRight} />}
+                            onClick={next}
                         >
                             {t('create_directory.next')}
-                        </Button>
+                        </KitButton>
                     )}
                     {currentStep > 0 && (
-                        <Button
+                        <KitButton
                             data-testid="create-btn"
+                            type="primary"
                             loading={loading}
                             disabled={!directoryName}
-                            className="submit-btn"
-                            title="Create"
-                            type="primary"
+                            icon={<FontAwesomeIcon icon={faCheck} />}
                             onClick={_handleCreateClick}
                         >
                             {t('create_directory.create_step_title')}
-                        </Button>
+                        </KitButton>
                     )}
-                </div>
+                </KitSpace>
             }
-        >
-            <Steps status={status} current={currentStep} items={items} />
-            <div style={contentStyle}>{steps[currentStep].content}</div>
-        </Modal>
+        />
     );
 }
 

@@ -8,6 +8,7 @@ import {
     UploadUpdateDocument,
 } from '_ui/_gqlTypes';
 import * as gqlTypes from '_ui/_gqlTypes';
+import {KitModal} from 'aristid-ds';
 import {fireEvent, render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeSimple} from '_ui/__mocks__/common/tree';
@@ -21,6 +22,8 @@ vi.mock('_ui/components/SelectTreeNode', () => ({
         </>
     ),
 }));
+
+KitModal.setAppElement(document.body);
 
 describe('UploadFiles', () => {
     const commonMocks = [
@@ -193,16 +196,10 @@ describe('UploadFiles', () => {
 
         await userEvent.click(screen.getByTestId('upload-btn'));
 
-        // Since antd 6, confirm modals render their title twice (modal header + confirm body),
-        // so a plain getByText matches multiple elements. Target the confirm body one.
-        await waitFor(() =>
-            expect(
-                screen.getByText('upload.replace_modal.title', {selector: '.ant-modal-confirm-title'}),
-            ).toBeInTheDocument(),
-        );
+        await waitFor(() => expect(screen.getByTestId('replace-file-modal')).toBeInTheDocument());
 
-        const replaceBtn = screen.getByText('upload.replace_modal.replaceBtn');
-        const keepBtn = screen.getByText('upload.replace_modal.keepBtn');
+        const replaceBtn = screen.getByTestId('replace-btn');
+        const keepBtn = screen.getByTestId('keep-both-btn');
 
         expect(replaceBtn).toBeInTheDocument();
         expect(keepBtn).toBeInTheDocument();

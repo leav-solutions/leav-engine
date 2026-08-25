@@ -6,6 +6,7 @@ import {
     LibraryBehavior,
     TreeBehavior,
 } from '_ui/_gqlTypes';
+import {KitModal} from 'aristid-ds';
 import {fireEvent, render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeSimple} from '_ui/__mocks__/common/tree';
@@ -15,7 +16,9 @@ vi.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNode: () => <div>SelectTreeNode</div>,
 }));
 
-describe('UploadFiles', () => {
+KitModal.setAppElement(document.body);
+
+describe('CreateDirectory', () => {
     const commonMocks = [
         {
             request: {
@@ -167,16 +170,18 @@ describe('UploadFiles', () => {
 
         await userEvent.click(createBtn);
 
-        // Since antd 6, confirm modals render their title twice (modal header + confirm body),
-        // so a plain getByText matches multiple elements. Target the confirm body one.
+        await waitFor(() => expect(screen.getByText('create_directory.duplicate_modal.title')).toBeInTheDocument());
+
+        // The warning is rendered imperatively in its own React root, outside of what testing-library
+        // tears down: close it explicitly or it leaks into the next test.
+        await userEvent.click(screen.getByText('global.ok'));
+
         await waitFor(() =>
-            expect(
-                screen.getByText('create_directory.duplicate_modal.title', {selector: '.ant-modal-confirm-title'}),
-            ).toBeInTheDocument(),
+            expect(screen.queryByText('create_directory.duplicate_modal.title')).not.toBeInTheDocument(),
         );
     });
 
-    test('Directory name exists', async () => {
+    test('Directory name does not exist', async () => {
         const mocks = [
             {
                 request: {
@@ -265,7 +270,7 @@ describe('UploadFiles', () => {
         userEvent.click(screen.getByTestId('create-btn'));
 
         await waitFor(() =>
-            expect(screen.queryByTestId('create_directory.duplicate_modal.title')).not.toBeInTheDocument(),
+            expect(screen.queryByText('create_directory.duplicate_modal.title')).not.toBeInTheDocument(),
         );
     });
 });

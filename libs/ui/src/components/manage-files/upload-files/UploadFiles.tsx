@@ -1,35 +1,19 @@
-import {CheckCircleTwoTone, FileOutlined, InboxOutlined, LoadingOutlined} from '@ant-design/icons';
-import {
-    Alert,
-    App,
-    Button,
-    Checkbox,
-    Divider,
-    Modal,
-    Row,
-    Space,
-    type StepsProps,
-    Steps,
-    theme,
-    Tooltip,
-    Upload,
-    type UploadFile,
-} from 'antd';
-import {useEffect, useState} from 'react';
-import {useUser} from '_ui/hooks';
+import {useState} from 'react';
+import {faCheck, faChevronLeft, faChevronRight, faXmark} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {KitButton, KitSpace} from 'aristid-ds';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type ITreeNodeWithRecord} from '_ui/types/trees';
-import {
-    LibraryBehavior,
-    TreeBehavior,
-    type UploadMutation,
-    useDoesFileExistAsChildLazyQuery,
-    useGetDirectoryDataQuery,
-    useGetTreeLibrariesQuery,
-    useUploadMutation,
-    useUploadUpdateSubscription,
-} from '_ui/_gqlTypes';
-import {SelectTreeNode} from '_ui/components/SelectTreeNode';
+import {type UploadMutation} from '_ui/_gqlTypes';
+import {DestinationStep, DestinationStepTitle} from '../shared/DestinationStep';
+import {FilesWizardModal, useWizardSteps} from '../shared/FilesWizardModal';
+import {useFilesTreeLibraries} from '../shared/useFilesTreeLibraries';
+import {type IWizardStep} from '../_types';
+import {FilesSelectionStep} from './FilesSelectionStep';
+import {ReplaceFileModal} from './ReplaceFileModal';
+import {useCheckFilesExist} from './useCheckFilesExist';
+import {useSelectedDirectoryPath} from './useSelectedDirectoryPath';
+import {useUploadFiles} from './useUploadFiles';
 
 interface IUploadFilesProps {
     defaultSelectedNode?: {id: string; recordId?: string};
@@ -47,360 +31,145 @@ function UploadFiles({
     onClose,
 }: IUploadFilesProps): JSX.Element {
     const {t} = useSharedTranslation();
-    const {token} = theme.useToken();
-    const {userData} = useUser();
-    const {modal} = App.useApp();
 
     const [selectedNode, setSelectedNode] = useState<{id: string; recordId?: string}>(defaultSelectedNode);
-    const [files, setFiles] = useState<Array<UploadFile & {replace?: boolean}>>([]);
-    const [status, setStatus] = useState<StepsProps['status']>('process');
-    const [currentStep, setCurrentStep] = useState(defaultSelectedNode ? 1 : 0);
-    const [filesTreeId, setFilesTreeId] = useState<string>();
-    const [directoriesLibraryId, setdirectoriesLibraryId] = useState<string>();
-    const [errorMsg, setErrorMsg] = useState<string>();
 
-    const [runUpload, {loading}] = useUploadMutation({
-        fetchPolicy: 'no-cache',
-        onCompleted: data => {
-            if (typeof onCompleted !== 'undefined') {
-                onCompleted(data.upload);
-            }
+    const {filesTreeId, directoriesLibraryId} = useFilesTreeLibraries(libraryId);
+    const {currentStep, next, prev, reset: resetSteps} = useWizardSteps(defaultSelectedNode ? 1 : 0);
+    const {
+        files,
+        status,
+        errorMsg,
+        loading,
+        addFile,
+        removeFile,
+        upload,
+        reset: resetUpload,
+    } = useUploadFiles({libraryId, onCompleted});
+    const {checkFilesExist, conflictingFilename, onDecide} = useCheckFilesExist(filesTreeId);
 
-            setStatus('finish');
-        },
-        onError: err => {
-            setStatus('error');
-            setErrorMsg(err.message);
-        },
-    });
+    const directoryPath = useSelectedDirectoryPath(directoriesLibraryId, selectedNode?.recordId);
+    const isDone = status === 'finish' || status === 'error';
 
-    const {data: directoryData} = useGetDirectoryDataQuery({
-        skip: !directoriesLibraryId || !selectedNode?.recordId,
-        variables: {
-            library: directoriesLibraryId,
-            directoryId: selectedNode?.recordId,
-        },
-    });
+    const _handleSelectPath = async (node: ITreeNodeWithRecord, selected: boolean) =>
+        setSelectedNode(selected ? {id: node.id, recordId: node.record?.id} : undefined);
 
-    // Derived from the query: no local state to resync when the selected node changes.
-    const dirData = directoryData?.records.list[0];
-    const selectedDir = dirData
-        ? {path: dirData.file_path?.[0]?.value ?? '', name: dirData.file_name?.[0]?.value ?? ''}
-        : null;
+    const _handleUploadClick = async () => {
+        const replaceDecisions = await checkFilesExist(selectedNode.id, files);
 
-    const props = {
-        name: 'files',
-        multiple,
-        maxCount: multiple ? 99999 : 1,
-        showUploadList: true,
-        fileList: files,
-        disabled: status !== 'process' || loading,
-        beforeUpload: async (file: UploadFile) => {
-            file.uid = window.crypto.randomUUID();
-            setFiles(prevState => prevState.concat([file]));
-
-            return false;
-        },
-        onRemove: (file: UploadFile) => {
-            const newFileList = files.filter(f => f.uid !== file.uid);
-            setFiles(newFileList);
-        },
-        iconRender: (file: UploadFile) => {
-            if (file.status === 'uploading') {
-                return <LoadingOutlined />;
-            } else if (file.status === 'done') {
-                return <CheckCircleTwoTone twoToneColor={token.colorSuccess} />;
-            }
-
-            return <FileOutlined />;
-        },
-        progress: {showInfo: true, strokeWidth: 2},
+        next();
+        await upload(selectedNode.id, replaceDecisions);
     };
 
-    const [runDoesFileExistAsChild] = useDoesFileExistAsChildLazyQuery({
-        fetchPolicy: 'no-cache',
-    });
-
-    const _checkFilesExist = async (parentNode: string): Promise<void> => {
-        let applyToAll: {replace: boolean};
-
-        const filesToCheck = [...files];
-
-        for (const f of filesToCheck) {
-            if (applyToAll) {
-                f.replace = f.replace ?? applyToAll.replace;
-            } else {
-                const isFileExists = await runDoesFileExistAsChild({
-                    variables: {
-                        treeId: filesTreeId,
-                        parentNode: parentNode !== filesTreeId ? parentNode : null,
-                        filename: f.name,
-                    },
-                });
-
-                if (isFileExists.data.doesFileExistAsChild) {
-                    const {applyToAll: mustBeAppliedToAll, replace} = await showReplaceModal(f.name);
-                    Modal.destroyAll();
-
-                    f.replace = replace;
-
-                    if (mustBeAppliedToAll) {
-                        applyToAll = {replace};
-                    }
-                }
-            }
-        }
-
-        setFiles(filesToCheck);
-    };
-
-    const {data: getTreeLibrariesData} = useGetTreeLibrariesQuery({
-        variables: {
-            library: libraryId,
-        },
-    });
-
-    useEffect(() => {
-        if (!getTreeLibrariesData) {
-            return;
-        }
-
-        const linkedTree = getTreeLibrariesData.trees.list.filter(
-            tree => tree.system && tree.behavior === TreeBehavior.files,
-        )[0];
-
-        if (!linkedTree) {
-            return;
-        }
-
-        setFilesTreeId(linkedTree.id);
-
-        const directoriesLibrary = linkedTree.libraries.filter(
-            l => l.library.behavior === LibraryBehavior.directories,
-        )[0]?.library.id;
-
-        setdirectoriesLibraryId(directoriesLibrary);
-    }, [getTreeLibrariesData]);
-
-    // Sub to update files upload progress
-    useUploadUpdateSubscription({
-        variables: {
-            filters: {userId: userData.userId},
-        },
-        // skip: !user?.userId,
-        onData: subData => {
-            const uploadData = subData.data.data.upload;
-
-            setFiles(prevState =>
-                prevState.map(f => {
-                    if (f.uid === uploadData.uid) {
-                        f.percent = uploadData.progress.percentage;
-                        f.status = uploadData.progress.percentage === 100 ? 'done' : 'uploading';
-                    }
-
-                    return f;
-                }),
-            );
-        },
-    });
-
-    const startUpload = async (): Promise<void> => {
-        await runUpload({
-            variables: {
-                library: libraryId,
-                nodeId: selectedNode.id,
-                files: files.map(f => ({
-                    data: f,
-                    uid: f.uid,
-                    size: f.size,
-                    replace: f.replace,
-                })),
-            },
-        });
-    };
-
-    const _handleUploadClick = () => {
-        _checkFilesExist(selectedNode.id).then(() => {
-            next();
-            startUpload();
-        });
-    };
-
-    const _onClose = () => {
-        setFiles([]);
+    const _handleClose = () => {
+        resetUpload();
+        resetSteps();
         setSelectedNode(defaultSelectedNode);
-        setStatus('process');
-        setCurrentStep(defaultSelectedNode ? 1 : 0);
-        setErrorMsg(undefined);
         onClose();
     };
 
-    const contentStyle: React.CSSProperties = {
-        marginTop: 16,
-    };
-
-    const next = () => {
-        setCurrentStep(currentStep + 1);
-    };
-
-    const prev = () => {
-        setCurrentStep(currentStep - 1);
-    };
-
-    const onSelectPath = async (node: ITreeNodeWithRecord, selected: boolean) => {
-        setSelectedNode(!selected ? undefined : {id: node.id, recordId: node.record?.id});
-    };
-
-    const Dragger = (
-        <Upload.Dragger data-testid="dragger" {...props}>
-            <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">{t('upload.dragger_content')}</p>
-        </Upload.Dragger>
-    );
-
-    const isDone = status === 'finish' || status === 'error';
-
-    const showReplaceModal = async (filename: string): Promise<{replace: boolean; applyToAll: boolean}> =>
-        new Promise(res => {
-            let applyToAll = false;
-
-            modal.confirm({
-                className: 'confirm-replace-modal',
-                closable: true,
-                open: true,
-                title: t('upload.replace_modal.title'),
-                content: <p>{t('upload.replace_modal.message', {filename})}</p>,
-                footer: (
-                    <Row justify="end">
-                        <Space>
-                            <Checkbox
-                                onChange={e => {
-                                    applyToAll = e.target.checked;
-                                }}
-                            >
-                                {t('upload.replace_modal.applyToAll')}
-                            </Checkbox>
-                            <Button key="keepBtn" onClick={() => res({replace: false, applyToAll})}>
-                                {t('upload.replace_modal.keepBtn')}
-                            </Button>
-                            <Button key="replaceBtn" type="primary" onClick={() => res({replace: true, applyToAll})}>
-                                {t('upload.replace_modal.replaceBtn')}
-                            </Button>
-                        </Space>
-                    </Row>
-                ),
-            });
-        });
-
-    const renderPathTitle = () => {
-        const title = selectedNode
-            ? selectedDir
-                ? [selectedDir.path, selectedDir.name].filter(Boolean).join('/').replace('./', '')
-                : filesTreeId
-            : t('upload.select_path_step_title');
-
-        return <Tooltip title={title}>{title?.length > 30 ? `${title.slice(0, 30)}...` : title}</Tooltip>;
-    };
-
-    const steps = [
+    const steps: IWizardStep[] = [
         {
-            title: renderPathTitle(),
+            key: 'destination',
+            title: selectedNode ? (
+                <DestinationStepTitle path={directoryPath ?? filesTreeId} />
+            ) : (
+                t('upload.select_path_step_title')
+            ),
             content: (
-                <div
-                    data-testid="select-tree-node"
-                    style={{
-                        borderRadius: token.borderRadiusLG,
-                        border: `1px dashed ${token.colorBorder}`,
-                    }}
-                >
-                    {filesTreeId && directoriesLibraryId && (
-                        <SelectTreeNode
-                            treeId={filesTreeId}
-                            onSelect={onSelectPath}
-                            selectedNodes={[selectedNode?.id]}
-                            canSelectRoot
-                            selectableLibraries={[directoriesLibraryId]}
-                            showNodeTypeIcon
-                        />
-                    )}
-                </div>
+                <DestinationStep
+                    treeId={filesTreeId}
+                    selectableLibraries={[directoriesLibraryId]}
+                    selectedNodeKey={selectedNode?.id}
+                    onSelect={_handleSelectPath}
+                />
             ),
         },
         {
+            key: 'files',
             title: t('upload.select_files_step_title'),
-            content: Dragger,
+            content: (
+                <FilesSelectionStep
+                    files={files}
+                    multiple={multiple}
+                    disabled={status !== 'process' || loading}
+                    onAdd={addFile}
+                    onRemove={removeFile}
+                />
+            ),
         },
         {
+            key: 'upload',
             title: t('upload.upload_step_title'),
             content: (
-                <>
-                    {Dragger}
-                    {!!errorMsg && (
-                        <>
-                            <Divider />
-                            <Alert message={errorMsg} type="error" />
-                        </>
-                    )}
-                </>
+                <FilesSelectionStep
+                    files={files}
+                    multiple={multiple}
+                    disabled={status !== 'process' || loading}
+                    errorMsg={errorMsg}
+                    onAdd={addFile}
+                    onRemove={removeFile}
+                />
             ),
-            icon: loading ? <LoadingOutlined /> : null,
         },
     ];
 
-    const items = steps.map(item => ({key: item.title, title: item.title, icon: item.icon}));
-
     return (
         <>
-            <Modal
+            <FilesWizardModal
                 title={t('upload.title')}
-                open
-                width="70rem"
-                onCancel={_onClose}
+                testId="upload-modal"
+                steps={steps}
+                currentStep={currentStep}
+                status={status}
+                onClose={_handleClose}
                 footer={
-                    <div style={{marginTop: 50}}>
+                    <KitSpace>
                         {currentStep > 0 && currentStep < steps.length - 1 && (
-                            <Button data-testid="prev-btn" onClick={() => prev()}>
+                            <KitButton
+                                data-testid="prev-btn"
+                                icon={<FontAwesomeIcon icon={faChevronLeft} />}
+                                onClick={prev}
+                            >
                                 {t('upload.previous')}
-                            </Button>
+                            </KitButton>
                         )}
                         {currentStep < steps.length - 2 && (
-                            <Button
+                            <KitButton
                                 data-testid="next-btn"
-                                disabled={!selectedNode}
                                 type="primary"
-                                onClick={() => next()}
+                                disabled={!selectedNode}
+                                icon={<FontAwesomeIcon icon={faChevronRight} />}
+                                onClick={next}
                             >
                                 {t('upload.next')}
-                            </Button>
+                            </KitButton>
                         )}
                         {(!files.length || !isDone) && currentStep >= steps.length - 2 && (
-                            <Button
+                            <KitButton
                                 data-testid="upload-btn"
+                                type="primary"
                                 loading={loading}
                                 disabled={!files.length}
-                                className="submit-btn"
-                                title="Upload"
-                                type="primary"
+                                icon={<FontAwesomeIcon icon={faCheck} />}
                                 onClick={_handleUploadClick}
                             >
                                 {t('upload.upload_step_title')}
-                            </Button>
+                            </KitButton>
                         )}
                         {isDone && (
-                            <Button data-testid="close-btn" onClick={_onClose}>
+                            <KitButton
+                                data-testid="close-btn"
+                                icon={<FontAwesomeIcon icon={faXmark} />}
+                                onClick={_handleClose}
+                            >
                                 {t('global.close')}
-                            </Button>
+                            </KitButton>
                         )}
-                    </div>
+                    </KitSpace>
                 }
-                data-testid="upload-modal"
-                upload-modal
-            >
-                <Steps status={status} current={currentStep} items={items} />
-                <div style={contentStyle}>{steps[currentStep].content}</div>
-            </Modal>
+            />
+            <ReplaceFileModal filename={conflictingFilename} onDecide={onDecide} />
         </>
     );
 }
