@@ -9,7 +9,7 @@ import {
 } from '_ui/_gqlTypes';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
 import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
-import {TreeNodeTitleV2} from '_ui/components/SelectTreeNodeV2';
+import {TreeNodeTitle} from '_ui/components/SelectTreeNode';
 import {TREE_FIELD_ID_PREFIX} from '_ui/constants';
 import {useLang} from '_ui/hooks';
 import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
@@ -19,7 +19,7 @@ import {type IFormElementProps} from '../../_types';
 import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
 import {ComputeIndicator} from '../shared/ComputeIndicator';
 import {useOutsideInteractionDetector} from '../shared/useOutsideInteractionDetector';
-import {fieldWrapper, inputExtraAlignLeft} from './TreeFieldV2.module.css';
+import {fieldWrapper, inputExtraAlignLeft} from './treeField.module.css';
 import {useTreeFieldValues} from './useTreeFieldValues';
 
 /**
@@ -82,7 +82,7 @@ const _toLockedNodeData = (nodeId: string, label: string): ITreeSelectNodeData =
     closable: false,
 });
 
-type TreeFieldV2Props = IFormElementProps<ICommonFieldsSettings>;
+type TreeFieldProps = IFormElementProps<ICommonFieldsSettings>;
 
 /**
  * Tree field of a record form.
@@ -96,7 +96,7 @@ type TreeFieldV2Props = IFormElementProps<ICommonFieldsSettings>;
  * displayed in the meantime, with the label the record form already carries.
  *
  * The `showSelectChildrenButton` / `showSelectDescendantsButton` group buttons are rendered by making
- * the title of a node a rich `ReactNode` (`TreeNodeTitleV2`, shared with the selection modal). By
+ * the title of a node a rich `ReactNode` (`TreeNodeTitle`, shared with the selection modal). By
  * default `TreeSelect` reuses that title to render a node once selected (`convert2LabelValues` in
  * `@rc-component/tree-select`), which would put the buttons inside the tags and inside the closed
  * field: `treeNodeLabelProp` points the selector at a separate plain-text `label` instead. The search
@@ -111,7 +111,7 @@ type TreeFieldV2Props = IFormElementProps<ICommonFieldsSettings>;
  * `SHOW_CHILD` strategy hides the tag of a node once every one of its children is also checked,
  * even though that node is a saved value of its own in LEAV.
  */
-const TreeFieldV2: FunctionComponent<TreeFieldV2Props> = ({
+const TreeField: FunctionComponent<TreeFieldProps> = ({
     element,
     readonly,
     isFormCreationMode,
@@ -261,7 +261,7 @@ const TreeFieldV2: FunctionComponent<TreeFieldV2Props> = ({
         // `ReactNode` title to work around
         const renderTitle = showGroupButtons
             ? (node: ITreeSelectionNode) => (
-                  <TreeNodeTitleV2
+                  <TreeNodeTitle
                       node={node}
                       nodesById={nodesById}
                       getDescendants={getDescendants}
@@ -357,4 +357,4 @@ const TreeFieldV2: FunctionComponent<TreeFieldV2Props> = ({
     );
 };
 
-export default TreeFieldV2;
+export default TreeField;

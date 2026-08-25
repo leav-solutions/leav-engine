@@ -19,7 +19,7 @@ import {
     treeSelectionContentQuery,
 } from '_ui/hooks/useTreeSelection/_queries/treeSelectionContentQuery';
 import {APICallStatus} from '../../_types';
-import TreeFieldV2 from './TreeFieldV2';
+import TreeField from './TreeField';
 
 const treeId = 'categories';
 const libraryId = 'campaigns';
@@ -163,7 +163,7 @@ const _renderField = ({
 } = {}) =>
     render(
         <AntForm>
-            <TreeFieldV2
+            <TreeField
                 element={element as any}
                 readonly={readonly}
                 isFormCreationMode={false}
@@ -204,7 +204,7 @@ const _findRichNode = async (label: string) =>
         return found as HTMLElement;
     });
 
-describe('TreeFieldV2', () => {
+describe('TreeField', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         Object.assign(mockInitialState, editedRecordState);

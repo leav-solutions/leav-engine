@@ -1,6 +1,6 @@
 import {type FunctionComponent} from 'react';
 import {KitTooltip} from 'aristid-ds';
-import {SelectTreeNodeV2} from '_ui/components/SelectTreeNodeV2';
+import {SelectTreeNode} from '_ui/components/SelectTreeNode';
 import {type ITreeNodeWithRecord} from '_ui/types/trees';
 import {destinationFrame} from './DestinationStep.module.css';
 
@@ -28,7 +28,7 @@ export const DestinationStep: FunctionComponent<IDestinationStepProps> = ({
 }) => (
     <div data-testid="select-tree-node" className={destinationFrame}>
         {treeId && selectableLibraries.every(Boolean) && (
-            <SelectTreeNodeV2
+            <SelectTreeNode
                 treeId={treeId}
                 onSelect={onSelect}
                 selectedNodes={selectedNodeKey ? [selectedNodeKey] : []}

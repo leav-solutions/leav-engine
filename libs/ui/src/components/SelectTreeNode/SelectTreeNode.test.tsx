@@ -9,7 +9,7 @@ import {
     treeSelectionContentQuery,
     treeSelectionRootNodeQuery,
 } from '_ui/hooks/useTreeSelection/_queries/treeSelectionContentQuery';
-import {SelectTreeNodeV2} from './SelectTreeNodeV2';
+import {SelectTreeNode} from './SelectTreeNode';
 
 /**
  * Every node renders its own group buttons — the reveal is a CSS `:hover` on antd's row, which jsdom
@@ -80,9 +80,9 @@ const treeDataMock: MockedResponse = {
 
 const defaultMocks = [_contentMock(), treeDataMock];
 
-describe('SelectTreeNodeV2', () => {
+describe('SelectTreeNode', () => {
     test('Renders the tree content under a pseudo root named after the tree', async () => {
-        render(<SelectTreeNodeV2 treeId={treeId} onSelect={vi.fn()} />, {mocks: defaultMocks});
+        render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} />, {mocks: defaultMocks});
 
         expect(await screen.findByText('Catégories')).toBeVisible();
         expect(screen.getByText('branch')).toBeVisible();
@@ -92,14 +92,14 @@ describe('SelectTreeNodeV2', () => {
     });
 
     test('Unfolds the whole tree with defaultExpanded', async () => {
-        render(<SelectTreeNodeV2 treeId={treeId} onSelect={vi.fn()} defaultExpanded />, {mocks: defaultMocks});
+        render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} defaultExpanded />, {mocks: defaultMocks});
 
         expect(await screen.findByText('leaf1')).toBeVisible();
         expect(screen.getByText('leaf2')).toBeVisible();
     });
 
     test('Starts at displayRootNode, which becomes the root of the displayed tree', async () => {
-        render(<SelectTreeNodeV2 treeId={treeId} onSelect={vi.fn()} displayRootNode="branch" />, {
+        render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} displayRootNode="branch" />, {
             mocks: [
                 _contentMock({startAt: 'branch', content: [_node('leaf1'), _node('leaf2')]}),
                 {
@@ -116,7 +116,7 @@ describe('SelectTreeNodeV2', () => {
     });
 
     test('Only fetches the content down to maxDepth', async () => {
-        render(<SelectTreeNodeV2 treeId={treeId} onSelect={vi.fn()} maxDepth={1} defaultExpanded />, {
+        render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} maxDepth={1} defaultExpanded />, {
             // Only matches if the component asked for a depth of 1
             mocks: [_contentMock({depth: 1, content: [_node('branch'), _node('otherLeaf')]}), treeDataMock],
         });
@@ -127,7 +127,7 @@ describe('SelectTreeNodeV2', () => {
 
     test('Selects a node on click, but not the pseudo root by default', async () => {
         const onSelect = vi.fn();
-        render(<SelectTreeNodeV2 treeId={treeId} onSelect={onSelect} />, {mocks: defaultMocks});
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} />, {mocks: defaultMocks});
 
         await userEvent.click(await screen.findByText('Catégories'));
         expect(onSelect).not.toHaveBeenCalled();
@@ -139,7 +139,7 @@ describe('SelectTreeNodeV2', () => {
 
     test('Selects the pseudo root with canSelectRootNode, under the id of the tree', async () => {
         const onSelect = vi.fn();
-        render(<SelectTreeNodeV2 treeId={treeId} onSelect={onSelect} canSelectRootNode />, {mocks: defaultMocks});
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} canSelectRootNode />, {mocks: defaultMocks});
 
         await userEvent.click(await screen.findByText('Catégories'));
 
@@ -149,7 +149,7 @@ describe('SelectTreeNodeV2', () => {
     test('Exempts the pseudo root from selectableLibraries, which it belongs to none of', async () => {
         const onSelect = vi.fn();
         render(
-            <SelectTreeNodeV2
+            <SelectTreeNode
                 treeId={treeId}
                 onSelect={onSelect}
                 canSelectRootNode
@@ -168,10 +168,9 @@ describe('SelectTreeNodeV2', () => {
 
     test('Keeps the pseudo root unselectable with leaves_only, even with canSelectRootNode', async () => {
         const onSelect = vi.fn();
-        render(
-            <SelectTreeNodeV2 treeId={treeId} onSelect={onSelect} canSelectRootNode selectableNodes="leaves_only" />,
-            {mocks: defaultMocks},
-        );
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} canSelectRootNode selectableNodes="leaves_only" />, {
+            mocks: defaultMocks,
+        });
 
         await userEvent.click(await screen.findByText('Catégories'));
 
@@ -180,7 +179,7 @@ describe('SelectTreeNodeV2', () => {
 
     test('Only lets leaves be selected with leaves_only', async () => {
         const onSelect = vi.fn();
-        render(<SelectTreeNodeV2 treeId={treeId} onSelect={onSelect} selectableNodes="leaves_only" />, {
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} selectableNodes="leaves_only" />, {
             mocks: defaultMocks,
         });
 
@@ -194,7 +193,7 @@ describe('SelectTreeNodeV2', () => {
     test('Removes the checkbox of unselectable nodes in checkable mode', async () => {
         const onCheck = vi.fn();
         const {container} = render(
-            <SelectTreeNodeV2
+            <SelectTreeNode
                 treeId={treeId}
                 onSelect={vi.fn()}
                 onCheck={onCheck}
@@ -219,7 +218,7 @@ describe('SelectTreeNodeV2', () => {
 
     test('Selects every direct child with showSelectChildrenButton', async () => {
         const onSelect = vi.fn();
-        render(<SelectTreeNodeV2 treeId={treeId} onSelect={onSelect} showSelectChildrenButton defaultExpanded />, {
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} showSelectChildrenButton defaultExpanded />, {
             mocks: defaultMocks,
         });
 
@@ -232,7 +231,7 @@ describe('SelectTreeNodeV2', () => {
 
     test('Selects every descendant with showSelectDescendantsButton', async () => {
         const onSelect = vi.fn();
-        render(<SelectTreeNodeV2 treeId={treeId} onSelect={onSelect} showSelectDescendantsButton defaultExpanded />, {
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} showSelectDescendantsButton defaultExpanded />, {
             mocks: defaultMocks,
         });
 
@@ -243,7 +242,7 @@ describe('SelectTreeNodeV2', () => {
     });
 
     test('Does not show the group selection buttons by default', async () => {
-        render(<SelectTreeNodeV2 treeId={treeId} onSelect={vi.fn()} defaultExpanded />, {mocks: defaultMocks});
+        render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} defaultExpanded />, {mocks: defaultMocks});
 
         expect(await screen.findByText('branch')).toBeVisible();
         expect(screen.queryByRole('button')).not.toBeInTheDocument();

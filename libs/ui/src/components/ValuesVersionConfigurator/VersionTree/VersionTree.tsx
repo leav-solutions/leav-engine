@@ -11,7 +11,7 @@ import {themeVars} from '../../../antdTheme';
 import useLang from '../../../hooks/useLang/useLang';
 import {type ITreeNode} from '../../../types/trees';
 import {type GetVersionableAttributesByLibraryQuery} from '../../../_gqlTypes';
-import {SelectTreeNodeModalV2} from '../../SelectTreeNodeV2';
+import {SelectTreeNodeModal} from '../../SelectTreeNode';
 
 const Wrapper = styled.div`
     background: ${themeVars.lightBg};
@@ -107,7 +107,7 @@ function VersionTree({tree, selectedNode, readOnly, onNodeChange}: IVersionTreeP
                 </SelectedNodeTitle>
             </Wrapper>
             {isTreeNodeSelectorOpen && (
-                <SelectTreeNodeModalV2
+                <SelectTreeNodeModal
                     open
                     title={t('tree-node-selection.title')}
                     attribute={{multiple_values: false, linked_tree: {id: tree.id}}}

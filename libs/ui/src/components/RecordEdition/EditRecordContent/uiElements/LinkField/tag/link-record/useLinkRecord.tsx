@@ -16,7 +16,7 @@ import {AntForm, KitButton, KitTooltip} from 'aristid-ds';
 import {type Dispatch, type SetStateAction, useState} from 'react';
 import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {SelectTreeNodeModalV2} from '_ui/components/SelectTreeNodeV2';
+import {SelectTreeNodeModal} from '_ui/components/SelectTreeNode';
 
 interface IUseLinkRecordProps {
     attribute: RecordFormAttributeLinkAttributeFragment;
@@ -117,7 +117,7 @@ export const useLinkRecord = ({
                     />
                 </KitTooltip>
                 {linkedTreeId ? (
-                    <SelectTreeNodeModalV2
+                    <SelectTreeNodeModal
                         open={isModalOpen}
                         attribute={{
                             multiple_values: attribute.multiple_values,

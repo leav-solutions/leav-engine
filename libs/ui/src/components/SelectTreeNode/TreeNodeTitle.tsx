@@ -4,9 +4,9 @@ import {KitButton, KitIdCard, KitTag, KitTooltip, KitTypography} from 'aristid-d
 import {type FunctionComponent, type MouseEvent} from 'react';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type ITreeSelectionNode, type ITreeSelectionNodesById} from '_ui/hooks/useTreeSelection';
-import {groupButtons, treeNodeLine, treeNodeLineSection} from './TreeNodeTitleV2.module.css';
+import {groupButtons, treeNodeLine, treeNodeLineSection} from './treeNodeTitle.module.css';
 
-interface ITreeNodeTitleV2Props {
+interface ITreeNodeTitleProps {
     node: ITreeSelectionNode;
     nodesById: ITreeSelectionNodesById;
     getDescendants: (nodeId: string) => string[];
@@ -18,7 +18,7 @@ interface ITreeNodeTitleV2Props {
     onGroupSelect: (nodes: ITreeSelectionNode[], selected: boolean) => void;
 }
 
-export const TreeNodeTitleV2: FunctionComponent<ITreeNodeTitleV2Props> = ({
+export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
     node,
     nodesById,
     getDescendants,

@@ -70,7 +70,7 @@ const _formatSubmittedValues = (result: ISubmitMultipleResult): RecordFormElemen
     })) as RecordFormElementsValueTreeValue[];
 
 /**
- * Value layer of `TreeFieldV2`: turns what `KitTreeSelect` gives back into the submit / delete calls
+ * Value layer of `TreeField`: turns what `KitTreeSelect` gives back into the submit / delete calls
  * of the record form, and keeps the antd form state in sync.
  *
  * Multiple values are saved by diff — the select hands over the whole selection, the record form API

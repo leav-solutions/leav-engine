@@ -8,7 +8,7 @@ import {
     type ITreeSelectionContentNode,
     treeSelectionContentQuery,
 } from '_ui/hooks/useTreeSelection/_queries/treeSelectionContentQuery';
-import {SelectTreeNodeModalV2, type SelectTreeNodeModalV2Attribute} from './SelectTreeNodeModalV2';
+import {SelectTreeNodeModal, type SelectTreeNodeModalAttribute} from './SelectTreeNodeModal';
 
 const treeId = 'categories';
 
@@ -64,17 +64,17 @@ const treeDataMock: MockedResponse = {
 const mocks = [contentMock, treeDataMock];
 
 const _attribute = (
-    treeSelectionConf: SelectTreeNodeModalV2Attribute['tree_selection_conf'] = null,
+    treeSelectionConf: SelectTreeNodeModalAttribute['tree_selection_conf'] = null,
     multipleValues = false,
-): SelectTreeNodeModalV2Attribute => ({
+): SelectTreeNodeModalAttribute => ({
     multiple_values: multipleValues,
     linked_tree: {id: treeId},
     tree_selection_conf: treeSelectionConf,
 });
 
-const _renderModal = (props: Partial<Parameters<typeof SelectTreeNodeModalV2>[0]> = {}) =>
+const _renderModal = (props: Partial<Parameters<typeof SelectTreeNodeModal>[0]> = {}) =>
     render(
-        <SelectTreeNodeModalV2
+        <SelectTreeNodeModal
             open
             title="Ajouter une catégorie"
             attribute={_attribute()}
@@ -86,7 +86,7 @@ const _renderModal = (props: Partial<Parameters<typeof SelectTreeNodeModalV2>[0]
         {mocks},
     );
 
-describe('SelectTreeNodeModalV2', () => {
+describe('SelectTreeNodeModal', () => {
     test('Applies the system defaults without configuration nor prop', async () => {
         _renderModal();
 

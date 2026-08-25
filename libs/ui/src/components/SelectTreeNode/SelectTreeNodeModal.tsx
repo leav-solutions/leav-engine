@@ -11,12 +11,12 @@ import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm'
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type IResolvedTreeSelectionConf, resolveTreeSelectionConf} from '_ui/hooks/useTreeSelection';
 import {type ITreeNodeWithRecord} from '_ui/types';
-import {SelectTreeNodeV2} from './SelectTreeNodeV2';
+import {SelectTreeNode} from './SelectTreeNode';
 
 const SELECT_TREE_NODE_MODAL_HEIGHT = '563px';
 const SELECT_TREE_NODE_MODAL_WIDTH = '656px';
 
-export type SelectTreeNodeModalV2BackendValue =
+export type SelectTreeNodeModalBackendValue =
     | RecordFormElementsValueTreeValue
     | {
           treeValue: {
@@ -28,7 +28,7 @@ export type SelectTreeNodeModalV2BackendValue =
  * Same widened type as the V1 modal, plus `tree_selection_conf`: callers outside of the record form
  * may pass a minimal object instead of a complete GraphQL fragment.
  */
-export type SelectTreeNodeModalV2Attribute =
+export type SelectTreeNodeModalAttribute =
     | RecordFormAttributeTreeAttributeFragment
     | {
           multiple_values: boolean;
@@ -38,11 +38,11 @@ export type SelectTreeNodeModalV2Attribute =
           tree_selection_conf?: Partial<IResolvedTreeSelectionConf> | null;
       };
 
-export interface ISelectTreeNodeModalV2Props extends Partial<IResolvedTreeSelectionConf> {
+export interface ISelectTreeNodeModalProps extends Partial<IResolvedTreeSelectionConf> {
     title: string;
     open: boolean;
-    attribute: SelectTreeNodeModalV2Attribute;
-    backendValues: SelectTreeNodeModalV2BackendValue[];
+    attribute: SelectTreeNodeModalAttribute;
+    backendValues: SelectTreeNodeModalBackendValue[];
     onConfirm: (selectedNodes: ITreeNodeWithRecord[]) => void;
     onClose: () => void;
     childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
@@ -50,7 +50,7 @@ export interface ISelectTreeNodeModalV2Props extends Partial<IResolvedTreeSelect
     className?: string;
 }
 
-export const SelectTreeNodeModalV2: FunctionComponent<ISelectTreeNodeModalV2Props> = ({
+export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> = ({
     title,
     open,
     attribute,
@@ -81,7 +81,7 @@ export const SelectTreeNodeModalV2: FunctionComponent<ISelectTreeNodeModalV2Prop
         showSelectDescendantsButton,
     });
 
-    const _handleOnSelect: ComponentProps<typeof SelectTreeNodeV2>['onSelect'] = (node, selected) => {
+    const _handleOnSelect: ComponentProps<typeof SelectTreeNode>['onSelect'] = (node, selected) => {
         if (!attribute.multiple_values) {
             onConfirm(selected ? [node] : []);
             onClose();
@@ -128,7 +128,7 @@ export const SelectTreeNodeModalV2: FunctionComponent<ISelectTreeNodeModalV2Prop
                 </>
             }
         >
-            <SelectTreeNodeV2
+            <SelectTreeNode
                 treeId={attribute.linked_tree.id}
                 multiple={attribute.multiple_values}
                 selectedNodes={[

@@ -13,9 +13,9 @@ import {
 } from '_ui/hooks/useTreeSelection';
 import {type ITreeNodeWithRecord} from '_ui/types';
 import {ErrorDisplay} from '../ErrorDisplay';
-import {TreeNodeTitleV2} from './TreeNodeTitleV2';
+import {TreeNodeTitle} from './TreeNodeTitle';
 
-export interface ISelectTreeNodeV2Props extends Partial<IResolvedTreeSelectionConf> {
+export interface ISelectTreeNodeProps extends Partial<IResolvedTreeSelectionConf> {
     treeId: string;
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
     onCheck?: (selection: ITreeNodeWithRecord[]) => void;
@@ -39,13 +39,13 @@ const _isObjectSelection = (selection: OnCheckSelection): selection is Exclude<O
     'checked' in selection && 'halfChecked' in selection;
 
 /**
- * Tree node selection, V2 of `SelectTreeNode`: same `KitTree` rendering, but the data and selection
- * layers are driven by an `IResolvedTreeSelectionConf` instead of hard-coded behaviours.
+ * Tree node selection rendered by `KitTree`, with its data and selection layers driven by an
+ * `IResolvedTreeSelectionConf`.
  *
  * The 6 configuration parameters arrive as optional overrides — callers that read them from an
- * attribute (see `SelectTreeNodeModalV2`) resolve them beforehand and pass them down already merged.
+ * attribute (see `SelectTreeNodeModal`) resolve them beforehand and pass them down already merged.
  */
-export const SelectTreeNodeV2: FunctionComponent<ISelectTreeNodeV2Props> = ({
+export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     treeId,
     onSelect,
     onCheck,
@@ -171,7 +171,7 @@ export const SelectTreeNodeV2: FunctionComponent<ISelectTreeNodeV2Props> = ({
             selectedKeys={selectedNodes}
             checkedKeys={selectedNodes}
             titleRender={node => (
-                <TreeNodeTitleV2
+                <TreeNodeTitle
                     node={node as ITreeSelectionNode}
                     nodesById={nodesById}
                     getDescendants={getDescendants}
