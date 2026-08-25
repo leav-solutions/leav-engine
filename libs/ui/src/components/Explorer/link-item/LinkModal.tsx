@@ -7,7 +7,7 @@ import {useAddLinkMassAction} from './useAddLinkMassAction';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {useReplaceLinkMassAction} from './useReplaceLinkMassAction';
 import {LINK_RECORDS_MODAL_CLASSNAME} from '../_constants';
-import {SelectTreeNodeModal} from '_ui/components';
+import {SelectTreeNodeModalV2} from '_ui/components/SelectTreeNodeV2';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 interface ILinkModalProps {
@@ -80,7 +80,7 @@ export const LinkModal: FunctionComponent<ILinkModalProps> = ({
     );
 
     return linkedTreeId ? (
-        <SelectTreeNodeModal
+        <SelectTreeNodeModalV2
             open
             attribute={{
                 multiple_values: isMultivalue,
