@@ -85,7 +85,7 @@ const _toLockedNodeData = (nodeId: string, label: string): ITreeSelectNodeData =
 type TreeFieldV2Props = IFormElementProps<ICommonFieldsSettings>;
 
 /**
- * V2 of `TreeField`, rendered instead of it when the `enableTreeAttributeV2Form` flag is on.
+ * Tree field of a record form.
  *
  * The whole hierarchy is picked inside a `KitTreeSelect` dropdown instead of a modal, and the
  * selection rules come from the `tree_selection_conf` of the attribute. A single-level tree renders

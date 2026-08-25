@@ -1,6 +1,5 @@
 import userEvent from '@testing-library/user-event';
 import {type MockedResponse} from '@apollo/client/testing';
-import {ENABLE_TREE_ATTRIBUTE_V2_FORM} from '@leav/utils';
 import {
     mockAttrAdvLink,
     mockAttrSimple,
@@ -18,7 +17,7 @@ import {
     TreeSelectableNodes,
     type TreeSelectionConfInput,
 } from '../../_gqlTypes';
-import {render, screen, waitFor} from '../../_tests/testUtils';
+import {render, screen, waitFor, within} from '../../_tests/testUtils';
 import {AttributeDisplayTab} from './AttributeDisplayTab';
 import {treeSelectionNodesQuery} from './get-tree-selection-nodes/treeSelectionNodesQuery';
 
@@ -96,24 +95,18 @@ const saveConfMock = (conf: Required<TreeSelectionConfInput>, onCalled: () => vo
     },
 });
 
-/** The Form section is behind the V2 flags and only ever applies to a tree attribute. */
+/** The Form section only ever applies to a tree attribute. */
 const _renderTab = (
     attribute: AttributeDetailsLinkAttributeFragment | AttributeDetailsTreeAttributeFragment,
-    {
-        apolloMocks = [treeNodesMock],
-        formV2Enabled = true,
-    }: {apolloMocks?: MockedResponse[]; formV2Enabled?: boolean} = {},
-) =>
-    render(<AttributeDisplayTab attribute={attribute} />, {
-        apolloMocks,
-        globalSettings: {
-            defaultApp: 'admin',
-            name: 'My App',
-            icon: null,
-            favicon: null,
-            settings: formV2Enabled ? {[ENABLE_TREE_ATTRIBUTE_V2_FORM]: true} : {},
-        },
-    });
+    {apolloMocks = [treeNodesMock]}: {apolloMocks?: MockedResponse[]} = {},
+) => render(<AttributeDisplayTab attribute={attribute} />, {apolloMocks});
+
+/**
+ * Both sections hold a combobox — the display option here, the root node in the Form section — so
+ * an assertion on either has to be scoped to its own section.
+ */
+const _explorerSection = () =>
+    screen.getByText('attributes.display.section_explorer').closest('section') as HTMLElement;
 
 describe('AttributeDisplayTab', () => {
     test('Display the six settings with their default values', async () => {
@@ -237,12 +230,12 @@ describe('AttributeDisplayTab', () => {
     });
 
     test('Offer only the identity card and the tag on a mono-valued attribute', async () => {
-        _renderTab(mockAttrTree, {formV2Enabled: false});
+        _renderTab(mockAttrTree);
 
         // Nothing stored on the attribute falls back to `avatar`, labelled as identity card in mono
         expect(screen.getByText('attributes.multi_display_options.avatar_mono')).toBeInTheDocument();
 
-        await userEvent.click(screen.getByRole('combobox'));
+        await userEvent.click(within(_explorerSection()).getByRole('combobox'));
 
         expect(await screen.findByText('attributes.multi_display_options.tag')).toBeInTheDocument();
         expect(screen.queryByText('attributes.multi_display_options.avatar')).not.toBeInTheDocument();
@@ -250,9 +243,9 @@ describe('AttributeDisplayTab', () => {
     });
 
     test('Offer the avatar group and the quantity badge on a multi-valued attribute', async () => {
-        _renderTab(mockAttrTreeMultival, {formV2Enabled: false});
+        _renderTab(mockAttrTreeMultival);
 
-        await userEvent.click(screen.getByRole('combobox'));
+        await userEvent.click(within(_explorerSection()).getByRole('combobox'));
 
         expect(screen.getAllByText('attributes.multi_display_options.avatar').length).toBeGreaterThan(0);
         expect(await screen.findByText('attributes.multi_display_options.badge_qty')).toBeInTheDocument();
@@ -302,20 +295,11 @@ describe('AttributeDisplayTab', () => {
         expect(screen.queryByText('attributes.display.section_form')).not.toBeInTheDocument();
     });
 
-    test('Hide the Form section when both V2 flags are off', async () => {
-        _renderTab(mockAttrTreeMultival, {formV2Enabled: false});
-
-        expect(screen.getByText('attributes.display.section_explorer')).toBeInTheDocument();
-        expect(screen.queryByText('attributes.display.section_form')).not.toBeInTheDocument();
-        // Only the column split switch remains: the four tree_selection_conf switches leave with the Form section
-        expect(screen.getAllByRole('switch')).toHaveLength(1);
-    });
-
     test('Save the display option as a root field of the attribute, not inside tree_selection_conf', async () => {
         let saveCalled = false;
         _renderTab(mockAttrTreeMultival, {
-            formV2Enabled: false,
             apolloMocks: [
+                treeNodesMock,
                 {
                     request: {
                         query: SaveAttributeDocument,
@@ -342,7 +326,7 @@ describe('AttributeDisplayTab', () => {
             ],
         });
 
-        await userEvent.click(screen.getByRole('combobox'));
+        await userEvent.click(within(_explorerSection()).getByRole('combobox'));
         await userEvent.click(await screen.findByText('attributes.multi_display_options.tag'));
 
         await waitFor(() => expect(saveCalled).toBe(true));
