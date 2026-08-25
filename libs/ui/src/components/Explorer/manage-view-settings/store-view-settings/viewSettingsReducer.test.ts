@@ -365,6 +365,21 @@ describe('ViewSettings Reducer', () => {
         expect(state.viewModified).toEqual(false);
     });
 
+    test(`Action ${ViewSettingsActionTypes.CLEAR_MASS_SELECTION} test`, async () => {
+        const state = viewSettingsReducer(
+            {
+                ...viewSettingsInitialState,
+                massSelection: ['key1', 'key2'],
+            },
+            {
+                type: ViewSettingsActionTypes.CLEAR_MASS_SELECTION,
+            },
+        );
+
+        expect(state.massSelection).toEqual([]);
+        expect(state.viewModified).toEqual(false);
+    });
+
     test(`Action ${ViewSettingsActionTypes.UPDATE_VIEWS} test`, async () => {
         const view = {
             id: 'viewId',

@@ -1,7 +1,7 @@
 import useSaveValueBatchMutation from '_ui/components/RecordEdition/EditRecordContent/hooks/useExecuteSaveValueBatchMutation';
 import {type FeatureHook, type IEntrypointLink, type IMassActions} from '../_types';
-import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings';
-import {type Dispatch, type Key, useMemo} from 'react';
+import {type IViewSettingsState} from '../manage-view-settings';
+import {type Key, useMemo} from 'react';
 import {useExplorerData} from '../_queries/useExplorerData';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
@@ -14,7 +14,7 @@ import {faTrash} from '@fortawesome/free-solid-svg-icons';
 
 export const useDeleteLinkValues = ({
     isEnabled,
-    store: {view, dispatch},
+    store: {view},
     filtersStore: {filters, filtersOperator},
     pagination,
     allVisibleKeys,
@@ -24,7 +24,6 @@ export const useDeleteLinkValues = ({
     pagination: null | {limit: number; offset: number};
     store: {
         view: IViewSettingsState;
-        dispatch: Dispatch<IViewSettingsAction>;
     };
     filtersStore: IUIFiltersState;
     allVisibleKeys: string[];
@@ -52,74 +51,73 @@ export const useDeleteLinkValues = ({
         () => ({
             label: t('explorer.massAction.deactivate'),
             icon: <FontAwesomeIcon icon={faTrash} />,
-            deselectAll: true,
-            callback: massSelectionFilter => {
-                openConfirmModal({
-                    title:
-                        t('explorer.delete_link', {
-                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
-                        }) ?? undefined,
-                    content:
-                        t('explorer.delete_link_description', {
-                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
-                        }) +
-                        BREAK_TWO_LINES +
-                        t('global.are_you_sure'),
-                    okText: t('global.submit') ?? undefined,
-                    onOk: async () => {
-                        const entrypoint = view.entrypoint as IEntrypointLink;
-                        let values: IValueToSubmit[];
-                        if (
-                            view.massSelection === MASS_SELECTION_ALL ||
-                            allVisibleKeys.every(key => view.massSelection.includes(key))
-                        ) {
-                            values =
-                                (linkData?.records ?? []).map(({id_value}) => ({
-                                    attribute: entrypoint.linkAttributeId,
-                                    idValue: id_value ?? null,
-                                    value: null,
-                                })) ?? [];
-                        } else {
-                            values = (linkData?.records ?? []).reduce<IValueToSubmit[]>((acc, {id_value, key}) => {
-                                if (view.massSelection.includes(key)) {
-                                    acc.push({
+            // callback resolves only once the unlink genuinely succeeds (never on cancel), so
+            // useMassActions' default selection-clearing is correct without help from this hook.
+            callback: massSelectionFilter =>
+                new Promise<void>(resolve => {
+                    openConfirmModal({
+                        title:
+                            t('explorer.delete_link', {
+                                count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
+                            }) ?? undefined,
+                        content:
+                            t('explorer.delete_link_description', {
+                                count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
+                            }) +
+                            BREAK_TWO_LINES +
+                            t('global.are_you_sure'),
+                        okText: t('global.submit') ?? undefined,
+                        onOk: async () => {
+                            const entrypoint = view.entrypoint as IEntrypointLink;
+                            let values: IValueToSubmit[];
+                            if (
+                                view.massSelection === MASS_SELECTION_ALL ||
+                                allVisibleKeys.every(key => view.massSelection.includes(key))
+                            ) {
+                                values =
+                                    (linkData?.records ?? []).map(({id_value}) => ({
                                         attribute: entrypoint.linkAttributeId,
                                         idValue: id_value ?? null,
                                         value: null,
-                                    });
-                                }
-                                return acc;
-                            }, []);
-                        }
+                                    })) ?? [];
+                            } else {
+                                values = (linkData?.records ?? []).reduce<IValueToSubmit[]>((acc, {id_value, key}) => {
+                                    if (view.massSelection.includes(key)) {
+                                        acc.push({
+                                            attribute: entrypoint.linkAttributeId,
+                                            idValue: id_value ?? null,
+                                            value: null,
+                                        });
+                                    }
+                                    return acc;
+                                }, []);
+                            }
 
-                        if (values.length > 0) {
-                            await saveValues(
-                                {
-                                    id: entrypoint.parentRecordId,
-                                    library: {
-                                        id: entrypoint.parentLibraryId,
+                            if (values.length > 0) {
+                                await saveValues(
+                                    {
+                                        id: entrypoint.parentRecordId,
+                                        library: {
+                                            id: entrypoint.parentLibraryId,
+                                        },
                                     },
-                                },
-                                values,
-                                undefined,
-                                true,
-                            );
+                                    values,
+                                    undefined,
+                                    true,
+                                );
 
-                            onDelete?.(
-                                massSelectionFilter,
-                                values.map(({idValue}) => idValue as Key),
-                            );
-                            await refetch();
-                        }
-                        dispatch({
-                            type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                            payload: [],
-                        });
-                    },
-                });
-            },
+                                onDelete?.(
+                                    massSelectionFilter,
+                                    values.map(({idValue}) => idValue as Key),
+                                );
+                                await refetch();
+                            }
+                            resolve();
+                        },
+                    });
+                }),
         }),
-        [t, saveValues, view.massSelection, dispatch, view.libraryId, allVisibleKeys],
+        [t, saveValues, view.massSelection, view.libraryId, allVisibleKeys],
     );
 
     return {

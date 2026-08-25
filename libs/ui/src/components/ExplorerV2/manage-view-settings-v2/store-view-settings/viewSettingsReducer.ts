@@ -13,6 +13,7 @@ export const ViewSettingsActionTypes = {
     CHANGE_FULLTEXT_SEARCH: 'CHANGE_FULLTEXT_SEARCH',
     CLEAR_FULLTEXT_SEARCH: 'CLEAR_FULLTEXT_SEARCH',
     SET_SELECTED_KEYS: 'SET_SELECTED_KEYS',
+    CLEAR_MASS_SELECTION: 'CLEAR_MASS_SELECTION',
 } as const;
 
 /**
@@ -70,6 +71,15 @@ interface IViewSettingsActionSetSelectedKeys {
     payload: MassSelection;
 }
 
+/**
+ * Distinct from SET_SELECTED_KEYS so every place that clears the selection once a mass action
+ * completes can be found by searching for this specific type, instead of being indistinguishable
+ * from manual selection changes (select all, toggle page, checkbox…).
+ */
+interface IViewSettingsActionClearMassSelection {
+    type: typeof ViewSettingsActionTypes.CLEAR_MASS_SELECTION;
+}
+
 type Reducer<
     PAYLOAD extends {
         type: keyof typeof ViewSettingsActionTypes;
@@ -101,12 +111,15 @@ const setSelectedKeys: Reducer<IViewSettingsActionSetSelectedKeys> = (state, pay
     massSelection: payload,
 });
 
+const clearMassSelection: Reducer = state => setSelectedKeys(state, []);
+
 export type IViewSettingsAction =
     | IViewSettingsActionChangePageSize
     | IViewSettingsActionChangeFulltextSearch
     | IViewSettingsActionClearFulltextSearch
     | IViewSettingsActionReset
-    | IViewSettingsActionSetSelectedKeys;
+    | IViewSettingsActionSetSelectedKeys
+    | IViewSettingsActionClearMassSelection;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -124,6 +137,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.SET_SELECTED_KEYS: {
             return setSelectedKeys(state, action.payload);
+        }
+        case ViewSettingsActionTypes.CLEAR_MASS_SELECTION: {
+            return clearMassSelection(state);
         }
         default:
             return state;

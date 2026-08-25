@@ -1,8 +1,8 @@
-import {type Key, type ReactElement, useCallback, useMemo, useState} from 'react';
+import {type Dispatch, type Key, type ReactElement, useCallback, useMemo, useState} from 'react';
 import {LibraryBehavior, useForcePreviewsGenerationMutation, type RecordFilterInput} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type FeatureHook, type IMassActions} from '../_types';
-import {type IViewSettingsState} from '../manage-view-settings-v2';
+import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings-v2';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faImage} from '@fortawesome/free-solid-svg-icons';
@@ -21,13 +21,14 @@ interface IUseGeneratePreviewsMassActionReturn {
  */
 export const useGeneratePreviewsMassAction = ({
     isEnabled,
-    store: {view},
+    store: {view, dispatch},
     libraryBehavior,
     totalCount,
     onGeneratePreviews,
 }: FeatureHook<{
     store: {
         view: IViewSettingsState;
+        dispatch: Dispatch<IViewSettingsAction>;
     };
     libraryBehavior: LibraryBehavior | null;
     totalCount: number;
@@ -78,6 +79,7 @@ export const useGeneratePreviewsMassAction = ({
                 }
 
                 onGeneratePreviews?.(massSelectionFilter, view.massSelection);
+                dispatch({type: ViewSettingsActionTypes.CLEAR_MASS_SELECTION});
                 setIsModalOpen(false);
             } catch {
                 KitAlert.error({
@@ -89,7 +91,7 @@ export const useGeneratePreviewsMassAction = ({
                 });
             }
         },
-        [view.libraryId, view.massSelection, totalCount, massSelectionFilter, onGeneratePreviews, t],
+        [view.libraryId, view.massSelection, totalCount, massSelectionFilter, onGeneratePreviews, dispatch, t],
     );
 
     const _handleCloseModal = useCallback(() => {
@@ -101,7 +103,10 @@ export const useGeneratePreviewsMassAction = ({
         () => ({
             label: t('explorer.massAction.generate_previews'),
             icon: <FontAwesomeIcon icon={faImage} />,
-            deselectAll: false,
+            // keepSelection: the generate-previews modal is a separate component confirmed by
+            // _handleConfirmGeneratePreviews, decoupled from this callback's own promise — that
+            // function clears the selection itself, after the generation genuinely succeeds.
+            keepSelection: true,
             callback: filter => {
                 setMassSelectionFilter(filter);
                 setIsModalOpen(true);

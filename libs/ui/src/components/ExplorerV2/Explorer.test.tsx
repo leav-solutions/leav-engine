@@ -2508,7 +2508,6 @@ describe('Explorer', () => {
             // GIVEN a simple mass action
             const testMassAction = {
                 label: 'test mass action',
-                deselectAll: true,
                 icon: <FontAwesomeIcon icon={faStar} />,
                 callback: vi.fn(),
             };
@@ -2583,7 +2582,6 @@ describe('Explorer', () => {
             // GIVEN a simple mass action
             const testMassAction = {
                 label: 'test mass action',
-                deselectAll: true,
                 icon: <FontAwesomeIcon icon={faStar} />,
                 callback: vi.fn(),
             };
@@ -2666,7 +2664,6 @@ describe('Explorer', () => {
             // AND a simple mass test action
             const testMassAction = {
                 label: 'test mass action',
-                deselectAll: true,
                 icon: <FontAwesomeIcon icon={faStar} />,
                 callback: vi.fn(),
             };
@@ -2781,7 +2778,6 @@ describe('Explorer', () => {
             // AND a simple mass test action is set
             const testMassAction = {
                 label: 'test mass action',
-                deselectAll: true,
                 icon: <FontAwesomeIcon icon={faStar} />,
                 callback: vi.fn(),
             };
@@ -2975,6 +2971,32 @@ describe('Explorer', () => {
 
             // AND the selection is cleared
             await waitFor(() => expect(screen.queryByRole('status')).not.toBeVisible());
+        });
+
+        it('should keep the mass selection when the deactivate confirmation is cancelled', async () => {
+            // GIVEN a mocked deactivate record mutation
+            const mockOnUseDeactivateRecordsMutation = vi.fn(() => ({data: {deactivateRecords: []}}));
+            vi.spyOn(gqlTypes, 'useDeactivateRecordsMutation').mockImplementation(
+                () => [mockOnUseDeactivateRecordsMutation, {}] as any,
+            );
+            // WHEN the component is rendered
+            render(<ExplorerV2 entrypoint={libraryEntrypoint} />);
+
+            // AND the user selects all records
+            const toolbar = screen.getByRole('list', {name: /toolbar/});
+            await user.click(within(toolbar).getByRole('checkbox'));
+            expect(screen.getByRole('status').textContent).toContain('massAction.selectedItems|2');
+
+            // WHEN the user opens the deactivate confirmation but cancels it
+            await user.click(within(screen.getByRole('status')).getByRole('button', {name: /massAction.deactivate/}));
+            expect(await screen.findByText('explorer.deactivate_item_description', {exact: false})).toBeVisible();
+            await user.click(screen.getByText('global.cancel'));
+
+            // THEN the mutation is never called and the selection is still there
+            await waitFor(() => {
+                expect(mockOnUseDeactivateRecordsMutation).not.toHaveBeenCalled();
+                expect(screen.getByRole('status').textContent).toContain('massAction.selectedItems|2');
+            });
         });
 
         // For an unknown reason, the success alert from last test is still present in the next test and makes it fail

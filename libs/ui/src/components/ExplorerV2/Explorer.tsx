@@ -540,7 +540,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {generatePreviewsMassAction, GeneratePreviewsModal} = useGeneratePreviewsMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('generatePreviews'),
-            store: {view},
+            store: {view, dispatch: viewSettingsDispatch},
             libraryBehavior,
             totalCount: totalCountFiltered,
             onGeneratePreviews: defaultCallbacks?.mass?.generatePreviews,
@@ -562,7 +562,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {deactivateMassAction} = useDeactivateMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
-            store: {view, dispatch: viewSettingsDispatch},
+            store: {view},
             allVisibleKeys,
             totalCount: totalCountFiltered,
             onDeactivate: defaultCallbacks?.mass?.deactivate,
@@ -571,7 +571,7 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {unlinkMassAction} = useDeleteLinkValues({
             isEnabled: isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
-            store: {view, dispatch: viewSettingsDispatch},
+            store: {view},
             filtersStore,
             attributeIds: dataAttributeIds,
             badgeAttributeIds,

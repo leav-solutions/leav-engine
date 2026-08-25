@@ -291,7 +291,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {generatePreviewsMassAction, GeneratePreviewsModal} = useGeneratePreviewsMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('generatePreviews'),
-            store: {view},
+            store: {view, dispatch: viewSettingsDispatch},
             totalCount: totalCountFiltered,
             onGeneratePreviews: defaultCallbacks?.mass?.generatePreviews,
         });
@@ -311,7 +311,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {deactivateMassAction} = useDeactivateMassAction({
             isEnabled: !isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
-            store: {view, dispatch: viewSettingsDispatch},
+            store: {view},
             allVisibleKeys,
             totalCount: totalCountFiltered,
             onDeactivate: defaultCallbacks?.mass?.deactivate,
@@ -320,7 +320,7 @@ export const Explorer = forwardRef<IExplorerRef, IExplorerProps>(
 
         const {unlinkMassAction} = useDeleteLinkValues({
             isEnabled: isLink && isNotEmpty(defaultMassActions) && defaultMassActions.includes('deactivate'),
-            store: {view, dispatch: viewSettingsDispatch},
+            store: {view},
             filtersStore: filtersData,
             pagination: noPagination ? null : {limit: view.pageSize, offset: view.pageSize * (currentPage - 1)},
             allVisibleKeys,

@@ -76,7 +76,7 @@ export const useMassActions = ({
                 message: t('explorer.massAction.selectedItems', {
                     count: view.massSelection === MASS_SELECTION_ALL ? totalCountFiltered : view.massSelection.length,
                 }),
-                actions: massActions.map(({label, icon, deselectAll, callback}, index) => ({
+                actions: massActions.map(({label, icon, keepSelection, callback}, index) => ({
                     key: index,
                     label,
                     icon,
@@ -97,12 +97,10 @@ export const useMassActions = ({
                             view.massSelection,
                             view.massSelection === MASS_SELECTION_ALL ? view.fulltextSearch || undefined : undefined,
                         );
-                        if (deselectAll) {
-                            dispatch({
-                                type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                                payload: [],
-                            });
+                        if (keepSelection) {
+                            return;
                         }
+                        dispatch({type: ViewSettingsActionTypes.CLEAR_MASS_SELECTION});
                     },
                 })),
             });

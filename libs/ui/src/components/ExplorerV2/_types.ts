@@ -84,12 +84,22 @@ export interface IPrimaryAction {
 }
 
 export interface IMassActions {
+    /**
+     * Resolves once the action has genuinely completed (e.g. after the confirm modal's onOk and its
+     * mutation), never if the user cancels. `useMassActions` awaits it to know when to clear the
+     * selection — see `keepSelection`.
+     */
     callback: (
         massSelectedFilter: RecordFilterInput[],
         massSelection: MassSelection,
         searchQuery?: string,
     ) => void | Promise<void>;
-    deselectAll: boolean;
+    /**
+     * Opt-out: by default the mass selection is cleared once `callback` resolves. Set this to `true`
+     * when the hook manages the clearing itself instead (e.g. its confirmation happens in a separate
+     * modal component, decoupled from `callback`'s own promise).
+     */
+    keepSelection?: boolean;
     icon: ReactElement;
     label: string;
 }
