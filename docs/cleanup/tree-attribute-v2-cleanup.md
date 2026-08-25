@@ -145,13 +145,14 @@ depuis l'extérieur) : il part en bloc.
 
 ## Étape 5 — Supprimer le contenu de sélection V1 (`SelectTreeNode`)
 
-Deux consommateurs applicatifs et deux dépendances « transverses » à traiter d'abord.
+Un consommateur applicatif et deux dépendances « transverses » à traiter d'abord.
 
-- [ ] Migrer `libs/ui/src/components/UploadFiles/UploadFiles.tsx` vers la V2 (paramètre
-      `selectableLibraries`, présent en V2 pour la parité) + `UploadFiles.test.tsx` (le `vi.mock`
-      cible `_ui/components/SelectTreeNode`).
-- [ ] Migrer `libs/ui/src/components/CreateDirectory/CreateDirectory.tsx` (idem) +
-      `CreateDirectory.test.tsx`.
+- [ ] Migrer `libs/ui/src/components/manage-files/shared/DestinationStep/DestinationStep.tsx` vers la
+      V2 (paramètre `selectableLibraries`, présent en V2 pour la parité). Depuis LEAVC-1090, c'est le
+      **seul** point de montage de `SelectTreeNode` pour les deux modales de fichiers, qui passent
+      aussi `showNodeTypeIcon` — vérifier que la V2 le supporte. Les `vi.mock` de
+      `UploadFiles.test.tsx` et `CreateDirectory.test.tsx` ciblent toujours
+      `_ui/components/SelectTreeNode`.
 - [ ] ⚠️ **`_queries/treeDataQuery.graphql` est partagé** : il vit dans
       `components/SelectTreeNode/_queries/` mais son hook généré `useTreeDataQueryQuery` est utilisé
       par le socle V2 (`hooks/useTreeSelection/useTreeSelectionNodes.ts`) et par

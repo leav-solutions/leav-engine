@@ -26,6 +26,13 @@ grep -rh --include="*.ts" --include="*.tsx" "from '@leav/ui'" \   # cherche les 
 
 **Composants :** `Explorer`, `EditRecordPage`, `EditRecordSkeleton`, `ErrorDisplay`, `InitNotificationsSubscription`, `AttributeConditionFilter`, `ThroughConditionFilter`, `CommonFilterItem`, `SelectTreeNode`
 
+> `SelectTreeNode` porte une prop opt-in **`showNodeTypeIcon`** : elle affiche une icône de type
+> (dossier / bureautique / image / fichier) devant chaque nœud. Opt-in parce que la surface est
+> consommée par AMP et xStream, et qu'aucun autre appelant ne veut d'icône. Elle n'est activée que
+> par les deux modales de [`manage-files/`](src/components/manage-files/CLAUDE.md). L'icône doit
+> rester **décorative** (`aria-hidden`, aucun texte) : plusieurs tests de cette famille comptent les
+> `role="img"` et comparent le `textContent` des nœuds.
+
 **Hooks :** `useAuth`, `useRedirectToLogin`, `useLang`, `useFilters`, `useFiltersContext`, `useFiltersReducer`, `useIFrameMessengerClient`, `useExecuteSaveValueBatchMutation`, `useGetRecordUpdatesSubscription`
 
 **Contextes / Classes :** `LangContext`, `FiltersContext`, `IFrameMessengerClient`
@@ -80,7 +87,9 @@ src/
 ├── components/          # Composants React (un dossier par composant)
 │   ├── Explorer/        # ← structure de référence (voir section dédiée)
 │   ├── RecordEdition/   # ← formulaire d'édition (legacy)
+│   ├── manage-files/    # ← module de gestion de fichiers (Upload + CreateDirectory)
 │   └── …               # autres composants (RecordCard, SearchModal, SelectTreeNode…)
+├── modules/             # Logique headless, interne, exportée par aucun barrel
 ├── hooks/               # Hooks globaux (auth, lang, user, cache, iFrame…)
 ├── _queries/            # Opérations GraphQL par domaine (attributes, records, trees…)
 ├── _gqlTypes/           # index.ts auto-généré — NE PAS MODIFIER À LA MAIN
@@ -91,6 +100,13 @@ src/
 └── _tests/              # TestProviders + testUtils pour les tests
 ```
 
+> **`components/` vs `modules/`** — le critère n'est pas la taille ni la richesse de la structure,
+> c'est la **nature** : `components/` rend de l'UI et est exporté par le barrel ; `modules/` est de
+> la logique **headless, interne**, importée par chemin direct et exportée par aucun barrel (son
+> unique occupant, `watch-record-updates`, l'illustre). Un « module » au sens structurel
+> (`_queries/`, sous-dossiers par domaine, `_types.ts`, CSS modules, `CLAUDE.md` local) qui rend de
+> l'UI va donc dans `components/` — c'est le cas d'`ExplorerV2` et de `manage-files`.
+
 ---
 
 ## GraphQL — pattern
@@ -100,6 +116,24 @@ src/
    Le dossier global `src/_queries/` est legacy et ne doit pas être alimenté pour du nouveau code.
 2. Lancer `yarn graphql-generate` pour régénérer `src/_gqlTypes/index.ts`
 3. Importer le hook généré depuis `_ui/_gqlTypes`
+
+> ⚠️ **Colocaliser un document est possible, colocaliser le hook généré ne l'est pas.** Le codegen
+> n'a qu'une seule sortie, `src/_gqlTypes/index.ts` — les hooks s'importeront toujours de là. Les
+> changer exigerait le preset `near-operation-file` à l'échelle du repo. En revanche les globs de
+> [`codegen.ts`](codegen.ts) couvrent déjà `src/**/*.graphql` et
+> `src/{components,modules}/**/_queries/**/*.ts` : poser des documents dans un nouveau module ne
+> demande **aucun réglage**. Le spread d'un fragment (`...RecordIdentity`) fonctionne **sans import**
+> depuis un `.graphql` colocalisé, le codegen résolvant les fragments globalement.
+>
+> ⚠️ **Un document construit à l'exécution est invisible pour le codegen** : le type qu'il produit
+> reste celui du document tel qu'il est écrit, sans les parties interpolées. C'est le cas de
+> `SelectTreeNode/_queries/treeContentDataQuery.ts`, qui interpole sa profondeur — tout champ ajouté
+> qui n'apparaît pas dans la partie statique doit être **typé à la main** côté consommateur.
+>
+> ⚠️ **`_gqlTypes/index.ts` committé ≠ ce que régénère une stack locale.** Le générateur introspecte
+> le core qui tourne : un core local sans les plugins xstream produit un fichier **amputé** de leurs
+> types (cf. ADR-005). Avant de committer une régénération, vérifier que le diff ne contient que ce
+> qu'on a changé.
 
 > ⚠️ Ne jamais modifier `src/_gqlTypes/index.ts` à la main — entièrement régénéré.
 > La génération requiert un `apolloApiKey.js` valide (introspection du schéma de `apps/core`).
@@ -167,6 +201,17 @@ Explorer.SettingsSidePanel;
   — fournit MockedProvider Apollo, MemoryRouter, contextes User/Lang, Design System
 - Fichiers de test colocalisés avec le composant : `MonComposant.test.tsx`
 
+Deux pièges silencieux :
+
+- **Un `vi.mock` sur un chemin qui n'existe plus ne lève aucune erreur** : le mock ne s'applique
+  simplement plus et le vrai composant est monté, avec des échecs qui semblent sans rapport. À
+  vérifier systématiquement après un déplacement de fichier. Et **deux `vi.mock` sur le même
+  chemin** : le second écrase le premier, une des deux sentinelles disparaît sans avertissement.
+- **`KitModal.confirm` / `.warning` montent leur propre racine React** hors de ce que
+  testing-library démonte : la modale d'un test **fuit dans le suivant**. Il faut la fermer
+  explicitement à la fin du test qui l'ouvre. Par ailleurs `appElement={document.getElementById('root')}`
+  est `null` en test : ajouter `KitModal.setAppElement(document.body)` en tête de fichier.
+
 ---
 
 ## Build
@@ -218,6 +263,24 @@ Deux approches coexistent. **styled-components** reste majoritaire dans l'exista
   bloquait les named imports) ; `import.meta.env` est typé par `src/typings/viteEnv.d.ts`.
   ⚠️ Il est **toujours présent dans `tsconfig.spec.json`** (`types: [… "vite/client"]`), ce qui rend
   la devDependency `vite` indispensable au `tscheck` bien qu'elle ne soit jamais importée.
+
+---
+
+## aristid-ds — omissions et comportements non évidents
+
+Le design system **retire** volontairement des props d'antd. L'omission n'est pas toujours un
+« débrouille-toi » : parfois le DS prend la main à la place. Vérifié à l'usage :
+
+| Composant                         | Ce qui est omis                                                    | Ce que ça implique                                                                                                                                                                                                                           |
+| --------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `KitTree`                         | `switcherIcon`, `showLine`                                         | Pas de personnalisation du chevron ni des filets ; passer par `titleRender` pour tout ce qui décore un nœud                                                                                                                                  |
+| `KitUpload` / `KitUpload.Dragger` | `showUploadList`, `progress`, `listType`, `previewFile`, `loading` | **Le DS rend la liste lui-même** : son `itemRender` par défaut produit un `KitUpload.UploadedItem` avec la barre de progression (`status: 'uploading'`), l'état d'erreur et l'action de suppression. Ne pas réimplémenter la liste à la main |
+| `KitSteps` (`IKitStep`)           | `icon`, `subTitle`                                                 | Pas d'icône par étape ; l'état de chargement d'une étape passe par le `loading` du bouton du footer                                                                                                                                          |
+
+Autre comportement à connaître : **`useConfirmModal` rend toujours un bouton secondaire**, parce
+qu'il force `type: 'confirm'` et que `KitModal` en déduit `okCancel`. C'est donc le bon outil pour
+une confirmation, pas pour un simple avertissement à acquitter — pour celui-là, appeler
+`KitModal.warning` directement (icône d'avertissement + bouton OK seul).
 
 ---
 
