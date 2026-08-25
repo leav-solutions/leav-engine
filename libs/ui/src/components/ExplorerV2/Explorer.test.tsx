@@ -77,6 +77,8 @@ vi.mock('@uidotdev/usehooks', () => ({
 }));
 
 const simpleMockAttribute = {
+    required: false,
+    permissions: {edit_value: true},
     id: 'simple_attribute',
     label: {
         fr: 'Mon attribut simple',
@@ -88,6 +90,8 @@ const simpleMockAttribute = {
 } satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const booleanMockAttribute = {
+    required: false,
+    permissions: {edit_value: true},
     id: 'boolean_attribute',
     label: {
         fr: 'Mon attribut booléen',
@@ -99,6 +103,8 @@ const booleanMockAttribute = {
 } satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const linkMockAttribute = {
+    required: false,
+    permissions: {edit_value: true},
     ...simpleMockAttribute,
     id: 'link_attribute',
     label: {
@@ -109,6 +115,8 @@ const linkMockAttribute = {
 } satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const multivalLinkMockAttribute = {
+    required: false,
+    permissions: {edit_value: true},
     ...linkMockAttribute,
     id: 'link_attribute_multival',
     label: {
@@ -130,6 +138,8 @@ const badgeQtyLinkMockAttribute = {
 } satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const simpleRichTextMockAttribute = {
+    required: false,
+    permissions: {edit_value: true},
     id: 'simple_rich_text',
     type: gqlTypes.AttributeType.simple,
     format: gqlTypes.AttributeFormat.rich_text,
@@ -141,6 +151,8 @@ const simpleRichTextMockAttribute = {
 } satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const simpleColorMockAttribute = {
+    required: false,
+    permissions: {edit_value: true},
     id: 'simple_color',
     type: gqlTypes.AttributeType.simple,
     format: gqlTypes.AttributeFormat.color,
@@ -152,6 +164,8 @@ const simpleColorMockAttribute = {
 } satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const multivalColorMockAttribute = {
+    required: false,
+    permissions: {edit_value: true},
     ...simpleColorMockAttribute,
     id: 'color_multival',
     multiple_values: true,
@@ -162,6 +176,8 @@ const multivalColorMockAttribute = {
 } satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const simpleDateRangeMockAttribute = {
+    required: false,
+    permissions: {edit_value: true},
     id: 'simple_date_range',
     type: gqlTypes.AttributeType.simple,
     format: gqlTypes.AttributeFormat.date_range,
@@ -173,6 +189,8 @@ const simpleDateRangeMockAttribute = {
 } satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
 
 const multivalDateRangeMockAttribute = {
+    required: false,
+    permissions: {edit_value: true},
     ...simpleDateRangeMockAttribute,
     id: 'multival_date_range',
     type: gqlTypes.AttributeType.advanced,
@@ -3737,6 +3755,296 @@ describe('Explorer', () => {
             );
 
             expect(await screen.findByText('5')).toBeInTheDocument();
+        });
+    });
+
+    describe('Column split (LEAVC-1073)', () => {
+        // Both the split flag AND the possible values now come from the single upfront metadata query
+        // (`ExplorerV2AttributeProperties.valuesList`) — there is no per-attribute options query left to
+        // mock, which is what makes this whole test a matter of one `spyLibraryMetadataQuery` call.
+        const splittableMockAttribute = {
+            ...simpleMockAttribute,
+            id: 'status_attribute',
+            label: {fr: 'Statut', en: 'Status'},
+            column_split_enabled: true,
+            valuesList: {
+                values: ['draft', 'published', 'archived'],
+            },
+        } satisfies gqlTypes.ExplorerV2AttributePropertiesFragment;
+
+        const mockRecordWithSplitValue = {
+            ...mockRecords[0],
+            properties: [
+                {
+                    attributeId: splittableMockAttribute.id,
+                    values: [{id_value: 'value_1', valuePayload: 'draft'}],
+                },
+            ],
+        };
+
+        test('splits a column into one sub-column per option and writes a checked value', async () => {
+            spyLibraryMetadataQuery({attributes: [splittableMockAttribute]});
+            // `mockImplementation` (not `mockReturnValue`) so `.data` is a fresh object reference on every
+            // call: `useExplorerData`'s `useMemo` depends on that reference, and `libraryId` starts out as
+            // '' until `useViewSettingsReducer`'s RESET effect resolves it from the entrypoint — a single
+            // shared `.data` reference would freeze the memo (and every record's `libraryId`) on that
+            // first, still-empty value.
+            spyUseExplorerV2LibraryDataQuery.mockImplementation(
+                () =>
+                    ({
+                        loading: false,
+                        called: true,
+                        data: {records: {totalCount: 1, list: [mockRecordWithSplitValue]}},
+                    }) as gqlTypes.ExplorerV2LibraryDataQueryResult,
+            );
+            const saveValues = vi.fn(async () => ({status: 'SUCCESS'}));
+            vi.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(
+                () =>
+                    ({
+                        loading: false,
+                        saveValues,
+                    }) as unknown as ReturnType<typeof useExecuteSaveValueBatchMutation.default>,
+            );
+
+            render(
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    defaultMassActions={[]}
+                    ignoreViewByDefault
+                    currentView={{attributesIds: [splittableMockAttribute.id]}}
+                />,
+            );
+
+            const splitButton = await screen.findByRole('button', {name: 'explorer.column_split.expand'});
+            await user.click(splitButton);
+
+            expect(await screen.findByRole('columnheader', {name: 'draft'})).toBeInTheDocument();
+            expect(screen.getByRole('columnheader', {name: 'published'})).toBeInTheDocument();
+            expect(screen.getByRole('columnheader', {name: 'archived'})).toBeInTheDocument();
+            expect(screen.getByRole('button', {name: 'explorer.column_split.collapse'})).toBeInTheDocument();
+
+            const publishedCheckbox = screen.getByRole('checkbox', {name: 'published'});
+            await user.click(publishedCheckbox);
+
+            expect(saveValues).toHaveBeenCalledWith(
+                {id: mockRecords[0].id, library: {id: libraryEntrypoint.libraryId}},
+                [{attribute: splittableMockAttribute.id, idValue: null, value: 'published'}],
+            );
+        });
+
+        test('keeps the plain column and disables the button when the values list resolved empty', async () => {
+            spyLibraryMetadataQuery({
+                attributes: [{...splittableMockAttribute, valuesList: {values: []}}],
+            });
+            spyUseExplorerV2LibraryDataQuery.mockImplementation(
+                () =>
+                    ({
+                        loading: false,
+                        called: true,
+                        data: {records: {totalCount: 1, list: [mockRecordWithSplitValue]}},
+                    }) as gqlTypes.ExplorerV2LibraryDataQueryResult,
+            );
+
+            render(
+                <ExplorerV2
+                    entrypoint={libraryEntrypoint}
+                    defaultMassActions={[]}
+                    ignoreViewByDefault
+                    currentView={{attributesIds: [splittableMockAttribute.id]}}
+                />,
+            );
+
+            expect(await screen.findByRole('button', {name: 'explorer.column_split.expand'})).toBeDisabled();
+        });
+
+        describe('flat tree attributes (LEAVC-1074)', () => {
+            const treeSplitMockAttribute = {
+                ...simpleMockAttribute,
+                id: 'status_tree_attribute',
+                label: {fr: 'Statut', en: 'Status'},
+                type: gqlTypes.AttributeType.tree,
+                format: null,
+                column_split_enabled: true,
+                linked_tree: {id: 'statuses'},
+            } as gqlTypes.ExplorerV2LibraryMetadataQuery['libraries']['list'][number]['attributes'][number];
+
+            /**
+             * A full `TreeNodeChild` node: unlike the metadata/records queries (plain `vi.spyOn`), the
+             * root nodes go through Apollo, and `MockedProvider` adds `__typename` to the query — a result
+             * missing it cannot be normalized and the whole payload is dropped.
+             */
+            const treeNodeResult = (
+                id: string,
+                {childrenCount = 0, label = id}: {childrenCount?: number; label?: string} = {},
+            ) => ({
+                __typename: 'TreeNodeLight',
+                id: `node-${id}`,
+                order: 0,
+                childrenCount,
+                record: {
+                    __typename: 'Record',
+                    id,
+                    whoAmI: {
+                        __typename: 'RecordIdentity',
+                        id,
+                        label,
+                        subLabel: null,
+                        color: null,
+                        library: {__typename: 'Library', id: 'statuses', label: 'Statuses'},
+                        preview: null,
+                    },
+                    active: [{__typename: 'Value', value: true}],
+                },
+                ancestors: [],
+                permissions: {__typename: 'TreeNodePermissions', access_tree: true, detach: true, edit_children: true},
+            });
+
+            const treeNodesMock = (nodes: Array<ReturnType<typeof treeNodeResult>>): MockedResponse => ({
+                request: {query: gqlTypes.TreeNodeChildrenDocument, variables: {treeId: 'statuses', node: null}},
+                result: {
+                    data: {
+                        treeNodeChildren: {__typename: 'TreeNodeLightList', totalCount: nodes.length, list: nodes},
+                    },
+                },
+            });
+
+            // A record already sitting on the `draft` node: its value carries the NODE id, which is the
+            // key the sub-columns are matched on (never the node's record id — see
+            // `mapTreeNodesToSplitSource`).
+            const recordOnDraftNode = {
+                ...mockRecords[0],
+                properties: [
+                    {
+                        attributeId: treeSplitMockAttribute.id,
+                        values: [
+                            {
+                                id_value: 'value_1',
+                                treePayload: {
+                                    id: 'node-draft',
+                                    record: {
+                                        id: 'draft',
+                                        whoAmI: {
+                                            id: 'draft',
+                                            label: 'Draft',
+                                            subLabel: null,
+                                            color: null,
+                                            library: {id: 'statuses', label: {fr: 'Statuts', en: 'Statuses'}},
+                                            preview: null,
+                                        },
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                ],
+            };
+
+            const mockRecordsQuery = (record: unknown) =>
+                spyUseExplorerV2LibraryDataQuery.mockImplementation(
+                    () =>
+                        ({
+                            loading: false,
+                            called: true,
+                            data: {records: {totalCount: 1, list: [record]}},
+                        }) as gqlTypes.ExplorerV2LibraryDataQueryResult,
+                );
+
+            const mockSaveValues = () => {
+                const saveValues = vi.fn(async () => ({status: 'SUCCESS'}));
+                vi.spyOn(useExecuteSaveValueBatchMutation, 'default').mockImplementation(
+                    () =>
+                        ({
+                            loading: false,
+                            saveValues,
+                        }) as unknown as ReturnType<typeof useExecuteSaveValueBatchMutation.default>,
+                );
+                return saveValues;
+            };
+
+            const renderTreeSplit = (
+                attributeOverrides: Record<string, unknown>,
+                nodes: Array<ReturnType<typeof treeNodeResult>>,
+            ) => {
+                spyLibraryMetadataQuery({attributes: [{...treeSplitMockAttribute, ...attributeOverrides}] as never});
+
+                return render(
+                    <ExplorerV2
+                        entrypoint={libraryEntrypoint}
+                        defaultMassActions={[]}
+                        ignoreViewByDefault
+                        currentView={{attributesIds: [treeSplitMockAttribute.id]}}
+                    />,
+                    {mocks: [treeNodesMock(nodes)]},
+                );
+            };
+
+            test('splits a flat tree into one sub-column per root node and writes the nodeId', async () => {
+                mockRecordsQuery(recordOnDraftNode);
+                const saveValues = mockSaveValues();
+
+                renderTreeSplit({}, [
+                    treeNodeResult('draft', {label: 'Draft'}),
+                    treeNodeResult('published', {label: 'Published'}),
+                ]);
+
+                await user.click(await screen.findByRole('button', {name: 'explorer.column_split.expand'}));
+
+                expect(await screen.findByRole('columnheader', {name: 'Draft'})).toBeInTheDocument();
+                expect(screen.getByRole('columnheader', {name: 'Published'})).toBeInTheDocument();
+                // The row's value is matched on the node id, so its own node is the one checked.
+                expect(screen.getByRole('checkbox', {name: 'Draft'})).toBeChecked();
+                expect(screen.getByRole('checkbox', {name: 'Published'})).not.toBeChecked();
+
+                await user.click(screen.getByRole('checkbox', {name: 'Published'}));
+
+                // The nodeId, not the node's record id ('published'): that is what saveValueBatch expects
+                // for a tree attribute, exactly like a kanban transition.
+                expect(saveValues).toHaveBeenCalledWith(
+                    {id: mockRecords[0].id, library: {id: libraryEntrypoint.libraryId}},
+                    [{attribute: treeSplitMockAttribute.id, idValue: null, value: 'node-published'}],
+                );
+            });
+
+            test('disables the split button, with the reason, on a multi-level tree', async () => {
+                mockRecordsQuery(recordOnDraftNode);
+
+                renderTreeSplit({}, [
+                    treeNodeResult('draft', {label: 'Draft'}),
+                    treeNodeResult('families', {label: 'Families', childrenCount: 4}),
+                ]);
+
+                const splitButton = await screen.findByRole('button', {name: 'explorer.column_split.expand'});
+                // Enabled until the root nodes land: flatness is only knowable from them.
+                await waitFor(() => expect(splitButton).toBeDisabled());
+
+                // Hover the button itself, not its header wrapper: the tooltip's trigger is the button —
+                // disabled or not, it still receives the pointer events rc-trigger listens to.
+                await user.hover(splitButton);
+                expect(
+                    await screen.findByText('explorer.column_split.unavailable_multi_level_tree'),
+                ).toBeInTheDocument();
+            });
+
+            test('lets a multivalued tree attribute hold several nodes on the same row', async () => {
+                mockRecordsQuery(recordOnDraftNode);
+                const saveValues = mockSaveValues();
+
+                renderTreeSplit({multiple_values: true}, [
+                    treeNodeResult('draft', {label: 'Draft'}),
+                    treeNodeResult('published', {label: 'Published'}),
+                ]);
+
+                await user.click(await screen.findByRole('button', {name: 'explorer.column_split.expand'}));
+                await user.click(await screen.findByRole('checkbox', {name: 'Published'}));
+
+                expect(saveValues).toHaveBeenCalledWith(
+                    {id: mockRecords[0].id, library: {id: libraryEntrypoint.libraryId}},
+                    [{attribute: treeSplitMockAttribute.id, idValue: null, value: 'node-published'}],
+                );
+                // Optimistically both: adding a value to a multivalued attribute never drops the others.
+                expect(screen.getByRole('checkbox', {name: 'Draft'})).toBeChecked();
+                expect(screen.getByRole('checkbox', {name: 'Published'})).toBeChecked();
+            });
         });
     });
 

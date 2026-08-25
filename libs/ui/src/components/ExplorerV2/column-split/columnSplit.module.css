@@ -1,0 +1,117 @@
+.columnSplitCell {
+    text-align: center;
+}
+
+th.columnSplitGroupCell {
+    border-bottom: none !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+th.columnSplitCell {
+    border-top: none !important;
+    border-radius: 0 !important;
+}
+
+th.columnSplitCell.columnSplitOuterEnd {
+    border-bottom-right-radius: calc(var(--general-border-radius-s) * 1px) !important;
+}
+
+th.columnSplitGroupCell,
+th.columnSplitFirst {
+    border-left: 1px solid var(--general-utilities-border) !important;
+}
+
+th.columnSplitGroupRightEdge,
+th.columnSplitLast {
+    border-right: 1px solid var(--general-utilities-border) !important;
+}
+
+td.columnSplitFirst {
+    box-shadow: inset 1px 0 0 var(--general-utilities-border);
+}
+
+td.columnSplitLast {
+    box-shadow: inset -1px 0 0 var(--general-utilities-border);
+}
+
+td.columnSplitFirst.columnSplitLast {
+    box-shadow:
+        inset 1px 0 0 var(--general-utilities-border),
+        inset -1px 0 0 var(--general-utilities-border);
+}
+
+th.columnSplitGroupCell,
+th.columnSplitCell {
+    height: calc(var(--kit-table-header-cell-height-s) / 2) !important;
+}
+
+th.columnSplitGroupCell.columnSplitGroupCell.columnSplitGroupCell,
+th.columnSplitCell.columnSplitCell.columnSplitCell {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+th.columnSplitGroupCell :global(.ant-table-cell),
+th.columnSplitCell :global(.ant-table-cell) {
+    min-height: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+th.columnSplitCell :global(.ant-table-cell),
+th.columnSplitGroupCell :global(.ant-table-cell),
+th.columnHeaderCellWithButton :global(.ant-table-cell) {
+    padding-right: 0 !important;
+    margin-left: calc(var(--general-spacing-xs) * 1px) !important;
+    margin-right: calc(var(--general-spacing-xs) * 1px) !important;
+}
+
+td.columnSplitCell :global(.ant-table-cell) {
+    padding-left: calc(var(--general-spacing-xs) * 1px) !important;
+    padding-right: calc(var(--general-spacing-xs) * 1px) !important;
+}
+
+.columnSplitCellControl {
+    display: block;
+}
+
+td.columnSplitCell :global(.ant-checkbox-wrapper),
+td.columnSplitCell :global(.ant-radio-wrapper) {
+    justify-content: center;
+    align-items: center;
+}
+
+.columnSplitHeader,
+.columnSplitValueHeader {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--general-spacing-xs) * 1px);
+    min-width: 0;
+}
+
+.columnSplitValueHeader {
+    justify-content: center;
+}
+
+.columnSplitHeader {
+    justify-content: space-between;
+}
+
+.columnSplitHeader > :first-child {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.columnSplitHeader > button {
+    flex: 0 0 auto;
+}
+
+.columnSplitHeader > button:focus,
+.columnSplitHeader > button:focus-visible {
+    outline-offset: -3px !important;
+}
+
+.columnSplitValueCard {
+    min-width: 0;
+}

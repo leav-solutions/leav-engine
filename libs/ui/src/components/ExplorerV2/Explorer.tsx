@@ -43,6 +43,7 @@ import {
     defaultPageSizeOptions,
     type IViewSettingsState,
     useOpenViewSettingsV2,
+    ViewSettingsActionTypes,
     ViewSettingsContext,
 } from './manage-view-settings-v2';
 import {useSearchInput} from './useSearchInput';
@@ -725,6 +726,18 @@ export const ExplorerV2 = forwardRef<IExplorerRef, IExplorerProps>(
                                 mode: selectionMode,
                             }}
                             tableBodyHeight={tableBodyHeight}
+                            columnSplit={{
+                                splitAttributeIds: view.splitAttributeIds,
+                                toggleSplit: (attributeId: string) =>
+                                    viewSettingsDispatch({
+                                        type: ViewSettingsActionTypes.TOGGLE_ATTRIBUTE_COLUMN_SPLIT,
+                                        payload: attributeId,
+                                    }),
+                                // Inline edition follows the same rule as item actions: disabled during a
+                                // "select all" mass selection (Explorer.tsx already does this for
+                                // itemActions just above).
+                                isEditionDisabled: isMassSelectionAll,
+                            }}
                         />
                     )}
                 </ExplorerPageDivStyled>

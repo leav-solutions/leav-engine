@@ -61,6 +61,16 @@ export interface IItemData {
         [attributeId: string]: number;
     };
     /**
+     * Column split only: the option keys EXPECTED on this record while a write is in flight, by
+     * attribute id. Absent on every untouched row — `useOptimisticSplitValues` sets it on a COPY of
+     * the item, so a toggle changes the identity of the clicked row and of it alone. That is what
+     * lets the split sub-columns keep a real `shouldCellUpdate` instead of redrawing every cell of
+     * every split column (see `buildSplitColumnGroup`).
+     */
+    optimisticSplitKeys?: {
+        [attributeId: string]: string[];
+    };
+    /**
      * Can be named `linkId` too, but for historical reason we keep old name 👴🏼.
      */
     id_value?: string;

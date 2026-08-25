@@ -103,6 +103,7 @@ app-studio importe). Construit par `panel-view-settings/store-current-view/viewV
 | `kanban/`                   | Mode Kanban complet : rendu, pagination per-column et DnD — voir section dédiée                                                                                                                                                                                                                                                                                      |
 | `cells/`                    | Rendu de cellule **partagé** entre les modes (`TableCell`, `IdCard`, `TableTagGroup`) — utilisé par `table/` **et** `kanban/` (cartes)                                                                                                                                                                                                                               |
 | `grouping/`                 | Regroupement partagé (`buildKanbanColumns`, `isValidGroupingAxis`, `groupFilters`, types `_types.ts`)                                                                                                                                                                                                                                                                |
+| `column-split/`             | Éclatement d'une colonne du mode tableau en une sous-colonne par valeur possible (LEAVC-1073/1074/1075) — voir section dédiée                                                                                                                                                                                                                                        |
 
 > ⚠️ `cells/IdCard.tsx`, `cells/TableCell.tsx` et `table/TableNameCell.tsx` sont des **copies** de
 > leurs homologues v1 (`Explorer/IdCard.tsx`, `Explorer/TableCell.tsx`, `Explorer/TableNameCell.tsx`)
@@ -155,7 +156,8 @@ d'`IdCard` (nom, cellule `link`, cellule `tree`) résout sa propre entrée du lo
 > la règle du DS, qui descend de `._kit-table_… .ant-table-wrapper` jusqu'au `th`, gagne toujours en
 > spécificité. L'en-tête se règle **uniquement** par `headerLineSize`. Corollaire : `headerTableHeight`
 > (calcul de la hauteur scrollable) doit être tenu à la main en miroir du token DS correspondant —
-> rien ne les relie.
+> rien ne les relie. Une colonne éclatée ajoute une deuxième ligne d'en-tête mais **ne change pas**
+> cette hauteur totale : les deux lignes se partagent les 48 px (voir plus bas).
 
 Le `height` posé par le DS sur un `th` est un **plancher**, pas un plafond : un libellé de colonne
 qui passe sur plusieurs lignes fait grandir la ligne d'en-tête au lieu d'être rogné.
@@ -303,6 +305,194 @@ null` → colonne « Sans valeur » ; ⚠️ pas de `searchQuery` sur cette quer
 pré-filtre de liaison de `PanelAttributeExplorer`). Ils restent des filtres **pleins** (`HiddenFullFilter`),
 ne vont **pas** dans le store éditable, mais sont **fusionnés à la requête**
 (`requestFilters = [...hiddenFilters, ...storeFilters]`) et **exclus de l'UI**.
+
+---
+
+## Éclatement de colonne (`column-split/`)
+
+En mode `list` (`table/TableView`), une colonne d'attribut à **liste de valeurs fermée** (LEAVC-1073) ou
+de type **arbre à un seul niveau** (LEAVC-1074) peut être **éclatée** en une sous-colonne par valeur
+possible ; chaque cellule porte une case à cocher (ou un bouton radio) qui lit/écrit la présence de cette
+valeur sur l'enregistrement de la ligne.
+
+**Deux sources d'options, un seul point d'entrée.** `useColumnSplitSources(attributs éclatables)` rend, par
+id d'attribut, ses sous-colonnes **ou** la raison pour laquelle il n'en a pas (`IColumnSplitSource`, dont
+l'`unavailableReasonKey` est une clé i18n de `_constants.ts` — jamais une chaîne traduite, pour que la
+résolution reste pure) :
+
+| Type d'attribut | Source des options                                           | Chargement                                  |
+| --------------- | ------------------------------------------------------------ | ------------------------------------------- |
+| standard / lien | `valuesList` du fragment `ExplorerV2AttributeProperties`     | déjà là (`getColumnSplitOptions`, **pure**) |
+| arbre           | les **nœuds racine** de `linked_tree` (`TREE_NODE_CHILDREN`) | une requête par arbre distinct              |
+
+Les champs `column_split_enabled`, `required`, `permissions.edit_value` **et** `valuesList` sont portés par
+`_queries/libraryMetadataQuery.graphql`, jouée une seule fois en amont pour toute la Library : pour les
+listes de valeurs, **aucune requête par attribut** à l'éclatement, donc aucun état de chargement à gérer.
+
+> ⚠️ Ne pas sortir ces champs dans une requête dédiée pour alléger la requête de métadonnées : celle-ci
+> tourne **une fois par Library**, là où une requête par attribut — ou un retour dans la requête de
+> **records**, rejouée à chaque page — multiplierait les allers-retours.
+
+**Pourquoi les arbres échappent à la règle** : les nœuds ne sont pas dans les métadonnées d'attribut, et
+`splitAttributeIds` est de longueur variable — appeler `useTreeNodeChildrenQuery` une fois par arbre
+violerait les règles des hooks. D'où le **fan-out impératif `apolloClient.query`** dans
+`useColumnSplitSources`, exactement le pattern de `kanban/useKanbanColumnsData` pour ses pages de colonne.
+**Ne pas** contourner ça par un composant-pont par colonne éclatée qui remonterait le résultat de son
+hook. Le fan-out est indexé par **id d'arbre**, pas par attribut : deux attributs sur le même arbre
+partagent un seul fetch, `cache-first`.
+
+> ⚠️ Les arbres sont requêtés pour toute colonne éclatable **affichée**, éclatée ou non — pas seulement à
+> l'éclatement. La platitude d'un arbre n'est connue que de ses nœuds, et le bouton doit être désactivé
+> **avant** le clic : autrement le premier clic ne ferait visiblement rien, puis désactiverait le bouton
+> après coup, avec un repli automatique et un `KitAlert.info` pour l'expliquer. Le coût est d'une requête de
+> nœuds racine par colonne arbre éclatable affichée — un paramètre que l'admin active attribut par attribut,
+> donc 0 à 2 en pratique.
+
+**Un arbre n'est éclatable que s'il est plat** : dès qu'**un** nœud racine a des enfants,
+`mapTreeNodesToSplitSource` déclare tout l'attribut inéclatable (`unavailable_multi_level_tree`) plutôt que
+d'éclater sur les racines en perdant leurs descendants. Les arbres à plusieurs niveaux sont hors périmètre
+du lot 1 d'édition grille.
+
+⚠️ **La clé d'une option d'arbre est l'id du NŒUD, jamais celui de son enregistrement** : un même
+enregistrement peut être rattaché à plusieurs nœuds, et le nœud est à la fois ce que porte la valeur d'un
+record (`treePayload.id`) et ce que `saveValueBatch` attend à l'écriture. Le kanban, lui, apparie ses
+cartes sur `treePayload.record.id` (`grouping/buildKanbanColumns.ts`) — uniquement parce que son fragment
+est antérieur à l'ajout de ce `id`.
+
+`isColumnSplittable(attribute)` = uniquement `column_split_enabled` (LEAVC-1075) — **pas**
+`isValidGroupingAxis` (ADR-011), même si `values_list` est maintenant disponible : le lot 1 (core) garantit
+déjà que le flag n'est vrai que sur un attribut éligible, et re-dériver l'éligibilité côté front
+n'ajouterait qu'une seconde source de vérité divergeable. Quand un attribut flaggé n'a finalement rien à
+éclater — liste vidée ou ouverte après coup, arbre à plusieurs niveaux, nœuds racine non chargés —
+`TableView` **désactive** le bouton avec la raison en tooltip au lieu de le masquer ; une colonne déjà
+éclatée retombe alors sur sa colonne simple. Un `IColumnSplitSource` à `options: []` **sans** raison est
+l'état transitoire « nœuds en vol » : le bouton y reste actif, et le groupe apparaît de lui-même à
+l'arrivée des nœuds.
+
+**État éphémère, non persisté** (décision D6) : `splitAttributeIds: string[]` vit dans
+`viewSettingsReducer` à côté de `fulltextSearch`/`massSelection` — survit à la pagination/au
+tri/au filtre, disparaît au changement d'entrypoint (`RESET`) ou au démontage du composant.
+
+**Overlay optimiste** (décision D1) : `useOptimisticSplitValues` tient un `Map<recordId, {[attributeId]:
+string[]}>` des clés d'option ATTENDUES pendant qu'une écriture est en vol. Aucun `refetch()` manuel après
+une écriture : `useWatchLibraryRecordUpdates` (voir `_queries/useExplorerData.ts`) rafraîchit
+l'enregistrement touché en place, et un effet de réconciliation supprime l'entrée d'overlay dès que la
+donnée fraîche confirme l'écriture qu'elle porte. Le rollback d'une écriture refusée n'est que la
+suppression de cette même entrée — on retombe alors sur la donnée serveur, jamais modifiée.
+
+⚠️ **L'overlay est fusionné DANS la donnée, pas lu à côté.** Le hook ne rend pas un accesseur mais
+`items` : la liste des enregistrements, avec `optimisticSplitKeys` posé sur les **seules** lignes
+touchées (une copie de l'item ; les autres gardent leur identité). C'est `items` qui alimente le
+`dataSource` de la table, et la lecture se fait par la fonction pure `getSelectedKeys(item, attribute)`.
+Raison : `shouldCellUpdate` ne voit **que** `(record, prevRecord)` — un overlay vivant à côté de la donnée
+y est structurellement invisible, ce qui obligeait à forcer `true` (voir juste en dessous). **Ne pas
+« re-simplifier »** en ressortant l'overlay de l'item : ça reviendrait à redessiner toutes les cellules de
+toutes les colonnes éclatées à chaque clic.
+
+> ⚠️ L'ensemble ATTENDU doit rester réconciliable : décocher une valeur d'un attribut **multivalué** ne
+> retire que **cette** clé (`selectedKeys.filter(...)`), jamais l'ensemble entier. Un attendu `[]` face à
+> une donnée serveur qui porte encore les autres valeurs ne réconcilie jamais — l'entrée d'overlay reste
+> collée et fait apparaître la ligne comme vide indéfiniment.
+
+**`shouldCellUpdate` des sous-colonnes compare vraiment** — `propertiesById[id]` **et**
+`optimisticSplitKeys?.[id]`, les deux portés par l'item (voir ci-dessus). Un clic ne redessine donc que les
+cellules éclatées de **sa** ligne. Deux choses à savoir avant d'y toucher :
+
+- `shouldCellUpdate` pilote directement le `useMemo` qui appelle `render()`
+  (`@rc-component/table`, `Cell/useCellRender.js`) : quand il rend `false`, `render()` n'est pas rappelé et
+  l'élément précédent est réutilisé. Il **court-circuite** le `mark` interne d'antd — c'est lui qui décide,
+  seul. Corollaire : un mémo React sur `ColumnSplitCell` serait redondant.
+- **Un flag de niveau colonne y est structurellement invisible** : `isEditionDisabled` est identique sur
+  `record` et `prevRecord`, donc son basculement ne peut pas être détecté depuis la comparaison. D'où le
+  `hasEditionDisabledChanged` calculé dans `TableView` (ref + effet, l'effet ne tournant qu'**après** le
+  commit qui a consommé le flag) et passé à `buildSplitColumnGroup` : il force une passe de mise à jour
+  des cellules, **dans les deux sens**. Sans lui, sortir de la sélection de masse laissait les cases
+  grisées. Même piège pour tout futur flag de colonne.
+
+⚠️ **Corollaire : une cellule de split ne résout aucune dépendance elle-même.** `saveValues`
+(`useSaveValueBatchMutation`) et `t` sont résolus **une fois** dans `TableView` et descendent en props
+jusqu'à `ColumnSplitCell` via `buildSplitColumnGroup` ; `toggleSplitValue` est une **fonction pure**, pas un
+hook. Les appeler depuis la cellule instanciait une mutation Apollo par cellule (lignes × sous-colonnes).
+Ne pas « re-simplifier » en re-hookant la cellule.
+
+⚠️ **Le fragment `PropertyValue` reste un jumeau byte-identique de celui d'`Explorer/_queries/`**
+(cf. [`libs/ui/CLAUDE.md`](../../../CLAUDE.md#graphql--pattern)) : les deux champs ajoutés pour ce lot —
+`id_value` (retirer UNE valeur d'un attribut multivalué) et `treePayload.id` (le nodeId, lot 3) — ont donc
+été répercutés à l'identique dans `Explorer/_queries/explorerQuery.graphql`, bien que v1 ne les consomme
+pas. Les métadonnées d'attribut, elles, n'ont plus de jumeau : v2 n'a plus de fragment
+`AttributeProperties` dans sa requête de records.
+
+### Le rendu de l'en-tête imbriqué n'est pas porté par le DS
+
+`KitTable` ne sait styler qu'**une** ligne d'en-tête : ses règles de bordure et d'arrondi sur les `th`
+sont écrites en `:first-of-type` / `:last-of-type`, qui **repartent à zéro à chaque `<tr>`**. Un groupe de
+colonnes ajoute une seconde ligne, donc le DS dessine **deux boîtes arrondies empilées** au lieu d'un
+cadre. `columnSplit.module.css` neutralise le bord bas (et ses arrondis) de la ligne de groupe et le bord
+haut de la ligne de valeurs pour retrouver un cadre unique — exactement ce que fait la table de cadrage
+(`xstream/apps/fronts/front-amont-cadrage/src/modules/table/Table.css`, qui documente sur place pourquoi
+elle ne remonte pas ça dans le DS : son imbrication à 3 niveaux n'est pas généralisable). Le cas à 2
+niveaux, lui, le serait : **si le DS finit par gérer l'en-tête imbriqué, ces règles-ci disparaissent.**
+
+Trois pièges à ne pas « re-simplifier » :
+
+- **La typo du libellé d'attribut est posée explicitement** (`size` + `weight` sur le
+  `KitTypography.Text` de `ColumnSplitHeader`) : `KitTypography` applique sa propre police, il n'hérite
+  donc **pas** du gras que le DS met sur un `th`. Sans `weight="bold"`, le libellé est plus clair que
+  celui des colonnes voisines (dont le titre est une simple chaîne). Niveaux repris de cadrage :
+  attribut = 14 px gras, valeur = 12 px normal.
+- **`KitTypography.Text` + `ellipsis` booléen**, et non `AdvancedText` + `ellipsis={{tooltip}}` : seul le
+  premier passe par le `useEllipsisTooltip` du DS, qui n'affiche le tooltip que si le texte **déborde
+  vraiment**. Le `description` d'un `KitIdCard` utilise le même hook, d'où la cohérence entre l'en-tête
+  d'attribut et celui d'une sous-colonne.
+- **Dans le corps, le cadre du groupe est un `box-shadow: inset`, pas une bordure** : au survol d'une
+  ligne, le DS recolore en couleur primaire la bordure de **tout** `.ant-table-cell` — avec `!important`
+  et une chaîne de sélecteurs qu'aucune classe locale ne surclasse — et un `td` porte cette classe. Une
+  bordure passerait donc au bleu avec la ligne ; un `box-shadow` est ignoré par cette règle.
+- **`isLastColumn`** (passé à `buildSplitColumnGroup`) décide qui dessine le bord droit du groupe :
+  dernière colonne du tableau → **personne**, le bord (et son arrondi) est déjà celui du tableau, et
+  y superposer le nôtre traçait un trait droit en travers du coin arrondi. Ailleurs → la dernière
+  sous-colonne, et l'arrondi que le DS pose sur le `:last-of-type` de la 2ᵉ ligne est neutralisé
+  puisqu'il tomberait en plein milieu du tableau.
+
+**Les deux lignes tiennent dans les 48 px** d'un en-tête normal (comme cadrage) : le DS pose un
+plancher de 48 px sur **chaque** `th`, donc chacune est épinglée à la moitié — le vrai plancher étant
+le bouton de repli (24 px). Il faut aplatir tout ce que le DS et le styled de `TableView` ajoutent
+autour du contenu (marges internes, `min-height`, padding vertical — ce dernier en **triplant la
+classe**, seul moyen de dépasser le `!important` du styled) : `height` sur un `th` est un plancher,
+pas un plafond. Bénéfice indirect : la hauteur scrollable du corps (`useTableScrollableHeight`) reste
+juste, sans avoir à connaître le nombre de lignes d'en-tête.
+
+L'espace de 8 px que le DS insère entre l'en-tête et le corps (`thead::after`) est **supprimé** dans
+le styled de `TableView` — pour tout le tableau, pas seulement les colonnes éclatées : il coupait le
+cadre du groupe en deux.
+
+**Les en-têtes.** Un seul composant, `ColumnSplitHeader`, sert les **deux** états d'une colonne éclatable
+(libellé + bouton d'éclatement / libellé de groupe + bouton de repli) : ils ne diffèrent que par l'icône,
+la clé i18n et `disabled`, et l'action est **un unique toggle**
+(`ViewSettingsActionTypes.TOGGLE_ATTRIBUTE_COLUMN_SPLIT`) — les deux points d'appel de `TableView`
+passaient déjà le même callback. Découper selon le rendu plutôt que selon l'état donnait deux composants
+jumeaux et deux classes CSS listées ensemble dans chacune de leurs règles.
+
+**L'en-tête d'une sous-colonne est un `KitIdCard`** (`ColumnSplitValueHeader`), pas une pastille maison :
+il fournit la barre de couleur fine du DS (`.card-color`, 3 px arrondie) et, via `description` **et non**
+`title`, la typo 12 px regular voulue pour cette ligne (`title` est gras et d'un cran au-dessus — c'est le
+niveau de l'en-tête de groupe). L'ellipse et son tooltip viennent avec. Précédent dans le module :
+`actions-mass/edit-attribute/TreeNodeRemap.tsx` rend déjà un nœud d'arbre ainsi.
+
+> ⚠️ Deux pièges du `KitIdCard` ici :
+>
+> - **Seule sa classe racine est hashée** (`_kit-id-card_3vw8m_1`, issue d'un CSS module) ; ses enfants
+>   (`.card-color`, `.card-info`, `.kit-id-card-description`) sont émis **globaux**. Pour le contraindre,
+>   passer par sa prop `className` — un sélecteur `:global(.kit-id-card)` ne matcherait rien.
+> - **La barre n'existe que si `color` est défini**, et le DS ne réserve la colonne de grille que dans ce
+>   cas. Une option sans couleur au milieu d'options colorées reçoit donc `transparent` plutôt que rien,
+>   sinon son libellé démarrerait 3 px + gap à gauche de celui de ses voisines (même astuce que
+>   `cells/IdCard.tsx`).
+
+**Cardinalité de la cellule** (`ColumnSplitCell`) : `multiple_values` → case à cocher classique ;
+mono **non requis** → case à cocher **exclusive** (cocher B remplace A en une seule écriture, décision
+D2 — le moteur gère le remplacement d'une valeur monovaluée tout seul) ; mono **requis** → bouton radio,
+pas de décochage.
 
 ---
 

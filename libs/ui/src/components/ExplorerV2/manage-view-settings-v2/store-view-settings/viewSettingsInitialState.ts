@@ -27,4 +27,5 @@ export const viewSettingsInitialState: IViewSettingsState = {
     shortcuts: DEFAULT_VIEW_SHORTCUTS,
     pageSize: defaultPageSizeOptions[0],
     massSelection: [],
+    splitAttributeIds: [],
 };
