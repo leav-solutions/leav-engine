@@ -154,6 +154,7 @@ function CreateDirectory({defaultSelectedKey, libraryId, onCompleted, onClose}: 
                             selectedNodes={[selectedNodeKey]}
                             canSelectRoot
                             selectableLibraries={[libraryId]}
+                            showNodeTypeIcon
                         />
                     )}
                 </div>

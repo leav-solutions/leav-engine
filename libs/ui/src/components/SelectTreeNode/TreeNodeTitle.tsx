@@ -2,21 +2,13 @@ import {useState, type FunctionComponent} from 'react';
 import {type ITreeMapElement} from './_types';
 import {KitButton, KitIdCard, KitTag, KitTypography} from 'aristid-ds';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCheck} from '@fortawesome/free-solid-svg-icons';
+import {faCheck, faFolder} from '@fortawesome/free-solid-svg-icons';
 import {type ITreeNodeWithRecord} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import styled from 'styled-components';
+import {LibraryBehavior} from '_ui/_gqlTypes';
+import {getFileTypeIcon} from '_ui/_utils/getFileTypeIcon';
+import {treeNodeLine, treeNodeLineSection} from './TreeNodeTitle.module.css';
 
-const TreeNodeLine = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-`;
-const TreeNodeLineSection = styled.div`
-    display: flex;
-    align-items: center;
-    gap: calc(var(--general-spacing-xs) * 1px);
-`;
 interface ITreeNodeTitleProps {
     checkable: boolean;
     disabledNodes: string[];
@@ -24,6 +16,7 @@ interface ITreeNodeTitleProps {
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
     selectedNodes: string[];
     showSelectChildrenButton: boolean;
+    showNodeTypeIcon?: boolean;
 }
 
 export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
@@ -33,13 +26,15 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
     onSelect,
     selectedNodes,
     showSelectChildrenButton,
+    showNodeTypeIcon = false,
 }) => {
     const {t} = useSharedTranslation();
 
     const [hover, setHover] = useState(false);
 
     const isSelected = selectedNodes.includes(node.id) && !node.isShowMore;
-    const isDisabled = disabledNodes.includes(node.id);
+    // Fall back on `disabledNodes`: the synthetic root node carries no `disabled` flag.
+    const isDisabled = node.disabled ?? disabledNodes.includes(node.id);
 
     const buttonInSelectMode = node.children
         .filter(child => !child.isShowMore && !disabledNodes.includes(child.id))
@@ -48,7 +43,7 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
     const handleChildrenSelection = (event: React.MouseEvent) => {
         event.stopPropagation();
         node.children.forEach(child => {
-            if (node.disabled || child.isShowMore) {
+            if (node.disabled || child.disabled || child.isShowMore) {
                 return;
             }
             onSelect(child, buttonInSelectMode);
@@ -56,14 +51,24 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
     };
 
     return (
-        <TreeNodeLine onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-            <TreeNodeLineSection>
+        <div className={treeNodeLine} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+            <div className={treeNodeLineSection}>
+                {showNodeTypeIcon && node.record && (
+                    <FontAwesomeIcon
+                        icon={
+                            node.libraryBehavior === LibraryBehavior.directories
+                                ? faFolder
+                                : getFileTypeIcon(node.title as string)
+                        }
+                        color={isDisabled ? 'var(--general-utilities-text-disabled)' : undefined}
+                    />
+                )}
                 <KitTypography.Text size="fontSize5" disabled={isDisabled}>
                     {node.title}
                 </KitTypography.Text>
                 <SelectedChildrenCount node={node} selectedNodes={selectedNodes} />
-            </TreeNodeLineSection>
-            <TreeNodeLineSection>
+            </div>
+            <div className={treeNodeLineSection}>
                 {showSelectChildrenButton && node.children.length > 0 && hover && (
                     <KitButton size="s" onClick={e => handleChildrenSelection(e)}>
                         {t(`tree-node-selection.${buttonInSelectMode ? 'select_children' : 'unselect_children'}`)}
@@ -77,8 +82,8 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
                         }
                     />
                 )}
-            </TreeNodeLineSection>
-        </TreeNodeLine>
+            </div>
+        </div>
     );
 };
 

@@ -17,6 +17,7 @@ export const treeContentTreeNodeChildren = (depth = 0) => `
                 label
                 library {
                     id
+                    behavior
                 }
             }
         }
@@ -46,6 +47,7 @@ export const treeContentDataQuery = (depthTreeNodes = DEFAULT_DEPTH_TREE_NODES) 
                     label
                     library {
                         id
+                        behavior
                     }
                 }
             }
