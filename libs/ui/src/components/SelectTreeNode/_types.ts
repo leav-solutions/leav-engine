@@ -1,6 +1,7 @@
 import {type ComponentProps, type Key} from 'react';
 import {type KitTree} from 'aristid-ds';
 import {type ITreeNodeWithRecord} from '_ui/types';
+import {type LibraryBehavior} from '_ui/_gqlTypes';
 
 export interface ITreeMapElement extends ITreeNodeWithRecord {
     isLeaf?: boolean;
@@ -9,6 +10,7 @@ export interface ITreeMapElement extends ITreeNodeWithRecord {
     isShowMore?: boolean;
     selectable?: boolean;
     disabled?: boolean;
+    libraryBehavior?: LibraryBehavior;
 }
 
 export interface ITreeMap {

@@ -5,6 +5,7 @@ import {type ITreeNodeWithRecord} from '_ui/types';
 import {
     type ChildrenAsRecordValuePermissionFilterInput,
     type DependentValuesPermissionFilterInput,
+    type LibraryBehavior,
     type TreeContentDataQueryQuery,
 } from '_ui/_gqlTypes';
 import {ErrorDisplay} from '../../index';
@@ -27,16 +28,31 @@ interface ISelectTreeNodeContentProps {
     canSelectRoot?: boolean;
     selectableLibraries?: string[]; // all by default
     showSelectChildrenButton?: boolean;
+    showNodeTypeIcon?: boolean;
 }
 
-type TreeContentNode = TreeContentDataQueryQuery['treeContent'][number] & {
-    children?: Array<TreeContentDataQueryQuery['treeContent'][number]>;
+// `treeContentDataQuery` is built by string interpolation at runtime, so graphql-codegen never sees
+// it: the `behavior` field it asks for has to be typed by hand here.
+type TreeContentRecord = TreeContentDataQueryQuery['treeContent'][number]['record'] & {
+    whoAmI: {library: {behavior: LibraryBehavior}};
 };
 
-const _toTreeMapElement = (node: TreeContentNode, parents: string[], disabledNodes: string[]): ITreeMapElement => {
+type TreeContentNode = Omit<TreeContentDataQueryQuery['treeContent'][number], 'record'> & {
+    record: TreeContentRecord;
+    children?: TreeContentNode[];
+};
+
+const _toTreeMapElement = (
+    node: TreeContentNode,
+    parents: string[],
+    disabledNodes: string[],
+    selectableLibraries?: string[],
+): ITreeMapElement => {
     const children = (node.children ?? []).map(child =>
-        _toTreeMapElement(child as TreeContentNode, [...parents, node.id], disabledNodes),
+        _toTreeMapElement(child, [...parents, node.id], disabledNodes, selectableLibraries),
     );
+
+    const isSelectable = !selectableLibraries || selectableLibraries.includes(node.record.whoAmI.library.id);
 
     return {
         record: node.record,
@@ -46,7 +62,8 @@ const _toTreeMapElement = (node: TreeContentNode, parents: string[], disabledNod
         isLeaf: !node.childrenCount,
         children,
         parents,
-        disabled: disabledNodes.includes(node.id),
+        disabled: disabledNodes.includes(node.id) || !isSelectable,
+        libraryBehavior: node.record.whoAmI.library.behavior,
     };
 };
 
@@ -77,6 +94,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     canSelectRoot = false,
     selectableLibraries,
     showSelectChildrenButton = false,
+    showNodeTypeIcon = false,
 }) => {
     const rootNode: ITreeMapElement = {
         title: tree.label,
@@ -113,7 +131,9 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
 
                 const newRoot: ITreeMapElement = {
                     ...rootNode,
-                    children: content.map(node => _toTreeMapElement(node as TreeContentNode, [tree.id], disabledNodes)),
+                    children: content.map(node =>
+                        _toTreeMapElement(node as TreeContentNode, [tree.id], disabledNodes, selectableLibraries),
+                    ),
                 };
 
                 setTreeMap(_buildTreeMap(newRoot));
@@ -211,6 +231,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
                     onSelect={onSelect}
                     selectedNodes={selectedNodes}
                     showSelectChildrenButton={showSelectChildrenButton}
+                    showNodeTypeIcon={showNodeTypeIcon}
                 />
             )}
             onSelect={_handleSelect}

@@ -322,6 +322,7 @@ function UploadFiles({
                             selectedNodes={[selectedNode?.id]}
                             canSelectRoot
                             selectableLibraries={[directoriesLibraryId]}
+                            showNodeTypeIcon
                         />
                     )}
                 </div>

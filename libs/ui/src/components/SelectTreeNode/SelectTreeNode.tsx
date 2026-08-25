@@ -26,6 +26,7 @@ interface ISelectTreeNodeProps {
     checkable?: boolean;
     canSelectRoot?: boolean;
     showSelectChildrenButton?: boolean;
+    showNodeTypeIcon?: boolean;
 }
 
 export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
@@ -42,6 +43,7 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     checkable = false,
     canSelectRoot = false,
     showSelectChildrenButton = false,
+    showNodeTypeIcon,
 }) => {
     const {lang} = useLang();
     const {t} = useSharedTranslation();
@@ -76,6 +78,7 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
             canSelectRoot={canSelectRoot}
             selectableLibraries={selectableLibraries}
             showSelectChildrenButton={showSelectChildrenButton}
+            showNodeTypeIcon={showNodeTypeIcon}
         />
     );
 };
