@@ -92,10 +92,7 @@ export const useEditAttributeMassAction = ({
         });
 
         _closeModal();
-        dispatch({
-            type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-            payload: [],
-        });
+        dispatch({type: ViewSettingsActionTypes.CLEAR_MASS_SELECTION});
 
         KitNotification.info({
             message: t('explorer.massAction.editAttribute_submit_notification_title'),
@@ -120,7 +117,11 @@ export const useEditAttributeMassAction = ({
         editAttributeMassAction: {
             label: t('explorer.massAction.editAttribute'),
             icon: <FontAwesomeIcon icon={faEdit} />,
-            deselectAll: false,
+            // keepSelection: the edit modal is a separate component confirmed by _saveEditionMapping,
+            // decoupled from this callback's own promise — that function clears the selection itself,
+            // deliberately optimistic (before the mutation settles), matching the rest of this flow
+            // (modal closes and notification fires immediately too).
+            keepSelection: true,
             callback: (_massSelectionFilter: RecordFilterInput[], _massSelection, _searchQuery?: string) => {
                 setMassSelectionFilters(_massSelectionFilter);
                 setMassSelectionSearchQuery(_searchQuery);

@@ -1,10 +1,10 @@
-import {type Dispatch, useMemo} from 'react';
+import {useMemo} from 'react';
 import {KitAlert} from 'aristid-ds';
 import {useDeactivateRecordsMutation} from '_ui/_gqlTypes';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {useConfirmModal} from '_ui/hooks/useConfirmModal/useConfirmModal';
 import {type FeatureHook, type IMassActions} from '../_types';
-import {type IViewSettingsAction, type IViewSettingsState, ViewSettingsActionTypes} from '../manage-view-settings-v2';
+import {type IViewSettingsState} from '../manage-view-settings-v2';
 import {MASS_SELECTION_ALL} from '../_constants';
 import {type useExplorerData} from '../_queries/useExplorerData';
 import {SUCCESS_ALERT_DURATION, BREAK_TWO_LINES} from '_ui/constants';
@@ -19,14 +19,13 @@ import {faTrash} from '@fortawesome/free-solid-svg-icons';
  *
  * @param isEnabled - whether the action is present
  * @param view - represent the current view
- * @param dispatch - method to change the current view
  * @param libraryId - concerned library
  * @param allVisibleKeys - list of all visible keys used to know if we need to change page
  * @param refetch - method to get fresh data when we delete last page
  */
 export const useDeactivateMassAction = ({
     isEnabled,
-    store: {view, dispatch},
+    store: {view},
     allVisibleKeys,
     totalCount,
     onDeactivate,
@@ -34,7 +33,6 @@ export const useDeactivateMassAction = ({
 }: FeatureHook<{
     store: {
         view: IViewSettingsState;
-        dispatch: Dispatch<IViewSettingsAction>;
     };
     allVisibleKeys: string[];
     totalCount: number;
@@ -50,62 +48,61 @@ export const useDeactivateMassAction = ({
         () => ({
             label: t('explorer.massAction.deactivate'),
             icon: <FontAwesomeIcon icon={faTrash} />,
-            deselectAll: false,
-            callback: (massSelectionFilter, _massSelection, searchQuery) => {
-                openConfirmModal({
-                    title:
-                        t('explorer.deactivate_item', {
-                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
-                        }) ?? undefined,
-                    content:
-                        t('explorer.deactivate_item_description', {
-                            count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
-                        }) +
-                        BREAK_TWO_LINES +
-                        t('global.are_you_sure'),
-                    onOk: async () => {
-                        const {data} = await deactivateRecordsMutation({
-                            variables: {
-                                libraryId: view.libraryId,
-                                filters: massSelectionFilter,
-                                searchQuery,
-                            },
-                        });
-                        const total =
-                            view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
-                        KitAlert.success({
-                            showIcon: true,
-                            duration: SUCCESS_ALERT_DURATION,
-                            message: t('explorer.massAction.deactivate_message'),
-                            description: t('explorer.massAction.deactivate_description', {
-                                count: data?.deactivateRecords.length,
-                                total,
-                            }),
-                            closable: true,
-                        });
-                        if (
-                            view.massSelection === MASS_SELECTION_ALL ||
-                            allVisibleKeys.every(key => view.massSelection.includes(key))
-                        ) {
-                            await refetch({
-                                pagination: {
-                                    limit: view.pageSize,
-                                    offset: 0,
+            // callback resolves only once the deactivation genuinely succeeds (never on cancel), so
+            // useMassActions' default selection-clearing is correct without help from this hook.
+            callback: (massSelectionFilter, _massSelection, searchQuery) =>
+                new Promise<void>(resolve => {
+                    openConfirmModal({
+                        title:
+                            t('explorer.deactivate_item', {
+                                count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
+                            }) ?? undefined,
+                        content:
+                            t('explorer.deactivate_item_description', {
+                                count: view.massSelection === MASS_SELECTION_ALL ? Infinity : view.massSelection.length,
+                            }) +
+                            BREAK_TWO_LINES +
+                            t('global.are_you_sure'),
+                        onOk: async () => {
+                            const {data} = await deactivateRecordsMutation({
+                                variables: {
+                                    libraryId: view.libraryId,
+                                    filters: massSelectionFilter,
+                                    searchQuery,
                                 },
                             });
-                        } else {
-                            await refetch();
-                        }
-                        onDeactivate?.(massSelectionFilter, view.massSelection);
-                        dispatch({
-                            type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                            payload: [],
-                        });
-                    },
-                });
-            },
+                            const total =
+                                view.massSelection === MASS_SELECTION_ALL ? totalCount : view.massSelection.length;
+                            KitAlert.success({
+                                showIcon: true,
+                                duration: SUCCESS_ALERT_DURATION,
+                                message: t('explorer.massAction.deactivate_message'),
+                                description: t('explorer.massAction.deactivate_description', {
+                                    count: data?.deactivateRecords.length,
+                                    total,
+                                }),
+                                closable: true,
+                            });
+                            if (
+                                view.massSelection === MASS_SELECTION_ALL ||
+                                allVisibleKeys.every(key => view.massSelection.includes(key))
+                            ) {
+                                await refetch({
+                                    pagination: {
+                                        limit: view.pageSize,
+                                        offset: 0,
+                                    },
+                                });
+                            } else {
+                                await refetch();
+                            }
+                            onDeactivate?.(massSelectionFilter, view.massSelection);
+                            resolve();
+                        },
+                    });
+                }),
         }),
-        [t, deactivateRecordsMutation, view.massSelection, dispatch, view.libraryId, allVisibleKeys, refetch],
+        [t, deactivateRecordsMutation, view.massSelection, view.libraryId, allVisibleKeys, refetch],
     );
 
     return {

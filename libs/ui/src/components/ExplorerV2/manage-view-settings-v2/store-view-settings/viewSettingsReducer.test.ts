@@ -60,6 +60,16 @@ describe('ViewSettings Reducer (ExplorerV2)', () => {
         });
     });
 
+    describe(`Action ${ViewSettingsActionTypes.CLEAR_MASS_SELECTION}`, () => {
+        test('empties massSelection regardless of its previous value', () => {
+            const state = viewSettingsReducer(
+                {...viewSettingsInitialState, massSelection: MASS_SELECTION_ALL},
+                {type: ViewSettingsActionTypes.CLEAR_MASS_SELECTION},
+            );
+            expect(state.massSelection).toEqual([]);
+        });
+    });
+
     describe(`Action ${ViewSettingsActionTypes.RESET}`, () => {
         test('replaces the whole state with the payload', () => {
             const dirtyState: IViewSettingsState = {

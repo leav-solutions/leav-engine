@@ -149,7 +149,6 @@ export const SelectRecordForLinkModal: FunctionComponent<ISelectRecordForLinkMod
                                           label: replacementMode
                                               ? t('explorer.massAction.replace-link')
                                               : t('explorer.massAction.add-link'),
-                                          deselectAll: true,
                                           icon: replacementMode ? (
                                               <FontAwesomeIcon icon={faExchangeAlt} />
                                           ) : (

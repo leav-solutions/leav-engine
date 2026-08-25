@@ -73,7 +73,6 @@ export const SearchModal: FunctionComponent<ISearchModalProps> = ({visible, setV
                 {
                     label: t('global.add'),
                     icon: <FontAwesomeIcon icon={faPlus} />,
-                    deselectAll: true,
                     callback: (_, massSelection) => {
                         submitAction({
                             selected:

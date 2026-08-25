@@ -25,6 +25,7 @@ export const ViewSettingsActionTypes = {
     CHANGE_FULLTEXT_SEARCH: 'CHANGE_FULLTEXT_SEARCH',
     CLEAR_FULLTEXT_SEARCH: 'CLEAR_FULLTEXT_SEARCH',
     SET_SELECTED_KEYS: 'SET_SELECTED_KEYS',
+    CLEAR_MASS_SELECTION: 'CLEAR_MASS_SELECTION',
     RESTORE_INITIAL_VIEW_SETTINGS: 'RESTORE_INITIAL_VIEW_SETTINGS',
     UPDATE_VIEWS: 'UPDATE_VIEWS',
     RENAME_VIEW: 'RENAME_VIEW',
@@ -126,6 +127,15 @@ interface IViewSettingsActionReset {
 interface IViewSettingsActionSetSelectedKeys {
     type: typeof ViewSettingsActionTypes.SET_SELECTED_KEYS;
     payload: MassSelection;
+}
+
+/**
+ * Distinct from SET_SELECTED_KEYS so every place that clears the selection once a mass action
+ * completes can be found by searching for this specific type, instead of being indistinguishable
+ * from manual selection changes (select all, toggle page, checkbox…).
+ */
+interface IViewSettingsActionClearMassSelection {
+    type: typeof ViewSettingsActionTypes.CLEAR_MASS_SELECTION;
 }
 
 interface IViewSettingsActionRestoreInitialViewSettings {
@@ -262,6 +272,8 @@ const setSelectedKeys: Reducer<IViewSettingsActionSetSelectedKeys> = (state, pay
     massSelection: payload,
 });
 
+const clearMassSelection: Reducer = state => setSelectedKeys(state, []);
+
 const restoreInitialViewSettings: Reducer = state => ({
     ...state,
     ...state.initialViewSettings,
@@ -349,6 +361,7 @@ export type IViewSettingsAction =
     | IViewSettingsActionClearFulltextSearch
     | IViewSettingsActionReset
     | IViewSettingsActionSetSelectedKeys
+    | IViewSettingsActionClearMassSelection
     | IViewSettingsActionRestoreInitialViewSettings
     | IViewSettingsActionUpdateViewListAndCurrentView
     | IViewSettingsActionRenameView
@@ -399,6 +412,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.SET_SELECTED_KEYS: {
             return setSelectedKeys(state, action.payload);
+        }
+        case ViewSettingsActionTypes.CLEAR_MASS_SELECTION: {
+            return clearMassSelection(state);
         }
         case ViewSettingsActionTypes.RESTORE_INITIAL_VIEW_SETTINGS: {
             return restoreInitialViewSettings(state);

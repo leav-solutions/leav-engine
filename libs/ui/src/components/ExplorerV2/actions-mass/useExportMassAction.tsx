@@ -80,10 +80,7 @@ export const useExportMassAction = ({
                 });
 
                 onExport?.(massSelectionFilter, view.massSelection);
-                dispatch({
-                    type: ViewSettingsActionTypes.SET_SELECTED_KEYS,
-                    payload: [],
-                });
+                dispatch({type: ViewSettingsActionTypes.CLEAR_MASS_SELECTION});
                 setIsModalOpen(false);
             } catch (e) {
                 if (e.extensions?.code === 'CUSTOM_CONFIG_ERROR') {
@@ -132,7 +129,10 @@ export const useExportMassAction = ({
         () => ({
             label: t('explorer.massAction.export'),
             icon: <FontAwesomeIcon icon={faFileExport} />,
-            deselectAll: false,
+            // keepSelection: the export modal is a separate component confirmed by
+            // _handleConfirmExport, decoupled from this callback's own promise — that function
+            // clears the selection itself, after the export genuinely succeeds.
+            keepSelection: true,
             callback: (filter, _massSelection, searchQuery) => {
                 setMassSelectionFilter(filter);
                 setMassSelectionSearchQuery(searchQuery);
