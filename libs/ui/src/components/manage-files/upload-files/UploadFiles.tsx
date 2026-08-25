@@ -29,7 +29,7 @@ import {
     useUploadMutation,
     useUploadUpdateSubscription,
 } from '_ui/_gqlTypes';
-import {SelectTreeNode} from '../SelectTreeNode';
+import {SelectTreeNode} from '_ui/components/SelectTreeNode';
 
 interface IUploadFilesProps {
     defaultSelectedNode?: {id: string; recordId?: string};

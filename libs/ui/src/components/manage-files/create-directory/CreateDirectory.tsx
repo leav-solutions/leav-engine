@@ -9,7 +9,7 @@ import {
     useDoesFileExistAsChildLazyQuery,
     useGetTreeLibrariesQuery,
 } from '_ui/_gqlTypes';
-import {SelectTreeNode} from '../SelectTreeNode';
+import {SelectTreeNode} from '_ui/components/SelectTreeNode';
 
 interface ICreateDirectoryProps {
     defaultSelectedKey?: string;

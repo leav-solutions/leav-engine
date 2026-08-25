@@ -1,8 +1,13 @@
 import userEvent from '@testing-library/user-event';
-import {GetDirectoryDataDocument, LibraryBehavior, TreeBehavior, UploadUpdateDocument} from '_ui/_gqlTypes';
+import {
+    DoesFileExistAsChildDocument,
+    GetDirectoryDataDocument,
+    GetTreeLibrariesDocument,
+    LibraryBehavior,
+    TreeBehavior,
+    UploadUpdateDocument,
+} from '_ui/_gqlTypes';
 import * as gqlTypes from '_ui/_gqlTypes';
-import {doesFileExistAsChild} from '_ui/_queries/records/doesFileExistAsChild';
-import {getTreeLibraries} from '_ui/_queries/trees/getTreeLibraries';
 import {fireEvent, render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeSimple} from '_ui/__mocks__/common/tree';
@@ -21,7 +26,7 @@ describe('UploadFiles', () => {
     const commonMocks = [
         {
             request: {
-                query: getTreeLibraries,
+                query: GetTreeLibrariesDocument,
                 variables: {
                     library: 'files',
                 },
@@ -163,7 +168,7 @@ describe('UploadFiles', () => {
             ...commonMocks,
             {
                 request: {
-                    query: doesFileExistAsChild,
+                    query: DoesFileExistAsChildDocument,
                     variables: {
                         treeId: 'files_tree',
                         parentNode: null,

@@ -1,8 +1,11 @@
 import userEvent from '@testing-library/user-event';
-import {LibraryBehavior, TreeBehavior} from '_ui/_gqlTypes';
-import {createDirectoryMutation} from '_ui/_queries/files/createDirectory';
-import {doesFileExistAsChild} from '_ui/_queries/records/doesFileExistAsChild';
-import {getTreeLibraries} from '_ui/_queries/trees/getTreeLibraries';
+import {
+    CreateDirectoryDocument,
+    DoesFileExistAsChildDocument,
+    GetTreeLibrariesDocument,
+    LibraryBehavior,
+    TreeBehavior,
+} from '_ui/_gqlTypes';
 import {fireEvent, render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeSimple} from '_ui/__mocks__/common/tree';
@@ -16,7 +19,7 @@ describe('UploadFiles', () => {
     const commonMocks = [
         {
             request: {
-                query: getTreeLibraries,
+                query: GetTreeLibrariesDocument,
                 variables: {
                     library: 'files_directories',
                 },
@@ -78,7 +81,7 @@ describe('UploadFiles', () => {
         const mocks = [
             {
                 request: {
-                    query: doesFileExistAsChild,
+                    query: DoesFileExistAsChildDocument,
                     variables: {
                         treeId: 'files_tree',
                         parentNode: null,
@@ -93,7 +96,7 @@ describe('UploadFiles', () => {
             },
             {
                 request: {
-                    query: getTreeLibraries,
+                    query: GetTreeLibrariesDocument,
                     variables: {
                         library: 'files_directories',
                     },
@@ -131,7 +134,7 @@ describe('UploadFiles', () => {
             },
             {
                 request: {
-                    query: createDirectoryMutation,
+                    query: CreateDirectoryDocument,
                     variables: {
                         library: 'files_directories',
                         nodeId: 'files_tree',
@@ -177,7 +180,7 @@ describe('UploadFiles', () => {
         const mocks = [
             {
                 request: {
-                    query: doesFileExistAsChild,
+                    query: DoesFileExistAsChildDocument,
                     variables: {
                         treeId: 'files_tree',
                         parentNode: null,
@@ -192,7 +195,7 @@ describe('UploadFiles', () => {
             },
             {
                 request: {
-                    query: getTreeLibraries,
+                    query: GetTreeLibrariesDocument,
                     variables: {
                         library: 'files_directories',
                     },
@@ -230,7 +233,7 @@ describe('UploadFiles', () => {
             },
             {
                 request: {
-                    query: createDirectoryMutation,
+                    query: CreateDirectoryDocument,
                     variables: {
                         library: 'files_directories',
                         nodeId: 'files_tree',
