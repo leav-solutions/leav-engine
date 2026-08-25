@@ -3,7 +3,6 @@ import {KitTree, KitTypography} from 'aristid-ds';
 import {AttributeConditionFilter} from '_ui/types';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 import {type IFilterChildrenDropDownProps} from './_types';
-import {type ITreeMapElement} from '_ui/components/SelectTreeNode/_types';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck} from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
@@ -19,6 +18,12 @@ const KitTreeStyled = styled(KitTree)`
         width: 100% !important;
     }
 `;
+
+/** The two options are built here, so a node carries nothing more than what it takes to render it. */
+interface IBooleanValueNode {
+    title: string;
+    key: string;
+}
 
 const CheckIcon = styled(FontAwesomeIcon)`
     color: var(--general-utilities-text-blue);
@@ -60,7 +65,7 @@ export const BooleanAttributeDropDown: FunctionComponent<IFilterChildrenDropDown
         },
     ];
 
-    const TreeNodeTitle = ({node}: {node: ITreeMapElement}) => (
+    const TreeNodeTitle = ({node}: {node: IBooleanValueNode}) => (
         <TreeNodeTitleContainer>
             <KitTypography.Text size="fontSize5">{node.title}</KitTypography.Text>
             {node.key === filter.value && <CheckIcon icon={faCheck} />}
@@ -71,7 +76,7 @@ export const BooleanAttributeDropDown: FunctionComponent<IFilterChildrenDropDown
         <KitTreeStyled
             treeData={valuesOptions}
             selectedKeys={[filter.value]}
-            titleRender={node => <TreeNodeTitle node={node as ITreeMapElement} />}
+            titleRender={node => <TreeNodeTitle node={node as IBooleanValueNode} />}
             onSelect={_onSelectionChanged}
         />
     );

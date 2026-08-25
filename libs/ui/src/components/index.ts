@@ -27,7 +27,6 @@ export * from './RecordEdition';
 export * from './RecordHistory';
 export * from './RecordPreviewWithModal';
 export * from './SearchModal';
-export * from './SelectTreeNode';
 // TODO: rename to SelectTreeNode once the V1 is removed — LEAVC-1077, docs/cleanup/tree-attribute-v2-cleanup.md
 export {SelectTreeNodeV2} from './SelectTreeNodeV2';
 export * from './ShowMore';

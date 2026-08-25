@@ -12,8 +12,8 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeSimple} from '_ui/__mocks__/common/tree';
 import CreateDirectory from './CreateDirectory';
 
-vi.mock('_ui/components/SelectTreeNode', () => ({
-    SelectTreeNode: () => <div>SelectTreeNode</div>,
+vi.mock('_ui/components/SelectTreeNodeV2', () => ({
+    SelectTreeNodeV2: () => <div>SelectTreeNodeV2</div>,
 }));
 
 KitModal.setAppElement(document.body);

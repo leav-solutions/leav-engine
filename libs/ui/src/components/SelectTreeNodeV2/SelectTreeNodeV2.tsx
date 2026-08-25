@@ -25,6 +25,10 @@ export interface ISelectTreeNodeV2Props extends Partial<IResolvedTreeSelectionCo
     multiple?: boolean;
     checkable?: boolean;
     checkStrictly?: boolean;
+    /** Lets the tree root itself be picked, for a caller selecting a location instead of a value. */
+    canSelectRootNode?: boolean;
+    /** Bypasses the cache on mount, for a caller whose own flow adds or removes nodes of the tree. */
+    refreshOnMount?: boolean;
     childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
     dependentValuesPermissionFilter?: DependentValuesPermissionFilterInput;
 }
@@ -51,6 +55,8 @@ export const SelectTreeNodeV2: FunctionComponent<ISelectTreeNodeV2Props> = ({
     multiple = false,
     checkable = false,
     checkStrictly = true,
+    canSelectRootNode = false,
+    refreshOnMount = false,
     childrenAsRecordValuePermissionFilter,
     dependentValuesPermissionFilter,
     selectableNodes,
@@ -75,10 +81,14 @@ export const SelectTreeNodeV2: FunctionComponent<ISelectTreeNodeV2Props> = ({
         disabledNodes,
         childrenAsRecordValuePermissionFilter,
         dependentValuesPermissionFilter,
+        canSelectRootNode,
+        refreshOnMount,
     });
 
     const _canSelect = (node: ITreeSelectionNode) =>
-        node.selectable && (!selectableLibraries || selectableLibraries.includes(node.record?.whoAmI.library.id));
+        node.selectable &&
+        // The pseudo root node stands for the tree itself: it belongs to no library
+        (!selectableLibraries || !node.record || selectableLibraries.includes(node.record.whoAmI.library.id));
 
     const _emitCheck = (checkedKeys: string[]) => {
         onCheck?.(checkedKeys.map(key => nodesById[key]).filter(node => node && _canSelect(node)));

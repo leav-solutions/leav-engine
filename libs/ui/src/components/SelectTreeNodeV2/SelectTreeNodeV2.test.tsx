@@ -125,7 +125,7 @@ describe('SelectTreeNodeV2', () => {
         expect(screen.queryByText('leaf1')).not.toBeInTheDocument();
     });
 
-    test('Selects a node on click, but never the pseudo root', async () => {
+    test('Selects a node on click, but not the pseudo root by default', async () => {
         const onSelect = vi.fn();
         render(<SelectTreeNodeV2 treeId={treeId} onSelect={onSelect} />, {mocks: defaultMocks});
 
@@ -135,6 +135,47 @@ describe('SelectTreeNodeV2', () => {
         await userEvent.click(screen.getByText('branch'));
         expect(onSelect).toHaveBeenCalledTimes(1);
         expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: 'branch'}), true);
+    });
+
+    test('Selects the pseudo root with canSelectRootNode, under the id of the tree', async () => {
+        const onSelect = vi.fn();
+        render(<SelectTreeNodeV2 treeId={treeId} onSelect={onSelect} canSelectRootNode />, {mocks: defaultMocks});
+
+        await userEvent.click(await screen.findByText('Catégories'));
+
+        expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: treeId, record: null}), true);
+    });
+
+    test('Exempts the pseudo root from selectableLibraries, which it belongs to none of', async () => {
+        const onSelect = vi.fn();
+        render(
+            <SelectTreeNodeV2
+                treeId={treeId}
+                onSelect={onSelect}
+                canSelectRootNode
+                selectableLibraries={['directories']}
+            />,
+            {mocks: defaultMocks},
+        );
+
+        // The nodes of the tree are records of the `categories` library
+        await userEvent.click(await screen.findByText('branch'));
+        expect(onSelect).not.toHaveBeenCalled();
+
+        await userEvent.click(screen.getByText('Catégories'));
+        expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: treeId}), true);
+    });
+
+    test('Keeps the pseudo root unselectable with leaves_only, even with canSelectRootNode', async () => {
+        const onSelect = vi.fn();
+        render(
+            <SelectTreeNodeV2 treeId={treeId} onSelect={onSelect} canSelectRootNode selectableNodes="leaves_only" />,
+            {mocks: defaultMocks},
+        );
+
+        await userEvent.click(await screen.findByText('Catégories'));
+
+        expect(onSelect).not.toHaveBeenCalled();
     });
 
     test('Only lets leaves be selected with leaves_only', async () => {

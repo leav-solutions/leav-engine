@@ -28,6 +28,18 @@ export interface IUseTreeSelectionNodesParams {
     dependentValuesPermissionFilter?: DependentValuesPermissionFilterInput;
     /** Holds every request back, for a caller loading the tree only once the user asks for it. */
     skip?: boolean;
+    /**
+     * Opts out of the Apollo cache for the tree content, so each mount reflects the server. To be
+     * enabled by callers whose own flow adds or removes nodes — otherwise a remount silently
+     * replays the content read before that change.
+     */
+    refreshOnMount?: boolean;
+    /**
+     * Makes the pseudo root node selectable. Off by default: it stands for the tree itself and has
+     * no value to store. A caller picking a location rather than a value — where the tree root is
+     * a legitimate destination — turns it on.
+     */
+    canSelectRootNode?: boolean;
 }
 
 export interface IUseTreeSelectionNodes {
@@ -64,6 +76,8 @@ export const useTreeSelectionNodes = ({
     childrenAsRecordValuePermissionFilter,
     dependentValuesPermissionFilter,
     skip = false,
+    canSelectRootNode = false,
+    refreshOnMount = false,
 }: IUseTreeSelectionNodesParams): IUseTreeSelectionNodes => {
     const {lang} = useLang();
     const {selectableNodes, displayRootNode, maxDepth} = conf;
@@ -82,7 +96,9 @@ export const useTreeSelectionNodes = ({
             childrenAsRecordValuePermissionFilter,
             dependentValuesPermissionFilter,
         },
-        fetchPolicy: dependentValuesPermissionFilter ? 'no-cache' : undefined,
+        // `network-only` rather than `no-cache` for `refreshOnMount`: the response still lands in
+        // the cache, so the other trees mounted on the page benefit from the refresh too.
+        fetchPolicy: dependentValuesPermissionFilter ? 'no-cache' : refreshOnMount ? 'network-only' : undefined,
         skip,
     });
 
@@ -156,6 +172,10 @@ export const useTreeSelectionNodes = ({
             };
         }
 
+        // The pseudo root stands for the tree itself, not for a node: there is nothing to store
+        // unless the caller is picking a location, in which case it means "at the root of the tree"
+        const selectable = canSelectRootNode && isSelectable(treeId, false);
+
         return {
             id: treeId,
             key: treeId,
@@ -165,12 +185,21 @@ export const useTreeSelectionNodes = ({
             children: contentData.treeContent.map(node => toNode(node, [treeId])),
             parents: [],
             disabled: false,
-            // The pseudo root stands for the tree itself, not for a node: there is no value to store
-            selectable: false,
-            checkable: false,
+            selectable,
+            checkable: selectable,
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [contentData, rootNodeData, treeData, treeId, displayRootNode, selectableNodes, disabledNodesKey, lang]);
+    }, [
+        contentData,
+        rootNodeData,
+        treeData,
+        treeId,
+        displayRootNode,
+        selectableNodes,
+        disabledNodesKey,
+        lang,
+        canSelectRootNode,
+    ]);
 
     const nodesById = useMemo(() => (rootNode ? _buildNodesById(rootNode) : {}), [rootNode]);
 

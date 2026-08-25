@@ -14,8 +14,8 @@ import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeSimple} from '_ui/__mocks__/common/tree';
 import UploadFiles from './UploadFiles';
 
-vi.mock('_ui/components/SelectTreeNode', () => ({
-    SelectTreeNode: ({onSelect}: {onSelect: (node: any, selected: boolean) => void}) => (
+vi.mock('_ui/components/SelectTreeNodeV2', () => ({
+    SelectTreeNodeV2: ({onSelect}: {onSelect: (node: any, selected: boolean) => void}) => (
         <>
             <button onClick={() => onSelect({id: 'node1', record: {id: 'dir1'}}, true)}>select dir1</button>
             <button onClick={() => onSelect({id: 'node2', record: {id: 'dir2'}}, true)}>select dir2</button>
