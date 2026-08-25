@@ -7,6 +7,8 @@ const attribute = (overrides: Partial<AttributeProperties>): AttributeProperties
     label: 'Default',
     type: AttributeType.simple,
     multiple_values: false,
+    required: false,
+    permissions: {edit_value: false},
     ...overrides,
 });
 

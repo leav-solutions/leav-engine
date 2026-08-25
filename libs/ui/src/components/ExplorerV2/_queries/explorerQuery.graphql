@@ -1,4 +1,5 @@
 fragment PropertyValue on GenericValue {
+    id_value # Needed to remove one value of a multivalued attribute (column split, LEAVC-1073).
     ... on Value {
         valuePayload: payload
         valueRawPayload: raw_payload
@@ -10,6 +11,7 @@ fragment PropertyValue on GenericValue {
     }
     ... on TreeValue {
         treePayload: payload {
+            id # The nodeId, the only reliable key of a node (LEAVC-1074, column split lot 3).
             record {
                 ...RecordIdentity
             }

@@ -14,6 +14,7 @@ export const ViewSettingsActionTypes = {
     CLEAR_FULLTEXT_SEARCH: 'CLEAR_FULLTEXT_SEARCH',
     SET_SELECTED_KEYS: 'SET_SELECTED_KEYS',
     CLEAR_MASS_SELECTION: 'CLEAR_MASS_SELECTION',
+    TOGGLE_ATTRIBUTE_COLUMN_SPLIT: 'TOGGLE_ATTRIBUTE_COLUMN_SPLIT',
 } as const;
 
 /**
@@ -45,6 +46,12 @@ export interface IViewSettingsState {
     shortcuts: ViewSettingsShortcuts[];
     pageSize: number;
     massSelection: MassSelection;
+    /**
+     * Ids of the attributes whose explorer column is currently split into sub-columns (LEAVC-1073).
+     * EPHEMERAL, like `fulltextSearch`/`massSelection` (decision D6): not persisted, survives pagination/
+     * sort/filter/search changes, reset on entrypoint change (RESET) or when the component unmounts.
+     */
+    splitAttributeIds: string[];
 }
 
 interface IViewSettingsActionChangePageSize {
@@ -80,6 +87,11 @@ interface IViewSettingsActionClearMassSelection {
     type: typeof ViewSettingsActionTypes.CLEAR_MASS_SELECTION;
 }
 
+interface IViewSettingsActionToggleAttributeColumnSplit {
+    type: typeof ViewSettingsActionTypes.TOGGLE_ATTRIBUTE_COLUMN_SPLIT;
+    payload: string;
+}
+
 type Reducer<
     PAYLOAD extends {
         type: keyof typeof ViewSettingsActionTypes;
@@ -113,13 +125,21 @@ const setSelectedKeys: Reducer<IViewSettingsActionSetSelectedKeys> = (state, pay
 
 const clearMassSelection: Reducer = state => setSelectedKeys(state, []);
 
+const toggleAttributeColumnSplit: Reducer<IViewSettingsActionToggleAttributeColumnSplit> = (state, payload) => ({
+    ...state,
+    splitAttributeIds: state.splitAttributeIds.includes(payload)
+        ? state.splitAttributeIds.filter(attributeId => attributeId !== payload)
+        : [...state.splitAttributeIds, payload],
+});
+
 export type IViewSettingsAction =
     | IViewSettingsActionChangePageSize
     | IViewSettingsActionChangeFulltextSearch
     | IViewSettingsActionClearFulltextSearch
     | IViewSettingsActionReset
     | IViewSettingsActionSetSelectedKeys
-    | IViewSettingsActionClearMassSelection;
+    | IViewSettingsActionClearMassSelection
+    | IViewSettingsActionToggleAttributeColumnSplit;
 
 export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSettingsAction): IViewSettingsState => {
     switch (action.type) {
@@ -140,6 +160,9 @@ export const viewSettingsReducer = (state: IViewSettingsState, action: IViewSett
         }
         case ViewSettingsActionTypes.CLEAR_MASS_SELECTION: {
             return clearMassSelection(state);
+        }
+        case ViewSettingsActionTypes.TOGGLE_ATTRIBUTE_COLUMN_SPLIT: {
+            return toggleAttributeColumnSplit(state, action.payload);
         }
         default:
             return state;

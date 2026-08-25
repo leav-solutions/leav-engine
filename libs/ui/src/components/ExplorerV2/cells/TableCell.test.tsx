@@ -87,6 +87,7 @@ describe('TableCell component', () => {
             const treeValue: PropertyValueTreeValueFragment[] = [
                 {
                     treePayload: {
+                        id: 'mock_node_id',
                         record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record A', subLabel: 'Sub Label A'}},
                     },
                 },
@@ -253,36 +254,43 @@ describe('TableCell component', () => {
             const treeValues: PropertyValueTreeValueFragment[] = [
                 {
                     treePayload: {
+                        id: 'mock_node_id',
                         record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record A'}},
                     },
                 },
                 {
                     treePayload: {
+                        id: 'mock_node_id',
                         record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record B'}},
                     },
                 },
                 {
                     treePayload: {
+                        id: 'mock_node_id',
                         record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record C'}},
                     },
                 },
                 {
                     treePayload: {
+                        id: 'mock_node_id',
                         record: {...mockRecord, whoAmI: {...mockRecord, preview: null, label: 'Record D'}},
                     },
                 },
                 {
                     treePayload: {
+                        id: 'mock_node_id',
                         record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record E'}},
                     },
                 },
                 {
                     treePayload: {
+                        id: 'mock_node_id',
                         record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record F'}},
                     },
                 },
                 {
                     treePayload: {
+                        id: 'mock_node_id',
                         record: {...mockRecord, whoAmI: {...mockRecord, label: 'Record G'}},
                     },
                 },
@@ -401,9 +409,24 @@ describe('TableCell component', () => {
 
             test('For tree attribute, colors the tag and contrasts the text with the identity card color', async () => {
                 const treeValues: PropertyValueTreeValueFragment[] = [
-                    {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, label: 'Light', color: '#f8e58c'}}}},
-                    {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, label: 'Dark', color: '#000080'}}}},
-                    {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, label: 'Default', color: null}}}},
+                    {
+                        treePayload: {
+                            id: 'mock_node_id',
+                            record: {...mockRecord, whoAmI: {...mockRecord, label: 'Light', color: '#f8e58c'}},
+                        },
+                    },
+                    {
+                        treePayload: {
+                            id: 'mock_node_id',
+                            record: {...mockRecord, whoAmI: {...mockRecord, label: 'Dark', color: '#000080'}},
+                        },
+                    },
+                    {
+                        treePayload: {
+                            id: 'mock_node_id',
+                            record: {...mockRecord, whoAmI: {...mockRecord, label: 'Default', color: null}},
+                        },
+                    },
                 ];
                 const attributeProperties: CellAttributeProperties = {
                     id: 'default',
@@ -455,7 +478,12 @@ describe('TableCell component', () => {
 
             test('For a mono-valued tree attribute, colors the tag with the identity card color', async () => {
                 const treeValue: PropertyValueTreeValueFragment[] = [
-                    {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, label: 'Light', color: '#f8e58c'}}}},
+                    {
+                        treePayload: {
+                            id: 'mock_node_id',
+                            record: {...mockRecord, whoAmI: {...mockRecord, label: 'Light', color: '#f8e58c'}},
+                        },
+                    },
                 ];
                 const attributeProperties: CellAttributeProperties = {
                     id: 'default',
@@ -497,7 +525,7 @@ describe('TableCell component', () => {
 
         test('For a mono-valued tree attribute, reserves the swatch space when the target library has a color configured', async () => {
             const treeValue: PropertyValueTreeValueFragment[] = [
-                {treePayload: {record: {...mockRecord, whoAmI: {...mockRecord, color: null}}}},
+                {treePayload: {id: 'mock_node_id', record: {...mockRecord, whoAmI: {...mockRecord, color: null}}}},
             ];
             const attributeProperties: CellAttributeProperties = {
                 id: 'default',

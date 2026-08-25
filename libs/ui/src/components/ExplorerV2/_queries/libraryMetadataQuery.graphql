@@ -3,7 +3,8 @@
 # (label/type/format/multi_*), the kanban grouping axis (linked_tree), the mass-edition workflow
 # classification (permissions_conf_dependent_values), the generate-previews action gate (behavior),
 # the explorer title (label) and the create action (behavior picks the creation modal,
-# permissions.create_record gates the button). Replaces the derivation from records.list[0] and the
+# permissions.create_record gates the button) and the column split (column_split_enabled + values_list
+# + required + permissions.edit_value). Replaces the derivation from records.list[0] and the
 # MassEditableAttributes, KanbanAxisAttribute, GET_LIBRARY_BY_ID and ExplorerLibraryDetails queries.
 fragment ExplorerV2AttributeProperties on Attribute {
     id
@@ -13,11 +14,34 @@ fragment ExplorerV2AttributeProperties on Attribute {
     multiple_values
     multi_link_display_option
     multi_tree_display_option
+    # Column split (LEAVC-1073/1075): the admin flag that offers the split button, `required` to
+    # arbitrate checkbox vs radio in a split cell, and `edit_value` to make those cells read-only.
+    # `permissions` is queried WITHOUT a `record` argument on purpose: the answer is the
+    # attribute-level permission (`PermissionTypes.ATTRIBUTE`), the same for every row of the table.
+    column_split_enabled
+    required
+    permissions {
+        edit_value
+    }
+    # Column split options = the attribute's closed values list, resolved here rather than by a
+    # per-attribute query fired on split: this query already runs once upfront for the whole library.
+    ... on StandardAttribute {
+        valuesList: values_list {
+            ... on StandardStringValuesListConf {
+                values
+            }
+        }
+    }
     ... on LinkAttribute {
         linked_library {
             id
             recordIdentityConf {
                 color
+            }
+        }
+        valuesList: values_list {
+            linkedValues: values {
+                ...RecordIdentity
             }
         }
     }

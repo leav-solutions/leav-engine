@@ -70,6 +70,24 @@ describe('ViewSettings Reducer (ExplorerV2)', () => {
         });
     });
 
+    describe(`Action ${ViewSettingsActionTypes.TOGGLE_ATTRIBUTE_COLUMN_SPLIT}`, () => {
+        test('adds the attribute id when absent', () => {
+            const state = viewSettingsReducer(viewSettingsInitialState, {
+                type: ViewSettingsActionTypes.TOGGLE_ATTRIBUTE_COLUMN_SPLIT,
+                payload: 'attribute_a',
+            });
+            expect(state.splitAttributeIds).toEqual(['attribute_a']);
+        });
+
+        test('removes the attribute id when already present', () => {
+            const state = viewSettingsReducer(
+                {...viewSettingsInitialState, splitAttributeIds: ['attribute_a', 'attribute_b']},
+                {type: ViewSettingsActionTypes.TOGGLE_ATTRIBUTE_COLUMN_SPLIT, payload: 'attribute_a'},
+            );
+            expect(state.splitAttributeIds).toEqual(['attribute_b']);
+        });
+    });
+
     describe(`Action ${ViewSettingsActionTypes.RESET}`, () => {
         test('replaces the whole state with the payload', () => {
             const dirtyState: IViewSettingsState = {
