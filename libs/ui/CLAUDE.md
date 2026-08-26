@@ -282,6 +282,16 @@ qu'il force `type: 'confirm'` et que `KitModal` en déduit `okCancel`. C'est don
 une confirmation, pas pour un simple avertissement à acquitter — pour celui-là, appeler
 `KitModal.warning` directement (icône d'avertissement + bouton OK seul).
 
+Deux autres comportements de `KitModal`, vérifiés dans le bundle du DS :
+
+- **`close` est ignoré si ni `showCloseIcon` ni `shouldCloseOnOverlayClick` ne sont passés.** Son
+  `onRequestClose` teste `showCloseIcon || shouldCloseOnOverlayClick` avant d'appeler `close` — donc
+  retirer la croix d'une modale rend du même coup **Échap et le clic overlay inertes**, sans aucune
+  erreur. Pour une modale sans croix mais qui doit rester fermable au clavier, passer
+  `shouldCloseOnOverlayClick` (cf. `manage-files/upload-files/ReplaceFileModal/`).
+- `shouldCloseOnOverlayClick` est donc **impossible à désactiver seul** quand `showCloseIcon` est
+  vrai : les deux sont liés par ce même `||`.
+
 ---
 
 ## Dépendances — spécificités d'une lib publiée

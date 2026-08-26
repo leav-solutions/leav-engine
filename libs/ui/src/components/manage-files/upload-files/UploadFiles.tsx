@@ -46,7 +46,7 @@ function UploadFiles({
         upload,
         reset: resetUpload,
     } = useUploadFiles({libraryId, onCompleted});
-    const {checkFilesExist, conflictingFilename, onDecide} = useCheckFilesExist(filesTreeId);
+    const {checkFilesExist, conflictingFilename, onDecide, onCancel} = useCheckFilesExist(filesTreeId);
 
     const directoryPath = useSelectedDirectoryPath(directoriesLibraryId, selectedNode?.recordId);
     const isDone = status === 'finish' || status === 'error';
@@ -56,6 +56,11 @@ function UploadFiles({
 
     const _handleUploadClick = async () => {
         const replaceDecisions = await checkFilesExist(selectedNode.id, files);
+
+        // Cancelled from the conflict prompt: stay on the files step, nothing uploaded.
+        if (!replaceDecisions) {
+            return;
+        }
 
         next();
         await upload(selectedNode.id, replaceDecisions);
@@ -169,7 +174,7 @@ function UploadFiles({
                     </KitSpace>
                 }
             />
-            <ReplaceFileModal filename={conflictingFilename} onDecide={onDecide} />
+            <ReplaceFileModal filename={conflictingFilename} onDecide={onDecide} onCancel={onCancel} />
         </>
     );
 }

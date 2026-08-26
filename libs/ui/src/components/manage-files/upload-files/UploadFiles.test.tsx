@@ -211,6 +211,57 @@ describe('UploadFiles', () => {
         expect(await screen.findByTestId('close-btn')).toBeInTheDocument();
     });
 
+    test('Should cancel the whole upload from the conflict prompt', async () => {
+        const mockFile = new File(['(⌐□_□)'], 'chucknorris.png', {type: 'image/png'});
+
+        (mockFile as any).uid = 'uid';
+
+        const runUploadMock = vi.fn();
+        vi.spyOn(gqlTypes, 'useUploadMutation').mockImplementation(
+            () => [runUploadMock, {loading: false} as any] as any,
+        );
+
+        const mocks = [
+            ...commonMocks,
+            {
+                request: {
+                    query: DoesFileExistAsChildDocument,
+                    variables: {
+                        treeId: 'files_tree',
+                        parentNode: null,
+                        filename: 'chucknorris.png',
+                    },
+                },
+                result: {
+                    data: {
+                        doesFileExistAsChild: true,
+                    },
+                },
+            },
+        ];
+
+        render(<UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={vi.fn()} />, {mocks});
+
+        fireEvent.drop(screen.getByTestId('dragger'), {
+            dataTransfer: {
+                files: [mockFile],
+            },
+        });
+
+        await userEvent.click(screen.getByTestId('upload-btn'));
+
+        await waitFor(() => expect(screen.getByTestId('replace-file-modal')).toBeInTheDocument());
+
+        await userEvent.click(screen.getByTestId('cancel-btn'));
+
+        await waitFor(() => expect(screen.queryByTestId('replace-file-modal')).not.toBeInTheDocument());
+
+        expect(runUploadMock).not.toHaveBeenCalled();
+        expect(screen.getByTestId('upload-btn')).toBeInTheDocument();
+        expect(screen.queryByTestId('close-btn')).not.toBeInTheDocument();
+        expect(screen.getByText('chucknorris.png')).toBeInTheDocument();
+    });
+
     test('Should display the selected directory path without crashing', async () => {
         render(
             <UploadFiles defaultSelectedNode={{id: 'node1', recordId: 'dir1'}} libraryId="files" onClose={vi.fn()} />,

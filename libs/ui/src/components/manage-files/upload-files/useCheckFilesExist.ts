@@ -7,6 +7,9 @@ export interface IReplaceDecision {
     applyToAll: boolean;
 }
 
+/** `null` = the user cancelled the whole upload from the conflict prompt. */
+type ReplaceAnswer = IReplaceDecision | null;
+
 /**
  * Walks the queue one file at a time and asks the user what to do with each name that already
  * exists in the destination. The prompt is a declarative modal, so the sequential loop awaits a
@@ -16,21 +19,22 @@ export const useCheckFilesExist = (treeId?: string) => {
     const {doesFileExistAsChild} = useDoesFileExistAsChild(treeId);
 
     const [conflictingFilename, setConflictingFilename] = useState<string>();
-    const decideRef = useRef<(decision: IReplaceDecision) => void>();
+    const decideRef = useRef<(answer: ReplaceAnswer) => void>();
 
     const _askUser = async (filename: string) =>
-        new Promise<IReplaceDecision>(resolve => {
+        new Promise<ReplaceAnswer>(resolve => {
             decideRef.current = resolve;
             setConflictingFilename(filename);
         });
 
-    const _handleDecide = (decision: IReplaceDecision) => {
+    const _handleDecide = (answer: ReplaceAnswer) => {
         setConflictingFilename(undefined);
-        decideRef.current?.(decision);
+        decideRef.current?.(answer);
         decideRef.current = undefined;
     };
 
-    const checkFilesExist = async (parentNode: string, files: IUploadFile[]): Promise<ReplaceDecisions> => {
+    /** `null` when the user cancelled: nothing must be uploaded at all. */
+    const checkFilesExist = async (parentNode: string, files: IUploadFile[]): Promise<ReplaceDecisions | null> => {
         const decisions: ReplaceDecisions = {};
         let appliedToAll: boolean | undefined;
 
@@ -44,7 +48,13 @@ export const useCheckFilesExist = (treeId?: string) => {
                 continue;
             }
 
-            const {replace, applyToAll} = await _askUser(file.name);
+            const answer = await _askUser(file.name);
+
+            if (answer === null) {
+                return null;
+            }
+
+            const {replace, applyToAll} = answer;
 
             decisions[file.uid] = replace;
 
@@ -60,5 +70,6 @@ export const useCheckFilesExist = (treeId?: string) => {
         checkFilesExist,
         conflictingFilename,
         onDecide: _handleDecide,
+        onCancel: () => _handleDecide(null),
     };
 };
