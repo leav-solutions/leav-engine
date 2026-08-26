@@ -1,45 +1,45 @@
 {
-    "name": "sync-scan",
-    "version": "1.19.0",
-    "description": "",
-    "main": "dist/index.js",
-    "scripts": {
-        "start": "node .",
-        "start:dev": "NODE_ENV=development tsx src/index.ts",
-        "build": "tsc -b tsconfig.build.json",
-        "build:backend": "yarn run build",
-        "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
-        "test": "vitest run -c vitest.unit.config.ts",
-        "test:ci": "vitest run -c vitest.unit.config.ts --maxWorkers=2 --reporter=verbose",
-        "test:commit": "vitest run -c vitest.unit.config.ts --changed",
-        "test:watch": "vitest -c vitest.unit.config.ts",
-        "test:e2e": "NODE_ENV=test NODE_OPTIONS='--import tsx' vitest run -c vitest.e2e.config.ts",
-        "prettier": "prettier --write 'src/**/*.ts'",
-        "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
-        "tscheck:watch": "tsc -b -w tsconfig.json"
-    },
-    "author": "",
-    "license": "LGPL3",
-    "devDependencies": {
-        "@types/node": "24.13.3",
-        "prettier": "3.9.6",
-        "tsx": "4.23.12",
-        "typescript": "7.0.2",
-        "vitest": "4.1.11"
-    },
-    "dependencies": {
-        "@leav/config-manager": "workspace:libs/config-manager",
-        "@leav/logger": "workspace:libs/logger",
-        "@leav/message-broker": "workspace:libs/message-broker",
-        "@leav/utils": "workspace:*",
-        "apollo-cache-inmemory": "1.6.6",
-        "apollo-client": "2.6.10",
-        "apollo-link": "1.2.14",
-        "apollo-link-http": "1.5.17",
-        "graphql": "16.14.2",
-        "graphql-tag": "2.12.7",
-        "joi": "18.2.5",
-        "walk": "2.3.15"
-    },
-    "stableVersion": "1.0.0"
+  "name": "sync-scan",
+  "version": "1.19.1",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node .",
+    "start:dev": "NODE_ENV=development tsx src/index.ts",
+    "build": "tsc -b tsconfig.build.json",
+    "build:backend": "yarn run build",
+    "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
+    "test": "vitest run -c vitest.unit.config.ts",
+    "test:ci": "vitest run -c vitest.unit.config.ts --maxWorkers=2 --reporter=verbose",
+    "test:commit": "vitest run -c vitest.unit.config.ts --changed",
+    "test:watch": "vitest -c vitest.unit.config.ts",
+    "test:e2e": "NODE_ENV=test NODE_OPTIONS='--import tsx' vitest run -c vitest.e2e.config.ts",
+    "prettier": "prettier --write 'src/**/*.ts'",
+    "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
+    "tscheck:watch": "tsc -b -w tsconfig.json"
+  },
+  "author": "",
+  "license": "LGPL3",
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "prettier": "3.9.6",
+    "tsx": "4.23.12",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  },
+  "dependencies": {
+    "@leav/config-manager": "workspace:libs/config-manager",
+    "@leav/logger": "workspace:libs/logger",
+    "@leav/message-broker": "workspace:libs/message-broker",
+    "@leav/utils": "workspace:*",
+    "apollo-cache-inmemory": "1.6.6",
+    "apollo-client": "2.6.10",
+    "apollo-link": "1.2.14",
+    "apollo-link-http": "1.5.17",
+    "graphql": "16.14.2",
+    "graphql-tag": "2.12.7",
+    "joi": "18.2.5",
+    "walk": "2.3.15"
+  },
+  "stableVersion": "1.0.0"
 }

@@ -1,44 +1,44 @@
 {
-    "name": "@leav/core-publish",
-    "version": "1.19.0",
-    "description": "Export core and libs packages for easier imports in plugins",
-    "main": "index.js",
-    "types": "index.d.ts",
-    "exports": {
-        ".": {
-            "types": "./index.d.ts",
-            "default": "./index.js"
-        },
-        "./*": {
-            "types": "./*.d.ts",
-            "default": "./*.js"
-        }
+  "name": "@leav/core-publish",
+  "version": "1.19.1",
+  "description": "Export core and libs packages for easier imports in plugins",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
     },
-    "typesVersions": {
-        "*": {
-            "*": [
-                "./*",
-                "./*/index.d.ts"
-            ]
-        }
-    },
-    "files": [
-        "**/*.js",
-        "**/*.js.map",
-        "**/*.d.ts",
-        "**/*.d.ts.map",
-        "**/*.json",
-        "!scripts/**",
-        "!package.json"
-    ],
-    "scripts": {
-        "publish": "yarn npm publish --access public",
-        "build": "yarn generate",
-        "clean": "rm -rf apps libs",
-        "generate": "yarn workspace core build-publish && mv ../../apps/core/dist-publish/* . && rmdir ../../apps/core/dist-publish && yarn run sync-deps",
-        "sync-deps": "node scripts/sync-deps.js",
-        "get-version": "jq -r '.version' package.json",
-        "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"
-    },
-    "license": "LGPL3"
+    "./*": {
+      "types": "./*.d.ts",
+      "default": "./*.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./*",
+        "./*/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "**/*.js",
+    "**/*.js.map",
+    "**/*.d.ts",
+    "**/*.d.ts.map",
+    "**/*.json",
+    "!scripts/**",
+    "!package.json"
+  ],
+  "scripts": {
+    "publish": "yarn npm publish --access public",
+    "build": "yarn generate",
+    "clean": "rm -rf apps libs",
+    "generate": "yarn workspace core build-publish && mv ../../apps/core/dist-publish/* . && rmdir ../../apps/core/dist-publish && yarn run sync-deps",
+    "sync-deps": "node scripts/sync-deps.js",
+    "get-version": "jq -r '.version' package.json",
+    "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"
+  },
+  "license": "LGPL3"
 }
