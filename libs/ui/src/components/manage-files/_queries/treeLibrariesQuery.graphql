@@ -1,5 +1,5 @@
-query GET_TREE_LIBRARIES($treeId: [ID!], $library: String) {
-    trees(filters: {id: $treeId, library: $library}) {
+query GET_TREE_LIBRARIES($library: String) {
+    trees(filters: {library: $library}) {
         totalCount
         list {
             id
