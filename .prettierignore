@@ -1,6 +1,7 @@
 **/_gqlTypes/*
 **/__generated__/*
 **/dist/*
+.husky/*
 yarn.lock
 .yarn
 *.snap

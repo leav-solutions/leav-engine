@@ -13968,12 +13968,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"husky@npm:6.0.0":
-  version: 6.0.0
-  resolution: "husky@npm:6.0.0"
+"husky@npm:9.1.7":
+  version: 9.1.7
+  resolution: "husky@npm:9.1.7"
   bin:
-    husky: lib/bin.js
-  checksum: 10/7527e831c85d011518222965f2fe8487a30b1a06ed1c15d97143937184423827847e6436f721d8ffc2ab6abcc7ba1e6fff6c42cd43d69dc2d8e2deb0bde0c1b0
+    husky: bin.js
+  checksum: 10/c2412753f15695db369634ba70f50f5c0b7e5cb13b673d0826c411ec1bd9ddef08c1dad89ea154f57da2521d2605bd64308af748749b27d08c5f563bcd89975f
   languageName: node
   linkType: hard
 
@@ -15206,7 +15206,7 @@ __metadata:
     cz-conventional-changelog: "npm:3.3.0"
     eslint: "npm:9.39.5"
     eslint-formatter-gitlab: "npm:7.2.0"
-    husky: "npm:6.0.0"
+    husky: "npm:9.1.7"
     lint-staged: "npm:16.4.0"
     prettier: "npm:3.9.6"
     typescript: "npm:@typescript/typescript6@^6.0.2"
