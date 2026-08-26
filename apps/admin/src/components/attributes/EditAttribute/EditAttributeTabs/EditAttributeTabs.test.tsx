@@ -1,4 +1,3 @@
-import {ENABLE_TREE_ATTRIBUTE_V2_FORM, ENABLE_TREE_ATTRIBUTE_V2_MODAL} from '@leav/utils';
 import {render, screen, within} from '../../../../_tests/testUtils';
 import {
     mockAttrAdv,
@@ -107,18 +106,6 @@ describe('EditAttributeTabs', () => {
         });
 
         test.each([
-            ['both V2 flags are off', {}],
-            ['the modal V2 flag is on', {[ENABLE_TREE_ATTRIBUTE_V2_MODAL]: true}],
-            ['the form V2 flag is on', {[ENABLE_TREE_ATTRIBUTE_V2_FORM]: true}],
-        ])('Show the display tab for a tree attribute when %s', async (_, settings) => {
-            render(<EditAttributeTabs attribute={{...mockAttrTree}} />, {
-                globalSettings: {defaultApp: 'admin', name: 'My App', icon: null, favicon: null, settings},
-            });
-
-            expect(screen.getByText(/display/)).toBeInTheDocument();
-        });
-
-        test.each([
             ['a tree attribute', mockAttrTree],
             ['a simple_link attribute', mockAttrSimpleLink],
             ['an advanced_link attribute', mockAttrAdvLink],
@@ -131,16 +118,8 @@ describe('EditAttributeTabs', () => {
         test.each([
             ['a simple attribute', mockAttrSimple],
             ['an advanced attribute', mockAttrAdv],
-        ])('Hide the display tab for %s even when the V2 flags are on', async (_, attribute) => {
-            render(<EditAttributeTabs attribute={{...attribute}} />, {
-                globalSettings: {
-                    defaultApp: 'admin',
-                    name: 'My App',
-                    icon: null,
-                    favicon: null,
-                    settings: {[ENABLE_TREE_ATTRIBUTE_V2_FORM]: true, [ENABLE_TREE_ATTRIBUTE_V2_MODAL]: true},
-                },
-            });
+        ])('Hide the display tab for %s', async (_, attribute) => {
+            render(<EditAttributeTabs attribute={{...attribute}} />);
 
             expect(screen.queryByText(/display/)).not.toBeInTheDocument();
         });

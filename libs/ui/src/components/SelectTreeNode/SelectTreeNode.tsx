@@ -1,92 +1,191 @@
-import {localizedTranslation} from '@leav/utils';
-import {type FunctionComponent} from 'react';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {Spin} from 'antd';
+import {KitTree} from 'aristid-ds';
+import {type ComponentProps, type FunctionComponent, type Key} from 'react';
 import {
     type ChildrenAsRecordValuePermissionFilterInput,
     type DependentValuesPermissionFilterInput,
-    useTreeDataQueryQuery,
 } from '_ui/_gqlTypes';
-import {ErrorDisplay} from '../..';
-import useLang from '../../hooks/useLang/useLang';
-import {type ITreeNodeWithRecord} from '../../types/trees';
-import {SelectTreeNodeContent} from './SelectTreeNodeContent';
-import {SelectTreeNodeContentSkeleton} from './SelectTreeNodeContentSkeleton';
+import {
+    type IResolvedTreeSelectionConf,
+    type ITreeSelectionNode,
+    resolveTreeSelectionConf,
+    useTreeSelectionNodes,
+} from '_ui/hooks/useTreeSelection';
+import {type ITreeNodeWithRecord} from '_ui/types';
+import {ErrorDisplay} from '../ErrorDisplay';
+import {TreeNodeTitle} from './TreeNodeTitle';
 
-interface ISelectTreeNodeProps {
+export interface ISelectTreeNodeProps extends Partial<IResolvedTreeSelectionConf> {
     treeId: string;
-    childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
-    dependentValuesPermissionFilter?: DependentValuesPermissionFilterInput;
     onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
     onCheck?: (selection: ITreeNodeWithRecord[]) => void;
     selectedNodes?: string[];
     disabledNodes?: string[];
     selectableLibraries?: string[]; // all by default
     multiple?: boolean;
-    checkStrictly?: boolean;
     checkable?: boolean;
-    canSelectRoot?: boolean;
-    showSelectChildrenButton?: boolean;
+    checkStrictly?: boolean;
+    /** Lets the tree root itself be picked, for a caller selecting a location instead of a value. */
+    canSelectRootNode?: boolean;
+    /** Prefixes each node with a folder / file type icon, for a tree mixing directories and files. */
     showNodeTypeIcon?: boolean;
-    /**
-     * Opt out of the Apollo cache for the tree content, so each mount reflects the server. To be
-     * enabled by callers whose own flow adds or removes nodes — otherwise a remount silently
-     * replays the content read before that change.
-     */
+    /** Bypasses the cache on mount, for a caller whose own flow adds or removes nodes of the tree. */
     refreshOnMount?: boolean;
+    childrenAsRecordValuePermissionFilter?: ChildrenAsRecordValuePermissionFilterInput;
+    dependentValuesPermissionFilter?: DependentValuesPermissionFilterInput;
 }
 
+type OnCheckSelection = Parameters<ComponentProps<typeof KitTree>['onCheck']>[0];
+
+const _isObjectSelection = (selection: OnCheckSelection): selection is Exclude<OnCheckSelection, Key[]> =>
+    'checked' in selection && 'halfChecked' in selection;
+
+/**
+ * Tree node selection rendered by `KitTree`, with its data and selection layers driven by an
+ * `IResolvedTreeSelectionConf`.
+ *
+ * The 6 configuration parameters arrive as optional overrides — callers that read them from an
+ * attribute (see `SelectTreeNodeModal`) resolve them beforehand and pass them down already merged.
+ */
 export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     treeId,
-    childrenAsRecordValuePermissionFilter,
-    dependentValuesPermissionFilter,
     onSelect,
     onCheck,
-    selectedNodes,
-    disabledNodes,
+    selectedNodes = [],
+    disabledNodes = [],
     selectableLibraries,
     multiple = false,
-    checkStrictly = true,
     checkable = false,
-    canSelectRoot = false,
-    showSelectChildrenButton = false,
-    showNodeTypeIcon,
+    checkStrictly = true,
+    canSelectRootNode = false,
+    showNodeTypeIcon = false,
     refreshOnMount = false,
+    childrenAsRecordValuePermissionFilter,
+    dependentValuesPermissionFilter,
+    selectableNodes,
+    defaultExpanded,
+    displayRootNode,
+    maxDepth,
+    showSelectChildrenButton,
+    showSelectDescendantsButton,
 }) => {
-    const {lang} = useLang();
-    const {t} = useSharedTranslation();
-    const {loading, error, data} = useTreeDataQueryQuery({
-        variables: {treeId},
+    const conf = resolveTreeSelectionConf(null, {
+        selectableNodes,
+        defaultExpanded,
+        displayRootNode,
+        maxDepth,
+        showSelectChildrenButton,
+        showSelectDescendantsButton,
     });
 
+    const {rootNode, nodesById, getDescendants, loading, error} = useTreeSelectionNodes({
+        treeId,
+        conf,
+        disabledNodes,
+        selectableLibraries,
+        childrenAsRecordValuePermissionFilter,
+        dependentValuesPermissionFilter,
+        canSelectRootNode,
+        refreshOnMount,
+    });
+
+    // `node.selectable` already accounts for `selectableLibraries`: the socle folds it in, and
+    // disables the nodes it rules out — the pseudo root excepted, as it belongs to no library
+    const _emitCheck = (checkedKeys: string[]) => {
+        onCheck?.(checkedKeys.map(key => nodesById[key]).filter(node => node?.selectable));
+    };
+
+    const _handleSelect: ComponentProps<typeof KitTree>['onSelect'] = (_, event) => {
+        // Prevent selecting when clicking on one of the group selection buttons
+        if (event.nativeEvent.target instanceof HTMLButtonElement) {
+            return;
+        }
+
+        const node = nodesById[String(event.node.key)];
+
+        if (!node?.selectable) {
+            return;
+        }
+
+        if (checkable) {
+            _emitCheck(
+                selectedNodes.includes(node.id)
+                    ? selectedNodes.filter(selectedNode => selectedNode !== node.id)
+                    : [...selectedNodes, node.id],
+            );
+
+            return;
+        }
+
+        onSelect(node, event.selected);
+    };
+
+    const _handleGroupSelect = (nodes: ITreeSelectionNode[], selected: boolean) => {
+        if (checkable) {
+            const nodeIds = nodes.map(node => node.id);
+
+            _emitCheck(
+                selected
+                    ? [...new Set([...selectedNodes, ...nodeIds])]
+                    : selectedNodes.filter(selectedNode => !nodeIds.includes(selectedNode)),
+            );
+
+            return;
+        }
+
+        nodes.forEach(node => onSelect(node, selected));
+    };
+
+    // `selectable: false` is not enough in checkable mode, the keys have to be filtered as well
+    const _handleCheck: ComponentProps<typeof KitTree>['onCheck'] = selection => {
+        const checkedKeys = _isObjectSelection(selection) ? selection.checked : selection;
+
+        _emitCheck(checkedKeys.map(String));
+    };
+
     if (loading) {
-        return <SelectTreeNodeContentSkeleton />;
+        return <Spin />;
     }
 
     if (error) {
         return <ErrorDisplay message={error.message} />;
     }
 
-    if (!data?.trees.list[0]) {
-        return <ErrorDisplay message={t('error.unknown_tree', {treeId})} />;
+    if (!rootNode) {
+        return null;
     }
 
+    // Ancestors of the already selected nodes, so that current values are visible without unfolding
+    const defaultExpandedKeys = [
+        rootNode.key,
+        ...selectedNodes.flatMap(selectedNode => nodesById[selectedNode]?.parents ?? []),
+    ];
+
     return (
-        <SelectTreeNodeContent
-            treeData={{id: treeId, label: localizedTranslation(data.trees.list[0].label, lang) || treeId}}
-            childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
-            dependentValuesPermissionFilter={dependentValuesPermissionFilter}
-            onCheck={onCheck}
-            onSelect={onSelect}
+        <KitTree
+            treeData={[rootNode]}
             multiple={multiple}
             checkable={checkable}
             checkStrictly={checkStrictly}
-            selectedNodes={selectedNodes}
-            disabledNodes={disabledNodes}
-            canSelectRoot={canSelectRoot}
-            selectableLibraries={selectableLibraries}
-            showSelectChildrenButton={showSelectChildrenButton}
-            showNodeTypeIcon={showNodeTypeIcon}
-            refreshOnMount={refreshOnMount}
+            defaultExpandAll={conf.defaultExpanded}
+            defaultExpandedKeys={conf.defaultExpanded ? undefined : defaultExpandedKeys}
+            selectedKeys={selectedNodes}
+            checkedKeys={selectedNodes}
+            titleRender={node => (
+                <TreeNodeTitle
+                    node={node as ITreeSelectionNode}
+                    nodesById={nodesById}
+                    getDescendants={getDescendants}
+                    checkable={checkable}
+                    selectedNodes={selectedNodes}
+                    showSelectChildrenButton={conf.showSelectChildrenButton}
+                    showSelectDescendantsButton={conf.showSelectDescendantsButton}
+                    showNodeTypeIcon={showNodeTypeIcon}
+                    onGroupSelect={_handleGroupSelect}
+                />
+            )}
+            onSelect={_handleSelect}
+            onCheck={_handleCheck}
         />
     );
 };

@@ -1,21 +1,22 @@
-import {type ComponentProps, type FunctionComponent, useState} from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faCheck, faXmark} from '@fortawesome/free-solid-svg-icons';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {KitButton, KitModal} from 'aristid-ds';
+import {type ComponentProps, type FunctionComponent, useState} from 'react';
 import {
-    type DependentValuesPermissionFilterInput,
     type ChildrenAsRecordValuePermissionFilterInput,
+    type DependentValuesPermissionFilterInput,
     type RecordFormAttributeTreeAttributeFragment,
 } from '_ui/_gqlTypes';
-import {SelectTreeNode} from '_ui/components/SelectTreeNode';
 import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {type IResolvedTreeSelectionConf, resolveTreeSelectionConf} from '_ui/hooks/useTreeSelection';
 import {type ITreeNodeWithRecord} from '_ui/types';
+import {SelectTreeNode} from './SelectTreeNode';
 
 const SELECT_TREE_NODE_MODAL_HEIGHT = '563px';
 const SELECT_TREE_NODE_MODAL_WIDTH = '656px';
 
-type SelectTreeNodeModalBackendValue =
+export type SelectTreeNodeModalBackendValue =
     | RecordFormElementsValueTreeValue
     | {
           treeValue: {
@@ -23,16 +24,21 @@ type SelectTreeNodeModalBackendValue =
           };
       };
 
-type SelectTreeNodeModalAttribute =
+/**
+ * Same widened type as the V1 modal, plus `tree_selection_conf`: callers outside of the record form
+ * may pass a minimal object instead of a complete GraphQL fragment.
+ */
+export type SelectTreeNodeModalAttribute =
     | RecordFormAttributeTreeAttributeFragment
     | {
           multiple_values: boolean;
           linked_tree: {
               id: string;
           };
+          tree_selection_conf?: Partial<IResolvedTreeSelectionConf> | null;
       };
 
-interface ISelectTreeNodeModalProps {
+export interface ISelectTreeNodeModalProps extends Partial<IResolvedTreeSelectionConf> {
     title: string;
     open: boolean;
     attribute: SelectTreeNodeModalAttribute;
@@ -54,10 +60,26 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
     childrenAsRecordValuePermissionFilter,
     dependentValuesPermissionFilter,
     className,
+    selectableNodes,
+    defaultExpanded,
+    displayRootNode,
+    maxDepth,
+    showSelectChildrenButton,
+    showSelectDescendantsButton,
 }) => {
     const {t} = useSharedTranslation();
 
     const [selectedNodes, setSelectedNodes] = useState<ITreeNodeWithRecord[]>([]);
+
+    // Calling props win over the attribute configuration, which wins over the system defaults
+    const conf = resolveTreeSelectionConf(attribute.tree_selection_conf, {
+        selectableNodes,
+        defaultExpanded,
+        displayRootNode,
+        maxDepth,
+        showSelectChildrenButton,
+        showSelectDescendantsButton,
+    });
 
     const _handleOnSelect: ComponentProps<typeof SelectTreeNode>['onSelect'] = (node, selected) => {
         if (!attribute.multiple_values) {
@@ -108,15 +130,17 @@ export const SelectTreeNodeModal: FunctionComponent<ISelectTreeNodeModalProps> =
         >
             <SelectTreeNode
                 treeId={attribute.linked_tree.id}
-                multiple // We want to be able to set as selected in the tree components, the nodes that are already selected and the disabled nodes
+                multiple={attribute.multiple_values}
                 selectedNodes={[
                     ...selectedNodes.map(node => node.id),
                     ...backendValues.map(value => value.treeValue.id),
                 ]}
+                // Values already linked to the record cannot be picked again
+                disabledNodes={backendValues.map(value => value.treeValue.id)}
                 childrenAsRecordValuePermissionFilter={childrenAsRecordValuePermissionFilter}
                 dependentValuesPermissionFilter={dependentValuesPermissionFilter}
-                disabledNodes={backendValues.map(value => value.treeValue.id).concat(attribute.linked_tree.id)}
                 onSelect={_handleOnSelect}
+                {...conf}
             />
         </KitModal>
     );

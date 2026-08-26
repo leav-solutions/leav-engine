@@ -1,6 +1,7 @@
+import * as apolloClient from '@apollo/client';
 import {type MockedResponse} from '@apollo/client/testing';
 import {vi} from 'vitest';
-import {TreeDataQueryDocument} from '_ui/_gqlTypes';
+import {LibraryBehavior, TreeDataQueryDocument} from '_ui/_gqlTypes';
 import {renderHook, waitFor} from '_ui/_tests/testUtils';
 import {type IResolvedTreeSelectionConf} from './_types';
 import {
@@ -15,24 +16,24 @@ import {useTreeSelectionNodes} from './useTreeSelectionNodes';
 const treeId = 'categories';
 
 // `__typename` is required: MockedProvider adds it to the documents, the cache drops what lacks it
-const _record = (id: string) => ({
+const _record = (id: string, libraryId = 'categories') => ({
     __typename: 'Record',
     id,
     whoAmI: {
         __typename: 'RecordIdentity',
         id,
         label: `label ${id}`,
-        library: {__typename: 'Library', id: 'categories'},
+        library: {__typename: 'Library', id: libraryId, behavior: LibraryBehavior.standard},
     },
 });
 
 type MockContentNode = ITreeSelectionContentNode & {__typename: string};
 
-const _node = (id: string, children: MockContentNode[] = []): MockContentNode => ({
+const _node = (id: string, children: MockContentNode[] = [], libraryId?: string): MockContentNode => ({
     __typename: 'TreeNode',
     id,
     childrenCount: children.length,
-    record: _record(id),
+    record: _record(id, libraryId),
     children,
 });
 
@@ -149,6 +150,23 @@ describe('useTreeSelectionNodes', () => {
         expect(result.current.nodesById.leaf2).toMatchObject({disabled: false, selectable: true});
     });
 
+    test('Disables the nodes of a library outside selectableLibraries', async () => {
+        const {result} = renderHook(
+            () =>
+                useTreeSelectionNodes({
+                    treeId,
+                    conf: TREE_SELECTION_DEFAULTS,
+                    selectableLibraries: ['categories'],
+                }),
+            {mocks: [_contentMock({content: [_node('branch'), _node('file', [], 'files')]}), treeDataMock]},
+        );
+
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        expect(result.current.nodesById.file).toMatchObject({disabled: true, selectable: false, checkable: false});
+        expect(result.current.nodesById.branch).toMatchObject({disabled: false, selectable: true});
+    });
+
     test('Starts at displayRootNode, which becomes the pseudo root', async () => {
         const {result} = _renderHook({displayRootNode: 'branch'}, [
             _contentMock({startAt: 'branch', content: [_node('leaf1'), _node('leaf2')]}),
@@ -221,6 +239,34 @@ describe('useTreeSelectionNodes', () => {
 
         await waitFor(() => expect(result.current.rootNode).not.toBe(null));
         expect(onContentCalled).toHaveBeenCalledTimes(1);
+    });
+
+    test('Reads the tree content from the cache by default', async () => {
+        const useQuery = vi.spyOn(apolloClient, 'useQuery');
+        const {result} = _renderHook({}, [_contentMock(), treeDataMock]);
+
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        expect(useQuery).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({fetchPolicy: undefined}));
+
+        useQuery.mockRestore();
+    });
+
+    test('Bypasses the cache when asked to refresh on mount', async () => {
+        const useQuery = vi.spyOn(apolloClient, 'useQuery');
+        const {result} = renderHook(
+            () => useTreeSelectionNodes({treeId, conf: TREE_SELECTION_DEFAULTS, refreshOnMount: true}),
+            {mocks: [_contentMock(), treeDataMock]},
+        );
+
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        expect(useQuery).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({fetchPolicy: 'network-only'}),
+        );
+
+        useQuery.mockRestore();
     });
 
     test('Surfaces the loading and error states', async () => {

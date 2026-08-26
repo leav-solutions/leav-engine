@@ -1,57 +1,58 @@
-import {useState, type FunctionComponent} from 'react';
-import {type ITreeMapElement} from './_types';
-import {KitButton, KitIdCard, KitTag, KitTypography} from 'aristid-ds';
+import {faCheck, faCheckDouble, faFolder, faListCheck} from '@fortawesome/free-solid-svg-icons';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faCheck, faFolder} from '@fortawesome/free-solid-svg-icons';
-import {type ITreeNodeWithRecord} from '_ui/types';
-import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {KitButton, KitIdCard, KitTag, KitTooltip, KitTypography} from 'aristid-ds';
+import {type FunctionComponent, type MouseEvent} from 'react';
 import {LibraryBehavior} from '_ui/_gqlTypes';
 import {getFileTypeIcon} from '_ui/_utils/getFileTypeIcon';
-import {treeNodeLine, treeNodeLineSection} from './TreeNodeTitle.module.css';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {type ITreeSelectionNode, type ITreeSelectionNodesById} from '_ui/hooks/useTreeSelection';
+import {groupButtons, treeNodeLine, treeNodeLineSection} from './treeNodeTitle.module.css';
 
 interface ITreeNodeTitleProps {
+    node: ITreeSelectionNode;
+    nodesById: ITreeSelectionNodesById;
+    getDescendants: (nodeId: string) => string[];
     checkable: boolean;
-    disabledNodes: string[];
-    node: ITreeMapElement;
-    onSelect: (node: ITreeNodeWithRecord, selected: boolean) => void;
     selectedNodes: string[];
     showSelectChildrenButton: boolean;
+    showSelectDescendantsButton: boolean;
+    /** Opt-in: only a tree mixing directories and files needs to tell its node types apart. */
     showNodeTypeIcon?: boolean;
+    /** Batched on purpose: a per-node callback would read a stale selection in checkable mode. */
+    onGroupSelect: (nodes: ITreeSelectionNode[], selected: boolean) => void;
 }
 
 export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
-    checkable,
-    disabledNodes,
     node,
-    onSelect,
+    nodesById,
+    getDescendants,
+    checkable,
     selectedNodes,
     showSelectChildrenButton,
+    showSelectDescendantsButton,
     showNodeTypeIcon = false,
+    onGroupSelect,
 }) => {
     const {t} = useSharedTranslation();
 
-    const [hover, setHover] = useState(false);
+    const isSelected = selectedNodes.includes(node.id);
 
-    const isSelected = selectedNodes.includes(node.id) && !node.isShowMore;
-    // Fall back on `disabledNodes`: the synthetic root node carries no `disabled` flag.
-    const isDisabled = node.disabled ?? disabledNodes.includes(node.id);
+    // Groups actions only act on what the configuration actually allows to select
+    const selectableChildren = node.children.filter(child => child.selectable);
+    const selectableDescendants = getDescendants(node.id)
+        .map(descendantId => nodesById[descendantId])
+        .filter(descendant => descendant?.selectable);
 
-    const buttonInSelectMode = node.children
-        .filter(child => !child.isShowMore && !disabledNodes.includes(child.id))
-        .every(child => !selectedNodes.includes(child.id));
+    const childrenInSelectMode = selectableChildren.every(child => !selectedNodes.includes(child.id));
+    const descendantsInSelectMode = selectableDescendants.every(descendant => !selectedNodes.includes(descendant.id));
 
-    const handleChildrenSelection = (event: React.MouseEvent) => {
+    const _handleGroupSelection = (nodes: ITreeSelectionNode[], selected: boolean) => (event: MouseEvent) => {
         event.stopPropagation();
-        node.children.forEach(child => {
-            if (node.disabled || child.disabled || child.isShowMore) {
-                return;
-            }
-            onSelect(child, buttonInSelectMode);
-        });
+        onGroupSelect(nodes, selected);
     };
 
     return (
-        <div className={treeNodeLine} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+        <div className={treeNodeLine}>
             <div className={treeNodeLineSection}>
                 {showNodeTypeIcon && node.record && (
                     <FontAwesomeIcon
@@ -60,25 +61,56 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
                                 ? faFolder
                                 : getFileTypeIcon(node.title as string)
                         }
-                        color={isDisabled ? 'var(--general-utilities-text-disabled)' : undefined}
+                        color={node.disabled ? 'var(--general-utilities-text-disabled)' : undefined}
                     />
                 )}
-                <KitTypography.Text size="fontSize5" disabled={isDisabled}>
+                <KitTypography.Text size="fontSize5" disabled={node.disabled}>
                     {node.title}
                 </KitTypography.Text>
-                <SelectedChildrenCount node={node} selectedNodes={selectedNodes} />
+                <SelectedDescendantsCount node={node} selectedNodes={selectedNodes} />
             </div>
             <div className={treeNodeLineSection}>
-                {showSelectChildrenButton && node.children.length > 0 && hover && (
-                    <KitButton size="s" onClick={e => handleChildrenSelection(e)}>
-                        {t(`tree-node-selection.${buttonInSelectMode ? 'select_children' : 'unselect_children'}`)}
-                    </KitButton>
-                )}
+                <div className={groupButtons}>
+                    {showSelectChildrenButton && selectableChildren.length > 0 && (
+                        <KitTooltip
+                            title={t(
+                                `tree-node-selection.${childrenInSelectMode ? 'select_children' : 'unselect_children'}`,
+                            )}
+                        >
+                            <KitButton
+                                size="s"
+                                icon={<FontAwesomeIcon icon={faListCheck} />}
+                                onClick={_handleGroupSelection(selectableChildren, childrenInSelectMode)}
+                                aria-label={t(
+                                    `tree-node-selection.${childrenInSelectMode ? 'select_children' : 'unselect_children'}`,
+                                )}
+                            />
+                        </KitTooltip>
+                    )}
+                    {showSelectDescendantsButton && selectableDescendants.length > 0 && (
+                        <KitTooltip
+                            title={t(
+                                `tree-node-selection.${descendantsInSelectMode ? 'select_descendants' : 'unselect_descendants'}`,
+                            )}
+                        >
+                            <KitButton
+                                size="s"
+                                icon={<FontAwesomeIcon icon={faCheckDouble} />}
+                                onClick={_handleGroupSelection(selectableDescendants, descendantsInSelectMode)}
+                                aria-label={t(
+                                    `tree-node-selection.${descendantsInSelectMode ? 'select_descendants' : 'unselect_descendants'}`,
+                                )}
+                            />
+                        </KitTooltip>
+                    )}
+                </div>
                 {!checkable && isSelected && (
                     <FontAwesomeIcon
                         icon={faCheck}
                         color={
-                            isDisabled ? 'var(--general-utilities-text-disabled)' : 'var(--general-utilities-text-blue)'
+                            node.disabled
+                                ? 'var(--general-utilities-text-disabled)'
+                                : 'var(--general-utilities-text-blue)'
                         }
                     />
                 )}
@@ -87,24 +119,22 @@ export const TreeNodeTitle: FunctionComponent<ITreeNodeTitleProps> = ({
     );
 };
 
-const SelectedChildrenCount: FunctionComponent<{
-    node: ITreeMapElement;
-    selectedNodes: string[];
-}> = ({node, selectedNodes}) => {
-    const selectedChildrenCount = countSelectedNodes(node, selectedNodes);
+const SelectedDescendantsCount: FunctionComponent<{node: ITreeSelectionNode; selectedNodes: string[]}> = ({
+    node,
+    selectedNodes,
+}) => {
+    const selectedDescendantsCount = _countSelectedDescendants(node, selectedNodes);
 
-    return selectedChildrenCount > 0 ? (
+    return selectedDescendantsCount > 0 ? (
         <KitTag>
-            <KitIdCard description={selectedChildrenCount} />
+            <KitIdCard description={selectedDescendantsCount} />
         </KitTag>
     ) : null;
 };
 
-const countSelectedNodes = (node: ITreeMapElement, selectedNodes: string[]): number =>
-    node.children?.reduce((count, child) => {
-        if (selectedNodes.includes(child.id) && !child.isShowMore) {
-            count += 1;
-        }
-        count += countSelectedNodes(child, selectedNodes);
-        return count;
-    }, 0) ?? 0;
+const _countSelectedDescendants = (node: ITreeSelectionNode, selectedNodes: string[]): number =>
+    node.children.reduce(
+        (count, child) =>
+            count + (selectedNodes.includes(child.id) ? 1 : 0) + _countSelectedDescendants(child, selectedNodes),
+        0,
+    );

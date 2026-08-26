@@ -273,18 +273,6 @@ export enum AvailableLanguage {
   fr = 'fr'
 }
 
-export type CampaignToRenew = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
-export type CampaignToUpdateDates = {
-  endDate: Scalars['String']['input'];
-  id: Scalars['String']['input'];
-  startDate: Scalars['String']['input'];
-};
-
 export type ChildrenAsRecordValuePermissionFilterInput = {
   action: RecordPermissionsActions;
   attributeId: Scalars['ID']['input'];
@@ -368,8 +356,6 @@ export enum EventAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -589,8 +575,6 @@ export enum LogAction {
   LIBRARY_PURGE = 'LIBRARY_PURGE',
   LIBRARY_SAVE = 'LIBRARY_SAVE',
   PERMISSION_SAVE = 'PERMISSION_SAVE',
-  PLANNING_RECONDUCTION_END = 'PLANNING_RECONDUCTION_END',
-  PLANNING_RECONDUCTION_START = 'PLANNING_RECONDUCTION_START',
   RECORD_DELETE = 'RECORD_DELETE',
   RECORD_INIT = 'RECORD_INIT',
   RECORD_SAVE = 'RECORD_SAVE',
@@ -979,19 +963,12 @@ export enum TaskStatus {
 
 export enum TaskType {
   EXPORT = 'EXPORT',
-  FRAMING_REPORT = 'FRAMING_REPORT',
   IMPORT_CONFIG = 'IMPORT_CONFIG',
   IMPORT_DATA = 'IMPORT_DATA',
   INDEXATION = 'INDEXATION',
   PURGE_MULTIPLE_VALUES = 'PURGE_MULTIPLE_VALUES',
-  RENEW_CAMPAIGNS = 'RENEW_CAMPAIGNS',
   SAVE_VALUE_BULK = 'SAVE_VALUE_BULK'
 }
-
-export type ThematicToRenew = {
-  campaignId: Scalars['String']['input'];
-  thematicId: Scalars['String']['input'];
-};
 
 export enum TreeBehavior {
   files = 'files',
@@ -2396,27 +2373,12 @@ export type GetRecordHistoryQuery = { logs?: { total: number, logs: Array<{ acti
         | { id: string, whoAmI: { id: string, library: { id: string } }, properties: Array<{ attributeId: string, values: Array<{ payload?: any | null }> }> }
       , before?: { asString?: string | null } | null, after?: { asString?: string | null } | null }> } | null };
 
-export type TreeContentDataQueryQueryVariables = Exact<{
-  treeId: Scalars['ID']['input'];
-  startAt?: InputMaybe<Scalars['ID']['input']>;
-  childrenAsRecordValuePermissionFilter?: InputMaybe<ChildrenAsRecordValuePermissionFilterInput>;
-  dependentValuesPermissionFilter?: InputMaybe<DependentValuesPermissionFilterInput>;
-}>;
-
-
-export type TreeContentDataQueryQuery = { treeContent: Array<{ id: string, childrenCount?: number | null, record: { id: string, whoAmI: { id: string, label?: string | null, library: { id: string } } } }> };
-
 export type TreeDataQueryQueryVariables = Exact<{
   treeId: Scalars['ID']['input'];
 }>;
 
 
 export type TreeDataQueryQuery = { trees?: { list: Array<{ id: string, label?: any | null }> } | null };
-
-export type GlobalSettingsFlagsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GlobalSettingsFlagsQuery = { globalSettings: { settings?: any | null } };
 
 export type RecordUpdateLightSubscriptionVariables = Exact<{
   filters?: InputMaybe<RecordUpdateFilterInput>;
@@ -7412,68 +7374,6 @@ export type GetRecordHistoryQueryHookResult = ReturnType<typeof useGetRecordHist
 export type GetRecordHistoryLazyQueryHookResult = ReturnType<typeof useGetRecordHistoryLazyQuery>;
 export type GetRecordHistorySuspenseQueryHookResult = ReturnType<typeof useGetRecordHistorySuspenseQuery>;
 export type GetRecordHistoryQueryResult = Apollo.QueryResult<GetRecordHistoryQuery, GetRecordHistoryQueryVariables>;
-export const TreeContentDataQueryDocument = gql`
-    query TreeContentDataQuery($treeId: ID!, $startAt: ID, $childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput, $dependentValuesPermissionFilter: DependentValuesPermissionFilterInput) {
-  treeContent(
-    treeId: $treeId
-    startAt: $startAt
-    childrenAsRecordValuePermissionFilter: $childrenAsRecordValuePermissionFilter
-    dependentValuesPermissionFilter: $dependentValuesPermissionFilter
-  ) {
-    id
-    childrenCount
-    record {
-      id
-      whoAmI {
-        id
-        label
-        library {
-          id
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useTreeContentDataQueryQuery__
- *
- * To run a query within a React component, call `useTreeContentDataQueryQuery` and pass it any options that fit your needs.
- * When your component renders, `useTreeContentDataQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useTreeContentDataQueryQuery({
- *   variables: {
- *      treeId: // value for 'treeId'
- *      startAt: // value for 'startAt'
- *      childrenAsRecordValuePermissionFilter: // value for 'childrenAsRecordValuePermissionFilter'
- *      dependentValuesPermissionFilter: // value for 'dependentValuesPermissionFilter'
- *   },
- * });
- */
-export function useTreeContentDataQueryQuery(baseOptions: Apollo.QueryHookOptions<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables> & ({ variables: TreeContentDataQueryQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>(TreeContentDataQueryDocument, options);
-      }
-export function useTreeContentDataQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>(TreeContentDataQueryDocument, options);
-        }
-// @ts-ignore
-export function useTreeContentDataQuerySuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>): Apollo.UseSuspenseQueryResult<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>;
-export function useTreeContentDataQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>): Apollo.UseSuspenseQueryResult<TreeContentDataQueryQuery | undefined, TreeContentDataQueryQueryVariables>;
-export function useTreeContentDataQuerySuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>(TreeContentDataQueryDocument, options);
-        }
-export type TreeContentDataQueryQueryHookResult = ReturnType<typeof useTreeContentDataQueryQuery>;
-export type TreeContentDataQueryLazyQueryHookResult = ReturnType<typeof useTreeContentDataQueryLazyQuery>;
-export type TreeContentDataQuerySuspenseQueryHookResult = ReturnType<typeof useTreeContentDataQuerySuspenseQuery>;
-export type TreeContentDataQueryQueryResult = Apollo.QueryResult<TreeContentDataQueryQuery, TreeContentDataQueryQueryVariables>;
 export const TreeDataQueryDocument = gql`
     query TreeDataQuery($treeId: ID!) {
   trees(filters: {id: [$treeId]}) {
@@ -7520,48 +7420,6 @@ export type TreeDataQueryQueryHookResult = ReturnType<typeof useTreeDataQueryQue
 export type TreeDataQueryLazyQueryHookResult = ReturnType<typeof useTreeDataQueryLazyQuery>;
 export type TreeDataQuerySuspenseQueryHookResult = ReturnType<typeof useTreeDataQuerySuspenseQuery>;
 export type TreeDataQueryQueryResult = Apollo.QueryResult<TreeDataQueryQuery, TreeDataQueryQueryVariables>;
-export const GlobalSettingsFlagsDocument = gql`
-    query GlobalSettingsFlags {
-  globalSettings {
-    settings
-  }
-}
-    `;
-
-/**
- * __useGlobalSettingsFlagsQuery__
- *
- * To run a query within a React component, call `useGlobalSettingsFlagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGlobalSettingsFlagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGlobalSettingsFlagsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGlobalSettingsFlagsQuery(baseOptions?: Apollo.QueryHookOptions<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>(GlobalSettingsFlagsDocument, options);
-      }
-export function useGlobalSettingsFlagsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>(GlobalSettingsFlagsDocument, options);
-        }
-// @ts-ignore
-export function useGlobalSettingsFlagsSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>): Apollo.UseSuspenseQueryResult<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>;
-export function useGlobalSettingsFlagsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>): Apollo.UseSuspenseQueryResult<GlobalSettingsFlagsQuery | undefined, GlobalSettingsFlagsQueryVariables>;
-export function useGlobalSettingsFlagsSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>) {
-          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>(GlobalSettingsFlagsDocument, options);
-        }
-export type GlobalSettingsFlagsQueryHookResult = ReturnType<typeof useGlobalSettingsFlagsQuery>;
-export type GlobalSettingsFlagsLazyQueryHookResult = ReturnType<typeof useGlobalSettingsFlagsLazyQuery>;
-export type GlobalSettingsFlagsSuspenseQueryHookResult = ReturnType<typeof useGlobalSettingsFlagsSuspenseQuery>;
-export type GlobalSettingsFlagsQueryResult = Apollo.QueryResult<GlobalSettingsFlagsQuery, GlobalSettingsFlagsQueryVariables>;
 export const RecordUpdateLightDocument = gql`
     subscription RECORD_UPDATE_LIGHT($filters: RecordUpdateFilterInput) {
   recordUpdate(filters: $filters) {

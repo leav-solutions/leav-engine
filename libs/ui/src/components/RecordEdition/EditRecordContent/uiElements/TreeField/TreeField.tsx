@@ -1,56 +1,116 @@
-import {type FunctionComponent, useEffect, useState} from 'react';
-import styled, {css} from 'styled-components';
 import {type ICommonFieldsSettings, localizedTranslation} from '@leav/utils';
-import {AntForm, KitButton, KitInputWrapper} from 'aristid-ds';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faList} from '@fortawesome/free-solid-svg-icons';
-import {useLang} from '_ui/hooks';
-import {type IFormElementProps} from '../../_types';
+import {AntForm, AntTreeSelect, KitLoader, KitTreeSelect} from 'aristid-ds';
+import {type FunctionComponent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {
     type ChildrenAsRecordValuePermissionFilterInput,
     type DependentValuesPermissionFilterInput,
     type RecordFormAttributeTreeAttributeFragment,
     RecordPermissionsActions,
 } from '_ui/_gqlTypes';
-import {TREE_FIELD_ID_PREFIX} from '_ui/constants';
-import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
-import {TreeNodeList} from './display-tree-node/TreeNodeList';
-import {useManageTreeNodeSelection} from './manage-tree-node-selection/useManageTreeNodeSelection';
-import {useOutsideInteractionDetector} from '../shared/useOutsideInteractionDetector';
-import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
 import {EditRecordReducerActionsTypes} from '_ui/components/RecordEdition/editRecordReducer/editRecordReducer';
+import {useEditRecordReducer} from '_ui/components/RecordEdition/editRecordReducer/useEditRecordReducer';
+import {TreeNodeTitle} from '_ui/components/SelectTreeNode';
+import {TREE_FIELD_ID_PREFIX} from '_ui/constants';
+import {useLang} from '_ui/hooks';
+import {type RecordFormElementsValueTreeValue} from '_ui/hooks/useGetRecordForm';
+import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
+import {type ITreeSelectionNode, resolveTreeSelectionConf, useTreeSelectionNodes} from '_ui/hooks/useTreeSelection';
+import {type IFormElementProps} from '../../_types';
 import {computeCalculatedFlags, computeInheritedFlags} from '../shared/calculatedInheritedFlags';
 import {ComputeIndicator} from '../shared/ComputeIndicator';
+import {useOutsideInteractionDetector} from '../shared/useOutsideInteractionDetector';
+import {fieldWrapper, inputExtraAlignLeft} from './treeField.module.css';
+import {useTreeFieldValues} from './useTreeFieldValues';
 
-const StyledWrapperDiv = styled.div<{$metadataEdit: boolean}>`
-    margin-bottom: ${props => (props.$metadataEdit ? 0 : '1.5em')};
-`;
+/**
+ * `AntForm.Item` clones its child with a `value` / `onChange` pair. The select is entirely controlled
+ * by `useTreeFieldValues` (the antd form only mirrors the saved ids), so the injected props are
+ * swallowed here instead of reaching the DOM.
+ */
+const FormItemChildDiv: FunctionComponent<{id: string; children: ReactNode}> = ({id, children}) => (
+    <div id={id}>{children}</div>
+);
 
-const KitInputExtraAlignLeftDiv = styled.div`
-    margin-right: auto;
-    line-height: 12px;
-`;
+/** Keys handled by antd `TreeSelect`, which does not accept the `bigint` of the React `Key`. */
+type TreeSelectKey = string | number;
 
-const StyledFieldFooterKitButton = styled(KitButton)<{$hasNoValue: boolean}>`
-    margin-top: ${props => (props.$hasNoValue ? 0 : 'calc((var(--general-spacing-xs)) * 1px)')};
-`;
+interface ITreeSelectNodeData {
+    value: string;
+    key: string;
+    title: ReactNode;
+    label: string;
+    selectable: boolean;
+    checkable: boolean;
+    disabled: boolean;
+    disableCheckbox: boolean;
+    closable?: boolean;
+    children?: ITreeSelectNodeData[];
+}
 
-const KitInputWrapperStyled = styled(KitInputWrapper)<{$readonlyBackground: boolean}>`
-    .kit-input-wrapper-content {
-        min-height: 48px;
-    }
+/** Titles built by `useTreeSelectionNodes` are always strings; the node type allows a `ReactNode`. */
+const _toLabel = (title: ITreeSelectionNode['title'], nodeId: string): string =>
+    typeof title === 'string' ? title : nodeId;
 
-    ${props =>
-        props.$readonlyBackground &&
-        css`
-            .kit-input-wrapper-content {
-                background-color: var(--general-utilities-neutral-light);
-            }
-        `}
-`;
+const _toTreeSelectData = (
+    nodes: ITreeSelectionNode[],
+    renderTitle?: (node: ITreeSelectionNode) => ReactNode,
+    lockedNodeId?: string,
+): ITreeSelectNodeData[] =>
+    nodes.map(node => ({
+        value: node.id,
+        key: node.id,
+        title: renderTitle ? renderTitle(node) : node.title,
+        label: _toLabel(node.title, node.id),
+        selectable: node.selectable,
+        checkable: node.checkable,
+        disabled: node.disabled,
+        disableCheckbox: node.disabled || !node.checkable,
+        closable: node.id === lockedNodeId ? false : undefined,
+        children: node.children.length > 0 ? _toTreeSelectData(node.children, renderTitle, lockedNodeId) : undefined,
+    }));
+
+/** The locked value, standing in for the whole tree until it is loaded. */
+const _toLockedNodeData = (nodeId: string, label: string): ITreeSelectNodeData => ({
+    value: nodeId,
+    key: nodeId,
+    title: label,
+    label,
+    selectable: true,
+    checkable: true,
+    disabled: false,
+    disableCheckbox: false,
+    closable: false,
+});
 
 type TreeFieldProps = IFormElementProps<ICommonFieldsSettings>;
 
+/**
+ * Tree field of a record form.
+ *
+ * The whole hierarchy is picked inside a `KitTreeSelect` dropdown instead of a modal, and the
+ * selection rules come from the `tree_selection_conf` of the attribute. A single-level tree renders
+ * as a plain list, with no dedicated code path (LEAVC-962).
+ *
+ * The tree itself is only fetched on the first opening of the dropdown: a form holding several tree
+ * attributes would otherwise fire as many `TreeSelectionContent` queries on mount. The saved values are
+ * displayed in the meantime, with the label the record form already carries.
+ *
+ * The `showSelectChildrenButton` / `showSelectDescendantsButton` group buttons are rendered by making
+ * the title of a node a rich `ReactNode` (`TreeNodeTitle`, shared with the selection modal). By
+ * default `TreeSelect` reuses that title to render a node once selected (`convert2LabelValues` in
+ * `@rc-component/tree-select`), which would put the buttons inside the tags and inside the closed
+ * field: `treeNodeLabelProp` points the selector at a separate plain-text `label` instead. The search
+ * filters on that same `label`, since the title is no longer text.
+ *
+ * The last value of a required multivalued attribute is locked with `closable: false` on its node
+ * (LEAVC-1129): a required attribute cannot be emptied, so its removal was only ever answered by a
+ * backend error. Locking goes through `treeData` because that is where `aristid-ds` reads it from,
+ * which is why the node is seeded there while the tree is still loading.
+ *
+ * On a multivalued attribute, `showCheckedStrategy` is forced to `SHOW_ALL`: antd's default
+ * `SHOW_CHILD` strategy hides the tag of a node once every one of its children is also checked,
+ * even though that node is a saved value of its own in LEAV.
+ */
 const TreeField: FunctionComponent<TreeFieldProps> = ({
     element,
     readonly,
@@ -62,6 +122,7 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
 }) => {
     const {state, dispatch} = useEditRecordReducer();
     const {lang} = useLang();
+    const {t} = useSharedTranslation();
     const {
         settings,
         attribute,
@@ -73,12 +134,18 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
     } = element;
 
     const [backendValues, setBackendValues] = useState<RecordFormElementsValueTreeValue[]>(values);
+    const [expandedKeys, setExpandedKeys] = useState<TreeSelectKey[] | null>(null);
+    const [searchValue, setSearchValue] = useState('');
+    // Latched on purpose: the tree is loaded once, not on every opening of the dropdown
+    const [hasOpenedDropdown, setHasOpenedDropdown] = useState(false);
 
     const calculatedFlags = computeCalculatedFlags(backendValues);
     const inheritedFlags = computeInheritedFlags(backendValues);
     const label = localizedTranslation(settings.label, lang);
     const form = AntForm.useFormInstance();
-    const fieldErrors = form.getFieldError(attribute.id);
+
+    // Used to force the input error display when a value is set
+    AntForm.useWatch(attribute.id, form);
 
     // TODO: Temporary const that should be removed (and all it's usages) when we will have a proper way to override multiple values
     const tmpCantOverrideValues =
@@ -86,7 +153,6 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         (calculatedFlags.calculatedValues?.length > 1 || inheritedFlags.inheritedValues?.length > 1);
 
     const isReadOnly = attribute.readonly || !attribute.permissions.edit_value || readonly || tmpCantOverrideValues;
-    const isFieldInError = fieldErrors.length > 0;
 
     useEffect(() => {
         if (state.activeAttribute?.attribute.id === attribute.id) {
@@ -103,10 +169,11 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
         attributePrefix: TREE_FIELD_ID_PREFIX,
         dispatch,
         backendValues,
-        allowedSelectors: ['.kit-modal-wrapper'],
+        allowedSelectors: ['.kit-select-dropdown-content', '.ant-select-dropdown'],
     });
 
-    // The attribute of the field itself, not `state.activeAttribute`, which only gets set on interaction
+    // The attribute of the field itself, not `state.activeAttribute`: opening the dropdown does not make
+    // the attribute active on its own
     const childrenAsRecordValuePermissionFilter: ChildrenAsRecordValuePermissionFilterInput = {
         libraryId: state.libraryId,
         attributeId: attribute.id,
@@ -123,63 +190,170 @@ const TreeField: FunctionComponent<TreeFieldProps> = ({
           }
         : undefined;
 
-    const {openModal, removeTreeNode, actionButtonLabel, SelectTreeNodeModal, RemoveAllTreeNodes} =
-        useManageTreeNodeSelection({
-            modaleTitle: label,
-            attribute,
-            isFormCreationMode,
-            backendValues,
-            setBackendValues,
-            onValueSubmit,
-            onValueDelete,
-            onDeleteMultipleValues,
-            isReadOnly,
-            isFieldInError,
-            childrenAsRecordValuePermissionFilter,
-            dependentValuesPermissionFilter,
-        });
+    // No calling prop on a form field: the configuration of the attribute wins over the defaults
+    const conf = resolveTreeSelectionConf(attribute.tree_selection_conf);
+
+    const {rootNode, nodesById, getDescendants, loading, error} = useTreeSelectionNodes({
+        treeId: attribute.linked_tree.id,
+        conf,
+        childrenAsRecordValuePermissionFilter,
+        dependentValuesPermissionFilter,
+        skip: !hasOpenedDropdown,
+    });
+
+    const {value, errors, handleChange} = useTreeFieldValues({
+        attribute,
+        nodesById,
+        backendValues,
+        setBackendValues,
+        isFormCreationMode,
+        onValueSubmit,
+        onValueDelete,
+        onDeleteMultipleValues,
+    });
+
+    const selectedValues = Array.isArray(value) ? value : value ? [value] : [];
+    const selectedNodeIds = selectedValues.map(selectedValue => selectedValue.value);
+
+    // A required attribute cannot be emptied, so the last value of a multivalued one is not removable:
+    // the backend rejects the deletion, and offering it only ever produced an error (LEAVC-1129).
+    const lockedNodeId =
+        attribute.required && attribute.multiple_values && selectedNodeIds.length === 1
+            ? selectedNodeIds[0]
+            : undefined;
+    const lockedNodeLabel = selectedValues.find(selectedValue => selectedValue.value === lockedNodeId)?.label ?? '';
+
+    // `handleChange` and the value array are rebuilt on every render: read through a ref so that they
+    // never invalidate the memoized `treeData`, which the selection already invalidates by content
+    const latestSelection = useRef({handleChange, selectedNodeIds});
+    latestSelection.current = {handleChange, selectedNodeIds};
+
+    // Group selection is a diff on the whole current selection, which `handleChange` then saves
+    const _handleGroupSelect = useCallback((nodes: ITreeSelectionNode[], selected: boolean) => {
+        const {handleChange: change, selectedNodeIds: currentIds} = latestSelection.current;
+        const groupIds = nodes.map(node => node.id);
+
+        change(
+            selected
+                ? [...new Set([...currentIds, ...groupIds])]
+                : currentIds.filter(nodeId => !groupIds.includes(nodeId)),
+        );
+    }, []);
+
+    // Group selection makes no sense on a mono-valued attribute, and nothing is selectable read-only
+    const showGroupButtons =
+        attribute.multiple_values && !isReadOnly && (conf.showSelectChildrenButton || conf.showSelectDescendantsButton);
+
+    // Compared by content: the selection drives the state each rich title displays
+    const selectedNodesKey = selectedNodeIds.join('|');
+
+    // The pseudo root stands for the tree itself and carries no value: only real nodes are offered
+    const treeData = useMemo(() => {
+        if (!rootNode) {
+            // `rc-tree-select` resolves the closability of a tag from the node matching its value and
+            // treats a value it finds no node for as closable (`convert2LabelValues`), so the lock
+            // would simply be ignored while the tree is not loaded. The locked value is therefore
+            // handed over on its own until the real nodes replace it.
+            return lockedNodeId ? [_toLockedNodeData(lockedNodeId, lockedNodeLabel)] : [];
+        }
+
+        // Left as a plain string when there is no group button to render: zero visual change, and no
+        // `ReactNode` title to work around
+        const renderTitle = showGroupButtons
+            ? (node: ITreeSelectionNode) => (
+                  <TreeNodeTitle
+                      node={node}
+                      nodesById={nodesById}
+                      getDescendants={getDescendants}
+                      // antd already renders its own checkbox: no redundant check icon
+                      checkable
+                      selectedNodes={latestSelection.current.selectedNodeIds}
+                      showSelectChildrenButton={conf.showSelectChildrenButton}
+                      showSelectDescendantsButton={conf.showSelectDescendantsButton}
+                      onGroupSelect={_handleGroupSelect}
+                  />
+              )
+            : undefined;
+
+        return _toTreeSelectData(rootNode.record === null ? rootNode.children : [rootNode], renderTitle, lockedNodeId);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        rootNode,
+        lockedNodeId,
+        lockedNodeLabel,
+        nodesById,
+        getDescendants,
+        showGroupButtons,
+        conf.showSelectChildrenButton,
+        conf.showSelectDescendantsButton,
+        selectedNodesKey,
+        _handleGroupSelect,
+    ]);
+
+    // Nodes are loaded asynchronously, long after the uncontrolled antd defaults have been captured:
+    // the expanded keys have to be driven from here to honour `defaultExpanded`
+    const autoExpandedKeys = useMemo<TreeSelectKey[]>(() => {
+        if (conf.defaultExpanded) {
+            return Object.keys(nodesById);
+        }
+
+        // Ancestors of the current values, so that they are visible without unfolding anything
+        return [
+            ...new Set(backendValues.flatMap(backendValue => nodesById[backendValue.treeValue?.id]?.parents ?? [])),
+        ];
+    }, [conf.defaultExpanded, nodesById, backendValues]);
+
+    // Errors of the field itself first, then the ones set on the form by the record edition as a whole
+    const formErrors = form.getFieldError(attribute.id);
+    const errorMessage = errors[0] ?? (formErrors.length > 0 ? String(formErrors[0]) : error?.message);
 
     return (
-        <StyledWrapperDiv $metadataEdit={metadataEdit}>
+        <div className={metadataEdit ? undefined : fieldWrapper}>
             <AntForm.Item name={attribute.id} noStyle>
-                <KitInputWrapperStyled
-                    id={TREE_FIELD_ID_PREFIX + attribute.id}
-                    data-testid="tree-field"
-                    label={label}
-                    required={attribute.required}
-                    bordered
-                    status={isFieldInError ? 'error' : undefined}
-                    helper={isFieldInError ? String(fieldErrors[0]) : undefined}
-                    $readonlyBackground={isReadOnly}
-                    extra={
-                        <>
-                            <KitInputExtraAlignLeftDiv>
+                <FormItemChildDiv id={TREE_FIELD_ID_PREFIX + attribute.id}>
+                    <KitTreeSelect
+                        data-testid="tree-field-v2"
+                        label={label}
+                        required={attribute.required}
+                        treeData={treeData}
+                        value={value}
+                        onChange={handleChange}
+                        multiple={attribute.multiple_values}
+                        // Without it antd checks the whole subtree, whereas selecting an intermediate
+                        // node is a value of its own in LEAV
+                        treeCheckStrictly={attribute.multiple_values}
+                        // In LEAV every checked node is a value of its own, never a shortcut for its
+                        // children: antd's default `SHOW_CHILD` strategy drops from the displayed tags
+                        // any node whose children are all checked (`formatStrategyValues` in
+                        // `@rc-component/tree-select`), while the value stays saved.
+                        showCheckedStrategy={AntTreeSelect.SHOW_ALL}
+                        // While searching, antd unfolds the matching nodes on its own
+                        treeExpandedKeys={searchValue ? undefined : (expandedKeys ?? autoExpandedKeys)}
+                        onTreeExpand={setExpandedKeys}
+                        showSearch={{
+                            onSearch: setSearchValue,
+                            treeNodeFilterProp: 'label',
+                        }}
+                        treeNodeLabelProp="label"
+                        readonly={isReadOnly}
+                        allowClear={!attribute.required}
+                        // The dropdown is normally opened before the tree has arrived: `loading` only
+                        // turns the suffix icon into a spinner, the popup needs its own
+                        loading={loading}
+                        notFoundContent={loading ? <KitLoader /> : undefined}
+                        onOpenChange={open => open && setHasOpenedDropdown(true)}
+                        status={errorMessage ? 'error' : undefined}
+                        helper={errorMessage}
+                        placeholder={t('record_edition.placeholder.select_an_option')}
+                        extra={
+                            <div className={inputExtraAlignLeft}>
                                 <ComputeIndicator calculatedFlags={calculatedFlags} inheritedFlags={inheritedFlags} />
-                            </KitInputExtraAlignLeftDiv>
-                            {RemoveAllTreeNodes}
-                        </>
-                    }
-                >
-                    <TreeNodeList
-                        attribute={attribute}
-                        backendValues={backendValues}
-                        removeTreeNode={removeTreeNode}
-                        isReadOnly={isReadOnly}
+                            </div>
+                        }
                     />
-                    {!isReadOnly && (
-                        <StyledFieldFooterKitButton
-                            icon={<FontAwesomeIcon icon={faList} />}
-                            onClick={openModal}
-                            size="m"
-                            $hasNoValue={!backendValues?.length}
-                        >
-                            {actionButtonLabel}
-                        </StyledFieldFooterKitButton>
-                    )}
-                    {SelectTreeNodeModal}
-                </KitInputWrapperStyled>
+                </FormItemChildDiv>
             </AntForm.Item>
-        </StyledWrapperDiv>
+        </div>
     );
 };
 

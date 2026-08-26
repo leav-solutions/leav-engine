@@ -47,7 +47,7 @@ vi.mock('_ui/components/SelectRecordForLinkModal', () => ({
         ) : null,
 }));
 
-vi.mock('../../../TreeField/manage-tree-node-selection/SelectTreeNodeModal', () => ({
+vi.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNodeModal: ({onConfirm, open}: any) =>
         open ? (
             <div data-testid="select-tree-node-modal">

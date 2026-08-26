@@ -16,7 +16,7 @@ import {AntForm, KitButton, KitTooltip} from 'aristid-ds';
 import {type Dispatch, type SetStateAction, useState} from 'react';
 import {type RecordFormElementsValueLinkValue} from '_ui/hooks/useGetRecordForm';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
-import {SelectTreeNodeModal} from '../../../TreeField/manage-tree-node-selection/SelectTreeNodeModal';
+import {SelectTreeNodeModal} from '_ui/components/SelectTreeNode';
 
 interface IUseLinkRecordProps {
     attribute: RecordFormAttributeLinkAttributeFragment;

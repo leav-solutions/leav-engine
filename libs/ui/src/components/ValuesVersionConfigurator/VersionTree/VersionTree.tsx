@@ -11,7 +11,7 @@ import {themeVars} from '../../../antdTheme';
 import useLang from '../../../hooks/useLang/useLang';
 import {type ITreeNode} from '../../../types/trees';
 import {type GetVersionableAttributesByLibraryQuery} from '../../../_gqlTypes';
-import {SelectTreeNodeModalOld} from '../../SelectTreeNodeModalOld';
+import {SelectTreeNodeModal} from '../../SelectTreeNode';
 
 const Wrapper = styled.div`
     background: ${themeVars.lightBg};
@@ -69,8 +69,8 @@ function VersionTree({tree, selectedNode, readOnly, onNodeChange}: IVersionTreeP
 
     const [isTreeNodeSelectorOpen, setIsTreeNodeSelectorOpen] = React.useState(false);
 
-    const _handleTreeSelect = (node: ITreeNode) => {
-        onNodeChange(node);
+    const _handleTreeSelect = (selectedNodes: ITreeNode[]) => {
+        onNodeChange(selectedNodes[0] ?? null);
     };
 
     const _handleClickSelectedNode = () => {
@@ -107,12 +107,14 @@ function VersionTree({tree, selectedNode, readOnly, onNodeChange}: IVersionTreeP
                 </SelectedNodeTitle>
             </Wrapper>
             {isTreeNodeSelectorOpen && (
-                <SelectTreeNodeModalOld
-                    treeId={tree.id}
+                <SelectTreeNodeModal
+                    open
+                    title={t('tree-node-selection.title')}
+                    attribute={{multiple_values: false, linked_tree: {id: tree.id}}}
+                    // The current version is shown selected, and the tree unfolds down to it
+                    backendValues={selectedNode ? [{treeValue: {id: selectedNode.id}}] : []}
+                    onConfirm={_handleTreeSelect}
                     onClose={_handleCloseTreeSelector}
-                    isVisible={isTreeNodeSelectorOpen}
-                    onSubmit={_handleTreeSelect}
-                    selectedNodeKey={selectedNode?.id}
                 />
             )}
         </>

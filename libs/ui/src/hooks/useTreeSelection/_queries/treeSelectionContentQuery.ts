@@ -2,6 +2,7 @@ import {gql} from '@apollo/client';
 import {
     type ChildrenAsRecordValuePermissionFilterInput,
     type DependentValuesPermissionFilterInput,
+    type LibraryBehavior,
 } from '_ui/_gqlTypes';
 
 /** Same default as `DEFAULT_DEPTH_TREE_NODES` of the V1 query: deeper nodes are not fetched. */
@@ -19,6 +20,7 @@ const NODE_FRAGMENT = `
                 # Part of the RecordIdentity cache key, see cacheTypePolicies
                 library {
                     id
+                    behavior
                 }
             }
         }
@@ -79,6 +81,7 @@ export const treeSelectionRootNodeQuery = gql`
                 label
                 library {
                     id
+                    behavior
                 }
             }
         }
@@ -87,7 +90,7 @@ export const treeSelectionRootNodeQuery = gql`
 
 export interface ITreeSelectionContentRecord {
     id: string;
-    whoAmI: {id: string; label?: string | null; library: {id: string}};
+    whoAmI: {id: string; label?: string | null; library: {id: string; behavior: LibraryBehavior}};
 }
 
 export interface ITreeSelectionContentNode {

@@ -31,8 +31,8 @@ export const DestinationStep: FunctionComponent<IDestinationStepProps> = ({
             <SelectTreeNode
                 treeId={treeId}
                 onSelect={onSelect}
-                selectedNodes={[selectedNodeKey]}
-                canSelectRoot
+                selectedNodes={selectedNodeKey ? [selectedNodeKey] : []}
+                canSelectRootNode
                 selectableLibraries={selectableLibraries as string[]}
                 showNodeTypeIcon
                 refreshOnMount

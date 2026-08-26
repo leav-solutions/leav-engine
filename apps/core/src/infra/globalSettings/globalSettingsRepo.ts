@@ -21,6 +21,8 @@ export default function ({'core.infra.db.dbService': dbService = null}: IDeps = 
             const collec = dbService.db.collection(GLOBAL_SETTINGS_COLLECTION);
             const settingsToSave = {_key: settingsKey, ...settings};
 
+            // `mergeObjects: false`: the whole `settings` sub-object is replaced, not merged. A caller
+            // editing one custom key has to send the other ones back, or they are dropped.
             const savedSettings = await dbService.execute<IGlobalSettings[]>({
                 query: aql`UPSERT {_key: ${settingsKey}}
                     INSERT ${settingsToSave}

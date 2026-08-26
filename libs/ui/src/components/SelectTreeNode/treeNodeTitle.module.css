@@ -18,6 +18,13 @@
     min-width: 0;
 }
 
+/*
+ * The group selection buttons are revealed by CSS, not by an `onMouseEnter` on the title: the design
+ * system sets `display: flex` on antd's row, so the title span is only as wide as its text and never
+ * covers the row the user is actually hovering. Hence the `:hover` on the row above, and the `:has`
+ * rule stretching the title. Vitest stubs CSS, so no test can cover this reveal — the tests assert
+ * the DOM contract instead (the buttons sit in the row of their own node).
+ */
 .groupButtons {
     display: none;
 }

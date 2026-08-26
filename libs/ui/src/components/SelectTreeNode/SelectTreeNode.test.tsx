@@ -1,172 +1,301 @@
+import {type MockedResponse} from '@apollo/client/testing';
 import userEvent from '@testing-library/user-event';
-import * as apolloClient from '@apollo/client';
-import * as gqlTypes from '_ui/_gqlTypes';
-import {render, screen, waitFor} from '_ui/_tests/testUtils';
+import {vi} from 'vitest';
+import {LibraryBehavior, TreeDataQueryDocument} from '_ui/_gqlTypes';
+import {render, screen, waitFor, within} from '_ui/_tests/testUtils';
+import {
+    DEFAULT_TREE_SELECTION_DEPTH,
+    type ITreeSelectionContentNode,
+    treeSelectionContentQuery,
+    treeSelectionRootNodeQuery,
+} from '_ui/hooks/useTreeSelection/_queries/treeSelectionContentQuery';
 import {SelectTreeNode} from './SelectTreeNode';
 
-// `behavior` is fetched by `treeContentDataQuery`, a document built at runtime and thus ignored by
-// graphql-codegen: the generated type has to be widened by hand, here as in `SelectTreeNodeContent`.
-type MockTreeContentNode = Omit<gqlTypes.TreeContentDataQueryQuery['treeContent'][number], 'record'> & {
-    record: gqlTypes.TreeContentDataQueryQuery['treeContent'][number]['record'] & {
-        whoAmI: {library: {behavior: gqlTypes.LibraryBehavior}};
-    };
-    children?: MockTreeContentNode[];
+/**
+ * Every node renders its own group buttons — the reveal is a CSS `:hover` on antd's row, which jsdom
+ * knows nothing about — so a button has to be looked up inside the row of the node it belongs to.
+ */
+const _nodeButton = async (label: string, name: RegExp) => {
+    const row = (await screen.findByText(label)).closest('.ant-tree-node-content-wrapper') as HTMLElement;
+
+    return within(row).getByRole('button', {name});
 };
 
-const mockTreeContent: MockTreeContentNode[] = [
-    {
-        id: 'id1',
-        record: {
-            id: 'id1',
-            whoAmI: {
-                id: 'id1',
-                label: 'label1',
-                library: {
-                    id: 'directories',
-                    behavior: gqlTypes.LibraryBehavior.directories,
-                },
-            },
-        },
-        childrenCount: 1,
-        children: [
-            {
-                id: 'id2',
-                record: {
-                    id: 'id2',
-                    whoAmI: {
-                        id: 'id2',
-                        label: 'label2',
-                        library: {
-                            id: 'directories',
-                            behavior: gqlTypes.LibraryBehavior.directories,
-                        },
-                    },
-                },
-                childrenCount: 0,
-            },
-            {
-                id: 'id3',
-                record: {
-                    id: 'id3',
-                    whoAmI: {
-                        id: 'id3',
-                        label: 'blue.png',
-                        library: {
-                            id: 'files',
-                            behavior: gqlTypes.LibraryBehavior.files,
-                        },
-                    },
-                },
-                childrenCount: 0,
-            },
-        ],
+const treeId = 'categories';
+
+interface IMockLibrary {
+    id: string;
+    behavior: LibraryBehavior;
+}
+
+const categoriesLibrary: IMockLibrary = {id: 'categories', behavior: LibraryBehavior.standard};
+
+// `__typename` is required: MockedProvider adds it to the documents, the cache drops what lacks it
+const _record = (id: string, library: IMockLibrary = categoriesLibrary) => ({
+    __typename: 'Record',
+    id,
+    whoAmI: {
+        __typename: 'RecordIdentity',
+        id,
+        label: id,
+        library: {__typename: 'Library', ...library},
     },
+});
+
+type MockContentNode = ITreeSelectionContentNode & {__typename: string};
+
+const _node = (id: string, children: MockContentNode[] = [], library?: IMockLibrary): MockContentNode => ({
+    __typename: 'TreeNode',
+    id,
+    childrenCount: children.length,
+    record: _record(id, library),
+    children,
+});
+
+const treeContent = [_node('branch', [_node('leaf1'), _node('leaf2')]), _node('otherLeaf')];
+
+// A `files` tree mixes directories and files, the case the node type icon is meant for
+const filesTreeContent = [
+    _node('directory', [], {id: 'directories', behavior: LibraryBehavior.directories}),
+    _node('blue.png', [], {id: 'files', behavior: LibraryBehavior.files}),
 ];
 
-const _mockQueries = () => {
-    vi.spyOn(gqlTypes, 'useTreeDataQueryQuery').mockReturnValue({
+const _contentMock = ({
+    startAt = null,
+    depth = DEFAULT_TREE_SELECTION_DEPTH,
+    content = treeContent,
+} = {}): MockedResponse => ({
+    request: {
+        query: treeSelectionContentQuery(depth),
+        variables: {
+            treeId,
+            startAt,
+            childrenAsRecordValuePermissionFilter: undefined,
+            dependentValuesPermissionFilter: undefined,
+        },
+    },
+    maxUsageCount: Number.POSITIVE_INFINITY,
+    result: {data: {treeContent: content}},
+});
+
+const treeDataMock: MockedResponse = {
+    request: {query: TreeDataQueryDocument, variables: {treeId}},
+    maxUsageCount: Number.POSITIVE_INFINITY,
+    result: {
         data: {
             trees: {
-                list: [{id: 'treeId', label: {fr: 'Tree Label'}}],
+                __typename: 'TreesList',
+                list: [{__typename: 'Tree', id: treeId, label: {fr: 'Catégories'}}],
             },
         },
-        called: true,
-        loading: false,
-        error: null,
-    } as gqlTypes.TreeDataQueryQueryHookResult);
-
-    vi.spyOn(apolloClient, 'useLazyQuery').mockReturnValue([
-        vi.fn().mockResolvedValue({
-            data: {
-                treeContent: mockTreeContent,
-            },
-        }),
-        {} as apolloClient.QueryResult,
-    ] as unknown as ReturnType<typeof apolloClient.useLazyQuery>);
+    },
 };
 
+const defaultMocks = [_contentMock(), treeDataMock];
+
 describe('SelectTreeNode', () => {
-    beforeEach(() => {
-        _mockQueries();
+    test('Renders the tree content under a pseudo root named after the tree', async () => {
+        render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} />, {mocks: defaultMocks});
+
+        expect(await screen.findByText('Catégories')).toBeVisible();
+        expect(screen.getByText('branch')).toBeVisible();
+        expect(screen.getByText('otherLeaf')).toBeVisible();
+        // Not expanded by default
+        expect(screen.queryByText('leaf1')).not.toBeInTheDocument();
     });
 
-    afterEach(() => {
-        vi.restoreAllMocks();
+    test('Unfolds the whole tree with defaultExpanded', async () => {
+        render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} defaultExpanded />, {mocks: defaultMocks});
+
+        expect(await screen.findByText('leaf1')).toBeVisible();
+        expect(screen.getByText('leaf2')).toBeVisible();
     });
 
-    test('Render tree and navigate', async () => {
-        render(<SelectTreeNode treeId="treeId" onSelect={vi.fn()} />);
+    test('Starts at displayRootNode, which becomes the root of the displayed tree', async () => {
+        render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} displayRootNode="branch" />, {
+            mocks: [
+                _contentMock({startAt: 'branch', content: [_node('leaf1'), _node('leaf2')]}),
+                {
+                    request: {query: treeSelectionRootNodeQuery, variables: {treeId, nodeId: 'branch'}},
+                    result: {data: {getRecordByNodeId: _record('branch')}},
+                },
+            ],
+        });
 
-        await waitFor(() => screen.getByText('Tree Label'));
-        expect(screen.getByText('Tree Label')).toBeInTheDocument();
-
-        // First level loaded
-        expect(await screen.findByText('label1')).toBeInTheDocument();
-
-        // Expand node => fetch children
-        await userEvent.click(screen.getByRole('img', {name: 'Ouvrir'}));
-        await waitFor(() => expect(screen.getByText('label2')).toBeInTheDocument());
+        expect(await screen.findByText('branch')).toBeVisible();
+        expect(screen.getByText('leaf1')).toBeVisible();
+        expect(screen.queryByText('Catégories')).not.toBeInTheDocument();
+        expect(screen.queryByText('otherLeaf')).not.toBeInTheDocument();
     });
 
-    test('Should disable nodes from a non selectable library', async () => {
-        render(<SelectTreeNode treeId="treeId" onSelect={vi.fn()} selectableLibraries={['directories']} />);
+    test('Only fetches the content down to maxDepth', async () => {
+        render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} maxDepth={1} defaultExpanded />, {
+            // Only matches if the component asked for a depth of 1
+            mocks: [_contentMock({depth: 1, content: [_node('branch'), _node('otherLeaf')]}), treeDataMock],
+        });
 
-        await userEvent.click(await screen.findByRole('img', {name: 'Ouvrir'}));
+        expect(await screen.findByText('branch')).toBeVisible();
+        expect(screen.queryByText('leaf1')).not.toBeInTheDocument();
+    });
+
+    test('Selects a node on click, but not the pseudo root by default', async () => {
+        const onSelect = vi.fn();
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} />, {mocks: defaultMocks});
+
+        await userEvent.click(await screen.findByText('Catégories'));
+        expect(onSelect).not.toHaveBeenCalled();
+
+        await userEvent.click(screen.getByText('branch'));
+        expect(onSelect).toHaveBeenCalledTimes(1);
+        expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: 'branch'}), true);
+    });
+
+    test('Selects the pseudo root with canSelectRootNode, under the id of the tree', async () => {
+        const onSelect = vi.fn();
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} canSelectRootNode />, {mocks: defaultMocks});
+
+        await userEvent.click(await screen.findByText('Catégories'));
+
+        expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: treeId, record: null}), true);
+    });
+
+    test('Exempts the pseudo root from selectableLibraries, which it belongs to none of', async () => {
+        const onSelect = vi.fn();
+        render(
+            <SelectTreeNode
+                treeId={treeId}
+                onSelect={onSelect}
+                canSelectRootNode
+                selectableLibraries={['directories']}
+            />,
+            {mocks: defaultMocks},
+        );
+
+        // The nodes of the tree are records of the `categories` library
+        await userEvent.click(await screen.findByText('branch'));
+        expect(onSelect).not.toHaveBeenCalled();
+
+        await userEvent.click(screen.getByText('Catégories'));
+        expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: treeId}), true);
+    });
+
+    test('Disables the nodes of a library outside selectableLibraries', async () => {
+        const onSelect = vi.fn();
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} selectableLibraries={['directories']} />, {
+            mocks: [_contentMock({content: filesTreeContent}), treeDataMock],
+        });
 
         expect(await screen.findByRole('treeitem', {name: 'blue.png'})).toHaveAttribute('aria-disabled', 'true');
-        expect(screen.getByRole('treeitem', {name: 'label2'})).not.toHaveAttribute('aria-disabled', 'true');
-    });
-
-    test('Should not select a node from a non selectable library', async () => {
-        const onSelect = vi.fn();
-        render(<SelectTreeNode treeId="treeId" onSelect={onSelect} selectableLibraries={['directories']} />);
-
-        await userEvent.click(await screen.findByRole('img', {name: 'Ouvrir'}));
+        expect(screen.getByRole('treeitem', {name: 'directory'})).not.toHaveAttribute('aria-disabled', 'true');
 
         await userEvent.click(screen.getByText('blue.png'));
         expect(onSelect).not.toHaveBeenCalled();
 
-        await userEvent.click(screen.getByText('label2'));
-        expect(onSelect).toHaveBeenCalled();
+        await userEvent.click(screen.getByText('directory'));
+        expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: 'directory'}), true);
     });
 
-    test('Should display a type icon on each node when asked to', async () => {
-        const {container} = render(<SelectTreeNode treeId="treeId" onSelect={vi.fn()} showNodeTypeIcon />);
+    test('Shows a type icon on each node with showNodeTypeIcon', async () => {
+        const {container} = render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} showNodeTypeIcon />, {
+            mocks: [_contentMock({content: filesTreeContent}), treeDataMock],
+        });
 
-        await userEvent.click(await screen.findByRole('img', {name: 'Ouvrir'}));
         await screen.findByText('blue.png');
 
-        expect(container.querySelectorAll('[data-icon="folder"]')).toHaveLength(2);
+        // The pseudo root has no record, hence no icon of its own
+        expect(container.querySelectorAll('[data-icon="folder"]')).toHaveLength(1);
         expect(container.querySelectorAll('[data-icon="file-image"]')).toHaveLength(1);
     });
 
-    test('Should not display any type icon by default', async () => {
-        const {container} = render(<SelectTreeNode treeId="treeId" onSelect={vi.fn()} />);
+    test('Does not show any type icon by default', async () => {
+        const {container} = render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} />, {
+            mocks: [_contentMock({content: filesTreeContent}), treeDataMock],
+        });
 
-        await screen.findByText('label1');
+        await screen.findByText('blue.png');
 
         expect(container.querySelector('[data-icon="folder"]')).not.toBeInTheDocument();
     });
 
-    test('Should read the tree content from the cache by default', async () => {
-        render(<SelectTreeNode treeId="treeId" onSelect={vi.fn()} />);
+    test('Keeps the pseudo root unselectable with leaves_only, even with canSelectRootNode', async () => {
+        const onSelect = vi.fn();
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} canSelectRootNode selectableNodes="leaves_only" />, {
+            mocks: defaultMocks,
+        });
 
-        await screen.findByText('label1');
+        await userEvent.click(await screen.findByText('Catégories'));
 
-        expect(apolloClient.useLazyQuery).toHaveBeenCalledWith(
-            expect.anything(),
-            expect.objectContaining({fetchPolicy: undefined}),
-        );
+        expect(onSelect).not.toHaveBeenCalled();
     });
 
-    test('Should bypass the cache when asked to refresh on mount', async () => {
-        render(<SelectTreeNode treeId="treeId" onSelect={vi.fn()} refreshOnMount />);
+    test('Only lets leaves be selected with leaves_only', async () => {
+        const onSelect = vi.fn();
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} selectableNodes="leaves_only" />, {
+            mocks: defaultMocks,
+        });
 
-        await screen.findByText('label1');
+        await userEvent.click(await screen.findByText('branch'));
+        expect(onSelect).not.toHaveBeenCalled();
 
-        expect(apolloClient.useLazyQuery).toHaveBeenCalledWith(
-            expect.anything(),
-            expect.objectContaining({fetchPolicy: 'network-only'}),
+        await userEvent.click(screen.getByText('otherLeaf'));
+        expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: 'otherLeaf'}), true);
+    });
+
+    test('Removes the checkbox of unselectable nodes in checkable mode', async () => {
+        const onCheck = vi.fn();
+        const {container} = render(
+            <SelectTreeNode
+                treeId={treeId}
+                onSelect={vi.fn()}
+                onCheck={onCheck}
+                checkable
+                selectableNodes="leaves_only"
+                defaultExpanded
+            />,
+            {mocks: defaultMocks},
         );
+
+        await screen.findByText('branch');
+
+        // Only the 3 leaves can be checked: neither the pseudo root nor `branch`
+        await waitFor(() => expect(container.querySelectorAll('.ant-tree-checkbox')).toHaveLength(3));
+
+        await userEvent.click(screen.getByText('branch'));
+        expect(onCheck).not.toHaveBeenCalled();
+
+        await userEvent.click(screen.getByText('leaf1'));
+        expect(onCheck).toHaveBeenCalledWith([expect.objectContaining({id: 'leaf1'})]);
+    });
+
+    test('Selects every direct child with showSelectChildrenButton', async () => {
+        const onSelect = vi.fn();
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} showSelectChildrenButton defaultExpanded />, {
+            mocks: defaultMocks,
+        });
+
+        await userEvent.click(await _nodeButton('branch', /select_children/));
+
+        expect(onSelect).toHaveBeenCalledTimes(2);
+        expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: 'leaf1'}), true);
+        expect(onSelect).toHaveBeenCalledWith(expect.objectContaining({id: 'leaf2'}), true);
+    });
+
+    test('Selects every descendant with showSelectDescendantsButton', async () => {
+        const onSelect = vi.fn();
+        render(<SelectTreeNode treeId={treeId} onSelect={onSelect} showSelectDescendantsButton defaultExpanded />, {
+            mocks: defaultMocks,
+        });
+
+        await userEvent.click(await _nodeButton('Catégories', /select_descendants/));
+
+        // The whole tree, the pseudo root excluded since it cannot be selected
+        expect(onSelect.mock.calls.map(([node]) => node.id)).toEqual(['branch', 'leaf1', 'leaf2', 'otherLeaf']);
+    });
+
+    test('Does not show the group selection buttons by default', async () => {
+        render(<SelectTreeNode treeId={treeId} onSelect={vi.fn()} defaultExpanded />, {mocks: defaultMocks});
+
+        expect(await screen.findByText('branch')).toBeVisible();
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 });

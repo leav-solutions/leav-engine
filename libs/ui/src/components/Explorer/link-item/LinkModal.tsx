@@ -7,7 +7,7 @@ import {useAddLinkMassAction} from './useAddLinkMassAction';
 import {useViewSettingsContext} from '../manage-view-settings/store-view-settings/useViewSettingsContext';
 import {useReplaceLinkMassAction} from './useReplaceLinkMassAction';
 import {LINK_RECORDS_MODAL_CLASSNAME} from '../_constants';
-import {SelectTreeNodeModal} from '_ui/components';
+import {SelectTreeNodeModal} from '_ui/components/SelectTreeNode';
 import {useSharedTranslation} from '_ui/hooks/useSharedTranslation';
 
 interface ILinkModalProps {
