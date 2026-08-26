@@ -218,7 +218,7 @@ describe('EditRecordPage', () => {
                 />,
             );
 
-            waitFor(() => {
+            await waitFor(() => {
                 expect(editRecordFn).toHaveBeenCalledWith(
                     expect.objectContaining({
                         formId: 'creation-form',

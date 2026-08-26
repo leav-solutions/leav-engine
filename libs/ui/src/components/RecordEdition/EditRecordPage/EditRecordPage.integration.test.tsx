@@ -400,7 +400,7 @@ describe('EditRecordPage', () => {
         await userEvent.type(simpleInput, 'some value');
         await userEvent.tab();
 
-        waitFor(() => {
+        await waitFor(() => {
             expect(screen.queryByText('some value')).not.toBeInTheDocument();
             expect(saveValuesMock).toHaveBeenCalled();
         });
