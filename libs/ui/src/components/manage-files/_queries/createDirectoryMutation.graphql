@@ -1,0 +1,5 @@
+mutation CREATE_DIRECTORY($library: String!, $nodeId: String!, $name: String!) {
+    createDirectory(library: $library, nodeId: $nodeId, name: $name) {
+        ...RecordIdentity
+    }
+}

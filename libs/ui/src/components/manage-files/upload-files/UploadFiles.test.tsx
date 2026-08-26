@@ -1,8 +1,14 @@
 import userEvent from '@testing-library/user-event';
-import {GetDirectoryDataDocument, LibraryBehavior, TreeBehavior, UploadUpdateDocument} from '_ui/_gqlTypes';
+import {
+    DoesFileExistAsChildDocument,
+    GetDirectoryDataDocument,
+    GetTreeLibrariesDocument,
+    LibraryBehavior,
+    TreeBehavior,
+    UploadUpdateDocument,
+} from '_ui/_gqlTypes';
 import * as gqlTypes from '_ui/_gqlTypes';
-import {doesFileExistAsChild} from '_ui/_queries/records/doesFileExistAsChild';
-import {getTreeLibraries} from '_ui/_queries/trees/getTreeLibraries';
+import {KitModal} from 'aristid-ds';
 import {fireEvent, render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeSimple} from '_ui/__mocks__/common/tree';
@@ -17,11 +23,13 @@ vi.mock('_ui/components/SelectTreeNode', () => ({
     ),
 }));
 
+KitModal.setAppElement(document.body);
+
 describe('UploadFiles', () => {
     const commonMocks = [
         {
             request: {
-                query: getTreeLibraries,
+                query: GetTreeLibrariesDocument,
                 variables: {
                     library: 'files',
                 },
@@ -163,7 +171,7 @@ describe('UploadFiles', () => {
             ...commonMocks,
             {
                 request: {
-                    query: doesFileExistAsChild,
+                    query: DoesFileExistAsChildDocument,
                     variables: {
                         treeId: 'files_tree',
                         parentNode: null,
@@ -188,16 +196,10 @@ describe('UploadFiles', () => {
 
         await userEvent.click(screen.getByTestId('upload-btn'));
 
-        // Since antd 6, confirm modals render their title twice (modal header + confirm body),
-        // so a plain getByText matches multiple elements. Target the confirm body one.
-        await waitFor(() =>
-            expect(
-                screen.getByText('upload.replace_modal.title', {selector: '.ant-modal-confirm-title'}),
-            ).toBeInTheDocument(),
-        );
+        await waitFor(() => expect(screen.getByTestId('replace-file-modal')).toBeInTheDocument());
 
-        const replaceBtn = screen.getByText('upload.replace_modal.replaceBtn');
-        const keepBtn = screen.getByText('upload.replace_modal.keepBtn');
+        const replaceBtn = screen.getByTestId('replace-btn');
+        const keepBtn = screen.getByTestId('keep-both-btn');
 
         expect(replaceBtn).toBeInTheDocument();
         expect(keepBtn).toBeInTheDocument();
@@ -207,6 +209,57 @@ describe('UploadFiles', () => {
         await waitFor(() => expect(screen.queryByTestId('upload-btn')).not.toBeInTheDocument());
 
         expect(await screen.findByTestId('close-btn')).toBeInTheDocument();
+    });
+
+    test('Should cancel the whole upload from the conflict prompt', async () => {
+        const mockFile = new File(['(⌐□_□)'], 'chucknorris.png', {type: 'image/png'});
+
+        (mockFile as any).uid = 'uid';
+
+        const runUploadMock = vi.fn();
+        vi.spyOn(gqlTypes, 'useUploadMutation').mockImplementation(
+            () => [runUploadMock, {loading: false} as any] as any,
+        );
+
+        const mocks = [
+            ...commonMocks,
+            {
+                request: {
+                    query: DoesFileExistAsChildDocument,
+                    variables: {
+                        treeId: 'files_tree',
+                        parentNode: null,
+                        filename: 'chucknorris.png',
+                    },
+                },
+                result: {
+                    data: {
+                        doesFileExistAsChild: true,
+                    },
+                },
+            },
+        ];
+
+        render(<UploadFiles defaultSelectedNode={{id: 'files_tree'}} libraryId="files" onClose={vi.fn()} />, {mocks});
+
+        fireEvent.drop(screen.getByTestId('dragger'), {
+            dataTransfer: {
+                files: [mockFile],
+            },
+        });
+
+        await userEvent.click(screen.getByTestId('upload-btn'));
+
+        await waitFor(() => expect(screen.getByTestId('replace-file-modal')).toBeInTheDocument());
+
+        await userEvent.click(screen.getByTestId('cancel-btn'));
+
+        await waitFor(() => expect(screen.queryByTestId('replace-file-modal')).not.toBeInTheDocument());
+
+        expect(runUploadMock).not.toHaveBeenCalled();
+        expect(screen.getByTestId('upload-btn')).toBeInTheDocument();
+        expect(screen.queryByTestId('close-btn')).not.toBeInTheDocument();
+        expect(screen.getByText('chucknorris.png')).toBeInTheDocument();
     });
 
     test('Should display the selected directory path without crashing', async () => {

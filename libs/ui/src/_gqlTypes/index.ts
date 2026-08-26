@@ -1986,7 +1986,6 @@ export type GetTreeByIdQueryVariables = Exact<{
 export type GetTreeByIdQuery = { trees?: { list: Array<{ id: string, label?: any | null, behavior: TreeBehavior, system: boolean, libraries: Array<{ library: { id: string, label?: any | null }, settings: { allowMultiplePositions: boolean, allowedAtRoot: boolean, allowedChildren: Array<string> } }> }> } | null };
 
 export type GetTreeLibrariesQueryVariables = Exact<{
-  treeId?: InputMaybe<Array<Scalars['ID']['input']> | Scalars['ID']['input']>;
   library?: InputMaybe<Scalars['String']['input']>;
 }>;
 
@@ -5387,8 +5386,8 @@ export type GetTreeByIdLazyQueryHookResult = ReturnType<typeof useGetTreeByIdLaz
 export type GetTreeByIdSuspenseQueryHookResult = ReturnType<typeof useGetTreeByIdSuspenseQuery>;
 export type GetTreeByIdQueryResult = Apollo.QueryResult<GetTreeByIdQuery, GetTreeByIdQueryVariables>;
 export const GetTreeLibrariesDocument = gql`
-    query GET_TREE_LIBRARIES($treeId: [ID!], $library: String) {
-  trees(filters: {id: $treeId, library: $library}) {
+    query GET_TREE_LIBRARIES($library: String) {
+  trees(filters: {library: $library}) {
     totalCount
     list {
       id

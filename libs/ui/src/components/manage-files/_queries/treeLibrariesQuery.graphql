@@ -1,0 +1,23 @@
+query GET_TREE_LIBRARIES($library: String) {
+    trees(filters: {library: $library}) {
+        totalCount
+        list {
+            id
+            behavior
+            system
+            libraries {
+                library {
+                    id
+                    label
+                    behavior
+                    system
+                }
+                settings {
+                    allowMultiplePositions
+                    allowedChildren
+                    allowedAtRoot
+                }
+            }
+        }
+    }
+}

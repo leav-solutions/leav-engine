@@ -1,8 +1,12 @@
 import userEvent from '@testing-library/user-event';
-import {LibraryBehavior, TreeBehavior} from '_ui/_gqlTypes';
-import {createDirectoryMutation} from '_ui/_queries/files/createDirectory';
-import {doesFileExistAsChild} from '_ui/_queries/records/doesFileExistAsChild';
-import {getTreeLibraries} from '_ui/_queries/trees/getTreeLibraries';
+import {
+    CreateDirectoryDocument,
+    DoesFileExistAsChildDocument,
+    GetTreeLibrariesDocument,
+    LibraryBehavior,
+    TreeBehavior,
+} from '_ui/_gqlTypes';
+import {KitModal} from 'aristid-ds';
 import {fireEvent, render, screen, waitFor} from '_ui/_tests/testUtils';
 import {mockRecord} from '_ui/__mocks__/common/record';
 import {mockTreeSimple} from '_ui/__mocks__/common/tree';
@@ -12,11 +16,13 @@ vi.mock('_ui/components/SelectTreeNode', () => ({
     SelectTreeNode: () => <div>SelectTreeNode</div>,
 }));
 
-describe('UploadFiles', () => {
+KitModal.setAppElement(document.body);
+
+describe('CreateDirectory', () => {
     const commonMocks = [
         {
             request: {
-                query: getTreeLibraries,
+                query: GetTreeLibrariesDocument,
                 variables: {
                     library: 'files_directories',
                 },
@@ -78,7 +84,7 @@ describe('UploadFiles', () => {
         const mocks = [
             {
                 request: {
-                    query: doesFileExistAsChild,
+                    query: DoesFileExistAsChildDocument,
                     variables: {
                         treeId: 'files_tree',
                         parentNode: null,
@@ -93,7 +99,7 @@ describe('UploadFiles', () => {
             },
             {
                 request: {
-                    query: getTreeLibraries,
+                    query: GetTreeLibrariesDocument,
                     variables: {
                         library: 'files_directories',
                     },
@@ -131,7 +137,7 @@ describe('UploadFiles', () => {
             },
             {
                 request: {
-                    query: createDirectoryMutation,
+                    query: CreateDirectoryDocument,
                     variables: {
                         library: 'files_directories',
                         nodeId: 'files_tree',
@@ -164,20 +170,22 @@ describe('UploadFiles', () => {
 
         await userEvent.click(createBtn);
 
-        // Since antd 6, confirm modals render their title twice (modal header + confirm body),
-        // so a plain getByText matches multiple elements. Target the confirm body one.
+        await waitFor(() => expect(screen.getByText('create_directory.duplicate_modal.title')).toBeInTheDocument());
+
+        // The warning is rendered imperatively in its own React root, outside of what testing-library
+        // tears down: close it explicitly or it leaks into the next test.
+        await userEvent.click(screen.getByText('global.ok'));
+
         await waitFor(() =>
-            expect(
-                screen.getByText('create_directory.duplicate_modal.title', {selector: '.ant-modal-confirm-title'}),
-            ).toBeInTheDocument(),
+            expect(screen.queryByText('create_directory.duplicate_modal.title')).not.toBeInTheDocument(),
         );
     });
 
-    test('Directory name exists', async () => {
+    test('Directory name does not exist', async () => {
         const mocks = [
             {
                 request: {
-                    query: doesFileExistAsChild,
+                    query: DoesFileExistAsChildDocument,
                     variables: {
                         treeId: 'files_tree',
                         parentNode: null,
@@ -192,7 +200,7 @@ describe('UploadFiles', () => {
             },
             {
                 request: {
-                    query: getTreeLibraries,
+                    query: GetTreeLibrariesDocument,
                     variables: {
                         library: 'files_directories',
                     },
@@ -230,7 +238,7 @@ describe('UploadFiles', () => {
             },
             {
                 request: {
-                    query: createDirectoryMutation,
+                    query: CreateDirectoryDocument,
                     variables: {
                         library: 'files_directories',
                         nodeId: 'files_tree',
@@ -262,7 +270,7 @@ describe('UploadFiles', () => {
         userEvent.click(screen.getByTestId('create-btn'));
 
         await waitFor(() =>
-            expect(screen.queryByTestId('create_directory.duplicate_modal.title')).not.toBeInTheDocument(),
+            expect(screen.queryByText('create_directory.duplicate_modal.title')).not.toBeInTheDocument(),
         );
     });
 });

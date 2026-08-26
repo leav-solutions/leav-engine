@@ -27,10 +27,8 @@ const CreateDirectoryMock = 'CreateDirectory';
 const EditRecordModalMock = 'EditRecordModal';
 const LinkRecordModalMock = 'LinkRecordModalMock';
 
-vi.mock('_ui/components/UploadFiles', () => ({
+vi.mock('_ui/components/manage-files', () => ({
     UploadFiles: () => <div>{UploadFilesMock}</div>,
-}));
-vi.mock('_ui/components/CreateDirectory', () => ({
     CreateDirectory: () => <div>{CreateDirectoryMock}</div>,
 }));
 

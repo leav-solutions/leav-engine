@@ -1,0 +1,8 @@
+mutation UPLOAD($library: String!, $nodeId: String!, $files: [FileInput!]!) {
+    upload(library: $library, nodeId: $nodeId, files: $files) {
+        uid
+        record {
+            ...RecordIdentity
+        }
+    }
+}
