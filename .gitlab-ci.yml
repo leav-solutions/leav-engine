@@ -1136,6 +1136,7 @@ release:
       when: manual
   before_script:
     - apk add --no-cache jq git
+    - corepack enable # needed for `yarn workspaces list` below
   script:
     - |
       set -e
@@ -1152,12 +1153,19 @@ release:
       git remote set-url origin "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
 
       git checkout -b "$RELEASE_BRANCH"
-      # Propagate to every package.json AND manifest.json (a yarn foreach wouldn't cover
-      # manifest.json). npm version already bumped the root; this loop re-writes it too, so its
+      # Propagate to real yarn workspaces' package.json (+ their public/manifest.json, when it
+      # exists) only. A blind `find` on package.json/manifest.json would also bump test-fixture
+      # package.json nested under a workspace's own src/ (e.g.
+      # apps/core/src/__tests__/fixtures/**) — not real workspace members, just test data. npm
+      # version already bumped the root; this loop re-writes it too (it's workspace "."), so its
       # formatting doesn't matter. --indent 4 matches .prettierrc's tabWidth (jq's own default is
       # 2), otherwise every release reformats every file and buries the version bump in noise.
-      for f in $(find . \( -name package.json -o -name manifest.json \) -not -path "*/node_modules/*" -type f); do
-        tmp="$f.tmp"; jq --indent 4 --arg v "$RELEASE_VERSION" '.version = $v' "$f" > "$tmp" && mv "$tmp" "$f"
+      for loc in $(yarn workspaces list --json | jq -r .location); do
+        for f in "$loc/package.json" "$loc/public/manifest.json"; do
+          if [ -f "$f" ]; then
+            tmp="$f.tmp"; jq --indent 4 --arg v "$RELEASE_VERSION" '.version = $v' "$f" > "$tmp" && mv "$tmp" "$f"
+          fi
+        done
       done
       # The release MR only runs the release-gate job (lint/tests/build excluded for
       # make-release-* branches), that green job is enough to trigger the auto-merge.
