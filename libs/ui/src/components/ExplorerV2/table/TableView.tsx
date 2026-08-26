@@ -104,7 +104,7 @@ const arePropsEqual = (prevProps: ITableViewProps, nextProps: ITableViewProps) =
             selectedKeys: prevProps.selection.selectedKeys,
             // Without this, clicking the split/collapse button has no effect: `columnSplit` is a new
             // object reference on every Explorer.tsx render, but its content is what actually matters
-            // (ExplorerV2/CLAUDE.md, "Éclatement de colonne" — TableView is memoized on three props only).
+            // (ExplorerV2/CLAUDE.md, "Dépliage de colonne" — TableView is memoized on three props only).
             splitAttributeIds: prevProps.columnSplit.splitAttributeIds,
         },
         {

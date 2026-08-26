@@ -103,7 +103,7 @@ app-studio importe). Construit par `panel-view-settings/store-current-view/viewV
 | `kanban/`                   | Mode Kanban complet : rendu, pagination per-column et DnD — voir section dédiée                                                                                                                                                                                                                                                                                      |
 | `cells/`                    | Rendu de cellule **partagé** entre les modes (`TableCell`, `IdCard`, `TableTagGroup`) — utilisé par `table/` **et** `kanban/` (cartes)                                                                                                                                                                                                                               |
 | `grouping/`                 | Regroupement partagé (`buildKanbanColumns`, `isValidGroupingAxis`, `groupFilters`, types `_types.ts`)                                                                                                                                                                                                                                                                |
-| `column-split/`             | Éclatement d'une colonne du mode tableau en une sous-colonne par valeur possible (LEAVC-1073/1074/1075) — voir section dédiée                                                                                                                                                                                                                                        |
+| `column-split/`             | Dépliage d'une colonne du mode tableau en une sous-colonne par valeur possible (LEAVC-1073/1074/1075) — voir section dédiée                                                                                                                                                                                                                                          |
 
 > ⚠️ `cells/IdCard.tsx`, `cells/TableCell.tsx` et `table/TableNameCell.tsx` sont des **copies** de
 > leurs homologues v1 (`Explorer/IdCard.tsx`, `Explorer/TableCell.tsx`, `Explorer/TableNameCell.tsx`)
@@ -156,7 +156,7 @@ d'`IdCard` (nom, cellule `link`, cellule `tree`) résout sa propre entrée du lo
 > la règle du DS, qui descend de `._kit-table_… .ant-table-wrapper` jusqu'au `th`, gagne toujours en
 > spécificité. L'en-tête se règle **uniquement** par `headerLineSize`. Corollaire : `headerTableHeight`
 > (calcul de la hauteur scrollable) doit être tenu à la main en miroir du token DS correspondant —
-> rien ne les relie. Une colonne éclatée ajoute une deuxième ligne d'en-tête mais **ne change pas**
+> rien ne les relie. Une colonne dépliée ajoute une deuxième ligne d'en-tête mais **ne change pas**
 > cette hauteur totale : les deux lignes se partagent les 48 px (voir plus bas).
 
 Le `height` posé par le DS sur un `th` est un **plancher**, pas un plafond : un libellé de colonne
@@ -308,14 +308,14 @@ ne vont **pas** dans le store éditable, mais sont **fusionnés à la requête**
 
 ---
 
-## Éclatement de colonne (`column-split/`)
+## Dépliage de colonne (`column-split/`)
 
 En mode `list` (`table/TableView`), une colonne d'attribut à **liste de valeurs fermée** (LEAVC-1073) ou
-de type **arbre à un seul niveau** (LEAVC-1074) peut être **éclatée** en une sous-colonne par valeur
+de type **arbre à un seul niveau** (LEAVC-1074) peut être **dépliée** en une sous-colonne par valeur
 possible ; chaque cellule porte une case à cocher (ou un bouton radio) qui lit/écrit la présence de cette
 valeur sur l'enregistrement de la ligne.
 
-**Deux sources d'options, un seul point d'entrée.** `useColumnSplitSources(attributs éclatables)` rend, par
+**Deux sources d'options, un seul point d'entrée.** `useColumnSplitSources(attributs dépliables)` rend, par
 id d'attribut, ses sous-colonnes **ou** la raison pour laquelle il n'en a pas (`IColumnSplitSource`, dont
 l'`unavailableReasonKey` est une clé i18n de `_constants.ts` — jamais une chaîne traduite, pour que la
 résolution reste pure) :
@@ -327,7 +327,7 @@ résolution reste pure) :
 
 Les champs `column_split_enabled`, `required`, `permissions.edit_value` **et** `valuesList` sont portés par
 `_queries/libraryMetadataQuery.graphql`, jouée une seule fois en amont pour toute la Library : pour les
-listes de valeurs, **aucune requête par attribut** à l'éclatement, donc aucun état de chargement à gérer.
+listes de valeurs, **aucune requête par attribut** au dépliage, donc aucun état de chargement à gérer.
 
 > ⚠️ Ne pas sortir ces champs dans une requête dédiée pour alléger la requête de métadonnées : celle-ci
 > tourne **une fois par Library**, là où une requête par attribut — ou un retour dans la requête de
@@ -337,20 +337,20 @@ listes de valeurs, **aucune requête par attribut** à l'éclatement, donc aucun
 `splitAttributeIds` est de longueur variable — appeler `useTreeNodeChildrenQuery` une fois par arbre
 violerait les règles des hooks. D'où le **fan-out impératif `apolloClient.query`** dans
 `useColumnSplitSources`, exactement le pattern de `kanban/useKanbanColumnsData` pour ses pages de colonne.
-**Ne pas** contourner ça par un composant-pont par colonne éclatée qui remonterait le résultat de son
+**Ne pas** contourner ça par un composant-pont par colonne dépliée qui remonterait le résultat de son
 hook. Le fan-out est indexé par **id d'arbre**, pas par attribut : deux attributs sur le même arbre
 partagent un seul fetch, `cache-first`.
 
-> ⚠️ Les arbres sont requêtés pour toute colonne éclatable **affichée**, éclatée ou non — pas seulement à
-> l'éclatement. La platitude d'un arbre n'est connue que de ses nœuds, et le bouton doit être désactivé
+> ⚠️ Les arbres sont requêtés pour toute colonne dépliable **affichée**, dépliée ou non — pas seulement au
+> dépliage. La platitude d'un arbre n'est connue que de ses nœuds, et le bouton doit être désactivé
 > **avant** le clic : autrement le premier clic ne ferait visiblement rien, puis désactiverait le bouton
 > après coup, avec un repli automatique et un `KitAlert.info` pour l'expliquer. Le coût est d'une requête de
-> nœuds racine par colonne arbre éclatable affichée — un paramètre que l'admin active attribut par attribut,
+> nœuds racine par colonne arbre dépliable affichée — un paramètre que l'admin active attribut par attribut,
 > donc 0 à 2 en pratique.
 
-**Un arbre n'est éclatable que s'il est plat** : dès qu'**un** nœud racine a des enfants,
-`mapTreeNodesToSplitSource` déclare tout l'attribut inéclatable (`unavailable_multi_level_tree`) plutôt que
-d'éclater sur les racines en perdant leurs descendants. Les arbres à plusieurs niveaux sont hors périmètre
+**Un arbre n'est dépliable que s'il est plat** : dès qu'**un** nœud racine a des enfants,
+`mapTreeNodesToSplitSource` déclare tout l'attribut indépliable (`unavailable_multi_level_tree`) plutôt que
+de déplier sur les racines en perdant leurs descendants. Les arbres à plusieurs niveaux sont hors périmètre
 du lot 1 d'édition grille.
 
 ⚠️ **La clé d'une option d'arbre est l'id du NŒUD, jamais celui de son enregistrement** : un même
@@ -363,9 +363,9 @@ est antérieur à l'ajout de ce `id`.
 `isValidGroupingAxis` (ADR-011), même si `values_list` est maintenant disponible : le lot 1 (core) garantit
 déjà que le flag n'est vrai que sur un attribut éligible, et re-dériver l'éligibilité côté front
 n'ajouterait qu'une seconde source de vérité divergeable. Quand un attribut flaggé n'a finalement rien à
-éclater — liste vidée ou ouverte après coup, arbre à plusieurs niveaux, nœuds racine non chargés —
+déplier — liste vidée ou ouverte après coup, arbre à plusieurs niveaux, nœuds racine non chargés —
 `TableView` **désactive** le bouton avec la raison en tooltip au lieu de le masquer ; une colonne déjà
-éclatée retombe alors sur sa colonne simple. Un `IColumnSplitSource` à `options: []` **sans** raison est
+dépliée retombe alors sur sa colonne simple. Un `IColumnSplitSource` à `options: []` **sans** raison est
 l'état transitoire « nœuds en vol » : le bouton y reste actif, et le groupe apparaît de lui-même à
 l'arrivée des nœuds.
 
@@ -387,7 +387,7 @@ touchées (une copie de l'item ; les autres gardent leur identité). C'est `item
 Raison : `shouldCellUpdate` ne voit **que** `(record, prevRecord)` — un overlay vivant à côté de la donnée
 y est structurellement invisible, ce qui obligeait à forcer `true` (voir juste en dessous). **Ne pas
 « re-simplifier »** en ressortant l'overlay de l'item : ça reviendrait à redessiner toutes les cellules de
-toutes les colonnes éclatées à chaque clic.
+toutes les colonnes dépliées à chaque clic.
 
 > ⚠️ L'ensemble ATTENDU doit rester réconciliable : décocher une valeur d'un attribut **multivalué** ne
 > retire que **cette** clé (`selectedKeys.filter(...)`), jamais l'ensemble entier. Un attendu `[]` face à
@@ -396,7 +396,7 @@ toutes les colonnes éclatées à chaque clic.
 
 **`shouldCellUpdate` des sous-colonnes compare vraiment** — `propertiesById[id]` **et**
 `optimisticSplitKeys?.[id]`, les deux portés par l'item (voir ci-dessus). Un clic ne redessine donc que les
-cellules éclatées de **sa** ligne. Deux choses à savoir avant d'y toucher :
+cellules dépliées de **sa** ligne. Deux choses à savoir avant d'y toucher :
 
 - `shouldCellUpdate` pilote directement le `useMemo` qui appelle `render()`
   (`@rc-component/table`, `Cell/useCellRender.js`) : quand il rend `false`, `render()` n'est pas rappelé et
@@ -463,11 +463,11 @@ pas un plafond. Bénéfice indirect : la hauteur scrollable du corps (`useTableS
 juste, sans avoir à connaître le nombre de lignes d'en-tête.
 
 L'espace de 8 px que le DS insère entre l'en-tête et le corps (`thead::after`) est **supprimé** dans
-le styled de `TableView` — pour tout le tableau, pas seulement les colonnes éclatées : il coupait le
+le styled de `TableView` — pour tout le tableau, pas seulement les colonnes dépliées : il coupait le
 cadre du groupe en deux.
 
-**Les en-têtes.** Un seul composant, `ColumnSplitHeader`, sert les **deux** états d'une colonne éclatable
-(libellé + bouton d'éclatement / libellé de groupe + bouton de repli) : ils ne diffèrent que par l'icône,
+**Les en-têtes.** Un seul composant, `ColumnSplitHeader`, sert les **deux** états d'une colonne dépliable
+(libellé + bouton de dépliage / libellé de groupe + bouton de repli) : ils ne diffèrent que par l'icône,
 la clé i18n et `disabled`, et l'action est **un unique toggle**
 (`ViewSettingsActionTypes.TOGGLE_ATTRIBUTE_COLUMN_SPLIT`) — les deux points d'appel de `TableView`
 passaient déjà le même callback. Découper selon le rendu plutôt que selon l'état donnait deux composants

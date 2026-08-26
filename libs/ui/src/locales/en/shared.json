@@ -817,10 +817,10 @@
             "between_dates": "Between dates"
         },
         "column_split": {
-            "expand": "Split the column by value",
+            "expand": "Expand the column",
             "collapse": "Collapse the column",
-            "unavailable_no_values": "This attribute has no possible value to split into.",
-            "unavailable_multi_level_tree": "Only a single-level tree can be split into columns.",
+            "unavailable_no_values": "This attribute has no possible value to expand into.",
+            "unavailable_multi_level_tree": "Only a single-level tree can be expanded into columns.",
             "unavailable_options_error": "The possible values could not be loaded.",
             "save_error": "The value could not be saved. Your change was cancelled."
         },
