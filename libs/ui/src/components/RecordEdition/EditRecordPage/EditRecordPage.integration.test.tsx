@@ -396,12 +396,13 @@ describe('EditRecordPage', () => {
 
         const simpleInput = screen.getByRole('textbox', {name: 'simple attribute'});
 
+        expect(screen.queryByText('some value')).not.toBeInTheDocument();
+
         await user.click(simpleInput);
         await userEvent.type(simpleInput, 'some value');
         await userEvent.tab();
 
-        waitFor(() => {
-            expect(screen.queryByText('some value')).not.toBeInTheDocument();
+        await waitFor(() => {
             expect(saveValuesMock).toHaveBeenCalled();
         });
 
