@@ -1,40 +1,40 @@
 {
-  "name": "@leav/message-broker",
-  "version": "1.19.1",
-  "description": "Shared message broker to use across projects",
-  "main": "./dist/index",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "prepublishOnly": "npm run build",
-    "build": "tsc --build tsconfig.build.json",
-    "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
-    "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
-    "tscheck:watch": "tsc -b -w tsconfig.json",
-    "test": "vitest run -c vitest.config.ts",
-    "test:ci": "vitest run -c vitest.config.ts --maxWorkers=2 --reporter=verbose",
-    "test:commit": "vitest run -c vitest.config.ts --changed",
-    "publish": "yarn npm publish --access public",
-    "get-version": "jq -r '.version' package.json",
-    "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"
-  },
-  "keywords": [
-    "config",
-    "configuration",
-    "settings"
-  ],
-  "author": "",
-  "license": "LGPL3",
-  "devDependencies": {
-    "@types/node": "24.13.3",
-    "typescript": "7.0.2",
-    "vitest": "4.1.11"
-  },
-  "dependencies": {
-    "@leav/logger": "workspace:libs/logger",
-    "amqp-connection-manager": "5.0.0",
-    "amqplib": "2.0.1"
-  },
-  "stableVersion": "1.0.0"
+    "name": "@leav/message-broker",
+    "version": "1.19.1",
+    "description": "Shared message broker to use across projects",
+    "main": "./dist/index",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "prepublishOnly": "npm run build",
+        "build": "tsc --build tsconfig.build.json",
+        "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
+        "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
+        "tscheck:watch": "tsc -b -w tsconfig.json",
+        "test": "vitest run -c vitest.config.ts",
+        "test:ci": "vitest run -c vitest.config.ts --maxWorkers=2 --reporter=verbose",
+        "test:commit": "vitest run -c vitest.config.ts --changed",
+        "publish": "yarn npm publish --access public",
+        "get-version": "jq -r '.version' package.json",
+        "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"
+    },
+    "keywords": [
+        "config",
+        "configuration",
+        "settings"
+    ],
+    "author": "",
+    "license": "LGPL3",
+    "devDependencies": {
+        "@types/node": "24.13.3",
+        "typescript": "7.0.2",
+        "vitest": "4.1.11"
+    },
+    "dependencies": {
+        "@leav/logger": "workspace:libs/logger",
+        "amqp-connection-manager": "5.0.0",
+        "amqplib": "2.0.1"
+    },
+    "stableVersion": "1.0.0"
 }

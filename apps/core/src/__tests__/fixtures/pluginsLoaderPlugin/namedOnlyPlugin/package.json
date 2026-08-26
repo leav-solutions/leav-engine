@@ -1,6 +1,6 @@
 {
-  "name": "named-only-plugin",
-  "description": "No default export fixture",
-  "version": "1.19.1",
-  "author": "test"
+    "name": "named-only-plugin",
+    "description": "No default export fixture",
+    "version": "1.19.1",
+    "author": "test"
 }

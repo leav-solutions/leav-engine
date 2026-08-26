@@ -1,33 +1,33 @@
 {
-  "name": "e2e-playwright",
-  "version": "1.19.1",
-  "scripts": {
-    "start": "playwright test",
-    "start-ui": "playwright test --ui",
-    "start-debug": "playwright test --debug",
-    "graphql-generate": "graphql-codegen --config ./codegen.ts",
-    "tscheck": "tsc --noEmit -p .",
-    "tscheck:watch": "tsc -w --noEmit -p .",
-    "local-stack-up": "docker compose -f docker-compose.e2e-playwright.yml up -d",
-    "local-stack-down": "docker compose -f docker-compose.e2e-playwright.yml down -v",
-    "local-stack-reset": "yarn run local-stack-down && yarn run local-stack-up",
-    "local-stack-core-logs": "docker compose -f docker-compose.e2e-playwright.yml logs -f leav_core"
-  },
-  "dependencies": {
-    "@leav/e2e-test-utils": "workspace:*",
-    "@playwright/test": "1.62.1",
-    "graphql": "16.14.2",
-    "graphql-request": "7.4.0",
-    "graphql-tag": "2.12.7"
-  },
-  "devDependencies": {
-    "@graphql-codegen/add": "5.0.3",
-    "@graphql-codegen/cli": "6.3.1",
-    "@graphql-codegen/client-preset": "4.8.3",
-    "@graphql-codegen/typescript": "5.0.10",
-    "@graphql-codegen/typescript-graphql-request": "6.4.0",
-    "@graphql-codegen/typescript-operations": "5.1.0",
-    "@types/node": "24.13.3",
-    "typescript": "7.0.2"
-  }
+    "name": "e2e-playwright",
+    "version": "1.19.1",
+    "scripts": {
+        "start": "playwright test",
+        "start-ui": "playwright test --ui",
+        "start-debug": "playwright test --debug",
+        "graphql-generate": "graphql-codegen --config ./codegen.ts",
+        "tscheck": "tsc --noEmit -p .",
+        "tscheck:watch": "tsc -w --noEmit -p .",
+        "local-stack-up": "docker compose -f docker-compose.e2e-playwright.yml up -d",
+        "local-stack-down": "docker compose -f docker-compose.e2e-playwright.yml down -v",
+        "local-stack-reset": "yarn run local-stack-down && yarn run local-stack-up",
+        "local-stack-core-logs": "docker compose -f docker-compose.e2e-playwright.yml logs -f leav_core"
+    },
+    "dependencies": {
+        "@leav/e2e-test-utils": "workspace:*",
+        "@playwright/test": "1.62.1",
+        "graphql": "16.14.2",
+        "graphql-request": "7.4.0",
+        "graphql-tag": "2.12.7"
+    },
+    "devDependencies": {
+        "@graphql-codegen/add": "5.0.3",
+        "@graphql-codegen/cli": "6.3.1",
+        "@graphql-codegen/client-preset": "4.8.3",
+        "@graphql-codegen/typescript": "5.0.10",
+        "@graphql-codegen/typescript-graphql-request": "6.4.0",
+        "@graphql-codegen/typescript-operations": "5.1.0",
+        "@types/node": "24.13.3",
+        "typescript": "7.0.2"
+    }
 }
