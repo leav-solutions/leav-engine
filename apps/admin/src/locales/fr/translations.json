@@ -186,9 +186,9 @@
             "show_select_descendants_button": "Bouton de sélection des descendants",
             "save_error": "Impossible d’enregistrer la configuration de sélection",
             "display_option_save_error": "Impossible d’enregistrer le mode d’affichage",
-            "column_split": "Éclatement en colonnes",
-            "column_split_helper": "Autorise l’éclatement de la colonne de cet attribut en une sous-colonne par valeur, dans l’explorateur.",
-            "column_split_save_error": "Impossible d’enregistrer le paramètre d’éclatement"
+            "column_split": "Dépliage en colonnes",
+            "column_split_helper": "Autorise le dépliage de la colonne de cet attribut en une sous-colonne par valeur, dans l’explorateur.",
+            "column_split_save_error": "Impossible d’enregistrer le paramètre de dépliage"
         },
         "smart_filter": {
             "enable": "Activer le filtre intelligent"

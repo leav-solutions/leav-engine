@@ -817,10 +817,10 @@
             "between_dates": "Entre les dates"
         },
         "column_split": {
-            "expand": "Éclater la colonne par valeur",
+            "expand": "Déplier la colonne",
             "collapse": "Replier la colonne",
-            "unavailable_no_values": "Cet attribut n’a aucune valeur possible à éclater.",
-            "unavailable_multi_level_tree": "L’éclatement n’est possible que sur un arbre à un seul niveau.",
+            "unavailable_no_values": "Cet attribut n’a aucune valeur possible à déplier.",
+            "unavailable_multi_level_tree": "Seul un arbre à un seul niveau peut être déplié en colonnes.",
             "unavailable_options_error": "Les valeurs possibles n’ont pas pu être chargées.",
             "save_error": "La valeur n’a pas pu être enregistrée. Votre modification a été annulée."
         },
