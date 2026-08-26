@@ -32,6 +32,12 @@ grep -rh --include="*.ts" --include="*.tsx" "from '@leav/ui'" \   # cherche les 
 > par les deux modales de [`manage-files/`](src/components/manage-files/CLAUDE.md). L'icône doit
 > rester **décorative** (`aria-hidden`, aucun texte) : plusieurs tests de cette famille comptent les
 > `role="img"` et comparent le `textContent` des nœuds.
+>
+> Elle porte aussi **`refreshOnMount`** : le contenu de l'arbre est lu en `cache-first`, donc un
+> remontage resert ce qu'Apollo a déjà en cache. La prop bascule la requête en `network-only`
+> (et non `no-cache` : la réponse alimente le cache, dont profitent les autres arbres de la page).
+> Opt-in pour la même raison — seul un appelant qui modifie lui-même l'arbre en a besoin, les
+> autres n'ont pas à payer une requête par montage.
 
 **Hooks :** `useAuth`, `useRedirectToLogin`, `useLang`, `useFilters`, `useFiltersContext`, `useFiltersReducer`, `useIFrameMessengerClient`, `useExecuteSaveValueBatchMutation`, `useGetRecordUpdatesSubscription`
 

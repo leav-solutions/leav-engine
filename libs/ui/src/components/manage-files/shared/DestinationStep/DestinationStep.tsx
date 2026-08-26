@@ -16,6 +16,9 @@ interface IDestinationStepProps {
 /**
  * First step of both wizards: pick the destination node in the system `files` tree. Files are shown
  * with a type icon and greyed out, since only directories can be selected.
+ *
+ * `refreshOnMount` because both wizards add nodes to that very tree: served from the cache, a
+ * second opening would show the tree as it was before the previous upload or directory creation.
  */
 export const DestinationStep: FunctionComponent<IDestinationStepProps> = ({
     treeId,
@@ -32,6 +35,7 @@ export const DestinationStep: FunctionComponent<IDestinationStepProps> = ({
                 canSelectRoot
                 selectableLibraries={selectableLibraries as string[]}
                 showNodeTypeIcon
+                refreshOnMount
             />
         )}
     </div>

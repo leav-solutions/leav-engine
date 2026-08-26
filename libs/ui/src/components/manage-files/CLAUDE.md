@@ -65,3 +65,20 @@ Les entrées du `fileList` d'antd **sont les instances `File` du navigateur**, d
   progression : le re-render est porté par la nouvelle identité du **tableau**, pas des items.
 - D'où aussi le choix de garder les décisions « remplacer / conserver les deux » dans une map
   `uid → boolean` (`ReplaceDecisions`) plutôt que sur le fichier.
+
+---
+
+## Un fichier envoyé n'est pas immédiatement dans l'arbre
+
+Les mutations `upload` et `createDirectory` **n'attachent pas** le nœud à l'arbre `files` : elles
+créent le record et écrivent sur le système de fichiers. C'est `automate-scan` qui émet l'événement
+FS, et le `filesManager` du core qui, en le traitant, appelle `treeDomain.addElement`. Deux
+conséquences :
+
+- **Invalider le cache Apollo à la fin de la mutation ne sert à rien** : la requête repartirait avant
+  que le nœud existe. D'où le `refreshOnMount` de `DestinationStep` — on garantit « à chaque
+  ouverture, l'état réel du serveur », pas « le fichier visible immédiatement ».
+- En local **sans le profil docker `automate`**, le fichier n'apparaît jamais dans l'arbre, alors que
+  son record existe. Symptôme trompeur quand on teste à la main : `doesFileExistAsChild` interroge
+  les **enfants du nœud d'arbre**, donc la modale de conflit ne s'ouvre pas pour un nom pourtant
+  présent en base.

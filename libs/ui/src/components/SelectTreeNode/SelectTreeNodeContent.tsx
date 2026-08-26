@@ -29,6 +29,7 @@ interface ISelectTreeNodeContentProps {
     selectableLibraries?: string[]; // all by default
     showSelectChildrenButton?: boolean;
     showNodeTypeIcon?: boolean;
+    refreshOnMount?: boolean;
 }
 
 // `treeContentDataQuery` is built by string interpolation at runtime, so graphql-codegen never sees
@@ -95,6 +96,7 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     selectableLibraries,
     showSelectChildrenButton = false,
     showNodeTypeIcon = false,
+    refreshOnMount = false,
 }) => {
     const rootNode: ITreeMapElement = {
         title: tree.label,
@@ -110,8 +112,10 @@ export const SelectTreeNodeContent: FunctionComponent<ISelectTreeNodeContentProp
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | null>(null);
 
+    // `network-only` rather than `no-cache` for `refreshOnMount`: the response still lands in the
+    // cache, so the other trees mounted on the page benefit from the refresh too.
     const [loadTreeContent] = useLazyQuery(treeContentDataQuery(), {
-        fetchPolicy: dependentValuesPermissionFilter ? 'no-cache' : undefined,
+        fetchPolicy: dependentValuesPermissionFilter ? 'no-cache' : refreshOnMount ? 'network-only' : undefined,
     });
 
     useEffect(() => {

@@ -27,6 +27,12 @@ interface ISelectTreeNodeProps {
     canSelectRoot?: boolean;
     showSelectChildrenButton?: boolean;
     showNodeTypeIcon?: boolean;
+    /**
+     * Opt out of the Apollo cache for the tree content, so each mount reflects the server. To be
+     * enabled by callers whose own flow adds or removes nodes — otherwise a remount silently
+     * replays the content read before that change.
+     */
+    refreshOnMount?: boolean;
 }
 
 export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
@@ -44,6 +50,7 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
     canSelectRoot = false,
     showSelectChildrenButton = false,
     showNodeTypeIcon,
+    refreshOnMount = false,
 }) => {
     const {lang} = useLang();
     const {t} = useSharedTranslation();
@@ -79,6 +86,7 @@ export const SelectTreeNode: FunctionComponent<ISelectTreeNodeProps> = ({
             selectableLibraries={selectableLibraries}
             showSelectChildrenButton={showSelectChildrenButton}
             showNodeTypeIcon={showNodeTypeIcon}
+            refreshOnMount={refreshOnMount}
         />
     );
 };

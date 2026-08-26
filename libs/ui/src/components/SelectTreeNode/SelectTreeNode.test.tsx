@@ -147,4 +147,26 @@ describe('SelectTreeNode', () => {
 
         expect(container.querySelector('[data-icon="folder"]')).not.toBeInTheDocument();
     });
+
+    test('Should read the tree content from the cache by default', async () => {
+        render(<SelectTreeNode treeId="treeId" onSelect={vi.fn()} />);
+
+        await screen.findByText('label1');
+
+        expect(apolloClient.useLazyQuery).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({fetchPolicy: undefined}),
+        );
+    });
+
+    test('Should bypass the cache when asked to refresh on mount', async () => {
+        render(<SelectTreeNode treeId="treeId" onSelect={vi.fn()} refreshOnMount />);
+
+        await screen.findByText('label1');
+
+        expect(apolloClient.useLazyQuery).toHaveBeenCalledWith(
+            expect.anything(),
+            expect.objectContaining({fetchPolicy: 'network-only'}),
+        );
+    });
 });
