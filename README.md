@@ -555,6 +555,12 @@ You can reach keycloak admin console on: [keycloak.leav.localhost](http://keyclo
 - [Renewrefresh and refresh](./docs/oidc/OIDC-Renewrefresh-Refresh.svg)
 - [Logout](./docs/oidc/OIDC-Logout.svg)
 
+# Release
+
+Create a release by launching `release` job in CI `develop` branch pipeline. By default it create a minor release, you can change with CI variable `RELEASE_BUMP`
+
+See more detail at [ADR-012-ci-one-click-release.md](docs/adr/ADR-012-ci-one-click-release.md)
+
 # License
 
 LEAV-Engine is released under the [LGPL v3](https://www.gnu.org/licenses/lgpl-3.0.txt) license.
