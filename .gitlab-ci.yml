@@ -38,6 +38,13 @@ workflow:
   if: $CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_BRANCH == "develop" && $SCHEDULED_ACTION == "dependency-audit"
   when: on_success
 
+# A release MR (make-release-*, created by the `release` job below) is a pure version bump: it
+# can't break lint/tests/build, so we exclude them to avoid needlessly lengthening its pipeline.
+# Validated beforehand in poc-release (see the docs/adr entry for this mechanism).
+.no_release_branch_rule: &no_release_branch_rule
+  if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^make-release-/
+  when: never
+
 .new_lib_installed_changes: &new_lib_installed_changes yarn.lock
 
 # Inject the leav registry token (CI_JOB_TOKEN) into the runner home .yarnrc.yml
@@ -64,6 +71,7 @@ variables:
   DISABLE_E2E_PLAYWRIGHT_JOBS: "false"
   DISABLE_BUILD_DOCKER_JOBS: "false"
   DISABLE_BUILD_NPM_JOBS: "false"
+  DISABLE_RELEASE_JOBS: "false"
   # If use npmjs.org public registry
   NPM_TOKEN: ""
 
@@ -71,6 +79,7 @@ stages:
   - test
   - build
   - post-build-test
+  - release
 
 .yarn_cache: &yarn_cache
   key:
@@ -91,6 +100,7 @@ stages:
   - *disable_check_rule
   - *no_tag_rule
   - *no_duplicate_rule
+  - *no_release_branch_rule
   - *mr_rule
 
 lint:
@@ -173,6 +183,7 @@ libs/config-manager-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -189,6 +200,7 @@ libs/logger-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -205,6 +217,7 @@ libs/message-broker-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -221,6 +234,7 @@ libs/monitoring-server-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -243,6 +257,7 @@ libs/ui-unit-tests/explorer:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -259,6 +274,7 @@ libs/ui-unit-tests/explorer-v2:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -275,6 +291,7 @@ libs/ui-unit-tests/record-edition:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -291,6 +308,7 @@ libs/ui-unit-tests/rest:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -307,6 +325,7 @@ libs/utils-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -323,6 +342,7 @@ apps/admin-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -341,6 +361,7 @@ apps/app-studio-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -359,6 +380,7 @@ apps/automate-scan-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -380,6 +402,7 @@ apps/core-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -401,6 +424,7 @@ apps/login-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -418,6 +442,7 @@ apps/portal-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -436,6 +461,7 @@ apps/preview-generator-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -457,6 +483,7 @@ apps/sync-scan-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -476,6 +503,7 @@ apps/mcp-runtime-unit-tests:
     - *disable_test_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -533,6 +561,7 @@ integration-test-core:
     - *disable_e2e_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -564,6 +593,7 @@ integration-test-automate-scan:
     - *disable_e2e_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -608,6 +638,7 @@ e2e-api:
     - *disable_e2e_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -643,6 +674,7 @@ e2e-indexation-manager:
     - *disable_e2e_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -673,6 +705,7 @@ e2e-sync-scan:
     - *disable_e2e_rule
     - *no_tag_rule
     - *no_duplicate_rule
+    - *no_release_branch_rule
     - <<: *mr_rule
       changes:
         - *new_lib_installed_changes
@@ -1057,4 +1090,134 @@ build-npm-leav-message-broker:
     PATH_CHANGES: libs/message-broker/**/*
 
 ## Build npm packages
+##########
+
+##########
+## Release
+## Mechanism validated beforehand in poc-release (see docs/adr): develop stays on the last
+## published version (no n+1), the release itself IS the bump. Two jobs:
+##   - `release` (manual, on develop): bumps + opens an auto-merged make-release-X.Y.Z MR
+##   - `auto-tag` (auto, on every develop push, idempotent): creates the tag once the MR is merged
+## The resulting tag already triggers build-npm-leav-*/build-docker-* (nothing to change there).
+.disable_release_rule: &disable_release_rule
+  if: $DISABLE_RELEASE_JOBS == "true"
+  when: never
+
+# Release MR: minimal pipeline (a single green job) to allow auto-merge without re-running
+# lint/tests/build (all excluded via no_release_branch_rule for this branch).
+release-gate:
+  stage: test
+  script:
+    - echo "Release MR ($CI_MERGE_REQUEST_SOURCE_BRANCH_NAME) - minimal pipeline for auto-merge"
+  rules:
+    - *disable_release_rule
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ /^make-release-/
+
+# Release (MANUAL, on develop) — opens the release MR, DOES NOT tag.
+#   develop = last published version (no n+1). The release itself IS the bump:
+#     1. computes the new version X.Y.Z (RELEASE_BUMP: minor (default) | major | patch)
+#     2. propagates X.Y.Z to every package.json + manifest.json on a make-release-X.Y.Z branch
+#     3. opens an auto-merged MR to develop (push options; develop is protected against direct push)
+#   The TAG is created AFTER the merge, by the `auto-tag` job on the develop pipeline (see below).
+#
+# Push auth: gitlab-ci-token:${CI_JOB_TOKEN} — requires Settings -> CI/CD -> Job token
+# permissions -> "Allow Git push requests to your project repository". No PAT to manage.
+# Must be run by a Maintainer/Owner: the auto-merge is attributed to them, and it's THEIR identity
+# that will run the post-merge pipeline on develop (so THEY create the tag — matters if tags are
+# protected).
+release:
+  stage: release
+  variables:
+    RELEASE_BUMP: minor # minor (default) | major | patch
+    GIT_DEPTH: "0" # full clone, needed to create/push refs
+  rules:
+    - *disable_release_rule
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: manual
+  before_script:
+    - apk add --no-cache jq git
+  script:
+    - |
+      set -e
+      RELEASE_VERSION=$(npm version "$RELEASE_BUMP" --no-git-tag-version --no-workspaces-update | sed 's/^v//')
+      RELEASE_BRANCH="make-release-$RELEASE_VERSION"
+      echo "Release -> $RELEASE_VERSION (RELEASE_BUMP=$RELEASE_BUMP) via MR $RELEASE_BRANCH"
+
+      # Identity of the person who triggered this manual job (GitLab predefined variables), not a
+      # bot: running it requires being a Maintainer/Owner (see comment above), so
+      # GITLAB_USER_NAME/EMAIL already resolve to a real person, consistent with the rest of the
+      # release history.
+      git config user.name "${GITLAB_USER_NAME}"
+      git config user.email "${GITLAB_USER_EMAIL}"
+      git remote set-url origin "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+
+      git checkout -b "$RELEASE_BRANCH"
+      # Propagate to every package.json AND manifest.json (a yarn foreach wouldn't cover
+      # manifest.json). npm version already bumped the root; align the rest.
+      for f in $(find . \( -name package.json -o -name manifest.json \) -not -path "*/node_modules/*" -type f); do
+        tmp="$f.tmp"; jq --arg v "$RELEASE_VERSION" '.version = $v' "$f" > "$tmp" && mv "$tmp" "$f"
+      done
+      # The release MR only runs the release-gate job (lint/tests/build excluded for
+      # make-release-* branches), that green job is enough to trigger the auto-merge.
+      git commit -am "chore: release $RELEASE_VERSION"
+      git push origin "$RELEASE_BRANCH" \
+        -o merge_request.create \
+        -o merge_request.target=develop \
+        -o merge_request.auto_merge \
+        -o merge_request.remove_source_branch \
+        -o "merge_request.title=chore: release $RELEASE_VERSION" \
+        -o "merge_request.description=MR auto-generated by the \"release\" CI job. On merge, the auto-tag job will create the $RELEASE_VERSION tag (-> latest publish)."
+
+# auto-tag (on develop, after merge): creates the tag for the current version if it's missing.
+# Idempotent: without n+1, the root version only changes on a release, so this job is a no-op on
+# every other develop push.
+#
+# Tag pushed via CI_JOB_TOKEN. A push via CI_JOB_TOKEN does NOT trigger a pipeline (anti-recursion
+# protection) -> we explicitly trigger the tag's publish pipeline via a *pipeline trigger token*
+# (variable RELEASE_TRIGGER_TOKEN, Protected + Masked). The freshly pushed ref may not be
+# immediately resolvable via the API (-> 400 "Reference not found"): retry with backoff.
+auto-tag:
+  stage: release
+  variables:
+    GIT_DEPTH: "0" # full clone, needed to create/push refs
+  rules:
+    - *disable_release_rule
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop"
+  before_script:
+    - apk add --no-cache jq git curl
+  script:
+    - |
+      set -e
+      VERSION=$(jq -r .version package.json)
+      git remote set-url origin "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+      if [ -n "$(git ls-remote --tags origin "refs/tags/$VERSION")" ]; then
+        echo "Tag $VERSION already exists, nothing to do."
+        exit 0
+      fi
+      echo "Creating tag $VERSION"
+      # No git config user.*/email here: this is a LIGHTWEIGHT tag (no -a), and `git push`
+      # doesn't commit anything either — neither operation reads the configured git identity.
+      git tag "$VERSION"
+      git push origin "$VERSION"
+      # A push via CI_JOB_TOKEN doesn't trigger a pipeline -> trigger the tag's one via the
+      # trigger token. Retry: the freshly pushed ref may not be resolvable via the API yet
+      # (-> 400 "Reference not found").
+      n=0
+      until [ "$n" -ge 6 ]; do
+        HTTP=$(curl -sS -o /tmp/trigger.json -w '%{http_code}' -X POST \
+          --form "token=${RELEASE_TRIGGER_TOKEN}" \
+          --form "ref=${VERSION}" \
+          "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/trigger/pipeline" || true)
+        if [ "$HTTP" = "201" ]; then
+          echo "Publish pipeline triggered for tag $VERSION."
+          exit 0
+        fi
+        n=$((n + 1))
+        echo "Trigger attempt $n: HTTP $HTTP — $(cat /tmp/trigger.json 2>/dev/null)"
+        sleep 5
+      done
+      echo "Failed to trigger the pipeline for tag $VERSION after $n attempts."
+      exit 1
+
+## Release
 ##########

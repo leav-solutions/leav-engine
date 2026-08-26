@@ -67,3 +67,4 @@ For decisions taken mid-EPIC, a table of subjects still to settle.
 | 009 | [libs/utils ESM-only migration: blocked without a bundler, deferred](ADR-009-libs-utils-esm-migration.md) | Accepted          |
 | 010 | [Backend Node module system: nodenext re-enabled](ADR-010-backend-nodenext-reenabled.md)                  | Accepted          |
 | 011 | [Explorer grouping engine (core backend)](ADR-011-explorer-grouping-core.md)                              | Accepted          |
+| 012 | [CI one-click release](ADR-012-ci-one-click-release.md)                                                   | Accepted          |
