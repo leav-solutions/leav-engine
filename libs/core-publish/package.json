@@ -1,6 +1,6 @@
 {
     "name": "@leav/core-publish",
-    "version": "1.19.1",
+    "version": "1.20.0",
     "description": "Export core and libs packages for easier imports in plugins",
     "main": "index.js",
     "types": "index.d.ts",

@@ -1,6 +1,6 @@
 {
     "name": "@leav/message-broker",
-    "version": "1.19.1",
+    "version": "1.20.0",
     "description": "Shared message broker to use across projects",
     "main": "./dist/index",
     "files": [

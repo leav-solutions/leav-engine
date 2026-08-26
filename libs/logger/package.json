@@ -1,6 +1,6 @@
 {
     "name": "@leav/logger",
-    "version": "1.19.1",
+    "version": "1.20.0",
     "description": "leav logger",
     "main": "./dist/index",
     "files": [
