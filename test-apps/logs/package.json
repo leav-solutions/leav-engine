@@ -1,29 +1,29 @@
 {
-    "name": "logs",
-    "version": "1.19.0",
-    "description": "Integration testing of the backend of app logs managing",
-    "scripts": {
-        "start": "vitest run -c vitest.config.ts",
-        "tscheck": "tsc --noEmit -p .",
-        "tscheck:watch": "tsc -w --noEmit -p .",
-        "graphql-generate": "graphql-codegen --config ./codegen.ts"
-    },
-    "dependencies": {
-        "@leav/config-manager": "workspace:*",
-        "@leav/utils": "workspace:*",
-        "graphql": "16.14.2",
-        "graphql-request": "7.4.0",
-        "graphql-tag": "2.12.7",
-        "zod": "4.4.3"
-    },
-    "devDependencies": {
-        "@graphql-codegen/add": "5.0.3",
-        "@graphql-codegen/cli": "6.3.1",
-        "@graphql-codegen/client-preset": "4.8.3",
-        "@graphql-codegen/typescript": "5.0.10",
-        "@graphql-codegen/typescript-graphql-request": "6.4.0",
-        "@graphql-codegen/typescript-operations": "5.1.0",
-        "typescript": "7.0.2",
-        "vitest": "4.1.11"
-    }
+  "name": "logs",
+  "version": "1.19.1",
+  "description": "Integration testing of the backend of app logs managing",
+  "scripts": {
+    "start": "vitest run -c vitest.config.ts",
+    "tscheck": "tsc --noEmit -p .",
+    "tscheck:watch": "tsc -w --noEmit -p .",
+    "graphql-generate": "graphql-codegen --config ./codegen.ts"
+  },
+  "dependencies": {
+    "@leav/config-manager": "workspace:*",
+    "@leav/utils": "workspace:*",
+    "graphql": "16.14.2",
+    "graphql-request": "7.4.0",
+    "graphql-tag": "2.12.7",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@graphql-codegen/add": "5.0.3",
+    "@graphql-codegen/cli": "6.3.1",
+    "@graphql-codegen/client-preset": "4.8.3",
+    "@graphql-codegen/typescript": "5.0.10",
+    "@graphql-codegen/typescript-graphql-request": "6.4.0",
+    "@graphql-codegen/typescript-operations": "5.1.0",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  }
 }

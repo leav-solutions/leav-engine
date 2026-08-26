@@ -1,6 +1,6 @@
 {
-    "name": "ts-plugin",
-    "description": "TS plugin fixture",
-    "version": "1.0.0",
-    "author": "test"
+  "name": "ts-plugin",
+  "description": "TS plugin fixture",
+  "version": "1.19.1",
+  "author": "test"
 }

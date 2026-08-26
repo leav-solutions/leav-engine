@@ -1,35 +1,35 @@
 {
-    "name": "@leav/config-manager",
-    "version": "1.19.0",
-    "description": "Module to load project configuration, allowing config overrides based on environment",
-    "main": "./dist/index",
-    "files": [
-        "dist"
-    ],
-    "scripts": {
-        "test": "vitest run -c vitest.config.ts",
-        "test:ci": "vitest run -c vitest.config.ts --maxWorkers=2 --reporter=verbose",
-        "test:commit": "vitest run -c vitest.config.ts --changed",
-        "prepublishOnly": "npm run build",
-        "build": "tsc --build tsconfig.build.json",
-        "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
-        "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
-        "tscheck:watch": "tsc -b -w tsconfig.json",
-        "publish": "yarn npm publish --access public",
-        "get-version": "jq -r '.version' package.json",
-        "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"
-    },
-    "keywords": [
-        "config",
-        "configuration",
-        "settings"
-    ],
-    "author": "",
-    "license": "LGPL3",
-    "devDependencies": {
-        "@types/node": "24.13.3",
-        "typescript": "7.0.2",
-        "vitest": "4.1.11"
-    },
-    "stableVersion": "1.0.0"
+  "name": "@leav/config-manager",
+  "version": "1.19.1",
+  "description": "Module to load project configuration, allowing config overrides based on environment",
+  "main": "./dist/index",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "vitest run -c vitest.config.ts",
+    "test:ci": "vitest run -c vitest.config.ts --maxWorkers=2 --reporter=verbose",
+    "test:commit": "vitest run -c vitest.config.ts --changed",
+    "prepublishOnly": "npm run build",
+    "build": "tsc --build tsconfig.build.json",
+    "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
+    "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
+    "tscheck:watch": "tsc -b -w tsconfig.json",
+    "publish": "yarn npm publish --access public",
+    "get-version": "jq -r '.version' package.json",
+    "set-version": "jq --arg v $1 '.version = $v' package.json > package.tmp.json && mv package.tmp.json package.json"
+  },
+  "keywords": [
+    "config",
+    "configuration",
+    "settings"
+  ],
+  "author": "",
+  "license": "LGPL3",
+  "devDependencies": {
+    "@types/node": "24.13.3",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  },
+  "stableVersion": "1.0.0"
 }

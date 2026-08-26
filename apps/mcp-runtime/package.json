@@ -1,39 +1,39 @@
 {
-    "name": "mcp-runtime",
-    "version": "1.19.0",
-    "description": "MCP server exposing LEAV APIs as tools for AI agents",
-    "main": "dist/index.js",
-    "scripts": {
-        "start": "node .",
-        "start:dev": "NODE_ENV=development tsx watch --clear-screen=false --ignore src/__tests__ --ignore 'src/**/*.spec.ts' src/index.ts",
-        "start:watch": "yarn run start:dev",
-        "build": "tsc -b tsconfig.build.json",
-        "build:backend": "yarn run build",
-        "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
-        "test": "vitest run -c vitest.unit.config.ts",
-        "test:ci": "vitest run -c vitest.unit.config.ts --maxWorkers=2 --reporter=verbose",
-        "test:commit": "vitest run -c vitest.unit.config.ts --changed",
-        "test:watch": "vitest -c vitest.unit.config.ts",
-        "prettier": "prettier --write 'src/**/*.ts'",
-        "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
-        "tscheck:watch": "tsc -b -w tsconfig.json"
-    },
-    "author": "",
-    "license": "LGPL3",
-    "devDependencies": {
-        "@types/express": "5.0.6",
-        "@types/node": "24.13.3",
-        "prettier": "3.9.6",
-        "tsx": "4.23.12",
-        "typescript": "7.0.2",
-        "vitest": "4.1.11"
-    },
-    "dependencies": {
-        "@leav/logger": "workspace:libs/logger",
-        "@leav/monitoring-server": "workspace:libs/monitoring-server",
-        "@modelcontextprotocol/sdk": "1.30.0",
-        "express": "4.22.2",
-        "zod": "4.4.3"
-    },
-    "stableVersion": "1.0.0"
+  "name": "mcp-runtime",
+  "version": "1.19.1",
+  "description": "MCP server exposing LEAV APIs as tools for AI agents",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node .",
+    "start:dev": "NODE_ENV=development tsx watch --clear-screen=false --ignore src/__tests__ --ignore 'src/**/*.spec.ts' src/index.ts",
+    "start:watch": "yarn run start:dev",
+    "build": "tsc -b tsconfig.build.json",
+    "build:backend": "yarn run build",
+    "clean": "rm -rf dist dist-spec tsconfig.build.tsbuildinfo tsconfig.spec.tsbuildinfo",
+    "test": "vitest run -c vitest.unit.config.ts",
+    "test:ci": "vitest run -c vitest.unit.config.ts --maxWorkers=2 --reporter=verbose",
+    "test:commit": "vitest run -c vitest.unit.config.ts --changed",
+    "test:watch": "vitest -c vitest.unit.config.ts",
+    "prettier": "prettier --write 'src/**/*.ts'",
+    "tscheck": "tsc -b tsconfig.build.json && tsc --noEmit -p tsconfig.spec.json",
+    "tscheck:watch": "tsc -b -w tsconfig.json"
+  },
+  "author": "",
+  "license": "LGPL3",
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "@types/node": "24.13.3",
+    "prettier": "3.9.6",
+    "tsx": "4.23.12",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  },
+  "dependencies": {
+    "@leav/logger": "workspace:libs/logger",
+    "@leav/monitoring-server": "workspace:libs/monitoring-server",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "express": "4.22.2",
+    "zod": "4.4.3"
+  },
+  "stableVersion": "1.0.0"
 }
