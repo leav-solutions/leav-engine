@@ -808,11 +808,11 @@ e2e-playwright:
   rules:
     - if: $DISABLE_BUILD_DOCKER_JOBS == "true"
       when: never
-    - if: $CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "develop") && $DOCKER_PLATFORM == "linux/arm64"
+    - if: ($CI_COMMIT_TAG || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop")) && $DOCKER_PLATFORM == "linux/arm64"
       needs:
         - job: build-docker-arm64
       when: on_success
-    - if: $CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "develop") && $DOCKER_PLATFORM == "linux/amd64"
+    - if: ($CI_COMMIT_TAG || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop")) && $DOCKER_PLATFORM == "linux/amd64"
       when: on_success
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       allow_failure: true # To make job optional in MR pipelines
@@ -879,7 +879,7 @@ build-docker-arm64:
   rules:
     - if: $DISABLE_BUILD_DOCKER_JOBS == "true"
       when: never
-    - if: $CI_PIPELINE_SOURCE == "push" && ($CI_COMMIT_TAG || $CI_COMMIT_BRANCH == "develop")
+    - if: $CI_COMMIT_TAG || ($CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "develop")
       when: manual
 
 build-docker-core:
@@ -1027,7 +1027,7 @@ build-docker-mcp-runtime:
       changes:
         - $PATH_CHANGES
       when: on_success
-    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_TAG
+    - if: $CI_COMMIT_TAG
       when: on_success
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       allow_failure: true # To make job optional in MR pipelines
@@ -1153,9 +1153,11 @@ release:
 
       git checkout -b "$RELEASE_BRANCH"
       # Propagate to every package.json AND manifest.json (a yarn foreach wouldn't cover
-      # manifest.json). npm version already bumped the root; align the rest.
+      # manifest.json). npm version already bumped the root; this loop re-writes it too, so its
+      # formatting doesn't matter. --indent 4 matches .prettierrc's tabWidth (jq's own default is
+      # 2), otherwise every release reformats every file and buries the version bump in noise.
       for f in $(find . \( -name package.json -o -name manifest.json \) -not -path "*/node_modules/*" -type f); do
-        tmp="$f.tmp"; jq --arg v "$RELEASE_VERSION" '.version = $v' "$f" > "$tmp" && mv "$tmp" "$f"
+        tmp="$f.tmp"; jq --indent 4 --arg v "$RELEASE_VERSION" '.version = $v' "$f" > "$tmp" && mv "$tmp" "$f"
       done
       # The release MR only runs the release-gate job (lint/tests/build excluded for
       # make-release-* branches), that green job is enough to trigger the auto-merge.
