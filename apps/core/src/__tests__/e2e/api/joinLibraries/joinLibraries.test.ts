@@ -710,6 +710,238 @@ describe('JoinLibraries', () => {
             });
         });
 
+        describe('Campaign with advanced reverse link of structure_items simple link', () => {
+            let campaign: string;
+            const attrStructureItemsCampaign = 'attribute_structure_items_campaign'; // simple link
+            beforeAll(async () => {
+                await makeGraphQlCall(`mutation {
+                    saveAttribute(
+                        attribute: {
+                            id: "${attrStructureItemsCampaign}",
+                            type: ${AttributeTypes.SIMPLE_LINK},
+                            format: text,
+                            linked_library: "${libCampaign}",
+                            label: {en: "Campaign"},
+                            multiple_values: false
+                        }
+                    ) { id }
+                }`);
+
+                await makeGraphQlCall(`mutation {
+                    saveAttribute(
+                        attribute: {
+                            id: "${attrCampaignStructureItems}",
+                            type: ${AttributeTypes.ADVANCED_LINK},
+                            format: text,
+                            linked_library: "${libStructureItem}",
+                            reverse_link: "${attrStructureItemsCampaign}",
+                            label: {en: "Thematic"},
+                            multiple_values: true
+                        }
+                    ) { id }
+                }`);
+
+                await makeGraphQlCall(`mutation {
+                    saveLibrary(library: {
+                        id: "${libCampaign}", 
+                        label: {en: "Campaigns"}, 
+                        behavior: ${LibraryBehavior.STANDARD},
+                        attributes: [
+                            "id",
+                            "${attrCampaignStructureItems}",
+                        ]
+                    }) { id }
+                }`);
+
+                await makeGraphQlCall(`mutation {
+                    saveLibrary(library: {
+                        id: "${libStructureItem}", 
+                        attributes: [
+                            "id",
+                            "${attrStructureItemThematic}",
+                            "${attrStructureItemsCampaign}"
+                        ],
+                    }) { id }
+                }`);
+            });
+
+            afterAll(async () => {
+                await makeGraphQlCall(`mutation {
+                    d1: saveLibrary(library: {
+                        id: "${libStructureItem}", 
+                        attributes: [
+                            "id",
+                            "${attrStructureItemThematic}",
+                        ],
+                    }) { id }
+                    d10: deleteForm(library: "${libCampaign}", id: "${formCampaign}") { id }
+                    d20: deleteLibrary(id: "${libCampaign}") { id }
+                    d30: deleteAttribute(id: "${attrCampaignStructureItems}") { id }
+                    d31: deleteAttribute(id: "${attrStructureItemThematic}") { id }
+                }`);
+            });
+
+            beforeEach(async () => {
+                campaign = await gqlCreateRecord(libCampaign);
+            });
+
+            afterEach(async () => {
+                await makeGraphQlCall(`mutation {
+                    deleteRecord(library: "${libCampaign}", id: "${campaign}") { id }
+                }`);
+            });
+
+            it('should add joinLibraryContext in campaign form structure item element', async () => {
+                const elementId = '123456';
+
+                const res = await createCampaignFormWithStructureItem(elementId);
+                expect(res.data.data.saveForm.id).toBe(formCampaign);
+                expect(res.data.data.saveForm.library.id).toBe(libCampaign);
+                expect(res.data.data.saveForm.elements[0].elements).toHaveLength(2);
+
+                const joinLibraryElement = res.data.data.saveForm.elements[0].elements.find(e => e.id === elementId);
+                expect(joinLibraryElement).toBeDefined();
+                expect(joinLibraryElement.attribute.id).toBe(attrCampaignStructureItems);
+                expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.linked_library.id).toBe(libThematic);
+                expect(joinLibraryElement.joinLibraryContext.mandatoryAttribute.id).toBe(attrStructureItemThematic);
+            });
+
+            it('saveValue campaign_structure_items with thematic should create join structure_item records bound to that thematic', async () => {
+                const res = await makeGraphQlCall(`mutation {
+                    saveValue(
+                        library: "${libCampaign}",
+                        recordId: "${campaign}",
+                        attribute: "${attrCampaignStructureItems}",
+                        value: {
+                            payload: "${thematic1}"
+                        }
+                    ) {
+                        id_value
+                        ... on LinkValue {
+                            payload {
+                                id
+                            }
+                        }
+                    }
+                }`);
+
+                expect(res.status).toBe(200);
+                expect(res.data.errors).toBeUndefined();
+                expect(res.data.data.saveValue[0].id_value).toBeTruthy();
+                expect(res.data.data.saveValue[0].payload.id).toBeTruthy();
+
+                const structureItemsRecords = await getStructureItemsRecords(res.data.data.saveValue[0].payload.id);
+                expect(structureItemsRecords[0].id).toBe(res.data.data.saveValue[0].payload.id);
+                expect(structureItemsRecords[0].whoAmI.library.id).toBe(libStructureItem);
+                expect(structureItemsRecords[0].property[0].linkPayload.id).toBe(thematic1);
+                expect(structureItemsRecords[0].property[0].id_value).toBeNull(); // simple link, no id_value
+
+                const campaignRecords = await getCampaignRecordWithStructureItems(campaign);
+                expect(campaignRecords[0].property[0].linkPayload.id).toBe(res.data.data.saveValue[0].payload.id);
+                expect(campaignRecords[0].property[0].id_value).toBe(res.data.data.saveValue[0].id_value);
+                expect(campaignRecords[0].property[0].id_value).toBe(campaignRecords[0].property[0].linkPayload.id); // because reverse linked or simple link
+
+                const resStructureItem = await makeGraphQlCall(`query {
+                    records(
+                        library: "${libStructureItem}",
+                        filters: [ { field: "id", condition: ${AttributeCondition.EQUAL}, value: "${res.data.data.saveValue[0].payload.id}" }]
+                    ) {
+                        list {
+                            property (attribute: "${attrStructureItemsCampaign}") {
+                                id_value
+                                ... on LinkValue {
+                                    linkPayload: payload {
+                                        id
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }`);
+                expect(resStructureItem.status).toBe(200);
+                expect(resStructureItem.data.errors).toBeUndefined();
+                expect(resStructureItem.data.data.records.list[0].property[0].id_value).toBeFalsy(); // simple link
+                expect(resStructureItem.data.data.records.list[0].property[0].linkPayload.id).toBe(campaign);
+            });
+
+            describe('Campaign with 2 structure items', () => {
+                let campaignStructureItems: Array<{id: string; id_value: string}>;
+
+                beforeEach(async () => {
+                    const res = await makeGraphQlCall(`mutation {
+                        saveValueBatch(
+                            library: "${libCampaign}",
+                            recordId: "${campaign}",
+                            values: [
+                                {
+                                    attribute: "${attrCampaignStructureItems}",
+                                    payload: "${thematic1}"
+                                },
+                                {
+                                    attribute: "${attrCampaignStructureItems}",
+                                    payload: "${thematic2}"
+                                },
+                            ]
+                        ) {
+                            values {
+                                id_value
+                                ... on LinkValue {
+                                    payload {
+                                        id
+                                    }
+                                }
+                        }
+                        }
+                    }`);
+
+                    expect(res.status).toBe(200);
+                    expect(res.data.errors).toBeUndefined();
+
+                    const campaignRecords = await getCampaignRecordWithStructureItems(campaign);
+                    expect(campaignRecords[0].property).toHaveLength(2);
+
+                    campaignStructureItems = res.data.data.saveValueBatch.values.map(v => ({
+                        id: v.payload.id,
+                        id_value: v.id_value
+                    }));
+                });
+
+                it('deleteValue campaign_structure_items should delete join structure_item records', async () => {
+                    const res = await makeGraphQlCall(`mutation {
+                        deleteValue(
+                            library: "${libCampaign}",
+                            recordId: "${campaign}",
+                            attribute: "${attrCampaignStructureItems}",
+                            value: {
+                                id_value: "${campaignStructureItems[0].id_value}",
+                            }
+                        ) {
+                            id_value
+                            ... on LinkValue {
+                                payload {
+                                    id
+                                }
+                            }
+                        }
+                    }`);
+
+                    expect(res.status).toBe(200);
+                    expect(res.data.errors).toBeUndefined();
+                    expect(res.data.data.deleteValue).toHaveLength(1);
+                    expect(res.data.data.deleteValue[0].id_value).toBe(campaignStructureItems[0].id_value);
+                    expect(res.data.data.deleteValue[0].payload.id).toBe(campaignStructureItems[0].id);
+
+                    const structureItems0 = await getStructureItemsRecords(campaignStructureItems[0].id);
+                    expect(structureItems0).toHaveLength(0); // should be deleted
+
+                    const campaignRecords = await getCampaignRecordWithStructureItems(campaign);
+                    expect(campaignRecords[0].property.map(p => p.linkPayload.id)).toEqual(
+                        expect.arrayContaining([campaignStructureItems[1].id])
+                    );
+                });
+            });
+        });
+
         async function getStructureItemsRecords(structureItemId: string) {
             const res = await makeGraphQlCall(`query {
                 records(
